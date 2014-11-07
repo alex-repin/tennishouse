@@ -1,0 +1,5 @@
+# rus_build_exim_1C dbazhenov
+<Files ~ "exim_1c.php$">
+  order deny,allow
+  allow from all
+</Files>
