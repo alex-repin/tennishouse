@@ -1,0 +1,2 @@
+1. cc and ctpl - fn.init.php
+2. display_errors - config.local.php

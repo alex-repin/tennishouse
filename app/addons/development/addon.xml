@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<addon scheme="2.0">
+    <id>development</id>
+    <version>1.0</version>
+    <name>Разработка</name>
+    <description>Аддон для TennisPlaza</description>
+    <priority>4294967294</priority>
+    <position>0</position>
+    <status>active</status>
+    <default_language>ru</default_language>
+    <queries>
+        <item>
+            CREATE TABLE IF NOT EXISTS `cscart_players` (
+                `player_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+                `player` VARCHAR( 128 ) NOT NULL ,
+                `status` CHAR( 1 ) NOT NULL DEFAULT 'A' ,
+                `position` SMALLINT( 5 ) UNSIGNED NOT NULL ,
+                `gender` char(1) NOT NULL DEFAULT 'M',
+                `birthday` int(11) NOT NULL,
+                `birthplace` VARCHAR( 128 ) NOT NULL,
+                `residence` VARCHAR( 128 ) NOT NULL,
+                `height` smallint(5) NOT NULL,
+                `weight` smallint(5) NOT NULL,
+                `plays` CHAR( 1 ) NOT NULL DEFAULT 'R',
+                `turned_pro` smallint(5) NOT NULL,
+                `coach` VARCHAR( 128 ) NOT NULL,
+                PRIMARY KEY (`player_id`)
+            ) ;
+        </item>
+        <item>
+            CREATE TABLE IF NOT EXISTS `cscart_players_gear` (
+                `gear_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+                `player_id` mediumint(8) unsigned NOT NULL,
+                `product_id` mediumint(8) unsigned NOT NULL,
+                PRIMARY KEY (`gear_id`)
+            ) ;
+        </item>
+    </queries>
+    <language_variables>
+        <item lang="ru" id="tennisplaza_template">Шаблон TennisPlaza</item>
+        <item lang="ru" id="calculate_racket_balance">Посчитать баланс ракетки</item>
+        <item lang="ru" id="players">Игроки</item>
+        <item lang="ru" id="player">Игрок</item>
+        <item lang="ru" id="players_menu_description">Профайлы игроков ATP и WTA тура</item>
+        <item lang="ru" id="text_player_has_been_deleted">Игрок был успешно удален.</item>
+        <item lang="ru" id="players.new_player">Новый игрок</item>
+        <item lang="ru" id="players.editing_player">Редактирование игрока</item>
+        <item lang="ru" id="player_name">Имя</item>
+        <item lang="ru" id="atp_ranking">ATP рейтинг</item>
+        <item lang="ru" id="photo">Фото</item>
+        <item lang="ru" id="gender">Пол</item>
+        <item lang="ru" id="birthday">День рождения</item>
+        <item lang="ru" id="birthplace">Место рождения</item>
+        <item lang="ru" id="residence">Проживает</item>
+        <item lang="ru" id="player_height">Рост</item>
+        <item lang="ru" id="player_plays">Стиль</item>
+        <item lang="ru" id="turned_pro">Стал профессионалом</item>
+        <item lang="ru" id="coach">Тренер</item>
+        <item lang="ru" id="male">Мужской</item>
+        <item lang="ru" id="female">Женский</item>
+        <item lang="ru" id="righty">Правша</item>
+        <item lang="ru" id="lefty">Левша</item>
+        <item lang="ru" id="add_players">Добавить игроков</item>
+        <item lang="ru" id="add_players_and_close">Добавить игроков и закрыть</item>
+        <item lang="ru" id="racket_played_by">Этой ракеткой предпочитают играть</item>
+    </language_variables>
+</addon>
