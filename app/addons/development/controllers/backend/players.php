@@ -61,7 +61,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $suffix = ".manage";
     }
 
-
+    if ($mode == 'm_update') {
+        if (!empty($_REQUEST['players_data'])) {
+            foreach ($_REQUEST['players_data'] as $k => $v) {
+                fn_update_player($v, $k);
+            }
+        }
+        $suffix = ".manage";
+    }
+    
     return array(CONTROLLER_STATUS_OK, "players$suffix");
 }
 

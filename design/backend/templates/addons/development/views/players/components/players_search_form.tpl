@@ -42,7 +42,7 @@
     </div>
 </div>
 <div class="sidebar-field">
-    <label for="elm_ranking">{__("ranking")}</label>
+    <label for="elm_ranking">{__("atp_ranking")}</label>
     <div class="break">
         <input type="text" name="ranking" id="elm_ranking" value="{$search.ranking}" />
     </div>

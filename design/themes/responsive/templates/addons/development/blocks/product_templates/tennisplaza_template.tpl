@@ -154,13 +154,11 @@
                 </h3>
                 <div>
                     {foreach from=$product.players item="player"}
-                            <div class="ty-product-list__image">
-                                    <a href="{"players.view?player_id=`$player.player_id`"|fn_url}">
-                                        {include file="common/image.tpl" obj_id=$obj_id_prefix images=$player.main_pair image_width=$settings.Thumbnails.product_lists_thumbnail_width image_height=$settings.Thumbnails.product_lists_thumbnail_height}
-                                    </a>
-
-                                {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
-                                {$smarty.capture.$discount_label nofilter}
+                            <div class="ty-product-list__player_image">
+                                <a href="{"players.view?player_id=`$player.player_id`"|fn_url}">
+                                    {include file="common/image.tpl" obj_id=$obj_id_prefix images=$player.main_pair image_width=$settings.Thumbnails.product_lists_thumbnail_width image_height=$settings.Thumbnails.product_lists_thumbnail_height}
+                                </a>
+                                <div>{$player.player}</div>
                             </div>
                     {/foreach}
                 </div>

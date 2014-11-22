@@ -13,7 +13,8 @@
 <tr>
     <th width="1%" class="left">
         {include file="common/check_items.tpl" class="cm-no-hide-input"}</th>
-    <th width="5%">{__("atp_ranking")}</th>
+    <th width="5%"><span>{__("image")}</span></th>
+    <th width="10%">{__("atp_ranking")}</th>
     <th>{__("player_name")}</th>
     <th width="6%">&nbsp;</th>
     <th width="10%" class="right">{__("status")}</th>
@@ -24,8 +25,11 @@
 
     <td class="left">
         <input type="checkbox" name="player_ids[]" value="{$player.player_id}" class="cm-item " /></td>
+    <td>
+        {include file="common/image.tpl" image=$player.main_pair.icon|default:$player.main_pair.detailed image_id=$player.main_pair.image_id image_width=50 href="players.update?player_id=`$player.player_id`"|fn_url}
+    </td>
     <td class="">
-        #{$player.ranking}
+        <input type="text" name="players_data[{$player.player_id}][ranking]" size="3" value="{$player.ranking}" class="input-micro" />
     </td>
     <td class="">
         <a class="row-status" href="{"players.update?player_id=`$player.player_id`"|fn_url}">{$player.player}</a>
@@ -56,7 +60,9 @@
         {/if}
     {/capture}
     {dropdown content=$smarty.capture.tools_list}
-{/capture}
+    {if $players}
+        {include file="buttons/save.tpl" but_name="dispatch[players.m_update]" but_role="submit-link" but_target_form="players_form"}
+    {/if}{/capture}
 {capture name="adv_buttons"}
     {include file="common/tools.tpl" tool_href="players.add" prefix="top" hide_tools="true" title=__("add_player") icon="icon-plus"}
 {/capture}

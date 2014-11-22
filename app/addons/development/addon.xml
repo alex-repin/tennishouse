@@ -11,21 +11,21 @@
     <queries>
         <item>
             CREATE TABLE IF NOT EXISTS `cscart_players` (
-                `player_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-                `player` VARCHAR( 128 ) NOT NULL ,
-                `status` CHAR( 1 ) NOT NULL DEFAULT 'A' ,
-                `position` SMALLINT( 5 ) UNSIGNED NOT NULL ,
-                `gender` char(1) NOT NULL DEFAULT 'M',
-                `birthday` int(11) NOT NULL,
-                `birthplace` VARCHAR( 128 ) NOT NULL,
-                `residence` VARCHAR( 128 ) NOT NULL,
-                `height` smallint(5) NOT NULL,
-                `weight` smallint(5) NOT NULL,
-                `plays` CHAR( 1 ) NOT NULL DEFAULT 'R',
-                `turned_pro` smallint(5) NOT NULL,
-                `coach` VARCHAR( 128 ) NOT NULL,
-                PRIMARY KEY (`player_id`)
-            ) ;
+            `player_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+            `player` varchar(128) NOT NULL,
+            `status` char(1) CHARACTER SET NOT NULL DEFAULT 'A',
+            `ranking` smallint(5) unsigned NOT NULL,
+            `gender` char(1) CHARACTER SET NOT NULL DEFAULT 'M',
+            `birthday` int(11) NOT NULL,
+            `birthplace` varchar(128) NOT NULL,
+            `residence` varchar(128) NOT NULL,
+            `height` smallint(5) NOT NULL,
+            `weight` smallint(5) NOT NULL,
+            `plays` char(1) CHARACTER SET NOT NULL DEFAULT 'R',
+            `turned_pro` smallint(5) NOT NULL,
+            `coach` varchar(128) NOT NULL,
+            PRIMARY KEY (`player_id`)
+            ) DEFAULT CHARSET=utf8 ;
         </item>
         <item>
             CREATE TABLE IF NOT EXISTS `cscart_players_gear` (

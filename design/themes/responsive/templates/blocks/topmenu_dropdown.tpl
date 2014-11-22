@@ -25,8 +25,8 @@
                             <i class="ty-menu__icon-hide ty-icon-up-open"></i>
                         </a>
                     {/if}
-                    <a {if $item1_url} href="{$item1_url}"{/if} class="ty-menu__item-link">
-                        {$item1.$name}
+                    <a {if $item1_url} href="{$item1_url}"{/if} class="ty-menu__item-link {if $item1.href == 'index.php'}ty-menu__homepage-link{/if}">
+                        {if $item1.href != 'index.php'}{$item1.$name}{else}&nbsp;{/if}
                     </a>
                 {if $item1.$childs}
 

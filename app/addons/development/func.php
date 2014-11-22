@@ -68,12 +68,15 @@ function fn_get_category_type($category_id)
 
 function fn_development_get_product_data_post(&$product_data, $auth, $preview, $lang_code)
 {
-    $product_data['players'] = db_get_fields("SELECT player_id FROM ?:players_gear WHERE product_id = ?i", $product_data['product_id']);
-    if (AREA == 'C' && !empty($product_data['players'])) {
-        $players = array();
-        foreach ($product_data['players'] as $player_id) {
-            $players[$player_id] = fn_get_player_data($player_id);
-        }
+    if (AREA == 'A') {
+        $plain = true;
+    } else {
+        $plain = false;
+    }
+    list($players, ) = fn_get_players(array('product_id' => $product_data['product_id'], 'plain' => $plain));
+    if (AREA == 'A') {
+        $product_data['players'] = implode(',', array_keys($players));
+    } else {
         $product_data['players'] = $players;
     }
     $product_data['category_type'] = fn_get_category_type($product_data['main_category']);
@@ -116,10 +119,12 @@ function fn_get_player_data($player_id)
 function fn_get_players($params)
 {
     $fields = array (
-        '?:players.*'
+        '?:players.*',
+        'GROUP_CONCAT(?:players_gear.product_id) as gear'
     );
 
-    $condition = '';
+    $condition = $join = '';
+    $join .= db_quote(" LEFT JOIN ?:players_gear ON ?:players_gear.player_id = ?:players.player_id ");
 
     if (AREA == 'C') {
         $_statuses = array('A'); // Show enabled players
@@ -146,25 +151,31 @@ function fn_get_players($params)
         $condition .= db_quote(' AND ?:players.player_id IN (?n)', explode(',', $params['item_ids']));
     }
 
+    if (!empty($params['product_id'])) {
+        $condition .= db_quote(' AND ?:players_gear.product_id = ?i', $params['product_id']);
+    }
+
     if (!empty($params['except_id']) && (empty($params['item_ids']) || !empty($params['item_ids']) && !in_array($params['except_id'], explode(',', $params['item_ids'])))) {
         $condition .= db_quote(' AND ?:players.player_id != ?i', $params['except_id']);
     }
 
-    $limit = $join = $group_by = '';
+    $limit = $group_by = '';
 
     if (!empty($params['limit'])) {
         $limit = db_quote(' LIMIT 0, ?i', $params['limit']);
     }
 
-    $players = db_get_hash_array('SELECT ' . implode(',', $fields) . " FROM ?:players WHERE 1 ?p ORDER BY ?:players.ranking ASC ?p", 'player_id', $condition, $limit);
+    $players = db_get_hash_array('SELECT ' . implode(',', $fields) . " FROM ?:players ?p WHERE 1 ?p GROUP BY ?:players.player_id ORDER BY ?:players.ranking ASC ?p", 'player_id', $join, $condition, $limit);
 
     if (empty($players)) {
         return array(array(), $params);
     }
 
-    foreach ($players as $k => $v) {
-        $players[$k]['main_pair'] = fn_get_image_pairs($v['player_id'], 'player', 'M', true, true);
-        $players[$k]['gear'] = db_get_fields("SELECT product_id FROM ?:players_gear WHERE player_id = ?i", $v['player_id']);
+    if (!$params['plain']) {
+        foreach ($players as $k => $v) {
+            $players[$k]['main_pair'] = fn_get_image_pairs($v['player_id'], 'player', 'M', true, true);
+            $players[$k]['gear'] = explode(',', $players[$k]['gear']);
+        }
     }
     
     return array($players, $params);
@@ -224,7 +235,7 @@ function fn_update_player($player_data, $player_id = 0)
         $existing_gear = db_get_fields("SELECT product_id FROM ?:players_gear WHERE player_id = ?i", $player_id);
     }
 
-    if (!empty($player_id)) {
+    if (!empty($player_id) && isset($_data['gear'])) {
 
         // Log player add/update
         fn_log_event('players', !empty($create) ? 'create' : 'update', array(
