@@ -39,6 +39,8 @@
     <language_variables>
         <item lang="ru" id="tennisplaza_template">Шаблон TennisPlaza</item>
         <item lang="ru" id="calculate_racket_balance">Посчитать баланс ракетки</item>
+        <item lang="ru" id="theme_editor.category_menu_color">Меню категорий</item>
+        <item lang="ru" id="theme_editor.category_menu_links_color">Ссылки меню категорий</item>
         <item lang="ru" id="players">Игроки</item>
         <item lang="ru" id="player">Игрок</item>
         <item lang="ru" id="players_menu_description">Профайлы игроков ATP и WTA тура</item>

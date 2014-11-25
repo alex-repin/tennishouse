@@ -46,11 +46,15 @@
 /*.ty-dropdown-box__title a, .ty-dropdown-box .ty-icon-down-micro, .ty-minicart__icon {
     color: #ffffff;
 }*/
+.footer-stay-connected {
+    background: none repeat scroll 0 0 #272528;
+}
+/*Top menu*/
 .no-touch .ty-menu__item:hover .ty-menu__item-link,
 .is-hover-menu .ty-menu__item-link,
 .is-hover-menu.ty-menu__item-active .ty-menu__item-link {
     background-color: #292929;
-    color: white;
+    color: #ffffff;
     text-shadow: none;
     transition: all 400ms linear 0s;
 }
@@ -69,7 +73,7 @@
     margin-bottom: 0;
 }
 .ty-menu .ty-menu__items {
-    background-color: #ffffff;
+    background-color: @category_menu;
 }
 .ty-menu__homepage-link {
     background: url("../../../media/images/addons/development/white-home-icon.png") no-repeat scroll center transparent !important;
@@ -80,6 +84,59 @@
     text-shadow: none;
     transition: all 400ms linear 0s;
 }
+/*Top menu*/
+
+/*Category menu*/
+
+.ty-menu .ty-menu__items {
+    background: @category_menu;
+}
+.ty-menu .ty-menu__item.ty-menu__item-active .ty-menu__item-link {
+    background-color: darken(@category_menu, 5%);
+    color: @category_menu_links;
+    transition: none;
+}
+.ty-menu .ty-menu__item .ty-menu__item-link {
+    color: @category_menu_links;
+}
+.no-touch .ty-menu .ty-menu__item:hover .ty-menu__item-link, .is-hover-menu .ty-menu .ty-menu__item-link, .is-hover-menu .ty-menu .ty-menu__item-active .ty-menu__item-link {
+    background-color: darken(@category_menu, 10%);
+    color: @category_menu_links;
+    text-shadow: none;
+    transition: none;
+}
+
+.ty-menu-vertical .ty-menu__items {
+    border-bottom: 1px solid #34495E;
+}
+.ty-menu-vertical .ty-menu__item .ty-menu__submenu .ty-menu__submenu-items {
+    border: 1px solid #2B3E51;
+    padding: 0px;
+}
+.no-touch .ty-menu-vertical .ty-menu__submenu .ty-menu__item:hover > .ty-menu__submenu-item-header .ty-menu__item-link {
+    background-color: darken(@category_menu, 10%);
+    color: @category_menu_links;
+}
+.ty-menu-vertical .ty-menu__item .ty-menu__submenu .ty-menu__item-link {
+    color: @category_menu_links;
+    background: white;
+}
+.no-touch .ty-menu-vertical .ty-menu__item .ty-menu__submenu .ty-menu__item:hover > .ty-menu__item-link {
+    background: @menu;
+    color: @category_menu_links;
+}
+.ty-menu-vertical .ty-menu__item i {
+    color: @category_menu_links;
+}
+.no-touch .ty-menu-vertical .ty-menu__item:hover .ty-menu__item-link, .is-hover-menu .ty-menu-vertical .ty-menu__item-link, .is-hover-menu .ty-menu-vertical .ty-menu__item-active .ty-menu__item-link {
+    background-color: darken(@category_menu, 10%);
+    color: @category_menu_links;
+    text-shadow: none;
+    transition: none;
+}
+
+/*Category menu*/
+
 /*.ty-helper-container {
     background: none repeat scroll 0 0 #f1f1f1;
 }*/
