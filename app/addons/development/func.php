@@ -171,7 +171,7 @@ function fn_get_players($params)
         return array(array(), $params);
     }
 
-    if (!$params['plain']) {
+    if (empty($params['plain'])) {
         foreach ($players as $k => $v) {
             $players[$k]['main_pair'] = fn_get_image_pairs($v['player_id'], 'player', 'M', true, true);
             $players[$k]['gear'] = explode(',', $players[$k]['gear']);
