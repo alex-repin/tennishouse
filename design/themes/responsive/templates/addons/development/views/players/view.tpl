@@ -1,94 +1,122 @@
-
 {assign var="obj_id" value=$player_data.player_id}
 {assign var="obj_id_prefix" value="`$obj_prefix``$obj_id`"}
-{include file="common/image.tpl" obj_id=$obj_id_prefix images=$player_data.main_pair.detailed}
-<div class="ty-player-detail clearfix">
+<div class="ty-player-details">
+    <div class="ty-player-detail">
+        <div class="ty-player-block__img-wrapper">
+            {hook name="products:image_wrap"}
+                {if !$no_images}
+                    <div class="ty-product-block__img cm-reload-{$product.product_id}" id="product_images_{$product.product_id}_update">
 
-    <div id="block_player_{$player_data.player_id}" class="clearfix">
-        <h1 class="ty-mainbox-title">{$player_data.player}</h1>
-
-        <div class="ty-player-detail__info">
-            <div class="ty-player-detail__logo">
-                {assign var="capture_name" value="logo_`$obj_id`"}
-                {$smarty.capture.$capture_name nofilter}
+                        {include file="common/image.tpl" obj_id=$obj_id_prefix images=$player_data.main_pair.detailed}
+                    <!--product_images_{$product.product_id}_update--></div>
+                {/if}
+            {/hook}
+        </div>
+        <h1 class="ty-player-details-title">{$player_data.player}{if $player_data.titles}<span class="ty-player-titles">{$player_data.titles}</span>{/if}</h1>
+        <div class="ty-player-block__left">
+            <div class="ty-player-data">
+                <span class="ty-player-data__label">{__("date_of_birth")}:</span>
+                <div class="ty-player-data__value">{$player_data.birthday|date_format:"`$settings.Appearance.date_format`"} ({$player_data.birthday|fn_get_age} {__("years_old")})</div>
             </div>
-            <div class="ty-player-detail__info-list ty-player-detail_info-first">
-                <h5 class="ty-player-detail__info-title">{__("contact_information")}</h5>
-                {if $player_data.email}
-                    <div class="ty-player-detail__control-group">
-                        <label class="ty-player-detail__control-lable">{__("email")}:</label>
-                        <span><a href="mailto:{$player_data.email}">{$player_data.email}</a></span>
-                    </div>
-                {/if}
-                {if $player_data.phone}
-                    <div class="ty-player-detail__control-group">
-                        <label class="ty-player-detail__control-lable">{__("phone")}:</label>
-                        <span>{$player_data.phone}</span>
-                    </div>
-                {/if}
-                {if $player_data.fax}
-                    <div class="ty-player-detail__control-group">
-                        <label class="ty-player-detail__control-lable">{__("fax")}:</label>
-                        <span>{$player_data.fax}</span>
-                    </div>
-                {/if}
-                {if $player_data.url}
-                    <div class="ty-player-detail__control-group">
-                        <label class="ty-player-detail__control-lable">{__("website")}:</label>
-                        <span><a href="{$player_data.url}">{$player_data.url}</a></span>
-                    </div>
-                {/if}
+            <div class="ty-player-data">
+                <span class="ty-player-data__label">{__("birthplace")}:</span>
+                <div class="ty-player-data__value">{$player_data.birthplace}</div>
             </div>
-            <div class="ty-player-detail__info-list">
-                <h5 class="ty-player-detail__info-title">{__("shipping_address")}</h5>
-
-                <div class="ty-player-detail__control-group">
-                    <span>{$player_data.address}</span>
-                </div>
-                <div class="ty-player-detail__control-group">
-                    <span>{$player_data.city}
-                        , {$player_data.state|fn_get_state_name:$player_data.country} {$player_data.zipcode}</span>
-                </div>
-                <div class="ty-player-detail__control-group">
-                    <span>{$player_data.country|fn_get_country_name}</span>
-                </div>
+            <div class="ty-player-data">
+                <span class="ty-player-data__label">{__("residence")}:</span>
+                <div class="ty-player-data__value">{$player_data.residence}</div>
+            </div>
+            <div class="ty-player-data">
+                <span class="ty-player-data__label">{__("player_height")}:</span>
+                <div class="ty-player-data__value">{$player_data.height} {__("cm")}</div>
+            </div>
+            <div class="ty-player-data">
+                <span class="ty-player-data__label">{__("weight")}:</span>
+                <div class="ty-player-data__value">{$player_data.weight} {__("kg")}</div>
+            </div>
+            <div class="ty-player-data">
+                <span class="ty-player-data__label">{__("player_plays")}:</span>
+                <div class="ty-player-data__value">{if $player_data.plays == 'R'}{__("righty")}{else}{__("lefty")}{/if}</div>
+            </div>
+            <div class="ty-player-data">
+                <span class="ty-player-data__label">{__("turned_pro")}:</span>
+                <div class="ty-player-data__value">{$player_data.turned_pro}</div>
+            </div>
+            <div class="ty-player-data">
+                <span class="ty-player-data__label">{__("coach")}:</span>
+                <div class="ty-player-data__value">{$player_data.coach}</div>
             </div>
         </div>
     </div>
-
-    <div class="ty-player-detail__categories">
-        <h3 class="ty-subheader">{__("categories")}</h3>
-
-        <table class="ty-player-detail__table ty-table">
-            <thead>
-                <tr>
-                    <th>{__("name")}</th>
-                    <th>{__("products_amount")}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {foreach from=$player_categories item="category"}
-                    <tr>
-                        <td>
-                            <a href="{"products.search?search_performed=Y&cid=`$category.category_id`&player_id=`$player_data.player_id`"|fn_url}">{$category.category}</a>
-                        </td>
-                        <td style="width: 10%" class="ty-right">{$category.count}</td>
-                    </tr>
-                {/foreach}
-            </tbody>
-        </table>
-    </div>
-
-    {capture name="tabsbox"}
-        <div id="content_description"
-                class="{if $selected_section && $selected_section != "description"}hidden{/if}">
-            {if $player_data.player_description}
-                <div class="ty-wysiwyg-content">
-                    {$player_data.player_description nofilter}
+    {if $player_data.news_feed}
+    <div class="ty-news-feed">
+        <h2>{__("news")}</h2>
+        <div id="scroll_list_news_{$player_data.player_id}" class="owl-carousel ty-scroller-list">
+            {foreach from=$player_data.news_feed item="news" name="for_news"}
+                <div class="ty-scroller-news-list__item">
+                    <span class="ty-news-date">{$news.timestamp|date_format:"%e %B %Y, %A"}</span>
+                                            
+                    <div class="ty-news-item-title">
+                        <a target="_blank" href="{$news.link}">
+                            <div class="ty-news-item-row">
+                                <span class="ty-news-time">{$news.timestamp|date_format:"%H:%M"}</span>
+                            </div>
+                            <div class="ty-news-item-column-descritpion">
+                                <div class="ty-news-item-row-title">{$news.title}</div>
+                                <div class="ty-news-item-row-description">{$news.description}</div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
-            {/if}
+            {/foreach}
         </div>
 
-    {/capture}
+        {script src="js/lib/owlcarousel/owl.carousel.min.js"}
+        <script type="text/javascript">
+        (function(_, $) {
+            $.ceEvent('on', 'ce.commoninit', function(context) {
+                var elm = context.find('#scroll_list_news_{$player_data.player_id}');
+
+                if (elm.length) {
+                    elm.owlCarousel({
+                        items: 1,
+                        scrollPerPage: false,
+                        autoPlay: '8000',
+                        slideSpeed: '400',
+                        stopOnHover: true,
+                        navigation: true,
+                        moveDirection: 'vertical',
+                        navigationText: ['{__("back")}', '{__("next")}'],
+                        pagination: false
+                    });
+                }
+            });
+        }(Tygh, Tygh.$));
+        </script>
+    </div>
+    {/if}
 </div>
+{if $player_data.gear}
+<div class="ty-player-gear">
+    <h2>{__("products")}</h2>
+    {include file="blocks/list_templates/grid_list.tpl"
+    products=$player_data.gear
+    columns=4
+    form_prefix="block_manager"
+    no_sorting="Y"
+    no_pagination="Y"
+    no_ids="Y"
+    obj_prefix="players_gear"
+    item_number=false
+    show_trunc_name=true
+    show_old_price=true
+    show_price=true
+    show_rating=true
+    show_clean_price=true
+    show_list_discount=true
+    show_add_to_cart=true
+    but_role="action"
+    show_discount_label=true}
+</div>
+{/if}
 {include file="common/tabsbox.tpl" content=$smarty.capture.tabsbox active_tab=$smarty.request.selected_section}

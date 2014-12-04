@@ -16,6 +16,17 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_get_age($birth_date)
+{
+    $now = time();
+    $years = fn_date_format(time(), "%Y") - fn_date_format($birth_date, "%Y");
+
+    if (fn_date_format(time(), "%m") < fn_date_format($birth_date, "%m") || (fn_date_format(time(), "%m") == fn_date_format($birth_date, "%d") && fn_date_format(time(), "%d") < fn_date_format($birth_date, "%m"))) {
+        $years--;
+    }
+    return $years;
+}
+
 function fn_development_delete_product_post($product_id, $product_deleted)
 {
     if ($product_deleted) {

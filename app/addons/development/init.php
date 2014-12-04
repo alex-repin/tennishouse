@@ -15,6 +15,11 @@
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 define('RACKETS_CATEGORY_ID', 254);
+define('APPAREL_CATEGORY_ID', 262);
+define('SHOES_CATEGORY_ID', 263);
+define('BAGS_CATEGORY_ID', 264);
+define('ACCESSORIES_CATEGORY_ID', 267);
+define('SPORTS_NUTRITION_CATEGORY_ID', 302);
 
 fn_register_hooks(
     'update_product_post',

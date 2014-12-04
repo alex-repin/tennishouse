@@ -24,6 +24,8 @@
             `plays` char(1) CHARACTER SET NOT NULL DEFAULT 'R',
             `turned_pro` smallint(5) NOT NULL,
             `coach` varchar(128) NOT NULL,
+            `titles` SMALLINT( 5 ) UNSIGNED NOT NULL,
+            `rss_link` VARCHAR( 255 ) NOT NULL,
             PRIMARY KEY (`player_id`)
             ) DEFAULT CHARSET=utf8 ;
         </item>
@@ -56,7 +58,7 @@
         <item lang="ru" id="residence">Проживает</item>
         <item lang="ru" id="player_height">Рост</item>
         <item lang="ru" id="player_plays">Стиль</item>
-        <item lang="ru" id="turned_pro">Стал профессионалом</item>
+        <item lang="ru" id="turned_pro">Профессионал с</item>
         <item lang="ru" id="professionals">Профессионалы</item>
         <item lang="ru" id="coach">Тренер</item>
         <item lang="ru" id="male">Мужской</item>
@@ -66,5 +68,13 @@
         <item lang="ru" id="add_players">Добавить игроков</item>
         <item lang="ru" id="add_players_and_close">Добавить игроков и закрыть</item>
         <item lang="ru" id="racket_played_by">Этой ракеткой предпочитают играть</item>
+        <item lang="ru" id="years_old">лет</item>
+        <item lang="ru" id="cm">см</item>
+        <item lang="ru" id="kg">кг</item>
+        <item lang="ru" id="back">Назад</item>
+        <item lang="ru" id="titles">Титулы</item>
+        <item lang="ru" id="rss_link">RSS ссылка</item>
+        <item lang="ru" id="atp">ATP</item>
+        <item lang="ru" id="wta">WTA</item>
     </language_variables>
 </addon>

@@ -98,9 +98,23 @@
     </div>
 
     <div class="control-group">
+        <label for="elm_player_titles" class="control-label">{__("titles")}</label>
+        <div class="controls">
+            <input type="text" name="player_data[titles]" id="elm_player_titles" value="{$player_data.titles}" size="5" class="input-small"/>
+        </div>
+    </div>
+
+    <div class="control-group">
         <label for="elm_player_coach" class="control-label">{__("coach")}</label>
         <div class="controls">
             <input type="text" name="player_data[coach]" id="elm_player_coach" value="{$player_data.coach}" size="25" class="input-long"/>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label for="elm_player_rss_link" class="control-label">{__("rss_link")}</label>
+        <div class="controls">
+            <input type="text" name="player_data[rss_link]" id="elm_player_rss_link" value="{$player_data.rss_link}" size="25" class="input-long"/>
         </div>
     </div>
 

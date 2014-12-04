@@ -1089,6 +1089,9 @@ function fn_top_menu_standardize($items, $id_name, $name, $children_name, $href_
     $result = array();
     foreach ($items as $v) {
         $result[$v[$id_name]] = array(
+            // [dab]
+            'object_id' => $v[$id_name],
+            // [dab]
             'descr' => $v[$name],
             'param' => empty($v['link']) ? $href_prefix . $v[$id_name] : $v['link'],
             'new_window' => isset($v['new_window']) ? $v['new_window'] : 0
