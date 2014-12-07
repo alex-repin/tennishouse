@@ -25,8 +25,8 @@
                             <i class="ty-menu__icon-hide ty-icon-up-open"></i>
                         </a>
                     {/if}
-                    <a {if $item1_url} href="{$item1_url}"{/if} class="ty-menu__item-link {if $item1.href == 'index.php'}ty-menu__homepage-link{/if}">
-                        {if $item1.href != 'index.php'}{$item1.$name}{else}&nbsp;{/if}
+                    <a {if $item1_url} href="{$item1_url}"{/if} class="ty-menu__item-link">
+                        {$item1.$name}
                     </a>
                 {if $item1.$childs}
 
@@ -57,11 +57,10 @@
                             {hook name="blocks:topmenu_dropdown_3levels_cols"}
                                 <ul class="ty-menu__submenu-items cm-responsive-menu-submenu">
                                     {foreach from=$item1.$childs item="item2" name="item2"}
-                                        {$col_width = 94 / ($item1.$childs|sizeof)}
-                                        <li class="ty-top-mine__submenu-col" style="width: {$col_width}%;">
+                                        <li class="ty-top-mine__submenu-col">
                                             {assign var="item2_url" value=$item2|fn_form_dropdown_object_link:$block.type}
-                                            <div class="ty-menu__submenu-item-header {if $item2.active || $item2|fn_check_is_active_menu_item:$block.type} ty-menu__submenu-item-header-active{/if} {if $item2.object_id == $smarty.const.SPORTS_NUTRITION_CATEGORY_ID}ty-menu__sports-nutrition{/if}">
-                                                <a{if $item2_url} href="{$item2_url}"{/if} class="ty-menu__submenu-link">{$item2.$name|upper nofilter}</a>
+                                            <div class="ty-menu__submenu-item-header {if $item2.active || $item2|fn_check_is_active_menu_item:$block.type} ty-menu__submenu-item-header-active{/if}">
+                                                <a{if $item2_url} href="{$item2_url}"{/if} class="ty-menu__submenu-link">{$item2.$name}</a>
                                             </div>
                                             {if $item2.$childs}
                                                 <a class="ty-menu__item-toggle visible-phone cm-responsive-menu-toggle">

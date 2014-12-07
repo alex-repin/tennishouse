@@ -1,6 +1,7 @@
 {assign var="obj_id" value=$player_data.player_id}
 {assign var="obj_id_prefix" value="`$obj_prefix``$obj_id`"}
 <div class="ty-player-details">
+    <div style="display: inline-block;">
     <div class="ty-player-detail">
         <div class="ty-player-block__img-wrapper">
             {hook name="products:image_wrap"}
@@ -50,17 +51,13 @@
     </div>
     {if $player_data.news_feed}
     <div class="ty-news-feed">
-        <h2>{__("news")}</h2>
         <div id="scroll_list_news_{$player_data.player_id}" class="owl-carousel ty-scroller-list">
             {foreach from=$player_data.news_feed item="news" name="for_news"}
                 <div class="ty-scroller-news-list__item">
-                    <span class="ty-news-date">{$news.timestamp|date_format:"%e %B %Y, %A"}</span>
+                    <span class="ty-news-date">{$news.timestamp|date_format:"%e %B %Y %A, %H:%M"}</span>
                                             
                     <div class="ty-news-item-title">
                         <a target="_blank" href="{$news.link}">
-                            <div class="ty-news-item-row">
-                                <span class="ty-news-time">{$news.timestamp|date_format:"%H:%M"}</span>
-                            </div>
                             <div class="ty-news-item-column-descritpion">
                                 <div class="ty-news-item-row-title">{$news.title}</div>
                                 <div class="ty-news-item-row-description">{$news.description}</div>
@@ -81,12 +78,11 @@
                     elm.owlCarousel({
                         items: 1,
                         scrollPerPage: false,
-                        autoPlay: '8000',
+                        autoPlay: '15000',
                         slideSpeed: '400',
                         stopOnHover: true,
                         navigation: true,
-                        moveDirection: 'vertical',
-                        navigationText: ['{__("back")}', '{__("next")}'],
+                        navigationText: ['<', '>'],
                         pagination: false
                     });
                 }
@@ -95,12 +91,59 @@
         </script>
     </div>
     {/if}
+    </div>
+    {if $player_data.gear.R}
+    <div class="ty-tp-block ty-player-rackets">
+        <h2>{__("his_choice")}</h2>
+        {include file="blocks/list_templates/grid_list.tpl"
+        products=$player_data.gear.R
+        columns=1
+        form_prefix="block_manager"
+        no_sorting="Y"
+        no_pagination="Y"
+        no_ids="Y"
+        obj_prefix="players_gear"
+        item_number=false
+        show_trunc_name=true
+        show_old_price=true
+        show_price=true
+        show_rating=true
+        show_clean_price=true
+        show_list_discount=true
+        show_add_to_cart=true
+        but_role="action"
+        show_discount_label=true}
+    </div>
+    {/if}
 </div>
-{if $player_data.gear}
-<div class="ty-player-gear">
-    <h2>{__("products")}</h2>
+{if $player_data.gear.BC}
+<div class="ty-tp-block ty-player-gear">
+    <h2>{__("bags_and_accessories")}</h2>
     {include file="blocks/list_templates/grid_list.tpl"
-    products=$player_data.gear
+    products=$player_data.gear.BC
+    columns=4
+    form_prefix="block_manager"
+    no_sorting="Y"
+    no_pagination="Y"
+    no_ids="Y"
+    obj_prefix="players_gear"
+    item_number=false
+    show_trunc_name=true
+    show_old_price=true
+    show_price=true
+    show_rating=true
+    show_clean_price=true
+    show_list_discount=true
+    show_add_to_cart=true
+    but_role="action"
+    show_discount_label=true}
+</div>
+{/if}
+{if $player_data.gear.AS}
+<div class="ty-tp-block ty-player-gear">
+    <h2>{__("apparel_and_shoes")}</h2>
+    {include file="blocks/list_templates/grid_list.tpl"
+    products=$player_data.gear.AS
     columns=4
     form_prefix="block_manager"
     no_sorting="Y"

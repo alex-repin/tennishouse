@@ -29,16 +29,31 @@ if ($mode == 'view') {
     }
 
     if (!empty($player_data['gear'])) {
-        list($player_data['gear'],) = fn_get_products(array('item_ids' => implode(',', $player_data['gear'])));
-        fn_gather_additional_products_data($player_data['gear'], array(
-            'get_icon' => true,
-            'get_detailed' => true,
-            'get_additional' => true,
-            'get_options' => true,
-            'get_discounts' => true,
-            'get_features' => true
-        ));
-        fn_print_die($player_data['gear']);
+        list($gear,) = fn_get_products(array('item_ids' => implode(',', $player_data['gear'])));
+        if (!empty($gear)) {
+            fn_gather_additional_products_data($gear, array(
+                'get_icon' => true,
+                'get_detailed' => true,
+                'get_additional' => true,
+                'get_options' => true,
+                'get_discounts' => true,
+                'get_features' => true
+            ));
+            $player_data['gear'] = array(
+                'R' => array(),
+                'BC' => array(),
+                'AS' => array(),
+            );
+            foreach ($gear as $i => $prod) {
+                if (in_array($prod['type'], array('R'))) {
+                    $player_data['gear']['R'][] = $prod;
+                } elseif (in_array($prod['type'], array('B', 'C'))) {
+                    $player_data['gear']['BC'][] = $prod;
+                } elseif (in_array($prod['type'], array('A', 'S'))) {
+                    $player_data['gear']['AS'][] = $prod;
+                }
+            }
+        }
     }
     
     if (!empty($player_data['rss_link'])) {
@@ -65,10 +80,12 @@ if ($mode == 'view') {
     fn_add_breadcrumb(__('professionals'));
 
     $params = $_REQUEST;
+    
+    $params['gender'] = 'M';
+    list($atp_players,) = fn_get_players($params);
+    Registry::get('view')->assign('atp_players', $atp_players);
 
-    list($players, $search) = fn_get_players($params);
-
-    Registry::get('view')->assign('players', $players);
-    Registry::get('view')->assign('search', $search);
-
+    $params['gender'] = 'F';
+    list($wta_players,) = fn_get_players($params);
+    Registry::get('view')->assign('wta_players', $wta_players);
 }

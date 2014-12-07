@@ -60,6 +60,8 @@
 .ty-menu__submenu-items {
     background: none repeat scroll 0 0 #ffffff;
     color: #000000;
+    height: 380px;
+    text-align: left;
 }
 .ty-menu__submenu-items .ty-menu__submenu-link {
     color: #454545;
@@ -101,11 +103,8 @@
     text-shadow: none;
     transition: all 400ms linear 0s;
 }
-.ty-menu__submenu-items .ty-menu__submenu-item, .ty-menu__submenu-item-header, .no-touch .ty-menu__item:hover .ty-menu__submenu-items, .is-hover-menu .ty-menu__submenu-items {
-    text-align: left;
-}
 .ty-menu__submenu .ty-menu__submenu-items .ty-menu__submenu-item-active a {
-    background: lighten(#272528, 80%);
+    background: lighten(#272528, 82%);
     color: inherit;
     padding: 3px 5px 3px 12px;
 }
@@ -117,8 +116,8 @@
     padding: 0 30px;
 }
 .top-menu .ty-menu__submenu-items {
-    right: 100px;
-    width: 1100px;
+    right: 55px;
+    width: 1150px;
 }
 .ty-menu__item.ty-menu__item-active .ty-menu__item-link {
     background-color: lighten(@menu, 20%);
@@ -146,6 +145,27 @@
 }
 .top-menu {
     box-shadow: 0 0 5px 1px #888888;
+}
+.ty-menu__submenu-item-subheader {
+    background-color: darken(#ffffff, 10%);
+    position: relative;
+    margin: 1px 0;
+}
+.ty-menu__submenu-item-subheader .ty-menu__submenu-link {
+    color: #000000;
+}
+.no-touch .ty-menu__submenu-item-subheader .ty-menu__submenu-link:hover {
+    color: lighten(@menu, 20%);
+    background-color: lighten(#000000, 40%);
+}
+.ty-menu__submenu-item-subheader .ty-icon-down-open:before, .ty-menu__submenu-item-subheader .ty-icon-right-open:before {
+    position: absolute;
+    right: 5px;
+    top: 3px;
+    color: #000000;
+}
+.ty-menu__submenu-items .ty-top-mine__submenu-col {
+    margin: 0 5px 0 0;
 }
 /*.top-menu-phone {
     text-align: right;
@@ -206,7 +226,6 @@
 .ty-menu__submenu > .ty-menu__submenu-items > .ty-menu__item-active > .ty-menu__submenu-item-header > .ty-menu__item-link {
     background-color: darken(@category_menu, 5%);
 }
-
 /*Category menu*/
 
 .ty-price-slider__input-text {
@@ -239,6 +258,9 @@
     padding-left: 150px;
     width: 500px;
 }
+.ty-player-details .ty-grid-list__item {
+    margin: 0 10px 10px;
+}
 .ty-player-data {
     padding: 0 0 5px;
 }
@@ -256,13 +278,38 @@
 }
 .ty-news-feed {
     border: 1px solid #ebebeb;
-    display: inline-block;
-    float: right;
-    margin: 0 0 0 60px;
     padding: 5px;
     text-align: left;
     vertical-align: top;
-    width: 180px;
+    width: 700px;
+    position: relative;
+    margin: 10px 5px;
+}
+.ty-news-feed .owl-prev {
+    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_right.png") no-repeat scroll 0 0 #ffffff !important;
+    border: 1px solid #ebebeb;
+    border-radius: unset !important;
+    height: 50px;
+    left: -25px;
+    margin: 0 !important;
+    opacity: 1 !important;
+    padding: 0 !important;
+    position: absolute;
+    top: 5px;
+    width: 23px;
+}
+.ty-news-feed .owl-next {
+    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_left.png") no-repeat scroll 0 0 #ffffff !important;
+    border: 1px solid #ebebeb;
+    border-radius: unset !important;
+    height: 50px;
+    right: -25px;
+    margin: 0 !important;
+    opacity: 1 !important;
+    padding: 0 !important;
+    position: absolute;
+    top: 5px;
+    width: 23px;
 }
 .ty-news-feed .owl-theme .owl-controls {
     margin: 0;
@@ -280,8 +327,10 @@
 }
 .ty-news-date {
     color: darken(@base, 30%);
-    margin: 0 0 5px 5px;
-    display: block;
+    display: inline-block;
+    margin: 0 5px 5px;
+    vertical-align: top;
+    width: 15%;
 }
 .ty-news-time {
     color: darken(@base, 30%);
@@ -303,13 +352,14 @@
     display: inline-block;
 }
 .ty-news-item-title {
-    display: block;
+    display: inline-block;
     margin: 0 5px;
+    width: 81%;
 }
 .ty-player-titles {
     color: darken(@base, 25%);
     width: 40px;
-    background: url("../../../../../../../../design/themes/responsive/media/images/addons/development/cup.png?1417720354") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    background: url("../../../design/themes/responsive/media/images/addons/development/cup.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
     float: right;
     height: 50px;
     padding: 0 0 5px 40px;
@@ -318,11 +368,45 @@
     display: block;
     padding-top: 20px;
 }
-.ty-player-gear h2 {
+.ty-tp-block h2 {
     color: #ffffff;
     background-color: #000000;
     padding: 2px 2px 1px 15px;
 }
+.ty-player-rackets {
+    float: right;
+    width: 25%;
+}
+.ty-btn + .ty-btn {
+    margin-left: 0;
+}
+.ty-grid-list__item-name {
+    width: 100%;
+    max-width: unset;
+    height: 32px;
+}
+.ty-grid-list__price {
+    max-width: unset;
+}
+.ty-atp-players-block, .ty-wta-players-block {
+    margin-top: 15px;
+}
+.ty-atp-players-block {
+    border-right: 1px solid #ebebeb;
+}
+.ty-players-list h1 {
+    text-align: center;
+    font-size: 200%;
+}
+.ty-players-list .ty-player-name {
+    font-size: 110%;
+    font-weight: bold;
+}
+.ty-players-list__item {
+    padding-bottom: 20px;
+    text-align: center;
+}
+
 /*Player details*/
 /*.ty-helper-container {
     background: none repeat scroll 0 0 #f1f1f1;

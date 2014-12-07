@@ -16,6 +16,37 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_display_subheaders($category_id)
+{
+    return in_array($category_id, array(RACKETS_CATEGORY_ID, APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, BAGS_CATEGORY_ID));
+}
+function fn_development_get_products_post(&$products, $params, $lang_code)
+{
+    if (!empty($products)) {
+        foreach ($products as $i => $product) {
+            $cats = explode('/', $product['id_path']);
+            if (in_array(RACKETS_CATEGORY_ID, $cats)) {
+                $products[$i]['type'] = 'R';
+            } elseif (in_array(APPAREL_CATEGORY_ID, $cats)) {
+                $products[$i]['type'] = 'A';
+            } elseif (in_array(SHOES_CATEGORY_ID, $cats)) {
+                $products[$i]['type'] = 'S';
+            } elseif (in_array(BAGS_CATEGORY_ID, $cats)) {
+                $products[$i]['type'] = 'B';
+            } elseif (in_array(ACCESSORIES_CATEGORY_ID, $cats)) {
+                $products[$i]['type'] = 'C';
+            } elseif (in_array(SPORTS_NUTRITION_CATEGORY_ID, $cats)) {
+                $products[$i]['type'] = 'N';
+            }
+        }
+    }
+}
+
+function fn_development_get_products($params, &$fields, $sortings, $condition, $join, $sorting, $group_by, $lang_code, $having)
+{
+    $fields[] = '?:categories.id_path';
+}
+
 function fn_get_age($birth_date)
 {
     $now = time();

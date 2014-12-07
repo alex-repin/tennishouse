@@ -24,5 +24,7 @@ define('SPORTS_NUTRITION_CATEGORY_ID', 302);
 fn_register_hooks(
     'update_product_post',
     'get_product_data_post',
-    'delete_product_post'
+    'delete_product_post',
+    'get_products',
+    'get_products_post'
 );
