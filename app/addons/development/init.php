@@ -26,5 +26,10 @@ fn_register_hooks(
     'get_product_data_post',
     'delete_product_post',
     'get_products',
-    'get_products_post'
+    'get_products_post',
+    'get_filters_products_count_before_select_filters',
+    'get_filter_range_name_post',
+    'get_product_filter_fields',
+    'add_range_to_url_hash_pre',
+    'update_product_filter'
 );

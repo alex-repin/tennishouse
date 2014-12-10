@@ -16,6 +16,73 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_update_product_filter(&$filter_data, $filter_id, $lang_code)
+{
+    if ($filter_data['feature_type'] == 'N') {
+        if ($filter_data['is_slider'] != 'Y') {
+            db_query("UPDATE ?:product_filters SET field_type = '' WHERE filter_id = ?i", $filter_id);
+        } else {
+            $field_type = db_get_field("SELECT field_type FROM ?:product_filters WHERE filter_id = ?i", $filter_id);
+            if (empty($field_type)) {
+                $existing_codes = db_get_fields('SELECT field_type FROM ?:product_filters GROUP BY field_type');
+                $existing_codes[] = 'P';
+                $existing_codes[] = 'A';
+                $existing_codes[] = 'F';
+                $existing_codes[] = 'V';
+                $existing_codes[] = 'R';
+                $existing_codes[] = 'B';
+                $codes = array_diff(range('A', 'Z'), $existing_codes);
+                $field_type = reset($codes);
+                db_query("UPDATE ?:product_filters SET field_type = ?s WHERE filter_id = ?i", $field_type, $filter_id);
+            }
+        }
+    }
+}
+
+function fn_development_add_range_to_url_hash_pre(&$hash, $range, $field_type)
+{
+    $fields = fn_get_product_filter_fields();
+    foreach ($fields as $i => $fld) {
+        if (!empty($fld['slider']) && !in_array($i, array('P', 'A'))) {
+            $pattern = '/(' . $i . '\d+-\d+\.?)|(\.?' . $i . '\d+-\d+)/';
+            $hash = preg_replace($pattern, '', $hash);          
+        }
+    }
+
+}
+
+function fn_development_get_product_filter_fields(&$filters)
+{
+    $fields = db_get_array("SELECT ?:product_filters.field_type, ?:product_features_descriptions.description FROM ?:product_filters LEFT JOIN ?:product_features ON ?:product_features.feature_id = ?:product_filters.feature_id LEFT JOIN ?:product_features_descriptions ON ?:product_features_descriptions.feature_id = ?:product_features.feature_id AND ?:product_features_descriptions.lang_code = ?s WHERE ?:product_filters.is_slider = 'Y' AND ?:product_features.feature_type = 'N' AND ?:product_filters.field_type != ''", CART_LANGUAGE);
+    
+    if (!empty($fields)) {
+        foreach ($fields as $i => $field) {
+            $filters[$field['field_type']] = array(
+                'description' => $field['description'],
+                'slider' => true,
+            );
+        }
+    }
+}
+
+function fn_development_get_filter_range_name_post(&$range_name, $range_type, $range_id)
+{
+    if (!in_array($range_type, array('P', 'A', 'V', 'R'))) {
+        $from = fn_strtolower(__('range_from'));
+        $to = fn_strtolower(__('range_to'));
+        $fields = fn_get_product_filter_fields();
+        $data = explode('-', $range_id);
+        $from_val = !empty($data[0]) ? $data[0] : 0;
+        $to_val = !empty($data[1]) ? $data[1] : 0;
+        $range_name = $fields[$range_type]['description'] . " : $from $from_val $to $to_val";
+    }
+}
+
+function fn_development_get_filters_products_count_before_select_filters(&$sf_fields, $sf_join, $condition, $sf_sorting, $params)
+{
+    $sf_fields .= db_quote(", ?:product_filters.is_slider");
+}
+
 function fn_display_subheaders($category_id)
 {
     return in_array($category_id, array(RACKETS_CATEGORY_ID, APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, BAGS_CATEGORY_ID));

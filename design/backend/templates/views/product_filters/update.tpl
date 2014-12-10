@@ -21,7 +21,7 @@
 <div class="tabs cm-j-tabs">
     <ul class="nav nav-tabs">
         <li id="tab_details_{$id}" class="cm-js active"><a>{__("general")}</a></li>
-        {if ($filter.feature_type && "ODN"|strpos:$filter.feature_type !== false) || ($filter.field_type && $filter_fields[$filter.field_type].is_range == true) || !$id}
+        {if ($filter.feature_type && ("OD"|strpos:$filter.feature_type !== false || ($filter.feature_type == 'N' && $filter.is_slider == 'N'))) || ($filter.field_type && $filter_fields[$filter.field_type].is_range == true) || !$id}
             <li id="tab_variants_{$id}" class="cm-js {if !$id}hidden{/if}"><a>{__("ranges")}</a></li>
         {/if}
         <li id="tab_categories_{$id}" class="cm-js"><a>{__("categories")}</a></li>
@@ -93,6 +93,18 @@
             </div>
         </div>
 
+        {if $filter.feature_type == 'N'}
+            <div class="control-group">
+                <label class="control-label" for="elm_filter_is_slider_{$id}">{__("slider")}</label>
+                <div class="controls">
+                <select name="filter_data[is_slider]" id="elm_filter_is_slider_{$id}">
+                    <option value="N" {if $filter.is_slider == 'N'}  selected="selected"{/if}>{__("checkbox")}</option>
+                    <option value="Y"  {if $filter.is_slider == 'Y'}   selected="selected"{/if}>{__("slider")}</option>
+                </select>
+                </div>
+            </div>
+        {/if}
+        
         <div class="control-group{if !$filter.slider} hidden{/if}" id="round_to_{$id}_container">
             <label class="control-label" for="elm_filter_round_to_{$id}">{__("round_to")}</label>
             <div class="controls">

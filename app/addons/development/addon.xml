@@ -37,6 +37,9 @@
                 PRIMARY KEY (`gear_id`)
             ) ;
         </item>
+        <item>
+            ALTER TABLE `cscart_product_filters` ADD `is_slider` CHAR( 1 ) NOT NULL DEFAULT 'N';
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennisplaza_template">Шаблон TennisPlaza</item>
@@ -79,5 +82,6 @@
         <item lang="ru" id="bags_and_accessories">Сумки и аксессуары</item>
         <item lang="ru" id="apparel_and_shoes">Одежда и обувь</item>
         <item lang="ru" id="his_choice">Его выбор</item>
+        <item lang="ru" id="slider">Ползунок</item>
     </language_variables>
 </addon>

@@ -542,8 +542,8 @@ var Tygh = {
                         $('#' + id + ' [type=checkbox]').prop('disabled', flag);
                     }
 
-                    container.removeClass('hidden');
-                    container.toggleBy(flag);
+                    // [TennisPlaza]
+                    container.slideToggle();
 
                     $.ceEvent('trigger', 'ce.switch_' + id, [flag]);
 
@@ -558,13 +558,14 @@ var Tygh = {
                     // If container visibility can be saved in cookie, do it!
                     var s_elm = jelm.hasClass('cm-save-state') ? jelm : (p_elm.hasClass('cm-save-state') ? p_elm : false);
                     if (s_elm) {
-                        var _s = s_elm.hasClass('cm-ss-reverse') ? ':hidden' : ':visible';
-                        if (container.is(_s)) {
+                        var _s = s_elm.hasClass('cm-ss-reverse') ? true : false;
+                        if (flag == _s) {
                             $.cookie.set(id, 1);
                         } else {
                             $.cookie.remove(id);
                         }
                     }
+                    // [TennisPlaza]
 
                     // If we click on switcher, check if it has icons on background
                     if (prefix == 'sw_') {
