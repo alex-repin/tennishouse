@@ -5022,8 +5022,7 @@ function fn_get_filters_products_count($params = array())
 
     Registry::registerCache($key, array('products', 'product_features', 'product_filters', 'product_features_values', 'categories'), Registry::cacheLevel('user'));
 
-//    if (Registry::isExist($key) == false) {
-    if (true) {
+    if (Registry::isExist($key) == false) {
         if (!empty($params['check_location'])) { // FIXME: this is bad style, should be refactored
             $valid_locations = array(
                 'index.index',
@@ -5147,7 +5146,7 @@ function fn_get_filters_products_count($params = array())
             return array(array(), false);
         } else {
             foreach ($filters as $k => $v) {
-                if (!empty($v['feature_id'])) {
+                if (!empty($v['feature_id']) && $v['is_slider'] != 'Y') {
                     // Feature filters
                     $feature_ids[] = $v['feature_id'];
                 } else {
@@ -5156,10 +5155,11 @@ function fn_get_filters_products_count($params = array())
                         $_field = $fields[$v['field_type']];
                         $field_filters[$v['filter_id']] = array_merge($v, $_field);
                         $filters[$k]['condition_type'] = $_field['condition_type'];
-                        if (!empty($_field['slider'])) {
-                            $filters[$k]['slider'] = $_field['slider'];
+                        if (!empty($_field['slider']) || $v['is_slider'] == 'Y') {
+                            $filters[$k]['slider'] = true;
                         }
                     }
+                    
                 }
             }
         }
@@ -5314,6 +5314,28 @@ function fn_get_filters_products_count($params = array())
 
                 $fields_join = $fields_where = '';
 
+                if (!empty($slider_vals)) {
+                    foreach ($slider_vals as $tp => $slider) {
+                        if ($field['field_type'] != $tp) {
+                            if ($tp == 'P') {
+                                $fields_join .= db_quote(" LEFT JOIN ?:product_prices ON ?:product_prices.product_id = ?:products.product_id AND ?:product_prices.lower_limit = 1 AND ?:product_prices.usergroup_id IN (?n)", array_merge(array(USERGROUP_ALL), $_SESSION['auth']['usergroup_ids']));
+                                $currency = !empty($slider[2]) ? $slider[2] : CART_PRIMARY_CURRENCY;
+                                if ($currency != CART_PRIMARY_CURRENCY) {
+                                    $coef = Registry::get('currencies.' . $currency . '.coefficient');
+                                    $decimals = Registry::get('currencies.' . CART_PRIMARY_CURRENCY . '.decimals');
+                                    $slider[0] = round(floatval($slider[0]) * floatval($coef), $decimals);
+                                    $slider[1] = round(floatval($slider[1]) * floatval($coef), $decimals);
+                                }
+
+                                $fields_where .= db_quote(" AND ?:product_prices.price >= ?i AND ?:product_prices.price <= ?i", $slider[0], $slider[1]);
+                            } elseif ($fields[$tp]['condition_type'] == 'S') {
+                                $fields_join .= db_quote(" LEFT JOIN ?:product_features_values ON ?:product_features_values.product_id = ?:products.product_id AND ?:product_features_values.feature_id = ?i LEFT JOIN ?:product_feature_variant_descriptions ON ?:product_feature_variant_descriptions.variant_id = ?:product_features_values.variant_id", $fields[$tp]['feature_id']);
+                                $fields_where .= db_quote(" AND ?:product_feature_variant_descriptions.variant >= ?f AND ?:product_feature_variant_descriptions.variant <= ?f ", $slider[0], $slider[1]);
+                            }
+                        }
+                    }
+                }
+                
                 // Dinamic ranges (price, amount etc)
                 if ($field['condition_type'] == 'D') {
 
@@ -5321,7 +5343,7 @@ function fn_get_filters_products_count($params = array())
 
                     if ($field['field_type'] != 'A') {
                         if (strpos($_join, 'JOIN ?:products ') === false) {
-                            $fields_join .= " LEFT JOIN ?:products ON ?:products.product_id = ?:product_prices.product_id";
+                            $fields_join = " LEFT JOIN ?:products ON ?:products.product_id = ?:product_prices.product_id " . $fields_join;
                         } elseif (strpos($fields_join . $_join, 'JOIN ?:product_prices ') === false) {
                             $fields_join .= db_quote(" LEFT JOIN ?:product_prices ON ?:product_prices.product_id = ?:products.product_id AND ?:product_prices.lower_limit = 1 AND ?:product_prices.usergroup_id IN (?n)", array_merge(array(USERGROUP_ALL), $_SESSION['auth']['usergroup_ids']));
                         }
@@ -5409,6 +5431,9 @@ function fn_get_filters_products_count($params = array())
                                     $field_range_values[$filter_id]['left'] = $tmp;
                                 }
 
+                                if ($field_range_values[$filter_id]['right'] == $field_range_values[$filter_id]['max'] && $field_range_values[$filter_id]['left'] == $field_range_values[$filter_id]['min']) {
+                                    unset($slider_vals[$field['field_type']]);
+                                }
                                 $field_range_values[$filter_id]['left'] = floor($field_range_values[$filter_id]['left'] / $filters[$filter_id]['round_to']) * $filters[$filter_id]['round_to'];
                                 $field_range_values[$filter_id]['right'] = ceil($field_range_values[$filter_id]['right'] / $filters[$filter_id]['round_to']) * $filters[$filter_id]['round_to'];
 
@@ -5448,7 +5473,7 @@ function fn_get_filters_products_count($params = array())
 
                 // Char values (free shipping etc)
                 } elseif ($field['condition_type'] == 'C') {
-                    $field_ranges_counts[$filter_id] = db_get_hash_array("SELECT COUNT(DISTINCT ?:$field[table].product_id) as products, ?:$field[table].$field[db_field] as range_name, ?s AS field_type FROM ?:$field[table] ?p WHERE ?:products.status = 'A' ?p GROUP BY ?:$field[table].$field[db_field]", 'range_name', $field['field_type'], $join, $where);
+                    $field_ranges_counts[$filter_id] = db_get_hash_array("SELECT COUNT(DISTINCT ?:$field[table].product_id) as products, ?:$field[table].$field[db_field] as range_name, ?s AS field_type FROM ?:$field[table] ?p WHERE ?:products.status = 'A' ?p GROUP BY ?:$field[table].$field[db_field]", 'range_name', $field['field_type'], $join . $fields_join, $where . $fields_where);
                     if (!empty($field_ranges_counts[$filter_id])) {
                         foreach ($field_ranges_counts[$filter_id] as $range_key => $range) {
                             $field_ranges_counts[$filter_id][$range_key]['range_name'] = $field['variant_descriptions'][$range['range_name']];
@@ -5457,8 +5482,73 @@ function fn_get_filters_products_count($params = array())
                     }
                 // Fixed values (supplier etc)
                 } elseif ($field['condition_type'] == 'F') {
-                    $field_ranges_counts[$filter_id] = db_get_hash_array("SELECT COUNT(DISTINCT ?:$field[table].product_id) as products, ?:$field[foreign_table].$field[range_name] as range_name, UPPER(SUBSTRING(?:$field[foreign_table].$field[range_name], 1, 1)) AS `index`, ?:$field[foreign_table].$field[foreign_index] as range_id, ?s AS field_type FROM ?:$field[table] LEFT JOIN ?:$field[foreign_table] ON ?:$field[foreign_table].$field[foreign_index] = ?:$field[table].$field[db_field] ?p WHERE ?:products.status IN ('A') ?p GROUP BY ?:$field[table].$field[db_field] ORDER BY ?:$field[foreign_table].$field[range_name] ", 'range_id', $field['field_type'], $join, $where);
+                    $field_ranges_counts[$filter_id] = db_get_hash_array("SELECT COUNT(DISTINCT ?:$field[table].product_id) as products, ?:$field[foreign_table].$field[range_name] as range_name, UPPER(SUBSTRING(?:$field[foreign_table].$field[range_name], 1, 1)) AS `index`, ?:$field[foreign_table].$field[foreign_index] as range_id, ?s AS field_type FROM ?:$field[table] LEFT JOIN ?:$field[foreign_table] ON ?:$field[foreign_table].$field[foreign_index] = ?:$field[table].$field[db_field] ?p WHERE ?:products.status IN ('A') ?p GROUP BY ?:$field[table].$field[db_field] ORDER BY ?:$field[foreign_table].$field[range_name] ", 'range_id', $field['field_type'], $join . $fields_join, $where . $fields_where);
+                // [TennisPlaza]
+                } elseif ($field['condition_type'] == 'S') {
+                    $variants_counts = db_get_hash_array("SELECT " . implode(', ', $values_fields) . " FROM ?:product_features_values LEFT JOIN ?:products ON ?:products.product_id = ?:product_features_values.product_id LEFT JOIN ?:product_filters ON ?:product_filters.feature_id = ?:product_features_values.feature_id AND ?:product_filters.status = 'A' LEFT JOIN ?:product_feature_variants ON ?:product_feature_variants.variant_id = ?:product_features_values.variant_id LEFT JOIN ?:product_feature_variant_descriptions ON ?:product_feature_variant_descriptions.variant_id = ?:product_feature_variants.variant_id AND ?:product_feature_variant_descriptions.lang_code = ?s LEFT JOIN ?:product_features ON ?:product_features.feature_id = ?:product_filters.feature_id ?p WHERE ?:product_features_values.feature_id = ?i AND ?:product_features_values.lang_code = ?s AND ?:product_features_values.variant_id ?p AND ?:product_features.feature_type = 'N' AND ?:product_filters.is_slider = 'Y' GROUP BY ?:product_features_values.variant_id, ?:product_filters.filter_id ORDER BY ?:product_feature_variants.position, ?:product_feature_variant_descriptions.variant", 'range_id', CART_LANGUAGE, $join . $fields_join, $field['feature_id'], CART_LANGUAGE, $where . $fields_where);
+                    
+                    $range_values = array();
+                    foreach ($variants_counts as $u => $rv) {
+                        $range_values[] = $rv['range_name'];
+                    }
+                    $field_range_values[$filter_id]['min'] = min($range_values);
+                    $field_range_values[$filter_id]['max'] = max($range_values);
+                    
+                    if (fn_is_empty($field_range_values[$filter_id])) {
+                        unset($field_range_values[$filter_id]);
+                    } else {
+
+                        $field_range_values[$filter_id]['min'] = floor($field_range_values[$filter_id]['min'] / $filters[$filter_id]['round_to']) * $filters[$filter_id]['round_to'];
+                        $field_range_values[$filter_id]['max'] = ceil($field_range_values[$filter_id]['max'] / $filters[$filter_id]['round_to']) * $filters[$filter_id]['round_to'];
+
+                        if ($field_range_values[$filter_id]['max'] - $field_range_values[$filter_id]['min'] <= $filters[$filter_id]['round_to']) {
+                            $field_range_values[$filter_id]['max'] = $field_range_values[$filter_id]['min'] + $filters[$filter_id]['round_to'];
+                        }
+
+                        if (!empty($slider_vals[$field['field_type']])) {
+                            $_slider_vals[$field['field_type']] = $slider_vals[$field['field_type']];
+
+                            $field_range_values[$filter_id]['left'] = $slider_vals[$field['field_type']][0];
+                            $field_range_values[$filter_id]['right'] = $slider_vals[$field['field_type']][1];
+
+                            if ($field_range_values[$filter_id]['left'] < $field_range_values[$filter_id]['min']) {
+                                $field_range_values[$filter_id]['left'] = $field_range_values[$filter_id]['min'];
+                            }
+                            if ($field_range_values[$filter_id]['left'] > $field_range_values[$filter_id]['max']) {
+                                $field_range_values[$filter_id]['left'] = $field_range_values[$filter_id]['max'];
+                            }
+                            if ($field_range_values[$filter_id]['right'] > $field_range_values[$filter_id]['max']) {
+                                $field_range_values[$filter_id]['right'] = $field_range_values[$filter_id]['max'];
+                            }
+                            if ($field_range_values[$filter_id]['right'] < $field_range_values[$filter_id]['min']) {
+                                $field_range_values[$filter_id]['right'] = $field_range_values[$filter_id]['min'];
+                            }
+                            if ($field_range_values[$filter_id]['right'] < $field_range_values[$filter_id]['left']) {
+                                $tmp = $field_range_values[$filter_id]['right'];
+                                $field_range_values[$filter_id]['right'] = $field_range_values[$filter_id]['left'];
+                                $field_range_values[$filter_id]['left'] = $tmp;
+                            }
+
+                                if ($field_range_values[$filter_id]['right'] == $field_range_values[$filter_id]['max'] && $field_range_values[$filter_id]['left'] == $field_range_values[$filter_id]['min']) {
+                                    unset($slider_vals[$field['field_type']]);
+                                }
+
+                            $field_range_values[$filter_id]['left'] = floor($field_range_values[$filter_id]['left'] / $filters[$filter_id]['round_to']) * $filters[$filter_id]['round_to'];
+                            $field_range_values[$filter_id]['right'] = ceil($field_range_values[$filter_id]['right'] / $filters[$filter_id]['round_to']) * $filters[$filter_id]['round_to'];
+
+                            if (!empty($field_range_values[$filter_id]['left']) || !empty($field_range_values[$filter_id]['right'])) {
+                                $variant_ids = array();
+                                foreach ($variants_counts as $u => $rv) {
+                                    if ($field_range_values[$filter_id]['left'] <= $rv['range_name'] && $field_range_values[$filter_id]['right'] >= $rv['range_name'])
+                                    $variant_ids[] = $rv['range_id'];
+                                }
+                                $sliders_join .= db_quote(" LEFT JOIN ?:product_features_values AS slider_cond ON slider_cond.product_id = ?:product_features_values.product_id AND slider_cond.feature_id = ?i ", $field['feature_id']);
+                                $sliders_where .= db_quote(" AND slider_cond.variant_id IN (?n) ", $variant_ids);
+                            }
+                        }
+                    }
                 }
+                // [TennisPlaza]
             }
         }
 
@@ -5470,14 +5560,11 @@ function fn_get_filters_products_count($params = array())
             }
         }
 
-        // [TennisPlaza]
         if (!fn_allowed_for('ULTIMATE') || !empty($filters_list)) {
-            $variants_counts = db_get_hash_multi_array("SELECT " . implode(', ', $values_fields) . " FROM ?:product_features_values LEFT JOIN ?:products ON ?:products.product_id = ?:product_features_values.product_id LEFT JOIN ?:product_filters ON ?:product_filters.feature_id = ?:product_features_values.feature_id AND ?:product_filters.status = 'A' LEFT JOIN ?:product_feature_variants ON ?:product_feature_variants.variant_id = ?:product_features_values.variant_id LEFT JOIN ?:product_feature_variant_descriptions ON ?:product_feature_variant_descriptions.variant_id = ?:product_feature_variants.variant_id AND ?:product_feature_variant_descriptions.lang_code = ?s LEFT JOIN ?:product_features ON ?:product_features.feature_id = ?:product_filters.feature_id ?p WHERE ?:product_features_values.feature_id IN (?n) AND ?:product_features_values.lang_code = ?s AND ?:product_features_values.variant_id ?p ?p AND IF(?:product_filters.is_slider = 'N', ?:product_features.feature_type IN ('S', 'M', 'E'), ?:product_features.feature_type IN ('S', 'M', 'E', 'N')) GROUP BY ?:product_features_values.variant_id, ?:product_filters.filter_id ORDER BY ?:product_feature_variants.position, ?:product_feature_variant_descriptions.variant", array('filter_id', 'range_id'), CART_LANGUAGE, $join . $sliders_join, $feature_ids, CART_LANGUAGE, $where . $sliders_where . $filter_company_condition, $filter_vq);
+            $variants_counts = db_get_hash_multi_array("SELECT " . implode(', ', $values_fields) . " FROM ?:product_features_values LEFT JOIN ?:products ON ?:products.product_id = ?:product_features_values.product_id LEFT JOIN ?:product_filters ON ?:product_filters.feature_id = ?:product_features_values.feature_id AND ?:product_filters.status = 'A' LEFT JOIN ?:product_feature_variants ON ?:product_feature_variants.variant_id = ?:product_features_values.variant_id LEFT JOIN ?:product_feature_variant_descriptions ON ?:product_feature_variant_descriptions.variant_id = ?:product_feature_variants.variant_id AND ?:product_feature_variant_descriptions.lang_code = ?s LEFT JOIN ?:product_features ON ?:product_features.feature_id = ?:product_filters.feature_id ?p WHERE ?:product_features_values.feature_id IN (?n) AND ?:product_features_values.lang_code = ?s AND ?:product_features_values.variant_id ?p ?p AND ?:product_features.feature_type IN ('S', 'M', 'E') GROUP BY ?:product_features_values.variant_id, ?:product_filters.filter_id ORDER BY ?:product_feature_variants.position, ?:product_feature_variant_descriptions.variant", array('filter_id', 'range_id'), CART_LANGUAGE, $join . $sliders_join, $feature_ids, CART_LANGUAGE, $where . $sliders_where . $filter_company_condition, $filter_vq);
         } else {
             $variants_counts = array();
         }
-        // [TennisPlaza]
-
 
         $ranges_counts = db_get_hash_multi_array("SELECT " . implode(', ', $ranges_fields) . " FROM ?:product_filter_ranges LEFT JOIN ?:product_features_values ON ?:product_features_values.feature_id = ?:product_filter_ranges.feature_id AND ?:product_features_values.value_int >= ?:product_filter_ranges.from AND ?:product_features_values.value_int <= ?:product_filter_ranges.to LEFT JOIN ?:products ON ?:products.product_id = ?:product_features_values.product_id LEFT JOIN ?:product_filter_ranges_descriptions ON ?:product_filter_ranges_descriptions.range_id = ?:product_filter_ranges.range_id AND ?:product_filter_ranges_descriptions.lang_code = ?s LEFT JOIN ?:product_features ON ?:product_features.feature_id = ?:product_filter_ranges.feature_id ?p WHERE ?:product_features_values.feature_id IN (?n) AND ?:product_features_values.lang_code = ?s ?p ?p GROUP BY ?:product_filter_ranges.range_id ORDER BY ?:product_filter_ranges.position, ?:product_filter_ranges_descriptions.range_name", array('filter_id', 'range_id'), CART_LANGUAGE, $join . $sliders_join, $feature_ids, CART_LANGUAGE, $where . $sliders_where, $filter_rq);
 
@@ -5534,71 +5621,6 @@ function fn_get_filters_products_count($params = array())
 
                 $filters[$filter_id]['ranges'] = & $merged[$filter_id];
                 
-                // [TennisPlaza]
-                if ($filters[$filter_id]['is_slider'] == 'Y' && !empty($filters[$filter_id]['ranges'])) {
-                    $filters[$filter_id]['slider'] = true;
-                    $filters[$filter_id]['range_values']['min'] = $filters[$filter_id]['range_values']['max'] = 0;
-                    $range_values = array();
-                    foreach ($filters[$filter_id]['ranges'] as $u => $rv) {
-                        $range_values[] = $rv['range_name'];
-                    }
-                    $filters[$filter_id]['range_values']['min'] = min($range_values);
-                    $filters[$filter_id]['range_values']['max'] = max($range_values);
-                    if (!empty($slider_vals[$filters[$filter_id]['field_type']])) {
-                        $selected_ranges['left'] = $slider_vals[$filters[$filter_id]['field_type']][0];
-                        $selected_ranges['right'] = $slider_vals[$filters[$filter_id]['field_type']][1];
-
-                        if ($selected_ranges['left'] < $filters[$filter_id]['range_values']['min']) {
-                            $selected_ranges['left'] = $filters[$filter_id]['range_values']['min'];
-                        }
-                        if ($selected_ranges['left'] > $filters[$filter_id]['range_values']['max']) {
-                            $selected_ranges['left'] = $filters[$filter_id]['range_values']['max'];
-                        }
-                        if ($selected_ranges['right'] > $filters[$filter_id]['range_values']['max']) {
-                            $selected_ranges['right'] = $filters[$filter_id]['range_values']['max'];
-                        }
-                        if ($selected_ranges['right'] < $filters[$filter_id]['range_values']['min']) {
-                            $selected_ranges['right'] = $filters[$filter_id]['range_values']['min'];
-                        }
-                        if ($selected_ranges['right'] < $selected_ranges['left']) {
-                            $tmp = $selected_ranges['right'];
-                            $selected_ranges['right'] = $selected_ranges['left'];
-                            $selected_ranges['left'] = $tmp;
-                        }
-
-                        $filters[$filter_id]['range_values']['left'] = floor($selected_ranges['left'] / $filters[$filter_id]['round_to']) * $filters[$filter_id]['round_to'];
-                        $filters[$filter_id]['range_values']['right'] = ceil($selected_ranges['right'] / $filters[$filter_id]['round_to']) * $filters[$filter_id]['round_to'];
-                        
-//                         if (!empty($filters[$filter_id]['range_values']['left']) || !empty($filters[$filter_id]['range_values']['right'])) {
-//                             if ($field['field_type'] == 'P') {
-//                                 if (strpos($sliders_join, 'JOIN ?:product_prices ') === false) {
-//                                     if (strpos($join, 'JOIN ?:product_prices ') === false) {
-//                                         $sliders_join .= db_quote(" LEFT JOIN ?:product_prices ON ?:product_prices.product_id = ?:products.product_id AND ?:product_prices.lower_limit = 1 AND ?:product_prices.usergroup_id IN (?n)", array_merge(array(USERGROUP_ALL), $_SESSION['auth']['usergroup_ids']));
-//                                     }
-//                                     $vals = $_slider_vals['P'];
-//                                     $currency = !empty($vals[2]) ? $vals[2] : CART_PRIMARY_CURRENCY;
-//                                     if ($currency != CART_PRIMARY_CURRENCY) {
-//                                         $coef = Registry::get('currencies.' . $currency . '.coefficient');
-//                                         $decimals = Registry::get('currencies.' . CART_PRIMARY_CURRENCY . '.decimals');
-//                                         $vals[0] = round(floatval($vals[0]) * floatval($coef), $decimals);
-//                                         $vals[1] = round(floatval($vals[1]) * floatval($coef), $decimals);
-//                                     }
-// 
-//                                     $sliders_where .= db_quote(" AND ?:product_prices.price >= ?i AND ?:product_prices.price <= ?i", $vals[0], $vals[1]);
-//                                 }
-//                             } elseif ($field['field_type'] == 'A') {
-//                                 if (strpos($sliders_join, 'JOIN ?:product_options_inventory ') === false) {
-//                                     if (strpos($join, 'JOIN ?:product_options_inventory ') === false) {
-//                                         $sliders_join .= " LEFT JOIN ?:product_options_inventory as inventory ON inventory.product_id = ?:products.product_id";
-//                                     }
-//                                     $sliders_where .= db_quote(" AND $db_field >= ?i AND $db_field <= ?i", $filters[$filter_id]['range_values']['left'], $filters[$filter_id]['range_values']['right']);
-//                                 }
-//                             }
-//                         }
-                    }
-                }
-                // [TennisPlaza]
-
                 // Add feature type to the filter
                 if (!empty($merged[$filter_id])) {
                     $_first = reset($merged[$filter_id]);
@@ -5804,6 +5826,7 @@ function fn_check_selected_filter($element_id, $feature_type = '', $request_para
     $prefix = empty($field_type) ? (in_array($feature_type, array('N', 'O', 'D')) ? 'R' : 'V') : $field_type;
 
     $result = false;
+    $fields = fn_get_product_filter_fields();
 
     if (!empty($request_params['features_hash']) || !empty($request_params['req_range_id'])) {
         if (!empty($request_params['req_range_id']) && $request_params['req_range_id'] == $element_id) {
@@ -5851,12 +5874,13 @@ function fn_delete_range_from_url($url, $range, $field_type = '')
     fn_set_hook('delete_range_from_url_pre', $url, $range, $field_type);
 
     $prefix = empty($field_type) ? (in_array($range['feature_type'], array('N', 'O', 'D')) ? 'R' : 'V') : $field_type;
-
+    $fields = fn_get_product_filter_fields();
+    
     $element = $prefix . $range['range_id'];
     $pattern = '/(' . $element . '[\.]?)|([\.]?' . $element . ')(?![\d]+)/';
 
     $result = preg_replace($pattern, '', $url);
-
+    
     /** Modifies result after removing range from URL hash
      *
      * @param string $result     URL hash not containing range

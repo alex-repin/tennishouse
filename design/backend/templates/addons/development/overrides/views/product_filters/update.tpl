@@ -93,6 +93,24 @@
             </div>
         </div>
 
+        {if $filter.feature_type == 'N'}
+            <div class="control-group">
+                <label class="control-label" for="elm_filter_is_slider_{$id}">{__("slider")}</label>
+                <div class="controls">
+                <select name="filter_data[is_slider]" id="elm_filter_is_slider_{$id}">
+                    <option value="N" {if $filter.is_slider == 'N'}  selected="selected"{/if}>{__("checkbox")}</option>
+                    <option value="Y"  {if $filter.is_slider == 'Y'}   selected="selected"{/if}>{__("slider")}</option>
+                </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="elm_filter_units_{$id}">{__("units")}</label>
+                <div class="controls">
+                <input type="text" id="elm_filter_units_{$id}" name="filter_data[units]" value="{$filter.units}" />
+                </div>
+            </div>
+        {/if}
+        
         <div class="control-group{if !$filter.slider} hidden{/if}" id="round_to_{$id}_container">
             <label class="control-label" for="elm_filter_round_to_{$id}">{__("round_to")}</label>
             <div class="controls">

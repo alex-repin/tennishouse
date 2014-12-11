@@ -18,7 +18,7 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 function fn_development_update_product_filter(&$filter_data, $filter_id, $lang_code)
 {
-    if ($filter_data['feature_type'] == 'N') {
+    if (!empty($filter_data['feature_type']) && $filter_data['feature_type'] == 'N') {
         if ($filter_data['is_slider'] != 'Y') {
             db_query("UPDATE ?:product_filters SET field_type = '' WHERE filter_id = ?i", $filter_id);
         } else {
@@ -43,7 +43,7 @@ function fn_development_add_range_to_url_hash_pre(&$hash, $range, $field_type)
 {
     $fields = fn_get_product_filter_fields();
     foreach ($fields as $i => $fld) {
-        if (!empty($fld['slider']) && !in_array($i, array('P', 'A'))) {
+        if ($field_type == $i && !empty($fld['slider']) && !in_array($i, array('P', 'A'))) {
             $pattern = '/(' . $i . '\d+-\d+\.?)|(\.?' . $i . '\d+-\d+)/';
             $hash = preg_replace($pattern, '', $hash);          
         }
@@ -53,12 +53,14 @@ function fn_development_add_range_to_url_hash_pre(&$hash, $range, $field_type)
 
 function fn_development_get_product_filter_fields(&$filters)
 {
-    $fields = db_get_array("SELECT ?:product_filters.field_type, ?:product_features_descriptions.description FROM ?:product_filters LEFT JOIN ?:product_features ON ?:product_features.feature_id = ?:product_filters.feature_id LEFT JOIN ?:product_features_descriptions ON ?:product_features_descriptions.feature_id = ?:product_features.feature_id AND ?:product_features_descriptions.lang_code = ?s WHERE ?:product_filters.is_slider = 'Y' AND ?:product_features.feature_type = 'N' AND ?:product_filters.field_type != ''", CART_LANGUAGE);
-    
+    $fields = db_get_array("SELECT ?:product_filters.field_type, ?:product_filter_descriptions.filter, ?:product_filters.feature_id FROM ?:product_filters LEFT JOIN ?:product_features ON ?:product_features.feature_id = ?:product_filters.feature_id LEFT JOIN ?:product_filter_descriptions ON ?:product_filter_descriptions.filter_id = ?:product_filters.filter_id AND ?:product_filter_descriptions.lang_code = ?s WHERE ?:product_filters.is_slider = 'Y' AND ?:product_features.feature_type = 'N' AND ?:product_filters.field_type != ''", CART_LANGUAGE);
+
     if (!empty($fields)) {
         foreach ($fields as $i => $field) {
             $filters[$field['field_type']] = array(
-                'description' => $field['description'],
+                'description' => $field['filter'],
+                'feature_id' => $field['feature_id'],
+                'condition_type' => 'S',
                 'slider' => true,
             );
         }
@@ -80,7 +82,7 @@ function fn_development_get_filter_range_name_post(&$range_name, $range_type, $r
 
 function fn_development_get_filters_products_count_before_select_filters(&$sf_fields, $sf_join, $condition, $sf_sorting, $params)
 {
-    $sf_fields .= db_quote(", ?:product_filters.is_slider");
+    $sf_fields .= db_quote(", ?:product_filters.is_slider, ?:product_filters.units");
 }
 
 function fn_display_subheaders($category_id)

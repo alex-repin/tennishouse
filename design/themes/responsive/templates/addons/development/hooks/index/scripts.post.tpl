@@ -7,7 +7,7 @@
         var init_position = 0;
     
         $(window).scroll(function() {
-            if (!$('.ty-sticky').hasClass('sticky') && $(this).scrollTop() + 135 >= $('.ty-sticky').offset().top) {
+            if (!$('.ty-sticky').hasClass('sticky') && $(this).scrollTop() + 135 >= $('.ty-sticky').offset().top && $('.ty-sticky').outerHeight(true) > $('#tygh_footer').offset().top - $('.ty-sticky').offset().top + 100) {
                 init_position = $('.ty-sticky').offset().top;
                 $('.ty-sticky').addClass('sticky');
             }
