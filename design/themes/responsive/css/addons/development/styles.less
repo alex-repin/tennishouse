@@ -229,9 +229,10 @@
 /*Category menu*/
 
 /*Filters*/
-/*.ty-price-slider__input-text {
-    width: 55px;
-}*/
+.ty-price-slider__input-text {
+    width: 50px;
+    padding: 4px;
+}
 /*Filters*/
 
 /*Player details*/
@@ -393,6 +394,12 @@
 .ty-atp-players-block, .ty-wta-players-block {
     margin-top: 15px;
 }
+.ty-players-list .ty-column2 {
+    margin-right: -3px;
+}
+.ty-wta-players-block {
+    margin-left: 3px;
+}
 .ty-atp-players-block {
     border-right: 1px solid #ebebeb;
 }
@@ -405,16 +412,23 @@
     font-weight: bold;
 }
 .ty-players-list__item {
-    padding-bottom: 20px;
+    padding: 10px 0;
     text-align: center;
 }
-
+.ty-players-list__item:hover {
+    border: 1px solid #dadada;
+    margin-top: -1px;
+    margin-left: -1px;
+    margin-bottom: -1px;
+    margin-right: -4px;
+    border-radius: 4px;
+}
 /*Player details*/
 
 .sticky {
     position: fixed;
     top: 135px;
-    width: 232px;
+    width: 169px;
 }
 .ty-sticky {
 /*    display: inline-block;
@@ -426,6 +440,57 @@
     left: 20%;
     top: 0;
 }
+.ty-product-filters__block input {
+    color: #333333;
+}
+.ty-pagination-sorting, .ty-pagination__bottom {
+    background: @base;
+    display: inline-block;
+    width: 100%;
+    margin: 10px 0;
+}
+
+.ty-sort-container {
+    background: none;
+    display: inline-block;
+    float: right;
+    margin: 0;
+}
+.ty-pagination {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+.ty-pagination__text {
+    text-transform: none;
+}
+.ty-sort-dropdown__content-item-active {
+    background-color: lighten(@links, 50%);
+}
+.ty-pagination__item, .ty-pagination__selected, .ty-pagination__item:hover {
+    padding: 6px 7px 5px;
+    margin: 0;
+    border-radius: 0;
+}
+.ty-pagination__item:hover {
+    background: darken(@base, 3%);
+}
+.ty-sort-dropdown__wrapper {
+    color: darken(@base, 35%);
+    padding: 0 7px 5px;
+    margin: 0;
+}
+.ty-sort-dropdown__wrapper:hover {
+    color: darken(@base, 35%);
+    background: darken(@base, 3%);
+}
+.ty-pagination__selected {
+    background: darken(@base, 45%);
+}
+
+/*.ty-range-slider .ui-slider-handle {
+    background-color: lighten(@font, 22%);
+}*/
 /*.ty-helper-container {
     background: none repeat scroll 0 0 #f1f1f1;
 }*/

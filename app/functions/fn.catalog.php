@@ -5314,6 +5314,7 @@ function fn_get_filters_products_count($params = array())
 
                 $fields_join = $fields_where = '';
 
+                // [TennisPlaza]
                 if (!empty($slider_vals)) {
                     foreach ($slider_vals as $tp => $slider) {
                         if ($field['field_type'] != $tp) {
@@ -5329,12 +5330,13 @@ function fn_get_filters_products_count($params = array())
 
                                 $fields_where .= db_quote(" AND ?:product_prices.price >= ?i AND ?:product_prices.price <= ?i", $slider[0], $slider[1]);
                             } elseif ($fields[$tp]['condition_type'] == 'S') {
-                                $fields_join .= db_quote(" LEFT JOIN ?:product_features_values ON ?:product_features_values.product_id = ?:products.product_id AND ?:product_features_values.feature_id = ?i LEFT JOIN ?:product_feature_variant_descriptions ON ?:product_feature_variant_descriptions.variant_id = ?:product_features_values.variant_id", $fields[$tp]['feature_id']);
-                                $fields_where .= db_quote(" AND ?:product_feature_variant_descriptions.variant >= ?f AND ?:product_feature_variant_descriptions.variant <= ?f ", $slider[0], $slider[1]);
+                                $fields_join .= db_quote(" LEFT JOIN ?:product_features_values AS slider_cond_?i ON slider_cond_?i.product_id = ?:products.product_id AND slider_cond_?i.feature_id = ?i LEFT JOIN ?:product_feature_variant_descriptions AS slider_cond_descr_?i ON slider_cond_descr_?i.variant_id = slider_cond_?i.variant_id", $fields[$tp]['feature_id'], $fields[$tp]['feature_id'], $fields[$tp]['feature_id'], $fields[$tp]['feature_id'], $fields[$tp]['feature_id'], $fields[$tp]['feature_id'], $fields[$tp]['feature_id']);
+                                $fields_where .= db_quote(" AND slider_cond_descr_?i.variant >= ?f AND slider_cond_descr_?i.variant <= ?f ", $fields[$tp]['feature_id'], $slider[0], $fields[$tp]['feature_id'], $slider[1]);
                             }
                         }
                     }
                 }
+                // [TennisPlaza]
                 
                 // Dinamic ranges (price, amount etc)
                 if ($field['condition_type'] == 'D') {
@@ -5397,8 +5399,10 @@ function fn_get_filters_products_count($params = array())
                             $field_range_values[$filter_id]['min'] = floor($field_range_values[$filter_id]['min'] / $filters[$filter_id]['round_to']) * $filters[$filter_id]['round_to'];
                             $field_range_values[$filter_id]['max'] = ceil($field_range_values[$filter_id]['max'] / $filters[$filter_id]['round_to']) * $filters[$filter_id]['round_to'];
 
+                            $cheat = false;
                             if ($field_range_values[$filter_id]['max'] - $field_range_values[$filter_id]['min'] <= $filters[$filter_id]['round_to']) {
                                 $field_range_values[$filter_id]['max'] = $field_range_values[$filter_id]['min'] + $filters[$filter_id]['round_to'];
+                                $cheat = true;
                             }
 
                             if (!empty($slider_vals[$field['field_type']])) {
@@ -5431,9 +5435,13 @@ function fn_get_filters_products_count($params = array())
                                     $field_range_values[$filter_id]['left'] = $tmp;
                                 }
 
-                                if ($field_range_values[$filter_id]['right'] == $field_range_values[$filter_id]['max'] && $field_range_values[$filter_id]['left'] == $field_range_values[$filter_id]['min']) {
+                                if (($field_range_values[$filter_id]['right'] == $field_range_values[$filter_id]['max'] || $cheat) && $field_range_values[$filter_id]['left'] == $field_range_values[$filter_id]['min']) {
                                     unset($slider_vals[$field['field_type']]);
+                                    $filters[$filter_id]['open'] = false;
+                                } else {
+                                    $filters[$filter_id]['open'] = true;
                                 }
+                                
                                 $field_range_values[$filter_id]['left'] = floor($field_range_values[$filter_id]['left'] / $filters[$filter_id]['round_to']) * $filters[$filter_id]['round_to'];
                                 $field_range_values[$filter_id]['right'] = ceil($field_range_values[$filter_id]['right'] / $filters[$filter_id]['round_to']) * $filters[$filter_id]['round_to'];
 
@@ -5487,22 +5495,22 @@ function fn_get_filters_products_count($params = array())
                 } elseif ($field['condition_type'] == 'S') {
                     $variants_counts = db_get_hash_array("SELECT " . implode(', ', $values_fields) . " FROM ?:product_features_values LEFT JOIN ?:products ON ?:products.product_id = ?:product_features_values.product_id LEFT JOIN ?:product_filters ON ?:product_filters.feature_id = ?:product_features_values.feature_id AND ?:product_filters.status = 'A' LEFT JOIN ?:product_feature_variants ON ?:product_feature_variants.variant_id = ?:product_features_values.variant_id LEFT JOIN ?:product_feature_variant_descriptions ON ?:product_feature_variant_descriptions.variant_id = ?:product_feature_variants.variant_id AND ?:product_feature_variant_descriptions.lang_code = ?s LEFT JOIN ?:product_features ON ?:product_features.feature_id = ?:product_filters.feature_id ?p WHERE ?:product_features_values.feature_id = ?i AND ?:product_features_values.lang_code = ?s AND ?:product_features_values.variant_id ?p AND ?:product_features.feature_type = 'N' AND ?:product_filters.is_slider = 'Y' GROUP BY ?:product_features_values.variant_id, ?:product_filters.filter_id ORDER BY ?:product_feature_variants.position, ?:product_feature_variant_descriptions.variant", 'range_id', CART_LANGUAGE, $join . $fields_join, $field['feature_id'], CART_LANGUAGE, $where . $fields_where);
                     
-                    $range_values = array();
-                    foreach ($variants_counts as $u => $rv) {
-                        $range_values[] = $rv['range_name'];
-                    }
-                    $field_range_values[$filter_id]['min'] = min($range_values);
-                    $field_range_values[$filter_id]['max'] = max($range_values);
+                    if (!empty($variants_counts)) {
                     
-                    if (fn_is_empty($field_range_values[$filter_id])) {
-                        unset($field_range_values[$filter_id]);
-                    } else {
-
+                        $range_values = array();
+                        foreach ($variants_counts as $u => $rv) {
+                            $range_values[] = $rv['range_name'];
+                        }
+                        $field_range_values[$filter_id]['min'] = min($range_values);
+                        $field_range_values[$filter_id]['max'] = max($range_values);
+                        
                         $field_range_values[$filter_id]['min'] = floor($field_range_values[$filter_id]['min'] / $filters[$filter_id]['round_to']) * $filters[$filter_id]['round_to'];
                         $field_range_values[$filter_id]['max'] = ceil($field_range_values[$filter_id]['max'] / $filters[$filter_id]['round_to']) * $filters[$filter_id]['round_to'];
 
+                        $cheat = false;
                         if ($field_range_values[$filter_id]['max'] - $field_range_values[$filter_id]['min'] <= $filters[$filter_id]['round_to']) {
                             $field_range_values[$filter_id]['max'] = $field_range_values[$filter_id]['min'] + $filters[$filter_id]['round_to'];
+                            $cheat = true;
                         }
 
                         if (!empty($slider_vals[$field['field_type']])) {
@@ -5529,9 +5537,12 @@ function fn_get_filters_products_count($params = array())
                                 $field_range_values[$filter_id]['left'] = $tmp;
                             }
 
-                                if ($field_range_values[$filter_id]['right'] == $field_range_values[$filter_id]['max'] && $field_range_values[$filter_id]['left'] == $field_range_values[$filter_id]['min']) {
-                                    unset($slider_vals[$field['field_type']]);
-                                }
+                            if (($field_range_values[$filter_id]['right'] == $field_range_values[$filter_id]['max'] || $cheat) && $field_range_values[$filter_id]['left'] == $field_range_values[$filter_id]['min']) {
+                                unset($slider_vals[$field['field_type']]);
+                                $filters[$filter_id]['open'] = false;
+                            } else {
+                                $filters[$filter_id]['open'] = true;
+                            }
 
                             $field_range_values[$filter_id]['left'] = floor($field_range_values[$filter_id]['left'] / $filters[$filter_id]['round_to']) * $filters[$filter_id]['round_to'];
                             $field_range_values[$filter_id]['right'] = ceil($field_range_values[$filter_id]['right'] / $filters[$filter_id]['round_to']) * $filters[$filter_id]['round_to'];
@@ -5542,8 +5553,8 @@ function fn_get_filters_products_count($params = array())
                                     if ($field_range_values[$filter_id]['left'] <= $rv['range_name'] && $field_range_values[$filter_id]['right'] >= $rv['range_name'])
                                     $variant_ids[] = $rv['range_id'];
                                 }
-                                $sliders_join .= db_quote(" LEFT JOIN ?:product_features_values AS slider_cond ON slider_cond.product_id = ?:product_features_values.product_id AND slider_cond.feature_id = ?i ", $field['feature_id']);
-                                $sliders_where .= db_quote(" AND slider_cond.variant_id IN (?n) ", $variant_ids);
+                                $sliders_join .= db_quote(" LEFT JOIN ?:product_features_values AS slider_cond_?i ON slider_cond_?i.product_id = ?:product_features_values.product_id AND slider_cond_?i.feature_id = ?i ", $field['feature_id'], $field['feature_id'], $field['feature_id'], $field['feature_id']);
+                                $sliders_where .= db_quote(" AND slider_cond_?i.variant_id IN (?n) ", $field['feature_id'], $variant_ids);
                             }
                         }
                     }

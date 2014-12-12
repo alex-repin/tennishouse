@@ -29,13 +29,13 @@
         {if $filter.display == "N"}
             {* default behaviour of cm-combination *}
             {assign var="collapse" value=true}
-            {if $smarty.cookies.$cookie_name_show_filter}
+            {if $smarty.cookies.$cookie_name_show_filter || $filter.open || $filter.selected_ranges}
                 {assign var="collapse" value=false}
             {/if}
         {else}
             {* reverse behaviour of cm-combination *}
             {assign var="collapse" value=false}
-            {if $smarty.cookies.$cookie_name_show_filter}
+            {if $smarty.cookies.$cookie_name_show_filter || $filter.open || $filter.selected_ranges}
                 {assign var="collapse" value=true}
             {/if}
         {/if}
@@ -46,7 +46,21 @@
                 <i class="ty-product-filters__switch-down ty-icon-down-open"></i>
                 <i class="ty-product-filters__switch-right ty-icon-up-open"></i>
             </div>
+            <script type="text/javascript">
 
+            (function(_, $) {$ldelim}
+
+                $(document).ready(function() {$ldelim}
+                    var init_position = 0;
+                
+                    $('#sw_content_' + '{$filter_uid}').click(function() {$ldelim}
+                        $(this).parents('.ty-sticky').removeClass('sticky');
+                    {$rdelim});
+                {$rdelim});
+                
+            {$rdelim}(Tygh, Tygh.$));
+            </script>
+            
             {if $filter.slider}
                 {include file="blocks/product_filters/components/product_filter_slider.tpl" filter_uid=$filter_uid id="slider_`$filter_uid`" filter=$filter ajax_div_ids=$ajax_div_ids dynamic=true filter_qstring=$filter_qstring reset_qstring=$reset_qstring allow_ajax=$allow_ajax}
             {else}
@@ -57,7 +71,7 @@
 {/foreach}
 
 <div class="ty-product-filters__tools clearfix">
-    <a {if "FILTER_CUSTOM_ADVANCED"|defined}href="{"products.search?advanced_filter=Y"|fn_url}"{else}href="{$filter_qstring|fn_link_attach:"advanced_filter=Y"|fn_url}"{/if} rel="nofollow" class="ty-product-filters__advanced-button">{__("advanced")}</a>
+    {*<a {if "FILTER_CUSTOM_ADVANCED"|defined}href="{"products.search?advanced_filter=Y"|fn_url}"{else}href="{$filter_qstring|fn_link_attach:"advanced_filter=Y"|fn_url}"{/if} rel="nofollow" class="ty-product-filters__advanced-button">{__("advanced")}</a>*}
     {if $smarty.capture.has_selected}
     <a href="{if $smarty.request.category_id}{assign var="use_ajax" value=true}{"categories.view?category_id=`$smarty.request.category_id`"|fn_url}{else}{assign var="use_ajax" value=false}{""|fn_url}{/if}" rel="nofollow" class="ty-product-filters__reset-button{if $allow_ajax && $use_ajax} cm-ajax cm-ajax-full-render cm-history" data-ca-target-id="{$ajax_div_ids}{/if}"><i class="ty-product-filters__reset-icon ty-icon-cw"></i> {__("reset")}</a>
     {/if}
