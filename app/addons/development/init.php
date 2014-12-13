@@ -20,6 +20,16 @@ define('SHOES_CATEGORY_ID', 263);
 define('BAGS_CATEGORY_ID', 264);
 define('ACCESSORIES_CATEGORY_ID', 267);
 define('SPORTS_NUTRITION_CATEGORY_ID', 302);
+define('BRAND_FEATURE_ID', 29);
+define('TYPE_FEATURE_ID', 33);
+
+define('BABOLAT_SERIES_FEATURE_ID', 34);
+define('HEAD_SERIES_FEATURE_ID', 37);
+define('WILSON_SERIES_FEATURE_ID', 39);
+define('DUNLOP_SERIES_FEATURE_ID', 41);
+define('PRINCE_SERIES_FEATURE_ID', 43);
+define('YONEX_SERIES_FEATURE_ID', 45);
+define('PROKENNEX_SERIES_FEATURE_ID', 47);
 
 fn_register_hooks(
     'update_product_post',
@@ -31,5 +41,6 @@ fn_register_hooks(
     'get_filter_range_name_post',
     'get_product_filter_fields',
     'add_range_to_url_hash_pre',
-    'update_product_filter'
+    'update_product_filter',
+    'get_product_features_list_post'
 );

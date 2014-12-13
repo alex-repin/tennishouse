@@ -87,5 +87,6 @@
         <item lang="ru" id="apparel_and_shoes">Одежда и обувь</item>
         <item lang="ru" id="his_choice">Его выбор</item>
         <item lang="ru" id="slider">Ползунок</item>
+        <item lang="ru" id="series">Серия</item>
     </language_variables>
 </addon>

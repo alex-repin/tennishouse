@@ -51,10 +51,10 @@
             (function(_, $) {$ldelim}
 
                 $(document).ready(function() {$ldelim}
-                    var init_position = 0;
-                
                     $('#sw_content_' + '{$filter_uid}').click(function() {$ldelim}
-                        $(this).parents('.ty-sticky').removeClass('sticky');
+                        setTimeout(function() {
+                            fn_stick_element();
+                        }, 400);
                     {$rdelim});
                 {$rdelim});
                 

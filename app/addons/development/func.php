@@ -16,6 +16,29 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_get_series_feature($features)
+{
+    $feature_ids = array(BABOLAT_SERIES_FEATURE_ID, HEAD_SERIES_FEATURE_ID, WILSON_SERIES_FEATURE_ID, DUNLOP_SERIES_FEATURE_ID, PRINCE_SERIES_FEATURE_ID, YONEX_SERIES_FEATURE_ID, PROKENNEX_SERIES_FEATURE_ID);
+    foreach ($features as $feature_id => $feature) {
+        $key = array_search($feature_id, $feature_ids);
+        if ($key !== false) {
+            return $features[$feature_ids[$key]];
+        }
+    }
+    
+    return false;
+}
+
+function fn_development_get_product_features_list_post(&$features_list, $product, $display_on, $lang_code)
+{
+    if (!empty($features_list[BRAND_FEATURE_ID]['variants'])) {
+        $image_pairs = fn_get_image_pairs(array_keys($features_list[BRAND_FEATURE_ID]['variants']), 'feature_variant', 'V', true, true, CART_LANGUAGE);
+        foreach ($features_list[BRAND_FEATURE_ID]['variants'] as $variant_id => $variant) {
+            $features_list[BRAND_FEATURE_ID]['variants'][$variant_id]['image_pair'] = array_pop($image_pairs[$variant_id]);
+        }
+    }
+}
+
 function fn_development_update_product_filter(&$filter_data, $filter_id, $lang_code)
 {
     if (!empty($filter_data['feature_type']) && $filter_data['feature_type'] == 'N') {

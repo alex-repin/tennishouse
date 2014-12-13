@@ -24,33 +24,57 @@
     {/if}
     <div class="grid-list">
         {strip}
+            {$brand_id = $smarty.const.BRAND_FEATURE_ID}
+            {$type_id = $smarty.const.TYPE_FEATURE_ID}
             {foreach from=$splitted_products item="sproducts" name="sprod"}
                 {foreach from=$sproducts item="product" name="sproducts"}
                     <div class="ty-column{$columns}">
                         {if $product}
                             {assign var="obj_id" value=$product.product_id}
                             {assign var="obj_id_prefix" value="`$obj_prefix``$product.product_id`"}
+                            {$features = $product|fn_get_product_features_list}
+                            
+                            {$series_feature = $features|fn_get_series_feature}
+                            {$series_variant_id = $series_feature.variant_id}
+                            
+                            {$brand_variant_id = $features.$brand_id.variant_id}
+                            
+                            {$type_variant_id = $features.$type_id.variant_id}
+                            
                             {include file="common/product_data.tpl" product=$product}
 
                             <div class="ty-grid-list__item ty-quick-view-button__wrapper">
                                 {assign var="form_open" value="form_open_`$obj_id`"}
                                 {$smarty.capture.$form_open nofilter}
                                 {hook name="products:product_multicolumns_list"}
-                                        <div class="ty-grid-list__image">
-                                            {include file="views/products/components/product_icon.tpl" product=$product show_gallery=true}
+                                    <div class="ty-brand-image">
+                                        <img src="{$features.$brand_id.variants.$brand_variant_id.image_pair.icon.image_path}" alt="{$image.alt}" />
+                                    </div>
+                                    <div class="ty-grid-list__image">
+                                        {include file="views/products/components/product_icon.tpl" product=$product show_gallery=true}
 
-                                            {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
-                                            {$smarty.capture.$discount_label nofilter}
-                                        </div>
+                                        {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
+                                        {$smarty.capture.$discount_label nofilter}
+                                    </div>
 
+                                    <div class="ty-grid-list__item-info">
                                         <div class="ty-grid-list__item-name">
                                             {if $item_number == "Y"}
                                                 <span class="item-number">{$cur_number}.&nbsp;</span>
                                                 {math equation="num + 1" num=$cur_number assign="cur_number"}
                                             {/if}
-
-                                            {assign var="name" value="name_$obj_id"}
-                                            {$smarty.capture.$name nofilter}
+                                            
+                                            <div class="ty-product-series">
+                                                {if $series_feature.variants.$series_variant_id}
+                                                    {__("series")} - {$series_feature.variants.$series_variant_id.variant}
+                                                {else}
+                                                    {__("type")} - {$features.$type_id.variants.$type_variant_id.variant}
+                                                {/if}
+                                            </div>
+                                            <div class="ty-grid-list__item-title">
+                                                {assign var="name" value="name_$obj_id"}
+                                                {$smarty.capture.$name nofilter}
+                                            </div>
                                         </div>
 
                                         <div class="ty-grid-list__price {if $product.price == 0}ty-grid-list__no-price{/if}">
@@ -86,6 +110,7 @@
                                                 </div>
                                             {/if}
                                         </div>
+                                    </div>
                                 {/hook}
                                 {assign var="form_close" value="form_close_`$obj_id`"}
                                 {$smarty.capture.$form_close nofilter}

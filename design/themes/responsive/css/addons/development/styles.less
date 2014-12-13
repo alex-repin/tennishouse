@@ -116,8 +116,8 @@
     padding: 0 30px;
 }
 .top-menu .ty-menu__submenu-items {
-    right: 55px;
-    width: 1150px;
+    right: 125px;
+    width: 1000px;
 }
 .ty-menu__item.ty-menu__item-active .ty-menu__item-link {
     background-color: lighten(@menu, 20%);
@@ -165,7 +165,7 @@
     color: #000000;
 }
 .ty-menu__submenu-items .ty-top-mine__submenu-col {
-    margin: 0 5px 0 0;
+    margin: 0 3px;
 }
 /*.top-menu-phone {
     text-align: right;
@@ -261,6 +261,10 @@
     padding-left: 150px;
     width: 500px;
 }
+.ty-grid-list__item {
+    position: relative;
+}
+
 .ty-player-details .ty-grid-list__item {
     margin: 0 10px 10px;
 }
@@ -386,10 +390,39 @@
 .ty-grid-list__item-name {
     width: 100%;
     max-width: unset;
-    height: 32px;
+    margin-top: 0;
+}
+.ty-product-series {
+    color: lighten(@font, 35%);
+    font-size: 90%;
+}
+.ty-grid-list__item-name .product-title {
+    color: @font;
+    font-size: 125%;
+    display: block;
+    height: 40px;
+    overflow: hidden;
 }
 .ty-grid-list__price {
     max-width: unset;
+    width: 100%;
+}
+.ty-grid-list__item-info {
+    background: lighten(@base, 3%);
+    display: inline-block;
+    padding: 2px 5px 5px;
+}
+.ty-grid-list__item-title {
+    display: block;
+    height: 40px;
+    overflow: hidden;
+}
+.ty-price-update {
+    float: left;
+}
+.ty-list-price {
+    float: right;
+    font-size: 12px;
 }
 .ty-atp-players-block, .ty-wta-players-block {
     margin-top: 15px;
@@ -487,7 +520,18 @@
 .ty-pagination__selected {
     background: darken(@base, 45%);
 }
-
+.ty-grid-list__image {
+    padding: 10px 0 25px;
+}
+.ty-brand-image {
+    left: 5px;
+    position: absolute;
+    top: 190px;
+    z-index: 100;
+}
+.ty-brand-image img {
+    height: 19px;
+}
 /*.ty-range-slider .ui-slider-handle {
     background-color: lighten(@font, 22%);
 }*/
