@@ -47,14 +47,14 @@
                                 {assign var="form_open" value="form_open_`$obj_id`"}
                                 {$smarty.capture.$form_open nofilter}
                                 {hook name="products:product_multicolumns_list"}
-                                    <div class="ty-brand-image">
-                                        <img src="{$features.$brand_id.variants.$brand_variant_id.image_pair.icon.image_path}" alt="{$image.alt}" />
-                                    </div>
                                     <div class="ty-grid-list__image">
-                                        {include file="views/products/components/product_icon.tpl" product=$product show_gallery=true}
+                                        {include file="views/products/components/product_icon.tpl" product=$product show_gallery=false}
 
                                         {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
                                         {$smarty.capture.$discount_label nofilter}
+                                        <div class="ty-brand-image">
+                                            <img src="{$features.$brand_id.variants.$brand_variant_id.image_pair.icon.image_path}" alt="{$features.$brand_id.variants.$brand_variant_id.variant}" />
+                                        </div>
                                     </div>
 
                                     <div class="ty-grid-list__item-info">

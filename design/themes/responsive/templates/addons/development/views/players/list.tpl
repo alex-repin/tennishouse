@@ -8,12 +8,12 @@
         {foreach from=$splitted_atp_players item="saplayers"}
             {foreach from=$saplayers item="atp_player"}
                 {if $atp_player}
-                    <div class="ty-column{$columns} ty-players-list__item">
-                        <a href="{"players.view?player_id=`$atp_player.player_id`"|fn_url}" class="ty-subcategories-block__a">
+                    <a href="{"players.view?player_id=`$atp_player.player_id`"|fn_url}" class="ty-subcategories-block__a">
+                        <div class="ty-column{$columns} ty-players-list__item">
                             {include file="common/image.tpl" obj_id=$obj_id_prefix images=$atp_player.main_pair image_width="180" image_height="180"}
                             <div class="ty-player-name">{$atp_player.player}</div>
-                        </a>
-                    </div>
+                        </div>
+                    </a>
                 {/if}
             {/foreach}
         {/foreach}
@@ -28,12 +28,12 @@
         {foreach from=$splitted_wta_players item="swplayer"}
             {foreach from=$swplayer item="wta_player"}
                 {if $wta_player}
-                    <div class="ty-column{$columns} ty-players-list__item">
-                        <a href="{"players.view?player_id=`$wta_player.player_id`"|fn_url}" class="ty-subcategories-block__a">
+                    <a href="{"players.view?player_id=`$wta_player.player_id`"|fn_url}" class="ty-subcategories-block__a">
+                        <div class="ty-column{$columns} ty-players-list__item">
                             {include file="common/image.tpl" obj_id=$obj_id_prefix images=$wta_player.main_pair image_width="180" image_height="180"}
                             <div class="ty-player-name">{$wta_player.player}</div>
-                        </a>
-                    </div>
+                        </div>
+                    </a>
                 {/if}
             {/foreach}
         {/foreach}

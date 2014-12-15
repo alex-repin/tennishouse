@@ -57,5 +57,7 @@
 {/if}
 <!--category_products_{$block.block_id}--></div>
 
-{capture name="mainbox_title"}<span {live_edit name="category:category:{$category_data.category_id}"}>{$category_data.category}</span>{/capture}
+{if $category_data.parent_id}
+    {capture name="mainbox_title"}<span {live_edit name="category:category:{$category_data.category_id}"}>{$category_data.category}</span>{/capture}
+{/if}
 {/hook}

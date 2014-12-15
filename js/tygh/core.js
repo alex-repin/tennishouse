@@ -3332,6 +3332,7 @@ var Tygh = {
 
             init: function(params) {
 
+                
                 var default_params = {
                     events: {
                         def: 'mouseover, mouseout',
@@ -3351,10 +3352,16 @@ var Tygh = {
                         return false;
                     }
 
-                    if (elm.data('ceTooltipPosition') === 'top') {
+                    // [TennisPlaza]
+                    if (elm.data('cetooltipposition') === 'top') {
                         params.position = 'top left';
                         params.tipClass = 'tooltip arrow-top';
                         params.offset=[-10, 7];
+                    } else if (elm.data('cetooltipposition') === 'center') {
+                        params.offset=[10, 7];
+                        params.tipClass = 'tooltip arrow-down';
+                        params.position = 'center left';
+                    // [TennisPlaza]
                     } else {
                         params.offset=[10, 7];
                         params.tipClass = 'tooltip arrow-down';

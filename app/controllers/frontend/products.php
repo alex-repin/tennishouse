@@ -110,9 +110,19 @@ if ($mode == 'search') {
         if (!empty($parent_ids)) {
             Registry::set('runtime.active_category_ids', $parent_ids);
             $cats = fn_get_category_name($parent_ids);
-            foreach ($parent_ids as $c_id) {
-                fn_add_breadcrumb($cats[$c_id], "categories.view?category_id=$c_id");
+            // [TennisPlaza]
+            $display_subheader = true;
+            foreach ($parent_ids as $i => $c_id) {
+                if ($i == 0 && fn_display_subheaders($c_id)) {
+                    $display_subheader = false;
+                }
+                if ($i != 1 || $display_subheader) {
+                    fn_add_breadcrumb($cats[$c_id], "categories.view?category_id=$c_id");
+                } else {
+                    fn_add_breadcrumb($cats[$c_id]);
+                }
             }
+            // [TennisPlaza]
         }
     }
     fn_add_breadcrumb($product['product']);
