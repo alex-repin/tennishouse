@@ -1,6 +1,9 @@
 /*.ty-tabs__content {
     width: 500px;
 }*/
+select {
+    min-width: 2em;
+}
 .icon-question-sign {
     background-image: url("../../../media/images/addons/development/glyphicons-halflings.png");
     background-position: -96px  -96px;
@@ -639,14 +642,20 @@
 .ty-grid-list__image {
     padding: 10px 0 25px;
 }
-.ty-brand-image {
+.ty-grid-list__brand-image {
     left: 5px;
     position: absolute;
     bottom: 5px;
     z-index: 100;
 }
-.ty-brand-image img {
+.ty-grid-list__brand-image img {
     height: 19px;
+}
+.ty-product-detail__brand-image {
+    display: inline-block;
+}
+.ty-product-detail__brand-image img {
+    height: 16px;
 }
 .ty-category-title {
     margin: 0 -11px;
@@ -666,6 +675,60 @@
     position: absolute;
     top: 85px;
     box-shadow: 0 0 5px 1px #333;
+}
+.ty-product-detail__buy-section {
+    border: 1px solid #dadada;
+    background: @base;
+    padding: 0 10px;
+}
+.ty-product-block-title {
+    font-size: 25px;s
+}
+.ty-product-switcher {
+    top: 10px;
+}
+.ty-discussion__rating-wrapper {
+    display: inline-block;
+    margin-bottom: 0;
+    float: right;
+}
+.ty-product-detail__before-title {
+    display: inline-block;
+    width: 100%;
+}
+.ty-stars {
+    margin-right: 0;
+    vertical-align: top;
+}
+.ty-discussion__review-a {
+    font-size: 15px;
+    margin-right: 5px;
+}
+.ty-product-block__price-actual {
+    margin: 3px 0;
+}
+.ty-prices-container-wrap {
+    display: inline-block;
+    width: 100%;
+    margin: 20px 0;
+}
+.price-wrap {
+    display: inline-block;
+    width: 55%;
+}
+.ty-ti-price-wrap {
+    display: inline-block;
+    width: 44%;
+    vertical-align: top;
+}
+.ty-product-prices {
+    margin: 0;
+}
+.ty-qty-discount__quantity {
+    font-size: 30px;
+}
+.ty-qty-discount__price {
+    font-size: 15px;
 }
 /*.ty-range-slider .ui-slider-handle {
     background-color: lighten(@font, 22%);

@@ -1401,6 +1401,10 @@ var Tygh = {
 
             if (_.area == 'A') {
                 offset = 120; // offset fixed panel
+            // [TennisPlaza]
+            } else {
+                offset = 130; // offset fixed panel
+            // [TennisPlaza]
             }
 
             if (elm.is(':hidden')) {

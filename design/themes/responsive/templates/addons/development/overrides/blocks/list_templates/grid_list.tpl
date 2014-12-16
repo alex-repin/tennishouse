@@ -24,7 +24,6 @@
     {/if}
     <div class="grid-list">
         {strip}
-            {$brand_id = $smarty.const.BRAND_FEATURE_ID}
             {$type_id = $smarty.const.TYPE_FEATURE_ID}
             {foreach from=$splitted_products item="sproducts" name="sprod"}
                 {foreach from=$sproducts item="product" name="sproducts"}
@@ -36,8 +35,6 @@
                             
                             {$series_feature = $features|fn_get_series_feature}
                             {$series_variant_id = $series_feature.variant_id}
-                            
-                            {$brand_variant_id = $features.$brand_id.variant_id}
                             
                             {$type_variant_id = $features.$type_id.variant_id}
                             
@@ -52,8 +49,8 @@
 
                                         {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
                                         {$smarty.capture.$discount_label nofilter}
-                                        <div class="ty-brand-image">
-                                            <img src="{$features.$brand_id.variants.$brand_variant_id.image_pair.icon.image_path}" alt="{$features.$brand_id.variants.$brand_variant_id.variant}" />
+                                        <div class="ty-grid-list__brand-image">
+                                            {include file="addons/development/common/brand_logo.tpl" product=$product features=$features}
                                         </div>
                                     </div>
 

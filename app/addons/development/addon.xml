@@ -43,6 +43,9 @@
         <item>
             ALTER TABLE `cscart_product_filters` ADD `units` VARCHAR( 32 ) NOT NULL ;
         </item>
+        <item>
+            ALTER TABLE `cscart_products` ADD `net_cost` DECIMAL( 12, 2 ) UNSIGNED NOT NULL ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennisplaza_template">Шаблон TennisPlaza</item>
@@ -89,5 +92,6 @@
         <item lang="ru" id="his_choice">Его выбор</item>
         <item lang="ru" id="slider">Ползунок</item>
         <item lang="ru" id="series">Серия</item>
+        <item lang="ru" id="net_cost">Себестоимость</item>
     </language_variables>
 </addon>

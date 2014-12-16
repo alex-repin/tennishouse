@@ -432,9 +432,9 @@
                 </div>
                 {/if}
             </div>
-            {if $product.prices}
+            {*if $product.prices}
                 {include file="views/products/components/products_qty_discounts.tpl"}
-            {/if}
+            {/if*}
         {elseif !$bulk_add}
             <input type="hidden" name="product_data[{$obj_id}][amount]" value="{$default_amount}" />
         {/if}
@@ -443,6 +443,15 @@
 {/capture}
 {if $no_capture}
     {assign var="capture_name" value="qty_`$obj_id`"}
+    {$smarty.capture.$capture_name nofilter}
+{/if}
+{capture name="qty_discounts_`$obj_id`"}
+    {if $product.prices}
+        {include file="addons/development/common/products_qty_discounts.tpl"}
+    {/if}
+{/capture}
+{if $no_capture}
+    {assign var="capture_name" value="qty_discounts_`$obj_id`"}
     {$smarty.capture.$capture_name nofilter}
 {/if}
 
