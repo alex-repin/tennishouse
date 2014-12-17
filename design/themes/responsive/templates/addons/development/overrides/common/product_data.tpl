@@ -1,8 +1,8 @@
-{if $product.tracking == "ProductTracking::TRACK_WITH_OPTIONS"|enum}
+{*if $product.tracking == "ProductTracking::TRACK_WITH_OPTIONS"|enum}
     {assign var="out_of_stock_text" value=__("text_combination_out_of_stock")}
-{else}
+{else*}
     {assign var="out_of_stock_text" value=__("text_out_of_stock")}
-{/if}
+{*/if*}
 
 {if ($product.price|floatval || $product.zero_price_action == "P" || $product.zero_price_action == "A" || (!$product.price|floatval && $product.zero_price_action == "R")) && !($settings.General.allow_anonymous_shopping == "hide_price_and_add_to_cart" && !$auth.user_id)}
     {assign var="show_price_values" value=true}
@@ -217,7 +217,7 @@
             {if $product.discount}
                 <span class="ty-list-price ty-nowrap" id="line_old_price_{$obj_prefix}{$obj_id}">{if $details_page}{__("old_price")}: {/if}<span class="ty-strike">{include file="common/price.tpl" value=$product.original_price|default:$product.base_price span_id="old_price_`$obj_prefix``$obj_id`" class="ty-nowrap"}</span></span>
             {elseif $product.list_discount}
-                <span class="ty-list-price ty-nowrap" id="line_list_price_{$obj_prefix}{$obj_id}">{if $details_page}<span class="list-price-label">{__("list_price")}:</span> {/if}<span class="ty-strike">{include file="common/price.tpl" value=$product.list_price span_id="list_price_`$obj_prefix``$obj_id`" class="ty-nowrap"}</span></span>
+                <span class="ty-list-price ty-nowrap" id="line_list_price_{$obj_prefix}{$obj_id}">{*if $details_page}<span class="list-price-label">{__("list_price")}:</span> {/if*}<span class="ty-strike">{include file="common/price.tpl" value=$product.list_price span_id="list_price_`$obj_prefix``$obj_id`" class="ty-nowrap"}</span></span>
             {/if}
             {/hook}
         <!--old_price_update_{$obj_prefix}{$obj_id}--></span>
@@ -340,12 +340,12 @@
             {else}
                 {if ((($product_amount > 0 && $product_amount >= $product.min_qty) || $product.tracking == "ProductTracking::DO_NOT_TRACK"|enum) && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y") || ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount == "Y")}
                     <div class="ty-control-group product-list-field">
-                        <label class="ty-control-group__label">{__("availability")}:</label>
+                        {*<label class="ty-control-group__label">{__("availability")}:</label>*}
                         <span class="ty-qty-in-stock ty-control-group__item" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock")}</span>
                     </div>
                 {elseif $details_page && ($product_amount <= 0 || $product_amount < $product.min_qty) && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y"}
                     <div class="ty-control-group product-list-field">
-                        <label class="ty-control-group__label">{__("availability")}:</label>
+                        {*<label class="ty-control-group__label">{__("availability")}:</label>*}
                         <span class="ty-qty-out-of-stock ty-control-group__item" id="out_of_stock_info_{$obj_prefix}{$obj_id}">{$out_of_stock_text}</span>
                     </div>
                 {/if}

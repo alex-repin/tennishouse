@@ -18,16 +18,17 @@
             {if $subitems_count}
 
             {/if}
-            <li class="ty-menu__item {if !$item1.$childs} ty-menu__item-nodrop{else} cm-menu-item-responsive{/if} {if $item1.active || $item1|fn_check_is_active_menu_item:$block.type} ty-menu__item-active{/if}">
-                    {if $item1.$childs}
-                        <a class="ty-menu__item-toggle visible-phone cm-responsive-menu-toggle">
-                            <i class="ty-menu__icon-open ty-icon-down-open"></i>
-                            <i class="ty-menu__icon-hide ty-icon-up-open"></i>
-                        </a>
-                    {/if}
-                    <a {if $item1_url} href="{$item1_url}"{/if} class="ty-menu__item-link {if $item1.href == 'index.php'}ty-menu__homepage-link{/if}">
-                        {if $item1.href != 'index.php'}{$item1.$name}{else}&nbsp;{/if}
+            <li class="ty-menu__item {if !$item1.$childs} ty-menu__item-nodrop{else} ty-menu__item-parent cm-menu-item-responsive{/if} {if $item1.active || $item1|fn_check_is_active_menu_item:$block.type} ty-menu__item-active{/if}">
+                <div class="ty-menu__item_full">
+                {if $item1.$childs}
+                    <a class="ty-menu__item-toggle visible-phone cm-responsive-menu-toggle">
+                        <i class="ty-menu__icon-open ty-icon-down-open"></i>
+                        <i class="ty-menu__icon-hide ty-icon-up-open"></i>
                     </a>
+                {/if}
+                <a {if $item1_url} href="{$item1_url}"{/if} class="ty-menu__item-link {if $item1.href == 'index.php'}ty-menu__homepage-link{/if}">
+                    {if $item1.href != 'index.php'}{$item1.$name}{else}&nbsp;{/if}
+                </a>
                 {if $item1.$childs}
 
                     {if !$item1.$childs|fn_check_second_level_child_array:$childs}
@@ -141,10 +142,31 @@
                             {/hook}
                         </div>
                     {/if}
-
                 {/if}
+                </div>
             </li>
         {/foreach}
+        <script type="text/javascript">
+            Tygh.$(document).ready(function() {$ldelim}
+                Tygh.$('.ty-menu__item-parent .ty-menu__item_full').hover(function(e){$ldelim}
+                    $(this).addClass('is-hover');
+                    var submenu = $(this);
+                    setTimeout(function() {$ldelim}
+                        if (submenu.hasClass('is-hover')) {
+                            submenu.find('.ty-menu__submenu-items').slideDown(300);
+                        }
+                    {$rdelim}, 300);
+                {$rdelim}, function(e){$ldelim}
+                    $(this).removeClass('is-hover');
+                    var submenu = $(this);
+                    setTimeout(function() {$ldelim}
+                        if (!submenu.hasClass('is-hover')) {
+                            submenu.find('.ty-menu__submenu-items').slideUp(300);
+                        }
+                    {$rdelim}, 300);
+                {$rdelim});
+            {$rdelim});
+        </script>
 
         {/hook}
     </ul>

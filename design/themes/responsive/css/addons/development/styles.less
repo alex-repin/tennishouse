@@ -99,9 +99,9 @@ select {
 }
 .ty-product-list__player_image {
     display: inline-block;
-    margin: 5px 25px 10px 0;
+    margin: 5px 10px 10px;
     vertical-align: top;
-    width: 10%;
+    width: 80px;
 }
 .ty-product-list__player_image div {
     font-size: 90%;
@@ -651,6 +651,12 @@ select {
 .ty-grid-list__brand-image img {
     height: 19px;
 }
+.grid-list__rating {
+    right: 5px;
+    position: absolute;
+    bottom: 9px;
+    z-index: 100;
+}
 .ty-product-detail__brand-image {
     display: inline-block;
 }
@@ -677,9 +683,10 @@ select {
     box-shadow: 0 0 5px 1px #333;
 }
 .ty-product-detail__buy-section {
-    border: 1px solid #dadada;
-    background: @base;
-    padding: 0 10px;
+    border: 1px solid darken(@base, 5%);
+    background: lighten(@base, 3%);
+    padding: 0 10px 15px;
+    margin-bottom: 30px;
 }
 .ty-product-block-title {
     font-size: 25px;s
@@ -707,10 +714,12 @@ select {
 .ty-product-block__price-actual {
     margin: 3px 0;
 }
-.ty-prices-container-wrap {
+.ty-prices-container-wrap, .ty-options-avail-container-wrap {
+    border-bottom:  1px solid darken(@base, 5%);
     display: inline-block;
+    margin: 0;
+    padding: 10px 0;
     width: 100%;
-    margin: 20px 0;
 }
 .price-wrap {
     display: inline-block;
@@ -721,6 +730,17 @@ select {
     width: 44%;
     vertical-align: top;
 }
+.ty-options-container {
+    display: inline-block;
+    width: 55%;
+}
+.ty-avail-container {
+    display: inline-block;
+    width: 44%;
+}
+.ty-product-block__option, .ty-product-options__item, .ty-product-block__field-group {
+    margin: 0;
+}
 .ty-product-prices {
     margin: 0;
 }
@@ -730,6 +750,28 @@ select {
 .ty-qty-discount__price {
     font-size: 15px;
 }
+.ty-btn__add-to-cart {
+    font-size: 16px;
+    padding: 6px 50px;
+}
+.ty-breadcrumbs__current {
+    color: darken(@base, 25%);
+}
+.ty-breadcrumbs__a, .ty-breadcrumbs__a:hover {
+    color: @links;
+}
+.ty-product-detail-tabs {
+    display: inline-block;
+}
+.ty-product-qty {
+    margin-top: 10px;
+}
+.no-touch .ty-menu__item:hover .ty-menu__submenu-items,
+.is-hover-menu .ty-menu__submenu-items {
+    display: none;
+}
+
+
 /*.ty-range-slider .ui-slider-handle {
     background-color: lighten(@font, 22%);
 }*/

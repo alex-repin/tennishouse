@@ -49,9 +49,21 @@
 
                                         {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
                                         {$smarty.capture.$discount_label nofilter}
+                                        
                                         <div class="ty-grid-list__brand-image">
+                                            <a href="{"products.view?product_id=`$product.product_id`"|fn_url}">
                                             {include file="addons/development/common/brand_logo.tpl" product=$product features=$features}
+                                            </a>
                                         </div>
+                                        
+                                        {assign var="rating" value="rating_$obj_id"}
+                                        {if $smarty.capture.$rating}
+                                            <div class="grid-list__rating">
+                                                {$smarty.capture.$rating nofilter}
+                                            </div>
+                                        {/if}
+
+
                                     </div>
 
                                     <div class="ty-grid-list__item-info">
@@ -88,13 +100,6 @@
                                             {$smarty.capture.$list_discount nofilter}
                                         </div>
                                         
-                                        {assign var="rating" value="rating_$obj_id"}
-                                        {if $smarty.capture.$rating}
-                                            <div class="grid-list__rating">
-                                                {$smarty.capture.$rating nofilter}
-                                            </div>
-                                        {/if}
-
                                         <div class="ty-grid-list__control">
                                             {if $settings.Appearance.enable_quick_view == 'Y'}
                                                 {include file="views/products/components/quick_view_link.tpl" quick_nav_ids=$quick_nav_ids}

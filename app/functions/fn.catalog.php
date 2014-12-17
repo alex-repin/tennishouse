@@ -3477,9 +3477,9 @@ function fn_get_default_product_options($product_id, $get_all = false, $product 
         foreach ($product_options as $option_id => $option) {
             if (!empty($option['variants'])) {
                 // [TennisPlaza]
-                if ($option['option_type'] != 'S' || $option['required'] !='Y') {
+//                 if ($option['option_type'] != 'S' || $option['required'] !='Y') {
                     $default[$option_id] = key($option['variants']);
-                }
+//                 }
                 // [TennisPlaza]
                 foreach ($option['variants'] as $variant_id => $variant) {
                     $options[$option_id][$variant_id] = true;
