@@ -3287,6 +3287,9 @@ var Tygh = {
                             } else {
                                 $.ceAjax('request', url, {
                                     full_render: true,
+                                    // [TennisPaza]
+                                    force_exec: true,
+                                    // [TennisPaza]
                                     save_history: true,
                                     result_ids: data.result_ids,
                                     scroll: data.scroll || '',

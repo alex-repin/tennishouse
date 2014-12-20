@@ -1,4 +1,4 @@
-{if !$features}ddd
+{if !$features}
     {$features = $product|fn_get_product_features_list}
 {/if}
 {$brand_id = $smarty.const.BRAND_FEATURE_ID}

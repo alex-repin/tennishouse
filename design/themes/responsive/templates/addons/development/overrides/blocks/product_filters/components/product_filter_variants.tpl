@@ -20,7 +20,7 @@
                     {assign var="href" value=$reset_lnk|fn_url}
                 {/if}
                 {assign var="use_ajax" value=$href|fn_compare_dispatch:$config.current_url}
-                <a href="{$href}" class="ty-product-filters__item checked{if $allow_ajax && $use_ajax} cm-ajax cm-ajax-full-render cm-history"{/if} data-ca-target-id="{$ajax_div_ids}" rel="nofollow"><span class="ty-filter-icon"><i class="ty-icon-ok ty-filter-icon__check"></i><i class="ty-icon-cancel ty-filter-icon__delete"></i></span>{$filter.prefix}{$selected_range.range_name|fn_text_placeholders}{$filter.suffix}</a>
+                <a href="{$href}" class="ty-product-filters__item checked{if $allow_ajax && $use_ajax} cm-ajax-force cm-ajax cm-ajax-full-render cm-history"{/if} data-ca-target-id="{$ajax_div_ids}" rel="nofollow"><span class="ty-filter-icon"><i class="ty-icon-ok ty-filter-icon__check"></i><i class="ty-icon-cancel ty-filter-icon__delete"></i></span>{$filter.prefix}{$selected_range.range_name|fn_text_placeholders}{$filter.suffix}</a>
             {/strip}
         </li>
     {/foreach}

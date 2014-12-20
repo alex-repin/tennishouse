@@ -17,6 +17,26 @@
                         <!--product_images_{$product.product_id}_update--></div>
                     {/if}
                 {/hook}
+                {if $product.players}
+                    {if $product.category_type == 'R'}
+                        {$title = __("racket_played_by")}
+                    {/if}
+                    <div class="ty-product-block__players">
+                        <h3 class="ty-mainbox-simple-title">
+                            {$title}
+                        </h3>
+                        <div>
+                            {foreach from=$product.players item="player"}
+                                    <div class="ty-product-list__player_image">
+                                        <a href="{"players.view?player_id=`$player.player_id`"|fn_url}">
+                                            {include file="common/image.tpl" obj_id=$obj_id_prefix images=$player.main_pair image_width=$settings.Thumbnails.product_lists_thumbnail_width image_height=$settings.Thumbnails.product_lists_thumbnail_height}
+                                        </a>
+                                        <div>{$player.player}</div>
+                                    </div>
+                            {/foreach}
+                        </div>
+                    </div>
+                {/if}
             </div>
             <div class="ty-product-block__left">
                 {assign var="form_open" value="form_open_`$obj_id`"}
@@ -90,6 +110,13 @@
                             {$smarty.capture.$product_options nofilter}
                         </div>
                         {if $capture_options_vs_qty}{/capture}{/if}
+                        
+                        {*<div class="ty-product-block__advanced-option">
+                            {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
+                            {assign var="advanced_options" value="advanced_options_`$obj_id`"}
+                            {$smarty.capture.$advanced_options nofilter}
+                            {if $capture_options_vs_qty}{/capture}{/if}
+                        </div>*}
                     </div>
                     
                     <div class="ty-avail-container">
@@ -140,43 +167,19 @@
                 {hook name="products:product_detail_bottom"}
                 {/hook}
 
-                {if $product.players}
-                    {if $product.category_type == 'R'}
-                        {$title = __("racket_played_by")}
+                {if $show_product_tabs}
+                    {include file="views/tabs/components/product_popup_tabs.tpl"}
+                    {$smarty.capture.popupsbox_content nofilter}
+                    {include file="views/tabs/components/product_tabs.tpl"}
+
+                    {if $blocks.$tabs_block_id.properties.wrapper}
+                        {include file=$blocks.$tabs_block_id.properties.wrapper content=$smarty.capture.tabsbox_content title=$blocks.$tabs_block_id.description}
+                    {else}
+                        {$smarty.capture.tabsbox_content nofilter}
                     {/if}
-                    <div class="ty-product-block__players">
-                        <h3 class="ty-mainbox-simple-title">
-                            {$title}
-                        </h3>
-                        <div>
-                            {foreach from=$product.players item="player"}
-                                    <div class="ty-product-list__player_image">
-                                        <a href="{"players.view?player_id=`$player.player_id`"|fn_url}">
-                                            {include file="common/image.tpl" obj_id=$obj_id_prefix images=$player.main_pair image_width=$settings.Thumbnails.product_lists_thumbnail_width image_height=$settings.Thumbnails.product_lists_thumbnail_height}
-                                        </a>
-                                        <div>{$player.player}</div>
-                                    </div>
-                            {/foreach}
-                        </div>
-                    </div>
                 {/if}
             </div>
         {/if}
-
-        {if $show_product_tabs}
-            <div class="ty-product-detail-tabs">
-            {include file="views/tabs/components/product_popup_tabs.tpl"}
-            {$smarty.capture.popupsbox_content nofilter}
-            {include file="views/tabs/components/product_tabs.tpl"}
-
-            {if $blocks.$tabs_block_id.properties.wrapper}
-                {include file=$blocks.$tabs_block_id.properties.wrapper content=$smarty.capture.tabsbox_content title=$blocks.$tabs_block_id.description}
-            {else}
-                {$smarty.capture.tabsbox_content nofilter}
-            {/if}
-            </div>
-        {/if}
-        
     {/hook}
     </div>
 

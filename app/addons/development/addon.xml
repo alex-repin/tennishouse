@@ -46,6 +46,9 @@
         <item>
             ALTER TABLE `cscart_products` ADD `net_cost` DECIMAL( 12, 2 ) UNSIGNED NOT NULL ;
         </item>
+        <item>
+            ALTER TABLE `cscart_products` CHANGE `return_period` `return_period` INT( 11 ) UNSIGNED NOT NULL DEFAULT '30';
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennisplaza_template">Шаблон TennisPlaza</item>
@@ -93,5 +96,8 @@
         <item lang="ru" id="slider">Ползунок</item>
         <item lang="ru" id="series">Серия</item>
         <item lang="ru" id="net_cost">Себестоимость</item>
+        <item lang="ru" id="our_advantages_text">Наши преимущества</item>
+        <item lang="ru" id="free_delivery_text">Бесплатная доставка на заказы свыше 5000 рублей</item>
+        <item lang="ru" id="free_returns_text">Бесплатный возврат и обмен</item>
     </language_variables>
 </addon>

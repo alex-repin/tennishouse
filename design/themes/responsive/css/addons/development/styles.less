@@ -94,20 +94,6 @@ select {
 }
 /* /Tooltip */
 
-.ty-product-block__players {
-    margin-top: 10px;
-}
-.ty-product-list__player_image {
-    display: inline-block;
-    margin: 5px 10px 10px;
-    vertical-align: top;
-    width: 80px;
-}
-.ty-product-list__player_image div {
-    font-size: 90%;
-    font-weight: bold;
-    text-align: center;
-}
 .top-menu .ty-menu__item {
     text-align: center;
     width: 14.28%;
@@ -151,6 +137,81 @@ select {
 .footer-stay-connected {
     background: none repeat scroll 0 0 #272528;
 }
+
+/* Top block */
+.ty-top-block_top-wrapper {
+    border-bottom: 1px solid #eeeeee;
+    display: inline-block;
+    width: 100%;
+}
+.ty-top-block__search {
+    display: inline-block;
+    margin: 0 11px;
+    vertical-align: middle;
+    width: 250px;
+    float: left;
+}
+.ty-top-block__cart-account-wrapper {
+    display: inline-block;
+    vertical-align: top;
+    width: 300px;
+    float: right;
+}
+.ty-top-block__cart-account-wrapper a {
+    font-size: 14px;
+}
+.top-menu-section .ty-benefits-low-price {
+    background: url('../media/images/icons/benefits_sprite_top.png') no-repeat 5px 2px;
+    width: 32px;
+    height: 27px;
+    display: block;
+    margin: 0 auto;
+}
+.top-menu-section .ty-benefits-free-shipping {
+    background: url('../media/images/icons/benefits_sprite_top.png') no-repeat -37px 0;
+    width: 40px;
+    height: 27px;
+    display: block;
+    margin: 0 auto;
+}
+.top-menu-section .ty-benefits-free-returns {
+    background: url('../media/images/icons/benefits_sprite_top.png') no-repeat -79px 2px;
+    width: 40px;
+    height: 27px;
+    display: block;
+    margin: 0 auto;
+}
+.ty-benefits-guarantees__text {
+    color: #fff;
+    display: inline-block;
+    text-align: left;
+    vertical-align: top;
+    margin-left: 5px;
+    width: 170px;
+}
+.ty-benefits-guarantees__top {
+    display: inline-block;
+    padding: 0 4px;
+    width: 221px;
+}
+.ty-top-block_bottom-wrapper {
+    margin-top: -2px; /* why da fuck ?*/
+}
+.ty-benefits-guarantees__icon-block {
+    display: inline-block;
+    width: 40px;
+    padding: 3px 0;
+}
+.ty-benefits-guarantees__top:hover {
+    background: lighten(#484649, 5%);
+}
+.ty-benefits-guarantees__text-benefits {
+    padding: 8px 0;
+}
+/* Top block */
+
+
+
 /*Top menu*/
 .no-touch .ty-menu__item:hover .ty-menu__item-link, .is-hover-menu .ty-menu__item-link, .is-hover-menu.ty-menu__item-active .ty-menu__item-link {
     background-color: lighten(@menu, 35%);
@@ -236,10 +297,7 @@ select {
     color: #ffffff;
 }
 .top-search {
-    padding: 20px 0;
-}
-.top-menu-section {
-    border-bottom: 1px solid #eeeeee;
+    padding: 0;
 }
 .top-logo {
     padding: 8px 0;
@@ -334,10 +392,100 @@ select {
     width: 50px;
     padding: 4px;
 }
+.ty-product-filters__wrapper .is-hover {
+    background: lighten(@base, 3%);
+}
+.ty-product-filters__wrapper {
+    border-top: 1px solid lighten(@font, 63%);
+    border-left: 1px solid lighten(@font, 63%);
+    border-bottom: 1px solid lighten(@font, 63%);
+}
+.ty-product-filters__switch {
+    border-bottom: 1px solid lighten(@font, 63%);
+    border-right: 1px solid lighten(@font, 63%);
+}
+.ty-product-filters__tools {
+    border-right: 1px solid lighten(@font, 63%);
+}
+.is-hover .ty-product-filters__switch {
+    border-right: none;
+    padding-right: 11px;
+}
+.ty-product-filters__switch .ty-icon-ok {
+    color: #b4bcc4;
+    float: right;
+    font-size: 115%;
+    margin-right: 5px;
+}
+.sticky {
+    position: fixed;
+    top: 135px;
+    width: 169px;
+}
+.ty-filter-icon__check, .ty-filter-icon__delete {
+    font-size: 15px;
+    left: 20%;
+    top: 0;
+}
+.ty-product-filters__block {
+    position: relative;
+}
+.ty-product-filters {
+    background: lighten(@base, 3%);
+    border-top: 1px solid lighten(@font, 63%);
+    border-right: 1px solid lighten(@font, 63%);
+    border-bottom: 1px solid lighten(@font, 63%);
+    left: 168px;
+    top: -1px;
+    position: absolute;
+    z-index: 100;
+    width: 157px;
+    margin: 0;
+    padding: 0 5px 0 15px;
+}
+.ty-product-filters .ty-product-filters__item-more {
+    padding: 0;
+    margin: 0;
+}
+.ty-price-slider {
+    background: lighten(@base, 3%);
+    border-top: 1px solid lighten(@font, 63%);
+    border-right: 1px solid lighten(@font, 63%);
+    border-bottom: 1px solid lighten(@font, 63%);
+    left: 168px;
+    margin: 0;
+    padding: 10px 10px 25px;
+    position: absolute;
+    top: -1px;
+    width: 157px;
+    z-index: 100;
+}
+.ty-product-filters__block input {
+    color: #333333;
+}
 /*Filters*/
 
 /*Player details*/
 
+.ty-product-block__players {
+    margin-top: 20px;
+    width: 450px;
+    display: inline-block;
+}
+.ty-product-list__player_image {
+    display: inline-block;
+    margin: 5px 10px 10px;
+    vertical-align: top;
+    width: 80px;
+}
+.ty-product-list__player_image div {
+    font-size: 90%;
+    font-weight: bold;
+    text-align: center;
+}
+.ty-product-block .ty-tabs {
+    margin-top: 0;
+}
 .ty-player-block__img-wrapper {
     position: absolute;
     left: 115px;
@@ -372,7 +520,7 @@ select {
 .ty-grid-list__item:hover {
     position: relative;
 /*    outline: 1px solid #dadada;*/
-    margin: 0 0 5px;
+    margin: 0 0 10px;
     transition: all 200ms linear 0s;
     box-shadow: 0 0 5px 1px #333;
     z-index:20;
@@ -577,31 +725,12 @@ select {
 }
 /*Player details*/
 
-.sticky {
-    position: fixed;
-    top: 135px;
-    width: 169px;
-}
-.ty-sticky {
-/*    display: inline-block;
-    position: absolute;
-    width: 100%;*/
-}
-.ty-filter-icon__check, .ty-filter-icon__delete {
-    font-size: 15px;
-    left: 20%;
-    top: 0;
-}
-.ty-product-filters__block input {
-    color: #333333;
-}
 .ty-pagination-sorting, .ty-pagination__bottom {
     background: @base;
     display: inline-block;
     width: 100%;
     margin: 10px 0;
 }
-
 .ty-sort-container {
     background: none;
     display: inline-block;
@@ -759,9 +888,6 @@ select {
 }
 .ty-breadcrumbs__a, .ty-breadcrumbs__a:hover {
     color: @links;
-}
-.ty-product-detail-tabs {
-    display: inline-block;
 }
 .ty-product-qty {
     margin-top: 10px;

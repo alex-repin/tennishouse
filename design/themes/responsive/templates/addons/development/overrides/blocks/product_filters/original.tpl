@@ -29,37 +29,23 @@
         {if $filter.display == "N"}
             {* default behaviour of cm-combination *}
             {assign var="collapse" value=true}
-            {if $smarty.cookies.$cookie_name_show_filter || $filter.open || $filter.selected_ranges}
+            {if $smarty.cookies.$cookie_name_show_filter}
                 {assign var="collapse" value=false}
             {/if}
         {else}
             {* reverse behaviour of cm-combination *}
             {assign var="collapse" value=false}
-            {if $smarty.cookies.$cookie_name_show_filter || $filter.open || $filter.selected_ranges}
+            {if $smarty.cookies.$cookie_name_show_filter}
                 {assign var="collapse" value=true}
             {/if}
         {/if}
 
-        <div class="ty-product-filters__block">
-            <div id="sw_content_{$filter_uid}" class="ty-product-filters__switch cm-combination-filter_{$filter_uid}{if !$collapse} open{/if} cm-save-state {if $filter.display == "Y"}cm-ss-reverse{/if}">
+        <div class="ty-product-filters__block {if !$collapse}is-hover{/if}">
+            <div id="sw_content_{$filter_uid}" class="ty-product-filters__switch">
                 <span class="ty-product-filters__title">{$filter.filter}</span>
-                <i class="ty-product-filters__switch-down ty-icon-down-open"></i>
-                <i class="ty-product-filters__switch-right ty-icon-up-open"></i>
+                {if $filter.open || $filter.selected_ranges}<i class="ty-icon-ok"></i>{/if}
+                {*<i class="ty-product-filters__switch-right ty-icon-left-open"></i>*}
             </div>
-            <script type="text/javascript">
-
-            (function(_, $) {$ldelim}
-
-                $(document).ready(function() {$ldelim}
-                    $('#sw_content_' + '{$filter_uid}').click(function() {$ldelim}
-                        setTimeout(function() {
-                            fn_stick_element();
-                        }, 400);
-                    {$rdelim});
-                {$rdelim});
-                
-            {$rdelim}(Tygh, Tygh.$));
-            </script>
             
             {if $filter.slider}
                 {include file="blocks/product_filters/components/product_filter_slider.tpl" filter_uid=$filter_uid id="slider_`$filter_uid`" filter=$filter ajax_div_ids=$ajax_div_ids dynamic=true filter_qstring=$filter_qstring reset_qstring=$reset_qstring allow_ajax=$allow_ajax}
@@ -69,11 +55,44 @@
         </div>
     {/if}
 {/foreach}
+<script type="text/javascript">
+
+(function(_, $) {$ldelim}
+
+    $(document).ready(function() {$ldelim}
+        fn_stick_element();
+        $('.ty-product-filters__block').hover(function(e){$ldelim}
+            $(this).addClass('is-hover');
+            var block_id = $(this).find('.ty-product-filters__switch').prop('id').replace(/^(on_|off_|sw_)/, '');
+            var submenu = $(this);
+            setTimeout(function() {$ldelim}
+                if (submenu.hasClass('is-hover')) {
+                    $.cookie.set(block_id, 1);
+                    submenu.find('.ty-product-filters').show('slide');
+                    submenu.find('.ty-price-slider').show('slide');
+                }
+            {$rdelim}, 150);
+        {$rdelim}, function(e){$ldelim}
+            $(this).removeClass('is-hover');
+            var block_id = $(this).find('.ty-product-filters__switch').prop('id').replace(/^(on_|off_|sw_)/, '');
+            var submenu = $(this);
+            setTimeout(function() {$ldelim}
+                if (!submenu.hasClass('is-hover')) {
+                    $.cookie.remove(block_id);
+                    submenu.find('.ty-product-filters').hide('slide');
+                    submenu.find('.ty-price-slider').hide('slide');
+                }
+            {$rdelim}, 150);
+        {$rdelim});
+    {$rdelim});
+    
+{$rdelim}(Tygh, Tygh.$));
+</script>
 
 <div class="ty-product-filters__tools clearfix">
     {*<a {if "FILTER_CUSTOM_ADVANCED"|defined}href="{"products.search?advanced_filter=Y"|fn_url}"{else}href="{$filter_qstring|fn_link_attach:"advanced_filter=Y"|fn_url}"{/if} rel="nofollow" class="ty-product-filters__advanced-button">{__("advanced")}</a>*}
     {if $smarty.capture.has_selected}
-    <a href="{if $smarty.request.category_id}{assign var="use_ajax" value=true}{"categories.view?category_id=`$smarty.request.category_id`"|fn_url}{else}{assign var="use_ajax" value=false}{""|fn_url}{/if}" rel="nofollow" class="ty-product-filters__reset-button{if $allow_ajax && $use_ajax} cm-ajax cm-ajax-full-render cm-history" data-ca-target-id="{$ajax_div_ids}{/if}"><i class="ty-product-filters__reset-icon ty-icon-cw"></i> {__("reset")}</a>
+    <a href="{if $smarty.request.category_id}{assign var="use_ajax" value=true}{"categories.view?category_id=`$smarty.request.category_id`"|fn_url}{else}{assign var="use_ajax" value=false}{""|fn_url}{/if}" rel="nofollow" class="ty-product-filters__reset-button{if $allow_ajax && $use_ajax} cm-ajax cm-ajax-force cm-ajax-full-render cm-history" data-ca-target-id="{$ajax_div_ids}{/if}"><i class="ty-product-filters__reset-icon ty-icon-cw"></i> {__("reset")}</a>
     {/if}
 </div>
 

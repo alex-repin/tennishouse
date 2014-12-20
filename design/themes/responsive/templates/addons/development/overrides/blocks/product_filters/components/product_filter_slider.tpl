@@ -65,6 +65,7 @@
         "type": "{$filter.field_type}",
         "currency": "{$smarty.const.CART_SECONDARY_CURRENCY}",
         "ajax": {if $allow_ajax && $use_ajax}true{else}false{/if},
+        "scroll": ".cm-pagination-container",
         "result_ids": "{$ajax_div_ids}"
     {rdelim}' />
     {* /Slider params *}

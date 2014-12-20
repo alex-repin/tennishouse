@@ -1,4 +1,4 @@
-{assign var="dropdown_id" value=$block.snapping_id}
+{assign var="dropdown_id" value=$dropdown_id|default:$block.snapping_id}
 {assign var="r_url" value=$config.current_url|escape:url}
 {hook name="checkout:cart_content"}
     <div class="ty-dropdown-box" id="cart_status_{$dropdown_id}">
