@@ -181,20 +181,20 @@ if ($mode == 'search') {
     // Increase product popularity
     fn_set_product_popularity($_REQUEST['product_id']);
 
-    $product_notification_enabled = (isset($_SESSION['product_notifications']) ? (isset($_SESSION['product_notifications']['product_ids']) && in_array($_REQUEST['product_id'], $_SESSION['product_notifications']['product_ids']) ? 'Y' : 'N') : 'N');
-    if ($product_notification_enabled) {
-        if (($_SESSION['auth']['user_id'] == 0) && !empty($_SESSION['product_notifications']['email'])) {
-            if (!db_get_field("SELECT subscription_id FROM ?:product_subscriptions WHERE product_id = ?i AND email = ?s", $_REQUEST['product_id'], $_SESSION['product_notifications']['email'])) {
-                $product_notification_enabled = 'N';
-            }
-        } elseif (!db_get_field("SELECT subscription_id FROM ?:product_subscriptions WHERE product_id = ?i AND user_id = ?i", $_REQUEST['product_id'], $_SESSION['auth']['user_id'])) {
-            $product_notification_enabled = 'N';
-        }
-    }
+//     $product_notification_enabled = (isset($_SESSION['product_notifications']) ? (isset($_SESSION['product_notifications']['product_ids']) && in_array($_REQUEST['product_id'], $_SESSION['product_notifications']['product_ids']) ? 'Y' : 'N') : 'N');
+//     if ($product_notification_enabled) {
+//         if (($_SESSION['auth']['user_id'] == 0) && !empty($_SESSION['product_notifications']['email'])) {
+//             if (!db_get_field("SELECT subscription_id FROM ?:product_subscriptions WHERE product_id = ?i AND email = ?s", $_REQUEST['product_id'], $_SESSION['product_notifications']['email'])) {
+//                 $product_notification_enabled = 'N';
+//             }
+//         } elseif (!db_get_field("SELECT subscription_id FROM ?:product_subscriptions WHERE product_id = ?i AND user_id = ?i", $_REQUEST['product_id'], $_SESSION['auth']['user_id'])) {
+//             $product_notification_enabled = 'N';
+//         }
+//     }
 
     Registry::get('view')->assign('show_qty', true);
-    Registry::get('view')->assign('product_notification_enabled', $product_notification_enabled);
-    Registry::get('view')->assign('product_notification_email', (isset($_SESSION['product_notifications']) ? $_SESSION['product_notifications']['email'] : ''));
+//     Registry::get('view')->assign('product_notification_enabled', $product_notification_enabled);
+//     Registry::get('view')->assign('product_notification_email', (isset($_SESSION['product_notifications']) ? $_SESSION['product_notifications']['email'] : ''));
 
     if ($mode == 'quick_view') {
         if (defined('AJAX_REQUEST')) {
@@ -216,6 +216,9 @@ if ($mode == 'search') {
 } elseif ($mode == 'product_notifications') {
     fn_update_product_notifications(array(
         'product_id' => $_REQUEST['product_id'],
+        // [TennisPlaza]
+        'combination_hash' => $_REQUEST['combination_hash'],
+        // [TennisPlaza]
         'user_id' => $_SESSION['auth']['user_id'],
         'email' => (!empty($_SESSION['cart']['user_data']['email']) ? $_SESSION['cart']['user_data']['email'] : (!empty($_REQUEST['email']) ? $_REQUEST['email'] : '')),
         'enable' => $_REQUEST['enable']
@@ -271,20 +274,21 @@ function fn_set_product_popularity($product_id, $popularity_view = POPULARITY_VI
 
 function fn_update_product_notifications($data)
 {
+    // [TennisPlaza]
     if (!empty($data['email']) && fn_validate_email($data['email'])) {
-        $_SESSION['product_notifications']['email'] = $data['email'];
+        $_SESSION['product_notifications']['email'][$data['combination_hash']] = $data['email'];
         if ($data['enable'] == 'Y') {
             db_query("REPLACE INTO ?:product_subscriptions ?e", $data);
-            if (!isset($_SESSION['product_notifications']['product_ids']) || (is_array($_SESSION['product_notifications']['product_ids']) && !in_array($data['product_id'], $_SESSION['product_notifications']['product_ids']))) {
-                $_SESSION['product_notifications']['product_ids'][] = $data['product_id'];
+            if (!isset($_SESSION['product_notifications']['product_ids']) || !isset($_SESSION['product_notifications']['product_ids'][$data['product_id']]) || (is_array($_SESSION['product_notifications']['product_ids'][$data['product_id']]) && (!in_array($data['product_id'], array_keys($_SESSION['product_notifications']['product_ids'])) || !in_array($data['combination_hash'], $_SESSION['product_notifications']['product_ids'][$data['product_id']])))) {
+                $_SESSION['product_notifications']['product_ids'][$data['product_id']][] = $data['combination_hash'];
             }
 
             fn_set_notification('N', __('notice'), __('product_notification_subscribed'));
         } else {
-            $deleted = db_query("DELETE FROM ?:product_subscriptions WHERE product_id = ?i AND user_id = ?i AND email = ?s", $data['product_id'], $data['user_id'], $data['email']);
+            $deleted = db_query("DELETE FROM ?:product_subscriptions WHERE product_id = ?i AND user_id = ?i AND email = ?s AND combination_hash = ?i", $data['product_id'], $data['user_id'], $data['email'], $data['combination_hash']);
 
-            if (isset($_SESSION['product_notifications']) && isset($_SESSION['product_notifications']['product_ids']) && in_array($data['product_id'], $_SESSION['product_notifications']['product_ids'])) {
-                $_SESSION['product_notifications']['product_ids'] = array_diff($_SESSION['product_notifications']['product_ids'], array($data['product_id']));
+            if (isset($_SESSION['product_notifications']) && isset($_SESSION['product_notifications']['product_ids']) && isset($_SESSION['product_notifications']['product_ids'][$data['product_id']]) && in_array($data['combination_hash'], $_SESSION['product_notifications']['product_ids'][$data['product_id']])) {
+                $_SESSION['product_notifications']['product_ids'][$data['product_id']] = array_diff($_SESSION['product_notifications']['product_ids'][$data['product_id']], array($data['combination_hash']));
             }
 
             if (!empty($deleted)) {
@@ -292,4 +296,5 @@ function fn_update_product_notifications($data)
             }
         }
     }
+    // [TennisPlaza]
 }

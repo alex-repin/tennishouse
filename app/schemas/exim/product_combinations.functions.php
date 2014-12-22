@@ -106,7 +106,9 @@ function fn_exim_put_product_combination($product_id, $product_name, $combinatio
 
             if ($object_details['count']) {
                 if (($object_details['amount'] <= 0) && ($_data['amount'] > 0)) {
-                    fn_send_product_notifications($object_id);
+                    // [tennisplaza]
+                    fn_send_product_notifications($object_id, $combination_hash);
+                    // [tennisplaza]
                 }
                 db_query('UPDATE ?:product_options_inventory SET ?u WHERE combination_hash = ?i', $_data, $combination_hash);
                 fn_set_progress('echo', __('updating') . ' ' . __('product_combinations') . '...', false);

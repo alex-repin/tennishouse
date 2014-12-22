@@ -1,4 +1,3 @@
-{hook name="categories:view"}
 <div id="category_products_{$block.block_id}">
 
 {if $category_data.description || $runtime.customization_mode.live_editor}
@@ -60,4 +59,3 @@
 {if $category_data.parent_id}
     {capture name="mainbox_title"}<span {live_edit name="category:category:{$category_data.category_id}"}>{$category_data.category}</span>{/capture}
 {/if}
-{/hook}

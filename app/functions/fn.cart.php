@@ -698,7 +698,9 @@ function fn_update_product_amount($product_id, $amount, $product_options, $sign)
     }
 
     if (($current_amount <= 0) && ($new_amount > 0)) {
-        fn_send_product_notifications($product_id);
+        // [tennisplaza]
+        fn_send_product_notifications($product_id, $cart_id);
+        // [tennisplaza]
     }
 
     return true;

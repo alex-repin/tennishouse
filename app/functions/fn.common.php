@@ -825,12 +825,13 @@ function fn_format_price($price = 0, $currency = CART_PRIMARY_CURRENCY, $decimal
 * @param int $product_id product id
 * @return boolean always true
 */
-function fn_send_product_notifications($product_id)
+// [tennnisplaza]
+function fn_send_product_notifications($product_id, $combination_hash = 0)
 {
     if (empty($product_id)) {
         return false;
     }
-    $emails = db_get_fields("SELECT email FROM ?:product_subscriptions WHERE product_id = ?i", $product_id);
+    $emails = db_get_fields("SELECT email FROM ?:product_subscriptions WHERE product_id = ?i AND combination_hash = ?i", $product_id, $combination_hash);
 
     if (!empty($emails)) {
         $product['name'] = fn_get_product_name($product_id, Registry::get('settings.Appearance.frontend_default_language'));
@@ -851,9 +852,10 @@ function fn_send_product_notifications($product_id)
             'company_id' => $product['company_id'],
         ), 'C', Registry::get('settings.Appearance.frontend_default_language'));
         if (!defined('ORDER_MANAGEMENT')) {
-            db_query("DELETE FROM ?:product_subscriptions WHERE product_id = ?i", $product_id);
+            db_query("DELETE FROM ?:product_subscriptions WHERE product_id = ?i AND combination_hash = ?i", $product_id, $combination_hash);
         }
     }
+// [tennnisplaza]
 
     return true;
 }

@@ -86,7 +86,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             foreach ($_REQUEST['inventory'] as $k => $v) {
                 db_query("UPDATE ?:product_options_inventory SET ?u WHERE combination_hash = ?s", $v, $k);
                 if (($inventory[$k]['amount'] <= 0) && ($v['amount'] > 0)) {
-                    fn_send_product_notifications($_REQUEST['product_id']);
+                    // [tennisplaza]
+                    fn_send_product_notifications($_REQUEST['product_id'], $k);
+                    // [tennisplaza]
                 }
             }
         }

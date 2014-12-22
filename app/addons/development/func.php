@@ -16,6 +16,35 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_get_filters_products_count_pre(&$params)
+{
+    $params['get_all'] = true;
+}
+
+function fn_development_gather_additional_product_data_post(&$product, $auth, $params)
+{
+    if (AREA == 'C') {
+        if ($product['tracking'] == 'O') {
+            $combination = $product['combination_hash'];
+        } elseif ($product['tracking'] == 'B') {
+            $combination = 0;
+        }
+        if ($auth['user_id'] == 0 && !empty($_SESSION['product_notifications']['email'][$combination])) {
+            $subscription_id = db_get_field("SELECT subscription_id FROM ?:product_subscriptions WHERE product_id = ?i AND combination_hash = ?i AND email = ?s", $product['product_id'], $combination, $_SESSION['product_notifications']['email'][$combination]);
+            if (!empty($subscription_id)) {
+                $product['inventory_notification'] = 'Y';
+                $product['inventory_notification_email'] = $_SESSION['product_notifications']['email'][$combination];
+            }
+        } else {
+            $email = db_get_field("SELECT email FROM ?:product_subscriptions WHERE product_id = ?i AND combination_hash = ?i AND user_id = ?i", $product['product_id'], $combination, $auth['user_id']);
+            if (!empty($email)) {
+                $product['inventory_notification'] = 'Y';
+                $product['inventory_notification_email'] = $email;
+            }
+        }
+    }
+}
+
 function fn_get_series_feature($features)
 {
     $feature_ids = array(BABOLAT_SERIES_FEATURE_ID, HEAD_SERIES_FEATURE_ID, WILSON_SERIES_FEATURE_ID, DUNLOP_SERIES_FEATURE_ID, PRINCE_SERIES_FEATURE_ID, YONEX_SERIES_FEATURE_ID, PROKENNEX_SERIES_FEATURE_ID);
@@ -143,7 +172,7 @@ function fn_get_age($birth_date)
 {
     $now = time();
     $years = fn_date_format(time(), "%Y") - fn_date_format($birth_date, "%Y");
-
+//fn_print_r(fn_date_format(time(), "%Y"), fn_date_format($birth_date, "%Y"));
     if (fn_date_format(time(), "%m") < fn_date_format($birth_date, "%m") || (fn_date_format(time(), "%m") == fn_date_format($birth_date, "%d") && fn_date_format(time(), "%d") < fn_date_format($birth_date, "%m"))) {
         $years--;
     }
@@ -180,6 +209,15 @@ function fn_development_update_product_post($product_data, $product_id, $lang_co
             );
             db_query("REPLACE INTO ?:players_gear ?e", $__data);
         }
+    }
+}
+
+function fn_development_update_product_pre(&$product_data, $product_id, $lang_code, $can_update)
+{
+    $id_path = explode('/', db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $product_data['main_category']));
+    $enable_discussion = array('254', '263', '265', '266', '312', '313', '315', '316');
+    if (!empty(array_intersect($id_path, $enable_discussion))) {
+        $product_data['discussion_type'] = 'B';
     }
 }
 

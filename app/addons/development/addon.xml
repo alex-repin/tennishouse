@@ -49,10 +49,29 @@
         <item>
             ALTER TABLE `cscart_products` CHANGE `return_period` `return_period` INT( 11 ) UNSIGNED NOT NULL DEFAULT '30';
         </item>
+        <item>
+            ALTER TABLE `cscart_product_subscriptions` ADD `combination_hash` INT( 11 ) UNSIGNED NOT NULL ;
+        </item>
+        <item>
+            DROP TABLE IF EXISTS `cscart_product_subscriptions`;
+        </item>
+        <item>
+            CREATE TABLE `cscart_product_subscriptions` (
+            `subscription_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+            `product_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+            `combination_hash` INT( 11 ) UNSIGNED NOT NULL,
+            `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+            `email` varchar(128) NOT NULL DEFAULT '',
+            PRIMARY KEY (`subscription_id`),
+            UNIQUE KEY `pe` (`product_id`,`email`,`combination_hash`),
+            KEY `pd` (`product_id`,`user_id`,`email`,`combination_hash`)
+            ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennisplaza_template">Шаблон TennisPlaza</item>
         <item lang="ru" id="calculate_racket_balance">Посчитать баланс ракетки</item>
+        <item lang="ru" id="theme_editor.top_menu_background">Цвета фона топ меню</item>
         <item lang="ru" id="theme_editor.category_menu_color">Меню категорий</item>
         <item lang="ru" id="theme_editor.category_menu_links_color">Ссылки меню категорий</item>
         <item lang="ru" id="players">Игроки</item>
@@ -95,9 +114,24 @@
         <item lang="ru" id="his_choice">Его выбор</item>
         <item lang="ru" id="slider">Ползунок</item>
         <item lang="ru" id="series">Серия</item>
+        <item lang="ru" id="how_to_know_your_game_level">Как определить свой уровень игры</item>
+        <item lang="ru" id="rackets_alt">ракеток</item>
+        <item lang="ru" id="ti_discount_text">при покупке [items]+ [product]</item>
         <item lang="ru" id="net_cost">Себестоимость</item>
+        <item lang="ru" id="additional_information">Дополнительная информация</item>
         <item lang="ru" id="our_advantages_text">Наши преимущества</item>
+        <item lang="ru" id="variery_court_surfaces">Разновидности покрытий кортов</item>
         <item lang="ru" id="free_delivery_text">Бесплатная доставка на заказы свыше 5000 рублей</item>
         <item lang="ru" id="free_returns_text">Бесплатный возврат и обмен</item>
+        <item lang="ru" id="age">Возраст</item>
+        <item lang="ru" id="play_level">Уровень игры</item>
+        <item lang="ru" id="favourite_surface">Любимое покрытие</item>
+        <item lang="ru" id="hard_surface">Хард</item>
+        <item lang="ru" id="clay_surface">Грунт</item>
+        <item lang="ru" id="grass_surface">Трава</item>
+        <item lang="ru" id="synthetic_surface">Синтетика</item>
+        <item lang="ru" id="synthetic_grass_surface">Синтетическая трава</item>
+        <item lang="ru" id="parquet_surface">Паркет</item>
+        <item lang="ru" id="asphalt_surface">Асфальт</item>
     </language_variables>
 </addon>

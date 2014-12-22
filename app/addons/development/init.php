@@ -31,6 +31,11 @@ define('PRINCE_SERIES_FEATURE_ID', 43);
 define('YONEX_SERIES_FEATURE_ID', 45);
 define('PROKENNEX_SERIES_FEATURE_ID', 47);
 
+define('BIRTHDAY_PF_ID', 37);
+define('PLAY_LEVEL_PF_ID', 36);
+define('SURFACE_PF_ID', 38);
+define('CONFIGURATION_PF_ID', 39);
+
 fn_register_hooks(
     'update_product_post',
     'get_product_data_post',
@@ -42,5 +47,8 @@ fn_register_hooks(
     'get_product_filter_fields',
     'add_range_to_url_hash_pre',
     'update_product_filter',
-    'get_product_features_list_post'
+    'get_product_features_list_post',
+    'gather_additional_product_data_post',
+    'get_filters_products_count_pre',
+    'update_product_pre'
 );

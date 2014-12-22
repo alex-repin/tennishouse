@@ -2083,20 +2083,18 @@ function fn_global_update_products($update_data)
                 $send_notification = false;
                 $product = fn_get_product_data($product_id, $auth, DESCR_SL, '', true, true, true, true);
 
+                // [tennisplaza]
                 if (($product['tracking'] == ProductTracking::TRACK_WITHOUT_OPTIONS) && ($product['amount'] <= 0)) {
-                    $send_notification = true;
+                    fn_send_product_notifications($product_id);
                 } elseif ($product['tracking'] == ProductTracking::TRACK_WITH_OPTIONS) {
                     $inventory = db_get_array("SELECT * FROM ?:product_options_inventory WHERE product_id = ?i", $product_id);
                     foreach ($inventory as $inventory_item) {
                         if ($inventory_item['amount'] <= 0) {
-                            $send_notification = true;
+                            fn_send_product_notifications($product_id, $inventory_item['combination_hash']);
                         }
                     }
                 }
-
-                if ($send_notification) {
-                    fn_send_product_notifications($product_id);
-                }
+                // [tennisplaza]
             }
         }
 
@@ -3477,9 +3475,9 @@ function fn_get_default_product_options($product_id, $get_all = false, $product 
         foreach ($product_options as $option_id => $option) {
             if (!empty($option['variants'])) {
                 // [TennisPlaza]
-//                 if ($option['option_type'] != 'S' || $option['required'] !='Y') {
+                 if ($option['option_type'] != 'S' || $option['required'] !='Y') {
                     $default[$option_id] = key($option['variants']);
-//                 }
+                 }
                 // [TennisPlaza]
                 foreach ($option['variants'] as $variant_id => $variant) {
                     $options[$option_id][$variant_id] = true;
@@ -5675,11 +5673,13 @@ function fn_get_filters_products_count($params = array())
                             $_f = $_f[$filter_id];
                             if (!empty($_f['ranges'])) {
                                 // delete current range
-                                foreach ($_f['ranges'] as $_rid => $_rv) {
-                                    if (in_array($_rid, $selected_range_ids)) {
-                                        unset($_f['ranges'][$_rid]);
-                                    }
-                                }
+                                // [TennisPlaza]
+//                                 foreach ($_f['ranges'] as $_rid => $_rv) {
+//                                     if (in_array($_rid, $selected_range_ids)) {
+//                                         unset($_f['ranges'][$_rid]);
+//                                     }
+//                                 }
+                                // [TennisPlaza]
                                 $filters[$filter_id]['ranges'] = $_f['ranges'];
                                 $filters[$filter_id]['more_cut'] = !empty($_f['more_cut']) ? $_f['more_cut'] : false;
                             }
@@ -8357,7 +8357,8 @@ function fn_apply_options_rules($product)
     // Change product code and amount
     if (!empty($product['tracking']) && $product['tracking'] == ProductTracking::TRACK_WITH_OPTIONS) {
         $product['hide_stock_info'] = false;
-        if ($product['options_type'] == 'S') {
+            //[TennisPlaza]
+//         if ($product['options_type'] == 'S') {
             foreach ($product['product_options'] as $option) {
                 $option_id = $option['option_id'];
                 if ($option['inventory'] == 'Y' && empty($product['selected_options'][$option_id])) {
@@ -8366,7 +8367,8 @@ function fn_apply_options_rules($product)
                     break;
                 }
             }
-        }
+//         }
+            //[TennisPlaza]
 
         if (!$product['hide_stock_info']) {
             $combination = db_get_row("SELECT product_code, amount FROM ?:product_options_inventory WHERE combination_hash = ?i", $combination_hash);

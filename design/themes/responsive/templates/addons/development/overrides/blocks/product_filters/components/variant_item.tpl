@@ -1,4 +1,4 @@
-<li class="ty-product-filters__group">
+<div class="ty-product-filters__group">
     {if !$range.checked}
         {assign var="filter_query_elm" value=$smarty.request.features_hash|fn_add_range_to_url_hash:$range:$filter.field_type}
     {else}
@@ -14,4 +14,4 @@
     {/if}
     {assign var="use_ajax" value=$href|fn_compare_dispatch:$config.current_url}
     <a {if !$range.disabled || $range.checked}href="{$href}"{/if} {if $filter.feature_type != "E"}rel="nofollow"{/if} class="ty-product-filters__item{if $range.checked} checked{/if}{if $range.disabled} disabled{elseif $allow_ajax && $use_ajax} cm-ajax-force cm-ajax cm-ajax-full-render cm-history{/if}" data-ca-target-id="{$ajax_div_ids}" data-ca-scroll=".cm-pagination-container"><span class="ty-filter-icon"><i class="ty-icon-ok ty-filter-icon__check"></i><i class="ty-icon-cancel ty-filter-icon__delete"></i></span>{$filter.prefix}{$range.range_name|fn_text_placeholders}{$filter.suffix}&nbsp;{if !$range.disabled}<span class="ty-product-filters__count">&nbsp;({$range.products})</span>{/if}</a>
-</li>
+</div>

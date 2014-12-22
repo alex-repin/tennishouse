@@ -26,6 +26,9 @@
             "category_menu_links": {
                 "description": "theme_editor.category_menu_links_color"
             },
+            "top_menu_background": {
+                "description": "theme_editor.top_menu_background"
+            },
             "base": {
                 "description": "theme_editor.base_color"
             },

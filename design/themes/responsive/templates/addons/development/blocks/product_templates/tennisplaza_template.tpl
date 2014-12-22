@@ -126,6 +126,9 @@
                             {$smarty.capture.$product_amount nofilter}
                         </div>
                         {if $capture_options_vs_qty}{/capture}{/if}
+                        
+                        {assign var="follow" value="follow_`$obj_id`"}
+                        {$smarty.capture.$follow nofilter}
                     </div>
                 </div>
 

@@ -10,15 +10,13 @@
                 </a>
             </li>
 
+        {$item_width = 100 / $items|count}
         {foreach from=$items item="item1" name="item1"}
             {assign var="item1_url" value=$item1|fn_form_dropdown_object_link:$block.type}
             {assign var="unique_elm_id" value=$item1_url|md5}
             {assign var="unique_elm_id" value="topmenu_`$block.block_id`_`$unique_elm_id`"}
 
-            {if $subitems_count}
-
-            {/if}
-            <li class="ty-menu__item {if !$item1.$childs} ty-menu__item-nodrop{else} ty-menu__item-parent cm-menu-item-responsive{/if} {if $item1.active || $item1|fn_check_is_active_menu_item:$block.type} ty-menu__item-active{/if}">
+            <li class="ty-menu__item {if !$item1.$childs} ty-menu__item-nodrop{else} ty-menu__item-parent cm-menu-item-responsive{/if} {if $item1.active || $item1|fn_check_is_active_menu_item:$block.type} ty-menu__item-active{/if}" style="width: {$item_width}%;">
                 <div class="ty-menu__item_full">
                 {if $item1.$childs}
                     <a class="ty-menu__item-toggle visible-phone cm-responsive-menu-toggle">
