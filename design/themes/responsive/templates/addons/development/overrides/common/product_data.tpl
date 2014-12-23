@@ -73,6 +73,11 @@
 
 {capture name="follow_`$obj_id`"}
 {if $show_add_to_cart}
+{if $product.tracking == 'O'}
+    {$follow_combination = $product.combination_hash}
+{else}
+    {$follow_combination = 0}
+{/if}
 <div class="cm-reload-{$obj_prefix}{$obj_id}" id="follow_{$obj_prefix}{$obj_id}">
 {if !($product.zero_price_action == "R" && $product.price == 0) && ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "ProductTracking::DO_NOT_TRACK"|enum) && $product.is_edp != "Y") && !($product.has_options && !$show_product_options)}
     {if $details_page && $product.out_of_stock_actions == "S"}
@@ -82,10 +87,10 @@
                 <input id="sw_product_notify_{$obj_prefix}{$obj_id}" type="checkbox" class="checkbox cm-switch-availability cm-switch-visibility" name="product_notify" {if $product.inventory_notification == "Y"}checked="checked"{/if} onclick="
                     {if !$auth.user_id}
                         if (!this.checked) {
-                            Tygh.$.ceAjax('request', '{"products.product_notifications?enable="|fn_url nofilter}' + 'N&product_id={$product.product_id}&email=' + $('#product_notify_email_{$obj_prefix}{$obj_id}').get(0).value, {$ldelim}cache: false{$rdelim});
+                            Tygh.$.ceAjax('request', '{"products.product_notifications?enable="|fn_url nofilter}' + 'N&product_id={$product.product_id}&combination_hash={$follow_combination}&email=' + $('#product_notify_email_{$obj_prefix}{$obj_id}').get(0).value, {$ldelim}cache: false{$rdelim});
                         }
                     {else}
-                        Tygh.$.ceAjax('request', '{"products.product_notifications?enable="|fn_url nofilter}' + (this.checked ? 'Y' : 'N') + '&product_id=' + '{$product.product_id}', {$ldelim}cache: false{$rdelim});
+                        Tygh.$.ceAjax('request', '{"products.product_notifications?enable="|fn_url nofilter}' + (this.checked ? 'Y' : 'N') + '&product_id=' + '{$product.product_id}' + '&combination_hash=' + '{$follow_combination}', {$ldelim}cache: false{$rdelim});
                     {/if}
                 "/>{__("notify_when_back_in_stock")}
             </label>
@@ -95,7 +100,7 @@
 
             <input type="hidden" name="enable" value="Y"  />
             <input type="hidden" name="product_id" value="{$product.product_id}"  />
-            <input type="hidden" name="combination_hash" value="{$product.combination_hash|default:0}"  />
+            <input type="hidden" name="combination_hash" value="{$follow_combination}"  />
             
             <label id="product_notify_email_label" for="product_notify_email_{$obj_prefix}{$obj_id}" class="cm-required cm-email hidden">{__("email")}</label>
             <input type="text" name="email" id="product_notify_email_{$obj_prefix}{$obj_id}" size="20" value="{$product.inventory_notification_email|default:__("enter_email")}" class="ty-product-notify-email__input cm-hint" title="{__("enter_email")}" />
@@ -117,7 +122,7 @@
 
 {capture name="add_to_cart_`$obj_id`"}
 {if $show_add_to_cart}
-<div class="cm-reload-{$obj_prefix}{$obj_id} {$add_to_cart_class}" id="add_to_cart_update_{$obj_prefix}{$obj_id}">
+<div class="cm-reload-{$obj_prefix}{$obj_id} {$add_to_cart_class} ty-inline-block" id="add_to_cart_update_{$obj_prefix}{$obj_id}">
 <input type="hidden" name="appearance[show_add_to_cart]" value="{$show_add_to_cart}" />
 <input type="hidden" name="appearance[show_list_buttons]" value="{$show_list_buttons}" />
 <input type="hidden" name="appearance[but_role]" value="{$but_role}" />
@@ -449,9 +454,6 @@
                 </div>
                 {/if}
             </div>
-            {*if $product.prices}
-                {include file="views/products/components/products_qty_discounts.tpl"}
-            {/if*}
         {elseif !$bulk_add}
             <input type="hidden" name="product_data[{$obj_id}][amount]" value="{$default_amount}" />
         {/if}

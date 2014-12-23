@@ -13,19 +13,19 @@
             CREATE TABLE IF NOT EXISTS `cscart_players` (
             `player_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
             `player` varchar(128) NOT NULL,
-            `status` char(1) CHARACTER SET NOT NULL DEFAULT 'A',
+            `status` char(1) NOT NULL DEFAULT 'A',
             `ranking` smallint(5) unsigned NOT NULL,
-            `gender` char(1) CHARACTER SET NOT NULL DEFAULT 'M',
+            `gender` char(1) NOT NULL DEFAULT 'M',
             `birthday` int(11) NOT NULL,
             `birthplace` varchar(128) NOT NULL,
             `residence` varchar(128) NOT NULL,
             `height` smallint(5) NOT NULL,
             `weight` smallint(5) NOT NULL,
-            `plays` char(1) CHARACTER SET NOT NULL DEFAULT 'R',
+            `plays` char(1) NOT NULL DEFAULT 'R',
             `turned_pro` smallint(5) NOT NULL,
             `coach` varchar(128) NOT NULL,
-            `titles` SMALLINT( 5 ) UNSIGNED NOT NULL,
-            `rss_link` VARCHAR( 255 ) NOT NULL,
+            `titles` smallint(5) unsigned NOT NULL,
+            `rss_link` varchar(255) NOT NULL,
             PRIMARY KEY (`player_id`)
             ) DEFAULT CHARSET=utf8 ;
         </item>
@@ -67,6 +67,13 @@
             KEY `pd` (`product_id`,`user_id`,`email`,`combination_hash`)
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
         </item>
+        <item>
+            ALTER TABLE `cscart_discussion_messages` ADD `city` VARCHAR( 128 ) NOT NULL ,
+            ADD `age` VARCHAR( 32 ) NOT NULL ,
+            ADD `play_level` SMALLINT( 5 ) UNSIGNED NOT NULL ,
+            ADD `surface` SMALLINT( 5 ) NOT NULL ,
+            ADD `configuration` VARCHAR( 256 ) NOT NULL ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennisplaza_template">Шаблон TennisPlaza</item>
@@ -99,7 +106,6 @@
         <item lang="ru" id="add_players">Добавить игроков</item>
         <item lang="ru" id="add_players_and_close">Добавить игроков и закрыть</item>
         <item lang="ru" id="racket_played_by">Этой ракеткой предпочитают играть</item>
-        <item lang="ru" id="years_old">лет</item>
         <item lang="ru" id="cm">см</item>
         <item lang="ru" id="kg">кг</item>
         <item lang="ru" id="back">Назад</item>
@@ -132,6 +138,13 @@
         <item lang="ru" id="synthetic_surface">Синтетика</item>
         <item lang="ru" id="synthetic_grass_surface">Синтетическая трава</item>
         <item lang="ru" id="parquet_surface">Паркет</item>
+        <item lang="ru" id="years_old_1">год</item>
+        <item lang="ru" id="years_old_2_4">года</item>
+        <item lang="ru" id="years_old_5">лет</item>
+        <item lang="ru" id="configuration">Конфигурация</item>
+        <item lang="ru" id="scale_of_discount">Шкала скидок</item>
         <item lang="ru" id="asphalt_surface">Асфальт</item>
+        <item lang="ru" id="racket_string_tension">Ракетка - струна - жесткость натяжки</item>
+        <item lang="ru" id="additional_info_note">Следующая информация необязательна для заполнения, но другим пользователям будет интересно знать ее, т.к. с ней Ваш комментарий будет более полный</item>
     </language_variables>
 </addon>

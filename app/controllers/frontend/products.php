@@ -276,7 +276,7 @@ function fn_update_product_notifications($data)
 {
     // [TennisPlaza]
     if (!empty($data['email']) && fn_validate_email($data['email'])) {
-        $_SESSION['product_notifications']['email'][$data['combination_hash']] = $data['email'];
+        $_SESSION['product_notifications']['email'] = $data['email'];
         if ($data['enable'] == 'Y') {
             db_query("REPLACE INTO ?:product_subscriptions ?e", $data);
             if (!isset($_SESSION['product_notifications']['product_ids']) || !isset($_SESSION['product_notifications']['product_ids'][$data['product_id']]) || (is_array($_SESSION['product_notifications']['product_ids'][$data['product_id']]) && (!in_array($data['product_id'], array_keys($_SESSION['product_notifications']['product_ids'])) || !in_array($data['combination_hash'], $_SESSION['product_notifications']['product_ids'][$data['product_id']])))) {

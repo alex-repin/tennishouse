@@ -4,7 +4,7 @@
     {hook name="products:view_main_info"}
         {if $product}
             {assign var="obj_id" value=$product.product_id}
-            {include file="common/product_data.tpl" product=$product but_role="big" but_text=__("add_to_cart")}
+            {include file="common/product_data.tpl" product=$product but_role="big" but_text=__("add_to_cart") hide_qty_label=true}
             <div class="ty-product-block__img-wrapper">
                 {hook name="products:image_wrap"}
                     {if !$no_images}
@@ -132,28 +132,19 @@
                     </div>
                 </div>
 
-                <div class="ty-product-qty">
-                    {assign var="qty" value="qty_`$obj_id`"}
-                    {$smarty.capture.$qty nofilter}
-
-                    {assign var="min_qty" value="min_qty_`$obj_id`"}
-                    {$smarty.capture.$min_qty nofilter}
-                </div>
-                
-                {assign var="product_edp" value="product_edp_`$obj_id`"}
-                {$smarty.capture.$product_edp nofilter}
-
-                {if $show_descr}
-                {assign var="prod_descr" value="prod_descr_`$obj_id`"}
-                    <h3 class="ty-product-block__description-title">{__("description")}</h3>
-                    <div class="ty-product-block__description">{$smarty.capture.$prod_descr nofilter}</div>
-                {/if}
-
                 {if $capture_buttons}{capture name="buttons"}{/if}
                 <div class="ty-product-block__button">
                     {if $show_details_button}
                         {include file="buttons/button.tpl" but_href="products.view?product_id=`$product.product_id`" but_text=__("view_details") but_role="submit"}
                     {/if}
+
+                    <div class="ty-product-qty">
+                        {assign var="qty" value="qty_`$obj_id`"}
+                        {$smarty.capture.$qty nofilter}
+
+                        {assign var="min_qty" value="min_qty_`$obj_id`"}
+                        {$smarty.capture.$min_qty nofilter}
+                    </div>
 
                     {assign var="add_to_cart" value="add_to_cart_`$obj_id`"}
                     {$smarty.capture.$add_to_cart nofilter}

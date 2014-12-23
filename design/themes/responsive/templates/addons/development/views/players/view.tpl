@@ -17,7 +17,7 @@
         <div class="ty-player-block__left">
             <div class="ty-player-data">
                 <span class="ty-player-data__label">{__("date_of_birth")}:</span>
-                <div class="ty-player-data__value">{$player_data.birthday|date_format:"`$settings.Appearance.date_format`"} ({$player_data.birthday|fn_get_age} {__("years_old")})</div>
+                <div class="ty-player-data__value">{$player_data.birthday|date_format:"`$settings.Appearance.date_format`"} ({$player_data.birthday|fn_get_age|fn_show_age})</div>
             </div>
             <div class="ty-player-data">
                 <span class="ty-player-data__label">{__("birthplace")}:</span>

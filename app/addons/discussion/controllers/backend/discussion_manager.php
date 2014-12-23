@@ -71,6 +71,13 @@ function fn_get_discussions($params, $items_per_page)
     $fields = array (
         '?:discussion_posts.*',
         '?:discussion_messages.message',
+        // [tennisplaza]
+        '?:discussion_messages.city',
+        '?:discussion_messages.age',
+        '?:discussion_messages.play_level',
+        '?:discussion_messages.surface',
+        '?:discussion_messages.configuration',
+        // [tennisplaza]
         '?:discussion_rating.rating_value',
         '?:discussion.*'
     );

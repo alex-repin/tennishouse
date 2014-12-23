@@ -1,6 +1,3 @@
-/*.ty-tabs__content {
-    width: 500px;
-}*/
 select {
     min-width: 2em;
 }
@@ -25,7 +22,7 @@ select {
 
 .tooltip {
     display: none;
-    max-width: 200px;
+    max-width: 250px;
     z-index: 10000;
     padding: 9px;
     background: rgba(0, 0, 0, 0.8);
@@ -100,9 +97,11 @@ select {
 .top-menu .ty-menu__item .ty-menu__item-link {
     font-size: 17px;
     color: #000000;
+    min-height: 42px;
+    padding: 11px 20px;
 }
 .tygh-header > div {
-    padding-top: 119px;
+    padding-top: 109px;
 }
 .tygh-top-panel {
     left: 0;
@@ -117,7 +116,7 @@ select {
     padding-top: 30px;
 }
 .content-grid, .header-grid {
-    background: url("../../../media/images/addons/development/tennisplaza_wrapper_background.png") no-repeat scroll center top transparent !important;
+    background-color: #fff;
     box-shadow: 0 0 10px 1px #aaa;
 }
 .container-fluid {
@@ -154,22 +153,22 @@ select {
     margin-top: 0;
 }
 .top-menu-section .ty-benefits-low-price {
-    background: url('../media/images/icons/benefits_sprite_top.png') no-repeat 5px 2px;
-    width: 32px;
+    background: url('../media/images/icons/benefits_sprite_top.png') no-repeat 0 2px;
+    width: 21px;
     height: 27px;
     display: block;
     margin: 0 auto;
 }
 .top-menu-section .ty-benefits-free-shipping {
-    background: url('../media/images/icons/benefits_sprite_top.png') no-repeat -37px 0;
-    width: 40px;
+    background: url('../media/images/icons/benefits_sprite_top.png') no-repeat -36px 0;
+    width: 29px;
     height: 27px;
     display: block;
     margin: 0 auto;
 }
 .top-menu-section .ty-benefits-free-returns {
-    background: url('../media/images/icons/benefits_sprite_top.png') no-repeat -79px 2px;
-    width: 40px;
+    background: url('../media/images/icons/benefits_sprite_top.png') no-repeat -72px 2px;
+    width: 32px;
     height: 27px;
     display: block;
     margin: 0 auto;
@@ -181,6 +180,7 @@ select {
     vertical-align: top;
     margin-left: 5px;
     width: 170px;
+    font-size: 12px;
 }
 .ty-benefits-guarantees__top {
     display: inline-block;
@@ -192,20 +192,29 @@ select {
 }
 .ty-benefits-guarantees__icon-block {
     display: inline-block;
-    width: 40px;
-    padding: 3px 0;
+    width: 32px;
+    padding: 1px 0;
 }
 .ty-benefits-guarantees__top:hover {
-    background: lighten(#484649, 5%);
+    background: lighten(@top_menu_background, 17%);
 }
-.ty-benefits-guarantees__text-benefits {
-    padding: 8px 0;
+.ty-benefits-guarantees__text-single-line {
+    padding: 6px 0;
 }
 /* Top block */
 
 
 
 /*Top menu*/
+.ty-dropdown-box__title {
+    padding: 7px 11px 6px 8px;
+}
+.ty-dropdown-box__title a {
+    font-size: 14px;
+}
+.ty-dropdown-box__title.open {
+    background: lighten(@top_menu_background, 18%);
+}
 .no-touch .ty-menu__item:hover .ty-menu__item-link, .is-hover-menu .ty-menu__item-link, .is-hover-menu.ty-menu__item-active .ty-menu__item-link {
     background-color: lighten(@menu, 35%);
     color: #000000;
@@ -277,14 +286,12 @@ select {
 .ty-menu__item.ty-menu__item-active .ty-menu__item-link {
     background-color: lighten(@menu, 20%);
 }
-
-
 .top-grid {
     max-width: none;
     padding: 0;
 }
 .ty-dropdown-box__title:hover {
-    background: lighten(#484649, 5%);
+    background: lighten(@top_menu_background, 18%);
 }
 .logged .ty-account-info__title, .logged .ty-account-info__user-arrow, .ty-dropdown-box__title a, .ty-minicart__icon, .ty-dropdown-box .ty-icon-down-micro {
     color: #ffffff;
@@ -293,7 +300,7 @@ select {
     padding: 0;
 }
 .top-logo {
-    padding: 8px 0;
+    padding: 5px 0;
 }
 .top-menu {
     box-shadow: 0 0 5px 1px #888888;
@@ -325,9 +332,6 @@ select {
 .top-cart-content {
     float: right;
 }
-/*.top-menu-phone {
-    text-align: right;
-}*/
 /*Top menu*/
 
 /*Category menu*/
@@ -343,13 +347,6 @@ select {
 .ty-menu .ty-menu__item .ty-menu__item-link {
     color: @category_menu_links;
 }
-/*.no-touch .ty-menu .ty-menu__item:hover .ty-menu__item-link, .is-hover-menu .ty-menu .ty-menu__item-link, .is-hover-menu .ty-menu .ty-menu__item-active .ty-menu__item-link {
-    background-color: darken(@category_menu, 10%);
-    color: @category_menu_links;
-    text-shadow: none;
-    transition: none;
-}*/
-
 .ty-menu-vertical .ty-menu__items {
     border-bottom: 1px solid #34495E;
 }
@@ -361,10 +358,6 @@ select {
     background-color: darken(@category_menu, 10%);
     color: @category_menu_links;
 }
-/*.ty-menu-vertical .ty-menu__item .ty-menu__submenu .ty-menu__item-link {
-    color: @category_menu_links;
-    background-color: red;
-}*/
 .no-touch .ty-menu-vertical .ty-menu__item .ty-menu__submenu .ty-menu__item:hover > .ty-menu__item-link {
     background: @menu;
     color: @category_menu_links;
@@ -470,7 +463,44 @@ select {
 /*Filters*/
 
 /*Player details*/
-
+.ty-product-qty {
+    display: inline-block;
+    margin-top: 2px;
+    vertical-align: top;
+}
+.ty-product-block__button {
+    margin-top: 15px;
+}
+.ty-tabs__content {
+    border-right: 1px solid darken(@base, 7%);
+    border-bottom: 1px solid darken(@base, 7%);
+    border-left: 1px solid darken(@base, 7%);
+    padding: 15px 5px 15px 10px;
+}
+.ty-tabs__content > div {
+    height: 350px;
+}
+.ty-qty-disc-logo {
+    background:url("../../../design/themes/responsive/media/images/addons/development/qty_disc.png") no-repeat scroll 0 0 transparent !important;
+    height: 18px;
+    width: 19px;
+    display: inline-block;
+    margin: 0 10px;
+}
+.ty-qty-discount__table {
+    margin-top: 0;
+    width: 100%;
+}
+.ty-qty-discount__label {
+    border-bottom: 1px solid darken(@base, 7%);
+    font-size: 20px;
+    padding-bottom: 5px;
+}
+.ty-qty-discount {
+    margin: 50px 0 15px;
+    padding: 5px 10px;
+    vertical-align: bottom;
+}
 .ty-product-block__option .help-inline {
     margin: 0;
 }
@@ -479,7 +509,7 @@ select {
     vertical-align: sub;
 }
 .ty-product-block__players {
-    margin-top: 20px;
+    margin-top: 30px;
     width: 450px;
     display: inline-block;
 }
@@ -487,7 +517,7 @@ select {
     display: inline-block;
     margin: 5px 10px 10px;
     vertical-align: top;
-    width: 80px;
+    width: 90px;
 }
 .ty-product-list__player_image div {
     font-size: 90%;
@@ -734,6 +764,9 @@ select {
     margin-right: -4px;
     border-radius: 4px;
 }
+/*Player details*/
+
+/*Product page*/
 .ty-product-detail__brand-image {
     display: inline-block;
 }
@@ -743,7 +776,7 @@ select {
 .ty-product-detail__buy-section {
     border: 1px solid darken(@base, 5%);
     background: lighten(@base, 3%);
-    padding: 0 10px 15px;
+    padding: 0 10px 5px;
     margin-bottom: 30px;
 }
 .ty-product-block-title {
@@ -813,13 +846,11 @@ select {
 .ty-btn__add-to-cart {
     font-size: 16px;
     padding: 6px 50px;
-    color: #484848;
 }
 .ty-btn__add-to-cart:hover {
-    background: lighten(@primary_button, 15%);
-    color: #484848;
     transition: all 400ms linear 0s;
-    box-shadow: 0 0 5px 1px #ddd;
+    border: 1px solid #bbb;
+    box-shadow: 0 0 5px 1px #ccc;
 }
 .ty-breadcrumbs__current {
     color: darken(@base, 25%);
@@ -828,7 +859,7 @@ select {
     color: @links;
 }
 .ty-product-qty {
-    margin-top: 10px;
+    margin-top: 2px;
 }
 .no-touch .ty-menu__item:hover .ty-menu__submenu-items,
 .is-hover-menu .ty-menu__submenu-items {
@@ -837,17 +868,13 @@ select {
 .ty-control-group__item {
     padding: 0;
 }
-/*.ty-product-notify-email {
-    margin: 5px;
-    position: absolute;
-}*/
 .ty-product-detail__follow-wrap {
     position: relative;
 }
 .ty-product-detail__follow-controller {
     margin: 0;
 }
-/*Player details*/
+/*Product page*/
 
 /* Checkout */
 .checkout-steps .ty-btn {
@@ -855,6 +882,7 @@ select {
 }
 /* Checkout */
 
+/*Category page*/
 .ty-pagination-sorting, .ty-pagination__bottom {
     background: @base;
     display: inline-block;
@@ -935,6 +963,9 @@ select {
     top: 85px;
     box-shadow: 0 0 5px 1px #333;
 }
+/*Category page*/
+
+/*Profile page*/
 .ty-login-info__txt li {
     list-style-type: disc;
     margin-bottom: 11px;
@@ -956,15 +987,62 @@ select {
     width: 46%;
 }
 .ty-contact-address {
-    border-right: 1px solid #ededed;
+    border-right: 1px solid @base;
     display: inline-block;
     padding: 0 18px;
     vertical-align: top;
     width: 46%;
 }
+/*Profile page*/
+
+
+/*Discussion*/
 .ty-new-post_additional_fields input {
     height: 29px;
 }
+.ty-new-post__additional-info {
+    border-top: 1px solid @base;
+    color: lighten(@font, 25%);
+    display: inline-block;
+    padding: 10px 0;
+}
+.ty-new-post__additional-info .ty-control-group__title {
+    font-weight: normal;
+}
+.ty-new-post__additional-info-note {
+    width: 550px;
+    padding-bottom: 10px;
+}
+.ty-post-additionl-info {
+    margin-top: 5px;
+}
+.ty-post-additionl-info div {
+    color: lighten(@font, 25%);
+    margin-right: 20px;
+    font-size: 12px;
+}
+.ty-post-additionl-info .icon-question-sign {
+    opacity: 0.4;
+}
+.ty-tooltip-block {
+    vertical-align: top;
+}
+.ty-discussion-post__content {
+    margin: 0;
+}
+.ty-discussion-post {
+    padding: 5px 15px;
+    margin: 5px 0 10px;
+}
+.ty-discussion-post__buttons {
+    padding: 5px 10px;
+    margin-top: 15px;
+}
+.discussion-block {
+    height: 290px;
+}
+/*Discussion*/
+
 /*.ty-range-slider .ui-slider-handle {
     background-color: lighten(@font, 22%);
 }*/

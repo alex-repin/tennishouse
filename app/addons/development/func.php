@@ -29,11 +29,11 @@ function fn_development_gather_additional_product_data_post(&$product, $auth, $p
         } elseif ($product['tracking'] == 'B') {
             $combination = 0;
         }
-        if ($auth['user_id'] == 0 && !empty($_SESSION['product_notifications']['email'][$combination])) {
-            $subscription_id = db_get_field("SELECT subscription_id FROM ?:product_subscriptions WHERE product_id = ?i AND combination_hash = ?i AND email = ?s", $product['product_id'], $combination, $_SESSION['product_notifications']['email'][$combination]);
+        if ($auth['user_id'] == 0 && !empty($_SESSION['product_notifications']['email'])) {
+            $subscription_id = db_get_field("SELECT subscription_id FROM ?:product_subscriptions WHERE product_id = ?i AND combination_hash = ?i AND email = ?s", $product['product_id'], $combination, $_SESSION['product_notifications']['email']);
             if (!empty($subscription_id)) {
                 $product['inventory_notification'] = 'Y';
-                $product['inventory_notification_email'] = $_SESSION['product_notifications']['email'][$combination];
+                $product['inventory_notification_email'] = $_SESSION['product_notifications']['email'];
             }
         } else {
             $email = db_get_field("SELECT email FROM ?:product_subscriptions WHERE product_id = ?i AND combination_hash = ?i AND user_id = ?i", $product['product_id'], $combination, $auth['user_id']);
@@ -168,11 +168,31 @@ function fn_development_get_products($params, &$fields, $sortings, $condition, $
     $fields[] = '?:categories.id_path';
 }
 
+function fn_show_age($age)
+{
+    if ($age > 4 && $age < 21) {
+        $word = __("years_old_5");
+    } else {
+        $low_age = $age % 10;
+        if ($low_age == 1) {
+            $word = __("years_old_1");
+        } elseif ($low_age > 1 && $low_age < 5) {
+            $word = __("years_old_2_4");
+        } else {
+            $word = __("years_old_5");
+        }
+    }
+    
+    return $age . ' ' . $word;
+}
 function fn_get_age($birth_date)
 {
+    if (empty($birth_date)) {
+        return false;
+    }
     $now = time();
     $years = fn_date_format(time(), "%Y") - fn_date_format($birth_date, "%Y");
-//fn_print_r(fn_date_format(time(), "%Y"), fn_date_format($birth_date, "%Y"));
+
     if (fn_date_format(time(), "%m") < fn_date_format($birth_date, "%m") || (fn_date_format(time(), "%m") == fn_date_format($birth_date, "%d") && fn_date_format(time(), "%d") < fn_date_format($birth_date, "%m"))) {
         $years--;
     }
@@ -188,36 +208,40 @@ function fn_development_delete_product_post($product_id, $product_deleted)
 
 function fn_development_update_product_post($product_data, $product_id, $lang_code, $create)
 {
-    if ($create) {
-        $existing_gear = array();
-    } else {
-        $existing_gear = db_get_fields("SELECT player_id FROM ?:players_gear WHERE product_id = ?i", $product_id);
-    }
-    $product_data['players'] = (empty($product_data['players'])) ? array() : explode(',', $product_data['players']);
-    $to_delete = array_diff($existing_gear, $product_data['players']);
+    if (isset($product_data['players'])) {
+        if ($create) {
+            $existing_gear = array();
+        } else {
+            $existing_gear = db_get_fields("SELECT player_id FROM ?:players_gear WHERE product_id = ?i", $product_id);
+        }
+        $product_data['players'] = (empty($product_data['players'])) ? array() : explode(',', $product_data['players']);
+        $to_delete = array_diff($existing_gear, $product_data['players']);
 
-    if (!empty($to_delete)) {
-        db_query("DELETE FROM ?:players_gear WHERE player_id IN (?n) AND product_id = ?i", $to_delete, $product_id);
-    }
-    $to_add = array_diff($product_data['players'], $existing_gear);
+        if (!empty($to_delete)) {
+            db_query("DELETE FROM ?:players_gear WHERE player_id IN (?n) AND product_id = ?i", $to_delete, $product_id);
+        }
+        $to_add = array_diff($product_data['players'], $existing_gear);
 
-    if (!empty($to_add)) {
-        foreach ($to_add as $i => $gr) {
-            $__data = array(
-                'product_id' => $product_id,
-                'player_id' => $gr
-            );
-            db_query("REPLACE INTO ?:players_gear ?e", $__data);
+        if (!empty($to_add)) {
+            foreach ($to_add as $i => $gr) {
+                $__data = array(
+                    'product_id' => $product_id,
+                    'player_id' => $gr
+                );
+                db_query("REPLACE INTO ?:players_gear ?e", $__data);
+            }
         }
     }
 }
 
 function fn_development_update_product_pre(&$product_data, $product_id, $lang_code, $can_update)
 {
-    $id_path = explode('/', db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $product_data['main_category']));
-    $enable_discussion = array('254', '263', '265', '266', '312', '313', '315', '316');
-    if (!empty(array_intersect($id_path, $enable_discussion))) {
-        $product_data['discussion_type'] = 'B';
+    if (!empty($product_data['main_category'])) {
+        $id_path = explode('/', db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $product_data['main_category']));
+        $enable_discussion = array('254', '263', '265', '266', '312', '313', '315', '316');
+        if (!empty(array_intersect($id_path, $enable_discussion))) {
+            $product_data['discussion_type'] = 'B';
+        }
     }
 }
 

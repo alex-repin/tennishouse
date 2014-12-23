@@ -9228,8 +9228,16 @@ function fn_get_product_subscribers($params, $items_per_page = 0)
         $limit = db_paginate($params['page'], $params['items_per_page']);
     }
 
-    $subscribers = db_get_hash_array("SELECT subscription_id as subscriber_id, email FROM ?:product_subscriptions WHERE product_id = ?i $condition $sorting $limit", 'subscriber_id', $params['product_id']);
+    // [TennisPlaza]
+    $subscribers = db_get_hash_array("SELECT ?:product_subscriptions.subscription_id as subscriber_id, ?:product_subscriptions.email, ?:product_options_inventory.combination FROM ?:product_subscriptions LEFT JOIN ?:product_options_inventory ON ?:product_options_inventory.combination_hash = ?:product_subscriptions.combination_hash WHERE ?:product_subscriptions.product_id = ?i $condition $sorting $limit", 'subscriber_id', $params['product_id']);
 
+    if (!empty($subscribers)) {
+        foreach ($subscribers as $i => $subscr) {
+            $subscribers[$i]['options'] = fn_get_product_options_by_combination($subscr['combination']);
+        }
+    }
+    // [TennisPlaza]
+    
     /**
      * Changes product subscribers
      *
