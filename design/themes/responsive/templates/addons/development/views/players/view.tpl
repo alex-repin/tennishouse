@@ -1,7 +1,7 @@
 {assign var="obj_id" value=$player_data.player_id}
 {assign var="obj_id_prefix" value="`$obj_prefix``$obj_id`"}
 <div class="ty-player-details">
-    <div style="display: inline-block;">
+    <div class="ty-player-detail_wrapper">
     <div class="ty-player-detail">
         <div class="ty-player-block__img-wrapper">
             {hook name="products:image_wrap"}
@@ -50,45 +50,47 @@
         </div>
     </div>
     {if $player_data.news_feed}
-    <div class="ty-news-feed">
-        <div id="scroll_list_news_{$player_data.player_id}" class="owl-carousel ty-scroller-list">
-            {foreach from=$player_data.news_feed item="news" name="for_news"}
-                <div class="ty-scroller-news-list__item">
-                    <span class="ty-news-date">{$news.timestamp|date_format:"%e %B %Y %A, %H:%M"}</span>
-                                            
-                    <div class="ty-news-item-title">
-                        <a target="_blank" href="{$news.link}">
-                            <div class="ty-news-item-column-descritpion">
-                                <div class="ty-news-item-row-title">{$news.title}</div>
-                                <div class="ty-news-item-row-description">{$news.description}</div>
-                            </div>
-                        </a>
+    <div class="ty-tennisplaza-container ty-news-feed">
+        <div class="ty-tennisplaza-body">
+            <div id="scroll_list_news_{$player_data.player_id}" class="owl-carousel ty-scroller-list">
+                {foreach from=$player_data.news_feed item="news" name="for_news"}
+                    <div class="ty-scroller-news-list__item">
+                        <span class="ty-news-date">{$news.timestamp|date_format:"%e %B %Y %A, %H:%M"}</span>
+                                                
+                        <div class="ty-news-item-title">
+                            <a target="_blank" href="{$news.link}">
+                                <div class="ty-news-item-column-descritpion">
+                                    <div class="ty-news-item-row-title">{$news.title}</div>
+                                    <div class="ty-news-item-row-description">{$news.description}</div>
+                                </div>
+                            </a>
+                        </div>
                     </div>
-                </div>
-            {/foreach}
+                {/foreach}
+            </div>
+
+            {script src="js/lib/owlcarousel/owl.carousel.min.js"}
+            <script type="text/javascript">
+            (function(_, $) {
+                $.ceEvent('on', 'ce.commoninit', function(context) {
+                    var elm = context.find('#scroll_list_news_{$player_data.player_id}');
+
+                    if (elm.length) {
+                        elm.owlCarousel({
+                            items: 1,
+                            scrollPerPage: false,
+                            autoPlay: '15000',
+                            slideSpeed: '400',
+                            stopOnHover: true,
+                            navigation: true,
+                            navigationText: ['', ''],
+                            pagination: false
+                        });
+                    }
+                });
+            }(Tygh, Tygh.$));
+            </script>
         </div>
-
-        {script src="js/lib/owlcarousel/owl.carousel.min.js"}
-        <script type="text/javascript">
-        (function(_, $) {
-            $.ceEvent('on', 'ce.commoninit', function(context) {
-                var elm = context.find('#scroll_list_news_{$player_data.player_id}');
-
-                if (elm.length) {
-                    elm.owlCarousel({
-                        items: 1,
-                        scrollPerPage: false,
-                        autoPlay: '15000',
-                        slideSpeed: '400',
-                        stopOnHover: true,
-                        navigation: true,
-                        navigationText: ['<', '>'],
-                        pagination: false
-                    });
-                }
-            });
-        }(Tygh, Tygh.$));
-        </script>
     </div>
     {/if}
     </div>

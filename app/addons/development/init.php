@@ -20,9 +20,9 @@ define('SHOES_CATEGORY_ID', 263);
 define('BAGS_CATEGORY_ID', 264);
 define('ACCESSORIES_CATEGORY_ID', 267);
 define('SPORTS_NUTRITION_CATEGORY_ID', 302);
+
 define('BRAND_FEATURE_ID', 29);
 define('TYPE_FEATURE_ID', 33);
-
 define('BABOLAT_SERIES_FEATURE_ID', 34);
 define('HEAD_SERIES_FEATURE_ID', 37);
 define('WILSON_SERIES_FEATURE_ID', 39);
@@ -35,6 +35,8 @@ define('BIRTHDAY_PF_ID', 37);
 define('PLAY_LEVEL_PF_ID', 36);
 define('SURFACE_PF_ID', 38);
 define('CONFIGURATION_PF_ID', 39);
+
+define('PRODUCT_BLOCK_TABS_GRID_ID', 200);
 
 fn_register_hooks(
     'update_product_post',

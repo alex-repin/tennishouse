@@ -19,7 +19,7 @@
                 {/hook}
                 {if $product.players}
                     {if $product.category_type == 'R'}
-                        {$title = __("racket_played_by")}
+                        {$title = __("`$product.category_type`_played_by")}
                     {/if}
                     <div class="ty-product-block__players">
                         <h3 class="ty-mainbox-simple-title">
@@ -183,7 +183,19 @@
 
 </div>
 
-<div class="product-details">
-</div>
+{if $block_tabs.tabs}
+    <div class="ty-tennisplaza-container ty-products-scroller">
+    {$_block_tabs = []}
+    {capture name="block_tabsbox"}
+        {foreach from=$block_tabs.tabs item="block_data" key="block_tab_id"}
+            {if $smarty.capture.$block_tab_id}
+                {$_block_tabs.tabs.$block_tab_id = $block_data}
+                {$smarty.capture.$block_tab_id nofilter}
+            {/if}
+        {/foreach}
+    {/capture}
+    {include file="addons/development/common/tabsbox.tpl" content=$smarty.capture.block_tabsbox navigation=$_block_tabs}
+    </div>
+{/if}
 
 {capture name="mainbox_title"}{assign var="details_page" value=true}{/capture}

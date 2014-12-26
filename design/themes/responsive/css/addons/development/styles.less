@@ -100,7 +100,7 @@ select {
     min-height: 42px;
     padding: 11px 20px;
 }
-.tygh-header > div {
+.tygh-content {
     padding-top: 109px;
 }
 .tygh-top-panel {
@@ -477,7 +477,7 @@ select {
     border-left: 1px solid darken(@base, 7%);
     padding: 15px 5px 15px 10px;
 }
-.ty-tabs__content > div {
+.ty-product-block__left .ty-tabs__content > div {
     height: 350px;
 }
 .ty-qty-disc-logo {
@@ -545,6 +545,10 @@ select {
     padding: 30px 0 10px 30px;
     text-align: center;
 }
+.ty-player-detail_wrapper {
+    display: inline-block;
+    width: 722px;
+}
 .ty-player-detail {
     display: inline-block;
     min-height: 300px;
@@ -588,51 +592,6 @@ select {
     letter-spacing: -1px;
     margin-left: 5px;
 }
-.ty-news-feed {
-    border: 1px solid #ebebeb;
-    padding: 5px;
-    text-align: left;
-    vertical-align: top;
-    width: 700px;
-    position: relative;
-    margin: 10px 5px;
-}
-.ty-news-feed .owl-prev {
-    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_right.png") no-repeat scroll 0 0 #ffffff !important;
-    border: 1px solid #ebebeb;
-    border-radius: unset !important;
-    height: 50px;
-    left: -25px;
-    margin: 0 !important;
-    opacity: 1 !important;
-    padding: 0 !important;
-    position: absolute;
-    top: 5px;
-    width: 23px;
-}
-.ty-news-feed .owl-next {
-    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_left.png") no-repeat scroll 0 0 #ffffff !important;
-    border: 1px solid #ebebeb;
-    border-radius: unset !important;
-    height: 50px;
-    right: -25px;
-    margin: 0 !important;
-    opacity: 1 !important;
-    padding: 0 !important;
-    position: absolute;
-    top: 5px;
-    width: 23px;
-}
-.ty-news-feed .owl-theme .owl-controls {
-    margin: 0;
-}
-.ty-news-feed h2 {
-    font-size: 15px;
-    text-align: right;
-    color: #ffffff;
-    background-color: #000000;
-    padding: 2px 15px 1px 2px;
-}
 .ty-player-details {
     display: inline-block;
     width: 100%;
@@ -665,7 +624,6 @@ select {
 }
 .ty-news-item-title {
     display: inline-block;
-    margin: 0 5px;
     width: 81%;
 }
 .ty-player-titles {
@@ -682,7 +640,7 @@ select {
 }
 .ty-tp-block h2 {
     color: #ffffff;
-    background-color: #000000;
+    background-color: @top_menu_background;
     padding: 2px 2px 1px 15px;
 }
 .ty-player-rackets {
@@ -887,7 +845,7 @@ select {
     background: @base;
     display: inline-block;
     width: 100%;
-    margin: 10px 0;
+    margin: 5px 0 10px;
 }
 .ty-sort-container {
     background: none;
@@ -1042,6 +1000,119 @@ select {
     height: 290px;
 }
 /*Discussion*/
+
+/* TennisPlaza scroller block*/
+.ty-tennisplaza-container .ty-tabs__content {
+    padding: 0;
+}
+.ty-tennisplaza-container .ty-tabs__item, .ty-tabs .subtab, .ty-tennisplaza-container .ty-tabs__item.active, .ty-tabs .subtab.active {
+    background: transparent;
+    border: 0;
+    padding: 0;
+}
+.ty-tennisplaza-container .ty-tabs {
+    border: 0;
+}
+.ty-tennisplaza-container a.ty-tabs__a {
+    padding: 0;
+    height: unset;
+}
+.ty-tennisplaza-container h2 {
+    background-color: darken(@base, 40%);
+    color: #fff;
+    display: inline-block;
+    margin-bottom: 5px;
+    padding: 2px 15px 1px;
+}
+.ty-tennisplaza-container .ty-tabs__item h2 {
+    background-color: @base;
+    color: #7c7e80;
+    font-size: 18px;
+}
+.ty-tennisplaza-container .ty-tabs__item h2:hover {
+    background-color: lighten(@base, 2%);
+    color: #7c7e80;
+}
+.ty-tennisplaza-container .active h2, .ty-tennisplaza-container .active h2:hover {
+    background-color: darken(@base, 40%);
+    color: #ffffff;
+    border: 0;
+    padding: 2px 15px 1px;
+}
+.ty-tp-block h2 {
+    margin-bottom: 5px;
+}
+.ty-tennisplaza-container {
+    margin: 10px 5px;
+}
+.ty-tennisplaza-body {
+    border: 1px solid #ebebeb;
+    text-align: left;
+    vertical-align: top;
+    position: relative;
+}
+.ty-products-scroller .ty-tennisplaza-body .owl-prev {
+    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_right.png") no-repeat 0 12px #ffffff !important;
+    top: 120px;
+    height: 77px;
+}
+.ty-products-scroller .ty-tennisplaza-body .owl-next {
+    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_left.png") no-repeat 0 12px #ffffff !important;
+    top: 120px;
+    height: 77px;
+}
+.ty-news-feed .ty-tennisplaza-body .owl-prev {
+    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_right.png") no-repeat scroll 0 0 #ffffff !important;
+    top: 10px;
+    height: 50px;
+}
+.ty-news-feed .ty-tennisplaza-body .owl-next {
+    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_left.png") no-repeat scroll 0 0 #ffffff !important;
+    top: 10px;
+    height: 50px;
+}
+.ty-tennisplaza-body .owl-prev {
+    border: 1px solid #ebebeb;
+    border-radius: unset !important;
+    margin: 0 !important;
+    opacity: 1 !important;
+    padding: 0 !important;
+    position: absolute;
+    width: 23px;
+    left: -20px;
+}
+.ty-tennisplaza-body .owl-next {
+    border: 1px solid #ebebeb;
+    border-radius: unset !important;
+    height: 50px;
+    margin: 0 !important;
+    opacity: 1 !important;
+    padding: 0 !important;
+    position: absolute;
+    width: 23px;
+    right: -20px;
+}
+.ty-tennisplaza-container .owl-theme .owl-controls {
+    margin: 0;
+}
+.ty-news-feed .owl-carousel .owl-wrapper-outer {
+    padding: 5px;
+}
+.ty-products-scroller .owl-carousel .owl-wrapper-outer {
+    padding: 10px 6px 0;
+}
+.owl-carousel .owl-wrapper-outer {
+    width: 98.8%;
+}
+/*.ty-tennisplaza-container h2 {
+    font-size: 15px;
+    text-align: right;
+    color: #ffffff;
+    background-color: #000000;
+    padding: 2px 15px 1px 2px;
+}*/
+/* TennisPlaza scroller block*/
+
 
 /*.ty-range-slider .ui-slider-handle {
     background-color: lighten(@font, 22%);

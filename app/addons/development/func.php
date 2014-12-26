@@ -141,31 +141,40 @@ function fn_display_subheaders($category_id)
 {
     return in_array($category_id, array(RACKETS_CATEGORY_ID, APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, BAGS_CATEGORY_ID));
 }
-function fn_development_get_products_post(&$products, $params, $lang_code)
+
+function fn_development_get_products($params, &$fields, $sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
 {
-    if (!empty($products)) {
-        foreach ($products as $i => $product) {
-            $cats = explode('/', $product['id_path']);
-            if (in_array(RACKETS_CATEGORY_ID, $cats)) {
-                $products[$i]['type'] = 'R';
-            } elseif (in_array(APPAREL_CATEGORY_ID, $cats)) {
-                $products[$i]['type'] = 'A';
-            } elseif (in_array(SHOES_CATEGORY_ID, $cats)) {
-                $products[$i]['type'] = 'S';
-            } elseif (in_array(BAGS_CATEGORY_ID, $cats)) {
-                $products[$i]['type'] = 'B';
-            } elseif (in_array(ACCESSORIES_CATEGORY_ID, $cats)) {
-                $products[$i]['type'] = 'C';
-            } elseif (in_array(SPORTS_NUTRITION_CATEGORY_ID, $cats)) {
-                $products[$i]['type'] = 'N';
+    $fields[] = '?:categories.id_path';
+    if (!empty($params['similar_pid'])) {
+        $similar_products_features = array(
+            'R' => array('24', '25', '20', '22', '23')
+        );
+        if (!empty($similar_products_features[$_SESSION['category_type']])) {
+            foreach ($similar_products_features[$_SESSION['category_type']] as $i => $feature_id) {
+                if (!empty($_SESSION['product_features'][$feature_id])) {
+                    $join .= db_quote(" LEFT JOIN ?:product_features_values AS feature_?i ON feature_?i.product_id = products.product_id AND feature_?i.feature_id = ?i AND feature_?i.lang_code = ?s", $feature_id, $feature_id, $feature_id, $feature_id, $feature_id, $lang_code);
+                    if (in_array($feature_id, array('20', '25'))) {
+                        $condition .= db_quote(" AND feature_?i.variant_id = ?i ", $feature_id, $_SESSION['product_features'][$feature_id]['variant_id']);
+                    } elseif (in_array($feature_id, array('22', '23', '24'))) {
+                        $join .= db_quote(" LEFT JOIN ?:product_feature_variant_descriptions AS fvd_?i ON fvd_?i.variant_id = feature_?i.variant_id AND fvd_?i.lang_code = ?s ", $feature_id, $feature_id, $feature_id, $feature_id, $lang_code);
+                        if ($feature_id == '22') {
+                            $condition .= db_quote(" AND fvd_?i.variant <= ?f + 5 AND fvd_?i.variant >= ?f - 5 ", $feature_id, $_SESSION['product_features'][$feature_id]['variant_name'], $feature_id, $_SESSION['product_features'][$feature_id]['variant_name']);
+                        }
+                        if ($feature_id == '23') {
+                            $condition .= db_quote(" AND fvd_?i.variant <= ?f + 2 AND fvd_?i.variant >= ?f - 2 ", $feature_id, $_SESSION['product_features'][$feature_id]['variant_name'], $feature_id, $_SESSION['product_features'][$feature_id]['variant_name']);
+                        }
+                        if ($feature_id == '24') {
+                            $condition .= db_quote(" AND fvd_?i.variant <= ?f + .32 AND fvd_?i.variant >= ?f - .32 ", $feature_id, $_SESSION['product_features'][$feature_id]['variant_name'], $feature_id, $_SESSION['product_features'][$feature_id]['variant_name']);
+                        }
+                    }
+                }
             }
         }
     }
-}
-
-function fn_development_get_products($params, &$fields, $sortings, $condition, $join, $sorting, $group_by, $lang_code, $having)
-{
-    $fields[] = '?:categories.id_path';
+    if (!empty($params['same_brand_pid']) && !empty($_SESSION['product_features'][BRAND_FEATURE_ID])) {
+        $join .= db_quote(" LEFT JOIN ?:product_features_values ON ?:product_features_values.product_id = products.product_id AND ?:product_features_values.feature_id = ?i ", BRAND_FEATURE_ID);
+        $condition .= db_quote(" AND ?:product_features_values.variant_id = ?i ", $_SESSION['product_features'][BRAND_FEATURE_ID]['variant_id']);
+    }
 }
 
 function fn_show_age($age)
@@ -247,19 +256,8 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
 
 function fn_get_category_type($category_id)
 {
-    $path = explode('/', db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $category_id));
-    array_pop($path);
-    $result = '';
-    if (!empty($path)) {
-        foreach (array_reverse($path) as $cat_id) {
-            if ($cat_id == RACKETS_CATEGORY_ID) {
-                $result = 'R';
-                break;
-            }
-        }
-    }
-    
-    return $result;
+    $path = db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $category_id);
+    return fn_identify_category_type($path);
 }
 
 function fn_development_get_product_data_post(&$product_data, $auth, $preview, $lang_code)
@@ -276,6 +274,37 @@ function fn_development_get_product_data_post(&$product_data, $auth, $preview, $
         $product_data['players'] = $players;
     }
     $product_data['category_type'] = fn_get_category_type($product_data['main_category']);
+}
+
+function fn_identify_category_type($path)
+{
+    $type = '';
+    if (!empty($path)) {
+        $cats = explode('/', $path);
+        if (in_array(RACKETS_CATEGORY_ID, $cats)) {
+            $type = 'R';
+        } elseif (in_array(APPAREL_CATEGORY_ID, $cats)) {
+            $type = 'A';
+        } elseif (in_array(SHOES_CATEGORY_ID, $cats)) {
+            $type = 'S';
+        } elseif (in_array(BAGS_CATEGORY_ID, $cats)) {
+            $type = 'B';
+        } elseif (in_array(ACCESSORIES_CATEGORY_ID, $cats)) {
+            $type = 'C';
+        } elseif (in_array(SPORTS_NUTRITION_CATEGORY_ID, $cats)) {
+            $type = 'N';
+        }
+    }
+    
+    return $type;
+}
+function fn_development_get_products_post(&$products, $params, $lang_code)
+{
+    if (!empty($products)) {
+        foreach ($products as $i => $product) {
+            $products[$i]['type'] = fn_identify_category_type($product['id_path']);
+        }
+    }
 }
 
 function fn_insert_before_key($originalArray, $originalKey, $insertKey, $insertValue )
