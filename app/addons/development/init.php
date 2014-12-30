@@ -56,6 +56,8 @@ define('CATELOG_MENU_ITEM_ID', 153);
 
 define('KIRSCHBAUM_BRAND_ID', 340);
 
+define('RACKETS_QTY_DSC_PRC', 5);
+
 fn_register_hooks(
     'update_product_post',
     'get_product_data_post',

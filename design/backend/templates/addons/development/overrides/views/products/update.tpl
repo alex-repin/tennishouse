@@ -80,18 +80,6 @@
                         </div>
                     <!--product_categories--></div>
 
-                    {if $auth.is_root == 'Y'}
-                    <div class="control-group">
-                        <label class="control-label" for="elm_product_auto_price">{__("auto_price_calculation")}:</label>
-                        <div class="controls">
-                            <label class="checkbox">
-                                <input type="hidden" name="product_data[auto_price]" value="N" />
-                                <input type="checkbox" name="product_data[auto_price]" id="elm_product_auto_price" value="Y" {if $product_data.auto_price == "Y"}checked="checked"{/if} />
-                            </label>
-                        </div>
-                    </div>
-                    {/if}
-
                     <div class="control-group {$no_hide_input_if_shared_product}">
                         <label for="elm_price_price" class="control-label cm-required">{__("price")} ({$currencies.$primary_currency.symbol nofilter}):</label>
                         <div class="controls">
@@ -102,6 +90,15 @@
                     
                     {if $auth.is_root == 'Y'}
                         <div class="control-group">
+                            <label class="control-label" for="elm_product_auto_price">{__("auto_price_calculation")}:</label>
+                            <div class="controls">
+                                <label class="checkbox">
+                                    <input type="hidden" name="product_data[auto_price]" value="N" />
+                                    <input type="checkbox" name="product_data[auto_price]" id="elm_product_auto_price" value="Y" {if $product_data.auto_price == "Y"}checked="checked"{/if} onclick="Tygh.$('#net_cost').toggleBy();Tygh.$('#margin').toggleBy();"/>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="control-group {if $product_data.auto_price != "Y"}hidden{/if}" id="net_cost">
                             <label class="control-label" for="elm_net_cost">{__("net_cost")}:</label>
                             <div class="controls">
                                 <input type="text" name="product_data[net_cost]" id="elm_net_price" size="10" value="{$product_data.net_cost|default:"0.00"}" class="input-long" />
@@ -113,9 +110,9 @@
                             </div>
                         </div>
 
-                        {if $mode == 'update'}
-                        <div class="control-group">
-                            <label class="control-label" for="elm_product_margin">{__("margin")}(%):</label>
+                        {if $mode != 'add'}
+                        <div class="control-group {if $product_data.auto_price != "Y"}hidden{/if}" id="margin">
+                            <label class="control-label" for="elm_product_margin">{__("price_margin")}(%):</label>
                             <div class="controls">
                                 <input type="text" name="product_data[margin]" id="elm_margin" size="10" value="{$product_data.margin|default:"0.0"}" class="input-long" />
                             </div>

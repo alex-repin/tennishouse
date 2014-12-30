@@ -69,9 +69,9 @@
             </div>
         </div>
         <div class="control-group {if $category_data.override_margin != "Y"}hidden{/if}" id="category_margin">
-            <label class="control-label" for="elm_category_margin">{__("margin")}(%):</label>
+            <label class="control-label" for="elm_category_margin">{__("price_margin")}(%):</label>
             <div class="controls">
-                <input type="text" name="category_data[margin]" id="elm_category_margin" size="10" value="{$category_data.margin|default:"0.0"}" class="input-long" />
+                <input type="text" name="category_data[margin]" id="elm_category_margin" size="10" value="{$category_data.margin|default:"0"}" class="input-long" />
             </div>
         </div>
     {/if}

@@ -303,6 +303,65 @@ function fn_development_update_product_post($product_data, $product_id, $lang_co
     }
 }
 
+function fn_get_product_global_margin($category_id)
+{
+    $path = db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $category_id);
+    $result = Registry::get('addons.development.global_product_margin');
+    if (!empty($path)) {
+        $cat_ids = explode('/', $path);
+        $cat_margin = db_get_hash_single_array("SELECT margin, category_id FROM ?:categories WHERE override_margin = 'Y' AND category_id IN (?n)", array('category_id', 'margin'), $cat_ids);
+        foreach (array_reverse($cat_ids) as $i => $cat_id) {
+            if (!empty($cat_margin[$cat_id])) {
+                $result = $cat_margin[$cat_id];
+                break;
+            }
+        }
+    }
+    
+    return $result;
+}
+
+function fn_round_price($price)
+{
+    return ceil(ceil($price) / 10) * 10;
+}
+
+function fn_calculate_base_price($product_data)
+{
+    $net_cost = $product_data['net_cost'] * Registry::get('currencies.' . $product_data['net_currency_code'] . '.coefficient');
+    $base_price = $net_cost + $net_cost * $product_data['margin'] / 100;
+    
+    return $base_price;
+}
+
+function fn_update_prices()
+{
+    $products = db_get_hash_array("SELECT product_id, margin, net_cost, net_currency_code FROM ?:products WHERE auto_price = 'Y' AND margin > 0 AND net_cost > 0 AND net_currency_code != ''", 'product_id');
+    $result = array();
+    if (!empty($products)) {
+        $prices = db_get_hash_multi_array("SELECT * FROM ?:product_prices WHERE product_id IN (?n) AND lower_limit IN ('1', '2')", array('product_id', 'lower_limit'), array_keys($products));
+        if (!empty($prices)) {
+            foreach ($prices as $product_id => $prs) {
+                if (!empty($prs)) {
+                    $base_price = fn_calculate_base_price($products[$product_id]);
+                    foreach ($prs as $i => $p_data) {
+                        if ($p_data['lower_limit'] == 1 || ($p_data['lower_limit'] > 1 && $p_data['percentage_discount'] > 0)) {
+                            $prices[$product_id][$i]['price'] = fn_round_price($base_price);
+                        } else {
+                            $prices[$product_id][$i]['price'] = fn_round_price($base_price - $base_price * RACKETS_QTY_DSC_PRC / 100);
+                        }
+                        $result[] = $prices[$product_id][$i];
+                    }
+                }
+            }
+        }
+    }
+    
+    if (!empty($result)) {
+        db_query("REPLACE INTO ?:product_prices ?m", $result);
+    }
+}
+
 function fn_development_update_product_pre(&$product_data, $product_id, $lang_code, $can_update)
 {
     if (!empty($product_data['main_category'])) {
@@ -311,10 +370,32 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
         if (!empty(array_intersect($id_path, $enable_discussion))) {
             $product_data['discussion_type'] = 'B';
         }
+        
+        $players = (empty($product_data['players'])) ? array() : explode(',', $product_data['players']);
+        $variant_ids = db_get_fields("SELECT feature_variant_id FROM ?:players WHERE player_id IN (?n)", $players);
+        $product_data['product_features'][PLAYER_FEATURE_ID] = array_combine($variant_ids, $variant_ids);
+        
+        if ($product_data['auto_price'] == 'Y' && $product_data['margin'] == 0) {
+            $product_data['margin'] = fn_get_product_global_margin($product_data['main_category']);
+        }
+
+        $old_data = db_get_row("SELECT auto_price, margin, net_cost, net_currency_code FROM ?:products WHERE product_id = ?i", $product_id);
+        if ($product_data['auto_price'] == 'Y' && $product_data['net_cost'] > 0 && $product_data['margin'] > 0 && !empty($product_data['net_currency_code']) && ($product_data['auto_price'] != $old_data['auto_price'] || $product_data['margin'] != $old_data['margin'] || $product_data['net_cost'] != $old_data['net_cost'] || $product_data['net_currency_code'] != $old_data['net_currency_code'])) {
+            $base_price = fn_calculate_base_price($product_data);
+            $product_data['price'] = fn_round_price($base_price);
+            if (!empty($product_data['prices'])) {
+                foreach ($product_data['prices'] as $i => $p_data) {
+                    if (!empty($p_data['lower_limit'])) {
+                        if ($p_data['lower_limit'] == 1) {
+                            $product_data['prices'][$i]['price'] = fn_round_price($base_price);
+                        } elseif ($p_data['type'] == 'A') {
+                            $product_data['prices'][$i]['price'] = fn_round_price($base_price - $base_price * RACKETS_QTY_DSC_PRC / 100);
+                        }
+                    }
+                }
+            }
+        }
     }
-    $players = (empty($product_data['players'])) ? array() : explode(',', $product_data['players']);
-    $variant_ids = db_get_fields("SELECT feature_variant_id FROM ?:players WHERE player_id IN (?n)", $players);
-    $product_data['product_features'][PLAYER_FEATURE_ID] = array_combine($variant_ids, $variant_ids);
 }
 
 function fn_get_category_type($category_id)

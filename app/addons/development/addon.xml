@@ -11,10 +11,12 @@
     <settings edition_type="ROOT">
         <sections>
             <section id="general">
-                <item id="global_product_margin">
-                    <type>input</type>
-                    <default_value>65</default_value>
-                </item>
+                <items>
+                    <item id="global_product_margin">
+                        <type>input</type>
+                        <default_value>65</default_value>
+                    </item>
+                </items>
             </section>
         </sections>
     </settings>
@@ -176,10 +178,11 @@
         <item lang="ru" id="years_old_5">лет</item>
         <item lang="ru" id="auto_price_calculation">Автоматический пересчет цены</item>
         <item lang="ru" id="material">Материал</item>
+        <item lang="ru" id="price_margin">Надбавка</item>
         <item lang="ru" id="configuration">Конфигурация</item>
         <item lang="ru" id="scale_of_discount">Шкала скидок</item>
         <item lang="ru" id="asphalt_surface">Асфальт</item>
-        <item lang="ru" id="update_exchange_rates">Обновить курсы валют</item>
+        <item lang="ru" id="update_exchange_rates">Обновить курсы валют и ЦЕНЫ! товаров</item>
         <item lang="ru" id="racket_string_tension">Ракетка - струна - жесткость натяжки</item>
         <item lang="ru" id="additional_info_note">Следующая информация необязательна для заполнения, но другим пользователям будет интересно знать ее, т.к. с ней Ваш комментарий будет более полный</item>
         <item lang="ru" id="tennisplaza_general">Основной контейнер Tennisplaza</item>

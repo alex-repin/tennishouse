@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 if ($mode == 'calculate_balance') {
+
     $params = $_REQUEST;
     if (!empty($params['length']) && !empty($params['points']) && !empty($params['relation'])) {
         if (strtoupper($params['relation']) == 'HL') {
@@ -30,6 +31,5 @@ if ($mode == 'calculate_balance') {
         $params['result'] = $result * 2.54;
     }
     Registry::get('view')->assign('params', $params);
-} elseif ($mode == 'update_prices') {
-//    $products = db_get_array("SELECT ");
+    
 }
