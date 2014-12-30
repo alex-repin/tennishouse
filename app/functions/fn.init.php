@@ -427,7 +427,7 @@ function fn_init_currency($params, $area = AREA)
     }
 
     $currencies = fn_get_currencies_list($_params, $area, CART_LANGUAGE);
-
+    
     if (!empty($params['currency']) && !empty($currencies[$params['currency']])) {
         $secondary_currency = $params['currency'];
     } elseif (($c = fn_get_session_data('secondary_currency' . $area)) && !empty($currencies[$c])) {

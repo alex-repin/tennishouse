@@ -80,6 +80,18 @@
                         </div>
                     <!--product_categories--></div>
 
+                    {if $auth.is_root == 'Y'}
+                    <div class="control-group">
+                        <label class="control-label" for="elm_product_auto_price">{__("auto_price_calculation")}:</label>
+                        <div class="controls">
+                            <label class="checkbox">
+                                <input type="hidden" name="product_data[auto_price]" value="N" />
+                                <input type="checkbox" name="product_data[auto_price]" id="elm_product_auto_price" value="Y" {if $product_data.auto_price == "Y"}checked="checked"{/if} />
+                            </label>
+                        </div>
+                    </div>
+                    {/if}
+
                     <div class="control-group {$no_hide_input_if_shared_product}">
                         <label for="elm_price_price" class="control-label cm-required">{__("price")} ({$currencies.$primary_currency.symbol nofilter}):</label>
                         <div class="controls">
@@ -87,6 +99,29 @@
                             {include file="buttons/update_for_all.tpl" display=$show_update_for_all object_id='price' name="update_all_vendors[price]"}
                         </div>
                     </div>
+                    
+                    {if $auth.is_root == 'Y'}
+                        <div class="control-group">
+                            <label class="control-label" for="elm_net_cost">{__("net_cost")}:</label>
+                            <div class="controls">
+                                <input type="text" name="product_data[net_cost]" id="elm_net_price" size="10" value="{$product_data.net_cost|default:"0.00"}" class="input-long" />
+                                <select class="span3" name="product_data[net_currency_code]">
+                                {foreach from=$currencies item="cur"}
+                                    <option value="{$cur.currency_code}" {if $product_data.net_currency_code == $cur.currency_code}selected="selected"{/if}>{$cur.description}</option>
+                                {/foreach}
+                                </select>
+                            </div>
+                        </div>
+
+                        {if $mode == 'update'}
+                        <div class="control-group">
+                            <label class="control-label" for="elm_product_margin">{__("margin")}(%):</label>
+                            <div class="controls">
+                                <input type="text" name="product_data[margin]" id="elm_margin" size="10" value="{$product_data.margin|default:"0.0"}" class="input-long" />
+                            </div>
+                        </div>
+                        {/if}
+                    {/if}
 
                     <div class="control-group cm-no-hide-input">
                         <label class="control-label" for="elm_product_full_descr">{__("full_description")}:</label>
@@ -149,15 +184,6 @@
                             <input type="text" name="product_data[product_code]" id="elm_product_code" size="20" maxlength="32"  value="{$product_data.product_code}" class="input-long" />
                         </div>
                     </div>
-
-                    {if $auth.is_root == 'Y'}
-                    <div class="control-group">
-                        <label class="control-label" for="elm_net_cost">{__("net_cost")} ({$currencies.$primary_currency.symbol nofilter}) :</label>
-                        <div class="controls">
-                            <input type="text" name="product_data[net_cost]" id="elm_net_price" size="10" value="{$product_data.net_cost|default:"0.00"}" class="input-long" />
-                        </div>
-                    </div>
-                    {/if}
 
                     <div class="control-group">
                         <label class="control-label" for="elm_list_price">{__("list_price")} ({$currencies.$primary_currency.symbol nofilter}) :</label>

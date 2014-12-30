@@ -13,8 +13,46 @@
 ****************************************************************************/
 
 use Tygh\Registry;
-
+use Tygh\Http;
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
+
+function fn_get_currency_exchange_rates()
+{
+    $url = 'http://www.cbr.ru/scripts/XML_daily.asp';
+    $result_xml = Http::get($url);
+    $_result = @simplexml_load_string($result_xml);
+    $result = array();
+    if (!empty($_result->Valute)) {
+        foreach ($_result->Valute as $cur_rate) {
+            $result[(string) $cur_rate->CharCode] = str_replace(',', '.', (string) $cur_rate->Value);
+        }
+    }
+
+    return $result;
+}
+
+function fn_development_top_menu_form(&$v, $type, $id, $use_name)
+{
+    if ($type == 'P') {
+        $params = array('plain' => true);
+        list($players,) = fn_get_players($params);
+        if (!empty($players)) {
+            $atp = array();
+            $wta = array();
+            foreach($players as $i => $player) {
+                if ($player['gender'] == 'M') {
+                    $atp[] = $player;
+                } else {
+                    $wta[] = $player;
+                }
+            }
+            $v['subitems'] = array(
+                array('descr' => __('atp'), 'subitems' => fn_top_menu_standardize($atp, 'player_id', 'player', '', 'players.view?player_id=')),
+                array('descr' => __('wta'), 'subitems' => fn_top_menu_standardize($wta, 'player_id', 'player', '', 'players.view?player_id=')),
+            );
+        }
+    }
+}
 
 function fn_development_get_filters_products_count_pre(&$params)
 {
@@ -45,13 +83,35 @@ function fn_development_gather_additional_product_data_post(&$product, $auth, $p
     }
 }
 
-function fn_get_series_feature($features)
+function fn_get_type_feature($features)
 {
-    $feature_ids = array(BABOLAT_SERIES_FEATURE_ID, HEAD_SERIES_FEATURE_ID, WILSON_SERIES_FEATURE_ID, DUNLOP_SERIES_FEATURE_ID, PRINCE_SERIES_FEATURE_ID, YONEX_SERIES_FEATURE_ID, PROKENNEX_SERIES_FEATURE_ID);
-    foreach ($features as $feature_id => $feature) {
-        $key = array_search($feature_id, $feature_ids);
-        if ($key !== false) {
-            return $features[$feature_ids[$key]];
+    
+}
+function fn_get_subtitle_feature($features, $type = 'R')
+{
+    if ($type == 'R') {
+        $feature_ids = array(BABOLAT_SERIES_FEATURE_ID, HEAD_SERIES_FEATURE_ID, WILSON_SERIES_FEATURE_ID, DUNLOP_SERIES_FEATURE_ID, PRINCE_SERIES_FEATURE_ID, YONEX_SERIES_FEATURE_ID, PROKENNEX_SERIES_FEATURE_ID);
+    } else if ($type == 'A') {
+        $feature_ids = array(CLOTHES_TYPE_FEATURE_ID);
+    } else if ($type == 'S') {
+        $feature_ids = array(SHOES_SURFACE_FEATURE_ID);
+    } else if ($type == 'B') {
+        $feature_ids = array(BAG_SIZE_FEATURE_ID);
+    } else if ($type == 'ST') {
+        $feature_ids = array(STRING_TYPE_FEATURE_ID);
+    } else if ($type == 'BL') {
+        $feature_ids = array(BALLS_TYPE_FEATURE_ID);
+    } else if ($type == 'OG') {
+        $feature_ids = array(OG_TYPE_FEATURE_ID);
+    } else if ($type == 'BG') {
+        $feature_ids = array(BG_TYPE_FEATURE_ID);
+    }
+    if (!empty($feature_ids)) {
+        foreach ($features as $feature_id => $feature) {
+            $key = array_search($feature_id, $feature_ids);
+            if ($key !== false) {
+                return $features[$feature_ids[$key]];
+            }
         }
     }
     
@@ -71,7 +131,7 @@ function fn_development_get_product_features_list_post(&$features_list, $product
 function fn_development_update_product_filter(&$filter_data, $filter_id, $lang_code)
 {
     if (!empty($filter_data['feature_type']) && $filter_data['feature_type'] == 'N') {
-        if ($filter_data['is_slider'] != 'Y') {
+        if (!empty($filter_data['is_slider']) && $filter_data['is_slider'] != 'Y') {
             db_query("UPDATE ?:product_filters SET field_type = '' WHERE filter_id = ?i", $filter_id);
         } else {
             $field_type = db_get_field("SELECT field_type FROM ?:product_filters WHERE filter_id = ?i", $filter_id);
@@ -158,13 +218,13 @@ function fn_development_get_products($params, &$fields, $sortings, &$condition, 
                     } elseif (in_array($feature_id, array('22', '23', '24'))) {
                         $join .= db_quote(" LEFT JOIN ?:product_feature_variant_descriptions AS fvd_?i ON fvd_?i.variant_id = feature_?i.variant_id AND fvd_?i.lang_code = ?s ", $feature_id, $feature_id, $feature_id, $feature_id, $lang_code);
                         if ($feature_id == '22') {
-                            $condition .= db_quote(" AND fvd_?i.variant <= ?f + 5 AND fvd_?i.variant >= ?f - 5 ", $feature_id, $_SESSION['product_features'][$feature_id]['variant_name'], $feature_id, $_SESSION['product_features'][$feature_id]['variant_name']);
+                            $condition .= db_quote(" AND fvd_?i.variant <= ?d + 5 AND fvd_?i.variant >= ?d - 5 ", $feature_id, $_SESSION['product_features'][$feature_id]['variant_name'], $feature_id, $_SESSION['product_features'][$feature_id]['variant_name']);
                         }
                         if ($feature_id == '23') {
-                            $condition .= db_quote(" AND fvd_?i.variant <= ?f + 2 AND fvd_?i.variant >= ?f - 2 ", $feature_id, $_SESSION['product_features'][$feature_id]['variant_name'], $feature_id, $_SESSION['product_features'][$feature_id]['variant_name']);
+                            $condition .= db_quote(" AND fvd_?i.variant <= ?d + 2 AND fvd_?i.variant >= ?d - 2 ", $feature_id, $_SESSION['product_features'][$feature_id]['variant_name'], $feature_id, $_SESSION['product_features'][$feature_id]['variant_name']);
                         }
                         if ($feature_id == '24') {
-                            $condition .= db_quote(" AND fvd_?i.variant <= ?f + .32 AND fvd_?i.variant >= ?f - .32 ", $feature_id, $_SESSION['product_features'][$feature_id]['variant_name'], $feature_id, $_SESSION['product_features'][$feature_id]['variant_name']);
+                            $condition .= db_quote(" AND fvd_?i.variant <= ?d + .32 AND fvd_?i.variant >= ?d - .32 ", $feature_id, $_SESSION['product_features'][$feature_id]['variant_name'], $feature_id, $_SESSION['product_features'][$feature_id]['variant_name']);
                         }
                     }
                 }
@@ -252,6 +312,9 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
             $product_data['discussion_type'] = 'B';
         }
     }
+    $players = (empty($product_data['players'])) ? array() : explode(',', $product_data['players']);
+    $variant_ids = db_get_fields("SELECT feature_variant_id FROM ?:players WHERE player_id IN (?n)", $players);
+    $product_data['product_features'][PLAYER_FEATURE_ID] = array_combine($variant_ids, $variant_ids);
 }
 
 function fn_get_category_type($category_id)
@@ -289,10 +352,24 @@ function fn_identify_category_type($path)
             $type = 'S';
         } elseif (in_array(BAGS_CATEGORY_ID, $cats)) {
             $type = 'B';
-        } elseif (in_array(ACCESSORIES_CATEGORY_ID, $cats)) {
-            $type = 'C';
         } elseif (in_array(SPORTS_NUTRITION_CATEGORY_ID, $cats)) {
             $type = 'N';
+        } elseif (in_array(ACCESSORIES_CATEGORY_ID, $cats)) {
+            if (in_array(STRINGS_CATEGORY_ID, $cats)) {
+                $type = 'ST';
+            } elseif (in_array(BALLS_CATEGORY_ID, $cats)) {
+                $type = 'BL';
+            } elseif (in_array(TOWELS_CATEGORY_ID, $cats)) {
+                $type = 'TW';
+            } elseif (in_array(OVERGRIPS_CATEGORY_ID, $cats)) {
+                $type = 'OG';
+            } elseif (in_array(BASEGRIPS_CATEGORY_ID, $cats)) {
+                $type = 'BG';
+            } elseif (in_array(DAMPENERS_CATEGORY_ID, $cats)) {
+                $type = 'DP';
+            } else {
+                $type = 'C';
+            }
         }
     }
     
@@ -416,6 +493,10 @@ function fn_delete_player($player_id)
     fn_log_event('players', 'delete', array(
         'player_id' => $player_id,
     ));
+    $variant_variant_id = db_get_field("SELECT feature_variant_id FROM ?:players WHERE player_id = ?i", $player_id);
+    if (!empty($variant_variant_id)) {
+        fn_delete_product_feature_variants(0, array($variant_variant_id));
+    }
 
     // Deleting player
     db_query("DELETE FROM ?:players WHERE player_id = ?i", $player_id);
@@ -423,7 +504,7 @@ function fn_delete_player($player_id)
 
     // Deleting player images
     fn_delete_image_pairs($player_id, 'player');
-
+    
     return true;
 }
 
@@ -439,11 +520,17 @@ function fn_update_player($player_data, $player_id = 0)
         $_data['ranking'] = db_get_field("SELECT max(ranking) FROM ?:players");
         $_data['ranking'] = $_data['ranking'] + 1;
     }
+    
+    $variant_data = array(
+        'variant' => $player_data['player']
+    );
 
     // create new player
     if (empty($player_id)) {
 
         $create = true;
+
+        $_data['feature_variant_id'] = fn_update_product_feature_variant(PLAYER_FEATURE_ID, 'M', $variant_data);
 
         $player_id = db_query("INSERT INTO ?:players ?e", $_data);
         $existing_gear = array();
@@ -458,6 +545,8 @@ function fn_update_player($player_data, $player_id = 0)
             $player_id = false;
         }
         $existing_gear = db_get_fields("SELECT product_id FROM ?:players_gear WHERE player_id = ?i", $player_id);
+        $variant_data['variant_id'] = db_get_field("SELECT feature_variant_id FROM ?:players WHERE player_id = ?i", $player_id);
+        fn_update_product_feature_variant(PLAYER_FEATURE_ID, 'M', $variant_data);
     }
 
     if (!empty($player_id) && isset($_data['gear'])) {
@@ -485,7 +574,7 @@ function fn_update_player($player_data, $player_id = 0)
             }
         }
     }
-
+    
     return $player_id;
 
 }

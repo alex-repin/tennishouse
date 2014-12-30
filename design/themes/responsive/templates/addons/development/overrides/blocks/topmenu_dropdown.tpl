@@ -54,10 +54,10 @@
                     {else}
                         <div class="ty-menu__submenu" id="{$unique_elm_id}">
                             {hook name="blocks:topmenu_dropdown_3levels_cols"}
-                                <ul class="ty-menu__submenu-items cm-responsive-menu-submenu">
+                                <ul class="ty-menu__submenu-items cm-responsive-menu-submenu {if $item1.param_id == $smarty.const.CATELOG_MENU_ITEM_ID}ty-menu__catalog-items{/if}">
                                     {foreach from=$item1.$childs item="item2" name="item2"}
                                         {$col_width = 96 / ($item1.$childs|sizeof)}
-                                        <li class="ty-top-mine__submenu-col" style="width: {$col_width}%;">
+                                        <li class="ty-top-mine__submenu-col" {if $item1.param_id == $smarty.const.CATELOG_MENU_ITEM_ID}style="width: {$col_width}%;"{/if}>
                                             {assign var="item2_url" value=$item2|fn_form_dropdown_object_link:$block.type}
                                             <div class="ty-menu__submenu-item-header {if $item2.active || $item2|fn_check_is_active_menu_item:$block.type} ty-menu__submenu-item-header-active{/if} {if $item2.object_id == $smarty.const.SPORTS_NUTRITION_CATEGORY_ID}ty-menu__sports-nutrition{/if}">
                                                 <a{if $item2_url} href="{$item2_url}"{/if} class="ty-menu__submenu-link">{$item2.$name|upper nofilter}</a>

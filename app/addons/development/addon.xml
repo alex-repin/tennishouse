@@ -8,6 +8,16 @@
     <position>0</position>
     <status>active</status>
     <default_language>ru</default_language>
+    <settings edition_type="ROOT">
+        <sections>
+            <section id="general">
+                <item id="global_product_margin">
+                    <type>input</type>
+                    <default_value>65</default_value>
+                </item>
+            </section>
+        </sections>
+    </settings>
     <queries>
         <item>
             CREATE TABLE IF NOT EXISTS `cscart_players` (
@@ -74,6 +84,22 @@
             ADD `surface` SMALLINT( 5 ) NOT NULL ,
             ADD `configuration` VARCHAR( 256 ) NOT NULL ;
         </item>
+        <item>
+            ALTER TABLE `cscart_players` ADD `feature_variant_id` MEDIUMINT( 8 ) UNSIGNED NOT NULL ;
+        </item>
+        <item>
+            ALTER TABLE `cscart_products` ADD `net_currency_code` VARCHAR( 10 ) NOT NULL DEFAULT 'USD';
+        </item>
+        <item>
+            ALTER TABLE `cscart_products` ADD `margin` DECIMAL( 4, 1 ) UNSIGNED NOT NULL ;
+        </item>
+        <item>
+            ALTER TABLE `cscart_products` ADD `auto_price` CHAR( 1 ) NOT NULL DEFAULT 'Y';
+        </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `override_margin` CHAR( 1 ) NOT NULL DEFAULT 'N',
+            ADD `margin` DECIMAL( 4, 1 ) UNSIGNED NOT NULL ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennisplaza_template">Шаблон TennisPlaza</item>
@@ -122,6 +148,7 @@
         <item lang="ru" id="bags_and_accessories">Сумки и аксессуары</item>
         <item lang="ru" id="apparel_and_shoes">Одежда и обувь</item>
         <item lang="ru" id="his_choice">Его выбор</item>
+        <item lang="ru" id="her_choice">Ее выбор</item>
         <item lang="ru" id="slider">Ползунок</item>
         <item lang="ru" id="series">Серия</item>
         <item lang="ru" id="how_to_know_your_game_level">Как определить свой уровень игры</item>
@@ -143,16 +170,22 @@
         <item lang="ru" id="synthetic_grass_surface">Синтетическая трава</item>
         <item lang="ru" id="parquet_surface">Паркет</item>
         <item lang="ru" id="years_old_1">год</item>
+        <item lang="ru" id="bag">Сумка</item>
+        <item lang="ru" id="surface">Покрытие</item>
         <item lang="ru" id="years_old_2_4">года</item>
         <item lang="ru" id="years_old_5">лет</item>
+        <item lang="ru" id="auto_price_calculation">Автоматический пересчет цены</item>
+        <item lang="ru" id="material">Материал</item>
         <item lang="ru" id="configuration">Конфигурация</item>
         <item lang="ru" id="scale_of_discount">Шкала скидок</item>
         <item lang="ru" id="asphalt_surface">Асфальт</item>
+        <item lang="ru" id="update_exchange_rates">Обновить курсы валют</item>
         <item lang="ru" id="racket_string_tension">Ракетка - струна - жесткость натяжки</item>
         <item lang="ru" id="additional_info_note">Следующая информация необязательна для заполнения, но другим пользователям будет интересно знать ее, т.к. с ней Ваш комментарий будет более полный</item>
         <item lang="ru" id="tennisplaza_general">Основной контейнер Tennisplaza</item>
         <item lang="ru" id="tmpl_tabs_scroller">Скроллер во вкладках</item>
         <item lang="ru" id="simmilar_products">Похожие товары</item>
+        <item lang="ru" id="player_share_buttons_description">Профиль игрока. Личная информация. Экипировка.</item>
         <item lang="ru" id="same_brand_products">Товары того же бренда</item>
     </language_variables>
 </addon>

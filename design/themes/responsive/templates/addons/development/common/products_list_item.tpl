@@ -3,7 +3,7 @@
     {include file="common/product_data.tpl" product=$product}
 
     {$features = $product|fn_get_product_features_list}
-    {$series_feature = $features|fn_get_series_feature}
+    {$series_feature = $features|fn_get_subtitle_feature:$product.type}
     {$series_variant_id = $series_feature.variant_id}
     {$type_variant_id = $features.$type_id.variant_id}
     {assign var="form_open" value="form_open_`$obj_id`"}
@@ -29,7 +29,7 @@
 
 
     </div>
-
+    
     <div class="ty-grid-list__item-info">
         <div class="ty-grid-list__item-name">
             {if $item_number == "Y"}
@@ -38,10 +38,30 @@
             {/if}
             
             <div class="ty-product-series">
-                {if $series_feature.variants.$series_variant_id}
-                    {__("series")} - {$series_feature.variants.$series_variant_id.variant}
-                {else}
-                    {__("type")} - {$features.$type_id.variants.$type_variant_id.variant}
+                {if $product.type == 'R'}
+                    {if $series_feature.variants.$series_variant_id}
+                        {__("series")} - {$series_feature.variants.$series_variant_id.variant}
+                    {else}
+                        {__("type")} - {$features.$type_id.variants.$type_variant_id.variant}
+                    {/if}
+                {elseif $product.type == 'A'}
+                    {$brand_id = $smarty.const.BRAND_FEATURE_ID}
+                    {$brand_variant_id = $features.$brand_id.variant_id}
+                    {$series_feature.variants.$series_variant_id.variant} - {$features.$brand_id.variants.$brand_variant_id.variant}
+                {elseif $product.type == 'S'}
+                        {__("surface")} - {$series_feature.variants.$series_variant_id.variant}
+                {elseif $product.type == 'B'}
+                    {$brand_id = $smarty.const.BRAND_FEATURE_ID}
+                    {$brand_variant_id = $features.$brand_id.variant_id}
+                    {__("bag")} - {$features.$brand_id.variants.$brand_variant_id.variant}
+                {elseif $product.type == 'ST'}
+                    {__("type")} - {$series_feature.variants.$series_variant_id.variant}
+                {elseif $product.type == 'BL'}
+                    {__("type")} - {$series_feature.variants.$series_variant_id.variant}
+                {elseif $product.type == 'OG'}
+                    {__("type")} - {$series_feature.variants.$series_variant_id.variant}
+                {elseif $product.type == 'BG'}
+                    {__("material")} - {$series_feature.variants.$series_variant_id.variant}
                 {/if}
             </div>
             <div class="ty-grid-list__item-title">

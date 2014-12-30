@@ -1,10 +1,10 @@
 {if $filter.ranges|fn_is_not_empty}
 {split data=$filter.ranges size="10" assign="splitted_ranges" skip_complete=true}
-{$tot_width = 180 * $splitted_ranges|count}
+{$tot_width = 190 * $splitted_ranges|count}
 <div class="ty-product-filters {if $collapse}hidden{/if}" id="content_{$filter_uid}" style="width: {$tot_width}px;">
     <div id="ranges_{$filter_uid}" class="ty-product-filters__item-more" style="display: inline-block;">
         {foreach from=$splitted_ranges item="column"}
-            <div style="float: left;width: 180px;">
+            <div style="float: left;width: 190px;">
             {foreach from=$column item="range"}
                 {if $filter.selected_ranges && $range.range_id|array_key_exists:$filter.selected_ranges}
                     {capture name="has_selected"}Y{/capture}

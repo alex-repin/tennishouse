@@ -93,10 +93,13 @@
         </div>
     </div>
     {/if}
+    <div class="ty-player__share-buttons">
+        {include file="addons/development/common/share_buttons.tpl" title=$player_data.player description=__("player_share_buttons_description") image=$player_data.main_pair.detailed.image_path}
+    </div>
     </div>
     {if $player_data.gear.R}
     <div class="ty-tp-block ty-player-rackets">
-        <h2>{__("his_choice")}</h2>
+        <h2>{if $player_data.gender == 'M'}{__("his_choice")}{else}{__("her_choice")}{/if}</h2>
         {include file="blocks/list_templates/grid_list.tpl"
         products=$player_data.gear.R
         columns=1

@@ -30,4 +30,6 @@ if ($mode == 'calculate_balance') {
         $params['result'] = $result * 2.54;
     }
     Registry::get('view')->assign('params', $params);
+} elseif ($mode == 'update_prices') {
+//    $products = db_get_array("SELECT ");
 }

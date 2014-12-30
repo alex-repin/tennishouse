@@ -23,6 +23,10 @@ $schema['top']['administration']['items']['development'] = array(
             'href' => 'development.calculate_balance',
             'position' => 100,
         ),
+        'update_exchange_rates' => array(
+            'href' => fn_url('development.update_rub_rate', 'C'),
+            'position' => 100,
+        ),
     ),
 );
 
