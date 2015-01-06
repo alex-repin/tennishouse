@@ -81,7 +81,7 @@
                     <!--product_categories--></div>
 
                     <div class="control-group {$no_hide_input_if_shared_product}">
-                        <label for="elm_price_price" class="control-label cm-required">{__("price")} ({$currencies.$primary_currency.symbol nofilter}):</label>
+                        <label for="elm_price_price" class="control-label">{__("price")} ({$currencies.$primary_currency.symbol nofilter}):</label>
                         <div class="controls">
                             <input type="text" name="product_data[price]" id="elm_price_price" size="10" value="{$product_data.price|default:"0.00"|fn_format_price:$primary_currency:null:false}" class="input-long" />
                             {include file="buttons/update_for_all.tpl" display=$show_update_for_all object_id='price' name="update_all_vendors[price]"}
@@ -94,7 +94,7 @@
                             <div class="controls">
                                 <label class="checkbox">
                                     <input type="hidden" name="product_data[auto_price]" value="N" />
-                                    <input type="checkbox" name="product_data[auto_price]" id="elm_product_auto_price" value="Y" {if $product_data.auto_price == "Y"}checked="checked"{/if} onclick="Tygh.$('#net_cost').toggleBy();Tygh.$('#margin').toggleBy();"/>
+                                    <input type="checkbox" name="product_data[auto_price]" id="elm_product_auto_price" value="Y" {if !$product_data.auto_price || $product_data.auto_price == "Y"}checked="checked"{/if} onclick="Tygh.$('#net_cost').toggleBy();Tygh.$('#margin').toggleBy();"/>
                                 </label>
                             </div>
                         </div>

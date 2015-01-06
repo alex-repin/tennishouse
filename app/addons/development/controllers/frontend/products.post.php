@@ -25,20 +25,33 @@ if ($mode == 'view') {
     $features = array();
     if (!empty($product['product_features'])) {
         foreach ($product['product_features'] as $i => $f_data) {
-            $features[$f_data['feature_id']] = array(
-                'variant_id' => $f_data['variant_id'],
-                'variant_name' => $f_data['variants'][$f_data['variant_id']]['variant']
-            );
+            if (!empty($f_data['variant_id'])) {
+                $features[$f_data['feature_id']] = array(
+                    'variant_id' => $f_data['variant_id'],
+                    'variant_name' => $f_data['variants'][$f_data['variant_id']]['variant']
+                );
+            } else {
+                $features[$f_data['feature_id']] = array(
+                    'value' => $f_data['value']
+                );
+            }
         }
     }
     if (!empty($product['header_features'])) {
         foreach ($product['header_features'] as $i => $f_data) {
-            $features[$f_data['feature_id']] = array(
-                'variant_id' => $f_data['variant_id'],
-                'variant_name' => $f_data['variants'][$f_data['variant_id']]['variant']
-            );
+            if (!empty($f_data['variant_id'])) {
+                $features[$f_data['feature_id']] = array(
+                    'variant_id' => $f_data['variant_id'],
+                    'variant_name' => $f_data['variants'][$f_data['variant_id']]['variant']
+                );
+            } else {
+                $features[$f_data['feature_id']] = array(
+                    'value' => $f_data['value']
+                );
+            }
         }
     }
+    $_SESSION['product_category'] = $product['main_category'];
     $_SESSION['product_features'] = $features;
     $_SESSION['category_type'] = $product['category_type'];
 
@@ -53,7 +66,7 @@ if ($mode == 'view') {
     shuffle($blocks[PRODUCT_BLOCK_TABS_GRID_ID]);
     if (!empty($blocks[PRODUCT_BLOCK_TABS_GRID_ID])) {
         foreach ($blocks[PRODUCT_BLOCK_TABS_GRID_ID] as $i => $block_data) {
-            if ($block_data['properties']['template'] == 'addons/development/blocks/products/products_tab_scroller.tpl') {
+            if ($block_data['properties']['template'] == 'addons/development/blocks/products/products_scroller_capture.tpl') {
                 $block_tabs['tabs']['block_tab_' . $block_data['block_id']] = array(
                     'title' => $block_data['name'],
                     'js' => true

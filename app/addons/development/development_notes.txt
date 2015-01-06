@@ -1,2 +1,4 @@
 1. cc and ctpl - fn.init.php
 2. display_errors - config.local.php
+3. обновить ссылки страниц.
+4. водные знаки на картинки товаров и страниц

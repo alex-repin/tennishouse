@@ -1,4 +1,4 @@
-{** block-description:tmpl_tabs_scroller **}
+{** block-description:tmpl_scroller_capture **}
 
 {capture name="block_tab_`$block.block_id`"}
 {if $block.properties.enable_quick_view == "Y"}

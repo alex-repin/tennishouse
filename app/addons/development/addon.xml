@@ -139,6 +139,7 @@
         <item lang="ru" id="B_played_by">Этой сумкой пользуются</item>
         <item lang="ru" id="C_played_by">Этим товаром пользуются</item>
         <item lang="ru" id="cm">см</item>
+        <item lang="ru" id="this_brand">этого бренда</item>
         <item lang="ru" id="kg">кг</item>
         <item lang="ru" id="back">Назад</item>
         <item lang="ru" id="titles">Титулы</item>
@@ -186,9 +187,14 @@
         <item lang="ru" id="racket_string_tension">Ракетка - струна - жесткость натяжки</item>
         <item lang="ru" id="additional_info_note">Следующая информация необязательна для заполнения, но другим пользователям будет интересно знать ее, т.к. с ней Ваш комментарий будет более полный</item>
         <item lang="ru" id="tennisplaza_general">Основной контейнер Tennisplaza</item>
-        <item lang="ru" id="tmpl_tabs_scroller">Скроллер во вкладках</item>
-        <item lang="ru" id="simmilar_products">Похожие товары</item>
+        <item lang="ru" id="tennisplaza_capture">Скрытый контейнер Tennisplaza</item>
+        <item lang="ru" id="tmpl_scroller_capture">Скрытый скроллер</item>
+        <item lang="ru" id="similar_products">Похожие товары</item>
         <item lang="ru" id="player_share_buttons_description">Профиль игрока. Личная информация. Экипировка.</item>
         <item lang="ru" id="same_brand_products">Товары того же бренда</item>
+        <item lang="ru" id="shoes_for_hard">Обувь для харда</item>
+        <item lang="ru" id="bag">Сумка</item>
+        <item lang="ru" id="bag">Сумка</item>
+        <item lang="ru" id="bag">Сумка</item>
     </language_variables>
 </addon>

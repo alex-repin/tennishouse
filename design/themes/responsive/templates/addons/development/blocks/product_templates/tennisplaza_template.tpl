@@ -18,9 +18,7 @@
                     {/if}
                 {/hook}
                 {if $product.players}
-                    {if $product.category_type == 'R'}
-                        {$title = __("`$product.category_type`_played_by")}
-                    {/if}
+                    {$title = __("`$product.category_type`_played_by")}
                     <div class="ty-product-block__players">
                         <h3 class="ty-mainbox-simple-title">
                             {$title}
@@ -42,14 +40,16 @@
                 {assign var="form_open" value="form_open_`$obj_id`"}
                 {$smarty.capture.$form_open nofilter}
 
-                <div class="ty-product-detail__before-title">
-                {hook name="products:brand"}
-                    <div class="ty-product-detail__brand-image">
-                        {include file="addons/development/common/brand_logo.tpl" features=$product.header_features}
+                {if $product.discussion.posts || $product.header_features}
+                    <div class="ty-product-detail__before-title">
+                    {hook name="products:brand"}
+                        <div class="ty-product-detail__brand-image">
+                            {include file="addons/development/common/brand_logo.tpl" features=$product.header_features}
+                        </div>
+                    {/hook}
+                    {hook name="products:main_info_title"}{/hook}
                     </div>
-                {/hook}
-                {hook name="products:main_info_title"}{/hook}
-                </div>
+                {/if}
                 {if !$hide_title}
                     <h1 class="ty-product-block-title" {live_edit name="product:product:{$product.product_id}"}>
                         {$product.product nofilter}

@@ -12,7 +12,7 @@
 * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
 ****************************************************************************/
 
-$schema['addons/development/blocks/products/products_tab_scroller.tpl'] = array (
+$schema['addons/development/blocks/products/products_scroller_capture.tpl'] = array (
     'settings' => array(
         'show_price' => array (
             'type' => 'checkbox',

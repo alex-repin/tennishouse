@@ -30,5 +30,12 @@ $schema['products']['content']['items']['fillings']['same_brand_products']['para
         'exclude_pid' => '%PRODUCT_ID%'
     ),
 );
+$schema['products']['content']['items']['fillings']['shoes_for_hard']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'request' => array (
+        'shoes_for_hard' => 'Y'
+    ),
+);
 
 return $schema;

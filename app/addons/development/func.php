@@ -16,6 +16,29 @@ use Tygh\Registry;
 use Tygh\Http;
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_render_page_blocks($description, $smarty_capture)
+{
+    return str_replace(
+        array(
+            "[shoes_for_clay]",
+            "[shoes_for_hard]",
+            "[shoes_for_grass]",
+        ),
+        array(
+            $smarty_capture['block_shoes_for_clay'],
+            $smarty_capture['block_shoes_for_hard'],
+            $smarty_capture['block_shoes_for_grass'],
+        ),
+        $description
+    );
+}
+
+function fn_read_title($title)
+{
+    $brand = !empty($_SESSION['product_features'][BRAND_FEATURE_ID]['variant_name']) ? $_SESSION['product_features'][BRAND_FEATURE_ID]['variant_name'] : __("this_brand");
+    return str_replace(array('[brand]'), array($brand), $title);
+}
+
 function fn_get_currency_exchange_rates()
 {
     $url = 'http://www.cbr.ru/scripts/XML_daily.asp';
@@ -83,10 +106,6 @@ function fn_development_gather_additional_product_data_post(&$product, $auth, $p
     }
 }
 
-function fn_get_type_feature($features)
-{
-    
-}
 function fn_get_subtitle_feature($features, $type = 'R')
 {
     if ($type == 'R') {
@@ -207,15 +226,23 @@ function fn_development_get_products($params, &$fields, $sortings, &$condition, 
     $fields[] = '?:categories.id_path';
     if (!empty($params['similar_pid'])) {
         $similar_products_features = array(
-            'R' => array('24', '25', '20', '22', '23')
+            'R' => array('24', '25', '20', '22', '23'),
+            'A' => array('52', '50'),
+            'S' => array('54'),
+            'B' => array('58'),
+            'ST' => array('76', '60'),
+            'BL' => array('64'),
+            'OG' => array('66'),
+            'BG' => array('72'),
         );
+        $digit_features = array('22', '23', '24');
         if (!empty($similar_products_features[$_SESSION['category_type']])) {
             foreach ($similar_products_features[$_SESSION['category_type']] as $i => $feature_id) {
                 if (!empty($_SESSION['product_features'][$feature_id])) {
                     $join .= db_quote(" LEFT JOIN ?:product_features_values AS feature_?i ON feature_?i.product_id = products.product_id AND feature_?i.feature_id = ?i AND feature_?i.lang_code = ?s", $feature_id, $feature_id, $feature_id, $feature_id, $feature_id, $lang_code);
-                    if (in_array($feature_id, array('20', '25'))) {
-                        $condition .= db_quote(" AND feature_?i.variant_id = ?i ", $feature_id, $_SESSION['product_features'][$feature_id]['variant_id']);
-                    } elseif (in_array($feature_id, array('22', '23', '24'))) {
+                    if (!in_array($feature_id, $digit_features)) {
+                        $condition .= db_quote(" AND IF(feature_?i.variant_id IS NOT NULL, feature_?i.variant_id, feature_?i.value) = ?i ", $feature_id, $feature_id, $feature_id, ((!empty($_SESSION['product_features'][$feature_id]['variant_id'])) ? $_SESSION['product_features'][$feature_id]['variant_id'] : $_SESSION['product_features'][$feature_id]['value']));
+                    } else {
                         $join .= db_quote(" LEFT JOIN ?:product_feature_variant_descriptions AS fvd_?i ON fvd_?i.variant_id = feature_?i.variant_id AND fvd_?i.lang_code = ?s ", $feature_id, $feature_id, $feature_id, $feature_id, $lang_code);
                         if ($feature_id == '22') {
                             $condition .= db_quote(" AND fvd_?i.variant <= ?d + 5 AND fvd_?i.variant >= ?d - 5 ", $feature_id, $_SESSION['product_features'][$feature_id]['variant_name'], $feature_id, $_SESSION['product_features'][$feature_id]['variant_name']);
@@ -229,11 +256,19 @@ function fn_development_get_products($params, &$fields, $sortings, &$condition, 
                     }
                 }
             }
+        } elseif (!empty($_SESSION['product_category'])) {
+            $condition .= db_quote(" AND ?:categories.category_id = ?i", $_SESSION['product_category']);
+        } else {
+            $condition .= " AND NULL";
         }
     }
-    if (!empty($params['same_brand_pid']) && !empty($_SESSION['product_features'][BRAND_FEATURE_ID])) {
-        $join .= db_quote(" LEFT JOIN ?:product_features_values ON ?:product_features_values.product_id = products.product_id AND ?:product_features_values.feature_id = ?i ", BRAND_FEATURE_ID);
-        $condition .= db_quote(" AND ?:product_features_values.variant_id = ?i ", $_SESSION['product_features'][BRAND_FEATURE_ID]['variant_id']);
+    if (!empty($params['same_brand_pid'])) {
+        if (!empty($_SESSION['product_features'][BRAND_FEATURE_ID])) {
+            $join .= db_quote(" LEFT JOIN ?:product_features_values ON ?:product_features_values.product_id = products.product_id AND ?:product_features_values.feature_id = ?i ", BRAND_FEATURE_ID);
+            $condition .= db_quote(" AND ?:product_features_values.variant_id = ?i ", $_SESSION['product_features'][BRAND_FEATURE_ID]['variant_id']);
+        } else {
+            $condition .= " AND NULL";
+        }
     }
 }
 
