@@ -16,23 +16,6 @@ use Tygh\Registry;
 use Tygh\Http;
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-function fn_render_page_blocks($description, $smarty_capture)
-{
-    return str_replace(
-        array(
-            "[shoes_for_clay]",
-            "[shoes_for_hard]",
-            "[shoes_for_grass]",
-        ),
-        array(
-            $smarty_capture['block_shoes_for_clay'],
-            $smarty_capture['block_shoes_for_hard'],
-            $smarty_capture['block_shoes_for_grass'],
-        ),
-        $description
-    );
-}
-
 function fn_read_title($title)
 {
     $brand = !empty($_SESSION['product_features'][BRAND_FEATURE_ID]['variant_name']) ? $_SESSION['product_features'][BRAND_FEATURE_ID]['variant_name'] : __("this_brand");
@@ -226,7 +209,7 @@ function fn_development_get_products($params, &$fields, $sortings, &$condition, 
     $fields[] = '?:categories.id_path';
     if (!empty($params['similar_pid'])) {
         $similar_products_features = array(
-            'R' => array('24', '25', '20', '22', '23'),
+            'R' => array(R_BALANCE_FEATURE_ID, R_LENGTH_FEATURE_ID, R_HEADSIZE_FEATURE_ID, R_WEIGHT_FEATURE_ID, R_STIFFNESS_FEATURE_ID),
             'A' => array('52', '50'),
             'S' => array('54'),
             'B' => array('58'),
@@ -235,24 +218,28 @@ function fn_development_get_products($params, &$fields, $sortings, &$condition, 
             'OG' => array('66'),
             'BG' => array('72'),
         );
-        $digit_features = array('22', '23', '24');
+        $digit_features = array(R_WEIGHT_FEATURE_ID, R_STIFFNESS_FEATURE_ID, R_BALANCE_FEATURE_ID);
         if (!empty($similar_products_features[$_SESSION['category_type']])) {
             foreach ($similar_products_features[$_SESSION['category_type']] as $i => $feature_id) {
                 if (!empty($_SESSION['product_features'][$feature_id])) {
-                    $join .= db_quote(" LEFT JOIN ?:product_features_values AS feature_?i ON feature_?i.product_id = products.product_id AND feature_?i.feature_id = ?i AND feature_?i.lang_code = ?s", $feature_id, $feature_id, $feature_id, $feature_id, $feature_id, $lang_code);
                     if (!in_array($feature_id, $digit_features)) {
-                        $condition .= db_quote(" AND IF(feature_?i.variant_id IS NOT NULL, feature_?i.variant_id, feature_?i.value) = ?i ", $feature_id, $feature_id, $feature_id, ((!empty($_SESSION['product_features'][$feature_id]['variant_id'])) ? $_SESSION['product_features'][$feature_id]['variant_id'] : $_SESSION['product_features'][$feature_id]['value']));
+                        $params['features_condition'][$feature_id] = array(
+                            'value' => !empty($_SESSION['product_features'][$feature_id]['variant_id']) ? $_SESSION['product_features'][$feature_id]['variant_id'] : $_SESSION['product_features'][$feature_id]['value'],
+                        );
                     } else {
-                        $join .= db_quote(" LEFT JOIN ?:product_feature_variant_descriptions AS fvd_?i ON fvd_?i.variant_id = feature_?i.variant_id AND fvd_?i.lang_code = ?s ", $feature_id, $feature_id, $feature_id, $feature_id, $lang_code);
-                        if ($feature_id == '22') {
-                            $condition .= db_quote(" AND fvd_?i.variant <= ?d + 5 AND fvd_?i.variant >= ?d - 5 ", $feature_id, $_SESSION['product_features'][$feature_id]['variant_name'], $feature_id, $_SESSION['product_features'][$feature_id]['variant_name']);
+                        if ($feature_id == R_WEIGHT_FEATURE_ID) {
+                            $margin_value = 5;
                         }
-                        if ($feature_id == '23') {
-                            $condition .= db_quote(" AND fvd_?i.variant <= ?d + 2 AND fvd_?i.variant >= ?d - 2 ", $feature_id, $_SESSION['product_features'][$feature_id]['variant_name'], $feature_id, $_SESSION['product_features'][$feature_id]['variant_name']);
+                        if ($feature_id == R_STIFFNESS_FEATURE_ID) {
+                            $margin_value = 2;
                         }
-                        if ($feature_id == '24') {
-                            $condition .= db_quote(" AND fvd_?i.variant <= ?d + .32 AND fvd_?i.variant >= ?d - .32 ", $feature_id, $_SESSION['product_features'][$feature_id]['variant_name'], $feature_id, $_SESSION['product_features'][$feature_id]['variant_name']);
+                        if ($feature_id == R_BALANCE_FEATURE_ID) {
+                            $margin_value = 0.32;
                         }
+                        $params['features_condition'][$feature_id] = array(
+                            'min_value' => $_SESSION['product_features'][$feature_id]['variant_name'] - $margin_value,
+                            'max_value' => $_SESSION['product_features'][$feature_id]['variant_name'] + $margin_value
+                        );
                     }
                 }
             }
@@ -264,12 +251,103 @@ function fn_development_get_products($params, &$fields, $sortings, &$condition, 
     }
     if (!empty($params['same_brand_pid'])) {
         if (!empty($_SESSION['product_features'][BRAND_FEATURE_ID])) {
-            $join .= db_quote(" LEFT JOIN ?:product_features_values ON ?:product_features_values.product_id = products.product_id AND ?:product_features_values.feature_id = ?i ", BRAND_FEATURE_ID);
-            $condition .= db_quote(" AND ?:product_features_values.variant_id = ?i ", $_SESSION['product_features'][BRAND_FEATURE_ID]['variant_id']);
+            $params['features_condition'][BRAND_FEATURE_ID] = array(
+                'value' => $_SESSION['product_features'][BRAND_FEATURE_ID]['variant_id'],
+            );
         } else {
             $condition .= " AND NULL";
         }
     }
+    if (!empty($params['features_condition'])) {
+        foreach ($params['features_condition'] as $feature_id => $feature_data) {
+            $join .= db_quote(" LEFT JOIN ?:product_features_values AS feature_?i ON feature_?i.product_id = products.product_id AND feature_?i.feature_id = ?i AND feature_?i.lang_code = ?s", $feature_id, $feature_id, $feature_id, $feature_id, $feature_id, $lang_code);
+            if (!empty($feature_data['value'])) {
+                $condition .= db_quote(" AND IF(feature_?i.variant_id IS NOT NULL, feature_?i.variant_id, feature_?i.value) = ?i ", $feature_id, $feature_id, $feature_id, $feature_data['value']);
+            } elseif (!empty($feature_data['min_value']) || !empty($feature_data['max_value'])) {
+                $join .= db_quote(" LEFT JOIN ?:product_feature_variant_descriptions AS fvd_?i ON fvd_?i.variant_id = feature_?i.variant_id AND fvd_?i.lang_code = ?s ", $feature_id, $feature_id, $feature_id, $feature_id, $lang_code);
+                if (!empty($feature_data['min_value'])) {
+                    $condition .= db_quote(" AND fvd_?i.variant >= ?d ", $feature_id, $feature_data['min_value']);
+                }
+                if (!empty($feature_data['max_value'])) {
+                    $condition .= db_quote(" AND fvd_?i.variant <= ?d ", $feature_id, $feature_data['max_value']);
+                }
+            }
+        }
+    }
+}
+function fn_development_get_products_pre(&$params, $items_per_page, $lang_code)
+{
+    if (!empty($params['shoes_surface'])) {
+        $params['cid'] = SHOES_CATEGORY_ID;
+        $params['subcats'] = 'Y';
+        $feature_hash = 'V' . ALLCOURT_SURFACE_FV_ID;
+        if ($params['shoes_surface'] == 'clay') {
+            $feature_hash .= '.V' . CLAY_SURFACE_FV_ID;
+        }
+        if ($params['shoes_surface'] == 'grass') {
+            $feature_hash .= '.V' . GRASS_SURFACE_FV_ID;
+        }
+        $params['features_hash'] = (!empty($params['features_hash']) ? '.' : '') . $feature_hash;
+    }
+    if (!empty($params['rackets_type'])) {
+        $params['cid'] = RACKETS_CATEGORY_ID;
+        $params['subcats'] = 'Y';
+        if ($params['rackets_type'] == 'power') {
+            $feature_hash = 'V' . POWER_RACKET_FV_ID;
+        }
+        if ($params['rackets_type'] == 'club') {
+            $feature_hash = 'V' . CLUB_RACKET_FV_ID;
+        }
+        if ($params['rackets_type'] == 'pro') {
+            $feature_hash = 'V' . PRO_RACKET_FV_ID;
+        }
+        if ($params['rackets_type'] == 'heavy_head_light') {
+            $params['features_condition'][R_WEIGHT_FEATURE_ID] = array(
+                'min_value' => 300
+            );
+            $params['features_condition'][R_BALANCE_FEATURE_ID] = array(
+                'max_value' => 35
+            );
+        }
+        if ($params['rackets_type'] == 'light_head_heavy') {
+            $params['features_condition'][R_WEIGHT_FEATURE_ID] = array(
+                'max_value' => 300
+            );
+            $params['features_condition'][R_BALANCE_FEATURE_ID] = array(
+                'min_value' => 35
+            );
+        }
+        if ($params['rackets_type'] == 'stiff') {
+            $params['features_condition'][R_STIFFNESS_FEATURE_ID] = array(
+                'min_value' => 65
+            );
+        }
+        if ($params['rackets_type'] == 'soft') {
+            $params['features_condition'][R_STIFFNESS_FEATURE_ID] = array(
+                'max_value' => 64
+            );
+        }
+        if (!empty($feature_hash)) {
+            $params['features_hash'] = (!empty($params['features_hash']) ? '.' : '') . $feature_hash;
+        }
+    }
+}
+
+function fn_render_page_blocks($description, $smarty_capture)
+{
+    if (preg_match_all('/\[([a-zA-Z_]*)\]/', $description, $matches)) {
+        $blocks = array();
+        foreach ($matches[1] as $i => $name) {
+            $blocks[] = !empty($smarty_capture['block_' . $name]) ? $smarty_capture['block_' . $name] : '';
+        }
+        $description = str_replace(
+            $matches[0],
+            $blocks,
+            $description
+        );
+    }
+
+    return $description;
 }
 
 function fn_show_age($age)

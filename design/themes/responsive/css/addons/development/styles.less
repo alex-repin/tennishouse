@@ -1103,15 +1103,28 @@ select {
     padding: 10px;
     min-height: 35px;
 }
+.ty-menu-vertical .ty-menu__item .ty-menu__submenu .ty-menu__item-link {
+    padding: 10px;
+}
 .ty-menu-vertical .ty-menu__items {
     border-bottom: none;
 }
 .ty-menu-vertical .ty-menu__item .ty-menu__submenu {
     top: -1px;
+    right: -1px;
+}
+.ty-menu-vertical .ty-menu__submenu .ty-menu__submenu-item-header {
+    width: 300px;
+}
+.ty-menu__submenu-to-right {
+    position: absolute;
+}
+.ty-menu__submenu-to-right .ty-menu__submenu-items {
+    right: unset;
 }
 .ty-menu-vertical .ty-menu__item .ty-menu__submenu .ty-menu__submenu-items {
     border-top: 1px solid lighten(@font, 63%);
-    border-right: 1px solid lighten(@font, 63%);
+    border-right: 0;
     border-bottom: 1px solid lighten(@font, 63%);
     border-left: none;
     padding: 0px;
@@ -1146,7 +1159,11 @@ select {
     font-size: 110%;
 }
 .ty-wysiwyg-content h2 {
-    font-size: 20px;
+    font-size: 14px;
+    margin-top: 5px;
+}
+.ty-wysiwyg-content .ty-tennisplaza-container {
+    margin-top: 0;
 }
 .ty-page-products {
     display: inline-block;
@@ -1162,6 +1179,25 @@ select {
 }
 .ty-menu-vertical .dropdown-vertical__dir:hover {
     border-right: 1px solid darken(@category_menu, 10%);
+}
+.ty-small-mode .ty-grid-list__item-name .product-title {
+    font-size: 100%;
+    height: 30px;
+}
+.ty-small-mode .ty-price-num {
+    font-size: 14px;
+}
+.ty-small-mode .ty-grid-list__item-title {
+    height: 30px;
+}
+.ty-small-mode .ty-grid-list__price {
+    margin-top: 0;
+}
+.ty-small-mode .ty-grid-list__image {
+    min-height: 130px;
+}
+.ty-products-scroller .ty-tennisplaza-body .ty-small-mode .owl-prev, .ty-products-scroller .ty-tennisplaza-body .ty-small-mode .owl-next {
+    top: 80px;
 }
 /* Pages */
 

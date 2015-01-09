@@ -20,14 +20,14 @@
             </a>
         </div>
         
+        {if $small_mode != 'Y'}
         {assign var="rating" value="rating_`$obj_id`"}
         {if $smarty.capture.$rating}
             <div class="grid-list__rating">
                 {$smarty.capture.$rating nofilter}
             </div>
         {/if}
-
-
+        {/if}
     </div>
     
     <div class="ty-grid-list__item-info">
@@ -37,6 +37,7 @@
                 {math equation="num + 1" num=$cur_number assign="cur_number"}
             {/if}
             
+            {if $small_mode != 'Y'}
             <div class="ty-product-series">
                 {if $product.type == 'R'}
                     {if $series_feature.variants.$series_variant_id}
@@ -64,6 +65,7 @@
                     {__("material")} - {$series_feature.variants.$series_variant_id.variant}
                 {/if}
             </div>
+            {/if}
             <div class="ty-grid-list__item-title">
                 {assign var="name" value="name_`$obj_id`"}
                 {$smarty.capture.$name nofilter}

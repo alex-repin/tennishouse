@@ -30,12 +30,68 @@ $schema['products']['content']['items']['fillings']['same_brand_products']['para
         'exclude_pid' => '%PRODUCT_ID%'
     ),
 );
-$schema['products']['content']['items']['fillings']['shoes_for_hard']['params'] = array (
+$schema['pages']['content']['items']['fillings']['dynamic_content'] = array (
+    'params' => array (
+        'status' => 'A',
+        'request' => array (
+            'parent_id' => '%PAGE_ID%'
+        ),
+    ),
+);
+$schema['products']['content']['items']['fillings']['allcourt_shoes']['params'] = array (
     'sort_by' => 'timestamp',
     'sort_order' => 'desc',
-    'request' => array (
-        'shoes_for_hard' => 'Y'
-    ),
+    'shoes_surface' => 'allcourt'
+);
+$schema['products']['content']['items']['fillings']['shoes_for_clay']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'shoes_surface' => 'clay'
+);
+$schema['products']['content']['items']['fillings']['shoes_for_grass']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'shoes_surface' => 'grass'
+);
+$schema['products']['content']['items']['fillings']['power_rackets']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'rackets_type' => 'power'
+);
+$schema['products']['content']['items']['fillings']['club_rackets']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'rackets_type' => 'club'
+);
+$schema['products']['content']['items']['fillings']['pro_rackets']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'rackets_type' => 'pro'
+);
+$schema['products']['content']['items']['fillings']['heavy_head_light_rackets']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'rackets_type' => 'heavy_head_light'
+);
+$schema['products']['content']['items']['fillings']['light_head_heavy_rackets']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'rackets_type' => 'light_head_heavy'
+);
+$schema['products']['content']['items']['fillings']['stiff_rackets']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'rackets_type' => 'stiff'
+);
+$schema['products']['content']['items']['fillings']['soft_rackets']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'rackets_type' => 'soft'
+);
+$schema['products']['content']['items']['fillings']['regular_head_rackets']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'rackets_type' => 'regular_head'
 );
 
 return $schema;

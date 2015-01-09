@@ -58,5 +58,10 @@ $schema['addons/development/blocks/products/products_scroller_capture.tpl'] = ar
         ),
     ),
 );
+$schema['blocks/products/products_scroller.tpl']['settings']['small_mode'] = array (
+    'type' => 'checkbox',
+    'default_value' => 'N'
+);
+$schema['blocks/pages/pages_text_links.tpl']['fillings'][] = 'dynamic_content';
 
 return $schema;

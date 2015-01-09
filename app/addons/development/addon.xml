@@ -193,8 +193,23 @@
         <item lang="ru" id="player_share_buttons_description">Профиль игрока. Личная информация. Экипировка.</item>
         <item lang="ru" id="same_brand_products">Товары того же бренда</item>
         <item lang="ru" id="shoes_for_hard">Обувь для харда</item>
-        <item lang="ru" id="bag">Сумка</item>
-        <item lang="ru" id="bag">Сумка</item>
-        <item lang="ru" id="bag">Сумка</item>
+        <item lang="ru" id="small_mode">Уменьшенный режим</item>
+        <item lang="ru" id="override_global_margin">Переопределить наценку</item>
+        <item lang="ru" id="dynamic_content">Динамическое содержимое</item>
+        <item lang="ru" id="allcourt_shoes">Обувь для всех покрытий</item>
+        <item lang="ru" id="shoes_for_clay">Обувь для грунта</item>
+        <item lang="ru" id="shoes_for_grass">Обувь для травы</item>
+        <item lang="ru" id="power_rackets">Мощные и легкие ракетки</item>
+        <item lang="ru" id="club_rackets">Клубные ракетки</item>
+        <item lang="ru" id="pro_rackets">Профессиональные ракетки</item>
+        <item lang="ru" id="asphalt_surface">Асфальт</item>
+        <item lang="ru" id="asphalt_surface">Асфальт</item>
+        <item lang="ru" id="asphalt_surface">Асфальт</item>
+        <item lang="ru" id="asphalt_surface">Асфальт</item>
+        <item lang="ru" id="asphalt_surface">Асфальт</item>
+        <item lang="ru" id="asphalt_surface">Асфальт</item>
+        <item lang="ru" id="asphalt_surface">Асфальт</item>
+        <item lang="ru" id="asphalt_surface">Асфальт</item>
+        <item lang="ru" id="asphalt_surface">Асфальт</item>
     </language_variables>
 </addon>
