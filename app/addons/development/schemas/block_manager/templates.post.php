@@ -63,5 +63,9 @@ $schema['blocks/products/products_scroller.tpl']['settings']['small_mode'] = arr
     'default_value' => 'N'
 );
 $schema['blocks/pages/pages_text_links.tpl']['fillings'][] = 'dynamic_content';
+$schema['blocks/products/products_multicolumns.tpl']['settings']['small_mode'] = array (
+    'type' => 'checkbox',
+    'default_value' => 'N'
+);
 
 return $schema;

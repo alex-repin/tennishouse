@@ -35,6 +35,7 @@ define('R_LENGTH_FEATURE_ID', 25);
 define('R_BALANCE_FEATURE_ID', 24);
 define('R_HEADSIZE_FEATURE_ID', 20);
 define('R_STIFFNESS_FEATURE_ID', 23);
+define('R_STRING_PATTERN_FEATURE_ID', 21);
 define('BRAND_FEATURE_ID', 29);
 define('TYPE_FEATURE_ID', 33);
 define('PLAYER_FEATURE_ID', 48);
@@ -72,6 +73,8 @@ define('POWER_RACKET_FV_ID', 211);
 define('CLUB_RACKET_FV_ID', 212);
 define('PRO_RACKET_FV_ID', 265);
 define('KIDS_RACKET_FV_ID', 282);
+define('REGULAR_LENGTH_FV_ID', 141);
+define('CLOSED_PATTERN_FV_ID', 191);
 /*Rackets*/
 /*Feature values*/
 

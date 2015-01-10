@@ -261,8 +261,12 @@ function fn_development_get_products($params, &$fields, $sortings, &$condition, 
     if (!empty($params['features_condition'])) {
         foreach ($params['features_condition'] as $feature_id => $feature_data) {
             $join .= db_quote(" LEFT JOIN ?:product_features_values AS feature_?i ON feature_?i.product_id = products.product_id AND feature_?i.feature_id = ?i AND feature_?i.lang_code = ?s", $feature_id, $feature_id, $feature_id, $feature_id, $feature_id, $lang_code);
-            if (!empty($feature_data['value'])) {
-                $condition .= db_quote(" AND IF(feature_?i.variant_id IS NOT NULL, feature_?i.variant_id, feature_?i.value) = ?i ", $feature_id, $feature_id, $feature_id, $feature_data['value']);
+            if (!empty($feature_data['value']) || !empty($feature_data['not_value'])) {
+                if (!empty($feature_data['value'])) {
+                    $condition .= db_quote(" AND IF(feature_?i.variant_id IS NOT NULL, feature_?i.variant_id, feature_?i.value) = ?i ", $feature_id, $feature_id, $feature_id, $feature_data['value']);
+                } elseif (!empty($feature_data['not_value'])) {
+                    $condition .= db_quote(" AND IF(feature_?i.variant_id IS NOT NULL, feature_?i.variant_id, feature_?i.value) != ?i ", $feature_id, $feature_id, $feature_id, $feature_data['not_value']);
+                }
             } elseif (!empty($feature_data['min_value']) || !empty($feature_data['max_value'])) {
                 $join .= db_quote(" LEFT JOIN ?:product_feature_variant_descriptions AS fvd_?i ON fvd_?i.variant_id = feature_?i.variant_id AND fvd_?i.lang_code = ?s ", $feature_id, $feature_id, $feature_id, $feature_id, $lang_code);
                 if (!empty($feature_data['min_value'])) {
@@ -325,6 +329,27 @@ function fn_development_get_products_pre(&$params, $items_per_page, $lang_code)
         if ($params['rackets_type'] == 'soft') {
             $params['features_condition'][R_STIFFNESS_FEATURE_ID] = array(
                 'max_value' => 64
+            );
+        }
+        if ($params['rackets_type'] == 'regular_head') {
+            $params['features_condition'][R_HEADSIZE_FEATURE_ID] = array(
+                'min_value' => 612,
+                'max_value' => 677
+            );
+        }
+        if ($params['rackets_type'] == 'regular_length') {
+            $params['features_condition'][R_LENGTH_FEATURE_ID] = array(
+                'value' => REGULAR_LENGTH_FV_ID
+            );
+        }
+        if ($params['rackets_type'] == 'closed_pattern') {
+            $params['features_condition'][R_STRING_PATTERN_FEATURE_ID] = array(
+                'value' => CLOSED_PATTERN_FV_ID
+            );
+        }
+        if ($params['rackets_type'] == 'open_pattern') {
+            $params['features_condition'][R_STRING_PATTERN_FEATURE_ID] = array(
+                'not_value' => CLOSED_PATTERN_FV_ID
             );
         }
         if (!empty($feature_hash)) {

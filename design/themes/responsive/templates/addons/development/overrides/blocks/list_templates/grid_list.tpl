@@ -22,14 +22,14 @@
     {if $settings.Appearance.enable_quick_view == 'Y'}
         {$quick_nav_ids = $products|fn_fields_from_multi_level:"product_id":"product_id"}
     {/if}
-    <div class="grid-list">
+    <div class="grid-list {if $block.properties.small_mode && $block.properties.small_mode == 'Y'}ty-small-mode{/if}">
         {strip}
             {$type_id = $smarty.const.TYPE_FEATURE_ID}
             {foreach from=$splitted_products item="sproducts" name="sprod"}
                 {foreach from=$sproducts item="product" name="sproducts"}
                     <div class="ty-column{$columns}">
                         {if $product}
-                            {include file="addons/development/common/products_list_item.tpl"}
+                            {include file="addons/development/common/products_list_item.tpl" small_mode=$block.properties.small_mode|default:"N"}
                         {/if}
                     </div>
                 {/foreach}

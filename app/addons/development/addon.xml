@@ -202,14 +202,14 @@
         <item lang="ru" id="power_rackets">Мощные и легкие ракетки</item>
         <item lang="ru" id="club_rackets">Клубные ракетки</item>
         <item lang="ru" id="pro_rackets">Профессиональные ракетки</item>
-        <item lang="ru" id="asphalt_surface">Асфальт</item>
-        <item lang="ru" id="asphalt_surface">Асфальт</item>
-        <item lang="ru" id="asphalt_surface">Асфальт</item>
-        <item lang="ru" id="asphalt_surface">Асфальт</item>
-        <item lang="ru" id="asphalt_surface">Асфальт</item>
-        <item lang="ru" id="asphalt_surface">Асфальт</item>
-        <item lang="ru" id="asphalt_surface">Асфальт</item>
-        <item lang="ru" id="asphalt_surface">Асфальт</item>
+        <item lang="ru" id="heavy_head_light_rackets">Тяжелые ракетки с балансом в ручку</item>
+        <item lang="ru" id="light_head_heavy_rackets">Легкие ракетки с балансом в голову</item>
+        <item lang="ru" id="stiff_rackets">Жесткие ракетки</item>
+        <item lang="ru" id="soft_rackets">Мягкие ракетки</item>
+        <item lang="ru" id="regular_head_rackets">Ракетки со стандартной головой</item>
+        <item lang="ru" id="regular_length_rackets">Ракетки со стандартной длиной</item>
+        <item lang="ru" id="closed_pattern_rackets">Ракетки с высокой плотностью распределения струны</item>
+        <item lang="ru" id="open_pattern_rackets">Ракетки с низкой плотностью распределения струны</item>
         <item lang="ru" id="asphalt_surface">Асфальт</item>
     </language_variables>
 </addon>

@@ -93,5 +93,20 @@ $schema['products']['content']['items']['fillings']['regular_head_rackets']['par
     'sort_order' => 'desc',
     'rackets_type' => 'regular_head'
 );
+$schema['products']['content']['items']['fillings']['regular_length_rackets']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'rackets_type' => 'regular_length'
+);
+$schema['products']['content']['items']['fillings']['closed_pattern_rackets']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'rackets_type' => 'closed_pattern'
+);
+$schema['products']['content']['items']['fillings']['open_pattern_rackets']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'rackets_type' => 'open_pattern'
+);
 
 return $schema;
