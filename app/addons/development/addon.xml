@@ -210,6 +210,15 @@
         <item lang="ru" id="regular_length_rackets">Ракетки со стандартной длиной</item>
         <item lang="ru" id="closed_pattern_rackets">Ракетки с высокой плотностью распределения струны</item>
         <item lang="ru" id="open_pattern_rackets">Ракетки с низкой плотностью распределения струны</item>
+        <item lang="ru" id="nylon_strings">Нейлоновые струны</item>
+        <item lang="ru" id="natural_gut_strings">Натуральные струны</item>
+        <item lang="ru" id="polyester_strings">Полиэстеровые струны</item>
+        <item lang="ru" id="hybrid_strings">Гибридные струны</item>
+        <item lang="ru" id="check_all_items">Посмотреть все</item>
+        <item lang="ru" id="all_items_url">Ссылка "Посмотреть все"</item>
+        <item lang="ru" id="asphalt_surface">Асфальт</item>
+        <item lang="ru" id="asphalt_surface">Асфальт</item>
+        <item lang="ru" id="asphalt_surface">Асфальт</item>
         <item lang="ru" id="asphalt_surface">Асфальт</item>
     </language_variables>
 </addon>

@@ -17,7 +17,7 @@
 {/if}
 
 {assign var="obj_prefix" value="`$block.block_id`000"}
-    <div id="content_block_tab_{$block.block_id}" class="ty-wysiwyg-content">
+<div id="content_block_tab_{$block.block_id}" class="ty-wysiwyg-content">
     <div id="scroll_list_{$block.block_id}" class="owl-carousel ty-scroller-list">
         {$type_id = $smarty.const.TYPE_FEATURE_ID}
         {foreach from=$items item="product" name="for_products"}
@@ -33,7 +33,7 @@
             show_discount_label=true}
         {/foreach}
     </div>
-    </div>
+</div>
 
 {include file="common/scroller_init.tpl"}
 {/capture}

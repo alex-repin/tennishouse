@@ -38,6 +38,10 @@ $schema['pages']['content']['items']['fillings']['dynamic_content'] = array (
         ),
     ),
 );
+$schema['products']['settings']['all_items_url'] = array (
+    'type' => 'input',
+    'default_value' => ''
+);
 $schema['products']['content']['items']['fillings']['allcourt_shoes']['params'] = array (
     'sort_by' => 'timestamp',
     'sort_order' => 'desc',
@@ -107,6 +111,46 @@ $schema['products']['content']['items']['fillings']['open_pattern_rackets']['par
     'sort_by' => 'timestamp',
     'sort_order' => 'desc',
     'rackets_type' => 'open_pattern'
+);
+$schema['products']['content']['items']['fillings']['natural_gut_strings']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'strings_type' => 'natural_gut'
+);
+$schema['products']['content']['items']['fillings']['nylon_strings']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'strings_type' => 'nylon'
+);
+$schema['products']['content']['items']['fillings']['polyester_strings']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'strings_type' => 'polyester'
+);
+$schema['products']['content']['items']['fillings']['hybrid_strings']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'strings_type' => 'hybrid'
+);
+$schema['products']['content']['items']['fillings']['monofil_strings']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'strings_type' => 'monofil'
+);
+$schema['products']['content']['items']['fillings']['multifil_strings']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'strings_type' => 'multifil'
+);
+$schema['products']['content']['items']['fillings']['textured_strings']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'strings_type' => 'textured'
+);
+$schema['products']['content']['items']['fillings']['synthetic_gut_strings']['params'] = array (
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'strings_type' => 'synthetic_gut'
 );
 
 return $schema;

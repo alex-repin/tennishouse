@@ -76,6 +76,16 @@ define('KIDS_RACKET_FV_ID', 282);
 define('REGULAR_LENGTH_FV_ID', 141);
 define('CLOSED_PATTERN_FV_ID', 191);
 /*Rackets*/
+/*Strings*/
+define('NATURAL_GUT_STRINGS_FV_ID', 368);
+define('NYLON_STRINGS_FV_ID', 365);
+define('POLYESTER_STRINGS_FV_ID', 372);
+define('HYBRID_STRINGS_FV_ID', 369);
+define('MONOFIL_STRINGS_FV_ID', 330);
+define('MULTIFIL_STRINGS_FV_ID', 331);
+define('TEXTURED_STRINGS_FV_ID', 370);
+define('SYNTHETIC_GUT_STRINGS_FV_ID', 371);
+/*Strings*/
 /*Feature values*/
 
 define('PRODUCT_BLOCK_TABS_GRID_ID', 200);

@@ -356,6 +356,37 @@ function fn_development_get_products_pre(&$params, $items_per_page, $lang_code)
             $params['features_hash'] = (!empty($params['features_hash']) ? '.' : '') . $feature_hash;
         }
     }
+    if (!empty($params['strings_type'])) {
+        $params['cid'] = STRINGS_CATEGORY_ID;
+        $params['subcats'] = 'Y';
+        if ($params['strings_type'] == 'natural_gut') {
+            $feature_hash = 'V' . NATURAL_GUT_STRINGS_FV_ID;
+        }
+        if ($params['strings_type'] == 'nylon') {
+            $feature_hash = 'V' . NYLON_STRINGS_FV_ID;
+        }
+        if ($params['strings_type'] == 'polyester') {
+            $feature_hash = 'V' . POLYESTER_STRINGS_FV_ID;
+        }
+        if ($params['strings_type'] == 'hybrid') {
+            $feature_hash = 'V' . HYBRID_STRINGS_FV_ID;
+        }
+        if ($params['strings_type'] == 'monofil') {
+            $feature_hash = 'V' . MONOFIL_STRINGS_FV_ID;
+        }
+        if ($params['strings_type'] == 'multifil') {
+            $feature_hash = 'V' . MULTIFIL_STRINGS_FV_ID;
+        }
+        if ($params['strings_type'] == 'textured') {
+            $feature_hash = 'V' . TEXTURED_STRINGS_FV_ID;
+        }
+        if ($params['strings_type'] == 'synthetic_gut') {
+            $feature_hash = 'V' . SYNTHETIC_GUT_STRINGS_FV_ID;
+        }
+        if (!empty($feature_hash)) {
+            $params['features_hash'] = (!empty($params['features_hash']) ? '.' : '') . $feature_hash;
+        }
+    }
 }
 
 function fn_render_page_blocks($description, $smarty_capture)
