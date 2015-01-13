@@ -3360,6 +3360,15 @@ var Tygh = {
                     }
 
                     // [TennisPlaza]
+                    params.onShow = function( event, ui ) {
+                        elm.addClass('tooltip-shown');
+                    }
+                    params.onHide = function( event, ui ) {
+                        elm.removeClass('tooltip-shown');
+                        fn_mouseleave_tooltip(elm);
+
+                    }
+
                     if (elm.data('cetooltipposition') === 'top') {
                         params.position = 'top left';
                         params.tipClass = 'tooltip arrow-top';
