@@ -7,11 +7,12 @@
     {if $smarty.request.features_hash}
         {assign var="cur_features_hash" value="&features_hash=`$smarty.request.features_hash`"}
     {/if}
-    {if $filter.feature_type == "E" && (!$filter.simple_link || $filter.selected_ranges && $controller == "product_features")}
+    
+    {*if $filter.feature_type == "E" && (!$filter.simple_link || $filter.selected_ranges && $controller == "product_features")}
         {assign var="href" value="product_features.view?variant_id=`$range.range_id``$cur_features_hash`"|fn_url}
-    {else}
+    {else*}
         {assign var="href" value=$filter_qstring|fn_link_attach:"features_hash=`$filter_query_elm`"|fn_url}
-    {/if}
+    {*/if*}
     {assign var="use_ajax" value=$href|fn_compare_dispatch:$config.current_url}
     <a {if !$range.disabled || $range.checked}href="{$href}"{/if} {if $filter.feature_type != "E"}rel="nofollow"{/if} class="ty-product-filters__item{if $range.checked} checked{/if}{if $range.disabled} disabled{elseif $allow_ajax && $use_ajax} cm-ajax-force cm-ajax cm-ajax-full-render cm-history{/if}" data-ca-target-id="{$ajax_div_ids}" data-ca-scroll=".cm-pagination-container"><span class="ty-filter-icon"><i class="ty-icon-ok ty-filter-icon__check"></i><i class="ty-icon-cancel ty-filter-icon__delete"></i></span>{$filter.prefix}{$range.range_name|fn_text_placeholders}{$filter.suffix}&nbsp;{if !$range.disabled}<span class="ty-product-filters__count">&nbsp;({$range.products})</span>{/if}</a>
 </div>

@@ -12,14 +12,7 @@
                 {/hook}
             </h2>
         {/if}
-        <div class="ty-tennisplaza-body">
-            {$content nofilter}
-            {if $block.properties.all_items_url}
-                <div class="ty-check-all__block-link">
-                    <a href="{"`$block.properties.all_items_url`"|fn_url}">{__("check_all_items")|upper}</a>
-                </div>
-            {/if}
-        </div>
+        <div class="ty-tennisplaza-body">{$content nofilter}</div>
         
     </div>
 {/if}

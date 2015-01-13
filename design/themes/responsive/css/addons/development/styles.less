@@ -206,6 +206,9 @@ select {
 
 
 /*Top menu*/
+.ty-menu__submenu-items .ty-top-mine__submenu-col:last-child {
+    margin-right: 0;
+}
 .no-touch .top-menu .ty-menu__item:hover .ty-menu__submenu-items,
 .top-menu .is-hover-menu .ty-menu__submenu-items {
     display: none;
@@ -229,6 +232,7 @@ select {
     background: none repeat scroll 0 0 #ffffff;
     color: #000000;
     text-align: left;
+    padding: 15px;
 }
 .ty-menu__catalog-items {
     height: 380px;
@@ -244,7 +248,7 @@ select {
     color: #000000;
 }
 .ty-menu__submenu-item-header .ty-menu__submenu-link {
-    padding: 3px 5px 3px 12px;
+    padding: 3px 10px;
 }
 .ty-menu__submenu-item-header .ty-menu__submenu-link {
     color: #ffffff;
@@ -284,10 +288,6 @@ select {
 }
 .top-menu .ty-menu__items {
     padding: 0 30px;
-}
-.top-menu .ty-menu__catalog-items {
-    right: 125px;
-    width: 1000px;
 }
 .ty-menu__item.ty-menu__item-active .ty-menu__item-link {
     background-color: lighten(@menu, 20%);
@@ -330,7 +330,8 @@ select {
     color: #000000;
 }
 .ty-menu__submenu-items .ty-top-mine__submenu-col {
-    margin: 0 3px;
+    margin: 0;
+    width: 185px;
 }
 .top-my-account {
     float: right;
@@ -350,7 +351,7 @@ select {
     background-color: lighten(@base, 5%);
 }
 .ty-price-slider__input-text {
-    width: 50px;
+    width: 52px;
     padding: 4px;
 }
 .ty-product-filters__wrapper .is-hover {
@@ -425,12 +426,13 @@ select {
 }
 .ty-product-filters__block input {
     color: #333333;
+    padding: 4px 5px;
 }
 /*Filters*/
 
 /*Player details*/
-.content-description .ty-product-features {
-    margin-bottom: 50px;
+.content-description .ty-product-description {
+    margin-bottom: 0;
 }
 .ty-product-description {
     margin-bottom: 50px;
@@ -448,12 +450,13 @@ select {
     border-bottom: 1px solid darken(@base, 7%);
     border-left: 1px solid darken(@base, 7%);
     padding: 15px 5px 15px 10px;
+    max-height: 350px;
 }
 .ty-product-block__left {
     width: 518px;
 }
 .ty-product-block__left .ty-tabs__content > div {
-    height: 350px;
+/*    height: 350px;*/
 }
 .ty-qty-disc-logo {
     background:url("../../../design/themes/responsive/media/images/addons/development/qty_disc.png") no-repeat scroll 0 0 transparent !important;
@@ -501,6 +504,10 @@ select {
 }
 .ty-product-block .ty-tabs {
     margin-top: 0;
+}
+.ty-product-block .ty-no-items {
+    margin-bottom: 0;
+    padding: 40px 20px;
 }
 .ty-player-block__img-wrapper {
     position: absolute;
@@ -971,7 +978,7 @@ select {
     margin-top: 15px;
 }
 .discussion-block {
-    height: 290px;
+    max-height: 290px;
 }
 /*Discussion*/
 
@@ -1117,7 +1124,7 @@ select {
     width: 300px;
 }
 .ty-menu__submenu-to-right {
-    position: absolute;
+    position: unset;
 }
 .ty-menu__submenu-to-right .ty-menu__submenu-items {
     right: unset;
@@ -1209,6 +1216,11 @@ select {
     color: @font;
     font-size: 95%;
     font-weight: bold;
+}
+.top-menu .ty-tooltip-block {
+    position: absolute;
+    right: 80px;
+    top: 3px;
 }
 /*.ty-tennisplaza-container h2 {
     font-size: 15px;

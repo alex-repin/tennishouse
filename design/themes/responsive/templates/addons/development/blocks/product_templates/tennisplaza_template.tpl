@@ -108,6 +108,7 @@
                 *}
 
                 <div class="ty-options-avail-container-wrap">
+                    {if $product.product_options}
                     <div class="ty-options-container">
                         {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
                         <div class="ty-product-block__option">
@@ -123,6 +124,7 @@
                             {if $capture_options_vs_qty}{/capture}{/if}
                         </div>*}
                     </div>
+                    {/if}
                     
                     <div class="ty-avail-container">
                         {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}

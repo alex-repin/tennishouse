@@ -54,10 +54,10 @@
                     {else}
                         <div class="ty-menu__submenu" id="{$unique_elm_id}">
                             {hook name="blocks:topmenu_dropdown_3levels_cols"}
-                                <ul class="ty-menu__submenu-items cm-responsive-menu-submenu {if $item1.param_id == $smarty.const.CATELOG_MENU_ITEM_ID}ty-menu__catalog-items{/if}">
+                                <ul class="ty-menu__submenu-items cm-responsive-menu-submenu {if $item1.param_id == $smarty.const.CATALOG_MENU_ITEM_ID}ty-menu__catalog-items{/if}">
                                     {foreach from=$item1.$childs item="item2" name="item2"}
-                                        {$col_width = 96 / ($item1.$childs|sizeof)}
-                                        <li class="ty-top-mine__submenu-col" {if $item1.param_id == $smarty.const.CATELOG_MENU_ITEM_ID}style="width: {$col_width}%;"{/if}>
+                                        {*$col_width = 98 / ($item1.$childs|sizeof)*}
+                                        <li class="ty-top-mine__submenu-col" {*if $item1.param_id == $smarty.const.CATALOG_MENU_ITEM_ID}style="width: {$col_width}%;"{/if*}>
                                             {assign var="item2_url" value=$item2|fn_form_dropdown_object_link:$block.type}
                                             <div class="ty-menu__submenu-item-header {if $item2.active || $item2|fn_check_is_active_menu_item:$block.type} ty-menu__submenu-item-header-active{/if} {if $item2.object_id == $smarty.const.SPORTS_NUTRITION_CATEGORY_ID}ty-menu__sports-nutrition{/if}">
                                                 <a{if $item2_url} href="{$item2_url}"{/if} class="ty-menu__submenu-link">{$item2.$name|upper nofilter}</a>
@@ -77,7 +77,16 @@
                                                         {foreach from=$item2.$childs item="item3" name="item3"}
                                                             {assign var="item3_url" value=$item3|fn_form_dropdown_object_link:$block.type}
                                                             <div class="ty-menu__submenu-item-subheader {if $item3.active || $item3|fn_check_is_active_menu_item:$block.type} ty-menu__submenu-item-subheader-active{/if}">
-                                                                <a{if $item3_url} href="{$item3_url}"{/if} class="ty-menu__submenu-link">{$item3.$name nofilter}</a>
+                                                                <a{if $item3_url} href="{$item3_url}"{/if} class="ty-menu__submenu-link">
+                                                                    {$item3.$name nofilter}
+                                                                </a>
+                                                                {if $item3.note_text}
+                                                                    {capture name="category_note_`$item3.object_id`"}
+                                                                        {if $item3.note_url}<a href="{"`$item3.note_url`"|fn_url}">{/if}{$item3.note_text}{if $item3.note_url}</a>{/if}
+                                                                    {/capture}
+                                                                    {assign var="capture_name" value="category_note_`$item3.object_id`"}
+                                                                    {include file="common/tooltip.tpl" tooltip=$smarty.capture.$capture_name}
+                                                                {/if}
                                                                 <div class="ty-icon-down-open {if $smarty.foreach.item3.first}hidden{/if}"></div>
                                                                 <div class="ty-icon-right-open {if !$smarty.foreach.item3.first}hidden{/if}"></div>
                                                             </div>
@@ -137,6 +146,16 @@
                                         </li>
                                     {/if}
                                 </ul>
+                                <script type="text/javascript">
+                                    Tygh.$(document).ready(function() {$ldelim}
+                                        $('#' + '{$unique_elm_id}').find('.ty-menu__submenu-items').each(function(){$ldelim}
+                                            var submenu_width = '{$item1.$childs|sizeof}' * 185;
+                                            if (submenu_width > 600) {
+                                                $(this).css('left', Math.max(0, (($(window).width() - submenu_width) / 2) + $(window).scrollLeft()) + 'px');
+                                            }
+                                        {$rdelim});
+                                    {$rdelim});
+                                </script>
                             {/hook}
                         </div>
                     {/if}
@@ -156,14 +175,29 @@
                     {$rdelim}, 300);
                 {$rdelim}, function(e){$ldelim}
                     $(this).removeClass('is-hover');
-                    var submenu = $(this);
-                    setTimeout(function() {$ldelim}
-                        if (!submenu.hasClass('is-hover')) {
-                            submenu.find('.ty-menu__submenu-items').slideUp(300);
-                        }
-                    {$rdelim}, 300);
+                    fn_hide_top_menu($(this));
                 {$rdelim});
             {$rdelim});
+            {literal}
+            function fn_mouseleave_tooltip(trigger)
+            {
+                trigger.parents('.ty-menu__item-parent .ty-menu__item_full').each(function(){
+                    if (!$(this).hasClass('is-hover')) {
+                        fn_hide_top_menu($(this));
+                    }
+                });
+            }
+            function fn_hide_top_menu(top_menu)
+            {
+                if (!top_menu.find('.tooltip-shown').length) {
+                    setTimeout(function() {
+                        if (!top_menu.hasClass('is-hover')) {
+                            top_menu.find('.ty-menu__submenu-items').slideUp(300);
+                        }
+                    }, 300);
+                }
+            }
+            {/literal}
         </script>
 
         {/hook}

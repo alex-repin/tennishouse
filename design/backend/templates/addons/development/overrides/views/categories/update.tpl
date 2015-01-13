@@ -83,6 +83,19 @@
         </div>
     </div>
 
+    <div class="control-group">
+        <label class="control-label" for="elm_category_note_url">{__("note_url")}:</label>
+        <div class="controls">
+            <input type="text" name="category_data[note_url]" id="elm_category_note_url" size="55" value="{$category_data.note_url}" class="input-text-short" />
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="elm_category_note_text">{__("note_text")}:</label>
+        <div class="controls">
+            <input type="text" name="category_data[note_text]" id="elm_category_note_text" size="55" value="{$category_data.note_text}" class="input-text-short" />
+        </div>
+    </div>
+
     {include file="common/select_status.tpl" input_name="category_data[status]" id="elm_category_status" obj=$category_data hidden=true}
 
     {if "ULTIMATE"|fn_allowed_for}

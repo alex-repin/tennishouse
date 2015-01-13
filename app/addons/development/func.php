@@ -16,6 +16,12 @@ use Tygh\Registry;
 use Tygh\Http;
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_get_categories($params, $join, $condition, &$fields, $group_by, $sortings, $lang_code)
+{
+    $fields[] = '?:categories.note_url';
+    $fields[] = '?:categories.note_text';
+}
+
 function fn_read_title($title)
 {
     $brand = !empty($_SESSION['product_features'][BRAND_FEATURE_ID]['variant_name']) ? $_SESSION['product_features'][BRAND_FEATURE_ID]['variant_name'] : __("this_brand");
@@ -201,7 +207,7 @@ function fn_development_get_filters_products_count_before_select_filters(&$sf_fi
 
 function fn_display_subheaders($category_id)
 {
-    return in_array($category_id, array(RACKETS_CATEGORY_ID, APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, BAGS_CATEGORY_ID));
+    return in_array($category_id, array(RACKETS_CATEGORY_ID, APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, STRINGS_CATEGORY_ID, BAGS_CATEGORY_ID));
 }
 
 function fn_development_get_products($params, &$fields, $sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
@@ -604,10 +610,10 @@ function fn_identify_category_type($path)
             $type = 'B';
         } elseif (in_array(SPORTS_NUTRITION_CATEGORY_ID, $cats)) {
             $type = 'N';
+        } elseif (in_array(STRINGS_CATEGORY_ID, $cats)) {
+            $type = 'ST';
         } elseif (in_array(ACCESSORIES_CATEGORY_ID, $cats)) {
-            if (in_array(STRINGS_CATEGORY_ID, $cats)) {
-                $type = 'ST';
-            } elseif (in_array(BALLS_CATEGORY_ID, $cats)) {
+            if (in_array(BALLS_CATEGORY_ID, $cats)) {
                 $type = 'BL';
             } elseif (in_array(TOWELS_CATEGORY_ID, $cats)) {
                 $type = 'TW';

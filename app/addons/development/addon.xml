@@ -102,6 +102,12 @@
             ALTER TABLE `cscart_categories` ADD `override_margin` CHAR( 1 ) NOT NULL DEFAULT 'N',
             ADD `margin` DECIMAL( 4, 1 ) UNSIGNED NOT NULL ;
         </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `note_url` VARCHAR( 255 ) NOT NULL ;
+        </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `note_text` VARCHAR( 255 ) NOT NULL ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennisplaza_template">Шаблон TennisPlaza</item>
@@ -216,8 +222,8 @@
         <item lang="ru" id="hybrid_strings">Гибридные струны</item>
         <item lang="ru" id="check_all_items">Посмотреть все</item>
         <item lang="ru" id="all_items_url">Ссылка "Посмотреть все"</item>
-        <item lang="ru" id="asphalt_surface">Асфальт</item>
-        <item lang="ru" id="asphalt_surface">Асфальт</item>
+        <item lang="ru" id="structure">Структура</item>
+        <item lang="ru" id="note_url">URL подсказки</item>
         <item lang="ru" id="asphalt_surface">Асфальт</item>
         <item lang="ru" id="asphalt_surface">Асфальт</item>
     </language_variables>

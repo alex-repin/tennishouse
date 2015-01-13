@@ -1091,6 +1091,8 @@ function fn_top_menu_standardize($items, $id_name, $name, $children_name, $href_
         $result[$v[$id_name]] = array(
             // [dab]
             'object_id' => $v[$id_name],
+            'note_url' => $v['note_url'],
+            'note_text' => $v['note_text'],
             // [dab]
             'descr' => $v[$name],
             'param' => empty($v['link']) ? $href_prefix . $v[$id_name] : $v['link'],

@@ -53,6 +53,8 @@ define('STRING_TYPE_FEATURE_ID', 60);
 define('BALLS_TYPE_FEATURE_ID', 64);
 define('OG_TYPE_FEATURE_ID', 66);
 define('BG_TYPE_FEATURE_ID', 72);
+
+define('BRAND_FEATURE_TYPE', 'V');
 /*Features*/
 
 /*Profile fields*/
@@ -90,7 +92,7 @@ define('SYNTHETIC_GUT_STRINGS_FV_ID', 371);
 
 define('PRODUCT_BLOCK_TABS_GRID_ID', 200);
 
-define('CATELOG_MENU_ITEM_ID', 153);
+define('CATALOG_MENU_ITEM_ID', 153);
 
 define('KIRSCHBAUM_BRAND_ID', 340);
 
@@ -112,5 +114,6 @@ fn_register_hooks(
     'get_filters_products_count_pre',
     'update_product_pre',
     'top_menu_form',
-    'get_products_pre'
+    'get_products_pre',
+    'get_categories'
 );
