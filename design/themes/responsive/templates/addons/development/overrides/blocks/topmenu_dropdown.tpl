@@ -80,13 +80,7 @@
                                                                 <a{if $item3_url} href="{$item3_url}"{/if} class="ty-menu__submenu-link">
                                                                     {$item3.$name nofilter}
                                                                 </a>
-                                                                {if $item3.note_text}
-                                                                    {capture name="category_note_`$item3.object_id`"}
-                                                                        {if $item3.note_url}<a href="{"`$item3.note_url`"|fn_url}">{/if}{$item3.note_text}{if $item3.note_url}</a>{/if}
-                                                                    {/capture}
-                                                                    {assign var="capture_name" value="category_note_`$item3.object_id`"}
-                                                                    {include file="common/tooltip.tpl" tooltip=$smarty.capture.$capture_name}
-                                                                {/if}
+                                                                {include file="addons/development/common/tooltip.tpl" note_url=$item3.note_url note_text=$item3.note_text}
                                                                 <div class="ty-icon-down-open {if $smarty.foreach.item3.first}hidden{/if}"></div>
                                                                 <div class="ty-icon-right-open {if !$smarty.foreach.item3.first}hidden{/if}"></div>
                                                             </div>

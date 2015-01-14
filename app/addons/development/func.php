@@ -202,7 +202,7 @@ function fn_development_get_filter_range_name_post(&$range_name, $range_type, $r
 
 function fn_development_get_filters_products_count_before_select_filters(&$sf_fields, $sf_join, $condition, $sf_sorting, $params)
 {
-    $sf_fields .= db_quote(", ?:product_filters.is_slider, ?:product_filters.units");
+    $sf_fields .= db_quote(", ?:product_filters.is_slider, ?:product_filters.units, ?:product_filters.note_url, ?:product_filters.note_text");
 }
 
 function fn_display_subheaders($category_id)

@@ -16,6 +16,10 @@
                         <type>input</type>
                         <default_value>65</default_value>
                     </item>
+                    <item id="free_shipping_cost">
+                        <type>input</type>
+                        <default_value>5000</default_value>
+                    </item>
                 </items>
             </section>
         </sections>
@@ -107,6 +111,10 @@
         </item>
         <item>
             ALTER TABLE `cscart_categories` ADD `note_text` VARCHAR( 255 ) NOT NULL ;
+        </item>
+        <item>
+            ALTER TABLE `cscart_product_filters` ADD `note_url` VARCHAR( 255 ) NOT NULL ,
+            ADD `note_text` VARCHAR( 255 ) NOT NULL ;
         </item>
     </queries>
     <language_variables>

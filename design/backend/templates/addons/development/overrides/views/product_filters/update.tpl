@@ -51,6 +51,18 @@
             <input type="text" id="elm_filter_position_{$id}" name="filter_data[position]" size="3" value="{$filter.position}{if !$id}0{/if}"/>
             </div>
         </div>
+        <div class="control-group">
+            <label class="control-label" for="elm_filter_note_url_{$id}">{__("note_url")}</label>
+            <div class="controls">
+            <input type="text" id="elm_filter_note_url_{$id}" name="filter_data[note_url]" size="3" value="{$filter.note_url}"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="elm_filter_note_text_{$id}">{__("note_text")}</label>
+            <div class="controls">
+            <input type="text" id="elm_filter_note_text_{$id}" name="filter_data[note_text]" size="3" value="{$filter.note_text}"/>
+            </div>
+        </div>
 
         <div class="control-group">
             <label class="control-label" for="elm_filter_show_on_home_page_{$id}">{__("show_on_home_page")}</label>
