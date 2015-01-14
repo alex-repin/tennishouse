@@ -1,3 +1,2 @@
 config.local.php
-var/*
-!var/database
+var/cache/

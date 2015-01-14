@@ -771,12 +771,16 @@ class Block extends CompanySingleton
             $params = fn_array_merge($params, $filling_params);
         }
 
-        if (isset($block_scheme['content'][$item_name]['items_function'])) {
+        // [tennisplaza]
+        if (isset($field_scheme['params']['items_function'])) {
+            $callable = $field_scheme['params']['items_function'];
+        } elseif (isset($block_scheme['content'][$item_name]['items_function'])) {
             $callable = $block_scheme['content'][$item_name]['items_function'];
             $params['block_data'] = $block;
         } else {
             $callable = 'fn_get_' . $block['type'];
         }
+        // [tennisplaza]
 
         if (is_callable($callable)) {
             @list($items, ) = call_user_func($callable, $params);

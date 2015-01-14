@@ -30,3 +30,18 @@
     }(Tygh, Tygh.$));
     {/literal}
 </script>
+{*
+<script type="text/javascript">(function() {
+    {literal}
+    if (window.pluso)if (typeof window.pluso.start == "function") return;
+    if (window.ifpluso==undefined) { window.ifpluso = 1;
+        var d = document, s = d.createElement('script'), g = 'getElementsByTagName';
+        s.type = 'text/javascript'; s.charset='UTF-8'; s.async = true;
+        s.src = ('https:' == window.location.protocol ? 'https' : 'http')  + '://share.pluso.ru/pluso-like.js';
+        var h=d[g]('body')[0];
+        h.appendChild(s);
+    }})();
+    {/literal}
+</script>
+<div data-image="{$image}" data-description="{$description}" data-title="{$title}" data-url="{$config.current_url|fn_url}" class="pluso" data-background="transparent" data-options="medium,round,line,horizontal,nocounter,theme=03" data-services="vkontakte,odnoklassniki,facebook,twitter,google,moimir,email"></div>
+*}

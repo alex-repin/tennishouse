@@ -15,10 +15,16 @@
                     <item id="global_product_margin">
                         <type>input</type>
                         <default_value>65</default_value>
+                        <translations>
+                            <item lang="ru">Надбавка к цене (%)</item>
+                        </translations>
                     </item>
                     <item id="free_shipping_cost">
                         <type>input</type>
                         <default_value>5000</default_value>
+                        <translations>
+                            <item lang="ru">Бесплатная доставка</item>
+                        </translations>
                     </item>
                 </items>
             </section>
@@ -175,7 +181,7 @@
         <item lang="ru" id="additional_information">Дополнительная информация</item>
         <item lang="ru" id="our_advantages_text">Наши преимущества</item>
         <item lang="ru" id="variery_court_surfaces">Разновидности покрытий кортов</item>
-        <item lang="ru" id="free_delivery_text">Бесплатная доставка на заказы свыше 5000 рублей</item>
+        <item lang="ru" id="free_delivery_text">Бесплатная доставка на заказы свыше {free_shipping_cost} рублей</item>
         <item lang="ru" id="free_returns_text">Бесплатный возврат и обмен</item>
         <item lang="ru" id="age">Возраст</item>
         <item lang="ru" id="play_level">Уровень игры</item>
@@ -227,12 +233,16 @@
         <item lang="ru" id="nylon_strings">Нейлоновые струны</item>
         <item lang="ru" id="natural_gut_strings">Натуральные струны</item>
         <item lang="ru" id="polyester_strings">Полиэстеровые струны</item>
+        <item lang="ru" id="monofil_strings">Моноволоконные струны</item>
+        <item lang="ru" id="multifil_strings">Мультиволоконные струны</item>
+        <item lang="ru" id="textured_strings">Текстурированные струны</item>
+        <item lang="ru" id="synthetic_gut_strings">Комбинированные струны</item>
         <item lang="ru" id="hybrid_strings">Гибридные струны</item>
         <item lang="ru" id="check_all_items">Посмотреть все</item>
         <item lang="ru" id="all_items_url">Ссылка "Посмотреть все"</item>
         <item lang="ru" id="structure">Структура</item>
         <item lang="ru" id="note_url">URL подсказки</item>
-        <item lang="ru" id="asphalt_surface">Асфальт</item>
-        <item lang="ru" id="asphalt_surface">Асфальт</item>
+        <item lang="ru" id="free_shipping_tip">Подсказка: Выбрав товаров еще на [left_amount], вы получаете бесплатную доставку.</item>
+        <item lang="ru" id="cross_sales">Кросс-продажи</item>
     </language_variables>
 </addon>

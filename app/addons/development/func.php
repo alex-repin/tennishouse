@@ -16,6 +16,11 @@ use Tygh\Registry;
 use Tygh\Http;
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_get_lang_var_post(&$value, $var_name)
+{
+    $value = fn_check_vars($value);
+}
+
 function fn_development_get_categories($params, $join, $condition, &$fields, $group_by, $sortings, $lang_code)
 {
     $fields[] = '?:categories.note_url';
@@ -285,6 +290,50 @@ function fn_development_get_products($params, &$fields, $sortings, &$condition, 
         }
     }
 }
+
+function fn_development_calculate_cart_items(&$cart, $cart_products, $auth)
+{
+    if (!empty($cart_products)) {
+        foreach ($cart_products as $i => $product) {
+            $cart['products'][$i]['main_category'] = $product['main_category'];
+        }
+    }
+}
+
+function fn_get_cross_sales($params)
+{
+    $result = array();
+    if (!empty($_SESSION['cart']['products'])) {
+        $objective_cat_ids = array(RACKETS_CATEGORY_ID, APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, BAGS_CATEGORY_ID, STRINGS_CATEGORY_ID, BALLS_CATEGORY_ID, TOWELS_CATEGORY_ID, OVERGRIPS_CATEGORY_ID, BASEGRIPS_CATEGORY_ID, DAMPENERS_CATEGORY_ID);
+        $cat_ids = array();
+        foreach ($_SESSION['cart']['products'] as $item_id => $item) {
+            $cat_ids[] = $item['main_category'];
+        }
+        $show_cat_ids = array_diff($objective_cat_ids, $cat_ids);
+        if (!empty($show_cat_ids)) {
+            $limit = ceil($params['limit'] / count($show_cat_ids));
+            $_params = array (
+                'bestsellers' => true,
+                'sales_amount_from' => 1,
+                'sort_by' => 'sales_amount',
+                'sort_order' => 'desc',
+                'limit' => $limit,
+                'subcats' => 'Y'
+            );
+            foreach ($show_cat_ids as $id) {
+                $_params['cid'] = $id;
+                list($prods,) = fn_get_products($_params);
+                $result = array_merge($result, $prods);
+            }
+        }
+        if (!empty($result)) {
+            shuffle($result);
+        }
+    }
+
+    return array($result, $params);
+}
+
 function fn_development_get_products_pre(&$params, $items_per_page, $lang_code)
 {
     if (!empty($params['shoes_surface'])) {
@@ -393,6 +442,18 @@ function fn_development_get_products_pre(&$params, $items_per_page, $lang_code)
             $params['features_hash'] = (!empty($params['features_hash']) ? '.' : '') . $feature_hash;
         }
     }
+}
+
+function fn_check_vars($description)
+{
+    if (preg_match_all('/\{([a-zA-Z_]*)\}/', $description, $matches)) {
+        foreach ($matches[0] as $i => $vl) {
+            if ($vl == '{free_shipping_cost}') {
+                $description = str_replace($vl, Registry::get('addons.development.free_shipping_cost'), $description);
+            }
+        }
+    }
+    return $description;
 }
 
 function fn_render_page_blocks($description, $smarty_capture)
@@ -573,10 +634,15 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
     }
 }
 
-function fn_get_category_type($category_id)
+function fn_get_categories_types($category_ids)
 {
-    $path = db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $category_id);
-    return fn_identify_category_type($path);
+    $category_ids = is_array($category_ids) ? $category_ids : array($category_ids);
+    $paths = db_get_hash_single_array("SELECT id_path, category_id FROM ?:categories WHERE category_id IN (?n)", array("category_id", "id_path"), $category_ids);
+    $result = array();
+    foreach ($paths as $i => $path) {
+        $result[$i] = fn_identify_category_type($path);
+    }
+    return $result;
 }
 
 function fn_development_get_product_data_post(&$product_data, $auth, $preview, $lang_code)
@@ -592,7 +658,8 @@ function fn_development_get_product_data_post(&$product_data, $auth, $preview, $
     } else {
         $product_data['players'] = $players;
     }
-    $product_data['category_type'] = fn_get_category_type($product_data['main_category']);
+    $types = fn_get_categories_types($product_data['main_category']);
+    $product_data['category_type'] = $types[$product_data['main_category']];
 }
 
 function fn_identify_category_type($path)
@@ -637,6 +704,9 @@ function fn_development_get_products_post(&$products, $params, $lang_code)
         foreach ($products as $i => $product) {
             $products[$i]['type'] = fn_identify_category_type($product['id_path']);
         }
+    }
+    if (!empty($params['shuffle']) && $params['shuffle'] == 'Y') {
+        shuffle($products);
     }
 }
 

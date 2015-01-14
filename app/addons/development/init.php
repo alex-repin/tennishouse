@@ -115,5 +115,7 @@ fn_register_hooks(
     'update_product_pre',
     'top_menu_form',
     'get_products_pre',
-    'get_categories'
+    'get_categories',
+    'get_lang_var_post',
+    'calculate_cart_items'
 );

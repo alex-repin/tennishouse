@@ -148,6 +148,10 @@ class Values
             return '[lang name=' . $var_name . (preg_match('/\[[\w]+\]/', $values[$var_name]) ? ' cm-pre-ajax' : '') . ']' . $values[$var_name] . '[/lang]';
         }
 
+        //[tennisplaza]
+        fn_set_hook('get_lang_var_post', $values[$var_name], $var_name);
+        //[tennisplaza]
+        
         return $values[$var_name];
     }
 
