@@ -1,10 +1,10 @@
 <div id="category_products_{$block.block_id}">
 
-{if $category_data.description || $runtime.customization_mode.live_editor}
+{*if $category_data.description || $runtime.customization_mode.live_editor}
     <div class="ty-wysiwyg-content ty-mb-s" {live_edit name="category:description:{$category_data.category_id}"}>{$category_data.description nofilter}</div>
 {/if}
 
-{*if $subcategories}
+{if $subcategories}
     {math equation="ceil(n/c)" assign="rows" n=$subcategories|count c=$columns|default:"2"}
     {split data=$subcategories size=$rows assign="splitted_subcategories"}
     <ul class="subcategories clearfix">

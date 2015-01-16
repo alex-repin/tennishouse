@@ -67,5 +67,8 @@ $schema['blocks/products/products_multicolumns.tpl']['settings']['small_mode'] =
     'type' => 'checkbox',
     'default_value' => 'N'
 );
+$schema['addons/development/blocks/categories/categories_roundabout.tpl']['params'] = array(
+    'roundabout' => true
+);
 
 return $schema;

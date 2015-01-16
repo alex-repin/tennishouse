@@ -21,10 +21,14 @@ function fn_development_get_lang_var_post(&$value, $var_name)
     $value = fn_check_vars($value);
 }
 
-function fn_development_get_categories($params, $join, $condition, &$fields, $group_by, $sortings, $lang_code)
+function fn_development_get_categories(&$params, $join, $condition, &$fields, $group_by, $sortings, $lang_code)
 {
     $fields[] = '?:categories.note_url';
     $fields[] = '?:categories.note_text';
+    if (!empty($params['roundabout'])) {
+        $params['get_images'] = true;
+        $fields[] = '?:category_descriptions.description';
+    }
 }
 
 function fn_read_title($title)

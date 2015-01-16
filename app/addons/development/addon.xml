@@ -244,5 +244,9 @@
         <item lang="ru" id="note_url">URL подсказки</item>
         <item lang="ru" id="free_shipping_tip">Подсказка: Выбрав товаров еще на [left_amount], вы получаете бесплатную доставку.</item>
         <item lang="ru" id="cross_sales">Кросс-продажи</item>
+        <item lang="ru" id="tmpl_roundabout">Карусель</item>
+        <item lang="ru" id="view_collection">Посмотреть коллекцию</item>
+        <item lang="ru" id="cross_sales">Кросс-продажи</item>
+        <item lang="ru" id="cross_sales">Кросс-продажи</item>
     </language_variables>
 </addon>

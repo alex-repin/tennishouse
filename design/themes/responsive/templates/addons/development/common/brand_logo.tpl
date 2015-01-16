@@ -4,4 +4,14 @@
 {$brand_id = $smarty.const.BRAND_FEATURE_ID}
 {$brand_variant_id = $features.$brand_id.variant_id}
 
-<img src="{$features.$brand_id.variants.$brand_variant_id.image_pair.icon.image_path}" alt="{$features.$brand_id.variants.$brand_variant_id.variant}" {if $brand_variant_id == $smarty.const.KIRSCHBAUM_BRAND_ID}style="height: 30px;"{/if}/>
+{if $brand_variant_id == $smarty.const.KIRSCHBAUM_BRAND_ID}
+    {$img_height = "30"}
+{else}
+    {$img_height = "19"}
+{/if}
+{include file="common/image.tpl"
+show_detailed_link=false
+images=$features.$brand_id.variants.$brand_variant_id.image_pair
+no_ids=true
+image_height=$img_height
+keep_transparent=true}

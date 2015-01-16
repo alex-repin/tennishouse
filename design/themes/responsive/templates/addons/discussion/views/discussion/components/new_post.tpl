@@ -30,6 +30,7 @@
 </div>
 {/if}
 {/hook}
+{if $discussion.object_type == 'P'}
 <div class="ty-new-post__additional-info">
 
 <div class="ty-new-post__additional-info-note">{__("additional_info_note")}</div>
@@ -87,6 +88,12 @@
 </div>
 
 </div>
+{else}
+    <div class="ty-control-group ty-inline-block" style="width: 31%;">
+        <label for="dsc_city_{$obj_prefix}{$obj_id}" class="ty-control-group__title" style="padding-bottom: 7px;">{__("city")}</label>
+        <input type="text" id="dsc_city_{$obj_prefix}{$obj_id}" name="post_data[city]" value="{if $user_info.s_city}{$user_info.s_city}{elseif $discussion.post_data.city}{$discussion.post_data.city}{/if}" size="15" class="ty-input-text" />
+    </div>
+{/if}
 {include file="common/image_verification.tpl" option="use_for_discussion"}
 
 <!--new_post_{$obj_prefix}{$obj_id}--></div>

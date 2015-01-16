@@ -1,8 +1,9 @@
 {assign var="current_redirect_url" value=$config.current_url|fn_link_attach:"selected_section=discussion"|escape:url}
 <div class="summary">
     <input type="text" name="posts[{$post.post_id}][name]" value="{$post.name}" size="40" class="input-hidden ty-dm-name">
-    <input type="text" name="posts[{$post.post_id}][age]" value="{$post.age}" size="10" class="input-hidden ty-dm-age">
     <input type="text" name="posts[{$post.post_id}][city]" value="{$post.city}" size="20" class="input-hidden ty-dm-city">
+    {if $discussion.object_type == 'P' || $discussion_object_type == 'P'}
+    <input type="text" name="posts[{$post.post_id}][age]" value="{$post.age}" size="10" class="input-hidden ty-dm-age">
     <select name="posts[{$post.post_id}][play_level]" class="ty-dm-play-level">
         <option value="" > - </option>
         <option value="1" {if $post.play_level == '1'}selected="selected"{/if}>1.0</option>
@@ -27,13 +28,16 @@
         <option value="17" {if $post.surface == '17'}selected="selected"{/if}>{__("parquet_surface")}</option>
         <option value="18" {if $post.surface == '18'}selected="selected"{/if}>{__("asphalt_surface")}</option>
     </select>
+    {/if}
 
     {hook name="discussion:update_post"}
         {if $type == "C" || $type == "B"}
             <textarea name="posts[{$post.post_id}][message]" cols="80" rows="5" class="input-hidden">{$post.message}</textarea>
         {/if}
     {/hook}
+    {if $discussion.object_type == 'P' || $discussion_object_type == 'P'}
     <input type="text" name="posts[{$post.post_id}][configuration]" value="{$post.configuration}" size="40" class="input-hidden ty-dm-configuration">
+    {/if}
 </div>
 <div class="tools">
     <div class="pull-left">

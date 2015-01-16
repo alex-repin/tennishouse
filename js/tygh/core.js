@@ -3365,8 +3365,9 @@ var Tygh = {
                     }
                     params.onHide = function( event, ui ) {
                         elm.removeClass('tooltip-shown');
-                        fn_mouseleave_tooltip(elm);
-
+                        if (typeof fn_mouseleave_tooltip == 'function') {
+                            fn_mouseleave_tooltip(elm);
+                        }
                     }
 
                     if (elm.data('cetooltipposition') === 'top') {

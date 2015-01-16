@@ -5,7 +5,11 @@
 {$new_post_title = __("new_post")}
 {/if}
 {if $discussion && $discussion.type != "D"}
-    <div class="discussion-block mCustomScrollbar" data-mcs-theme="dark" id="{if $container_id}{$container_id}{else}content_discussion{/if}">
+        {if $object_type == 'P'}
+            <div class="discussion-block mCustomScrollbar" data-mcs-theme="dark" id="{if $container_id}{$container_id}{else}content_discussion{/if}">
+        {else}
+            <div class="discussion-block" id="{if $container_id}{$container_id}{else}content_discussion{/if}">
+        {/if}
         {if $wrap == true}
             {capture name="content"}
             {include file="common/subheader.tpl" title=$title}

@@ -173,14 +173,6 @@
                 {$rdelim});
             {$rdelim});
             {literal}
-            function fn_mouseleave_tooltip(trigger)
-            {
-                trigger.parents('.ty-menu__item-parent .ty-menu__item_full').each(function(){
-                    if (!$(this).hasClass('is-hover')) {
-                        fn_hide_top_menu($(this));
-                    }
-                });
-            }
             function fn_hide_top_menu(top_menu)
             {
                 if (!top_menu.find('.tooltip-shown').length) {

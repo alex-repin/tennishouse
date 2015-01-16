@@ -779,7 +779,9 @@ function fn_attach_image_pairs($name, $object_type, $object_id = 0, $lang_code =
  * @param bool $lazy lazy generation - returns script URL that generates thumbnail
  * @return array array with width, height, mime type and path
  */
-function fn_generate_thumbnail($image_path, $width, $height = 0, $lazy = false)
+ // [tennishouse]
+function fn_generate_thumbnail($image_path, $width, $height = 0, $lazy = false, $keep_transparent = false)
+// [tennishouse]
 {
     /**
      * Actions before thumbnail generate
@@ -827,7 +829,14 @@ function fn_generate_thumbnail($image_path, $width, $height = 0, $lazy = false)
         list(, , ,$tmp_path) = fn_get_image_size(Storage::instance('images')->getAbsolutePath($image_path));
 
         if (!empty($tmp_path)) {
-            list($cont, $format) = fn_resize_image($tmp_path, $width, $height, Registry::get('settings.Thumbnails.thumbnail_background_color'));
+            // [tennishouse]
+            if ($keep_transparent) {
+                $background = '';
+            } else {
+                $background = Registry::get('settings.Thumbnails.thumbnail_background_color');
+            }
+            list($cont, $format) = fn_resize_image($tmp_path, $width, $height, $background);
+            // [tennishouse]
 
             if (!empty($cont)) {
                 list(, $th_filename) = Storage::instance('images')->put($filename, array(
@@ -858,7 +867,9 @@ function fn_parse_rgb($color)
     return array($r, $g, $b);
 }
 
-function fn_image_to_display($images, $image_width = 0, $image_height = 0)
+//[tennishouse]
+function fn_image_to_display($images, $image_width = 0, $image_height = 0, $keep_transparent = false)
+//[tennishouse]
 {
     if (empty($images)) {
         return array();
@@ -905,7 +916,9 @@ function fn_image_to_display($images, $image_width = 0, $image_height = 0)
     }
 
     if (!empty($image_width) && !empty($relative_path) && !empty($absolute_path)) {
-        $image_path = fn_generate_thumbnail($relative_path, $image_width, $image_height, Registry::get('config.tweaks.lazy_thumbnails'));
+        // [tennishouse]
+        $image_path = fn_generate_thumbnail($relative_path, $image_width, $image_height, Registry::get('config.tweaks.lazy_thumbnails'), $keep_transparent);
+        // [tennishouse]
     } else {
         $image_width = $original_width;
         $image_height = $original_height;
