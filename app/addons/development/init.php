@@ -102,6 +102,8 @@ define('KIRSCHBAUM_BRAND_ID', 340);
 
 define('RACKETS_QTY_DSC_PRC', 5);
 
+define('LEARNING_CENTER_PAGE_ID', 53);
+
 fn_register_hooks(
     'update_product_post',
     'get_product_data_post',
@@ -124,5 +126,6 @@ fn_register_hooks(
     'calculate_cart_items',
     'get_categories_post',
     'get_product_feature_variants',
-    'get_category_data_post'
+    'get_category_data_post',
+    'render_block_register_cache'
 );

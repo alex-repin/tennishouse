@@ -16,6 +16,9 @@ select {
 .ty-control-group__label {
     width: 130px;
 }
+.tygh-content > div {
+    padding-bottom: 20px;
+}
 /* Tooltip */
 /*
  * Template: templates/common/tooltip.tpl
@@ -1219,12 +1222,14 @@ select {
 }
 
 /*Homepage*/
-.row-fluid .homepage-mens-clothes {
-    width: 490px;
+.homepage-block-row {
+    margin-top: 10px;
 }
-.row-fluid .homepage-womens-clothes {
+.row-fluid .homepage-item {
+    width: auto;
+}
+.row-fluid .homepage-right-item {
     margin-left: 10px;
-    width: 490px;
 }
 .row-fluid .homepage-right-column {
     margin-left: 1px;
@@ -1232,6 +1237,12 @@ select {
 }
 .row-fluid .tennis-bags {
     margin-bottom: 10px;
+}
+.ty-player-profiles {
+    background-image: url("../../../media/images/addons/development/players_profiles.png");
+    position: relative;
+    width: 468px;
+    height: 190px;
 }
 .ty-tennis-bags {
     background-image: url("../../../media/images/addons/development/luggage.png");
@@ -1249,33 +1260,66 @@ select {
     background-image: url("../../../media/images/addons/development/mens_clothes_shoes.png");
     position: relative;
     width: 490px;
-    height: 218px;
+    height: 190px;
 }
 .ty-womens-clothes-shoes {
     background-image: url("../../../media/images/addons/development/womens_clothes_shoes.png");
     position: relative;
     width: 490px;
-    height: 218px;
+    height: 190px;
 }
-.ty-block-categories {
+.ty-learning-center {
+    background-image: url("../../../media/images/addons/development/learning_center.png");
+    position: relative;
+    width: 251px;
+    height: 190px;
+}
+.ty-accessories {
+    background-image: url("../../../media/images/addons/development/accessories.png");
+    position: relative;
+    width: 251px;
+    height: 190px;
+}
+.ty-block-categories-top-left {
     position: absolute;
     top: 5px;
     left: 5px;
     opacity: 0.9;
+}
+.ty-block-categories-top-right {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    opacity: 0.9;
+}
+.ty-block-categories-bottom-left {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    opacity: 0.9;
+}
+.ty-block-categories-bottom-right {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    opacity: 0.9;
+}
+.ty-block-categories__players {
+    margin-bottom: 10px;
 }
 .ty-block-categories-first-wrapper {
     position: absolute;
     top: 0;
     left: 0;
     width: 490px;
-    height: 109px;
+    height: 95px;
 }
 .ty-block-categories-second-wrapper {
     position: absolute;
-    top: 110px;
+    top: 96px;
     left: 0;
     width: 490px;
-    height: 109px;
+    height: 95px;
 }
 .ty-block-categories__item {
     padding: 0 5px;
@@ -1292,12 +1336,12 @@ select {
     font-weight: bold;
     font-size: 95%;
 }
-.ty-block-caategories__overlay {
+.ty-block-categories__overlay {
     width: 100%;
     height: 100%;
     opacity: 0.5;
 }
-.ty-block-categories-wrapper:hover > .ty-block-caategories__overlay {
+.ty-block-categories-wrapper:hover > .ty-block-categories__overlay {
     background-color: #000;
     transition: all 200ms linear 0s;
 }
@@ -1309,12 +1353,52 @@ select {
     color: lighten(@menu, 20%);
     transition: all 200ms linear 0s;
 }
+.ty-discussion-post__item {
+    display: inline-block;
+    vertical-align: top;
+}
+.ty-discussion-post__city {
+    color: lighten(@font, 40%);
+}
+.homepage-block-row .ty-tennishouse-container {
+    margin: 0;
+}
+.homepage-block-row .ty-tennishouse-container h2 {
+    background-color: @top_menu_background;
+    font-size: 18px;
+}
+.ty-discussion-posts {
+    position: relative;
+    padding: 10px 0;
+}
+.ty-discussion-hp-post__message {
+    font-style: italic;
+    color: lighten(@font, 5%);
+    font-size: 110%;
+    position: relative;
+}
+.ty-discussion-hp-post {
+    margin: 0 20px 10px;
+}
+.ty-quote-left {
+    font-size: 200%;
+    position: absolute;
+    top: -10px;
+    left: -14px;
+    color: lighten(@font, 20%);
+}
+.ty-quote-right {
+    bottom: -20px;
+    font-size: 200%;
+    position: absolute;
+    color: lighten(@font, 20%);
+}
 /*Homepage*/
 
 /*Roundabout*/
 .ty-rounabout-list {
     display: inline-block;
-    height: 250px;
+    height: 240px;
     left: 50px;
     vertical-align: top;
     width: 650px;
@@ -1325,7 +1409,7 @@ select {
 }
 .ty-rounabout-description {
     display: inline-block;
-    height: 250px;
+    height: 240px;
     margin-left: 130px;
     overflow: hidden;
     width: 207px;

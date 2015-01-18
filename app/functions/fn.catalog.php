@@ -3474,11 +3474,11 @@ function fn_get_default_product_options($product_id, $get_all = false, $product 
     if (!empty($product_options)) {
         foreach ($product_options as $option_id => $option) {
             if (!empty($option['variants'])) {
-                // [TennisPlaza]
+                // [tennishouse]
                  if ($option['option_type'] != 'S' || $option['required'] !='Y') {
                     $default[$option_id] = key($option['variants']);
                  }
-                // [TennisPlaza]
+                // [tennishouse]
                 foreach ($option['variants'] as $variant_id => $variant) {
                     $options[$option_id][$variant_id] = true;
                 }
@@ -5316,7 +5316,7 @@ function fn_get_filters_products_count($params = array())
 
                 $fields_join = $fields_where = '';
 
-                // [TennisPlaza]
+                // [tennishouse]
                 if (!empty($slider_vals)) {
                     foreach ($slider_vals as $tp => $slider) {
                         if ($field['field_type'] != $tp) {
@@ -5338,7 +5338,7 @@ function fn_get_filters_products_count($params = array())
                         }
                     }
                 }
-                // [TennisPlaza]
+                // [tennishouse]
                 
                 // Dinamic ranges (price, amount etc)
                 if ($field['condition_type'] == 'D') {
@@ -5493,7 +5493,7 @@ function fn_get_filters_products_count($params = array())
                 // Fixed values (supplier etc)
                 } elseif ($field['condition_type'] == 'F') {
                     $field_ranges_counts[$filter_id] = db_get_hash_array("SELECT COUNT(DISTINCT ?:$field[table].product_id) as products, ?:$field[foreign_table].$field[range_name] as range_name, UPPER(SUBSTRING(?:$field[foreign_table].$field[range_name], 1, 1)) AS `index`, ?:$field[foreign_table].$field[foreign_index] as range_id, ?s AS field_type FROM ?:$field[table] LEFT JOIN ?:$field[foreign_table] ON ?:$field[foreign_table].$field[foreign_index] = ?:$field[table].$field[db_field] ?p WHERE ?:products.status IN ('A') ?p GROUP BY ?:$field[table].$field[db_field] ORDER BY ?:$field[foreign_table].$field[range_name] ", 'range_id', $field['field_type'], $join . $fields_join, $where . $fields_where);
-                // [TennisPlaza]
+                // [tennishouse]
                 } elseif ($field['condition_type'] == 'S') {
                     $variants_counts = db_get_hash_array("SELECT " . implode(', ', $values_fields) . " FROM ?:product_features_values LEFT JOIN ?:products ON ?:products.product_id = ?:product_features_values.product_id LEFT JOIN ?:product_filters ON ?:product_filters.feature_id = ?:product_features_values.feature_id AND ?:product_filters.status = 'A' LEFT JOIN ?:product_feature_variants ON ?:product_feature_variants.variant_id = ?:product_features_values.variant_id LEFT JOIN ?:product_feature_variant_descriptions ON ?:product_feature_variant_descriptions.variant_id = ?:product_feature_variants.variant_id AND ?:product_feature_variant_descriptions.lang_code = ?s LEFT JOIN ?:product_features ON ?:product_features.feature_id = ?:product_filters.feature_id ?p WHERE ?:product_features_values.feature_id = ?i AND ?:product_features_values.lang_code = ?s AND ?:product_features_values.variant_id ?p AND ?:product_features.feature_type = 'N' AND ?:product_filters.is_slider = 'Y' GROUP BY ?:product_features_values.variant_id, ?:product_filters.filter_id ORDER BY ?:product_feature_variants.position, ?:product_feature_variant_descriptions.variant", 'range_id', CART_LANGUAGE, $join . $fields_join, $field['feature_id'], CART_LANGUAGE, $where . $fields_where);
                     
@@ -5561,7 +5561,7 @@ function fn_get_filters_products_count($params = array())
                         }
                     }
                 }
-                // [TennisPlaza]
+                // [tennishouse]
             }
         }
 
@@ -5673,13 +5673,13 @@ function fn_get_filters_products_count($params = array())
                             $_f = $_f[$filter_id];
                             if (!empty($_f['ranges'])) {
                                 // delete current range
-                                // [TennisPlaza]
+                                // [tennishouse]
 //                                 foreach ($_f['ranges'] as $_rid => $_rv) {
 //                                     if (in_array($_rid, $selected_range_ids)) {
 //                                         unset($_f['ranges'][$_rid]);
 //                                     }
 //                                 }
-                                // [TennisPlaza]
+                                // [tennishouse]
                                 $filters[$filter_id]['ranges'] = $_f['ranges'];
                                 $filters[$filter_id]['more_cut'] = !empty($_f['more_cut']) ? $_f['more_cut'] : false;
                             }
@@ -6938,7 +6938,7 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
         list($av_ids, $ranges_ids, $fields_ids, $slider_vals, $fields_ids_revert) = fn_parse_features_hash($params['features_hash']);
         $advanced_variant_ids = db_get_hash_multi_array("SELECT feature_id, variant_id FROM ?:product_feature_variants WHERE variant_id IN (?n)", array('feature_id', 'variant_id'), $av_ids);
 
-        // [TennisPlaza]
+        // [tennishouse]
         if (!empty($slider_vals)) {
             foreach ($slider_vals as $type => $range) {
                 if (!in_array($type, array('P', 'A'))) {
@@ -6947,7 +6947,7 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
                 }
             }
         }
-        // [TennisPlaza]
+        // [tennishouse]
     }
 
     if (!empty($params['multiple_variants'])) {
@@ -8357,7 +8357,7 @@ function fn_apply_options_rules($product)
     // Change product code and amount
     if (!empty($product['tracking']) && $product['tracking'] == ProductTracking::TRACK_WITH_OPTIONS) {
         $product['hide_stock_info'] = false;
-            //[TennisPlaza]
+            //[tennishouse]
 //         if ($product['options_type'] == 'S') {
             foreach ($product['product_options'] as $option) {
                 $option_id = $option['option_id'];
@@ -8368,7 +8368,7 @@ function fn_apply_options_rules($product)
                 }
             }
 //         }
-            //[TennisPlaza]
+            //[tennishouse]
 
         if (!$product['hide_stock_info']) {
             $combination = db_get_row("SELECT product_code, amount FROM ?:product_options_inventory WHERE combination_hash = ?i", $combination_hash);
@@ -9228,7 +9228,7 @@ function fn_get_product_subscribers($params, $items_per_page = 0)
         $limit = db_paginate($params['page'], $params['items_per_page']);
     }
 
-    // [TennisPlaza]
+    // [tennishouse]
     $subscribers = db_get_hash_array("SELECT ?:product_subscriptions.subscription_id as subscriber_id, ?:product_subscriptions.email, ?:product_options_inventory.combination FROM ?:product_subscriptions LEFT JOIN ?:product_options_inventory ON ?:product_options_inventory.combination_hash = ?:product_subscriptions.combination_hash WHERE ?:product_subscriptions.product_id = ?i $condition $sorting $limit", 'subscriber_id', $params['product_id']);
 
     if (!empty($subscribers)) {
@@ -9236,7 +9236,7 @@ function fn_get_product_subscribers($params, $items_per_page = 0)
             $subscribers[$i]['options'] = fn_get_product_options_by_combination($subscr['combination']);
         }
     }
-    // [TennisPlaza]
+    // [tennishouse]
     
     /**
      * Changes product subscribers

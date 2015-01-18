@@ -110,7 +110,7 @@ if ($mode == 'search') {
         if (!empty($parent_ids)) {
             Registry::set('runtime.active_category_ids', $parent_ids);
             $cats = fn_get_category_name($parent_ids);
-            // [TennisPlaza]
+            // [tennishouse]
             $display_subheader = true;
             foreach ($parent_ids as $i => $c_id) {
                 if ($i == 0 && fn_display_subheaders($c_id)) {
@@ -122,7 +122,7 @@ if ($mode == 'search') {
                     fn_add_breadcrumb($cats[$c_id]);
                 }
             }
-            // [TennisPlaza]
+            // [tennishouse]
         }
     }
     fn_add_breadcrumb($product['product']);
@@ -216,9 +216,9 @@ if ($mode == 'search') {
 } elseif ($mode == 'product_notifications') {
     fn_update_product_notifications(array(
         'product_id' => $_REQUEST['product_id'],
-        // [TennisPlaza]
+        // [tennishouse]
         'combination_hash' => $_REQUEST['combination_hash'],
-        // [TennisPlaza]
+        // [tennishouse]
         'user_id' => $_SESSION['auth']['user_id'],
         'email' => (!empty($_SESSION['cart']['user_data']['email']) ? $_SESSION['cart']['user_data']['email'] : (!empty($_REQUEST['email']) ? $_REQUEST['email'] : '')),
         'enable' => $_REQUEST['enable']
@@ -274,7 +274,7 @@ function fn_set_product_popularity($product_id, $popularity_view = POPULARITY_VI
 
 function fn_update_product_notifications($data)
 {
-    // [TennisPlaza]
+    // [tennishouse]
     if (!empty($data['email']) && fn_validate_email($data['email'])) {
         $_SESSION['product_notifications']['email'] = $data['email'];
         if ($data['enable'] == 'Y') {
@@ -296,5 +296,5 @@ function fn_update_product_notifications($data)
             }
         }
     }
-    // [TennisPlaza]
+    // [tennishouse]
 }

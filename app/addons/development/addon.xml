@@ -30,6 +30,9 @@
             </section>
         </sections>
     </settings>
+    <compatibility>
+        <dependencies>discussion</dependencies>
+    </compatibility>
     <queries>
         <item>
             CREATE TABLE IF NOT EXISTS `cscart_players` (
@@ -257,5 +260,14 @@
         <item lang="ru" id="womens_shoes">Женская теннисная обувь</item>
         <item lang="ru" id="mens_apparel_and_shoes">Мужская одежда и обувь</item>
         <item lang="ru" id="womens_apparel_and_shoes">Женская одежда и обувь</item>
+        <item lang="ru" id="player_profiles">Профили игроков</item>
+        <item lang="ru" id="check_all_players">Посмотреть всех игроков</item>
+        <item lang="ru" id="learning_material">Учебные материалы</item>
+        <item lang="ru" id="balls_and_accessories">Мячи и аксессуары</item>
+        <item lang="ru" id="accessories">Аксессуары</item>
+        <item lang="ru" id="discussion_homepage">Отзывы на домашней странице</item>
+        <item lang="ru" id="accessories">Аксессуары</item>
+        <item lang="ru" id="accessories">Аксессуары</item>
+        <item lang="ru" id="accessories">Аксессуары</item>
     </language_variables>
 </addon>

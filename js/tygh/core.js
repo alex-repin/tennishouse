@@ -542,7 +542,7 @@ var Tygh = {
                         $('#' + id + ' [type=checkbox]').prop('disabled', flag);
                     }
 
-                    // [TennisPlaza]
+                    // [tennishouse]
                     container.slideToggle();
 
                     $.ceEvent('trigger', 'ce.switch_' + id, [flag]);
@@ -565,7 +565,7 @@ var Tygh = {
                             $.cookie.remove(id);
                         }
                     }
-                    // [TennisPlaza]
+                    // [tennishouse]
 
                     // If we click on switcher, check if it has icons on background
                     if (prefix == 'sw_') {
@@ -1401,10 +1401,10 @@ var Tygh = {
 
             if (_.area == 'A') {
                 offset = 120; // offset fixed panel
-            // [TennisPlaza]
+            // [tennishouse]
             } else {
                 offset = 130; // offset fixed panel
-            // [TennisPlaza]
+            // [tennishouse]
             }
 
             if (elm.is(':hidden')) {
@@ -3359,7 +3359,7 @@ var Tygh = {
                         return false;
                     }
 
-                    // [TennisPlaza]
+                    // [tennishouse]
                     params.onShow = function( event, ui ) {
                         elm.addClass('tooltip-shown');
                     }
@@ -3378,7 +3378,7 @@ var Tygh = {
                         params.offset=[10, 7];
                         params.tipClass = 'tooltip arrow-down';
                         params.position = 'center left';
-                    // [TennisPlaza]
+                    // [tennishouse]
                     } else {
                         params.offset=[10, 7];
                         params.tipClass = 'tooltip arrow-down';

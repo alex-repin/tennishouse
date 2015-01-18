@@ -16,6 +16,13 @@ use Tygh\Registry;
 use Tygh\Http;
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_render_block_register_cache($block, $cache_name, &$block_scheme, $register_cache, $display_block)
+{
+    if (!empty($block['properties']['random']) && $block['properties']['random'] == 'Y') {
+        unset($block_scheme['cache']);
+    }
+}
+
 function fn_get_block_categories($category_id)
 {
     $categories = array();
@@ -831,6 +838,23 @@ function fn_get_player_data($player_id)
     }
 
     return (!empty($player_data) ? $player_data : false);
+}
+
+function fn_get_block_players()
+{
+    $players = array();
+    $_params = array (
+        'gender' => 'M',
+        'limit' => 3
+    );
+    list($players['male'], ) = fn_get_players($_params);
+    $_params = array (
+        'gender' => 'F',
+        'limit' => 3
+    );
+    list($players['female'], ) = fn_get_players($_params);
+
+    return $players;
 }
 
 function fn_get_players($params)
