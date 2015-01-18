@@ -3,7 +3,7 @@
     <id>development</id>
     <version>1.0</version>
     <name>Разработка</name>
-    <description>Аддон для TennisPlaza</description>
+    <description>Аддон для TennisHouse</description>
     <priority>4294967294</priority>
     <position>0</position>
     <status>active</status>
@@ -122,9 +122,12 @@
             ALTER TABLE `cscart_product_filters` ADD `note_url` VARCHAR( 255 ) NOT NULL ,
             ADD `note_text` VARCHAR( 255 ) NOT NULL ;
         </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `brand_id` MEDIUMINT( 8 ) UNSIGNED NOT NULL ;
+        </item>
     </queries>
     <language_variables>
-        <item lang="ru" id="tennisplaza_template">Шаблон TennisPlaza</item>
+        <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
         <item lang="ru" id="calculate_racket_balance">Посчитать баланс ракетки</item>
         <item lang="ru" id="theme_editor.top_menu_background">Цвета фона топ меню</item>
         <item lang="ru" id="theme_editor.category_menu_color">Меню категорий</item>
@@ -206,8 +209,8 @@
         <item lang="ru" id="update_exchange_rates">Обновить курсы валют и ЦЕНЫ! товаров</item>
         <item lang="ru" id="racket_string_tension">Ракетка - струна - жесткость натяжки</item>
         <item lang="ru" id="additional_info_note">Следующая информация необязательна для заполнения, но другим пользователям будет интересно знать ее, т.к. с ней Ваш комментарий будет более полный</item>
-        <item lang="ru" id="tennisplaza_general">Основной контейнер Tennisplaza</item>
-        <item lang="ru" id="tennisplaza_capture">Скрытый контейнер Tennisplaza</item>
+        <item lang="ru" id="tennishouse_general">Основной контейнер TennisHouse</item>
+        <item lang="ru" id="tennishouse_capture">Скрытый контейнер TennisHouse</item>
         <item lang="ru" id="tmpl_scroller_capture">Скрытый скроллер</item>
         <item lang="ru" id="similar_products">Похожие товары</item>
         <item lang="ru" id="player_share_buttons_description">Профиль игрока. Личная информация. Экипировка.</item>
@@ -246,7 +249,13 @@
         <item lang="ru" id="cross_sales">Кросс-продажи</item>
         <item lang="ru" id="tmpl_roundabout">Карусель</item>
         <item lang="ru" id="view_collection">Посмотреть коллекцию</item>
-        <item lang="ru" id="cross_sales">Кросс-продажи</item>
-        <item lang="ru" id="cross_sales">Кросс-продажи</item>
+        <item lang="ru" id="tennis_bags">Теннисные сумки</item>
+        <item lang="ru" id="tennis_strings">Теннисные струны</item>
+        <item lang="ru" id="mens_apparel">Мужская теннисная одежда</item>
+        <item lang="ru" id="womens_apparel">Женская теннисная одежда</item>
+        <item lang="ru" id="mens_shoes">Мужская теннисная обувь</item>
+        <item lang="ru" id="womens_shoes">Женская теннисная обувь</item>
+        <item lang="ru" id="mens_apparel_and_shoes">Мужская одежда и обувь</item>
+        <item lang="ru" id="womens_apparel_and_shoes">Женская одежда и обувь</item>
     </language_variables>
 </addon>

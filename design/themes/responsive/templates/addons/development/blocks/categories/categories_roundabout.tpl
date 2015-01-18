@@ -4,13 +4,23 @@
 {script src="js/addons/development/jquery.roundabout-shapes.min.js"}
 <div class="ty-roundabout-wrapper">
     <div id="roundabout_images_{$block.block_id}" class="ty-rounabout-list">
-        {foreach from=$items item="category"}
-            {include file="common/image.tpl"
-            show_detailed_link=false
-            images=$category.main_pair
-            no_ids=true
-            image_width="250"
-            keep_transparent=true}
+        {foreach from=$items item="category" name="categories_images"}
+            <div class="ty-roundabout-item">
+                {include file="common/image.tpl"
+                show_detailed_link=false
+                images=$category.main_pair
+                no_ids=true
+                image_width="250"
+                keep_transparent=true}
+                <div class="ty-roundabout__brand-image" {if !$smarty.foreach.categories_images.first}style="display: none;"{/if}>
+                    {if $category.brand_id == $smarty.const.KIRSCHBAUM_BRAND_ID}
+                        {$img_height = "50"}
+                    {else}
+                        {$img_height = "35"}
+                    {/if}
+                    {include file="addons/development/common/brand_logo.tpl"  brand=$category.brand brand_variant_id=$category.brand_id img_height=$img_height}
+                </div>
+            </div>
         {/foreach}
     </div>
     <div id="roundabout_description_{$block.block_id}" class="ty-rounabout-description">
@@ -32,18 +42,26 @@ var block_id = '{$block.block_id}';
 
     $(document).ready(function() {
         var roundabout = $('#roundabout_images_' + block_id);
+        var roundabout_description = $('#roundabout_description_' + block_id);
         roundabout.roundabout({
-            childSelector: "img",
+            childSelector: "div",
             duration: 1000,
             autoplay: true,
             autoplayDuration: 5000,
             autoplayPauseOnHover: true
         });
         roundabout.bind( 'animationStart', function() {
-            $('#roundabout_description_' + block_id).find('.ty-roundabout-item-description').fadeOut('fast');
+            roundabout_description.find('.ty-roundabout-item-description').fadeOut('fast');
+            roundabout.find('.ty-roundabout__brand-image').fadeOut('fast');
         });
         roundabout.bind( 'animationEnd', function() {
-            $('#roundabout_description_' + block_id).find($('.ty-roundabout-item-description')[roundabout.roundabout('getChildInFocus')]).stop().fadeIn('fast');
+            roundabout_description.find($('.ty-roundabout-item-description')[roundabout.roundabout('getChildInFocus')]).stop().fadeIn('fast');
+            roundabout.find($('.ty-roundabout__brand-image')[roundabout.roundabout('getChildInFocus')]).stop().fadeIn('fast');
+        });
+        roundabout_description.hover(function(e){
+            roundabout.roundabout("stopAutoplay");
+        }, function(e){
+            roundabout.roundabout("startAutoplay");
         });
     });
     

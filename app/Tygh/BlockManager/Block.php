@@ -771,7 +771,7 @@ class Block extends CompanySingleton
             $params = fn_array_merge($params, $filling_params);
         }
 
-        // [tennisplaza]
+        // [tennishouse]
         if (isset($field_scheme['params']['items_function'])) {
             $callable = $field_scheme['params']['items_function'];
         } elseif (isset($block_scheme['content'][$item_name]['items_function'])) {
@@ -780,7 +780,7 @@ class Block extends CompanySingleton
         } else {
             $callable = 'fn_get_' . $block['type'];
         }
-        // [tennisplaza]
+        // [tennishouse]
 
         if (is_callable($callable)) {
             @list($items, ) = call_user_func($callable, $params);

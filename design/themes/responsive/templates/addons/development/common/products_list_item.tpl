@@ -16,7 +16,9 @@
         
         <div class="ty-grid-list__brand-image">
             <a href="{"products.view?product_id=`$product.product_id`"|fn_url}">
-            {include file="addons/development/common/brand_logo.tpl" product=$product features=$features}
+            {$brand_id = $smarty.const.BRAND_FEATURE_ID}
+            {$brand_variant_id = $features.$brand_id.variant_id}
+            {include file="addons/development/common/brand_logo.tpl"  brand=$features.$brand_id.variants.$brand_variant_id brand_variant_id=$brand_variant_id}
             </a>
         </div>
         

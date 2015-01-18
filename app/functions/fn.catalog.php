@@ -1468,9 +1468,9 @@ function fn_get_categories($params = array(), $lang_code = CART_LANGUAGE)
         $categories[$params['active_category_id']]['active'] = true;
         Registry::set('runtime.active_category_ids', explode('/', $categories[$params['active_category_id']]['id_path']));
     }
-    // [tennisplaza]
+    // [tennishouse]
     $params['active_category_ids'] = Registry::ifGet('runtime.active_category_ids', array());
-    // [tennisplaza]
+    // [tennishouse]
 
     $categories_list = array();
     if ($params['simple'] == true || $params['group_by_level'] == true) {
@@ -1485,11 +1485,11 @@ function fn_get_categories($params = array(), $lang_code = CART_LANGUAGE)
             if ((!empty($params['current_category_id']) || $v['level'] == 0) && isset($has_children[$k])) {
                 $v['has_children'] = $has_children[$k]['category_id'];
             }
-            // [tennisplaza]
+            // [tennishouse]
             if (!empty($params['active_category_ids']) && in_array($v['parent_id'], $params['active_category_ids'])) {
                 $v['active_neighbour'] = true;
             }
-            // [tennisplaza]
+            // [tennishouse]
             $categories_list[$v['level']][$v['category_id']] = $v;
             if ($params['get_images'] == true) {
                 $categories_list[$v['level']][$v['category_id']]['main_pair'] = fn_get_image_pairs($v['category_id'], 'category', 'M', true, true, $lang_code);
@@ -2083,7 +2083,7 @@ function fn_global_update_products($update_data)
                 $send_notification = false;
                 $product = fn_get_product_data($product_id, $auth, DESCR_SL, '', true, true, true, true);
 
-                // [tennisplaza]
+                // [tennishouse]
                 if (($product['tracking'] == ProductTracking::TRACK_WITHOUT_OPTIONS) && ($product['amount'] <= 0)) {
                     fn_send_product_notifications($product_id);
                 } elseif ($product['tracking'] == ProductTracking::TRACK_WITH_OPTIONS) {
@@ -2094,7 +2094,7 @@ function fn_global_update_products($update_data)
                         }
                     }
                 }
-                // [tennisplaza]
+                // [tennishouse]
             }
         }
 

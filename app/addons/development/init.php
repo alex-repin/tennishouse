@@ -17,7 +17,11 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 /*Categories*/
 define('RACKETS_CATEGORY_ID', 254);
 define('APPAREL_CATEGORY_ID', 262);
+define('MENS_APPAREL_CATEGORY_ID', 295);
+define('WOMEN_APPAREL_CATEGORY_ID', 296);
 define('SHOES_CATEGORY_ID', 263);
+define('MENS_SHOES_CATEGORY_ID', 303);
+define('WOMEN_SHOES_CATEGORY_ID', 304);
 define('BAGS_CATEGORY_ID', 264);
 define('SPORTS_NUTRITION_CATEGORY_ID', 302);
 define('ACCESSORIES_CATEGORY_ID', 267);
@@ -117,5 +121,8 @@ fn_register_hooks(
     'get_products_pre',
     'get_categories',
     'get_lang_var_post',
-    'calculate_cart_items'
+    'calculate_cart_items',
+    'get_categories_post',
+    'get_product_feature_variants',
+    'get_category_data_post'
 );

@@ -477,14 +477,14 @@ function fn_init_currency($params, $area = AREA)
         }
     }
 
-    // [tennisplaza]
+    // [tennishouse]
     if (!defined('CART_PRIMARY_CURRENCY')) {
         define('CART_PRIMARY_CURRENCY', $primary_currency);
     }
     if (!defined('CART_SECONDARY_CURRENCY')) {
         define('CART_SECONDARY_CURRENCY', $secondary_currency);
     }
-    // [tennisplaza]
+    // [tennishouse]
 
     Registry::set('currencies', $currencies);
 

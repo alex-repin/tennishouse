@@ -16,6 +16,90 @@ use Tygh\Registry;
 use Tygh\Http;
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_get_block_categories($category_id)
+{
+    $categories = array();
+    $_params = array (
+        'category_id' => $category_id,
+        'visible' => true,
+        'get_images' => true,
+        'limit' => 3
+    );
+    list($subcategories, ) = fn_get_categories($_params, CART_LANGUAGE);
+    if (!empty($subcategories)) {
+        if (fn_display_subheaders($category_id)) {
+            $subcategory = reset($subcategories);
+            $params = array (
+                'category_id' => $subcategory['category_id'],
+                'visible' => true,
+                'get_images' => true,
+                'limit' => 3
+            );
+
+            list($categories, ) = fn_get_categories($params, CART_LANGUAGE);
+        } else {
+            $categories = $subcategories;
+        }
+    }
+    
+    return $categories;
+}
+
+function fn_development_get_category_data_post($category_id, $field_list, $get_main_pair, $skip_company_condition, $lang_code, &$category_data)
+{
+    if (!empty($category_data['brand_id'])) {
+        list($brands) = fn_get_product_feature_variants(array(
+            'feature_id' => BRAND_FEATURE_ID,
+            'feature_type' => 'E',
+            'variant_ids' => $category_data['brand_id'],
+            'get_images' => true
+        ));
+        $category_data['brand'] = $brands[$category_data['brand_id']];
+    }
+}
+
+function fn_development_get_product_feature_variants($fields, $join, &$condition, $group_by, $sorting, $lang_code, $limit)
+{
+    if (!empty($params['variant_ids'])) {
+        $params['variant_ids'] = is_array($params['variant_ids']) ? $params['variant_ids'] : array($params['variant_ids']);
+        $condition .= db_quote(" AND ?:product_feature_variants.variant_id IN (?n)", $params['variant_ids']);
+    }
+}
+
+function fn_development_get_categories_post(&$categories_list, $params, $lang_code)
+{
+    if (!empty($params['roundabout']) && !empty($categories_list)) {
+        $brand_ids = array();
+        foreach ($categories_list as $i => $category) {
+            if (!empty($category['brand_id'])) {
+                $brand_ids[] = $category['brand_id'];
+            }
+        }
+        if (!empty($brand_ids)) {
+            list($brands) = fn_get_product_feature_variants(array(
+                'feature_id' => BRAND_FEATURE_ID,
+                'feature_type' => 'E',
+                'variant_ids' => $brand_ids,
+                'get_images' => true
+            ));
+            foreach ($categories_list as $i => $category) {
+                if (!empty($category['brand_id'])) {
+                    $categories_list[$i]['brand'] = $brands[$category['brand_id']];
+                }
+            }
+        }
+    }
+}
+
+function fn_get_brands()
+{
+    list($variants) = fn_get_product_feature_variants(array(
+        'feature_id' => BRAND_FEATURE_ID
+    ));
+    
+    return $variants;
+}
+
 function fn_development_get_lang_var_post(&$value, $var_name)
 {
     $value = fn_check_vars($value);
@@ -28,6 +112,7 @@ function fn_development_get_categories(&$params, $join, $condition, &$fields, $g
     if (!empty($params['roundabout'])) {
         $params['get_images'] = true;
         $fields[] = '?:category_descriptions.description';
+        $fields[] = '?:categories.brand_id';
     }
 }
 

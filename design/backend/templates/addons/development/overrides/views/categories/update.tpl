@@ -82,6 +82,19 @@
             <textarea id="elm_category_descr" name="category_data[description]" cols="55" rows="8" class="input-large cm-wysiwyg input-textarea-long">{$category_data.description}</textarea>
         </div>
     </div>
+    
+    <div class="control-group">
+        <label class="control-label" for="elm_category_brand_id">{__("brand")}:</label>
+
+        <div class="controls">
+        <select name="category_data[brand_id]" id="elm_category_brand_id">
+            <option value="0" {if $category_data.brand_id == "0"}selected="selected"{/if}> - </option>
+            {foreach from=""|fn_get_brands item="brand"}
+                <option value="{$brand.variant_id}" {if $category_data.brand_id == $brand.variant_id}selected="selected"{/if}>{$brand.variant}</option>
+            {/foreach}
+        </select>
+        </div>
+    </div>
 
     <div class="control-group">
         <label class="control-label" for="elm_category_note_url">{__("note_url")}:</label>

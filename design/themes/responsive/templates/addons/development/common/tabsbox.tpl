@@ -23,7 +23,7 @@
 </div>
 
 {if $_tabs}
-<div class="cm-tabs-content ty-tabs__content clearfix ty-tennisplaza-body" id="tabs_content">
+<div class="cm-tabs-content ty-tabs__content clearfix ty-tennishouse-body" id="tabs_content">
     {$content nofilter}
 </div>
 {/if}

@@ -57,5 +57,16 @@
 <!--category_products_{$block.block_id}--></div>
 
 {if $category_data.parent_id}
-    {capture name="mainbox_title"}<span {live_edit name="category:category:{$category_data.category_id}"}>{$category_data.category}</span>{/capture}
+    {capture name="mainbox_title"}
+    {if $category_data.brand.image_pair.icon.image_path}
+        {if $category.brand_id == $smarty.const.KIRSCHBAUM_BRAND_ID}
+            {$img_height = "50"}
+        {else}
+            {$img_height = "35"}
+        {/if}
+        {include file="addons/development/common/brand_logo.tpl"  brand=$category_data.brand brand_variant_id=$category_data.brand_id img_height=$img_height}
+    {else}
+        <span {live_edit name="category:category:{$category_data.category_id}"}>{$category_data.category}</span>
+    {/if}
+    {/capture}
 {/if}

@@ -118,9 +118,9 @@ function fn_get_discussion_posts($params, $items_per_page = 0)
 
     if ($thread_data['type'] == 'C' || $thread_data['type'] == 'B') {
         $join .= " LEFT JOIN ?:discussion_messages ON ?:discussion_messages.post_id = ?:discussion_posts.post_id ";
-        // [tennisplaza]
+        // [tennishouse]
         $fields .= ", ?:discussion_messages.message, ?:discussion_messages.city, ?:discussion_messages.play_level, ?:discussion_messages.surface, ?:discussion_messages.age, ?:discussion_messages.configuration";
-        // [tennisplaza]
+        // [tennishouse]
     }
 
     if ($thread_data['type'] == 'R' || $thread_data['type'] == 'B') {

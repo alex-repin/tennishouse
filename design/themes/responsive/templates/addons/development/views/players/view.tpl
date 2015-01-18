@@ -50,8 +50,8 @@
         </div>
     </div>
     {if $player_data.news_feed}
-    <div class="ty-tennisplaza-container ty-news-feed">
-        <div class="ty-tennisplaza-body">
+    <div class="ty-tennishouse-container ty-news-feed">
+        <div class="ty-tennishouse-body">
             <div id="scroll_list_news_{$player_data.player_id}" class="owl-carousel ty-scroller-list">
                 {foreach from=$player_data.news_feed item="news" name="for_news"}
                     <div class="ty-scroller-news-list__item">
