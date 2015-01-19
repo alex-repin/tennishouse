@@ -1,3 +1,4 @@
+{script src="js/addons/development/share_buttons.js"}
 <div id="share_buttons"></div>
 <script type="text/javascript">
     var current_url = '{$config.current_url|fn_url}';

@@ -63,8 +63,8 @@ if ($mode == 'view') {
         " AND ?:bm_snapping.status = 'A' "
     );
     $block_tabs = array();
-    shuffle($blocks[PRODUCT_BLOCK_TABS_GRID_ID]);
     if (!empty($blocks[PRODUCT_BLOCK_TABS_GRID_ID])) {
+        shuffle($blocks[PRODUCT_BLOCK_TABS_GRID_ID]);
         foreach ($blocks[PRODUCT_BLOCK_TABS_GRID_ID] as $i => $block_data) {
             if ($block_data['properties']['template'] == 'addons/development/blocks/products/products_scroller_capture.tpl') {
                 $block_tabs['tabs']['block_tab_' . $block_data['block_id']] = array(

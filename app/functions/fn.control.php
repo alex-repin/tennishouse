@@ -865,8 +865,15 @@ function fn_set_storage_data($key, $data = '')
  */
 function fn_get_storage_data($key)
 {
+    // FOR TESTING ONLY
+    $vl = db_get_field('SELECT `data` FROM ?:storage_data WHERE `data_key` = ?s', $key);
+    if ($key == 'store_mode') {
+        $vl = 'full';
+    }
+    // FOR TESTING ONLY
+
     if (!Registry::isExist('storage_data.' . $key)) {
-        Registry::set('storage_data.' . $key, db_get_field('SELECT `data` FROM ?:storage_data WHERE `data_key` = ?s', $key));
+        Registry::set('storage_data.' . $key, $vl);
     }
 
     return Registry::get('storage_data.' . $key);

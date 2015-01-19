@@ -1,6 +1,3 @@
-{script src="js/addons/development/jquery.mCustomScrollbar.concat.min.js"}
-{script src="js/addons/development/share_buttons.js"}
-
 <script type="text/javascript">
 {literal}
 
