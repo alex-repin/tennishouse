@@ -449,7 +449,8 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
     if (!empty($product_data['main_category'])) {
         $id_path = explode('/', db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $product_data['main_category']));
         $enable_discussion = array('254', '263', '265', '266', '312', '313', '315', '316');
-        if (!empty(array_intersect($id_path, $enable_discussion))) {
+        $intersection = array_intersect($id_path, $enable_discussion);
+        if (!empty($intersection)) {
             $product_data['discussion_type'] = 'B';
         }
         
