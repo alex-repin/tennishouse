@@ -13,6 +13,7 @@
 ****************************************************************************/
 
 use Tygh\Registry;
+use Tygh\FeaturesCache;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
@@ -34,5 +35,8 @@ if ($mode == 'update_rub_rate') {
         fn_update_prices();
     }
 
+    exit;
+} elseif ($mode == 'generate_features_memcache') {
+    FeaturesCache::generate();
     exit;
 }

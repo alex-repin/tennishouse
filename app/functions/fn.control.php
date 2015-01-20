@@ -866,9 +866,10 @@ function fn_set_storage_data($key, $data = '')
 function fn_get_storage_data($key)
 {
     // FOR TESTING ONLY
-    $vl = db_get_field('SELECT `data` FROM ?:storage_data WHERE `data_key` = ?s', $key);
     if ($key == 'store_mode') {
         $vl = 'full';
+    } else {
+        $vl = db_get_field('SELECT `data` FROM ?:storage_data WHERE `data_key` = ?s', $key);
     }
     // FOR TESTING ONLY
 

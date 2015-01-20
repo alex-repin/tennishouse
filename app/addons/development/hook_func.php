@@ -12,6 +12,8 @@
 * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
 ****************************************************************************/
 
+use Tygh\FeaturesCache;
+
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 function fn_development_render_block_register_cache($block, $cache_name, &$block_scheme, $register_cache, $display_block)
@@ -233,9 +235,15 @@ function fn_development_get_products($params, &$fields, $sortings, &$condition, 
             foreach ($similar_products_features[$_SESSION['category_type']] as $i => $feature_id) {
                 if (!empty($_SESSION['product_features'][$feature_id])) {
                     if (!in_array($feature_id, $digit_features)) {
-                        $params['features_condition'][$feature_id] = array(
-                            'value' => !empty($_SESSION['product_features'][$feature_id]['variant_id']) ? $_SESSION['product_features'][$feature_id]['variant_id'] : $_SESSION['product_features'][$feature_id]['value'],
-                        );
+                        if (!empty($_SESSION['product_features'][$feature_id]['variant_id'])) {
+                            $params['features_condition'][$feature_id] = array(
+                                'variant_id' => $_SESSION['product_features'][$feature_id]['variant_id'],
+                            );
+                        } elseif (!empty($_SESSION['product_features'][$feature_id]['value'])) {
+                            $params['features_condition'][$feature_id] = array(
+                                'value' => $_SESSION['product_features'][$feature_id]['value'],
+                            );
+                        }
                     } else {
                         if ($feature_id == R_WEIGHT_FEATURE_ID) {
                             $margin_value = 5;
@@ -262,31 +270,14 @@ function fn_development_get_products($params, &$fields, $sortings, &$condition, 
     if (!empty($params['same_brand_pid'])) {
         if (!empty($_SESSION['product_features'][BRAND_FEATURE_ID])) {
             $params['features_condition'][BRAND_FEATURE_ID] = array(
-                'value' => $_SESSION['product_features'][BRAND_FEATURE_ID]['variant_id'],
+                'variant_id' => $_SESSION['product_features'][BRAND_FEATURE_ID]['variant_id'],
             );
         } else {
             $condition .= " AND NULL";
         }
     }
     if (!empty($params['features_condition'])) {
-        foreach ($params['features_condition'] as $feature_id => $feature_data) {
-            $join .= db_quote(" LEFT JOIN ?:product_features_values AS feature_?i ON feature_?i.product_id = products.product_id AND feature_?i.feature_id = ?i AND feature_?i.lang_code = ?s", $feature_id, $feature_id, $feature_id, $feature_id, $feature_id, $lang_code);
-            if (!empty($feature_data['value']) || !empty($feature_data['not_value'])) {
-                if (!empty($feature_data['value'])) {
-                    $condition .= db_quote(" AND IF(feature_?i.variant_id IS NOT NULL, feature_?i.variant_id, feature_?i.value) = ?i ", $feature_id, $feature_id, $feature_id, $feature_data['value']);
-                } elseif (!empty($feature_data['not_value'])) {
-                    $condition .= db_quote(" AND IF(feature_?i.variant_id IS NOT NULL, feature_?i.variant_id, feature_?i.value) != ?i ", $feature_id, $feature_id, $feature_id, $feature_data['not_value']);
-                }
-            } elseif (!empty($feature_data['min_value']) || !empty($feature_data['max_value'])) {
-                $join .= db_quote(" LEFT JOIN ?:product_feature_variant_descriptions AS fvd_?i ON fvd_?i.variant_id = feature_?i.variant_id AND fvd_?i.lang_code = ?s ", $feature_id, $feature_id, $feature_id, $feature_id, $lang_code);
-                if (!empty($feature_data['min_value'])) {
-                    $condition .= db_quote(" AND fvd_?i.variant >= ?d ", $feature_id, $feature_data['min_value']);
-                }
-                if (!empty($feature_data['max_value'])) {
-                    $condition .= db_quote(" AND fvd_?i.variant <= ?d ", $feature_id, $feature_data['max_value']);
-                }
-            }
-        }
+        FeaturesCache::getProductsConditions($params['features_condition'], $join, $condition);
     }
 }
 
@@ -359,17 +350,17 @@ function fn_development_get_products_pre(&$params, $items_per_page, $lang_code)
         }
         if ($params['rackets_type'] == 'regular_length') {
             $params['features_condition'][R_LENGTH_FEATURE_ID] = array(
-                'value' => REGULAR_LENGTH_FV_ID
+                'variant_id' => REGULAR_LENGTH_FV_ID
             );
         }
         if ($params['rackets_type'] == 'closed_pattern') {
             $params['features_condition'][R_STRING_PATTERN_FEATURE_ID] = array(
-                'value' => CLOSED_PATTERN_FV_ID
+                'variant_id' => CLOSED_PATTERN_FV_ID
             );
         }
         if ($params['rackets_type'] == 'open_pattern') {
             $params['features_condition'][R_STRING_PATTERN_FEATURE_ID] = array(
-                'not_value' => CLOSED_PATTERN_FV_ID
+                'not_variant' => CLOSED_PATTERN_FV_ID
             );
         }
         if (!empty($feature_hash)) {

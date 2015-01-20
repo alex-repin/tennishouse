@@ -34,8 +34,21 @@ if ($mode == 'calculate_balance') {
     Registry::get('view')->assign('params', $params);
     
 } elseif ($mode == 'test_memcached') {
-//     Memcached::instance()->set('ddd', '');
-     fn_print_die(Memcached::instance()->validateSql( "SELECT  cscart_pages.*, cscart_page_descriptions.*  FROM cscart_pages LEFT JOIN cscart_page_descriptions ON cscart_pages.page_id = cscart_page_descriptions.page_id AND cscart_page_descriptions.lang_code = 'ru'  INNER JOIN cscart_ult_objects_sharing ON (cscart_ult_objects_sharing.share_object_id = cscart_pages.page_id AND cscart_ult_objects_sharing.share_company_id = 1 AND cscart_ult_objects_sharing.share_object_type = 'pages')WHERE  1 AND cscart_pages.id_path LIKE '53/%' AND cscart_pages.status IN ('A') AND cscart_pages.page_type IN ('T', 'L') AND (cscart_pages.usergroup_ids = '' OR FIND_IN_SET(0, cscart_pages.usergroup_ids) OR FIND_IN_SET(2, cscart_pages.usergroup_ids) OR FIND_IN_SET(1, cscart_pages.usergroup_ids)) AND (use_avail_period = 'N' OR (use_avail_period = 'Y' AND avail_from_timestamp <= 1421712562 AND avail_till_timestamp >= 1421712562))    ORDER BY cscart_pages.parent_id asc, cscart_pages.position asc, cscart_page_descriptions.page asc" ));
-//Memcached::instance()->flush();
+// Memcached::instance()->set('a', serialize(array()));
+ //fn_print_r(Memcached::instance()->get('9ab0ee1123f31620ca9b0c08b5a3b1d2'), unserialize(Memcached::instance()->get('9ab0ee1123f31620ca9b0c08b5a3b1d2')) !== false);
+// fn_print_r(unserialize(Memcached::instance()->get('b')) !== false);
+// $keys = Memcached::instance()->getAllKeys();
+// if (!empty($keys)) {
+//     foreach ($keys as $i => $key) {
+//         fn_print_r($key, Memcached::instance()->get($key));
+//     }
+// }
+// Memcached::instance()->clear();
+$keys = Memcached::instance()->getAllKeys();
+if (!empty($keys)) {
+    foreach ($keys as $i => $key) {
+        fn_print_r($key, Memcached::instance()->get($key));
+    }
+}
 exit;
 }
