@@ -20,6 +20,7 @@ use Tygh\Registry;
 
 class Database
 {
+    private static $_cacheDuration = 300;
     private static $_dbs = array(); // database connections list
     private static $_db; // current database connection
     private static $_table_prefix; // table prefix for current connection
@@ -110,11 +111,30 @@ class Database
     {
         if ($_result = call_user_func_array(array('self', 'query'), func_get_args())) {
 
-            while ($arr = self::$_db->fetchRow($_result)) {
-                $result[] = $arr;
-            }
+            if (defined('ALLOW_MEMCACHED')) {
 
-            self::$_db->freeResult($_result);
+                $hash = Memcached::instance()->validateSql( $_result->queryString );
+                if ( !empty($hash) && Memcached::instance()->get($hash) !== false) {
+                    $result = Memcached::instance()->get($hash);
+                } else {
+                    $result = array();
+                    while ($arr = self::$_db->fetchRow($_result)) {
+                        $result[] = $arr;
+                    }
+
+                    self::$_db->freeResult($_result);
+                    
+                    if ( !empty($hash) ) {
+                        Memcached::instance()->set($hash, $result, time() + self::$_cacheDuration);
+                    }
+                }
+            } else {
+                    while ($arr = self::$_db->fetchRow($_result)) {
+                        $result[] = $arr;
+                    }
+
+                    self::$_db->freeResult($_result);
+            }
         }
 
         return !empty($result) ? $result : array();
@@ -134,13 +154,33 @@ class Database
         array_unshift($args, $query);
 
         if ($_result = call_user_func_array(array('self', 'query'), $args)) {
-            while ($arr = self::$_db->fetchRow($_result)) {
-                if (isset($arr[$field])) {
-                    $result[$arr[$field]] = $arr;
+            if (defined('ALLOW_MEMCACHED')) {
+                $hash = Memcached::instance()->validateSql( $_result->queryString );
+                if ( !empty($hash) && Memcached::instance()->get($hash) !== false) {
+                    $result = Memcached::instance()->get($hash);
+                } else {
+                    $result = array();
+                    while ($arr = self::$_db->fetchRow($_result)) {
+                        if (isset($arr[$field])) {
+                            $result[$arr[$field]] = $arr;
+                        }
+                    }
+                    
+                    self::$_db->freeResult($_result);
+                    
+                    if ( !empty($hash) ) {
+                        Memcached::instance()->set($hash, $result, time() + self::$_cacheDuration);
+                    }
                 }
-            }
+            } else {
+                while ($arr = self::$_db->fetchRow($_result)) {
+                    if (isset($arr[$field])) {
+                        $result[$arr[$field]] = $arr;
+                    }
+                }
 
-            self::$_db->freeResult($_result);
+                self::$_db->freeResult($_result);
+            }
         }
 
         return !empty($result) ? $result : array();
@@ -157,10 +197,24 @@ class Database
     {
         if ($_result = call_user_func_array(array('self', 'query'), func_get_args())) {
 
-            $result = self::$_db->fetchRow($_result);
+            if (defined('ALLOW_MEMCACHED')) {
+                $hash = Memcached::instance()->validateSql( $_result->queryString );
+                if ( !empty($hash) && Memcached::instance()->get($hash) !== false) {
+                    $result = Memcached::instance()->get($hash);
+                } else {
+                    $result = self::$_db->fetchRow($_result);
 
-            self::$_db->freeResult($_result);
+                    self::$_db->freeResult($_result);
+                    
+                    if ( !empty($hash) ) {
+                        Memcached::instance()->set($hash, $result, time() + self::$_cacheDuration);
+                    }
+                }
+            } else {
+                $result = self::$_db->fetchRow($_result);
 
+                self::$_db->freeResult($_result);
+            }
         }
 
         return is_array($result) ? $result : array();
@@ -177,10 +231,25 @@ class Database
     {
         if ($_result = call_user_func_array(array('self', 'query'), func_get_args())) {
 
-            $result = self::$_db->fetchRow($_result, 'indexed');
+            if (defined('ALLOW_MEMCACHED')) {
+                $hash = Memcached::instance()->validateSql( $_result->queryString . 'indexed' );
+                if ( !empty($hash) && Memcached::instance()->get($hash) !== false ) {
+                    $result = Memcached::instance()->get($hash);
+                } else {
+                
+                    $result = self::$_db->fetchRow($_result, 'indexed');
 
-            self::$_db->freeResult($_result);
+                    self::$_db->freeResult($_result);
 
+                    if ( !empty($hash) ) {
+                        Memcached::instance()->set($hash, $result, time() + self::$_cacheDuration);
+                    }
+                }
+            } else {
+                $result = self::$_db->fetchRow($_result, 'indexed');
+
+                self::$_db->freeResult($_result);
+            }
         }
 
         return (isset($result) && is_array($result)) ? $result[0] : '';
@@ -198,11 +267,30 @@ class Database
         $result = array();
 
         if ($_result = call_user_func_array(array('self', 'query'), func_get_args())) {
-            while ($arr = self::$_db->fetchRow($_result, 'indexed')) {
-                $result[] = $arr[0];
-            }
+            if (defined('ALLOW_MEMCACHED')) {
+                $hash = Memcached::instance()->validateSql( $_result->queryString . 'indexed' );
+                if ( !empty($hash) && Memcached::instance()->get($hash) !== false ) {
+                    $result = Memcached::instance()->get($hash);
+                } else {
+                
+                    $result = array();
+                    while ($arr = self::$_db->fetchRow($_result, 'indexed')) {
+                        $result[] = $arr[0];
+                    }
 
-            self::$_db->freeResult($_result);
+                    self::$_db->freeResult($_result);
+                    
+                    if ( !empty($hash) ) {
+                        Memcached::instance()->set($hash, $result, time() + self::$_cacheDuration);
+                    }
+                }
+            } else {
+                while ($arr = self::$_db->fetchRow($_result, 'indexed')) {
+                    $result[] = $arr[0];
+                }
+
+                self::$_db->freeResult($_result);
+            }
         }
 
         return $result;
@@ -224,16 +312,37 @@ class Database
         array_unshift($args, $query);
 
         if ($_result = call_user_func_array(array('self', 'query'), $args)) {
-            while ($arr = self::$_db->fetchRow($_result)) {
-                if (!empty($field_2)) {
-                    $result[$arr[$field]][$arr[$field_2]] = !empty($value) ? $arr[$value] : $arr;
+            if (defined('ALLOW_MEMCACHED')) {
+                $hash = Memcached::instance()->validateSql( $_result->queryString );
+                if ( !empty($hash) && Memcached::instance()->get($hash) !== false ) {
+                    $result = Memcached::instance()->get($hash);
                 } else {
-                    $result[$arr[$field]][] = $arr;
+                    $result = array();
+                    while ($arr = self::$_db->fetchRow($_result)) {
+                        if (!empty($field_2)) {
+                            $result[$arr[$field]][$arr[$field_2]] = !empty($value) ? $arr[$value] : $arr;
+                        } else {
+                            $result[$arr[$field]][] = $arr;
+                        }
+                    }
+
+                    self::$_db->freeResult($_result);
+
+                    if ( !empty($hash) ) {
+                        Memcached::instance()->set($hash, $result, time() + self::$_cacheDuration);
+                    }
                 }
+            } else {
+                while ($arr = self::$_db->fetchRow($_result)) {
+                    if (!empty($field_2)) {
+                        $result[$arr[$field]][$arr[$field_2]] = !empty($value) ? $arr[$value] : $arr;
+                    } else {
+                        $result[$arr[$field]][] = $arr;
+                    }
+                }
+
+                self::$_db->freeResult($_result);
             }
-
-            self::$_db->freeResult($_result);
-
         }
 
         return !empty($result) ? $result : array();
@@ -255,11 +364,29 @@ class Database
         array_unshift($args, $query);
 
         if ($_result = call_user_func_array(array('self', 'query'), $args)) {
-            while ($arr = self::$_db->fetchRow($_result)) {
-                $result[$arr[$key]] = $arr[$value];
-            }
+            if (defined('ALLOW_MEMCACHED')) {
+                $hash = Memcached::instance()->validateSql( $_result->queryString );
+                if ( !empty($hash) && Memcached::instance()->get($hash) !== false ) {
+                    $result = Memcached::instance()->get($hash);
+                } else {
+                    $result = array();
+                    while ($arr = self::$_db->fetchRow($_result)) {
+                        $result[$arr[$key]] = $arr[$value];
+                    }
 
-            self::$_db->freeResult($_result);
+                    self::$_db->freeResult($_result);
+                    
+                    if ( !empty($hash) ) {
+                        Memcached::instance()->set($hash, $result, time() + self::$_cacheDuration);
+                    }
+                }
+            } else {
+                while ($arr = self::$_db->fetchRow($_result)) {
+                    $result[$arr[$key]] = $arr[$value];
+                }
+
+                self::$_db->freeResult($_result);
+            }
         }
 
         return !empty($result) ? $result : array();
@@ -339,6 +466,21 @@ class Database
                 fn_set_hook('db_query_executed', $query, $result);
             }
 
+            if (defined('ALLOW_MEMCACHED')) {
+                if ( preg_match("/^(INSERT|REPLACE|UPDATE)/i",trim($query)) ) {
+                        $ignore_list = array(DEFAULT_TABLE_PREFIX . 'logs', DEFAULT_TABLE_PREFIX . 'product_popularity', DEFAULT_TABLE_PREFIX . 'sessions', DEFAULT_TABLE_PREFIX . 'stat_', DEFAULT_TABLE_PREFIX . 'storage_data', DEFAULT_TABLE_PREFIX . 'stored_sessions', DEFAULT_TABLE_PREFIX . 'twigmo_', DEFAULT_TABLE_PREFIX . 'user_data', DEFAULT_TABLE_PREFIX . 'user_session_products', DEFAULT_TABLE_PREFIX . 'views');
+                        foreach($ignore_list as $ignoreStr) {
+                            if ( strpos($query,$ignoreStr) !== false ) {
+                                $ignoreFlag = TRUE;
+                            }
+                        }
+
+                        if ( empty($ignoreFlag) ) {
+                            Memcached::instance()->flush();
+                        }
+                }
+            }
+                        
             // "true" will be returned for Update/Delete/Insert/Replace statements. "SELECT" returns MySQLi/PDO object
             if ($result === true) {
                 $cmd = substr($query, 0, 6);
