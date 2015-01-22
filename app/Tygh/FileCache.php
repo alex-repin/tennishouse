@@ -12,34 +12,20 @@
 * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
 ****************************************************************************/
 
-use \Tygh\Registry;
+namespace Tygh;
 
-$schema['top']['administration']['items']['development'] = array(
-    'href' => 'development.index',
-    'type' => 'title',
-    'position' => 1500,
-    'subitems' => array(
-        'calculate_racket_balance' => array(
-            'href' => 'development.calculate_balance',
-            'position' => 100,
-        ),
-        'update_exchange_rates' => array(
-            'href' => fn_url('development.update_rub_rate', 'C'),
-            'position' => 100,
-        ),
-    ),
-);
-$active = fn_get_memcached_status();
-if ($active) {
-    $schema['top']['administration']['items']['development']['subitems']['cache_features'] = array(
-        'href' => fn_url('development.generate_features_cache', 'C'),
-        'position' => 200,
-    );
+class FileCache
+{
+    public static function set($data)
+    {
+        fn_put_contents(DIR_ROOT . '/var/features_cache/cache', serialize($data));
+    }
+
+    public static function get()
+    {
+        if (is_readable(DIR_ROOT . '/var/features_cache/cache')) {
+            return unserialize(fn_get_contents(DIR_ROOT . '/var/features_cache/cache'));
+        }
+    }
+
 }
-
-$schema['central']['products']['items']['players'] = array(
-    'href' => 'players.manage',
-    'position' => 350,
-);
-
-return $schema;

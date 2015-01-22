@@ -18,6 +18,11 @@ use Tygh\FeaturesCache;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_get_memcached_status()
+{
+    return (class_exists('Memcached')) ? true : false;
+}
+
 function fn_add_product_features($pid, $data)
 {
     $addition = array();

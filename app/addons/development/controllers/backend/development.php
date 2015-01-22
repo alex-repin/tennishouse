@@ -12,7 +12,7 @@
 * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
 ****************************************************************************/
 
-use Tygh\Memcached;
+use Tygh\Memcache;
 use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
@@ -34,31 +34,15 @@ if ($mode == 'calculate_balance') {
     Registry::get('view')->assign('params', $params);
     
 } elseif ($mode == 'show_memcached') {
-    $keys = Memcached::instance()->getAllKeys();
+    $keys = Memcache::instance()->call('getAllKeys');
     $result = array();
     if (!empty($keys)) {
         foreach ($keys as $i => $key) {
-            $result[$key] = Memcached::instance()->get($key);
+            $result[$key] = Memcache::instance()->call('get', $key);
         }
     }
     fn_print_r($result);
     exit;
 } elseif ($mode == 'test_memcached') {
-// Memcached::instance()->set('a', serialize(array()));
- //fn_print_r(Memcached::instance()->get('9ab0ee1123f31620ca9b0c08b5a3b1d2'), unserialize(Memcached::instance()->get('9ab0ee1123f31620ca9b0c08b5a3b1d2')) !== false);
-// fn_print_r(unserialize(Memcached::instance()->get('b')) !== false);
-// $keys = Memcached::instance()->getAllKeys();
-// if (!empty($keys)) {
-//     foreach ($keys as $i => $key) {
-//         fn_print_r($key, Memcached::instance()->get($key));
-//     }
-// }
-// Memcached::instance()->clear();
-$keys = Memcached::instance()->getAllKeys();
-if (!empty($keys)) {
-    foreach ($keys as $i => $key) {
-        fn_print_r($key, Memcached::instance()->get($key));
-    }
-}
-exit;
+    exit;
 }

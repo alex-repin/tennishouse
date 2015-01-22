@@ -19,6 +19,7 @@ use Tygh\BlockManager\Block;
 use Tygh\BlockManager\ProductTabs;
 use Tygh\Navigation\LastView;
 use Tygh\Languages\Languages;
+use Tygh\FeaturesCache;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
@@ -6969,19 +6970,11 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
     }
 
     if (!empty($advanced_variant_ids)) {
-        $join .= db_quote(" LEFT JOIN (SELECT product_id, GROUP_CONCAT(?:product_features_values.variant_id) AS advanced_variants FROM ?:product_features_values WHERE lang_code = ?s GROUP BY product_id) AS pfv_advanced ON pfv_advanced.product_id = products.product_id", $lang_code);
-
-        $where_and_conditions = array();
-        foreach ($advanced_variant_ids as $k => $variant_ids) {
-            $where_or_conditions = array();
-            foreach ($variant_ids as $variant_id => $v) {
-                $where_or_conditions[] = db_quote(" FIND_IN_SET('?i', advanced_variants)", $variant_id);
-            }
-            $where_and_conditions[] = '(' . implode(' OR ', $where_or_conditions) . ')';
-        }
-        $condition .= ' AND ' . implode(' AND ', $where_and_conditions);
+        // [tennishouse]
+        FeaturesCache::advancedVariantIds($advanced_variant_ids, $join, $condition, $lang_code);
+        // [tennishouse]
     }
-    
+
     if (!empty($simple_variant_ids)) {
         $join .= db_quote(" LEFT JOIN (SELECT product_id, GROUP_CONCAT(?:product_features_values.variant_id) AS simple_variants FROM ?:product_features_values WHERE lang_code = ?s GROUP BY product_id) AS pfv_simple ON pfv_simple.product_id = products.product_id", $lang_code);
 

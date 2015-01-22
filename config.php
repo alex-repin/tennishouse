@@ -247,12 +247,8 @@ $config['current_host'] = (defined('HTTPS')) ? $config['https_host'] : $config['
 $config['allowed_pack_exts'] = array('tgz', 'gz', 'zip');
 
 //[tennishouse]
-define('USE_MEMCACHED', true);
+define('USE_DB_MEMCACHED', true);
 define('DB_MEMCACHE_DURATION', time() + 60 * 60 * 24);
-
-if (class_exists('Memcached') && USE_MEMCACHED) {
-    define('ALLOW_MEMCACHED', true);
-}
 //[tennishouse]
 
 return $config;
