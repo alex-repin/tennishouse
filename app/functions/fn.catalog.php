@@ -2373,6 +2373,7 @@ function fn_update_product($product_data, $product_id = 0, $lang_code = CART_LAN
     return (int) $product_id;
 }
 
+//[tennishouse]
 function fn_update_product_features_value($product_id, $product_features, $add_new_variant, $lang_code)
 {
     if (empty($product_features)) {
@@ -2468,8 +2469,11 @@ function fn_update_product_features_value($product_id, $product_features, $add_n
         }
     }
 
+    fn_set_hook('update_product_features_value', $product_id, $product_features, $add_new_variant, $lang_code);
+    
     return true;
 }
+//[tennishouse]
 
 /**
  * Recalculates and updates products quantity in categories
@@ -4561,6 +4565,9 @@ function fn_update_product_feature($feature_data, $feature_id, $lang_code = DESC
 
         if (!fn_is_empty($new_categories) && (fn_is_empty($old_categories) || $old_categories != $new_categories)) {
             db_query('DELETE FROM ?:product_features_values WHERE feature_id = ?i AND product_id NOT IN (SELECT product_id FROM ?:products_categories WHERE link_type = ?s AND category_id IN (?a))', $feature_id, 'M', $new_categories);
+            //[tennishouse]
+            fn_change_feature_category($feature_id, $new_categories);
+            //[tennishouse]
         }
 
         if (strpos('SMNE', $feature_data['feature_type']) !== false) {
@@ -4656,6 +4663,9 @@ function fn_update_product_feature_variant($feature_id, $feature_type, $variant,
     }
 
     if ($feature_type == 'N') { // number
+        //[tennishouse]
+        fn_update_feature_value_int($variant_id, $variant['variant'], $lang_code);
+        //[tennishouse]
         db_query('UPDATE ?:product_features_values SET ?u WHERE variant_id = ?i AND lang_code = ?s', array('value_int' => $variant['variant']), $variant_id, $lang_code);
     }
 
@@ -4737,6 +4747,10 @@ function fn_delete_feature($feature_id)
  */
 function fn_delete_product_feature_variants($feature_id = 0, $variant_ids = array())
 {
+    //[tennishouse]
+    fn_set_hook('delete_product_feature_variants', $feature_id, $variant_ids);
+    //[tennishouse]
+
     if (!empty($feature_id)) {
         $variant_ids = db_get_fields("SELECT variant_id FROM ?:product_feature_variants WHERE feature_id = ?i", $feature_id);
         db_query("DELETE FROM ?:product_features_values WHERE feature_id = ?i", $feature_id);
@@ -4753,7 +4767,7 @@ function fn_delete_product_feature_variants($feature_id = 0, $variant_ids = arra
             fn_delete_image_pairs($variant_id, 'feature_variant');
         }
     }
-
+    
     return $variant_ids;
 }
 
@@ -8942,6 +8956,9 @@ function fn_clone_product($product_id)
         $v['product_id'] = $pid;
         db_query("INSERT INTO ?:product_features_values ?e", $v);
     }
+    //[tennishouse]
+    fn_add_product_features($pid, $data);
+    //[tennishouse]
 
     // Clone blocks
     Block::instance()->cloneDynamicObjectData('products', $product_id, $pid);

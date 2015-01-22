@@ -44,10 +44,10 @@
             <div id="sw_content_{$filter_uid}" class="ty-product-filters__switch">
                 <span class="ty-product-filters__title">
                     {$filter.filter}
-                    {include file="addons/development/common/tooltip.tpl" note_url=$filter.note_url note_text=$filter.note_text}
                 </span>
                 {if $filter.open || $filter.selected_ranges}<i class="ty-icon-ok"></i>{/if}
                 {*<i class="ty-product-filters__switch-right ty-icon-left-open"></i>*}
+                {include file="addons/development/common/tooltip.tpl" note_url=$filter.note_url note_text=$filter.note_text}
             </div>
             
             {if $filter.slider}

@@ -14,8 +14,39 @@
 
 use Tygh\Registry;
 use Tygh\Http;
+use Tygh\FeaturesCache;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
+
+function fn_add_product_features($pid, $data)
+{
+    $addition = array();
+    foreach ($data as $v) {
+        $v['product_id'] = $pid;
+        $addition[] = $v;
+    }
+    FeaturesCache::updateProductFeaturesValue($pid, $addition);
+}
+
+function fn_update_feature_value_int($variant_id, $value_int, $lang_code)
+{
+    $tmp = db_get_row("SELECT feature_id, value_int FROM ?:product_features_values WHERE variant_id = ?i AND lang_code = ?s", $variant_id, $lang_code);
+    if (!empty($tmp['feature_id']) && !empty($tmp['value_int'])) {
+        FeaturesCache::updateFeatureValueInt($tmp['feature_id'], $tmp['value_int'], $value_int, $lang_code);
+    }
+}
+
+function fn_change_feature_category($feature_id, $new_categories)
+{
+    $product_ids = db_get_fields("SELECT product_id FROM ?:products_categories WHERE link_type = 'M' AND category_id IN (?a)", $new_categories);
+    if (!empty($product_ids)) {
+        $params = array(
+            'delete' => array('not_product_id' => $product_ids),
+            'condition' => array('feature_id' => array($feature_id))
+        );
+        FeaturesCache::clearoutFeatures($params);
+    }
+}
 
 function fn_get_block_categories($category_id)
 {

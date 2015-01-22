@@ -33,6 +33,16 @@ if ($mode == 'calculate_balance') {
     }
     Registry::get('view')->assign('params', $params);
     
+} elseif ($mode == 'show_memcached') {
+    $keys = Memcached::instance()->getAllKeys();
+    $result = array();
+    if (!empty($keys)) {
+        foreach ($keys as $i => $key) {
+            $result[$key] = Memcached::instance()->get($key);
+        }
+    }
+    fn_print_r($result);
+    exit;
 } elseif ($mode == 'test_memcached') {
 // Memcached::instance()->set('a', serialize(array()));
  //fn_print_r(Memcached::instance()->get('9ab0ee1123f31620ca9b0c08b5a3b1d2'), unserialize(Memcached::instance()->get('9ab0ee1123f31620ca9b0c08b5a3b1d2')) !== false);

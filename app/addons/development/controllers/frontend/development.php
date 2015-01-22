@@ -37,6 +37,6 @@ if ($mode == 'update_rub_rate') {
 
     exit;
 } elseif ($mode == 'generate_features_memcache') {
-    FeaturesCache::generate();
+    FeaturesCache::generate(CART_LANGUAGE);
     exit;
 }

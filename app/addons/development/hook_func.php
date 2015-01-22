@@ -16,6 +16,21 @@ use Tygh\FeaturesCache;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_delete_product_feature_variants($feature_id, $variant_ids)
+{
+    if (!empty($feature_id)) {
+        FeaturesCache::deleteFeature($feature_id);
+    } elseif (!empty($variant_ids)) {
+        FeaturesCache::deleteVariants($variant_ids);
+    }
+}
+
+function fn_development_update_product_features_value($product_id, $product_features, $add_new_variant, $lang_code)
+{
+    $features = db_get_array("SELECT * FROM ?:product_features_values WHERE product_id = ?i", $product_id);
+    FeaturesCache::updateProductFeaturesValue($product_id, $features, $lang_code);
+}
+
 function fn_development_render_block_register_cache($block, $cache_name, &$block_scheme, $register_cache, $display_block)
 {
     if (!empty($block['properties']['random']) && $block['properties']['random'] == 'Y') {
@@ -277,7 +292,7 @@ function fn_development_get_products($params, &$fields, $sortings, &$condition, 
         }
     }
     if (!empty($params['features_condition'])) {
-        FeaturesCache::getProductsConditions($params['features_condition'], $join, $condition);
+        FeaturesCache::getProductsConditions($params['features_condition'], $join, $condition, $lang_code);
     }
 }
 
@@ -404,6 +419,7 @@ function fn_development_delete_product_post($product_id, $product_deleted)
 {
     if ($product_deleted) {
         db_query("DELETE FROM ?:players_gear WHERE product_id = ?i", $product_id);
+        FeaturesCache::deleteProduct($product_id);
     }
 }
 

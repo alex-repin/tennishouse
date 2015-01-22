@@ -19,29 +19,143 @@ use Tygh\Memcached;
 
 class FeaturesCache
 {
-    public static function generate()
+    private static $cache_levels = array(
+        'lang_code',
+        'feature_id',
+        'type',
+        'variant',
+        'product_id'
+    );
+    
+    public static function generate($lang_code = '')
     {
         $feature_values = db_get_array("SELECT * FROM ?:product_features_values");
         $result = array();
+        self::formatResults($result, $feature_values, $lang_code);
+        Memcached::instance()->set('features', $result, 'F');
+    }
+
+    public static function formatResults(&$result, $feature_values, $lang_code = '')
+    {
         if (!empty($feature_values)) {
             foreach ($feature_values as $i => $feature_value) {
-                if ($feature_value['lang_code'] == CART_LANGUAGE) {
+                if (empty($lang_code) || $feature_value['lang_code'] == $lang_code) {
                     if (!empty($feature_value['value_int']) && (empty($result[$feature_value['feature_id']][$feature_value['value_int']]) || !in_array($feature_value['product_id'], $result[$feature_value['feature_id']][$feature_value['value_int']]))) {
-                        $result[$feature_value['feature_id']]['values'][$feature_value['value_int']][] = $feature_value['product_id'];
+                        $result[$feature_value['lang_code']][$feature_value['feature_id']]['values'][$feature_value['value_int']][] = $feature_value['product_id'];
                     }
                     if (!empty($feature_value['variant_id']) && (empty($result[$feature_value['feature_id']][$feature_value['variant_id']]) || !in_array($feature_value['product_id'], $result[$feature_value['feature_id']][$feature_value['variant_id']]))) {
-                        $result[$feature_value['feature_id']]['variants'][$feature_value['variant_id']][] = $feature_value['product_id'];
+                        $result[$feature_value['lang_code']][$feature_value['feature_id']]['variants'][$feature_value['variant_id']][] = $feature_value['product_id'];
                     }
                 }
             }
         }
-        Memcached::instance()->set('features', $result, 'F');
     }
-
-    public static function getProductsConditions($features_condition, &$join, &$condition)
+    
+    public static function updateFeatureValueInt($feature_id, $old_value_int, $new_value_int, $lang_code)
+    {
+        $memcache_features = Memcached::instance()->get('features', 'F');
+        if (!empty($memcache_features[$lang_code][$feature_id]['values'][$old_value_int])) {
+            $tmp = $memcache_features[$lang_code][$feature_id]['values'][$old_value_int];
+            unset($memcache_features[$lang_code][$feature_id]['values'][$old_value_int]);
+            $memcache_features[$lang_code][$feature_id]['values'][(string)number_format($new_value_int, 2, '.', '')] = $tmp;
+        }
+        Memcached::instance()->set('features', $memcache_features, 'F');
+    }
+    
+    public static function clearoutFeatures($params)
     {
         $memcache_features = Memcached::instance()->get('features', 'F');
         if (!empty($memcache_features)) {
+            self::clearoutFeatureValues($params, $memcache_features);
+        }
+        Memcached::instance()->set('features', $memcache_features, 'F');
+    }
+    
+    public static function clearoutFeatureValues($params, &$memcache_features, $level = 0)
+    {
+        if (!empty($memcache_features)) {
+            foreach ($memcache_features as $i => $j) {
+                if (!empty($params['delete'][self::$cache_levels[$level]]) && in_array($i, $params['delete'][self::$cache_levels[$level]])) {
+                    unset($memcache_features[$i]);
+                } elseif (empty($params['condition'][self::$cache_levels[$level]]) || (!empty($params['condition'][self::$cache_levels[$level]]) && in_array($i, $params['condition'][self::$cache_levels[$level]]))) {
+                    if (is_array($j)) {
+                        self::clearoutFeatureValues($params, $memcache_features[$i], $level + 1);
+                    } elseif ((!empty($params['delete'][self::$cache_levels[$level]]) && in_array($j, $params['delete'][self::$cache_levels[$level]])) || (!empty($params['delete']['not_' . self::$cache_levels[$level]]) && !in_array($j, $params['delete']['not_' . self::$cache_levels[$level]]))) {
+                        unset($memcache_features[$i]);
+                    }
+                }
+            }
+        }
+    }
+    
+    public static function deleteFeature($feature_id)
+    {
+        $memcache_features = Memcached::instance()->get('features', 'F');
+        if (!empty($memcache_features)) {
+            $params = array(
+                'delete' => array('feature_id' => array($feature_id))
+            );
+            self::clearoutFeatureValues($params, $memcache_features);
+        }
+        Memcached::instance()->set('features', $memcache_features, 'F');
+    }
+    
+    public static function deleteVariants($variant_ids)
+    {
+        $memcache_features = Memcached::instance()->get('features', 'F');
+        if (!empty($memcache_features)) {
+            $value_ints = db_get_array("SELECT feature_id, value_int FROM ?:product_features_values WHERE variant_id IN (?n)", $variant_ids);
+            if (!empty($value_ints)) {
+                foreach ($value_ints as $i => $data) {
+                    if (!empty($data['value_int'])) {
+                        $params = array(
+                            'delete' => array('variant' => array($data['value_int'])),
+                            'condition' => array('feature_id' => array($data['feature_id']))
+                        );
+                        self::clearoutFeatureValues($params, $memcache_features);
+                    }
+                }
+            }
+            $params = array(
+                'delete' => array('variant' => $variant_ids)
+            );
+            self::clearoutFeatureValues($params, $memcache_features);
+        }
+        Memcached::instance()->set('features', $memcache_features, 'F');
+    }
+    
+    public static function deleteProduct($product_id)
+    {
+        $memcache_features = Memcached::instance()->get('features', 'F');
+        if (!empty($memcache_features)) {
+            $params = array(
+                'delete' => array('product_id' => array($product_id))
+            );
+            self::clearoutFeatureValues($params, $memcache_features);
+        }
+        Memcached::instance()->set('features', $memcache_features, 'F');
+    }
+    
+    public static function updateProductFeaturesValue($product_id, $features, $lang_code = CART_LANGUAGE)
+    {
+        $memcache_features = Memcached::instance()->get('features', 'F');
+        if (!empty($memcache_features)) {
+            $params = array(
+                'delete' => array('product_id' => array($product_id))
+            );
+            self::clearoutFeatureValues($params, $memcache_features);
+        }
+        if (!empty($features)) {
+            self::formatResults($memcache_features, $features, $lang_code);
+        }
+        Memcached::instance()->set('features', $memcache_features, 'F');
+    }
+    
+    public static function getProductsConditions($features_condition, &$join, &$condition, $lang_code = CART_LANGUAGE)
+    {
+        $memcache_features = Memcached::instance()->get('features', 'F');
+        if (!empty($memcache_features[$lang_code])) {
+            $memcache_features = $memcache_features[$lang_code];
             $product_ids = array();
             foreach ($features_condition as $feature_id => $feature_data) {
                 if (!empty($memcache_features[$feature_id])) {
@@ -87,7 +201,7 @@ class FeaturesCache
             $condition .= db_quote(" AND products.product_id IN (?n) ", $product_ids);
         } else {
             foreach ($features_condition as $feature_id => $feature_data) {
-                $join .= db_quote(" LEFT JOIN ?:product_features_values AS feature_?i ON feature_?i.product_id = products.product_id AND feature_?i.feature_id = ?i AND feature_?i.lang_code = ?s", $feature_id, $feature_id, $feature_id, $feature_id, $feature_id, CART_LANGUAGE);
+                $join .= db_quote(" LEFT JOIN ?:product_features_values AS feature_?i ON feature_?i.product_id = products.product_id AND feature_?i.feature_id = ?i AND feature_?i.lang_code = ?s", $feature_id, $feature_id, $feature_id, $feature_id, $feature_id, $lang_code);
                 if (!empty($feature_data['variant_id'])) {
                     $condition .= db_quote(" AND feature_?i.variant_id = ?i ", $feature_id, $feature_data['variant_id']);
                 } elseif (!empty($feature_data['value'])) {
