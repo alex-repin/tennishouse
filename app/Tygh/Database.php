@@ -518,7 +518,6 @@ class Database
                         }
 
                         if ( empty($ignoreFlag) ) {
-                        fn_print_r($query);
                             Memcache::instance()->call('clear', 'D');
                         }
                 }
