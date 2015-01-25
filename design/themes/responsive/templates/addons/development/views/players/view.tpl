@@ -126,7 +126,7 @@
     <h2>{__("bags_and_accessories")}</h2>
     {include file="blocks/list_templates/grid_list.tpl"
     products=$player_data.gear.BC
-    columns=4
+    columns=5
     form_prefix="block_manager"
     no_sorting="Y"
     no_pagination="Y"
@@ -148,7 +148,7 @@
     <h2>{__("apparel_and_shoes")}</h2>
     {include file="blocks/list_templates/grid_list.tpl"
     products=$player_data.gear.AS
-    columns=4
+    columns=5
     form_prefix="block_manager"
     no_sorting="Y"
     no_pagination="Y"

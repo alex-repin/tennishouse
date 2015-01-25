@@ -1455,11 +1455,11 @@ if (typeof Object.create !== "function") {
 
         items : 5,
         itemsCustom : false,
-        itemsDesktop : [1199, 4],
-        itemsDesktopSmall : [979, 3],
-        itemsTablet : [768, 2],
-        itemsTabletSmall : false,
-        itemsMobile : [479, 1],
+        itemsDesktop : /*[1199, 4]*/false,
+        itemsDesktopSmall : /*[979, 3]*/false,
+        itemsTablet : /*[768, 2]*/false,
+        itemsTabletSmall : /*false*/false,
+        itemsMobile : /*[479, 1]*/false,
         singleItem : false,
         itemsScaleUp : false,
 

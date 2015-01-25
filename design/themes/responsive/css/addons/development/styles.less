@@ -25,6 +25,18 @@ select {
 .ty-footer-menu > .row {
     padding: 0;
 }
+.tygh_container {
+    width: 2500px;
+}
+.ty-helper-container {
+    max-width: 2500px;
+}
+.my-account-grid {
+    margin-left: 50px;
+}
+.tygh-footer {
+    max-width: 2500px;
+}
 /* Tooltip */
 /*
  * Template: templates/common/tooltip.tpl
@@ -118,11 +130,30 @@ select {
 }
 
 /* Top block */
-[class*="span"], .row-fluid [class*="span"] {
-    float: left;
+.ty-top-block_top_left-wrapper {
+    display: inline-block;
+    width: 66%;
 }
-.top-grid .top-menu-row {
-    width: 1310px !important;
+.ty-top-block-wrapper {
+    display: inline-block;
+    width: 100%;
+}
+.ty-logo-container {
+    width: 33%;
+    display: inline-block;
+    padding: 6px 0;
+    vertical-align: top;
+    margin: 0;
+}
+.top-grid .row, .ty-footer-grid .row {
+    margin: 0;
+}
+.top-grid [class*="span"], .row-fluid [class*="span"] {
+    float: left;
+    margin: 0;
+}
+.top-grid .top-menu-row, .ty-footer-grid .top-menu-row {
+    width: 1050px !important;
     float: none;
     margin: 0 auto;
 }
@@ -131,20 +162,21 @@ select {
 }
 .top-grid {
     width: 100%;
-    min-width: 1290px;
 }
 .top-grid .span16, .ty-footer-grid .span16 {
     width: 100%;
 }
 .ty-footer-grid__full-width > .row {
-    width: 1050px;
+    width: auto;
 }
-.tygh-footer {
-    width: 100%;
-    min-width: 1290px;
-    max-width: none;
+.ty-footer-form-block {
+    margin: 40px 30px 29px;
 }
-.top-grid .span10 {
+.ty-social-link-block {
+    margin: 20px 30px 30px;
+    width: 250px;
+}
+/*.top-grid .span10 {
     width: 795px;
     margin-left: 28px
 }
@@ -153,15 +185,16 @@ select {
 }
 .top-grid .span6 {
     width: 465px;
-}
+}*/
 .tygh-top-panel {
     left: 0;
-    margin: 0 auto;
+    /*margin: 0 auto;*/
     position: fixed;
     text-align: center;
     top: 0;
     width: 100%;
     z-index: 400;
+    max-width: 2500px;
 }
 .top-menu-grid {
     padding-top: 30px;
@@ -185,7 +218,7 @@ select {
     color: #000000;
     min-height: 42px;
     height: 42px;
-    padding: 11px 18px;
+    padding: 11px 0;
 }
 .ty-top-block_top-wrapper {
     border-bottom: 1px solid #eeeeee;
@@ -202,21 +235,21 @@ select {
 .ty-dropdown-box__content {
     margin-top: 0;
 }
-.top-menu-section .ty-benefits-low-price {
+.top-grid .ty-benefits-low-price {
     background: url('../media/images/icons/benefits_sprite_top.png') no-repeat 0 2px;
     width: 21px;
     height: 27px;
     display: block;
     margin: 0 auto;
 }
-.top-menu-section .ty-benefits-free-shipping {
-    background: url('../media/images/icons/benefits_sprite_top.png') no-repeat -36px 0;
-    width: 29px;
+.top-grid .ty-benefits-free-shipping {
+    background: url('../media/images/icons/benefits_sprite_top.png') no-repeat -35px 0;
+    width: 31px;
     height: 27px;
     display: block;
     margin: 0 auto;
 }
-.top-menu-section .ty-benefits-free-returns {
+.top-grid .ty-benefits-free-returns {
     background: url('../media/images/icons/benefits_sprite_top.png') no-repeat -72px 2px;
     width: 32px;
     height: 27px;
@@ -234,11 +267,11 @@ select {
 }
 .ty-benefits-guarantees__top {
     display: inline-block;
-    padding: 0 4px;
-    width: 220px;
+    width: 32.9%;
 }
 .ty-top-block_bottom-wrapper {
     margin-top: -2px; /* why da fuck ?*/
+    width: 100%;
 }
 .ty-benefits-guarantees__icon-block {
     display: inline-block;
@@ -340,8 +373,7 @@ select {
     height: 42px;
 }
 .top-menu .ty-menu__items > ul{
-    padding: 0 30px;
-    width: 1230px;
+    width: 1050px;
     margin: 0 auto;
     display: inline-block;
 }
@@ -572,7 +604,7 @@ select {
 }
 .ty-player-block__img-wrapper {
     position: absolute;
-    left: 115px;
+    left: -35px;
 }
 .ty-player-block__left {
     display: inline-block;
@@ -597,6 +629,7 @@ select {
     min-height: 300px;
     padding-left: 150px;
     width: 500px;
+    position: relative;
 }
 .ty-grid-list__item {
     background: none repeat scroll 0 0 #f6f7f8;
@@ -1524,7 +1557,4 @@ select {
 
 /*.ty-range-slider .ui-slider-handle {
     background-color: lighten(@font, 22%);
-}*/
-/*.ty-helper-container {
-    background: none repeat scroll 0 0 #f1f1f1;
 }*/
