@@ -34,6 +34,7 @@ if ($mode == 'calculate_balance') {
     Registry::get('view')->assign('params', $params);
     
 } elseif ($mode == 'show_memcached') {
+//    fn_print_r(Memcache::instance()->call('getMemcacheKeys', 2000));
     $keys = Memcache::instance()->call('getAllKeys');
     $result = array();
     if (!empty($keys)) {
