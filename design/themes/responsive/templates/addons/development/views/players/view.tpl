@@ -94,7 +94,7 @@
     </div>
     {/if}
     <div class="ty-player__share-buttons">
-        {include file="addons/development/common/share_buttons.tpl" title=$player_data.player description=__("player_share_buttons_description") image=$player_data.main_pair.detailed.image_path}
+        {include file="addons/development/common/share_buttons.tpl" title=$player_data.player description=__("player_share_buttons_description") image=$player_data.main_pair}
     </div>
     </div>
     {if $player_data.gear.R}

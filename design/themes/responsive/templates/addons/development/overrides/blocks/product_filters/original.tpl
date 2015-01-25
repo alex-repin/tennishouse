@@ -64,6 +64,17 @@
 
     $(document).ready(function() {$ldelim}
         fn_stick_element();
+        $('.ty-product-filters__block').click(function(e){$ldelim}
+            $(this).toggleClass('is-hover');
+            var block_id = $(this).find('.ty-product-filters__switch').prop('id').replace(/^(on_|off_|sw_)/, '');
+            if ($(this).hasClass('is-hover')) {
+                $.cookie.set(block_id, 1);
+            } else {
+                $.cookie.set(block_id, 0);
+            }
+            $(this).find('.ty-product-filters').toggle('slide');
+            $(this).find('.ty-price-slider').toggle('slide');
+        {$rdelim});
         $('.ty-product-filters__block').hover(function(e){$ldelim}
             $(this).addClass('is-hover');
             var block_id = $(this).find('.ty-product-filters__switch').prop('id').replace(/^(on_|off_|sw_)/, '');
