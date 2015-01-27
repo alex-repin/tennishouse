@@ -51,11 +51,6 @@ class Memcache
         }
     }
 
-    private function getAllKeys()
-    {
-        return $this->MemcachedServer->getAllkeys();
-    }
-
     public function getMemcacheKeys($limit = 10000)
     {
         $keysFound = array();
@@ -153,16 +148,6 @@ class Memcache
         return unserialize($this->MemcachedServer->get($key));
     }
 
-//     private function getResultCode()
-//     {
-//         return $this->MemcachedServer->getResultCode();
-//     }
-// 
-//     private function getResultMessage()
-//     {
-//         return $this->MemcachedServer->getResultMessage();
-//     }
-// 
     private function validateSql($query)
     {
         // $ignore_list = array("?:logs","?:product_prices","?:sessions","?:settings_","?:stat_","?:storage_data","?:stored_sessions","?:ult_","?:user_data","?:user_session_products");
