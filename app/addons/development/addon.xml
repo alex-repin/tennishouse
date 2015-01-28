@@ -268,6 +268,9 @@
         <item lang="ru" id="discussion_homepage">Отзывы на домашней странице</item>
         <item lang="ru" id="memcached">Memcached</item>
         <item lang="ru" id="cache_features">Закешировать характеристики</item>
+        <item lang="ru" id="ssl_seal">SSL сертификат</item>
+        <item lang="ru" id="accessories">Аксессуары</item>
+        <item lang="ru" id="accessories">Аксессуары</item>
         <item lang="ru" id="accessories">Аксессуары</item>
     </language_variables>
 </addon>

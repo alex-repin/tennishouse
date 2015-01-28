@@ -28,12 +28,12 @@
 
 <div id="content_{$filter_uid}" class="ty-price-slider {if $collapse}hidden{/if} {$extra_class}">
     <input type="text" class="ty-price-slider__input-text" id="{$id}_left" name="left_{$id}" value="{$left}"{if $disable_slider} disabled="disabled"{/if} />
-    &nbsp;–&nbsp;
+     – 
     <input type="text" class="ty-price-slider__input-text" id="{$id}_right" name="right_{$id}" value="{$right}"{if $disable_slider} disabled="disabled"{/if} />
     {if $filter.units}
-        &nbsp;{$filter.units nofilter}
+        {$filter.units nofilter}
     {else if $filter.field_type == 'P'}
-        &nbsp;{$currencies.$secondary_currency.symbol nofilter}
+        {$currencies.$secondary_currency.symbol nofilter}
     {/if}
 
     <div id="{$id}" class="ty-range-slider cm-range-slider">

@@ -84,7 +84,8 @@
                             stopOnHover: true,
                             navigation: true,
                             navigationText: ['', ''],
-                            pagination: false
+                            pagination: false,
+                            responsive: false
                         });
                     }
                 });

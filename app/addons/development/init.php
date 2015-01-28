@@ -39,5 +39,6 @@ fn_register_hooks(
     'get_category_data_post',
     'render_block_register_cache',
     'update_product_features_value',
-    'delete_product_feature_variants'
+    'delete_product_feature_variants',
+    'redirect_complete'
 );

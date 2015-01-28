@@ -16,6 +16,11 @@ use Tygh\FeaturesCache;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_redirect_complete(&$meta_redirect)
+{
+    $meta_redirect = false;
+}
+
 function fn_development_delete_product_feature_variants($feature_id, $variant_ids)
 {
     if (!empty($feature_id)) {

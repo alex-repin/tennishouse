@@ -1,0 +1,1 @@
+<div class="ty-ssl-cert"></div>
