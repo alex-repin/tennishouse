@@ -41,6 +41,17 @@ select {
     float: none;
     display: inline;
 }
+.ty-ssl-cert {
+    background-image: url("../../../media/images/addons/development/rapidssl.png");
+    height: 55px;
+    margin-top: -5px;
+    width: 100px;
+}
+.ty-hover-ssl-cert {
+    position: absolute;
+    right: 140px;
+    top: 120px;
+}
 /* Tooltip */
 /*
  * Template: templates/common/tooltip.tpl
@@ -1552,6 +1563,13 @@ select {
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2),
 only screen and (min-device-pixel-ratio: 2) {
+    .ty-helper-container {
+        width: 1200px;
+    }
+}
+@media only screen 
+and (min-device-width : 320px) 
+and (max-device-width : 480px) {
     p {
         font-size: 6px;
     }
@@ -1563,9 +1581,6 @@ only screen and (min-device-pixel-ratio: 2) {
     }
     .ty-wysiwyg-content h2 {
         font-size: 7px;
-    }
-    .ty-helper-container {
-        width: 1200px;
     }
 }
 /*.ty-tennishouse-container h2 {
