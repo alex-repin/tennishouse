@@ -128,6 +128,49 @@
         <item>
             ALTER TABLE `cscart_categories` ADD `brand_id` MEDIUMINT( 8 ) UNSIGNED NOT NULL ;
         </item>
+        <item>
+            ALTER TABLE `cscart_product_feature_variant_descriptions` ADD `size_chart` TEXT NOT NULL ;
+        </item>
+        <item>
+            ALTER TABLE `cscart_product_feature_variant_descriptions` ADD `mens_clothes_size_chart` TEXT NOT NULL ;
+        </item>
+        <item>
+            ALTER TABLE `cscart_product_feature_variant_descriptions` ADD `womens_clothes_size_chart` TEXT NOT NULL ;
+        </item>
+        <item>
+            ALTER TABLE `cscart_product_feature_variant_descriptions` ADD `mens_shoes_size_chart` TEXT NOT NULL ;
+        </item>
+        <item>
+            ALTER TABLE `cscart_product_feature_variant_descriptions` ADD `womens_shoes_size_chart` TEXT NOT NULL ;
+        </item>
+        <item>
+            REPLACE INTO `cscart_product_tabs` (
+                `tab_id` ,
+                `tab_type` ,
+                `block_id` ,
+                `template` ,
+                `addon` ,
+                `position` ,
+                `status` ,
+                `is_primary` ,
+                `product_ids` ,
+                `company_id` ,
+                `show_in_popup`
+            ) VALUES (
+                '10' , 'T', '0', 'addons/development/blocks/product_tabs/size_chart.tpl', 'development', '4', 'A', 'Y', '', '1', 'N'
+            );
+        </item>
+        <item>
+            REPLACE INTO `cscart_product_tabs_descriptions` (
+                `tab_id` ,
+                `lang_code` ,
+                `name`
+            ) VALUES (
+                '10', 'ru', 'Таблица размеров'
+            ), (
+                '10', 'en', 'Size chart'
+            );
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -269,7 +312,7 @@
         <item lang="ru" id="memcached">Memcached</item>
         <item lang="ru" id="cache_features">Закешировать характеристики</item>
         <item lang="ru" id="ssl_seal">SSL сертификат</item>
-        <item lang="ru" id="accessories">Аксессуары</item>
+        <item lang="ru" id="size_chart">Таблица размеров</item>
         <item lang="ru" id="accessories">Аксессуары</item>
         <item lang="ru" id="accessories">Аксессуары</item>
     </language_variables>

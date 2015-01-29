@@ -1,6 +1,6 @@
 <div class="ty-qty-discount">
     <div class="ty-qty-discount__label"><icon class="ty-qty-disc-logo"></icon>{__("scale_of_discount")}</div>
-    <table class="ty-table ty-qty-discount__table">
+    <table class="ty-table ty-product-tabs__table">
         <tbody>
             <tr>
                 <td class="ty-qty-discount__td">{__("quantity")}</td>

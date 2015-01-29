@@ -40,6 +40,8 @@ define('R_BALANCE_FEATURE_ID', 24);
 define('R_HEADSIZE_FEATURE_ID', 20);
 define('R_STIFFNESS_FEATURE_ID', 23);
 define('R_STRING_PATTERN_FEATURE_ID', 21);
+define('CLOTHES_GENDER_FEATURE_ID', 52);
+define('SHOES_GENDER_FEATURE_ID', 54);
 define('BRAND_FEATURE_ID', 29);
 define('TYPE_FEATURE_ID', 33);
 define('PLAYER_FEATURE_ID', 48);
@@ -69,7 +71,13 @@ define('CONFIGURATION_PF_ID', 39);
 /*Profile fields*/
 
 /*Feature values*/
+/*Apparel*/
+define('C_GENDER_M_FV_ID', 324);
+define('C_GENDER_W_FV_ID', 388);
+/*Apparel*/
 /*Shoes*/
+define('S_GENDER_M_FV_ID', 326);
+define('S_GENDER_W_FV_ID', 387);
 define('ALLCOURT_SURFACE_FV_ID', 359);
 define('CLAY_SURFACE_FV_ID', 360);
 define('GRASS_SURFACE_FV_ID', 361);
@@ -103,3 +111,5 @@ define('KIRSCHBAUM_BRAND_ID', 340);
 define('RACKETS_QTY_DSC_PRC', 5);
 
 define('LEARNING_CENTER_PAGE_ID', 53);
+
+define('SIZE_CHART_TAB_ID', 10);

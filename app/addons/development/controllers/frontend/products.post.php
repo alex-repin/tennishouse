@@ -36,6 +36,54 @@ if ($mode == 'view') {
                 );
             }
         }
+        $gender = '';
+        $brand_size_chart = false;
+        if (!empty($product['product_features'][CLOTHES_GENDER_FEATURE_ID])) {
+            $variant_id = $product['product_features'][CLOTHES_GENDER_FEATURE_ID]['variant_id'];
+            if ($variant_id == C_GENDER_M_FV_ID) {
+                $gender = 'mens';
+            } elseif ($variant_id == C_GENDER_W_FV_ID) {
+                $gender = 'womens';
+            }
+            $product['size_chart'] = $product['product_features'][CLOTHES_GENDER_FEATURE_ID]['variants'][$variant_id]['size_chart'];
+        } elseif (!empty($product['product_features'][SHOES_GENDER_FEATURE_ID])) {
+            $variant_id = $product['product_features'][SHOES_GENDER_FEATURE_ID]['variant_id'];
+            if ($variant_id == S_GENDER_M_FV_ID) {
+                $gender = 'mens';
+            } elseif ($variant_id == S_GENDER_W_FV_ID) {
+                $gender = 'womens';
+            }
+            $product['size_chart'] = $product['product_features'][SHOES_GENDER_FEATURE_ID]['variants'][$variant_id]['size_chart'];
+        }
+        if (!empty($product['header_features'][BRAND_FEATURE_ID])) {
+            $cat_type = '';
+            $brand_id = $product['header_features'][BRAND_FEATURE_ID]['variant_id'];
+            if ($product['category_type'] == 'A') {
+                $cat_type = 'clothes';
+            } elseif ($product['category_type'] == 'S') {
+                $cat_type = 'shoes';
+            }
+            if (!empty($product['header_features'][BRAND_FEATURE_ID]['variants'][$brand_id][$gender . '_' . $cat_type . '_size_chart'])) {
+                $brand_size_chart = true;
+                $title = $product['header_features'][BRAND_FEATURE_ID]['variants'][$brand_id]['variant'];
+                $product['size_chart'] = $product['header_features'][BRAND_FEATURE_ID]['variants'][$brand_id][$gender . '_' . $cat_type . '_size_chart'];
+            }
+        }
+        if (!empty($product['size_chart'])) {
+            Registry::get('view')->assign('product', $product);
+            if ($brand_size_chart) {
+                $_tabs = Registry::get('navigation.tabs');
+                $_tabs['size_chart']['title'] .= ' ' . $title;
+                Registry::set('navigation.tabs', $_tabs);
+            }
+        } else {
+            $tabs = Registry::get('view')->gettemplatevars('tabs');
+            $_tabs = Registry::get('navigation.tabs');
+            unset($tabs[SIZE_CHART_TAB_ID]);
+            unset($_tabs['size_chart']);
+            Registry::set('navigation.tabs', $_tabs);
+            Registry::get('view')->assign('tabs', $tabs);
+        }
     }
     if (!empty($product['header_features'])) {
         foreach ($product['header_features'] as $i => $f_data) {

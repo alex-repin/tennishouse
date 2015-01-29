@@ -4167,7 +4167,13 @@ function fn_get_product_features_list($product, $display_on = 'C', $lang_code = 
                     'value' => $feature['value'],
                     'value_int' => $feature['value_int'],
                     'variant_id' => $feature['variant_id'],
-                    'variant' => $feature['variant']
+                    'variant' => $feature['variant'],
+                    // [tennishouse]
+                    'mens_clothes_size_chart' => $feature['mens_clothes_size_chart'],
+                    'womens_clothes_size_chart' => $feature['womens_clothes_size_chart'],
+                    'mens_shoes_size_chart' => $feature['mens_shoes_size_chart'],
+                    'womens_shoes_size_chart' => $feature['womens_shoes_size_chart']
+                    // [tennishouse]
                 );
             }
 

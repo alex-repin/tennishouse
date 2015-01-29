@@ -18,6 +18,11 @@ use Tygh\FeaturesCache;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_feature_has_size_chart($feature_id)
+{
+    return in_array($feature_id, array(BRAND_FEATURE_ID, SHOES_GENDER_FEATURE_ID, CLOTHES_GENDER_FEATURE_ID));
+}
+
 function fn_get_memcached_status()
 {
     return (class_exists('Memcached')) ? true : false;

@@ -40,5 +40,6 @@ fn_register_hooks(
     'render_block_register_cache',
     'update_product_features_value',
     'delete_product_feature_variants',
-    'redirect_complete'
+    'redirect_complete',
+    'get_product_features_list_before_select'
 );
