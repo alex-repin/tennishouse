@@ -126,8 +126,8 @@ function fn_development_top_menu_form(&$v, $type, $id, $use_name)
                 }
             }
             $v['subitems'] = array(
-                array('descr' => __('atp'), 'subitems' => fn_top_menu_standardize($atp, 'player_id', 'player', '', 'players.view?player_id=')),
-                array('descr' => __('wta'), 'subitems' => fn_top_menu_standardize($wta, 'player_id', 'player', '', 'players.view?player_id=')),
+                array('descr' => __('atp'), 'param' => 'players.list', 'subitems' => fn_top_menu_standardize($atp, 'player_id', 'player', '', 'players.view?player_id=')),
+                array('descr' => __('wta'), 'param' => 'players.list', 'subitems' => fn_top_menu_standardize($wta, 'player_id', 'player', '', 'players.view?player_id=')),
             );
         }
     }

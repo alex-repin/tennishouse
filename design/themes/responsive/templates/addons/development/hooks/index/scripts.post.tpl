@@ -40,13 +40,9 @@
         $('.tygh-top-panel').css({"left": - $(this).scrollLeft() + "px", "width": width});
         $('#tygh_main_container').css({"width": width});
     }
-    function fn_is_mobile()
-    {
-        return navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/) ? true : false;
-    }
     
 (function(_, $) {
-    if (!fn_is_mobile()) {
+    if (!$('#tygh_main_container').hasClass('touch')) {
         $(document).ready(function() {
             fn_fix_width();
             $(window).resize(function() {

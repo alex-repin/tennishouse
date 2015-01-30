@@ -131,7 +131,7 @@
                     if (elm.hasClass('cm-menu-item-responsive') || elm.closest('.cm-menu-item-responsive').length) {
                         var menuItem = elm.hasClass('cm-menu-item-responsive') ? elm : elm.closest('.cm-menu-item-responsive');
                         if (!menuItem.hasClass('is-hover-menu')) {
-                            e.preventDefault();
+                            //e.preventDefault();
                             $('.cm-menu-item-responsive').removeClass('is-hover-menu');
                             menuItem.addClass('is-hover-menu');
                         }

@@ -77,15 +77,21 @@
                 {/hook}
 
                 <div class="ty-prices-container-wrap">
-                    <div class="{if $smarty.capture.$old_price|trim || $smarty.capture.$clean_price|trim || $smarty.capture.$list_discount|trim}prices-container {/if}price-wrap">
+                    <div class="{if $smarty.capture.$old_price|trim || $smarty.capture.$clean_price|trim || $smarty.capture.$list_discount|trim}prices-container {/if}">
                         {if $smarty.capture.$old_price|trim || $smarty.capture.$clean_price|trim || $smarty.capture.$list_discount|trim}
                             <div class="ty-product-prices">
-                                {if $smarty.capture.$old_price|trim}{$smarty.capture.$old_price nofilter}&nbsp;{/if}
+                                {if $smarty.capture.$old_price|trim}{$smarty.capture.$old_price nofilter}{/if}
                         {/if}
 
                         {if $smarty.capture.$price|trim}
                             <div class="ty-product-block__price-actual">
                                 {$smarty.capture.$price nofilter}
+                                {assign var="qty_discounts" value="qty_discounts_`$obj_id`"}
+                                {if $smarty.capture.$qty_discounts|trim}
+                                    <div class="ty-ti-price-wrap">
+                                        {$smarty.capture.$qty_discounts nofilter}
+                                    </div>
+                                {/if}
                             </div>
                         {/if}
 
@@ -96,10 +102,6 @@
                         {/if}
                     </div>
                     
-                    <div class="ty-ti-price-wrap">
-                        {assign var="qty_discounts" value="qty_discounts_`$obj_id`"}
-                        {$smarty.capture.$qty_discounts nofilter}
-                    </div>
                 </div>
 
                 {*
