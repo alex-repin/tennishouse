@@ -1042,7 +1042,7 @@ function fn_top_menu_form($top_menu, $level = 0, &$active = NULL)
                 fn_set_hook('top_menu_form', $v, $type, $id, $use_name);
             }
         }
-
+        $v['param_2'] = empty($v['param_2']) ? '' : $v['param_2'];
         if (!empty($v['param']) && fn_top_menu_is_current_url($v['param'], $v['param_2'])) {
             $top_menu[$k]['active'] = true;
             // Store active value
@@ -1091,8 +1091,8 @@ function fn_top_menu_standardize($items, $id_name, $name, $children_name, $href_
         $result[$v[$id_name]] = array(
             // [dab]
             'object_id' => $v[$id_name],
-            'note_url' => $v['note_url'],
-            'note_text' => $v['note_text'],
+            'note_url' => empty($v['note_url']) ? '' : $v['note_url'],
+            'note_text' => empty($v['note_text']) ? '' : $v['note_text'],
             // [dab]
             'descr' => $v[$name],
             'param' => empty($v['link']) ? $href_prefix . $v[$id_name] : $v['link'],
@@ -1100,7 +1100,7 @@ function fn_top_menu_standardize($items, $id_name, $name, $children_name, $href_
         );
 
         if (!empty($v[$children_name])) {
-            $result[$v[$id_name]]['subitems'] = fn_top_menu_standardize($v[$children_name], $id_name, $name, $children_name, $href_prefix, $dir);
+            $result[$v[$id_name]]['subitems'] = fn_top_menu_standardize($v[$children_name], $id_name, $name, $children_name, $href_prefix);
         }
     }
 
@@ -1142,7 +1142,9 @@ function fn_top_menu_is_current_url($url, $active_for = '')
         if (!isset($params['host']) || $params['host'] == $_SERVER['HTTP_HOST']) {
             $current_params = parse_url($_SERVER['REQUEST_URI']);
 
-            if (((!isset($params['path']) && !isset($current_params['path'])) || $params['path'] == $current_params['path']) && ((!isset($params['query']) && !isset($current_params['query'])) || $params['query'] == $current_params['query'])) {
+            // [tennishouse]
+            if (((!isset($params['path']) && !isset($current_params['path'])) || $params['path'] == $current_params['path']) && ((!isset($params['query']) && !isset($current_params['query'])) || (isset($params['query']) && isset($current_params['query']) && $params['query'] == $current_params['query']))) {
+            // [tennishouse]
                 $active = true;
             }
         }

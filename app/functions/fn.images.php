@@ -894,7 +894,7 @@ function fn_image_to_display($images, $image_width = 0, $image_height = 0, $keep
         }
 
         $detailed_image_path = !empty($images['detailed']['image_path']) ? $images['detailed']['image_path'] : '';
-        $alt = !empty($images['icon']['alt']) ? $images['icon']['alt'] : $images['detailed']['alt'];
+        $alt = !empty($images['icon']['alt']) ? $images['icon']['alt'] : (empty($images['detailed']['alt']) ? '' : $images['detailed']['alt']);
 
     // single image passed only
     } else {

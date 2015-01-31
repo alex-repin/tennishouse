@@ -5663,7 +5663,9 @@ function fn_get_filters_products_count($params = array())
                     }
                 }
 
-                if (!empty($params['simple_link']) && $filters[$filter_id]['feature_type'] == 'E') {
+                // [tennishouse]
+                if (!empty($params['simple_link']) && !empty($filters[$filter_id]['feature_type']) && $filters[$filter_id]['feature_type'] == 'E') {
+                // [tennishouse]
                     $filters[$filter_id]['simple_link'] = true;
                 }
 

@@ -31,14 +31,7 @@ class LogFacade
                 $server = "[{$_SERVER['HOST_NAME']}]";
 
         self::$log->pushHandler($stream);
-        
-        Mailer::sendMail(array(
-            'to' => 'company_site_administrator',
-            'from' => 'company_site_administrator',
-            'data' => array(),
-            'subj' => "TennisHouse ERROR {$server}",
-            'body' => Logger::ERROR
-        ));
+        self::$log->pushHandler(new NativeMailerHandler('admin@tennishouse.ru', "TennisHouse ERROR {$server}", 'admin@tennishouse.ru', Logger::ERROR));
         
     }
 

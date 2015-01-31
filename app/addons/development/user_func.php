@@ -13,10 +13,18 @@
 ****************************************************************************/
 
 use Tygh\Registry;
+use Tygh\LogFacade;
 use Tygh\Http;
 use Tygh\FeaturesCache;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
+
+function fn_process_php_errors($errno, $errstr, $errfile, $errline, $errcontext)
+{
+    if (strpos($errfile, Registry::get('config.dir.var')) === false && strpos($errfile, Registry::get('config.dir.lib')) === false) {
+        LogFacade::error("Error #" . $errno . ":" . $errstr . " in " . $errfile . " at line " . $errline);
+    }
+}
 
 function fn_feature_has_size_chart($feature_id)
 {

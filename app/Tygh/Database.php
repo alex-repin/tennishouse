@@ -336,7 +336,11 @@ class Database
      */
     public static function getMultiHash($query, $params)
     {
-        @list($field, $field_2, $value) = $params;
+        // [tennishouse]
+        $field = empty($params[0]) ? '' : $params[0];
+        $field_2 = empty($params[1]) ? '' : $params[1];
+        $value = empty($params[2]) ? '' : $params[2];
+        // [tennishouse]
 
         $args = array_slice(func_get_args(), 2);
         array_unshift($args, $query);

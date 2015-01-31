@@ -704,12 +704,17 @@ function fn_get_route(&$req, $area = AREA)
     rtrim($dispatch, '/.');
     $dispatch = str_replace('/', '.', $dispatch);
 
-    @list($c, $m, $a, $e) = explode('.', $dispatch);
-
-    Registry::set('runtime.controller', empty($c) ? 'index' : $c);
-    Registry::set('runtime.mode', empty($m) ? 'index' : $m);
-    Registry::set('runtime.action', $a);
-    Registry::set('runtime.dispatch_extra', $e);
+    // [tennishouse]
+    $dispatch_data = explode('.', $dispatch);
+    Registry::set('runtime.controller', empty($dispatch_data[0]) ? 'index' : $dispatch_data[0]);
+    Registry::set('runtime.mode', empty($dispatch_data[1]) ? 'index' : $dispatch_data[1]);
+    if (!empty($dispatch_data[2])) {
+        Registry::set('runtime.action', $dispatch_data[2]);
+    }
+    if (!empty($dispatch_data[3])) {
+        Registry::set('runtime.dispatch_extra', $dispatch_data[3]);
+    }
+    // [tennishouse]
     Registry::set('runtime.checkout', false);
     Registry::set('runtime.root_template', 'index.tpl');
 

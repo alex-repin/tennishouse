@@ -24,7 +24,7 @@ function smarty_modifier_format_price($price, $currency, $span_id = '', $class =
 
     $value = fn_format_rate_value(
         $price,
-        $number_type,
+        'F',
         $currency['decimals'],
         $currency['decimals_separator'],
         $currency['thousands_separator'],

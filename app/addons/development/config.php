@@ -14,6 +14,8 @@
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+set_error_handler("fn_process_php_errors");
+
 /*Categories*/
 define('RACKETS_CATEGORY_ID', 254);
 define('APPAREL_CATEGORY_ID', 262);

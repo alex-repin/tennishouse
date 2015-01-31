@@ -38,14 +38,16 @@ function smarty_function_split($params, &$smarty)
 
     $chunks = array();
     $size = count($params['data']);
-    if ($params['simple'] == true) {
+    // [tennishouse]
+    if (!empty($params['simple'])) {
         $items_per_column = !empty($params['size_is_horizontal']) ? ceil($size / $params['size']) : $params['size'];
         for ($i=0; $i<$size; $i=$i+$items_per_column) {
             $chunks[] = array_slice($params['data'], $i, $items_per_column);
         }
 
     } else {
-        if ($params['vertical_delimition'] == false) {
+        if (empty($params['vertical_delimition'])) {
+            $params['preverse_keys'] = empty($params['preverse_keys']) ? '' : $params['preverse_keys'];
             $chunks = array_chunk($params['data'], $params['size'], $params['preverse_keys']);
         } else {
 
@@ -67,7 +69,7 @@ function smarty_function_split($params, &$smarty)
             }
         }
     }
-
+    // [tennishouse]
     $smarty->assign($params['assign'], $chunks, false);
 }
 
