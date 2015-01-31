@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Text' => array($baseDir . '/pear'),
+    'Psr\\Log\\' => array($vendorDir . '/psr/log'),
     'PEAR' => array($baseDir . '/pear'),
     'Net' => array($baseDir . '/pear'),
     'Crypt' => array($baseDir . '/pear'),

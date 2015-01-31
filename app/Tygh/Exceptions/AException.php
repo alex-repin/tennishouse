@@ -14,6 +14,7 @@
 
 namespace Tygh\Exceptions;
 
+use Tygh\LogFacade;
 use Tygh\Debugger;
 use Tygh\Ajax;
 use Tygh\Development;
@@ -35,18 +36,21 @@ abstract class AException extends \Exception
             if (!empty($_REQUEST['callback'])) {
                 $message = $_REQUEST['callback'] . "(" . $message . ");";
             }
+            LogFacade::error($message);
             echo($message);
             exit;
 
         } elseif ((Debugger::isActive() || defined('DEVELOPMENT') || defined('CONSOLE'))) {
+            LogFacade::error($this->printDebug(true));
             echo($this->printDebug(defined('CONSOLE')));
         } else {
+            LogFacade::error($this->printDebug(true));
             $debug = "<!--\n" . $this->printDebug(true) . "\n-->";
 
             Development::showStub(array(
-                '[title]' =>  'Service unavailable',
-                '[banner]' =>  'Service<br/> unavailable',
-                '[message]' => 'Sorry, service is temporarily unavailable.'
+                '[title]' =>  'Ошибка',
+                '[banner]' =>  'Ой, как неловко',
+                '[message]' => 'Администратор только что был уведомлен об ошибке.'
             ), $debug);
         }
     }

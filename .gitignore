@@ -2,3 +2,4 @@ config.local.php
 .gitignore
 .htaccess
 var/cache/
+var/logs/
