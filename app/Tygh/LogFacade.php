@@ -16,19 +16,21 @@ class LogFacade
     {
         /* if (!isset(self::$instance))
         self::$instance = new static; */
+        //fn_print_die($_SERVER);
         fn_mkdir(DIR_ROOT . '/var/logs');
         $stream = new StreamHandler(DIR_ROOT . '/var/logs/log', Logger::DEBUG);
 
-        $stream->setFormatter(new LineFormatter("[%datetime%] %channel%.%level_name%: %message%\n"));
+        $stream->setFormatter(new LineFormatter("[%datetime%] %channel%.%level_name%: %referer% %message%\n"));
 
         self::$log = new Logger('log');
 
         $server = "";
 
-        if ( !empty($_SERVER['SERVER_NAME']) )
-                $server = "[{$_SERVER['SERVER_NAME']}]";
-        elseif ( !empty($_SERVER['HOST_NAME']) )
-                $server = "[{$_SERVER['HOST_NAME']}]";
+        if ( !empty($_SERVER['SERVER_NAME']) ) {
+            $server = "[{$_SERVER['SERVER_NAME']}]";
+        } elseif ( !empty($_SERVER['HOST_NAME']) ) {
+            $server = "[{$_SERVER['HOST_NAME']}]";
+        }
 
         self::$log->pushHandler($stream);
         self::$log->pushHandler(new NativeMailerHandler('admin@tennishouse.ru', "TennisHouse ERROR {$server}", 'admin@tennishouse.ru', Logger::ERROR));

@@ -251,6 +251,7 @@ class Logger implements LoggerInterface
         $record = array(
             'message' => (string) $message,
             'context' => $context,
+            'referer' => $_SERVER['HTTP_REFERER'],
             'level' => $level,
             'level_name' => $levelName,
             'channel' => $this->name,
