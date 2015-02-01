@@ -129,6 +129,9 @@ class Memcache
 
         if ( strpos($query, "FOUND_ROWS()") !== false) {
             return 'found_rows';
+//        } elseif (preg_match('/(\S*)\(\)/', $query, $matches)) {
+        } elseif (strpos($query, "RAND()") !== false) {
+            return false;
         } elseif ( preg_match("/^SELECT\s+/i",trim($query)) ) {
             $hash = md5($query);
             return $hash;
