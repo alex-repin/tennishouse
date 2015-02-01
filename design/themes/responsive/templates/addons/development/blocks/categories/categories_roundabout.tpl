@@ -1,16 +1,17 @@
 {** block-description:tmpl_roundabout **}
 
+{$imageSize = "250"}
 {script src="js/addons/development/jquery.roundabout.min.js"}
 {script src="js/addons/development/jquery.roundabout-shapes.min.js"}
 <div class="ty-roundabout-wrapper">
     <div id="roundabout_images_{$block.block_id}" class="ty-rounabout-list">
         {foreach from=$items item="category" name="categories_images"}
-            <div class="ty-roundabout-item">
+            <div class="ty-roundabout-item" style="width: {$imageSize}px;height: {$imageSize}px;">
                 {include file="common/image.tpl"
                 show_detailed_link=false
                 images=$category.main_pair
                 no_ids=true
-                image_width="250"
+                image_width=$imageSize
                 keep_transparent=true}
                 <div class="ty-roundabout__brand-image" {if !$smarty.foreach.categories_images.first}style="display: none;"{/if}>
                     {if $category.brand_id == $smarty.const.KIRSCHBAUM_BRAND_ID}
@@ -37,6 +38,7 @@
 </div>
 <script type="text/javascript">
 var block_id = '{$block.block_id}';
+var startWidth = '{$imageSize}';
 {literal}
 (function(_, $) {
 
@@ -48,7 +50,7 @@ var block_id = '{$block.block_id}';
             duration: 1000,
             autoplay: true,
             autoplayDuration: 5000,
-            autoplayPauseOnHover: true
+            autoplayPauseOnHover: true,
         });
         roundabout.bind( 'animationStart', function() {
             roundabout_description.find('.ty-roundabout-item-description').fadeOut('fast');
