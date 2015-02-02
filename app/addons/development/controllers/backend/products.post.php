@@ -33,9 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST' && $mode == 'update') {
         unset($tabs['features']);
         $tabs = fn_insert_before_key($tabs, 'seo', 'features', $features_tab);
     }
-    $options_tab = $tabs['options'];
-    unset($tabs['options']);
-    $tabs['options'] = $options_tab;
+//     $options_tab = $tabs['options'];
+//     unset($tabs['options']);
+//     $tabs['options'] = $options_tab;
     
     
     // [/Product tabs]

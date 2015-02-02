@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 if ($mode == 'calculate_balance') {
 
     $params = $_REQUEST;
-    if (!empty($params['length']) && !empty($params['points']) && !empty($params['relation'])) {
+    if (!empty($params['length']) && !empty($params['relation'])) {
         if (strtoupper($params['relation']) == 'HL') {
             $result = $params['length']/2 - $params['points'] * 1/8;
         } else {

@@ -112,7 +112,7 @@
 
                         {if $mode != 'add'}
                         <div class="control-group {if $product_data.auto_price != "Y"}hidden{/if}" id="margin">
-                            <label class="control-label" for="elm_product_margin">{__("price_margin")}(%):</label>
+                            <label class="control-label" for="elm_product_margin">{__("net_cost")}(%):</label>
                             <div class="controls">
                                 <input type="text" name="product_data[margin]" id="elm_margin" size="10" value="{$product_data.margin|default:"0.0"}" class="input-long" />
                             </div>

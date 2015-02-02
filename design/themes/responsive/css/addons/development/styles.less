@@ -1,3 +1,6 @@
+.owl-theme .owl-controls .owl-buttons div {
+    border-radius: 0;
+}
 select {
     min-width: 2em;
 }
@@ -563,7 +566,7 @@ select {
     border-bottom: 1px solid darken(@base, 7%);
     border-left: 1px solid darken(@base, 7%);
     padding: 15px 5px 15px 10px;
-    max-height: 350px;
+    max-height: 406px;
 }
 .ty-product-block__left {
     width: 518px;
@@ -658,6 +661,10 @@ select {
     z-index:10;
     overflow: hidden;
 }
+.ty-grid-list__item .ty-grid-list__image-product .ty-pict {
+    width: 187px;
+    height: 187px;
+}
 .ty-grid-list__item:hover {
     position: relative;
 /*    outline: 1px solid #dadada;*/
@@ -665,6 +672,14 @@ select {
     transition: all 200ms linear 0s;
     box-shadow: 0 0 5px 1px #333;
     z-index:20;
+}
+.ty-grid-list__image {
+    padding: 10px 0 25px;
+}
+.ty-grid-list__item:hover .ty-grid-list__image-product .ty-pict {
+    transition: all 200ms linear 0s;
+    width: 197px;
+    height: 197px;
 }
 .ty-grid-list__image a{
     display: inline;
@@ -975,9 +990,6 @@ select {
 }
 .ty-pagination__selected {
     background: darken(@base, 45%);
-}
-.ty-grid-list__image {
-    padding: 10px 0 25px;
 }
 .ty-grid-list__brand-image {
     left: 5px;

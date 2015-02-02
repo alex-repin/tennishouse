@@ -9,7 +9,9 @@
     {assign var="form_open" value="form_open_`$obj_id`"}
     {$smarty.capture.$form_open nofilter}
     <div class="ty-grid-list__image">
-        {include file="views/products/components/product_icon.tpl" product=$product show_gallery=false}
+        <div class="ty-grid-list__image-product">
+            {include file="views/products/components/product_icon.tpl" product=$product show_gallery=false}
+        </div>
 
         {assign var="discount_label" value="discount_label_`$obj_id`"}
         {$smarty.capture.$discount_label nofilter}

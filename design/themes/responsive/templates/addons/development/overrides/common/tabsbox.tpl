@@ -34,6 +34,7 @@
             max_height = $(this).outerHeight(true);
         }
     });
+    max_height = (max_height > 376) ? 376 : max_height;
     if (max_height) {
         $('#tabs_content').children().each(function(){
             $(this).css("height", max_height + 'px');
