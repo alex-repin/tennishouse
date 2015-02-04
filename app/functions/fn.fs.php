@@ -476,7 +476,9 @@ function fn_rebuild_files($name)
 {
     $rebuilt = array();
 
-    if (!is_array(@$_FILES[$name])) {
+    // [tennishouse]
+    if (empty($_FILES[$name]) || !is_array(@$_FILES[$name])) {
+    // [tennishouse]
         return $rebuilt;
     }
 

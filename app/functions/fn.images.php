@@ -748,13 +748,19 @@ function fn_get_image_size($file)
         }
 
         $file = $tmp;
-    }
-
-    list($w, $h, $t, $a) = @getimagesize($file);
-
-    if (empty($w)) {
+    // [tennishouse]
+    } elseif (!file_exists($file)) {
         return false;
     }
+
+    $image_data = getimagesize($file);
+    if (empty($image_data[0])) {
+        return false;
+    }
+    $w = $image_data[0];
+    $h = !empty($image_data[1]) ? $image_data[1] : '';
+    $t = !empty($image_data[2]) ? $image_data[2] : '';
+    // [tennishouse]
 
     $t = image_type_to_mime_type($t);
 
