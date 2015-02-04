@@ -1679,7 +1679,9 @@ function fn_init_store_params_by_host(&$request, $area = AREA)
         $message = '';
     } else {
         $status = INIT_STATUS_FAIL;
-        $message = 'No storefronts defined for this domain';
+        // [tennishouse]
+        $message = "No storefronts defined for the '" . $short_host . "' domain";
+        // [tennishouse]
     }
 
     /**

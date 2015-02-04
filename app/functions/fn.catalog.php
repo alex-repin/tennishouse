@@ -9698,6 +9698,11 @@ function fn_get_product_pagination_steps($cols, $products_per_page)
     for ($i = 0; $i < $max_ranges; $i++) {
         $steps[] = $min_range;
         $min_range = $min_range * 2;
+        // [tennishouse]
+        if ($min_range > 32) {
+            break;
+        }
+        // [tennishouse]
     }
 
     $steps[] = (int) $products_per_page;
