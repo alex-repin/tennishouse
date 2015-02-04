@@ -313,7 +313,7 @@
         <item lang="ru" id="cache_features">Закешировать характеристики</item>
         <item lang="ru" id="ssl_seal">SSL сертификат</item>
         <item lang="ru" id="size_chart">Таблица размеров</item>
-        <item lang="ru" id="accessories">Аксессуары</item>
+        <item lang="ru" id="note_text">Текст подсказки</item>
         <item lang="ru" id="accessories">Аксессуары</item>
     </language_variables>
 </addon>

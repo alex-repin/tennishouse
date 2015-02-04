@@ -90,6 +90,7 @@
                                                                 {assign var="item4_url" value=$item4|fn_form_dropdown_object_link:$block.type}
                                                                 <li class="ty-menu__submenu-item{if $item4.active || $item4|fn_check_is_active_menu_item:$block.type} ty-menu__submenu-item-active{/if}">
                                                                     <a{if $item4_url} href="{$item4_url}"{/if} class="ty-menu__submenu-link">{$item4.$name}</a>
+                                                                    {include file="addons/development/common/tooltip.tpl" note_url=$item4.note_url note_text=$item4.note_text}
                                                                 </li>
                                                             {/foreach}
                                                             {if $item2.show_more && $item2_url}

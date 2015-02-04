@@ -144,8 +144,10 @@ class Memcache
     {
         if ($type == 'D' && $key == 'found_rows') {
             $result = $this->MemcachedServer->set($this->LastDBKeySet . $key, serialize($value), $duration);
+            $content_key = $this->LastDBKeySet . $key;
         } else {
             $result = $this->MemcachedServer->set($key, serialize($value), $duration);
+            $content_key = $key;
         }
         if ($result) {
             $this->MemcachedServer->set($type . '_status', serialize(true));
@@ -153,7 +155,7 @@ class Memcache
                 $this->LastDBKeySet = $key;
             }
             $contents = unserialize($this->MemcachedServer->get('contents'));
-            $contents[$type][$key] = $duration;
+            $contents[$type][$content_key] = $duration;
             $this->MemcachedServer->set('contents', serialize($contents));
         } else {
             $this->MemcachedServer->set($type . '_status', serialize(false));
