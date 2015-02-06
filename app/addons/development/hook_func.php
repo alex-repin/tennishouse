@@ -141,22 +141,24 @@ function fn_development_get_filters_products_count_pre(&$params)
 function fn_development_gather_additional_product_data_post(&$product, $auth, $params)
 {
     if (AREA == 'C') {
-        if ($product['tracking'] == 'O') {
+        if ($product['tracking'] == 'O' && !empty($product['combination_hash'])) {
             $combination = $product['combination_hash'];
         } elseif ($product['tracking'] == 'B') {
             $combination = 0;
         }
-        if ($auth['user_id'] == 0 && !empty($_SESSION['product_notifications']['email'])) {
-            $subscription_id = db_get_field("SELECT subscription_id FROM ?:product_subscriptions WHERE product_id = ?i AND combination_hash = ?i AND email = ?s", $product['product_id'], $combination, $_SESSION['product_notifications']['email']);
-            if (!empty($subscription_id)) {
-                $product['inventory_notification'] = 'Y';
-                $product['inventory_notification_email'] = $_SESSION['product_notifications']['email'];
-            }
-        } else {
-            $email = db_get_field("SELECT email FROM ?:product_subscriptions WHERE product_id = ?i AND combination_hash = ?i AND user_id = ?i", $product['product_id'], $combination, $auth['user_id']);
-            if (!empty($email)) {
-                $product['inventory_notification'] = 'Y';
-                $product['inventory_notification_email'] = $email;
+        if (isset($combination)) {
+            if ($auth['user_id'] == 0 && !empty($_SESSION['product_notifications']['email'])) {
+                $subscription_id = db_get_field("SELECT subscription_id FROM ?:product_subscriptions WHERE product_id = ?i AND combination_hash = ?i AND email = ?s", $product['product_id'], $combination, $_SESSION['product_notifications']['email']);
+                if (!empty($subscription_id)) {
+                    $product['inventory_notification'] = 'Y';
+                    $product['inventory_notification_email'] = $_SESSION['product_notifications']['email'];
+                }
+            } else {
+                $email = db_get_field("SELECT email FROM ?:product_subscriptions WHERE product_id = ?i AND combination_hash = ?i AND user_id = ?i", $product['product_id'], $combination, $auth['user_id']);
+                if (!empty($email)) {
+                    $product['inventory_notification'] = 'Y';
+                    $product['inventory_notification_email'] = $email;
+                }
             }
         }
     }
@@ -376,6 +378,36 @@ function fn_development_get_products_pre(&$params, $items_per_page, $lang_code)
         if ($params['rackets_type'] == 'regular_length') {
             $params['features_condition'][R_LENGTH_FEATURE_ID] = array(
                 'variant_id' => REGULAR_LENGTH_FV_ID
+            );
+        }
+        if ($params['rackets_type'] == 'kids_17') {
+            $params['features_condition'][R_LENGTH_FEATURE_ID] = array(
+                'variant_id' => KIDS_17_FV_ID
+            );
+        }
+        if ($params['rackets_type'] == 'kids_19') {
+            $params['features_condition'][R_LENGTH_FEATURE_ID] = array(
+                'variant_id' => KIDS_19_FV_ID
+            );
+        }
+        if ($params['rackets_type'] == 'kids_21') {
+            $params['features_condition'][R_LENGTH_FEATURE_ID] = array(
+                'variant_id' => KIDS_21_FV_ID
+            );
+        }
+        if ($params['rackets_type'] == 'kids_23') {
+            $params['features_condition'][R_LENGTH_FEATURE_ID] = array(
+                'variant_id' => KIDS_23_FV_ID
+            );
+        }
+        if ($params['rackets_type'] == 'kids_25') {
+            $params['features_condition'][R_LENGTH_FEATURE_ID] = array(
+                'variant_id' => KIDS_25_FV_ID
+            );
+        }
+        if ($params['rackets_type'] == 'kids_26') {
+            $params['features_condition'][R_LENGTH_FEATURE_ID] = array(
+                'variant_id' => KIDS_26_FV_ID
             );
         }
         if ($params['rackets_type'] == 'closed_pattern') {

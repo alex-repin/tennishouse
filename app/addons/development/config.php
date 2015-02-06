@@ -91,6 +91,12 @@ define('PRO_RACKET_FV_ID', 265);
 define('KIDS_RACKET_FV_ID', 282);
 define('REGULAR_LENGTH_FV_ID', 141);
 define('CLOSED_PATTERN_FV_ID', 191);
+define('KIDS_17_FV_ID', 474);
+define('KIDS_19_FV_ID', 463);
+define('KIDS_21_FV_ID', 460);
+define('KIDS_23_FV_ID', 465);
+define('KIDS_25_FV_ID', 458);
+define('KIDS_26_FV_ID', 455);
 /*Rackets*/
 /*Strings*/
 define('NATURAL_GUT_STRINGS_FV_ID', 368);

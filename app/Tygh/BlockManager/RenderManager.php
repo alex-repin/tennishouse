@@ -338,10 +338,12 @@ class RenderManager
             $status = 'A';
             $object_key = $dynamic_object_scheme['key'];
 
-            if ($block['status'] == 'A' && in_array($_REQUEST[$object_key], $block['items_array'])) {
+            // [tennishouse]
+            if ($block['status'] == 'A' && !empty($_REQUEST[$object_key]) && in_array($_REQUEST[$object_key], $block['items_array'])) {
+            // [tennishouse]
                 // If block enabled globally and disabled for some dynamic object
                 $status = 'D';
-            } elseif ($block['status'] == 'D' && !in_array($_REQUEST[$object_key], $block['items_array'])) {
+            } elseif ($block['status'] == 'D' && (empty($_REQUEST[$object_key]) || (!empty($_REQUEST[$object_key]) && !in_array($_REQUEST[$object_key], $block['items_array'])))) {
                 // If block disabled globally and not enabled for some dynamic object
                 $status = 'D';
             }

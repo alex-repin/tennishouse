@@ -883,7 +883,9 @@ function fn_filter_uploaded_data($name, $filter_by_ext = array())
     $filtered = array();
 
     foreach ($utype as $id => $type) {
-        if ($type == 'local' && !fn_is_empty(@$udata_local[$id])) {
+        // [tennishouse]
+        if ($type == 'local' && !empty($udata_local[$id]) && !fn_is_empty(@$udata_local[$id])) {
+        // [tennishouse]
             $filtered[$id] = fn_get_local_data(Bootstrap::stripSlashes($udata_local[$id]));
 
         } elseif ($type == 'server' && !fn_is_empty(@$udata_other[$id]) && AREA == 'A') {

@@ -209,7 +209,7 @@ function fn_check_vars($description)
 
 function fn_render_page_blocks($description, $smarty_capture)
 {
-    if (preg_match_all('/\[([a-zA-Z_]*)\]/', $description, $matches)) {
+    if (preg_match_all('/\[([a-zA-Z1-9_]*)\]/', $description, $matches)) {
         $blocks = array();
         foreach ($matches[1] as $i => $name) {
             $blocks[] = !empty($smarty_capture['block_' . $name]) ? $smarty_capture['block_' . $name] : '';

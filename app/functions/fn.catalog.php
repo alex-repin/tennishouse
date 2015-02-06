@@ -1502,7 +1502,9 @@ function fn_get_categories($params = array(), $lang_code = CART_LANGUAGE)
             $path = explode('/', $v['id_path']);
             $category_path = array();
             foreach ($path as $__k => $__v) {
-                $category_path[$__v] = @$categories[$__v]['category'];
+                // [tennishouse]
+                $category_path[$__v] = !empty($categories[$__v]) ? @$categories[$__v]['category'] : false;
+                // [tennishouse]
             }
             $v['category_path'] = implode($params['category_delimiter'], $category_path);
             $v['level'] = substr_count($v['id_path'], "/");
