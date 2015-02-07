@@ -17,6 +17,10 @@
                         <!--product_images_{$product.product_id}_update--></div>
                     {/if}
                 {/hook}
+                <div class="ty-product-cross-block">
+                    <div class="ty-product-plus">+</div>
+                    {$smarty.capture.block_strings_selection nofilter}
+                </div>
                 {if $product.players}
                     {$title = __("`$product.category_type`_played_by")}
                     <div class="ty-product-block__players">

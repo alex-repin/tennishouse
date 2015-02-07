@@ -24,7 +24,7 @@
             </a>
         </div>
         
-        {if $small_mode != 'Y'}
+        {if $mode == 'R'}
         {assign var="rating" value="rating_`$obj_id`"}
         {if $smarty.capture.$rating}
             <div class="grid-list__rating">
@@ -41,7 +41,7 @@
                 {math equation="num + 1" num=$cur_number assign="cur_number"}
             {/if}
             
-            {if $small_mode != 'Y'}
+            {if $mode == 'R'}
             <div class="ty-product-series">
                 {if $product.type == 'R'}
                     {if $series_feature.variants.$series_variant_id}

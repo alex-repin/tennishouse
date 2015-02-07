@@ -243,9 +243,10 @@ function fn_development_get_filters_products_count_before_select_filters(&$sf_fi
     $sf_fields .= db_quote(", ?:product_filters.is_slider, ?:product_filters.units, ?:product_filters.note_url, ?:product_filters.note_text");
 }
 
-function fn_development_get_products($params, &$fields, $sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
+function fn_development_get_products($params, &$fields, &$sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
 {
     $fields[] = '?:categories.id_path';
+    $sortings['random'] = 'RAND()';
     if (!empty($params['similar_pid'])) {
         $similar_products_features = array(
             'R' => array(R_BALANCE_FEATURE_ID, R_LENGTH_FEATURE_ID, R_HEADSIZE_FEATURE_ID, R_WEIGHT_FEATURE_ID, R_STIFFNESS_FEATURE_ID),

@@ -321,10 +321,10 @@
         <item lang="ru" id="kids_25_rackets">Детские ракетки 63.5 см</item>
         <item lang="ru" id="kids_26_rackets">Детские ракетки 66.0 см</item>
         <item lang="ru" id="rackets_description_note"><![CDATA[Подробную информацию о том, как выбрать теннисную ракетку Вы можете получить в нашем <a href="[learning_center_link]">Учебном центре</a>.]]></item>
-        <item lang="ru" id="accessories">Аксессуары</item>
-        <item lang="ru" id="accessories">Аксессуары</item>
-        <item lang="ru" id="accessories">Аксессуары</item>
-        <item lang="ru" id="accessories">Аксессуары</item>
-        <item lang="ru" id="accessories">Аксессуары</item>
+        <item lang="ru" id="mode">Режим</item>
+        <item lang="ru" id="regular">Обычный</item>
+        <item lang="ru" id="small">Уменьшенный</item>
+        <item lang="ru" id="micro">Микро</item>
+        <item lang="ru" id="mini">Мини</item>
     </language_variables>
 </addon>

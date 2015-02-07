@@ -161,6 +161,36 @@ function fn_display_subheaders($category_id)
     return in_array($category_id, array(RACKETS_CATEGORY_ID, APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, STRINGS_CATEGORY_ID, BAGS_CATEGORY_ID));
 }
 
+function fn_get_strings_selection()
+{
+    $result = array();
+    if (!empty($_SESSION['product_features'][R_STRINGS_FEATURE_ID]['value']) && $_SESSION['product_features'][R_STRINGS_FEATURE_ID]['value'] == 'N') {
+        $params_array = array('V' . NATURAL_GUT_STRINGS_FV_ID, 'V' . NYLON_STRINGS_FV_ID, 'V' . POLYESTER_STRINGS_FV_ID, 'V' . HYBRID_STRINGS_FV_ID);
+        $_params = array (
+            'sort_by' => 'random',
+            'limit' => 1,
+            'cid' => STRINGS_CATEGORY_ID,
+            'subcats' => 'Y',
+            'amount_from' => 1
+        );
+        $result = fn_get_result_products($_params, 'features_hash', $params_array);
+    }
+    
+    return array($result, );
+}
+
+function fn_get_result_products($params, $key, $param_array)
+{
+    $result = array();
+    foreach ($param_array as $val) {
+        $params[$key] = $val;
+        list($prods,) = fn_get_products($params);
+        $result = array_merge($result, $prods);
+    }
+    
+    return $result;
+}
+
 function fn_get_cross_sales($params)
 {
     $result = array();

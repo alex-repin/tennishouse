@@ -1,4 +1,4 @@
-{if !$hide_form && $addons.call_requests.buy_now_with_one_click == "Y"}
+{if !$hide_form && $addons.call_requests.buy_now_with_one_click == "Y" && !$hide_call_request}
 
 {$id = "call_request_{$obj_prefix}{$product.product_id}"}
 

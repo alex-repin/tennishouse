@@ -677,18 +677,6 @@ select {
     z-index:10;
     overflow: hidden;
 }
-.ty-grid-list__item .ty-grid-list__image-product .ty-pict {
-    width: 187px;
-    height: 187px;
-}
-.ty-small-mode .ty-grid-list__item .ty-grid-list__image-product .ty-pict {
-    width: none;
-    height: auto;
-}
-.ty-small-mode .ty-grid-list__item:hover .ty-grid-list__image-product .ty-pict {
-    width: none;
-    height: auto;
-}
 .ty-grid-list__item:hover {
     position: relative;
 /*    outline: 1px solid #dadada;*/
@@ -699,6 +687,10 @@ select {
 }
 .ty-grid-list__image {
     padding: 10px 0 25px;
+}
+.ty-grid-list__item .ty-grid-list__image-product .ty-pict {
+    width: 187px;
+    height: 187px;
 }
 .ty-grid-list__item:hover .ty-grid-list__image-product .ty-pict {
     transition: all 200ms linear 0s;
@@ -1334,15 +1326,15 @@ select {
 .ty-menu-vertical .dropdown-vertical__dir:hover {
     border-right: 1px solid darken(@category_menu, 10%);
 }
+.ty-ti-price-wrap .ty-product-block__price-actual .ty-price-num {
+    font-size: 16px;
+}
 .ty-small-mode .ty-grid-list__item-name .product-title {
     font-size: 100%;
     height: 30px;
 }
 .ty-small-mode .ty-price-num {
     font-size: 14px;
-}
-.ty-ti-price-wrap .ty-product-block__price-actual .ty-price-num {
-    font-size: 16px;
 }
 .ty-small-mode .ty-grid-list__item-title {
     height: 30px;
@@ -1356,6 +1348,117 @@ select {
 .ty-products-scroller .ty-tennishouse-body .ty-small-mode .owl-prev, .ty-products-scroller .ty-tennishouse-body .ty-small-mode .owl-next {
     top: 80px;
 }
+.ty-small-mode .ty-grid-list__item .ty-grid-list__image-product .ty-pict {
+    width: 130px;
+    height: 130px;
+}
+.ty-small-mode .ty-grid-list__item:hover .ty-grid-list__image-product .ty-pict {
+    width: 140px;
+    height: 140px;
+}
+
+.ty-mini-mode .ty-grid-list__item-name .product-title {
+    font-size: 100%;
+    height: 30px;
+}
+.ty-mini-mode .ty-price-num {
+    font-size: 14px;
+}
+.ty-mini-mode .ty-grid-list__item-title {
+    height: 30px;
+}
+.ty-mini-mode .ty-grid-list__price {
+    margin-top: 0;
+}
+.ty-mini-mode .ty-grid-list__image {
+    min-height: 100px;
+}
+.ty-products-scroller .ty-tennishouse-body .ty-mini-mode .owl-prev, .ty-products-scroller .ty-tennishouse-body .ty-mini-mode .owl-next {
+    top: 80px;
+}
+.ty-mini-mode .ty-grid-list__item .ty-grid-list__image-product .ty-pict {
+    width: 103px;
+    height: 103px;
+}
+.ty-mini-mode .ty-grid-list__item:hover .ty-grid-list__image-product .ty-pict {
+    width: 113px;
+    height: 113px;
+}
+
+.ty-micro-mode .ty-grid-list__item-name .product-title {
+    font-size: 100%;
+    height: 30px;
+}
+.ty-micro-mode .ty-price-num {
+    font-size: 14px;
+}
+.ty-micro-mode .ty-grid-list__item-title {
+    height: 30px;
+}
+.ty-micro-mode .ty-grid-list__price {
+    margin-top: 0;
+}
+.ty-micro-mode .ty-grid-list__image {
+    display: inline-block;
+    min-height: 70px;
+    width: 50%;
+    vertical-align: top;
+}
+.ty-products-scroller .ty-tennishouse-body .ty-micro-mode .owl-prev, .ty-products-scroller .ty-tennishouse-body .ty-micro-mode .owl-next {
+    top: 25px;
+}
+.ty-micro-mode .ty-grid-list__item .ty-grid-list__image-product .ty-pict {
+    width: 70px;
+    height: 70px;
+}
+.ty-micro-mode .ty-grid-list__item:hover .ty-grid-list__image-product .ty-pict {
+    width: 70px;
+    height: 70px;
+}
+.ty-micro-mode .ty-grid-list__item-info {
+    height: 70px;
+    padding: 5px 2px;
+    width: 45.5%;
+}
+.ty-products-scroller .ty-micro-mode .owl-wrapper-outer {
+    padding: 5px 5px 0;
+}
+.ty-micro-mode .owl-wrapper-outer {
+    width: 97.9%;
+}
+.ty-micro-mode .ty-btn__add-to-cart {
+    font-size: 14px;
+    padding: 2px 15px;
+}
+.ty-micro-mode .ty-grid-list__control {
+    bottom: 5px;
+    display: inline-block;
+    position: absolute;
+    right: 5px;
+}
+.ty-micro-mode .ty-grid-list__item:hover {
+    position: relative;
+    margin: 5px 5px 15px;
+    z-index:10;
+    overflow: hidden;
+    transition: none;
+    box-shadow: none;
+}
+.ty-product-plus {
+    display: inline-block;
+    font-size: 40px;
+    margin: -15px 0;
+    text-align: center;
+    width: 100%;
+}
+.ty-product-cross-block {
+    width: 450px;
+    display: inline-block;
+}
+.ty-product-block__img-wrapper {
+    width: 452px;
+}
+
 /* Pages */
 .ty-check-all__block-link {
     right: 20px;
