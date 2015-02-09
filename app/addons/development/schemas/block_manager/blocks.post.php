@@ -246,8 +246,10 @@ $schema['products']['content']['items']['fillings']['cross_sales']['params'] = a
     'items_function' => 'fn_get_cross_sales',
     'limit' => 10,
 );
-$schema['products']['content']['items']['fillings']['strings_selection']['params'] = array (
-    'items_function' => 'fn_get_strings_selection',
+$schema['products']['content']['items']['fillings']['product_cross_sales'] = array(
+    'params' => array (
+        'items_function' => 'fn_get_product_cross_sales',
+    )
 );
 $schema['testimonials']['templates']['addons/discussion/blocks/homepage_testimonials.tpl'] = array();
 

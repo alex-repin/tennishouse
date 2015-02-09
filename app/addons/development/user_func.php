@@ -19,6 +19,19 @@ use Tygh\FeaturesCache;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_gather_additional_products_data_cs(&$products, $params)
+{
+    if (empty($products)) {
+        return;
+    } else {
+        foreach ($products as $i => $prods) {
+            if (!empty($prods['items'])) {
+                fn_gather_additional_products_data($products[$i]['items'], $params);
+            }
+        }
+    }
+}
+
 function fn_process_php_errors($errno, $errstr, $errfile, $errline, $errcontext)
 {
     if (strpos($errfile, Registry::get('config.dir.var')) === false && strpos($errfile, Registry::get('config.dir.lib')) === false) {
@@ -161,22 +174,42 @@ function fn_display_subheaders($category_id)
     return in_array($category_id, array(RACKETS_CATEGORY_ID, APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, STRINGS_CATEGORY_ID, BAGS_CATEGORY_ID));
 }
 
-function fn_get_strings_selection()
+function fn_get_product_cross_sales($params)
 {
     $result = array();
-    if (!empty($_SESSION['product_features'][R_STRINGS_FEATURE_ID]['value']) && $_SESSION['product_features'][R_STRINGS_FEATURE_ID]['value'] == 'N') {
-        $params_array = array('V' . NATURAL_GUT_STRINGS_FV_ID, 'V' . NYLON_STRINGS_FV_ID, 'V' . POLYESTER_STRINGS_FV_ID, 'V' . HYBRID_STRINGS_FV_ID);
-        $_params = array (
-            'sort_by' => 'random',
-            'limit' => 1,
-            'cid' => STRINGS_CATEGORY_ID,
-            'subcats' => 'Y',
-            'amount_from' => 1
-        );
-        $result = fn_get_result_products($_params, 'features_hash', $params_array);
+    if (!empty($_SESSION['product_features'][TYPE_FEATURE_ID])) {
+        if ($_SESSION['product_features'][TYPE_FEATURE_ID] == KIDS_RACKET_FV_ID) {
+        } else {
+            if (!empty($_SESSION['product_features'][R_STRINGS_FEATURE_ID]['value']) && $_SESSION['product_features'][R_STRINGS_FEATURE_ID]['value'] == 'N') {
+                $params_array = array('V' . NATURAL_GUT_STRINGS_FV_ID, 'V' . NYLON_STRINGS_FV_ID, 'V' . POLYESTER_STRINGS_FV_ID, 'V' . HYBRID_STRINGS_FV_ID);
+                $_params = array (
+                    'sort_by' => 'random',
+                    'limit' => 1,
+                    'cid' => STRINGS_CATEGORY_ID,
+                    'subcats' => 'Y',
+                    'amount_from' => 1
+                );
+                $result[] = array(
+                    'title' => __('strings'),
+                    'items' => fn_get_result_products($_params, 'features_hash', $params_array)
+                );
+            }
+            $_params = array (
+                'sort_by' => 'random',
+                'limit' => (!empty($_SESSION['product_features'][R_STRINGS_FEATURE_ID]['value']) && $_SESSION['product_features'][R_STRINGS_FEATURE_ID]['value'] == 'N') ? 1 : 4,
+                'cid' => OVERGRIPS_CATEGORY_ID,
+                'subcats' => 'Y',
+                'amount_from' => 1
+            );
+            list($prods,) = fn_get_products($_params);
+            $result[] = array(
+                'title' => __('overgrips'),
+                'items' => $prods
+            );
+        }
     }
     
-    return array($result, );
+    return array($result, $params);
 }
 
 function fn_get_result_products($params, $key, $param_array)

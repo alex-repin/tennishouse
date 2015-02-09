@@ -17,12 +17,18 @@
                         <!--product_images_{$product.product_id}_update--></div>
                     {/if}
                 {/hook}
+                {if $smarty.capture.block_product_cross_sales}
                 <div class="ty-product-cross-block">
                     <div class="ty-product-plus">+</div>
-                    {$smarty.capture.block_strings_selection nofilter}
+                    {$smarty.capture.block_product_cross_sales nofilter}
                 </div>
+                {/if}
                 {if $product.players}
-                    {$title = __("`$product.category_type`_played_by")}
+                    {if $product.players|count == '1'}
+                        {$title = __("`$product.category_type`_played_by_single")}
+                    {else}
+                        {$title = __("`$product.category_type`_played_by")}
+                    {/if}
                     <div class="ty-product-block__players">
                         <h3 class="ty-mainbox-simple-title">
                             {$title}
@@ -40,7 +46,7 @@
                     </div>
                 {/if}
             </div>
-            <div class="ty-product-block__left">
+            <div class="ty-product-block__left {if $product.players}ty-product-block__left-long{/if}">
                 {assign var="form_open" value="form_open_`$obj_id`"}
                 {$smarty.capture.$form_open nofilter}
 

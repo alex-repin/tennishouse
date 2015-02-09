@@ -29,12 +29,13 @@
 <script type="text/javascript">
 (function(_, $) {
     var max_height = 0;
+    var mx_hght = $('.ty-product-block__left').hasClass('ty-product-block__left-long') ? 510 : 375;
     $('#tabs_content').children().each(function(){
         if (max_height < $(this).outerHeight(true)) {
             max_height = $(this).outerHeight(true);
         }
     });
-    max_height = (max_height > 376) ? 376 : max_height;
+    max_height = (max_height > mx_hght) ? mx_hght : max_height;
     if (max_height) {
         $('#tabs_content').children().each(function(){
             $(this).css("height", max_height + 'px');

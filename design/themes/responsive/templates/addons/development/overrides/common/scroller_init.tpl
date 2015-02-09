@@ -1,12 +1,13 @@
 {script src="js/lib/owlcarousel/owl.carousel.js"}
+{$items_count = $items_count|default:$block.properties.item_quantity}
 <script type="text/javascript">
 (function(_, $) {
     $.ceEvent('on', 'ce.commoninit', function(context) {
-        var elm = context.find('#scroll_list_{$block.block_id}');
+        var elm = context.find('#scroll_list_{$block.block_id}{$suf}');
 
         if (elm.length) {
             elm.owlCarousel({
-                items: {$block.properties.item_quantity|default:1},
+                items: {$items_count|default:1},
                 {if $block.properties.scroll_per_page == "Y"}
                 scrollPerPage: true,
                 {/if}
