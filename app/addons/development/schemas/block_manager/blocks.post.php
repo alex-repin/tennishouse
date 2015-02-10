@@ -249,7 +249,8 @@ $schema['products']['content']['items']['fillings']['cross_sales']['params'] = a
 $schema['products']['content']['items']['fillings']['product_cross_sales'] = array(
     'params' => array (
         'items_function' => 'fn_get_product_cross_sales',
-    )
+    ),
+    'cache' => false
 );
 $schema['testimonials']['templates']['addons/discussion/blocks/homepage_testimonials.tpl'] = array();
 
