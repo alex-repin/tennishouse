@@ -14,9 +14,9 @@
                 <items>
                     <item id="global_product_margin">
                         <type>input</type>
-                        <default_value>65</default_value>
+                        <default_value>2:85;203:60</default_value>
                         <translations>
-                            <item lang="ru">Надбавка к цене (%)</item>
+                            <item lang="ru">Надбавка к цене (mnc:mnp;mxc:mxp)</item>
                         </translations>
                     </item>
                     <item id="free_shipping_cost">
@@ -170,6 +170,9 @@
             ), (
                 '10', 'en', 'Size chart'
             );
+        </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `net_currency_code` VARCHAR( 10 ) NOT NULL DEFAULT 'USD' ;
         </item>
     </queries>
     <language_variables>
@@ -326,6 +329,7 @@
         <item lang="ru" id="kids_25_rackets">Детские ракетки 63.5 см</item>
         <item lang="ru" id="kids_26_rackets">Детские ракетки 66.0 см</item>
         <item lang="ru" id="rackets_description_note"><![CDATA[Подробную информацию о том, как выбрать теннисную ракетку Вы можете получить в нашем <a href="[learning_center_link]" target="_blank">Учебном центре</a>.]]></item>
+        <item lang="ru" id="strings_description_note"><![CDATA[Подробную информацию о том, как выбрать струны для теннисной ракетки Вы можете получить в нашем <a href="[learning_center_link]" target="_blank">Учебном центре</a>.]]></item>
         <item lang="ru" id="mode">Режим</item>
         <item lang="ru" id="regular">Обычный</item>
         <item lang="ru" id="small">Уменьшенный</item>
@@ -334,5 +338,8 @@
         <item lang="ru" id="tmpl_products_cross_sales">Кросс продажи для товара</item>
         <item lang="ru" id="strings">Струны</item>
         <item lang="ru" id="overgrips">Намотки</item>
+        <item lang="ru" id="hybrid">Гибрид</item>
+        <item lang="ru" id="error_incorrect_margin_data">Неправильный формат данных о надбавке</item>
+        <item lang="ru" id="net_currency_code">Валюта себестоимости</item>
     </language_variables>
 </addon>

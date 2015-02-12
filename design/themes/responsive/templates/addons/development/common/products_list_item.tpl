@@ -60,7 +60,11 @@
                     {$brand_variant_id = $features.$brand_id.variant_id}
                     {__("bag")} - {$features.$brand_id.variants.$brand_variant_id.variant}
                 {elseif $product.type == 'ST'}
-                    {__("structure")} - {$series_feature.variants.$series_variant_id.variant}
+                    {if $series_feature.variants|count > 1 && $series_feature.feature_type == 'M'}
+                        {__("structure")} - {__("hybrid")}
+                    {else}
+                        {__("structure")} - {$series_feature.variants.$series_variant_id.variant}
+                    {/if}
                 {elseif $product.type == 'BL'}
                     {__("type")} - {$series_feature.variants.$series_variant_id.variant}
                 {elseif $product.type == 'OG'}

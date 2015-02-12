@@ -142,7 +142,13 @@ class FeaturesCache
             $product_ids = array();
             foreach ($features_condition as $feature_id => $feature_data) {
                 if (!empty($memcache_features[$feature_id])) {
-                    if (!empty($feature_data['variant_id']) && !empty($memcache_features[$feature_id]['variants'][$feature_data['variant_id']])) {
+                    if (!empty($feature_data['variants'])) {
+                        foreach ($feature_data['variants'] as $i => $variant) {
+                            if (!empty($memcache_features[$feature_id]['variants'][$variant['variant_id']])) {
+                                $product_ids[] = $memcache_features[$feature_id]['variants'][$variant['variant_id']];
+                            }
+                        }
+                    } elseif (!empty($feature_data['variant_id']) && !empty($memcache_features[$feature_id]['variants'][$feature_data['variant_id']])) {
                         $product_ids[] = $memcache_features[$feature_id]['variants'][$feature_data['variant_id']];
                     } elseif (!empty($feature_data['value']) && !empty($memcache_features[$feature_id]['values'][$feature_data['value']])) {
                         $product_ids[] = $memcache_features[$feature_id]['values'][$feature_data['value']];
@@ -185,7 +191,13 @@ class FeaturesCache
         } else {
             foreach ($features_condition as $feature_id => $feature_data) {
                 $join .= db_quote(" LEFT JOIN ?:product_features_values AS feature_?i ON feature_?i.product_id = products.product_id AND feature_?i.feature_id = ?i AND feature_?i.lang_code = ?s", $feature_id, $feature_id, $feature_id, $feature_id, $feature_id, $lang_code);
-                if (!empty($feature_data['variant_id'])) {
+                if (!empty($feature_data['variants'])) {
+                    foreach ($feature_data['variants'] as $i => $variant) {
+                        if (!empty($variant['variant_id'])) {
+                            $condition .= db_quote(" AND feature_?i.variant_id = ?i ", $feature_id, $variant['variant_id']);
+                        }
+                    }
+                } elseif (!empty($feature_data['variant_id'])) {
                     $condition .= db_quote(" AND feature_?i.variant_id = ?i ", $feature_id, $feature_data['variant_id']);
                 } elseif (!empty($feature_data['value'])) {
                     $condition .= db_quote(" AND feature_?i.value = ?i ", $feature_id, $feature_data['value']);

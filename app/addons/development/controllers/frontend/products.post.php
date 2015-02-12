@@ -25,7 +25,16 @@ if ($mode == 'view') {
     $features = array();
     if (!empty($product['product_features'])) {
         foreach ($product['product_features'] as $i => $f_data) {
-            if (!empty($f_data['variant_id'])) {
+            if ($f_data['feature_type'] == 'M' && !empty($f_data['variants'])) {
+                foreach ($f_data['variants'] as $j => $var) {
+                    if (!empty($var['selected'])) {
+                        $features[$f_data['feature_id']]['variants'][] = array(
+                            'variant_id' => $var['variant_id'],
+                            'variant_name' => $var['variant']
+                        );
+                    }
+                }
+            } elseif (!empty($f_data['variant_id'])) {
                 $features[$f_data['feature_id']] = array(
                     'variant_id' => $f_data['variant_id'],
                     'variant_name' => $f_data['variants'][$f_data['variant_id']]['variant']

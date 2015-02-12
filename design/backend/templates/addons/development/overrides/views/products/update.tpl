@@ -98,21 +98,23 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="control-group {if $product_data.auto_price != "Y"}hidden{/if}" id="net_cost">
+                        <div class="control-group {if $product_data.auto_price != "Y" && $runtime.mode != 'add'}hidden{/if}" id="net_cost">
                             <label class="control-label" for="elm_net_cost">{__("net_cost")}:</label>
                             <div class="controls">
                                 <input type="text" name="product_data[net_cost]" id="elm_net_price" size="10" value="{$product_data.net_cost|default:"0.00"}" class="input-long" />
-                                <select class="span3" name="product_data[net_currency_code]">
-                                {foreach from=$currencies item="cur"}
-                                    <option value="{$cur.currency_code}" {if $product_data.net_currency_code == $cur.currency_code}selected="selected"{/if}>{$cur.description}</option>
-                                {/foreach}
-                                </select>
+                                {if $runtime.mode != 'add'}
+                                    <select class="span3" name="product_data[net_currency_code]">
+                                    {foreach from=$currencies item="cur"}
+                                        <option value="{$cur.currency_code}" {if $product_data.net_currency_code == $cur.currency_code}selected="selected"{/if}>{$cur.description}</option>
+                                    {/foreach}
+                                    </select>
+                                {/if}
                             </div>
                         </div>
 
-                        {if $mode != 'add'}
+                        {if $runtime.mode != 'add'}
                         <div class="control-group {if $product_data.auto_price != "Y"}hidden{/if}" id="margin">
-                            <label class="control-label" for="elm_product_margin">{__("net_cost")}(%):</label>
+                            <label class="control-label" for="elm_product_margin">{__("price_margin")}(%):</label>
                             <div class="controls">
                                 <input type="text" name="product_data[margin]" id="elm_margin" size="10" value="{$product_data.margin|default:"0.0"}" class="input-long" />
                             </div>
@@ -297,9 +299,9 @@
                         <label class="control-label" for="elm_out_of_stock_actions">{__("out_of_stock_actions")}:</label>
                         <div class="controls">
                             <select class="span3" name="product_data[out_of_stock_actions]" id="elm_out_of_stock_actions">
+                                <option value="S" {if $product_data.out_of_stock_actions == "S"}selected="selected"{/if}>{__("sign_up_for_notification")}</option>
                                 <option value="N" {if $product_data.out_of_stock_actions == "N"}selected="selected"{/if}>{__("none")}</option>
                                 <option value="B" {if $product_data.out_of_stock_actions == "B"}selected="selected"{/if}>{__("buy_in_advance")}</option>
-                                <option value="S" {if $product_data.out_of_stock_actions == "S"}selected="selected"{/if}>{__("sign_up_for_notification")}</option>
                             </select>
                         </div>
                     </div>

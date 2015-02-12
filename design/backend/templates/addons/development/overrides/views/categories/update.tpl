@@ -74,6 +74,16 @@
                 <input type="text" name="category_data[margin]" id="elm_category_margin" size="10" value="{$category_data.margin|default:"0"}" class="input-long" />
             </div>
         </div>
+        <div class="control-group">
+            <label class="control-label" for="elm_category_net_currency_code">{__("net_currency_code")}:</label>
+            <div class="controls">
+                <select class="span3" name="category_data[net_currency_code]">
+                {foreach from=$currencies item="cur"}
+                    <option value="{$cur.currency_code}" {if $category_data.net_currency_code == $cur.currency_code}selected="selected"{/if}>{$cur.description}</option>
+                {/foreach}
+                </select>
+            </div>
+        </div>
     {/if}
 
     <div class="control-group">

@@ -336,6 +336,23 @@ function fn_get_product_global_margin($category_id)
     return $result;
 }
 
+function fn_get_product_global_currency($category_id)
+{
+    $path = db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $category_id);
+    if (!empty($path)) {
+        $cat_ids = explode('/', $path);
+        $cat_margin = db_get_hash_single_array("SELECT net_currency_code, category_id FROM ?:categories WHERE category_id IN (?n)", array('category_id', 'net_currency_code'), $cat_ids);
+        foreach (array_reverse($cat_ids) as $i => $cat_id) {
+            if (!empty($cat_margin[$cat_id])) {
+                $result = $cat_margin[$cat_id];
+                break;
+            }
+        }
+    }
+    
+    return $result;
+}
+
 function fn_round_price($price)
 {
     return ceil(ceil($price) / 10) * 10;

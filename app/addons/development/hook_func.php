@@ -253,7 +253,7 @@ function fn_development_get_products($params, &$fields, &$sortings, &$condition,
             'A' => array('52', '50'),
             'S' => array('54'),
             'B' => array('58'),
-            'ST' => array('76', '60'),
+            'ST' => array('77', '60'),
             'BL' => array('64'),
             'OG' => array('66'),
             'BG' => array('72'),
@@ -262,30 +262,40 @@ function fn_development_get_products($params, &$fields, &$sortings, &$condition,
         if (!empty($similar_products_features[$_SESSION['category_type']])) {
             foreach ($similar_products_features[$_SESSION['category_type']] as $i => $feature_id) {
                 if (!empty($_SESSION['product_features'][$feature_id])) {
-                    if (!in_array($feature_id, $digit_features)) {
-                        if (!empty($_SESSION['product_features'][$feature_id]['variant_id'])) {
-                            $params['features_condition'][$feature_id] = array(
-                                'variant_id' => $_SESSION['product_features'][$feature_id]['variant_id'],
-                            );
-                        } elseif (!empty($_SESSION['product_features'][$feature_id]['value'])) {
-                            $params['features_condition'][$feature_id] = array(
-                                'value' => $_SESSION['product_features'][$feature_id]['value'],
-                            );
+                    if (!empty($_SESSION['product_features'][$feature_id]['variants'])) {
+                        foreach ($_SESSION['product_features'][$feature_id]['variants'] as $j => $variant) {
+                            if (!empty($variant['variant_id'])) {
+                                $params['features_condition'][$feature_id]['variants'][] = array(
+                                    'variant_id' => $variant['variant_id'],
+                                );
+                            }
                         }
                     } else {
-                        if ($feature_id == R_WEIGHT_FEATURE_ID) {
-                            $margin_value = 5;
+                        if (!in_array($feature_id, $digit_features)) {
+                            if (!empty($_SESSION['product_features'][$feature_id]['variant_id'])) {
+                                $params['features_condition'][$feature_id] = array(
+                                    'variant_id' => $_SESSION['product_features'][$feature_id]['variant_id'],
+                                );
+                            } elseif (!empty($_SESSION['product_features'][$feature_id]['value'])) {
+                                $params['features_condition'][$feature_id] = array(
+                                    'value' => $_SESSION['product_features'][$feature_id]['value'],
+                                );
+                            }
+                        } else {
+                            if ($feature_id == R_WEIGHT_FEATURE_ID) {
+                                $margin_value = 5;
+                            }
+                            if ($feature_id == R_STIFFNESS_FEATURE_ID) {
+                                $margin_value = 2;
+                            }
+                            if ($feature_id == R_BALANCE_FEATURE_ID) {
+                                $margin_value = 0.32;
+                            }
+                            $params['features_condition'][$feature_id] = array(
+                                'min_value' => $_SESSION['product_features'][$feature_id]['variant_name'] - $margin_value,
+                                'max_value' => $_SESSION['product_features'][$feature_id]['variant_name'] + $margin_value
+                            );
                         }
-                        if ($feature_id == R_STIFFNESS_FEATURE_ID) {
-                            $margin_value = 2;
-                        }
-                        if ($feature_id == R_BALANCE_FEATURE_ID) {
-                            $margin_value = 0.32;
-                        }
-                        $params['features_condition'][$feature_id] = array(
-                            'min_value' => $_SESSION['product_features'][$feature_id]['variant_name'] - $margin_value,
-                            'max_value' => $_SESSION['product_features'][$feature_id]['variant_name'] + $margin_value
-                        );
                     }
                 }
             }
@@ -429,28 +439,28 @@ function fn_development_get_products_pre(&$params, $items_per_page, $lang_code)
         $params['cid'] = STRINGS_CATEGORY_ID;
         $params['subcats'] = 'Y';
         if ($params['strings_type'] == 'natural_gut') {
-            $feature_hash = 'V' . NATURAL_GUT_STRINGS_FV_ID;
+            $params['cid'] = NATURAL_GUT_MATERIAL_CATEGORY_ID;
         }
         if ($params['strings_type'] == 'nylon') {
-            $feature_hash = 'V' . NYLON_STRINGS_FV_ID;
+            $params['cid'] = NYLON_MATERIAL_CATEGORY_ID;
         }
         if ($params['strings_type'] == 'polyester') {
-            $feature_hash = 'V' . POLYESTER_STRINGS_FV_ID;
+            $params['cid'] = POLYESTER_MATERIAL_CATEGORY_ID;
         }
         if ($params['strings_type'] == 'hybrid') {
-            $feature_hash = 'V' . HYBRID_STRINGS_FV_ID;
+            $params['cid'] = HYBRID_MATERIAL_CATEGORY_ID;
         }
         if ($params['strings_type'] == 'monofil') {
-            $feature_hash = 'V' . MONOFIL_STRINGS_FV_ID;
+            $params['cid'] = MONO_STRUCTURE_CATEGORY_ID;
         }
         if ($params['strings_type'] == 'multifil') {
-            $feature_hash = 'V' . MULTIFIL_STRINGS_FV_ID;
+            $params['cid'] = MULTI_STRUCTURE_CATEGORY_ID;
         }
         if ($params['strings_type'] == 'textured') {
-            $feature_hash = 'V' . TEXTURED_STRINGS_FV_ID;
+            $params['cid'] = TEXTURED_STRUCTURE_CATEGORY_ID;
         }
         if ($params['strings_type'] == 'synthetic_gut') {
-            $feature_hash = 'V' . SYNTHETIC_GUT_STRINGS_FV_ID;
+            $params['cid'] = SYNTH_GUT_STRUCTURE_CATEGORY_ID;
         }
         if (!empty($feature_hash)) {
             $params['features_hash'] = (!empty($params['features_hash']) ? '.' : '') . $feature_hash;
@@ -508,8 +518,40 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
         $variant_ids = db_get_fields("SELECT feature_variant_id FROM ?:players WHERE player_id IN (?n)", $players);
         $product_data['product_features'][PLAYER_FEATURE_ID] = array_combine($variant_ids, $variant_ids);
         
-        if ($product_data['auto_price'] == 'Y' && $product_data['margin'] == 0) {
-            $product_data['margin'] = fn_get_product_global_margin($product_data['main_category']);
+        if ($product_data['auto_price'] == 'Y' && empty($product_data['net_currency_code'])) {
+            $currency = fn_get_product_global_currency($product_data['main_category']);
+            if (!empty($currency)) {
+                $product_data['net_currency_code'] = $currency;
+            }
+        }
+        if ($product_data['auto_price'] == 'Y' && $product_data['margin'] == 0 && $product_data['net_cost'] > 0) {
+            $md = fn_get_product_global_margin($product_data['main_category']);
+            $error = false;
+            if (!empty($md)) {
+                $_md = explode(';', $md);
+                if (count($_md) == 2) {
+                    $min_md = explode(':', $_md[0]);
+                    $max_md = explode(':', $_md[1]);
+                    if (count($min_md) == 2 && count($max_md) == 2) {
+                        if ($product_data['net_cost'] <= $min_md[0]) {
+                            $product_data['margin'] = $min_md[1];
+                        } elseif ($product_data['net_cost'] >= $max_md[0]) {
+                            $product_data['margin'] = $max_md[1];
+                        } else {
+                            $product_data['margin'] = ceil((($product_data['net_cost'] - $min_md[0]) * ($max_md[1] - $min_md[1]) / ($max_md[0] - $min_md[0])) + $min_md[1]);
+                        }
+                    } else {
+                        $error = true;
+                    }
+                } else {
+                    $error = true;
+                }
+            } else {
+                $error = true;
+            }
+            if ($error) {
+                fn_set_notification('E', __('error'), __('error_incorrect_margin_data'));
+            }
         }
 
         $old_data = db_get_row("SELECT auto_price, margin, net_cost, net_currency_code FROM ?:products WHERE product_id = ?i", $product_id);
