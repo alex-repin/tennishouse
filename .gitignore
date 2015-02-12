@@ -3,3 +3,4 @@ config.local.php
 .htaccess
 var/cache/
 var/logs/
+var/features_cache
