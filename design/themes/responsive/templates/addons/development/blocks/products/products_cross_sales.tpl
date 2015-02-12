@@ -1,6 +1,6 @@
 {** block-description:tmpl_products_cross_sales **}
 
-{if $items|count == 1}
+{if ($items|count == 1 || !$items[1]['items']) && $items[0]['items']}
     <div class="ty-product-cross-sales">
         {assign var="obj_prefix" value="`$block.block_id`000"}
         <div id="content_block_tab_{$block.block_id}" class="ty-wysiwyg-content">
@@ -25,7 +25,7 @@
         {include file="common/scroller_init.tpl" items_count="2"}
         <div class="ty-product-cross-sales-title">{$items[0]['title']}</div>
     </div>
-{elseif $items|count == 2}
+{elseif $items|count == 2 && $items[0]['items'] && $items[1]['items']}
     <div class="ty-product-cross-sales-left">
         {assign var="obj_prefix" value="`$block.block_id`000"}
         <div id="content_block_tab_{$block.block_id}" class="ty-wysiwyg-content">
