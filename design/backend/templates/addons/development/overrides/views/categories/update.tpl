@@ -72,6 +72,9 @@
             <label class="control-label" for="elm_category_margin">{__("price_margin")}(%):</label>
             <div class="controls">
                 <input type="text" name="category_data[margin]" id="elm_category_margin" size="10" value="{$category_data.margin|default:"0"}" class="input-long" />
+                <div class="checkbox" style="display: inline-block;">
+                    {__("recalculate_margins")} <input type="checkbox" name="category_data[recalculate_margins]" id="elm_category_recalculate_margins" value="Y" />
+                </div>
             </div>
         </div>
         <div class="control-group">

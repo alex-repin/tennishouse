@@ -322,35 +322,20 @@ function fn_get_product_global_margin($category_id)
 {
     $path = db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $category_id);
     $result = Registry::get('addons.development.global_product_margin');
+    $currency = '';
     if (!empty($path)) {
         $cat_ids = explode('/', $path);
-        $cat_margin = db_get_hash_single_array("SELECT margin, category_id FROM ?:categories WHERE override_margin = 'Y' AND category_id IN (?n)", array('category_id', 'margin'), $cat_ids);
+        $cat_data = db_get_hash_array("SELECT margin, category_id, net_currency_code FROM ?:categories WHERE override_margin = 'Y' AND category_id IN (?n)", 'category_id', $cat_ids);
         foreach (array_reverse($cat_ids) as $i => $cat_id) {
-            if (!empty($cat_margin[$cat_id])) {
-                $result = $cat_margin[$cat_id];
+            if (!empty($cat_data[$cat_id])) {
+                $result = $cat_data[$cat_id]['margin'];
+                $currency = $cat_data[$cat_id]['net_currency_code'];
                 break;
             }
         }
     }
     
-    return $result;
-}
-
-function fn_get_product_global_currency($category_id)
-{
-    $path = db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $category_id);
-    if (!empty($path)) {
-        $cat_ids = explode('/', $path);
-        $cat_margin = db_get_hash_single_array("SELECT net_currency_code, category_id FROM ?:categories WHERE category_id IN (?n)", array('category_id', 'net_currency_code'), $cat_ids);
-        foreach (array_reverse($cat_ids) as $i => $cat_id) {
-            if (!empty($cat_margin[$cat_id])) {
-                $result = $cat_margin[$cat_id];
-                break;
-            }
-        }
-    }
-    
-    return $result;
+    return array($result, $currency);
 }
 
 function fn_round_price($price)
@@ -366,15 +351,57 @@ function fn_calculate_base_price($product_data)
     return $base_price;
 }
 
-function fn_update_prices()
+function fn_get_product_margin(&$product)
 {
-    $products = db_get_hash_array("SELECT product_id, margin, net_cost, net_currency_code FROM ?:products WHERE auto_price = 'Y' AND margin > 0 AND net_cost > 0 AND net_currency_code != ''", 'product_id');
+    list($md, $currency) = fn_get_product_global_margin($product['main_category']);
+    if (empty($product['net_currency_code']) && !empty($currency)) {
+        $product['net_currency_code'] = $currency;
+    }
+    $error = false;
+    if (!empty($md) && !empty($currency)) {
+        $_md = explode(';', $md);
+        if (count($_md) == 2) {
+            $min_md = explode(':', $_md[0]);
+            $max_md = explode(':', $_md[1]);
+            if (count($min_md) == 2 && count($max_md) == 2) {
+                $min_md[0] = $min_md[0] * Registry::get('currencies.' . $currency . '.coefficient');
+                $max_md[0] = $max_md[0] * Registry::get('currencies.' . $currency . '.coefficient');
+                $net_cost = $product['net_cost'] * Registry::get('currencies.' . $product['net_currency_code'] . '.coefficient');
+                if ($net_cost <= $min_md[0]) {
+                    $product['margin'] = $min_md[1];
+                } elseif ($net_cost >= $max_md[0]) {
+                    $product['margin'] = $max_md[1];
+                } else {
+                    $product['margin'] = ceil((($net_cost - $min_md[0]) * ($max_md[1] - $min_md[1]) / ($max_md[0] - $min_md[0])) + $min_md[1]);
+                }
+            } else {
+                $error = true;
+            }
+        } else {
+            $error = true;
+        }
+    } else {
+        $error = true;
+    }
+    if ($error) {
+        fn_set_notification('E', __('error'), __('error_incorrect_margin_data'));
+    }
+}
+
+function fn_process_update_prices($products)
+{
     $result = array();
     if (!empty($products)) {
         $prices = db_get_hash_multi_array("SELECT * FROM ?:product_prices WHERE product_id IN (?n) AND lower_limit IN ('1', '2')", array('product_id', 'lower_limit'), array_keys($products));
         if (!empty($prices)) {
             foreach ($prices as $product_id => $prs) {
                 if (!empty($prs)) {
+                    if ($products[$product_id]['margin'] == 0) {
+                        fn_get_product_margin($products[$product_id]);
+                        if ($products[$product_id]['margin'] > 0) {
+                            db_query("UPDATE ?:products SET margin = ?d, net_currency_code = ?s WHERE product_id = ?i", $products[$product_id]['margin'], $products[$product_id]['net_currency_code'], $product_id);
+                        }
+                    }
                     $base_price = fn_calculate_base_price($products[$product_id]);
                     foreach ($prs as $i => $p_data) {
                         if ($p_data['lower_limit'] == 1 || ($p_data['lower_limit'] > 1 && $p_data['percentage_discount'] > 0)) {
@@ -388,6 +415,14 @@ function fn_update_prices()
             }
         }
     }
+    
+    return $result;
+}
+
+function fn_update_prices()
+{
+    $products = db_get_hash_array("SELECT prods.product_id, prods.margin, prods.net_cost, prods.net_currency_code, prods.auto_price, cats.category_id AS main_category FROM ?:products AS prods LEFT JOIN ?:products_categories AS cats ON prods.product_id = cats.product_id AND cats.link_type = 'M' WHERE prods.auto_price = 'Y' AND prods.net_cost > 0", 'product_id');
+    $result = fn_process_update_prices($products);
     
     if (!empty($result)) {
         db_query("REPLACE INTO ?:product_prices ?m", $result);

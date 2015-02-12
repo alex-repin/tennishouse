@@ -41,5 +41,6 @@ fn_register_hooks(
     'update_product_features_value',
     'delete_product_feature_variants',
     'redirect_complete',
-    'get_product_features_list_before_select'
+    'get_product_features_list_before_select',
+    'update_category_post'
 );

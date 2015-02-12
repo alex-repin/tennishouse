@@ -102,13 +102,12 @@
                             <label class="control-label" for="elm_net_cost">{__("net_cost")}:</label>
                             <div class="controls">
                                 <input type="text" name="product_data[net_cost]" id="elm_net_price" size="10" value="{$product_data.net_cost|default:"0.00"}" class="input-long" />
-                                {if $runtime.mode != 'add'}
-                                    <select class="span3" name="product_data[net_currency_code]">
-                                    {foreach from=$currencies item="cur"}
-                                        <option value="{$cur.currency_code}" {if $product_data.net_currency_code == $cur.currency_code}selected="selected"{/if}>{$cur.description}</option>
-                                    {/foreach}
-                                    </select>
-                                {/if}
+                                <select class="span3" name="product_data[net_currency_code]">
+                                <option value="">{__("default")}</option>
+                                {foreach from=$currencies item="cur"}
+                                    <option value="{$cur.currency_code}" {if $product_data.net_currency_code == $cur.currency_code}selected="selected"{/if}>{$cur.description}</option>
+                                {/foreach}
+                                </select>
                             </div>
                         </div>
 

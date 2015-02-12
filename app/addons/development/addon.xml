@@ -341,5 +341,9 @@
         <item lang="ru" id="hybrid">Гибрид</item>
         <item lang="ru" id="error_incorrect_margin_data">Неправильный формат данных о надбавке</item>
         <item lang="ru" id="net_currency_code">Валюта себестоимости</item>
+        <item lang="ru" id="recalculate_margins">Пересчитать надбавки</item>
+        <item lang="ru" id="hybrid">Гибрид</item>
+        <item lang="ru" id="hybrid">Гибрид</item>
+        <item lang="ru" id="hybrid">Гибрид</item>
     </language_variables>
 </addon>

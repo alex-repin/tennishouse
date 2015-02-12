@@ -13,6 +13,7 @@
 ****************************************************************************/
 
 use Tygh\FeaturesCache;
+use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
@@ -518,40 +519,8 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
         $variant_ids = db_get_fields("SELECT feature_variant_id FROM ?:players WHERE player_id IN (?n)", $players);
         $product_data['product_features'][PLAYER_FEATURE_ID] = array_combine($variant_ids, $variant_ids);
         
-        if ($product_data['auto_price'] == 'Y' && empty($product_data['net_currency_code'])) {
-            $currency = fn_get_product_global_currency($product_data['main_category']);
-            if (!empty($currency)) {
-                $product_data['net_currency_code'] = $currency;
-            }
-        }
         if ($product_data['auto_price'] == 'Y' && $product_data['margin'] == 0 && $product_data['net_cost'] > 0) {
-            $md = fn_get_product_global_margin($product_data['main_category']);
-            $error = false;
-            if (!empty($md)) {
-                $_md = explode(';', $md);
-                if (count($_md) == 2) {
-                    $min_md = explode(':', $_md[0]);
-                    $max_md = explode(':', $_md[1]);
-                    if (count($min_md) == 2 && count($max_md) == 2) {
-                        if ($product_data['net_cost'] <= $min_md[0]) {
-                            $product_data['margin'] = $min_md[1];
-                        } elseif ($product_data['net_cost'] >= $max_md[0]) {
-                            $product_data['margin'] = $max_md[1];
-                        } else {
-                            $product_data['margin'] = ceil((($product_data['net_cost'] - $min_md[0]) * ($max_md[1] - $min_md[1]) / ($max_md[0] - $min_md[0])) + $min_md[1]);
-                        }
-                    } else {
-                        $error = true;
-                    }
-                } else {
-                    $error = true;
-                }
-            } else {
-                $error = true;
-            }
-            if ($error) {
-                fn_set_notification('E', __('error'), __('error_incorrect_margin_data'));
-            }
+            fn_get_product_margin($product_data);
         }
 
         $old_data = db_get_row("SELECT auto_price, margin, net_cost, net_currency_code FROM ?:products WHERE product_id = ?i", $product_id);
@@ -568,6 +537,33 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+function fn_development_update_category_post($category_data, $category_id, $lang_code)
+{
+    if ($category_data['recalculate_margins'] == 'Y') {
+        $products = array();
+        $_params = array (
+            'cid' => $category_id,
+            'subcats' => 'Y'
+        );
+        list($prods,) = fn_get_products($_params);
+        if (!empty($prods)) {
+            foreach ($prods as $i => $prod) {
+                if ($prod['auto_price'] == 'Y' && $prod['net_cost'] > 0) {
+                    unset($prod['margin']);
+                    $products[$prod['product_id']] = $prod;
+                }
+            }
+        }
+        if (!empty($products)) {
+            $result = fn_process_update_prices($products);
+            
+            if (!empty($result)) {
+                db_query("REPLACE INTO ?:product_prices ?m", $result);
             }
         }
     }
