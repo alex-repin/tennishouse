@@ -396,7 +396,7 @@ function fn_process_update_prices($products)
         if (!empty($prices)) {
             foreach ($prices as $product_id => $prs) {
                 if (!empty($prs)) {
-                    if ($products[$product_id]['margin'] == 0) {
+                    if (empty($products[$product_id]['margin']) || $products[$product_id]['margin'] == 0) {
                         fn_get_product_margin($products[$product_id]);
                         if ($products[$product_id]['margin'] > 0) {
                             db_query("UPDATE ?:products SET margin = ?d, net_currency_code = ?s WHERE product_id = ?i", $products[$product_id]['margin'], $products[$product_id]['net_currency_code'], $product_id);

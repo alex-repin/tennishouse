@@ -38,7 +38,7 @@ class FeaturesCache
     private static function set($result, $key = 'features', $type = 'F')
     {
         Memcache::instance()->call('set', $key, $result, $type);
-        fn_put_contents(DIR_ROOT . '/var/features_cache/cache', serialize($result));
+        fn_put_contents(DIR_ROOT . '/var/features_cache/cache', serialize($result), '', 0777);
     }
     
     private static function get($key = 'features', $type = 'F')

@@ -519,12 +519,12 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
         $variant_ids = db_get_fields("SELECT feature_variant_id FROM ?:players WHERE player_id IN (?n)", $players);
         $product_data['product_features'][PLAYER_FEATURE_ID] = array_combine($variant_ids, $variant_ids);
         
-        if ($product_data['auto_price'] == 'Y' && $product_data['margin'] == 0 && $product_data['net_cost'] > 0) {
+        if (!empty($product_data['auto_price']) && $product_data['auto_price'] == 'Y' && $product_data['margin'] == 0 && $product_data['net_cost'] > 0) {
             fn_get_product_margin($product_data);
         }
 
         $old_data = db_get_row("SELECT auto_price, margin, net_cost, net_currency_code FROM ?:products WHERE product_id = ?i", $product_id);
-        if ($product_data['auto_price'] == 'Y' && $product_data['net_cost'] > 0 && $product_data['margin'] > 0 && !empty($product_data['net_currency_code']) && ($product_data['auto_price'] != $old_data['auto_price'] || $product_data['margin'] != $old_data['margin'] || $product_data['net_cost'] != $old_data['net_cost'] || $product_data['net_currency_code'] != $old_data['net_currency_code'])) {
+        if (!empty($product_data['auto_price']) && $product_data['auto_price'] == 'Y' && $product_data['net_cost'] > 0 && $product_data['margin'] > 0 && !empty($product_data['net_currency_code']) && ($product_data['auto_price'] != $old_data['auto_price'] || $product_data['margin'] != $old_data['margin'] || $product_data['net_cost'] != $old_data['net_cost'] || $product_data['net_currency_code'] != $old_data['net_currency_code'])) {
             $base_price = fn_calculate_base_price($product_data);
             $product_data['price'] = fn_round_price($base_price);
             if (!empty($product_data['prices'])) {
