@@ -66,7 +66,7 @@ select {
 }
 .ty-hover-ssl-cert {
     position: absolute;
-    right: 0;
+    right: -100px;
     top: 10px;
 }
 /* Tooltip */
@@ -557,7 +557,7 @@ select {
     z-index: 100;
 }
 .ty-product-filters__block input {
-    color: #333333;
+    color: @font;
     padding: 4px 5px;
 }
 /*Filters*/
@@ -577,7 +577,7 @@ select {
 .ty-product-block__button {
     margin-top: 15px;
 }
-.ty-tabs__content {
+.ty-product-block .ty-tabs__content {
     border-right: 1px solid darken(@base, 7%);
     border-bottom: 1px solid darken(@base, 7%);
     border-left: 1px solid darken(@base, 7%);
@@ -682,7 +682,7 @@ select {
 /*    outline: 1px solid #dadada;*/
     margin: 0 0 10px;
     transition: all 200ms linear 0s;
-    box-shadow: 0 0 5px 1px #333;
+    box-shadow: 0 0 5px 1px @font;
     z-index:20;
 }
 .ty-grid-list__image {
@@ -907,12 +907,12 @@ select {
 }
 .ty-options-container {
     display: inline-block;
-    width: 50%;
+    float: left;
+    margin-right: 20px;
     vertical-align: top;
 }
 .ty-avail-container {
     display: inline-block;
-    width: 49%;
     vertical-align: top;
 }
 .ty-product-block__option, .ty-product-options__item, .ty-product-block__field-group {
@@ -954,6 +954,19 @@ select {
 }
 .ty-product-detail__follow-controller {
     margin: 0;
+}
+.ty-product-block .ty-control-group__label {
+    width: 100px;
+}
+.ty-product-variant-image {
+    margin-left: 0;
+    display: inline-block;
+}
+.ty-product-options__image {
+    padding: 1px;
+}
+.is-selected.ty-product-options__image {
+    border-color: @font;
 }
 /*Product page*/
 
@@ -1039,7 +1052,7 @@ select {
     padding: 2px 10px;
     position: absolute;
     top: 85px;
-    box-shadow: 0 0 5px 1px #333;
+    box-shadow: 0 0 5px 1px @font;
 }
 /*Category page*/
 
@@ -1432,7 +1445,7 @@ select {
 .ty-product-cross-sales .ty-micro-mode .owl-wrapper-outer {
     width: 95%;
 }
-.ty-micro-mode .ty-btn__add-to-cart {
+.ty-micro-mode .ty-btn__add-to-cart, .ty-micro-mode .ty-btn__big {
     font-size: 14px;
     padding: 2px 15px;
 }
@@ -1441,6 +1454,7 @@ select {
     display: inline-block;
     position: absolute;
     right: 5px;
+    max-width: 110px;
 }
 .ty-micro-mode .ty-grid-list__item:hover {
     position: relative;

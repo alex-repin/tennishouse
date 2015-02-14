@@ -29,7 +29,7 @@
 
 {capture name="tabsbox_content"}
 {if $settings.Appearance.product_details_in_tab == "Y"}
-    {include file="common/tabsbox.tpl" content=$smarty.capture.tabsbox }
+    {include file="addons/development/common/product_tabsbox.tpl" content=$smarty.capture.tabsbox }
 {else}
     {$smarty.capture.tabsbox nofilter}
 {/if}

@@ -513,7 +513,7 @@ class Database
             }
 
             if (USE_DB_MEMCACHED) {
-                if ( preg_match("/^(INSERT|REPLACE|UPDATE)/i",trim($query)) ) {
+                if ( preg_match("/^(INSERT|REPLACE|UPDATE|DELETE)/i",trim($query)) ) {
                         $ignore_list = array(DEFAULT_TABLE_PREFIX . 'logs', DEFAULT_TABLE_PREFIX . 'stored_sessions', DEFAULT_TABLE_PREFIX . 'sessions', DEFAULT_TABLE_PREFIX . 'stat_', DEFAULT_TABLE_PREFIX . 'user_session_products', DEFAULT_TABLE_PREFIX . 'views', DEFAULT_TABLE_PREFIX . 'storage_data', DEFAULT_TABLE_PREFIX . 'user_data', DEFAULT_TABLE_PREFIX . 'product_popularity', DEFAULT_TABLE_PREFIX . 'twigmo_');
                         foreach($ignore_list as $ignoreStr) {
                             if ( strpos($query, $ignoreStr) !== false ) {

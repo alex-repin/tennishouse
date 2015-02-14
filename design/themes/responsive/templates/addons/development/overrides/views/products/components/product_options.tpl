@@ -111,12 +111,20 @@
                 {foreach from=$po.variants item="var"}
                     {if $var.image_pair.image_id}
                         {if $var.variant_id == $selected_variant}{assign var="_class" value="is-selected"}{else}{assign var="_class" value="ty-product-variant-image-unselected"}{/if}
-                        {include file="common/image.tpl" class="ty-hand $_class ty-product-options__image" images=$var.image_pair image_width="50" image_height="50" obj_id="variant_image_`$obj_prefix``$id`_`$po.option_id`_`$var.variant_id`" image_onclick="fn_set_option_value('`$obj_prefix``$id`', '`$po.option_id`', '`$var.variant_id`'); void(0);"}
+                        {include file="common/image.tpl" class="ty-hand $_class ty-product-options__image" images=$var.image_pair image_width="20" image_height="20" obj_id="variant_image_`$obj_prefix``$id`_`$po.option_id`_`$var.variant_id`" image_onclick="fn_set_option_value('`$obj_prefix``$id`', '`$po.option_id`', '`$var.variant_id`'); void(0);"}
                     {/if}
                 {/foreach}
             {/if}
         {/capture}
-        {if $smarty.capture.variant_images|trim}<div class="ty-product-variant-image ty-clear-both">{$smarty.capture.variant_images nofilter}</div>{/if}
+
+        {if $smarty.capture.variant_images|trim}
+            <script type="text/javascript">
+            (function(_, $) {
+                $('#option_{$obj_prefix}{$id}_{$po.option_id}').css('display', 'none');
+            }(Tygh, Tygh.$));
+            </script>
+            <div class="ty-product-variant-image">{$smarty.capture.variant_images nofilter}</div>
+        {/if}
     </div>
     {/foreach}
 </div>

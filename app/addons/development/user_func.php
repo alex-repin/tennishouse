@@ -19,6 +19,43 @@ use Tygh\FeaturesCache;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_update_product_exception($product_id, $product_options, $new_amount)
+{
+    $exist = fn_check_combination($product_options, $product_id);
+    if ($new_amount < 1) {
+        if (!$exist) {
+            $_data = array(
+                'product_id' => $product_id,
+                'combination' => serialize($product_options)
+            );
+            db_query("INSERT INTO ?:product_options_exceptions ?e", $_data);
+        }
+    } else {
+        if ($exist) {
+            db_query("DELETE FROM ?:product_options_exceptions WHERE product_id = ?i AND combination = ?s", $product_id, serialize($product_options));
+        }
+    }
+}
+
+function fn_update_product_exceptions($product_id, $combinations)
+{
+    db_query("DELETE FROM ?:product_options_exceptions WHERE product_id = ?i", $product_id);
+    if (!empty($combinations)) {
+        $combination_options = db_get_hash_single_array("SELECT combination, combination_hash FROM ?:product_options_inventory WHERE combination_hash IN (?n)", array('combination_hash', 'combination'), array_keys($combinations));
+        if (!empty($combination_options)) {
+            foreach ($combination_options as $hash => $combination) {
+                if (!empty($combinations[$hash]) && $combinations[$hash]['amount'] < 1) {
+                    $_data = array(
+                        'product_id' => $product_id,
+                        'combination' => serialize(fn_get_product_options_by_combination($combination))
+                    );
+                    db_query("INSERT INTO ?:product_options_exceptions ?e", $_data);
+                }
+            }
+        }
+    }
+}
+
 function fn_gather_additional_products_data_cs(&$products, $params)
 {
     if (empty($products)) {

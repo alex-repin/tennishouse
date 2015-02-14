@@ -166,4 +166,3 @@
     show_discount_label=true}
 </div>
 {/if}
-{include file="common/tabsbox.tpl" content=$smarty.capture.tabsbox active_tab=$smarty.request.selected_section}

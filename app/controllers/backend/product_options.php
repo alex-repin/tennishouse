@@ -92,6 +92,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }
         }
+        // [tennishouse]
+        fn_update_product_exceptions($_REQUEST['product_id'], $_REQUEST['inventory']);
+        // [tennishouse]
 
         $suffix = ".inventory?product_id=$_REQUEST[product_id]";
     }
