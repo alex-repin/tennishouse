@@ -218,17 +218,17 @@ function fn_get_product_cross_sales($params)
         if ($_SESSION['product_features'][TYPE_FEATURE_ID]['variant_id'] == KIDS_RACKET_FV_ID) {
         } else {
             if (!empty($_SESSION['product_features'][R_STRINGS_FEATURE_ID]['value']) && $_SESSION['product_features'][R_STRINGS_FEATURE_ID]['value'] == 'N') {
-                $params_array = array('V' . NATURAL_GUT_STRINGS_FV_ID, 'V' . NYLON_STRINGS_FV_ID, 'V' . POLYESTER_STRINGS_FV_ID, 'V' . HYBRID_STRINGS_FV_ID);
+                $params_array = array(POLYESTER_MATERIAL_CATEGORY_ID, HYBRID_MATERIAL_CATEGORY_ID, NATURAL_GUT_MATERIAL_CATEGORY_ID, NYLON_MATERIAL_CATEGORY_ID);
                 $_params = array (
                     'sort_by' => 'random',
                     'limit' => 1,
-                    'cid' => STRINGS_CATEGORY_ID,
                     'subcats' => 'Y',
+                    'features_hash' => 'V' . TW_M_STRINGS_FV_ID,
                     'amount_from' => 1
                 );
                 $result[] = array(
                     'title' => __('strings'),
-                    'items' => fn_get_result_products($_params, 'features_hash', $params_array)
+                    'items' => fn_get_result_products($_params, 'cid', $params_array)
                 );
             }
             $_params = array (

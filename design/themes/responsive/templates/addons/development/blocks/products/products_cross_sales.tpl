@@ -14,6 +14,7 @@
                     show_clean_price=true
                     show_list_discount=true
                     show_add_to_cart=true
+                    show_product_options=true
                     hide_call_request=true
                     but_role="action"
                     show_discount_label=true
@@ -39,6 +40,7 @@
                     show_clean_price=true
                     show_list_discount=true
                     show_add_to_cart=true
+                    show_product_options=true
                     hide_call_request=true
                     but_role="action"
                     show_discount_label=true
@@ -62,6 +64,7 @@
                     show_clean_price=true
                     show_list_discount=true
                     show_add_to_cart=true
+                    show_product_options=true
                     hide_call_request=true
                     but_role="action"
                     show_discount_label=true
