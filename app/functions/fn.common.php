@@ -2359,7 +2359,9 @@ function fn_check_view_permissions($data, $request_method = '', $is_html_content
 
     list(, $request_params, ) = fn_parse_urn($data);
 
-    return fn_check_permissions($m[1], $m[2], 'admin', $request_method, $request_params);
+    // [tennishouse]
+    return (empty($m[2])) ? true : fn_check_permissions($m[1], $m[2], 'admin', $request_method, $request_params);
+    // [tennishouse]
 }
 
 function fn_check_html_view_permissions($data, $request_method = '')
