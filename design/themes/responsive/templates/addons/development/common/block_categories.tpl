@@ -5,8 +5,10 @@
         <a href="{"categories.view?category_id=$category_id"|fn_url}"><div class="ty-block-categories__item ty-block-categories__title">{$title}</div></a>
         {if !$no_subcategories}
             {$categories = $category_id|fn_get_block_categories}
-            {foreach from=$categories item="category"}
-                <div class="ty-block-categories__item"><a href="{"categories.view?category_id=`$category.category_id`"|fn_url}"> - {$category.category}</a></div>
+            {foreach from=$categories item="category" name="block_categories"}
+                {if $smarty.foreach.block_categories.iteration < 4}
+                    <div class="ty-block-categories__item"><a href="{"categories.view?category_id=`$category.category_id`"|fn_url}"> - {$category.category}</a></div>
+                {/if}
             {/foreach}
             <div class="ty-block-categories__item"><a href="{"categories.view?category_id=$category_id"|fn_url}"> - {__("check_all_items")}</a></div>
         {/if}

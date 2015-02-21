@@ -337,12 +337,12 @@
         <item lang="ru" id="mini">Мини</item>
         <item lang="ru" id="tmpl_products_cross_sales">Кросс продажи для товара</item>
         <item lang="ru" id="strings">Струны</item>
-        <item lang="ru" id="overgrips">Намотки</item>
+        <item lang="ru" id="overgrips">Обмотки</item>
         <item lang="ru" id="hybrid">Гибрид</item>
         <item lang="ru" id="error_incorrect_margin_data">Неправильный формат данных о надбавке</item>
         <item lang="ru" id="net_currency_code">Валюта себестоимости</item>
         <item lang="ru" id="recalculate_margins">Пересчитать надбавки</item>
-        <item lang="ru" id="hybrid">Гибрид</item>
+        <item lang="ru" id="strings_overgrips_discount_text">-20% на все струны и обмотки при покупке ракетки</item>
         <item lang="ru" id="hybrid">Гибрид</item>
         <item lang="ru" id="hybrid">Гибрид</item>
     </language_variables>

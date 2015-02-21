@@ -20,7 +20,7 @@
     </div>
 {/if}
 
-{if !$product.prices && !($product.full_description || $product.short_description)}
+{if !$product.prices && !($product.full_description || $product.short_description) && $product.product_features}
     <div class="ty-product-features" {if $product.prices}style="margin-bottom: 30px;"{/if}>
         {include file="views/products/components/product_features.tpl" product_features=$product.product_features details_page=true}
     </div>

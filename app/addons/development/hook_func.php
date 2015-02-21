@@ -70,8 +70,24 @@ function fn_development_get_product_feature_variants($fields, $join, &$condition
     }
 }
 
+function fn_filter_categroies(&$categories)
+{
+    if (!empty($categories)) {
+        foreach ($categories as $i => $cat) {
+            if (empty($cat['subcategories']) && $cat['product_count'] == 0) {
+                unset($categories[$i]);
+            } elseif (!empty($cat['subcategories'])) {
+                fn_filter_categroies($categories[$i]['subcategories']);
+            }
+        }
+    }
+}
+
 function fn_development_get_categories_post(&$categories_list, $params, $lang_code)
 {
+    if (AREA == 'C' && empty($params['skip_filter'])) {
+        fn_filter_categroies($categories_list);
+    }
     if (!empty($params['roundabout']) && !empty($categories_list)) {
         $brand_ids = array();
         foreach ($categories_list as $i => $category) {
@@ -104,6 +120,7 @@ function fn_development_get_categories(&$params, $join, $condition, &$fields, $g
 {
     $fields[] = '?:categories.note_url';
     $fields[] = '?:categories.note_text';
+    $fields[] = '?:categories.product_count';
     if (!empty($params['roundabout'])) {
         $params['get_images'] = true;
         $fields[] = '?:category_descriptions.description';
@@ -260,43 +277,41 @@ function fn_development_get_products($params, &$fields, &$sortings, &$condition,
             'BG' => array('72'),
         );
         $digit_features = array(R_WEIGHT_FEATURE_ID, R_STIFFNESS_FEATURE_ID, R_BALANCE_FEATURE_ID);
-        if (!empty($similar_products_features[$_SESSION['category_type']])) {
+        if (!empty($similar_products_features[$_SESSION['category_type']]) && !empty($_SESSION['product_features'][$feature_id])) {
             foreach ($similar_products_features[$_SESSION['category_type']] as $i => $feature_id) {
-                if (!empty($_SESSION['product_features'][$feature_id])) {
-                    if (!empty($_SESSION['product_features'][$feature_id]['variants'])) {
-                        foreach ($_SESSION['product_features'][$feature_id]['variants'] as $j => $variant) {
-                            if (!empty($variant['variant_id'])) {
-                                $params['features_condition'][$feature_id]['variants'][] = array(
-                                    'variant_id' => $variant['variant_id'],
-                                );
-                            }
-                        }
-                    } else {
-                        if (!in_array($feature_id, $digit_features)) {
-                            if (!empty($_SESSION['product_features'][$feature_id]['variant_id'])) {
-                                $params['features_condition'][$feature_id] = array(
-                                    'variant_id' => $_SESSION['product_features'][$feature_id]['variant_id'],
-                                );
-                            } elseif (!empty($_SESSION['product_features'][$feature_id]['value'])) {
-                                $params['features_condition'][$feature_id] = array(
-                                    'value' => $_SESSION['product_features'][$feature_id]['value'],
-                                );
-                            }
-                        } else {
-                            if ($feature_id == R_WEIGHT_FEATURE_ID) {
-                                $margin_value = 5;
-                            }
-                            if ($feature_id == R_STIFFNESS_FEATURE_ID) {
-                                $margin_value = 2;
-                            }
-                            if ($feature_id == R_BALANCE_FEATURE_ID) {
-                                $margin_value = 0.32;
-                            }
-                            $params['features_condition'][$feature_id] = array(
-                                'min_value' => $_SESSION['product_features'][$feature_id]['variant_name'] - $margin_value,
-                                'max_value' => $_SESSION['product_features'][$feature_id]['variant_name'] + $margin_value
+                if (!empty($_SESSION['product_features'][$feature_id]['variants'])) {
+                    foreach ($_SESSION['product_features'][$feature_id]['variants'] as $j => $variant) {
+                        if (!empty($variant['variant_id'])) {
+                            $params['features_condition'][$feature_id]['variants'][] = array(
+                                'variant_id' => $variant['variant_id'],
                             );
                         }
+                    }
+                } else {
+                    if (!in_array($feature_id, $digit_features)) {
+                        if (!empty($_SESSION['product_features'][$feature_id]['variant_id'])) {
+                            $params['features_condition'][$feature_id] = array(
+                                'variant_id' => $_SESSION['product_features'][$feature_id]['variant_id'],
+                            );
+                        } elseif (!empty($_SESSION['product_features'][$feature_id]['value'])) {
+                            $params['features_condition'][$feature_id] = array(
+                                'value' => $_SESSION['product_features'][$feature_id]['value'],
+                            );
+                        }
+                    } else {
+                        if ($feature_id == R_WEIGHT_FEATURE_ID) {
+                            $margin_value = 5;
+                        }
+                        if ($feature_id == R_STIFFNESS_FEATURE_ID) {
+                            $margin_value = 2;
+                        }
+                        if ($feature_id == R_BALANCE_FEATURE_ID) {
+                            $margin_value = 0.32;
+                        }
+                        $params['features_condition'][$feature_id] = array(
+                            'min_value' => $_SESSION['product_features'][$feature_id]['variant_name'] - $margin_value,
+                            'max_value' => $_SESSION['product_features'][$feature_id]['variant_name'] + $margin_value
+                        );
                     }
                 }
             }
@@ -509,10 +524,12 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
 {
     if (!empty($product_data['main_category'])) {
         $id_path = explode('/', db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $product_data['main_category']));
-        $enable_discussion = array('254', '263', '265', '266', '312', '313', '315', '316');
+        $enable_discussion = array('254', '263', '265', '266', '312', '313');
         $intersection = array_intersect($id_path, $enable_discussion);
         if (!empty($intersection)) {
             $product_data['discussion_type'] = 'B';
+        } else {
+            $product_data['discussion_type'] = 'D';
         }
         
         $players = (empty($product_data['players'])) ? array() : explode(',', $product_data['players']);

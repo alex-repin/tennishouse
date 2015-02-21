@@ -69,6 +69,12 @@ select {
     right: -100px;
     top: 10px;
 }
+.banner-inner {
+    background-color: #343135;
+    color: #ffff20;
+    font-size: 68px;
+}
+
 /* Tooltip */
 /*
  * Template: templates/common/tooltip.tpl
@@ -956,7 +962,7 @@ select {
     margin: 0;
 }
 .ty-product-block .ty-control-group__label {
-    width: 100px;
+    width: 130px;
 }
 .ty-product-variant-image {
     margin-left: 0;
@@ -966,6 +972,9 @@ select {
     padding: 1px;
 }
 .is-selected.ty-product-options__image {
+    border-color: @font;
+}
+.product-variant-image-selected {
     border-color: @font;
 }
 /*Product page*/
@@ -1513,12 +1522,28 @@ select {
 }
 .ty-product-cross-sales-title {
     color: @font;
-    font-size: 90%;
     font-weight: bold;
     left: 10px;
     position: absolute;
     text-transform: uppercase;
+    top: -20px;
+}
+.ty-product-cross-sales-all {
+    color: @font;
+    font-size: 70%;
+    font-weight: bold;
+    right: 10px;
+    position: absolute;
+    text-transform: uppercase;
     top: -15px;
+}
+.ty-micro-mode .ty-grid-list__item .ty-grid-list__image-product .ty-no-image {
+    min-height: 70px !important;
+    min-width: 70px !important;
+}
+.ty-product-cross-discounts {
+    margin: -10px 0 30px;
+    text-align: center;
 }
 
 /* Pages */

@@ -20,6 +20,7 @@
                 {if $smarty.capture.block_product_cross_sales}
                 <div class="ty-product-cross-block">
                     <div class="ty-product-plus">+</div>
+                    <div class="ty-product-cross-discounts">{__("strings_overgrips_discount_text")}</div>
                     {$smarty.capture.block_product_cross_sales nofilter}
                 </div>
                 {/if}

@@ -1,3 +1,4 @@
+{if $content|trim}
 {if !$active_tab}
     {assign var="active_tab" value=$smarty.request.selected_section}
 {/if}
@@ -54,4 +55,5 @@
 {/if}
 {else}
     {$content nofilter}
+{/if}
 {/if}

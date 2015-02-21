@@ -123,8 +123,11 @@ function fn_get_block_categories($category_id)
         'category_id' => $category_id,
         'visible' => true,
         'get_images' => true,
-        'limit' => 3
+        'limit' => 10
     );
+    if (fn_display_subheaders($category_id)) {
+        $_params['skip_filter'] = true;
+    }
     list($subcategories, ) = fn_get_categories($_params, CART_LANGUAGE);
     if (!empty($subcategories)) {
         if (fn_display_subheaders($category_id)) {
@@ -133,7 +136,7 @@ function fn_get_block_categories($category_id)
                 'category_id' => $subcategory['category_id'],
                 'visible' => true,
                 'get_images' => true,
-                'limit' => 3
+                'limit' => 10
             );
 
             list($categories, ) = fn_get_categories($params, CART_LANGUAGE);
@@ -362,9 +365,12 @@ function fn_get_product_global_margin($category_id)
     $currency = '';
     if (!empty($path)) {
         $cat_ids = explode('/', $path);
-        $cat_data = db_get_hash_array("SELECT margin, category_id, net_currency_code FROM ?:categories WHERE override_margin = 'Y' AND category_id IN (?n)", 'category_id', $cat_ids);
+        $cat_data = db_get_hash_array("SELECT margin, category_id, net_currency_code, override_margin FROM ?:categories WHERE category_id IN (?n)", 'category_id', $cat_ids);
         foreach (array_reverse($cat_ids) as $i => $cat_id) {
-            if (!empty($cat_data[$cat_id])) {
+            if (empty($currency)) {
+                $currency = $cat_data[$cat_id]['net_currency_code'];
+            }
+            if ($cat_data[$cat_id]['override_margin'] == 'Y' && !empty($cat_data[$cat_id]['margin'])) {
                 $result = $cat_data[$cat_id]['margin'];
                 $currency = $cat_data[$cat_id]['net_currency_code'];
                 break;
@@ -608,6 +614,10 @@ function fn_get_players($params)
         $condition .= db_quote(' AND ?:players.player_id != ?i', $params['except_id']);
     }
 
+    if (AREA == 'C') {
+        $condition .= db_quote(' AND ?:players_gear.product_id IS NOT NULL');
+    }
+    
     $limit = $group_by = '';
 
     if (!empty($params['limit'])) {
@@ -626,7 +636,7 @@ function fn_get_players($params)
             $players[$k]['gear'] = explode(',', $players[$k]['gear']);
         }
     }
-    
+
     return array($players, $params);
 }
 
