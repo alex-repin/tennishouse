@@ -13,7 +13,7 @@
         {/if}
         <div class="ty-mainbox-body">{$content nofilter}</div>
         {if $smarty.const.HTTPS}
-            <div class="ty-hover-ssl-cert">{include file="addons/development/blocks/static_templates/ssl_seal.tpl"}</div>
+            <div class="ty-hover-ssl-cert">{include file="addons/development/blocks/static_templates/ssl_seal.tpl" show_tooltip=true}</div>
         {/if}
     </div>
 {/if}

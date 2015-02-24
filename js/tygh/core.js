@@ -3378,6 +3378,13 @@ var Tygh = {
                         params.offset=[10, 7];
                         params.tipClass = 'tooltip arrow-down';
                         params.position = 'center left';
+                    } else if (elm.data('cetooltipposition') === 'ssl') {
+                        params.offset=[-10, -60];
+                        params.tipClass = 'tooltip-ssl tooltip arrow-down';
+                        params.position = 'bottom center';
+                        params.effect = 'fade';
+                        params.fadeOutSpeed = '1000';
+                        params.fadeInSpeed = '1000';
                     // [tennishouse]
                     } else {
                         params.offset=[10, 7];

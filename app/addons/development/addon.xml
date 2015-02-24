@@ -343,7 +343,7 @@
         <item lang="ru" id="net_currency_code">Валюта себестоимости</item>
         <item lang="ru" id="recalculate_margins">Пересчитать надбавки</item>
         <item lang="ru" id="strings_overgrips_discount_text">-20% на все струны и обмотки при покупке ракетки</item>
-        <item lang="ru" id="hybrid">Гибрид</item>
+        <item lang="ru" id="ssl_seal_text">Эта страница работает через защищенное соединение(https). TennisHouse обеспечивает эту защиту для того, чтобы Вы были уверены в безопасности Ваших личных данных, платежей и заказов.</item>
         <item lang="ru" id="hybrid">Гибрид</item>
     </language_variables>
 </addon>

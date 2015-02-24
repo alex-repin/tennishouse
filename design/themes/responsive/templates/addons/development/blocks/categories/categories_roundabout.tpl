@@ -1,6 +1,6 @@
 {** block-description:tmpl_roundabout **}
 
-{$imageSize = "250"}
+{$imageSize = "300"}
 {script src="js/addons/development/jquery.roundabout.min.js"}
 {script src="js/addons/development/jquery.roundabout-shapes.min.js"}
 <div class="ty-roundabout-wrapper">
