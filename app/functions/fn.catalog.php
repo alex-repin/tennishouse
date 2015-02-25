@@ -3604,7 +3604,7 @@ function fn_get_options_combinations($options, $variants)
                 foreach ($sub_combinations as $sub_combination) {
                     $sub_combination[$option_id] = $variant;
                     $combinations[] = $sub_combination;
-                }
+                }       
             } else {
                 $combinations[] = array(
                     $option_id => $variant
@@ -3644,6 +3644,12 @@ function fn_look_through_variants($product_id, $amount, $options, $variants)
     $position = 0;
     $hashes = array();
     $combinations = fn_get_options_combinations($options, $variants);
+    
+    // [tennishouse]
+    foreach ($options as $i => $option_id) {
+        $variant_codes[$option_id] = db_get_hash_single_array("SELECT variant_id, code_suffix FROM ?:product_option_variants WHERE variant_id IN (?a)", array('variant_id', 'code_suffix'), $variants[$i]);
+    }
+    $product_code = db_get_field("SELECT product_code FROM ?:products WHERE product_id = ?i", $product_id);
 
     if (!empty($combinations)) {
         foreach ($combinations as $combination) {
@@ -3664,9 +3670,15 @@ function fn_look_through_variants($product_id, $amount, $options, $variants)
                     . "WHERE product_id = ?i AND combination_hash = ?i AND temp = 'Y'",
                     $product_id, $_data['combination_hash']
                 );
+                $_data['product_code'] = $product_code;
+                foreach ($combination as $option_id => $variant_id) {
+                    if (!empty($variant_codes[$option_id][$variant_id])) {
+                        $_data['product_code'] .= '-' . $variant_codes[$option_id][$variant_id];
+                    }
+                }
 
                 $_data['amount'] = isset($old_data['amount']) ? $old_data['amount'] : $amount;
-                $_data['product_code'] = isset($old_data['product_code']) ? $old_data['product_code'] : '';
+//                $_data['product_code'] = isset($old_data['product_code']) ? $old_data['product_code'] : '';
 
                 /**
                  * Changes data before update combination
@@ -3686,6 +3698,7 @@ function fn_look_through_variants($product_id, $amount, $options, $variants)
             echo str_repeat('. ', count($combination));
         }
     }
+    // [tennishouse]
 
     /**
      * Changes the product options combinations

@@ -17,6 +17,11 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_get_product_option_data_pre($option_id, $product_id, $fields, $condition, $join, &$extra_variant_fields, $lang_code)
+{
+    $extra_variant_fields .= ' a.code_suffix,';
+}
+
 function fn_development_get_product_features_list_before_select(&$fields, $join, $condition, $product, $display_on, $lang_code)
 {
     $fields .= db_quote(", vd.mens_clothes_size_chart, vd.womens_clothes_size_chart, vd.mens_shoes_size_chart, vd.womens_shoes_size_chart");

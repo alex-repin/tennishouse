@@ -200,7 +200,7 @@
             <th class="cm-non-cb{if $option_data.option_type == "C"} hidden{/if}">{__("position_short")}</th>
             <th class="cm-non-cb{if $option_data.option_type == "C"} hidden{/if}">{__("name")}</th>
             <th>{__("modifier")}&nbsp;/&nbsp;{__("type")}</th>
-            <th>{__("weight_modifier")}&nbsp;/&nbsp;{__("type")}</th>
+            <th>{__("code_suffix")}</th>
             <th class="cm-non-cb{if $option_data.option_type == "C"} hidden{/if}">{__("status")}</th>
             <th>
                 <div id="on_st_{$id}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand cm-combinations-options-{$id} exicon-expand"></div><div id="off_st_{$id}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand hidden cm-combinations-options-{$id} exicon-collapse"></div>
@@ -224,10 +224,7 @@
                 {include file="buttons/update_for_all.tpl" display=$show_update_for_all object_id=$vr.variant_id name="update_all_vendors[`$num`]"}
             </td>
             <td class="nowrap">
-                <input type="text" name="option_data[variants][{$num}][weight_modifier]" value="{$vr.weight_modifier}" size="5" class="input-mini" />&nbsp;/&nbsp;<select class="input-mini" name="option_data[variants][{$num}][weight_modifier_type]">
-                    <option value="A" {if $vr.weight_modifier_type == "A"}selected="selected"{/if}>{$settings.General.weight_symbol}</option>
-                    <option value="P" {if $vr.weight_modifier_type == "P"}selected="selected"{/if}>%</option>
-                </select>
+                <input type="text" name="option_data[variants][{$num}][code_suffix]" value="{$vr.code_suffix}" size="5" class="input-mini" />
             </td>
             <td class="cm-non-cb{if $option_data.option_type == "C"} hidden{/if}">
                 {include file="common/select_status.tpl" input_name="option_data[variants][`$num`][status]" display="select" obj=$vr meta="input-small"}</td>
@@ -244,6 +241,15 @@
         <tr id="extra_option_variants_{$id}_{$num}" class="cm-ex-op hidden">
             <td colspan="7">
                 {hook name="product_options:edit_product_options"}
+                <div class="control-group cm-non-cb">
+                    <label class="control-label">{__("weight_modifier")}&nbsp;/&nbsp;{__("type")}</label>
+                    <div class="controls">
+                        <input type="text" name="option_data[variants][{$num}][weight_modifier]" value="{$vr.weight_modifier}" size="5" class="input-mini" />&nbsp;/&nbsp;<select class="input-mini" name="option_data[variants][{$num}][weight_modifier_type]">
+                            <option value="A" {if $vr.weight_modifier_type == "A"}selected="selected"{/if}>{$settings.General.weight_symbol}</option>
+                            <option value="P" {if $vr.weight_modifier_type == "P"}selected="selected"{/if}>%</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="control-group cm-non-cb{if $option_data.option_type == "C"} hidden{/if}">
                     <label class="control-label">{__("icon")}</label>
                     <div class="controls">
@@ -272,10 +278,7 @@
                 </select>
             </td>
             <td>
-                <input type="text" name="option_data[variants][{$num}][weight_modifier]" value="" size="5" class="input-mini" />&nbsp;/&nbsp;<select class='input-mini' name="option_data[variants][{$num}][weight_modifier_type]">
-                    <option value="A">{$settings.General.weight_symbol}</option>
-                    <option value="P">%</option>
-                </select>
+                <input type="text" name="option_data[variants][{$num}][code_suffix]" value="" size="5" class="input-mini" />
             </td>
             <td class="cm-non-cb{if $option_data.option_type == "C"} hidden{/if}">
                 {include file="common/select_status.tpl" input_name="option_data[variants][`$num`][status]" display="select" meta="input-small"}</td>
@@ -291,6 +294,15 @@
         <tr id="extra_option_variants_{$id}_{$num}" class="cm-ex-op hidden">
             <td colspan="7">
                 {hook name="product_options:edit_product_options"}
+                <div class="control-group cm-non-cb">
+                    <label class="control-label">{__("weight_modifier")}&nbsp;/&nbsp;{__("type")}</label>
+                    <div class="controls">
+                        <input type="text" name="option_data[variants][{$num}][weight_modifier]" value="" size="5" class="input-mini" />&nbsp;/&nbsp;<select class='input-mini' name="option_data[variants][{$num}][weight_modifier_type]">
+                            <option value="A">{$settings.General.weight_symbol}</option>
+                            <option value="P">%</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="control-group cm-non-cb">
                     <label class="control-label">{__("icon")}</label>
                     <div class="controls">

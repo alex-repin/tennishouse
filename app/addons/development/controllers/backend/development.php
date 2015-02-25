@@ -46,4 +46,15 @@ if ($mode == 'calculate_balance') {
     exit;
 } elseif ($mode == 'test_memcached') {
     exit;
+} elseif ($mode == 'rebuild_combinations') {
+    $product_ids = db_get_fields("SELECT DISTINCT(product_id) FROM ?:product_options_inventory");
+    if (!empty($product_ids)) {
+        foreach ($product_ids as $i => $product_id) {
+            fn_rebuild_product_options_inventory($product_id);
+        }
+    }
+    exit;
+} elseif ($mode == 'colors') {
+    $product_ids = db_get_fields("SELECT a.product_id FROM ?:product_options AS a LEFT JOIN ?:product_options_descriptions AS b ON a.option_id = b.option_id AND b.lang_code = 'ru' WHERE b.option_name LIKE '%цвет%'");
+    fn_print_die($product_ids);
 }
