@@ -7,3 +7,12 @@ Options -Indexes
 <Files ~ "\.([pP][hH][pP].?)$">
   deny from all
 </Files>
+
+# Rewrite watermarks rules
+<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteCond %{REQUEST_URI} \/images\/(product|category|detailed)\/*
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule .(gif|jpeg|jpg|png)$ /var/www/html/tennishouse/index.php?dispatch=watermark.create [NC]
+</IfModule>
+# /Rewrite watermarks rules
