@@ -37,6 +37,7 @@
         }
     });
     max_height = (max_height > mx_hght) ? mx_hght : max_height;
+    max_height = (max_height < 130) ? 130 : max_height;
     if (max_height) {
         $('#tabs_content').children().each(function(){
             $(this).css("height", max_height + 'px');

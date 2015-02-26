@@ -17,6 +17,34 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_update_product_option_post($option_data, $option_id, $deleted_variants, $lang_code)
+{
+    if (!empty($option_data['feature_id'])) {
+        $feature_data = fn_get_product_feature_data($option_data['feature_id'], true);
+    }
+    $option_variants = array();
+    if (!empty($option_data['variants'])) {
+        foreach ($option_data['variants'] as $i => $variant) {
+            $feature_variant_id = 0;
+            if (!empty($feature_data) && !empty($feature_data['variants'])) {
+                foreach ($feature_data['variants'] as $j => $f_variant) {
+                    if ($variant['variant_name'] == $f_variant['variant']) {
+                        $feature_variant_id = $f_variant['variant_id'];
+                        break;
+                    }
+                }
+                if (empty($feature_variant_id)) {
+                    $f_v_data = array(
+                        'variant' => $variant['variant_name']
+                    );
+                    $feature_variant_id = fn_update_product_feature_variant($feature_data['feature_id'], $feature_data['feature_type'], $f_v_data);
+                }
+            }
+            db_query('UPDATE ?:product_option_variants SET feature_variant_id = ?i WHERE variant_id = ?i', $feature_variant_id, $variant['variant_id']);
+        }
+    }
+}
+
 function fn_development_get_product_option_data_pre($option_id, $product_id, $fields, $condition, $join, &$extra_variant_fields, $lang_code)
 {
     $extra_variant_fields .= ' a.code_suffix,';

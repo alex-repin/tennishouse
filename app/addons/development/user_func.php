@@ -35,6 +35,53 @@ function fn_update_product_exception($product_id, $product_options, $new_amount)
             db_query("DELETE FROM ?:product_options_exceptions WHERE product_id = ?i AND combination = ?s", $product_id, serialize($product_options));
         }
     }
+    fn_update_combinations($product_id);
+}
+
+function fn_update_combinations($product_id)
+{
+    $combinations = db_get_array("SELECT * FROM ?:product_options_inventory WHERE product_id = ?i", $product_id);
+    if (!empty($combinations)) {
+        $option_variants_avail = $option_variants = array();
+        foreach ($combinations as $i => $combination) {
+            $options_array = fn_get_product_options_by_combination($combination['combination']);
+            if ($combination['amount'] < 1) {
+                foreach ($options_array as $option_id => $variant_id) {
+                    if (!in_array($option_id, array_keys($option_variants_avail))) {
+                        $option_variants_avail[$option_id] = array();
+                    }
+                }
+            } else {
+                foreach ($options_array as $option_id => $variant_id) {
+                    if (!in_array($variant_id, $option_variants_avail[$option_id])) {
+                        $option_variants_avail[$option_id][] = $option_variants[] = $variant_id;
+                    }
+                }
+            }
+        }
+        if (!empty($option_variants_avail)) {
+            $features = db_get_hash_single_array("SELECT feature_id, option_id FROM ?:product_options WHERE option_id IN (?n)", array('option_id', 'feature_id'), array_keys($option_variants_avail));
+            if (!empty($option_variants)) {
+                $feature_variants = db_get_hash_single_array("SELECT feature_variant_id, variant_id FROM ?:product_option_variants WHERE variant_id IN (?n)", array('variant_id', 'feature_variant_id'), $option_variants);
+            }
+            $features_data = array();
+            foreach ($option_variants_avail as $option_id => $variants) {
+                if (!empty($features[$option_id])) {
+                    $features_data[$features[$option_id]] = array();
+                    if (!empty($variants)) {
+                        foreach ($variants as $j => $variant_id) {
+                            if (!empty($feature_variants[$variant_id])) {
+                                $features_data[$features[$option_id]][] = $feature_variants[$variant_id];
+                            }
+                        }
+                    }
+                }
+            }
+            if (!empty($features_data)) {
+                fn_update_product_features_value($product_id, $features_data);
+            }
+        }
+    }
 }
 
 function fn_update_product_exceptions($product_id, $combinations)
@@ -43,17 +90,20 @@ function fn_update_product_exceptions($product_id, $combinations)
         $combination_options = db_get_hash_single_array("SELECT combination, combination_hash FROM ?:product_options_inventory WHERE combination_hash IN (?n)", array('combination_hash', 'combination'), array_keys($combinations));
         if (!empty($combination_options)) {
             foreach ($combination_options as $hash => $combination) {
-                db_query("DELETE FROM ?:product_options_exceptions WHERE product_id = ?i AND combination = ?s", $product_id, serialize(fn_get_product_options_by_combination($combination)));
+                $options_array = fn_get_product_options_by_combination($combination);
+                
+                db_query("DELETE FROM ?:product_options_exceptions WHERE product_id = ?i AND combination = ?s", $product_id, serialize($options_array));
                 if (!empty($combinations[$hash]) && $combinations[$hash]['amount'] < 1) {
                     $_data = array(
                         'product_id' => $product_id,
-                        'combination' => serialize(fn_get_product_options_by_combination($combination))
+                        'combination' => serialize($options_array)
                     );
                     db_query("INSERT INTO ?:product_options_exceptions ?e", $_data);
                 }
             }
         }
     }
+    fn_update_combinations($product_id);
 }
 
 function fn_gather_additional_products_data_cs(&$products, $params)

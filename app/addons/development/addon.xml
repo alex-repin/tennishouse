@@ -177,6 +177,12 @@
         <item>
             ALTER TABLE `cscart_product_option_variants` ADD `code_suffix` VARCHAR( 32 ) NOT NULL ;
         </item>
+        <item>
+            ALTER TABLE `cscart_product_options` ADD `feature_id` MEDIUMINT( 8 ) UNSIGNED NOT NULL ;
+        </item>
+        <item>
+            ALTER TABLE `cscart_product_option_variants` ADD `feature_variant_id` MEDIUMINT( 8 ) UNSIGNED NOT NULL ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>

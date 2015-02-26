@@ -55,6 +55,6 @@ if ($mode == 'calculate_balance') {
     }
     exit;
 } elseif ($mode == 'colors') {
-    $product_ids = db_get_fields("SELECT a.product_id FROM ?:product_options AS a LEFT JOIN ?:product_options_descriptions AS b ON a.option_id = b.option_id AND b.lang_code = 'ru' WHERE b.option_name LIKE '%цвет%'");
+    $product_ids = db_get_fields("SELECT a.product_id FROM ?:product_options AS a");
     fn_print_die($product_ids);
 }

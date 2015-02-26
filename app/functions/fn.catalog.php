@@ -3827,9 +3827,11 @@ function fn_get_product_features($params = array(), $items_per_page = 0, $lang_c
     $group_condition = '';
 
     $join .= db_quote(" LEFT JOIN ?:product_features_descriptions ON ?:product_features_descriptions.feature_id = pf.feature_id AND ?:product_features_descriptions.lang_code = ?s", $lang_code);
-    $join .= db_quote(" LEFT JOIN ?:product_features AS groups ON pf.parent_id = groups.feature_id");
+    // [tennishouse]
+    $join .= db_quote(" LEFT JOIN ?:product_features AS groups ON pf.parent_id = groups.feature_id LEFT JOIN ?:product_features_descriptions AS groups_descr ON groups_descr.feature_id = groups.feature_id AND groups_descr.lang_code = ?s", $lang_code);
 
-    $fields[] = 'groups.position AS group_position';
+    $fields[] = 'groups.position AS group_position, groups_descr.description AS group_description';
+    // [tennishouse]
 
     if (!empty($params['product_id'])) {
         $join .= db_quote(" LEFT JOIN ?:product_features_values ON ?:product_features_values.feature_id = pf.feature_id  AND ?:product_features_values.product_id = ?i AND ?:product_features_values.lang_code = ?s", $params['product_id'], $lang_code);
@@ -7791,7 +7793,7 @@ function fn_update_product_option($option_data, $option_id = 0, $lang_code = DES
         }
 
         $variant_images = array();
-        foreach ($option_data['variants'] as $k => $v) {
+        foreach ($option_data['variants'] as $k => &$v) {
             if ((!isset($v['variant_name']) || $v['variant_name'] == '') && $option_data['option_type'] != 'C') {
                 continue;
             }
