@@ -5330,7 +5330,7 @@ function fn_get_filters_products_count($params = array())
         $where .= fn_get_localizations_condition('?:categories.localization', true);
 
         $sliders_join = $sliders_where = '';
-
+        $sliders_condition = array();
         /**
          * Change SQL parameters before select filter variants and products count
          *
@@ -5354,6 +5354,7 @@ function fn_get_filters_products_count($params = array())
 
                 // [tennishouse]
                 if (!empty($slider_vals)) {
+                    $feature_conditions = array();
                     foreach ($slider_vals as $tp => $slider) {
                         if ($field['field_type'] != $tp) {
                             if ($tp == 'P') {
@@ -5368,10 +5369,15 @@ function fn_get_filters_products_count($params = array())
 
                                 $fields_where .= db_quote(" AND ?:product_prices.price >= ?i AND ?:product_prices.price <= ?i", $slider[0], $slider[1]);
                             } elseif ($fields[$tp]['condition_type'] == 'S') {
-                                $fields_join .= db_quote(" LEFT JOIN ?:product_features_values AS slider_cond_?i ON slider_cond_?i.product_id = ?:products.product_id AND slider_cond_?i.feature_id = ?i LEFT JOIN ?:product_feature_variant_descriptions AS slider_cond_descr_?i ON slider_cond_descr_?i.variant_id = slider_cond_?i.variant_id", $fields[$tp]['feature_id'], $fields[$tp]['feature_id'], $fields[$tp]['feature_id'], $fields[$tp]['feature_id'], $fields[$tp]['feature_id'], $fields[$tp]['feature_id'], $fields[$tp]['feature_id']);
-                                $fields_where .= db_quote(" AND slider_cond_descr_?i.variant >= ?f AND slider_cond_descr_?i.variant <= ?f ", $fields[$tp]['feature_id'], $slider[0], $fields[$tp]['feature_id'], $slider[1]);
+                                $feature_conditions[$fields[$tp]['feature_id']] = array(
+                                    'min_value' => $slider[0],
+                                    'max_value' => $slider[1],
+                                );
                             }
                         }
+                    }
+                    if (!empty($feature_conditions)) {
+                        FeaturesCache::getProductsConditions($feature_conditions, $fields_join, $fields_where, CART_LANGUAGE, '?:products');
                     }
                 }
                 // [tennishouse]
@@ -5588,18 +5594,23 @@ function fn_get_filters_products_count($params = array())
                             if (!empty($field_range_values[$filter_id]['left']) || !empty($field_range_values[$filter_id]['right'])) {
                                 $variant_ids = array();
                                 foreach ($variants_counts as $u => $rv) {
-                                    if ($field_range_values[$filter_id]['left'] <= $rv['range_name'] && $field_range_values[$filter_id]['right'] >= $rv['range_name'])
-                                    $variant_ids[] = $rv['range_id'];
+                                    if ($field_range_values[$filter_id]['left'] <= $rv['range_name'] && $field_range_values[$filter_id]['right'] >= $rv['range_name']) {
+                                        $sliders_condition[$field['feature_id']]['variants'][] = array(
+                                            'variant_id' => $rv['range_id']
+                                        );
+                                    }
                                 }
-                                $sliders_join .= db_quote(" LEFT JOIN ?:product_features_values AS slider_cond_?i ON slider_cond_?i.product_id = ?:product_features_values.product_id AND slider_cond_?i.feature_id = ?i ", $field['feature_id'], $field['feature_id'], $field['feature_id'], $field['feature_id']);
-                                $sliders_where .= db_quote(" AND slider_cond_?i.variant_id IN (?n) ", $field['feature_id'], $variant_ids);
                             }
                         }
                     }
                 }
-                // [tennishouse]
             }
         }
+        if (!empty($sliders_condition)) {
+            FeaturesCache::getProductsConditions($sliders_condition, $sliders_join, $sliders_where, CART_LANGUAGE, '?:products');
+        }
+        // [tennishouse]
+
 
         $filter_company_condition = "";
         if (fn_allowed_for('ULTIMATE') && Registry::get('runtime.company_id')) {

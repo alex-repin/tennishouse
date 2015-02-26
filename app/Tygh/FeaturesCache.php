@@ -134,7 +134,7 @@ class FeaturesCache
         self::set($memcache_features);
     }
     
-    public static function getProductsConditions($features_condition, &$join, &$condition, $lang_code = CART_LANGUAGE)
+    public static function getProductsConditions($features_condition, &$join, &$condition, $lang_code = CART_LANGUAGE, $products_table = 'products')
     {
         $memcache_features = self::get();
         if (!empty($memcache_features[$lang_code])) {
@@ -143,11 +143,13 @@ class FeaturesCache
             foreach ($features_condition as $feature_id => $feature_data) {
                 if (!empty($memcache_features[$feature_id])) {
                     if (!empty($feature_data['variants'])) {
+                        $pr_ids = array();
                         foreach ($feature_data['variants'] as $i => $variant) {
                             if (!empty($memcache_features[$feature_id]['variants'][$variant['variant_id']])) {
-                                $product_ids[] = $memcache_features[$feature_id]['variants'][$variant['variant_id']];
+                                $pr_ids = array_merge($pr_ids, $memcache_features[$feature_id]['variants'][$variant['variant_id']]);
                             }
                         }
+                        $product_ids[] = $pr_ids;
                     } elseif (!empty($feature_data['variant_id']) && !empty($memcache_features[$feature_id]['variants'][$feature_data['variant_id']])) {
                         $product_ids[] = $memcache_features[$feature_id]['variants'][$feature_data['variant_id']];
                     } elseif (!empty($feature_data['value']) && !empty($memcache_features[$feature_id]['values'][$feature_data['value']])) {
@@ -187,16 +189,18 @@ class FeaturesCache
                 }
                 $product_ids = $result;
             }
-            $condition .= db_quote(" AND products.product_id IN (?n) ", $product_ids);
+            $condition .= db_quote(" AND $products_table.product_id IN (?n) ", $product_ids);
         } else {
             foreach ($features_condition as $feature_id => $feature_data) {
-                $join .= db_quote(" LEFT JOIN ?:product_features_values AS feature_?i ON feature_?i.product_id = products.product_id AND feature_?i.feature_id = ?i AND feature_?i.lang_code = ?s", $feature_id, $feature_id, $feature_id, $feature_id, $feature_id, $lang_code);
+                $join .= db_quote(" LEFT JOIN ?:product_features_values AS feature_?i ON feature_?i.product_id = $products_table.product_id AND feature_?i.feature_id = ?i AND feature_?i.lang_code = ?s", $feature_id, $feature_id, $feature_id, $feature_id, $feature_id, $lang_code);
                 if (!empty($feature_data['variants'])) {
+                    $where_conditions = array();
                     foreach ($feature_data['variants'] as $i => $variant) {
                         if (!empty($variant['variant_id'])) {
-                            $condition .= db_quote(" AND feature_?i.variant_id = ?i ", $feature_id, $variant['variant_id']);
+                            $where_conditions[] = db_quote(" feature_?i.variant_id = ?i ", $feature_id, $variant['variant_id']);
                         }
                     }
+                    $condition .= db_quote(" AND (?p)", implode(" OR ", $where_conditions));
                 } elseif (!empty($feature_data['variant_id'])) {
                     $condition .= db_quote(" AND feature_?i.variant_id = ?i ", $feature_id, $feature_data['variant_id']);
                 } elseif (!empty($feature_data['value'])) {
