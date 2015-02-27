@@ -156,8 +156,8 @@
                         <label class="control-label" for="elm_options_type">{__("options_type")}:</label>
                         <div class="controls">
                             <select class="span3" name="product_data[options_type]" id="elm_options_type" {if $disable_selectors}disabled="disabled"{/if}>
-                                <option value="P" {if $product_data.options_type == "P"}selected="selected"{/if}>{__("simultaneous")}</option>
                                 <option value="S" {if $product_data.options_type == "S"}selected="selected"{/if}>{__("sequential")}</option>
+                                <option value="P" {if $product_data.options_type == "P"}selected="selected"{/if}>{__("simultaneous")}</option>
                             </select>
                         </div>
                     </div>

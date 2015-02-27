@@ -17,6 +17,18 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_get_product_option_data_post(&$opt, $product_id, $lang_code)
+{
+    if (!empty($opt['variants'])) {
+        $image_pairs = fn_get_image_pairs(array_keys($opt['variants']), 'variant_additional', 'Z', true, true, $lang_code);
+        foreach ($opt['variants'] as $i => $variant) {
+            if (!empty($image_pairs[$variant['variant_id']])) {
+                $opt['variants'][$i]['images'] = $image_pairs[$variant['variant_id']];
+            }
+        }
+    }
+}
+
 function fn_development_update_product_option_post($option_data, $option_id, $deleted_variants, $lang_code)
 {
     if (!empty($option_data['feature_id'])) {
@@ -41,6 +53,10 @@ function fn_development_update_product_option_post($option_data, $option_id, $de
                 }
             }
             db_query('UPDATE ?:product_option_variants SET feature_variant_id = ?i WHERE variant_id = ?i', $feature_variant_id, $variant['variant_id']);
+            
+            fn_attach_image_pairs('variant_additional_' . $variant['variant_id'], 'variant_additional', $variant['variant_id'], $lang_code);
+            fn_attach_image_pairs('variant_add_additional_' . $variant['variant_id'], 'variant_additional', $variant['variant_id'], $lang_code);
+            
         }
     }
 }
@@ -189,6 +205,32 @@ function fn_development_get_filters_products_count_pre(&$params)
     $params['get_all'] = true;
 }
 
+function fn_development_get_product_options_post($product_ids, $lang_code, $only_selectable, $inventory, $only_avail, &$options)
+{
+    $variant_ids = array();
+    foreach ($options as $product_id => $_options) {
+        foreach ($_options as $option_id => $_option) {
+            if (!empty($_option['variants'])) {
+                $variant_ids = array_merge($variant_ids, array_keys($_option['variants']));
+            }
+        }
+    }
+    if (!empty($variant_ids)) {
+        $image_pairs = fn_get_image_pairs($variant_ids, 'variant_additional', 'Z', true, true, $lang_code);
+        foreach ($options as $product_id => $_options) {
+            foreach ($_options as $option_id => $_option) {
+                if (!empty($_option['variants'])) {
+                    foreach ($_option['variants'] as $variant_id => $variant) {
+                        if (!empty($image_pairs[$variant_id])) {
+                            $options[$product_id][$option_id]['variants'][$variant_id]['images'] = $image_pairs[$variant_id];
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 function fn_development_gather_additional_product_data_post(&$product, $auth, $params)
 {
     if (AREA == 'C') {
@@ -212,6 +254,19 @@ function fn_development_gather_additional_product_data_post(&$product, $auth, $p
                 }
             }
         }
+        
+        if (($params['get_icon'] == true || $params['get_detailed'] == true) && !empty($product['selected_options'])) {
+            foreach ($product['selected_options'] as $option_id => $variant_id) {
+                if (!empty($product['product_options'][$option_id]['variants'][$variant_id]['images'])) {
+                    $tmp = $product['product_options'][$option_id]['variants'][$variant_id]['images'];
+                    $product['main_pair'] = reset($tmp);
+                    unset($tmp[key($tmp)]);
+                    $product['image_pairs'] = $tmp;
+                    break;
+                }
+            }
+        }
+        
     }
 }
 

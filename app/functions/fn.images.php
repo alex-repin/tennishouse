@@ -310,7 +310,9 @@ function fn_get_image_pairs($object_ids, $object_type, $pair_type, $get_icon = t
     if (is_array($object_ids)) {
         return $pairs_data;
     } else {
-        if ($pair_type == 'A') {
+        // [tennishouse]
+        if ($pair_type == 'A' || $pair_type == 'Z') {
+        // [tennishouse]
             return $pairs_data[$object_ids];
         } else {
             return !empty($pairs_data[$object_ids])? reset($pairs_data[$object_ids]) : array();

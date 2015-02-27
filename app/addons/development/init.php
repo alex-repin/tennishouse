@@ -44,5 +44,7 @@ fn_register_hooks(
     'get_product_features_list_before_select',
     'update_category_post',
     'get_product_option_data_pre',
-    'update_product_option_post'
+    'update_product_option_post',
+    'get_product_option_data_post',
+    'get_product_options_post'
 );

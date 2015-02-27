@@ -178,7 +178,9 @@ function fn_is_need_watermark($object_type, $is_detailed = true, $company_id = n
     $result = fn_is_watermarks_enabled($company_id);
 
     if ($result == true) {
-        if ($object_type == 'product_option' || $object_type == 'variant_image') {
+        // [tennishouse]
+        if ($object_type == 'product_option' || $object_type == 'variant_image' || $object_type == 'variant_additional') {
+        // [tennishouse]
             $object_type = 'product';
         }
 
