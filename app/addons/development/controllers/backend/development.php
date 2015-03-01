@@ -55,6 +55,6 @@ if ($mode == 'calculate_balance') {
     }
     exit;
 } elseif ($mode == 'colors') {
-    $product_ids = db_get_fields("SELECT a.product_id FROM ?:product_options AS a");
+    $product_ids = db_get_fields("SELECT DISTINCT(a.product_id) FROM ?:product_options_inventory AS a LEFT JOIN ?:images_links AS b ON a.combination_hash = b.object_id AND b.object_type = 'product_option' WHERE b.pair_id IS NOT NULL");
     fn_print_die($product_ids);
 }

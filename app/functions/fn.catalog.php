@@ -9217,20 +9217,27 @@ function fn_add_feature_variant($feature_id, $variant)
         return false;
     }
 
-    $variant['feature_id'] = $feature_id;
-    $variant['variant_id'] = db_query("INSERT INTO ?:product_feature_variants ?e", $variant);
+    // [tennishouse]
+    $exists = db_get_field("SELECT b.variant_id FROM ?:product_feature_variant_descriptions AS b LEFT JOIN ?:product_feature_variants AS a ON b.variant_id = a.variant_id AND b.lang_code = ?s WHERE b.variant = ?s AND a.feature_id = ?i", CART_LANGUAGE, $variant['variant'], $feature_id);
+    if (empty($exists)) {
+        $variant['feature_id'] = $feature_id;
+        $variant['variant_id'] = db_query("INSERT INTO ?:product_feature_variants ?e", $variant);
 
-    foreach (fn_get_translation_languages() as $variant['lang_code'] => $_d) {
-        db_query("INSERT INTO ?:product_feature_variant_descriptions ?e", $variant);
+        foreach (fn_get_translation_languages() as $variant['lang_code'] => $_d) {
+            db_query("INSERT INTO ?:product_feature_variant_descriptions ?e", $variant);
+        }
+
+        /**
+        * Adds additional actions before category parent updating
+        *
+        * @param int   $feature_id Feature identifier
+        * @param array $variant    Variant data
+        */
+        fn_set_hook('add_feature_variant_post', $feature_id, $variant);
+    } else {
+        $variant['variant_id'] = $exists;
     }
-
-    /**
-     * Adds additional actions before category parent updating
-     *
-     * @param int   $feature_id Feature identifier
-     * @param array $variant    Variant data
-     */
-    fn_set_hook('add_feature_variant_post', $feature_id, $variant);
+    // [tennishouse]
 
     return $variant['variant_id'];
 }

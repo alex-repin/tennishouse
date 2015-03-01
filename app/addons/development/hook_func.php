@@ -31,6 +31,9 @@ function fn_development_get_product_option_data_post(&$opt, $product_id, $lang_c
 
 function fn_development_update_product_option_post($option_data, $option_id, $deleted_variants, $lang_code)
 {
+    if ($option_data['inventory'] == 'Y') {
+        db_query("UPDATE ?:products SET tracking = 'O' WHERE product_id = ?i", $option_data['product_id']);
+    }
     if (!empty($option_data['feature_id'])) {
         $feature_data = fn_get_product_feature_data($option_data['feature_id'], true);
     }
