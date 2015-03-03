@@ -686,7 +686,7 @@ function fn_generate_pagination($params, $area = AREA)
         return array();
     }
 
-    $deviation = ($area == 'A') ? 5 : 7;
+    $deviation = ($area == 'A') ? 5 : 5;
     $max_pages = 10;
     $per_page = 10;
 
