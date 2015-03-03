@@ -41,11 +41,13 @@ function fn_development_update_product_option_post($option_data, $option_id, $de
     if (!empty($option_data['variants'])) {
         foreach ($option_data['variants'] as $i => $variant) {
             $feature_variant_id = 0;
-            if (!empty($feature_data) && !empty($feature_data['variants'])) {
-                foreach ($feature_data['variants'] as $j => $f_variant) {
-                    if ($variant['variant_name'] == $f_variant['variant']) {
-                        $feature_variant_id = $f_variant['variant_id'];
-                        break;
+            if (!empty($feature_data)) {
+                if (!empty($feature_data['variants'])) {
+                    foreach ($feature_data['variants'] as $j => $f_variant) {
+                        if ($variant['variant_name'] == $f_variant['variant']) {
+                            $feature_variant_id = $f_variant['variant_id'];
+                            break;
+                        }
                     }
                 }
                 if (empty($feature_variant_id)) {

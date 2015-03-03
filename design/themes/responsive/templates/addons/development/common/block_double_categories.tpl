@@ -4,8 +4,10 @@
         <div class="ty-block-categories-top-left">
             <a href="{"categories.view?category_id=$first_category_id"|fn_url}"><div class="ty-block-categories__item ty-block-categories__title">{$first_title}</div></a>
             {$categories = $first_category_id|fn_get_block_categories}
-            {foreach from=$categories item="category"}
-                <div class="ty-block-categories__item"><a href="{"categories.view?category_id=`$category.category_id`"|fn_url}"> - {$category.category}</a></div>
+            {foreach from=$categories item="category" name="block_categories"}
+                {if $smarty.foreach.block_categories.iteration < 4}
+                    <div class="ty-block-categories__item"><a href="{"categories.view?category_id=`$category.category_id`"|fn_url}"> - {$category.category}</a></div>
+                {/if}
             {/foreach}
             <div class="ty-block-categories__item"><a href="{"categories.view?category_id=$first_category_id"|fn_url}"> - {__("check_all_items")}</a></div>
         </div>
@@ -14,8 +16,10 @@
         <div class="ty-block-categories-top-left">
             <a href="{"categories.view?category_id=$second_category_id"|fn_url}"><div class="ty-block-categories__item ty-block-categories__title">{$second_title}</div></a>
             {$categories = $second_category_id|fn_get_block_categories}
-            {foreach from=$categories item="category"}
-                <div class="ty-block-categories__item"><a href="{"categories.view?category_id=`$category.category_id`"|fn_url}"> - {$category.category}</a></div>
+            {foreach from=$categories item="category" name="block_categories"}
+                {if $smarty.foreach.block_categories.iteration < 4}
+                    <div class="ty-block-categories__item"><a href="{"categories.view?category_id=`$category.category_id`"|fn_url}"> - {$category.category}</a></div>
+                {/if}
             {/foreach}
             <div class="ty-block-categories__item"><a href="{"categories.view?category_id=$second_category_id"|fn_url}"> - {__("check_all_items")}</a></div>
         </div>

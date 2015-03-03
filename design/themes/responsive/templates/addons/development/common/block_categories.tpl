@@ -6,7 +6,7 @@
         {if !$no_subcategories}
             {$categories = $category_id|fn_get_block_categories}
             {foreach from=$categories item="category" name="block_categories"}
-                {if $smarty.foreach.block_categories.iteration < 4}
+                {if $smarty.foreach.block_categories.iteration < 5}
                     <div class="ty-block-categories__item"><a href="{"categories.view?category_id=`$category.category_id`"|fn_url}"> - {$category.category}</a></div>
                 {/if}
             {/foreach}
