@@ -18,8 +18,24 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 if ($mode == 'view') {
     $category_data = Registry::get('view')->gettemplatevars('category_data');
+    if (empty($category_data['brand_id']) && !empty($category_data['parent_id'])) {
+        $cat_ids = explode('/', $category_data['id_path']);
+        $main_parent = reset($cat_ids);
+        if (!empty($main_parent)) {
+            $category_data['main_pair'] = fn_get_image_pairs($main_parent, 'category', 'M', true, true, CART_LANGUAGE);
+        }
+    } elseif (!empty($category_data['brand_id'])) {
+        unset($category_data['main_pair']);
+    }
     $products = Registry::get('view')->gettemplatevars('products');
-    $subcategories = Registry::get('view')->gettemplatevars('subcategories');
+    $params = array (
+        'category_id' => $category_data['category_id'],
+        'visible' => true,
+        'get_images' => true,
+        'skip_filter' => true
+    );
+    list($subcategories, ) = fn_get_categories($params, CART_LANGUAGE);
+    
     if (empty($subcategories) && empty($products)) {
         $cat_ids = explode('/', $category_data['id_path']);
         $main_parent = reset($cat_ids);
@@ -27,4 +43,6 @@ if ($mode == 'view') {
             return array(CONTROLLER_STATUS_REDIRECT, 'categories.view?category_id=' . $main_parent);
         }
     }
+    Registry::get('view')->assign('subcategories', $subcategories);
+    Registry::get('view')->assign('category_data', $category_data);
 }

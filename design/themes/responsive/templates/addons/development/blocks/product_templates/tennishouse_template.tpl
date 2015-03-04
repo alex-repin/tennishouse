@@ -25,6 +25,11 @@
                 </div>
                 {/if}
                 {if $product.players}
+                    {if "RASBST"|strpos:$product.category_type !== false}
+                        {$type = $product.category_type}
+                    {else}
+                        {$type = 'C'}
+                    {/if}
                     {if $product.players|count == '1'}
                         {$title = __("`$product.category_type`_played_by_single")}
                     {else}

@@ -1,14 +1,15 @@
 <div id="category_products_{$block.block_id}">
 
-{*if $category_data.description || $runtime.customization_mode.live_editor}
+{*if ($category_data.description || $runtime.customization_mode.live_editor) && !$category_data.category_id|fn_display_subheaders && !$category_data.parent_id}
     <div class="ty-wysiwyg-content ty-mb-s" {live_edit name="category:description:{$category_data.category_id}"}>{$category_data.description nofilter}</div>
-{/if}
+{/if*}
 
-{if $subcategories}
+{if $subcategories && !$category_data.category_id|fn_display_subheaders && !$category_data.parent_id}
     {math equation="ceil(n/c)" assign="rows" n=$subcategories|count c=$columns|default:"2"}
     {split data=$subcategories size=$rows assign="splitted_subcategories"}
     <ul class="subcategories clearfix">
     {foreach from=$splitted_subcategories item="ssubcateg"}
+        <div class="subcategories-column">
         {foreach from=$ssubcateg item=category name="ssubcateg"}
             {if $category}
                 <li class="ty-subcategories__item">
@@ -29,9 +30,10 @@
                 </li>
             {/if}
         {/foreach}
+        </div>
     {/foreach}
     </ul>
-{/if*}
+{/if}
 
 {if $smarty.request.advanced_filter}
     {include file="views/products/components/product_filters_advanced_form.tpl" separate_form=true}
@@ -56,7 +58,7 @@
 {/if}
 <!--category_products_{$block.block_id}--></div>
 
-{if $category_data.parent_id}
+{if !$category_data.main_pair.detailed.image_path}
     {capture name="mainbox_title"}
     {if $category_data.brand.image_pair.icon.image_path}
         {if $category.brand_id == $smarty.const.KIRSCHBAUM_BRAND_ID}

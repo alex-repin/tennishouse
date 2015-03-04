@@ -218,12 +218,14 @@
         <item lang="ru" id="A_played_by">В этой одежде играют</item>
         <item lang="ru" id="S_played_by">В этой обуви играют</item>
         <item lang="ru" id="B_played_by">Этой сумкой пользуются</item>
+        <item lang="ru" id="ST_played_by">Этими струнами играют</item>
         <item lang="ru" id="C_played_by">Этим товаром пользуются</item>
         <item lang="ru" id="R_played_by_single">Этой ракеткой играет</item>
         <item lang="ru" id="A_played_by_single">В этой одежде играет</item>
         <item lang="ru" id="S_played_by_single">В этой обуви играет</item>
         <item lang="ru" id="B_played_by_single">Этой сумкой пользуется</item>
         <item lang="ru" id="C_played_by_single">Этим товаром пользуется</item>
+        <item lang="ru" id="ST_played_by_single">Этими струнами играет</item>
         <item lang="ru" id="cm">см</item>
         <item lang="ru" id="this_brand">этого бренда</item>
         <item lang="ru" id="kg">кг</item>
@@ -353,6 +355,11 @@
         <item lang="ru" id="recalculate_margins">Пересчитать надбавки</item>
         <item lang="ru" id="strings_overgrips_discount_text">-20% на все струны и обмотки при покупке ракетки</item>
         <item lang="ru" id="ssl_seal_text">Эта страница работает через защищенное соединение(https). TennisHouse обеспечивает эту защиту для того, чтобы Вы были уверены в безопасности Ваших личных данных, платежей и заказов.</item>
+        <item lang="ru" id="code_suffix">Код</item>
+        <item lang="ru" id="code_suffix">Код</item>
+        <item lang="ru" id="code_suffix">Код</item>
+        <item lang="ru" id="code_suffix">Код</item>
+        <item lang="ru" id="code_suffix">Код</item>
         <item lang="ru" id="code_suffix">Код</item>
     </language_variables>
 </addon>

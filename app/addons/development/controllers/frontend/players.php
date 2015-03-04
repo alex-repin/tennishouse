@@ -39,6 +39,7 @@ if ($mode == 'view') {
                 'get_discounts' => true,
                 'get_features' => true
             ));
+
             $player_data['gear'] = array(
                 'R' => array(),
                 'BC' => array(),
@@ -47,10 +48,10 @@ if ($mode == 'view') {
             foreach ($gear as $i => $prod) {
                 if (in_array($prod['type'], array('R'))) {
                     $player_data['gear']['R'][] = $prod;
-                } elseif (in_array($prod['type'], array('B', 'C'))) {
-                    $player_data['gear']['BC'][] = $prod;
                 } elseif (in_array($prod['type'], array('A', 'S'))) {
                     $player_data['gear']['AS'][] = $prod;
+                } else {
+                    $player_data['gear']['BC'][] = $prod;
                 }
             }
         }

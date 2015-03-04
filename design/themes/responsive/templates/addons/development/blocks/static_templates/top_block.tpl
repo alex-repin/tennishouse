@@ -29,7 +29,7 @@
         </div>
     </div>
     <div class="ty-top-block_bottom-wrapper">
-        <a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=6"|fn_url}">
+        <a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=2"|fn_url}">
             <div class="ty-benefits-guarantees__top">
                 <div class="ty-benefits-guarantees__icon-block"><i class="ty-benefits-low-price"></i></div>
                 <div class="ty-benefits-guarantees__text ty-benefits-guarantees__text-single-line">{__("our_advantages_text")}</div>
