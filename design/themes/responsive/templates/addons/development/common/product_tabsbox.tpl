@@ -29,16 +29,28 @@
 </div>
 <script type="text/javascript">
 (function(_, $) {
-    var max_height = 0;
-    var mx_hght = $('.ty-product-block__left').hasClass('ty-product-block__left-long') ? 510 : 375;
+    var max_height = 120;
+    {if $product.image_pairs}
+        max_height += 50;
+    {/if}
+    {if $product.players}
+        max_height += 175;
+    {/if}
+    {if $smarty.capture.block_product_cross_sales}
+        max_height += 190;
+    {/if}
+    var mx_hght = 0;
     $('#tabs_content').children().each(function(){
-        if (max_height < $(this).outerHeight(true)) {
-            max_height = $(this).outerHeight(true);
+        if (mx_hght < $(this).outerHeight(true)) {
+            mx_hght = $(this).outerHeight(true);
         }
     });
-    max_height = (max_height > mx_hght) ? mx_hght : max_height;
-    max_height = (max_height < 130) ? 130 : max_height;
+    if (max_height < mx_hght) {
+        diff = mx_hght - max_height;
+        max_height += (diff > 100) ? 100 : diff;
+    }
     if (max_height) {
+        $('#tabs_content').css("max-height", max_height + 'px');
         $('#tabs_content').children().each(function(){
             $(this).css("height", max_height + 'px');
         });

@@ -40,19 +40,21 @@
                             {$title}
                         </h3>
                         <div>
-                            {foreach from=$product.players item="player"}
+                            {foreach from=$product.players item="player" name="plrs"}
+                                {if $smarty.foreach.plrs.iteration < 5}
                                     <div class="ty-product-list__player_image">
                                         <a href="{"players.view?player_id=`$player.player_id`"|fn_url}">
                                             {include file="common/image.tpl" obj_id=$obj_id_prefix images=$player.main_pair image_width=$settings.Thumbnails.product_lists_thumbnail_width image_height=$settings.Thumbnails.product_lists_thumbnail_height}
                                         </a>
                                         <div>{$player.player}</div>
                                     </div>
+                                {/if}
                             {/foreach}
                         </div>
                     </div>
                 {/if}
             </div>
-            <div class="ty-product-block__left {if $product.players}ty-product-block__left-long{/if}">
+            <div class="ty-product-block__left">
                 {assign var="form_open" value="form_open_`$obj_id`"}
                 {$smarty.capture.$form_open nofilter}
 
