@@ -40,27 +40,28 @@
         $('.tygh-top-panel').css({"left": - $(this).scrollLeft() + "px", "width": width});
         $('#tygh_main_container').css({"width": width});
     }
-    
 (function(_, $) {
-    if (!$('#tygh_main_container').hasClass('touch')) {
-        $(document).ready(function() {
-            fn_fix_width();
-            $(window).resize(function() {
+    Tygh.$(document).ready(function() {
+        if (!$('#tygh_main_container').hasClass('touch')) {
+            $(document).ready(function() {
                 fn_fix_width();
-                if ($(".ty-sticky").length > 0) {
-                    var init_position = 0;
-                    fn_stick_element();
-                }
+                $(window).resize(function() {
+                    fn_fix_width();
+                    if ($(".ty-sticky").length > 0) {
+                        var init_position = 0;
+                        fn_stick_element();
+                    }
+                });
+                $(window).scroll(function() {
+                    fn_fix_width();
+                    if ($(".ty-sticky").length > 0) {
+                        var init_position = 0;
+                        fn_stick_element();
+                    }
+                });
             });
-            $(window).scroll(function() {
-                fn_fix_width();
-                if ($(".ty-sticky").length > 0) {
-                    var init_position = 0;
-                    fn_stick_element();
-                }
-            });
-        });
-    }
+        }
+    });
 }(Tygh, Tygh.$));
 {/literal}
 </script>

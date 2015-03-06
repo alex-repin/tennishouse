@@ -355,6 +355,9 @@ function fn_check_vars($description)
             if ($vl == '{free_shipping_cost}') {
                 $description = str_replace($vl, Registry::get('addons.development.free_shipping_cost'), $description);
             }
+            if ($vl == '{company_phone}') {
+                $description = str_replace($vl, Registry::get('settings.Company.company_phone'), $description);
+            }
         }
     }
     return $description;
