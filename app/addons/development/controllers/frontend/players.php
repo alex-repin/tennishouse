@@ -71,14 +71,14 @@ if ($mode == 'view') {
         }
         $player_data['news_feed'] = $news_feed;
     }
-    fn_add_breadcrumb(__('professionals'), 'players.list');
+    fn_add_breadcrumb(__('professionals') . ' ' . (($player_data['gender'] == 'M') ? __("atp") : __("wta") ), 'players.list');
     fn_add_breadcrumb($player_data['player']);
 
     Registry::get('view')->assign('player_data', $player_data);
 
 } elseif ($mode == 'list') {
 
-    fn_add_breadcrumb(__('professionals'));
+    fn_add_breadcrumb(__('players_atp_wta'));
 
     $params = $_REQUEST;
     
@@ -89,4 +89,29 @@ if ($mode == 'view') {
     $params['gender'] = 'F';
     list($wta_players,) = fn_get_players($params);
     Registry::get('view')->assign('wta_players', $wta_players);
+    
+    $meta_players = '';
+    if (!empty($atp_players)) {
+        $num = 0;
+        foreach ($atp_players as $i => $player) {
+            if ($num < 5) {
+                $meta_players .= ($meta_players == '') ? $player['player'] : ', ' . $player['player'];
+                $num++;
+            } else {
+                break;
+            }
+        }
+    }
+    if (!empty($wta_players)) {
+        $num = 0;
+        foreach ($wta_players as $i => $player) {
+            if ($num < 5) {
+                $meta_players .= ($meta_players == '') ? $player['player'] : ', ' . $player['player'];
+                $num++;
+            } else {
+                break;
+            }
+        }
+    }
+    Registry::get('view')->assign('meta_players', $meta_players);
 }

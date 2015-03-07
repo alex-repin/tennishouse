@@ -531,41 +531,62 @@ function fn_get_categories_types($category_ids)
     $paths = db_get_hash_single_array("SELECT id_path, category_id FROM ?:categories WHERE category_id IN (?n)", array("category_id", "id_path"), $category_ids);
     $result = array();
     foreach ($paths as $i => $path) {
-        $result[$i] = fn_identify_category_type($path);
+        $result[$i] = fn_identify_type_category_id($path);
     }
     return $result;
 }
 
 function fn_identify_category_type($path)
 {
+    return fn_get_category_type(fn_identify_type_category_id($path));
+}
+function fn_get_category_type($category_id)
+{
+    $types = array(
+        RACKETS_CATEGORY_ID => 'R',
+        APPAREL_CATEGORY_ID => 'A',
+        SHOES_CATEGORY_ID => 'S',
+        BAGS_CATEGORY_ID => 'B',
+        SPORTS_NUTRITION_CATEGORY_ID => 'N',
+        STRINGS_CATEGORY_ID => 'ST',
+        ACCESSORIES_CATEGORY_ID => 'C',
+        BALLS_CATEGORY_ID => 'BL',
+        OVERGRIPS_CATEGORY_ID => 'OG',
+        BASEGRIPS_CATEGORY_ID => 'BG',
+        DAMPENERS_CATEGORY_ID => 'DP',
+    );
+    
+    return !empty($types[$category_id]) ? $types[$category_id] : '';
+}
+
+function fn_identify_type_category_id($path)
+{
     $type = '';
     if (!empty($path)) {
         $cats = explode('/', $path);
         if (in_array(RACKETS_CATEGORY_ID, $cats)) {
-            $type = 'R';
+            $type = RACKETS_CATEGORY_ID;
         } elseif (in_array(APPAREL_CATEGORY_ID, $cats)) {
-            $type = 'A';
+            $type = APPAREL_CATEGORY_ID;
         } elseif (in_array(SHOES_CATEGORY_ID, $cats)) {
-            $type = 'S';
+            $type = SHOES_CATEGORY_ID;
         } elseif (in_array(BAGS_CATEGORY_ID, $cats)) {
-            $type = 'B';
+            $type = BAGS_CATEGORY_ID;
         } elseif (in_array(SPORTS_NUTRITION_CATEGORY_ID, $cats)) {
-            $type = 'N';
+            $type = SPORTS_NUTRITION_CATEGORY_ID;
         } elseif (in_array(STRINGS_CATEGORY_ID, $cats)) {
-            $type = 'ST';
+            $type = STRINGS_CATEGORY_ID;
         } elseif (in_array(ACCESSORIES_CATEGORY_ID, $cats)) {
             if (in_array(BALLS_CATEGORY_ID, $cats)) {
-                $type = 'BL';
-            } elseif (in_array(TOWELS_CATEGORY_ID, $cats)) {
-                $type = 'TW';
+                $type = BALLS_CATEGORY_ID;
             } elseif (in_array(OVERGRIPS_CATEGORY_ID, $cats)) {
-                $type = 'OG';
+                $type = OVERGRIPS_CATEGORY_ID;
             } elseif (in_array(BASEGRIPS_CATEGORY_ID, $cats)) {
-                $type = 'BG';
+                $type = BASEGRIPS_CATEGORY_ID;
             } elseif (in_array(DAMPENERS_CATEGORY_ID, $cats)) {
-                $type = 'DP';
+                $type = DAMPENERS_CATEGORY_ID;
             } else {
-                $type = 'C';
+                $type = ACCESSORIES_CATEGORY_ID;
             }
         }
     }

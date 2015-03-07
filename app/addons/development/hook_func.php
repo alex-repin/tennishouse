@@ -128,7 +128,7 @@ function fn_filter_categroies(&$categories)
 {
     if (!empty($categories)) {
         foreach ($categories as $i => $cat) {
-            if (empty($cat['subcategories']) && $cat['product_count'] == 0) {
+            if (empty($cat['subcategories']) && $cat['product_count'] == 0 && empty($cat['has_children'])) {
                 unset($categories[$i]);
             } elseif (!empty($cat['subcategories'])) {
                 fn_filter_categroies($categories[$i]['subcategories']);
@@ -239,6 +239,9 @@ function fn_development_get_product_options_post($product_ids, $lang_code, $only
 function fn_development_gather_additional_product_data_post(&$product, $auth, $params)
 {
     if (AREA == 'C') {
+        if (!empty($product['category_main_id'])) {
+            $product['category_main_title'] = db_get_field("SELECT category FROM ?:category_descriptions WHERE category_id = ?i AND lang_code = ?s", $product['category_main_id'], CART_LANGUAGE);
+        }
         if ($product['tracking'] == 'O' && !empty($product['combination_hash'])) {
             $combination = $product['combination_hash'];
         } elseif ($product['tracking'] == 'B') {
@@ -698,8 +701,9 @@ function fn_development_get_product_data_post(&$product_data, $auth, $preview, $
     } else {
         $product_data['players'] = $players;
     }
-    $types = fn_get_categories_types($product_data['main_category']);
-    $product_data['category_type'] = $types[$product_data['main_category']];
+    $types_ids = fn_get_categories_types($product_data['main_category']);
+    $product_data['category_type'] = fn_get_category_type($types_ids[$product_data['main_category']]);
+    $product_data['category_main_id'] = $types_ids[$product_data['main_category']];
 }
 
 function fn_development_get_products_post(&$products, $params, $lang_code)
