@@ -1044,7 +1044,7 @@ function fn_seo_url_post(&$url, &$area, &$original_url, &$prefix, &$company_id_i
         } else {
             if (rtrim($url, '/') == Registry::get('config.http_location') || rtrim($url, '/') == Registry::get('config.https_location')) {
                 $url = rtrim($url, '/') . "/" . $index_script;
-                $parsed_url['path'] = rtrim($parsed_url['path'], '/') . "/" . $index_script;
+                $parsed_url['path'] = ((!empty($parsed_url['path'])) ? rtrim($parsed_url['path'], '/') : '') . "/" . $index_script;
             }
         }
     }
