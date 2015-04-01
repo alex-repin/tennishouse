@@ -183,6 +183,9 @@
         <item>
             ALTER TABLE `cscart_product_option_variants` ADD `feature_variant_id` MEDIUMINT( 8 ) UNSIGNED NOT NULL ;
         </item>
+        <div>
+            ALTER TABLE `cscart_shippings` ADD `payment_ids` TEXT NOT NULL ;
+        </div>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>

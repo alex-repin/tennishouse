@@ -2137,6 +2137,17 @@ function fn_get_shipping_info($shipping_id, $lang_code = CART_LANGUAGE)
             $shipping['service_params'] = unserialize($shipping['service_params']);
         }
 
+        // [tennishouse]
+        $payment_ids = unserialize($shipping['payment_ids']);
+        $shipping['payment_ids'] = array();
+        if (!empty($payment_ids)) {
+            $names = fn_get_simple_payment_methods($_SESSION['auth']);
+            foreach ($payment_ids as $i => $s_id) {
+                $shipping['payment_ids'][$s_id] = $names[$s_id];
+            }
+        }
+        // [tennishouse]
+
         $destinations = array();
         if ($shipping['rate_calculation'] == 'M') {
             $destinations = fn_get_destinations();

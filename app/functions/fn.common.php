@@ -3112,7 +3112,8 @@ function fn_strlen($string, $encoding = 'UTF-8')
     }
 
     if (function_exists('iconv_strlen')) {
-        return @iconv_strlen($string, $encoding);
+//        return @iconv_strlen($string, $encoding);
+        return @iconv_strlen($string);
     } elseif (function_exists('mb_strlen')) {
         return mb_strlen($string, $encoding);
     } else {

@@ -46,5 +46,7 @@ fn_register_hooks(
     'get_product_option_data_pre',
     'update_product_option_post',
     'get_product_option_data_post',
-    'get_product_options_post'
+    'get_product_options_post',
+    'update_shipping',
+    'prepare_checkout_payment_methods'
 );

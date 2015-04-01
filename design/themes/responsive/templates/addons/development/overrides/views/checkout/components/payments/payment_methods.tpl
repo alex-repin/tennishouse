@@ -70,15 +70,15 @@
                     
                     {if $payment.template}
                         {capture name="payment_template"}
-                            {if $payment.image}
-                                <div class="clearfix">
-                                    {include file="common/image.tpl" obj_id=$payment.payment_id images=$payment.image image_width=$settings.Thumbnails.product_cart_thumbnail_width image_height=$settings.Thumbnails.product_cart_thumbnail_height}
-                                </div>
-                            {/if}
-                            
                             {if $payment.description}
                                 <div class="ty-payments-list__description">
                                     {$payment.description}
+                                </div>
+                            {/if}
+
+                            {if $payment.image}
+                                <div class="clearfix">
+                                    {include file="common/image.tpl" obj_id=$payment.payment_id images=$payment.image image_height=$settings.Thumbnails.product_cart_thumbnail_height keep_transparent=true}
                                 </div>
                             {/if}
                             

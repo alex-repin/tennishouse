@@ -318,7 +318,7 @@ function fn_get_cross_sales($params)
 {
     $result = array();
     if (!empty($_SESSION['cart']['products'])) {
-        $objective_cat_ids = array(RACKETS_CATEGORY_ID, APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, BAGS_CATEGORY_ID, STRINGS_CATEGORY_ID, BALLS_CATEGORY_ID, TOWELS_CATEGORY_ID, OVERGRIPS_CATEGORY_ID, BASEGRIPS_CATEGORY_ID, DAMPENERS_CATEGORY_ID);
+        $objective_cat_ids = array(RACKETS_CATEGORY_ID, APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, BAGS_CATEGORY_ID, STRINGS_CATEGORY_ID, BALLS_CATEGORY_ID, OVERGRIPS_CATEGORY_ID, BASEGRIPS_CATEGORY_ID, DAMPENERS_CATEGORY_ID);
         $cat_ids = array();
         foreach ($_SESSION['cart']['products'] as $item_id => $item) {
             $cat_ids[] = $item['main_category'];

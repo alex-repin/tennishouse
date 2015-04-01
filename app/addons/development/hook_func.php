@@ -17,6 +17,36 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_prepare_checkout_payment_methods($cart, $auth, &$payment_groups)
+{
+    if (!empty($cart['chosen_shipping'])) {
+        $allowed_payments = array();
+        $ids = db_get_hash_single_array("SELECT payment_ids, shipping_id FROM ?:shippings WHERE shipping_id IN (?a)", array('shipping_id', 'payment_ids'), $cart['chosen_shipping']);
+        foreach ($cart['chosen_shipping'] as $i => $sh_id) {
+            if (!empty($ids[$sh_id])) {
+                $allowed_payments = array_merge($allowed_payments, unserialize($ids[$sh_id]));
+            }
+        }
+        if (!empty($allowed_payments) && !empty($payment_groups)) {
+            foreach ($payment_groups as $i => $tab) {
+                foreach ($tab as $j => $sh) {
+                    if (!in_array($sh['payment_id'], $allowed_payments)) {
+                        unset($payment_groups[$i][$j]);
+                    }
+                }
+                if (empty($payment_groups[$i])) {
+                    unset($payment_groups[$i]);
+                }
+            }
+        }
+    }
+}
+
+function fn_development_update_shipping(&$shipping_data, $shipping_id, $lang_code)
+{
+    $shipping_data['payment_ids'] = serialize($shipping_data['payment_ids']);
+}
+
 function fn_development_get_product_option_data_post(&$opt, $product_id, $lang_code)
 {
     if (!empty($opt['variants'])) {
