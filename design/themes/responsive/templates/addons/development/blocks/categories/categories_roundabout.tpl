@@ -6,7 +6,7 @@
 <div class="ty-roundabout-wrapper">
     <div id="roundabout_images_{$block.block_id}" class="ty-rounabout-list">
         {foreach from=$items item="category" name="categories_images"}
-            <div class="ty-roundabout-item" style="width: {$imageSize}px;height: {$imageSize}px;">
+            <div id="roundabout_category_{$category.category_id}" class="ty-roundabout-item" style="width: {$imageSize}px;height: {$imageSize}px;" onclick="if ($(this).hasClass('roundabout-in-focus')) {ldelim}$('#roundabout_category_link_{$category.category_id}').click();{rdelim}">
                 {include file="common/image.tpl"
                 show_detailed_link=false
                 images=$category.main_pair
@@ -29,7 +29,7 @@
             <div class="ty-roundabout-item-description" {if !$smarty.foreach.roundabout_descr.first}style="display: none;"{/if}>
                 <h2>{$category.category}</h2>
                 <div class="ty-wysiwyg-content ty-mb-s">{$category.description nofilter}</div>
-                <a href="{"categories.view?category_id=`$category.category_id`"|fn_url}">
+                <a id="roundabout_category_link_{$category.category_id}" href="{"categories.view?category_id=`$category.category_id`"|fn_url}">
                     <div class="ty-roundabout-view-collection">{__("view_collection")}</div>
                 </a>
             </div>
