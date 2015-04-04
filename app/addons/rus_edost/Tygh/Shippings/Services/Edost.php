@@ -369,6 +369,7 @@ class Edost implements IService
     {
 
         $xml = @simplexml_load_string($response);
+        $return = array();
 
         if (!empty($xml)) {
             foreach ($xml->tarif as $shipment) {

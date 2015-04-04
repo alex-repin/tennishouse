@@ -4020,8 +4020,10 @@ function fn_check_amount_in_stock($product_id, $amount, $product_options, $cart_
                             $v['product_id'] == $product_id
                         ) ||
                         (
+                        // [tennishouse]
                             $product['tracking'] == ProductTracking::TRACK_WITH_OPTIONS &&
-                            @$v['selectable_cart_id'] == $selectable_cart_id
+                            (!empty($v['selectable_cart_id']) && $v['selectable_cart_id'] == $selectable_cart_id)
+                        // [tennishouse]
                         )
                     ) {
                         $current_amount -= $v['amount'];
@@ -4576,7 +4578,7 @@ function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false)
             }
 
             $cart['products'][$_id]['extra'] = (empty($data['extra'])) ? array() : $data['extra'];
-            $cart['products'][$_id]['stored_discount'] = @$data['stored_discount'];
+            $cart['products'][$_id]['stored_discount'] = (!empty($data['stored_discount'])) ? $data['stored_discount'] : 0;
             if (defined('ORDER_MANAGEMENT')) {
                 $cart['products'][$_id]['discount'] = @$data['discount'];
             }
