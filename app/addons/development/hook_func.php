@@ -17,6 +17,18 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_shippings_get_shippings_list_conditions($group, $shippings, &$fields, $join, $condition, $order_by)
+{
+    $fields[] = "?:shippings.website";
+}
+
+function fn_development_shippings_get_shippings_list_post($group, $lang, $area, &$shippings_info)
+{
+    foreach ($shippings_info as $key => $shipping_info) {
+        $shippings_info[$key]['icon'] = fn_get_image_pairs($shipping_info['shipping_id'], 'shipping', 'M', true, true, $lang);
+    }
+}
+
 function fn_development_prepare_checkout_payment_methods($cart, $auth, &$payment_groups)
 {
     if (!empty($cart['chosen_shipping'])) {

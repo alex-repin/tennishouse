@@ -88,6 +88,13 @@
 </div>
 
 <div class="control-group">
+    <label class="control-label" for="elm_website">{__("website")}</label>
+    <div class="controls">
+    <input type="text" class="input-medium" name="shipping_data[website]" id="elm_website" size="30" value="{$shipping.website}" />
+    </div>
+</div>
+
+<div class="control-group">
     <label class="control-label" for="elm_min_weight">{__("weight_limit")}&nbsp;({$settings.General.weight_symbol}):</label>
     <div class="controls">
         <input type="text" name="shipping_data[min_weight]" id="elm_min_weight" size="4" value="{$shipping.min_weight}" class="input-mini" />&nbsp;-&nbsp;<input type="text" name="shipping_data[max_weight]" size="4" value="{if $shipping.max_weight != "0.00"}{$shipping.max_weight}{/if}" class="input-mini right" />

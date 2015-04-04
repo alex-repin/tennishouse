@@ -186,6 +186,9 @@
         <div>
             ALTER TABLE `cscart_shippings` ADD `payment_ids` TEXT NOT NULL ;
         </div>
+        <item>
+            ALTER TABLE `cscart_shippings` ADD `website` TEXT NOT NULL ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -363,6 +366,8 @@
         <item lang="ru" id="players_atp_wta">Игроки ATP и WTA тура</item>
         <item lang="ru" id="players_meta_description">Купить экипировку профессиональных теннисистов. [players] и другие. Бесплатная доставка и возврат по России*.</item>
         <item lang="ru" id="code_suffix">Код</item>
-        <item lang="ru" id="code_suffix">Код</item>
+        <item lang="ru" id="shipping_carriers_bottom_text">В дополнение к курьеру TennisHouse, который доставит Ваш заказ по Москве и области, мы также работаем с самыми лучшими курьерскими службами доставки по всей России</item>
+        <item lang="ru" id="payment_methods_bottom_text">В нашем магазине Вы можете оплатить покупки при получении банковской картой или наличными курьеру TennisHouse, либо выбрать любой другой способ онлайн оплаты</item>
+        <item lang="ru" id="shipping_and_payment">Оплата и доставка</item>
     </language_variables>
 </addon>
