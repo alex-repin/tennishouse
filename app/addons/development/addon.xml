@@ -187,7 +187,10 @@
             ALTER TABLE `cscart_shippings` ADD `payment_ids` TEXT NOT NULL ;
         </div>
         <item>
-            ALTER TABLE `cscart_shippings` ADD `website` TEXT NOT NULL ;
+            ALTER TABLE `cscart_shippings` ADD `website` VARCHAR( 128 ) NOT NULL ;
+        </item>
+        <item>
+            ALTER TABLE `cscart_payments` ADD `website` VARCHAR( 128 ) NOT NULL ;
         </item>
     </queries>
     <language_variables>

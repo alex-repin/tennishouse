@@ -19,7 +19,11 @@ Responsive: Large desktop and up 1200px
 @media (min-width: 1224px) {
 
     // Fixed grid
-    #grid > .core(@gridColumnWidth1200, @gridGutterWidth1200);
+    #grid > .core(@gridColumnWidth, @gridGutterWidth);
+    .ty-footer-grid {
+        #grid > .core(@gridColumnWidth1200, @gridGutterWidth1200);
+    }
+
 
     // Fluid grid
     #grid > .fluid(@fluidGridColumnWidth1200, @fluidGridGutterWidth1200);

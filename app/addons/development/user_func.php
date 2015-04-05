@@ -19,6 +19,32 @@ use Tygh\FeaturesCache;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_get_online_payment_methods()
+{
+    $payment_methods = db_get_hash_array("SELECT payment_id, website FROM ?:payments WHERE status = 'A' AND processor_id != '0' ORDER BY position", 'payment_id');
+
+    if (!empty($payment_methods)) {
+        foreach ($payment_methods as $i => $payment) {
+            $payment_methods[$i]['image'] = fn_get_image_pairs($payment['payment_id'], 'payment', 'M', true, true, CART_LANGUAGE);
+        }
+    }
+
+    return $payment_methods;
+}
+
+function fn_get_online_shipping_methods()
+{
+    $shipping_methods = db_get_hash_array("SELECT shipping_id, website FROM ?:shippings WHERE status = 'A' AND service_id != '0' ORDER BY position", 'shipping_id');
+
+    if (!empty($shipping_methods)) {
+        foreach ($shipping_methods as $i => $shipping) {
+            $shipping_methods[$i]['image'] = fn_get_image_pairs($shipping['shipping_id'], 'shipping', 'M', true, true, CART_LANGUAGE);
+        }
+    }
+
+    return $shipping_methods;
+}
+
 function fn_update_product_exception($product_id, $product_options, $new_amount)
 {
     $exist = fn_check_combination($product_options, $product_id);

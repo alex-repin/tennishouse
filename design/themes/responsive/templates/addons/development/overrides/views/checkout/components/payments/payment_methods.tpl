@@ -78,7 +78,7 @@
 
                             {if $payment.image}
                                 <div class="clearfix">
-                                    {include file="common/image.tpl" obj_id=$payment.payment_id images=$payment.image image_width="100" keep_transparent=true}
+                                    {include file="common/image.tpl" obj_id=$payment.payment_id images=$payment.image image_width="100" image_height="35" keep_transparent=true}
                                 </div>
                             {/if}
                             

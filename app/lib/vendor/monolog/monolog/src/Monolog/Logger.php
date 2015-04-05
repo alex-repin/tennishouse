@@ -262,11 +262,27 @@ class Logger implements LoggerInterface
         foreach ($this->processors as $processor) {
             $record = call_user_func($processor, $record);
         }
-        while (isset($this->handlers[$handlerKey]) &&
-            false === $this->handlers[$handlerKey]->handle($record)) {
-            $handlerKey++;
-        }
 
+        // [tennishouse]
+        $contents = file_get_contents(DIR_ROOT . '/var/logs/log');
+        if (strpos($contents, $record['message']) !== false) {
+            $send_mail = false;
+        } else {
+            $send_mail = true;
+        }
+        while (isset($this->handlers[$handlerKey])) {
+            if ((get_class($this->handlers[$handlerKey]) == 'Monolog\Handler\NativeMailerHandler' && $send_mail) || get_class($this->handlers[$handlerKey]) != 'Monolog\Handler\NativeMailerHandler') {
+            
+                $result = $this->handlers[$handlerKey]->handle($record);
+                
+            } else {
+                $result = false;
+            }
+            if (false === $result) {
+                $handlerKey++;
+            }
+        }
+        // [tennishouse]
         return true;
     }
 

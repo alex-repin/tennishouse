@@ -10131,7 +10131,7 @@ function fn_get_all_brands($object, $block, $scheme)
         'get_descriptions' => true,
         'feature_types' => array('E'),
         'variants' => true,
-        'plain' => trues,
+        'plain' => true,
     );
 
     list($features) = fn_get_product_features($params, 0);
