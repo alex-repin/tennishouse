@@ -42,4 +42,8 @@ $schema['central']['products']['items']['players'] = array(
     'position' => 350,
 );
 
+$schema['top']['administration']['items']['import_data']['subitems']['supplier_stocks'] = array(
+    'href' => 'development.update_stocks',
+    'position' => 1000,
+);
 return $schema;

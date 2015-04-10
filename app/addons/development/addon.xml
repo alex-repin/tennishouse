@@ -372,5 +372,9 @@
         <item lang="ru" id="shipping_carriers_bottom_text">В дополнение к курьеру TennisHouse, который доставит Ваш заказ по Москве и области, мы также работаем с самыми лучшими курьерскими службами доставки по всей России</item>
         <item lang="ru" id="payment_methods_bottom_text">В нашем магазине Вы можете оплатить покупки при получении банковской картой или наличными курьеру TennisHouse, либо выбрать любой другой способ онлайн оплаты</item>
         <item lang="ru" id="shipping_and_payment">Оплата и доставка</item>
+        <item lang="ru" id="supplier_stocks">Остатки поставщика</item>
+        <item lang="ru" id="update_stocks">Обновить остатки</item>
+        <item lang="ru" id="error_brand_undefined">Бренд не выбран</item>
+        <item lang="ru" id="error_duplicate_product_code">Одинаковый артикул [product_code] в строчках [line1] и [line2]</item>
     </language_variables>
 </addon>

@@ -82,6 +82,9 @@ define('CONFIGURATION_PF_ID', 39);
 /*Profile fields*/
 
 /*Feature values*/
+/*Brands*/
+define('BABOLAT_FV_ID', 143);
+/*Brands*/
 /*Apparel*/
 define('C_GENDER_M_FV_ID', 324);
 define('C_GENDER_W_FV_ID', 388);

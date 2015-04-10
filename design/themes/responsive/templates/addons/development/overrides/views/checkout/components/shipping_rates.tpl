@@ -116,7 +116,7 @@ function fn_calculate_total_shipping_cost() {
                             <p class="ty-shipping-options__method">
                                 <input type="radio" class="ty-valign" id="sh_{$group_key}_{$shipping.shipping_id}" name="shipping_ids[{$group_key}]" value="{$shipping.shipping_id}" onclick="fn_calculate_total_shipping_cost();" {$checked} />
                                 {if $shipping.icon}
-                                    {include file="common/image.tpl" obj_id=$shipping.shipping_id images=$shipping.icon image_width="70" keep_transparent=true}
+                                    {include file="common/image.tpl" obj_id=$shipping.shipping_id images=$shipping.icon image_width="70" image_height="35" keep_transparent=true}
                                 {/if}
                                 <label for="sh_{$group_key}_{$shipping.shipping_id}" class="ty-valign">{$shipping.shipping} {$delivery_time} - <b>{$rate nofilter}</b></label>
                                 {if $shipping.website}

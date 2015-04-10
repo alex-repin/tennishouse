@@ -79,7 +79,7 @@ function fn_update_combinations($product_id)
                 }
             } else {
                 foreach ($options_array as $option_id => $variant_id) {
-                    if (!in_array($variant_id, $option_variants_avail[$option_id])) {
+                    if (empty($option_variants_avail[$option_id]) || !in_array($variant_id, $option_variants_avail[$option_id])) {
                         $option_variants_avail[$option_id][] = $option_variants[] = $variant_id;
                     }
                 }
@@ -104,7 +104,8 @@ function fn_update_combinations($product_id)
                 }
             }
             if (!empty($features_data)) {
-                fn_update_product_features_value($product_id, $features_data);
+                $add_new_variant = array();
+                fn_update_product_features_value($product_id, $features_data, $add_new_variant, CART_LANGUAGE);
             }
         }
     }

@@ -88,42 +88,46 @@ class Edost implements IService
 
         $result = '';
 
-        if (($destination['country'] != 'RU') || ($origination != 'RU')) {
-            $result = !empty($countries[$destination['country']]) ? $countries[$destination['country']] : '';
-        } else {
+        // [tennishouse]
+        if (!empty($destination['city']) && !empty($destination['state']) && !empty($destination['country'])) {
+        // [tennishouse]
+            if (($destination['country'] != 'RU') || ($origination != 'RU')) {
+                $result = !empty($countries[$destination['country']]) ? $countries[$destination['country']] : '';
+            } else {
 
-            if (Registry::get('addons.rus_cities.status') == 'A') {
-                if (preg_match('/^[a-zA-Z]+$/',$destination['city'])) {
-                    $lang_code = 'en';
-                } else {
-                    $lang_code = 'ru';
-                }
-
-                $condition = db_quote(" d.lang_code = ?s AND d.city = ?s AND c.status = ?s", $lang_code , $destination['city'] , 'A');
-
-                if (!empty($destination['state'])) {
-                    $condition .= db_quote(" AND c.state_code = ?s", $destination['state']);
-                }
-                if (!empty($destination['country'])) {
-                    $condition .= db_quote(" AND c.country_code = ?s", $destination['country']);
-                }
-
-                $result = db_get_field("SELECT c.city_code FROM ?:rus_city_descriptions as d LEFT JOIN ?:rus_cities as c ON c.city_id = d.city_id WHERE ?p", $condition);
-
-            }
-
-            if (empty($result)) {
-                $result = !empty($cities[$destination['city']]) ? $cities[$destination['city']] : '';
-
-                if ($result == '') {
-                    $alt_city = $destination['city'] . ' (' . fn_get_state_name($destination['state'], $destination['country'], 'RU') . ')';
-                    if (!empty($cities[$alt_city])) {
-                        $result = $cities[$alt_city];
+                if (Registry::get('addons.rus_cities.status') == 'A') {
+                    if (preg_match('/^[a-zA-Z]+$/', $destination['city'])) {
+                        $lang_code = 'en';
+                    } else {
+                        $lang_code = 'ru';
                     }
+
+                    $condition = db_quote(" d.lang_code = ?s AND d.city = ?s AND c.status = ?s", $lang_code , $destination['city'] , 'A');
+
+                    if (!empty($destination['state'])) {
+                        $condition .= db_quote(" AND c.state_code = ?s", $destination['state']);
+                    }
+                    if (!empty($destination['country'])) {
+                        $condition .= db_quote(" AND c.country_code = ?s", $destination['country']);
+                    }
+
+                    $result = db_get_field("SELECT c.city_code FROM ?:rus_city_descriptions as d LEFT JOIN ?:rus_cities as c ON c.city_id = d.city_id WHERE ?p", $condition);
+
                 }
 
-                if ($result == '') {
-                    $result = !empty($regions[$destination['state']]) ? $regions[$destination['state']] : '';
+                if (empty($result)) {
+                    $result = !empty($cities[$destination['city']]) ? $cities[$destination['city']] : '';
+
+                    if ($result == '') {
+                        $alt_city = $destination['city'] . ' (' . fn_get_state_name($destination['state'], $destination['country'], 'RU') . ')';
+                        if (!empty($cities[$alt_city])) {
+                            $result = $cities[$alt_city];
+                        }
+                    }
+
+                    if ($result == '') {
+                        $result = !empty($regions[$destination['state']]) ? $regions[$destination['state']] : '';
+                    }
                 }
             }
         }
@@ -249,7 +253,12 @@ class Edost implements IService
      */
     public function getPackageValues()
     {
-
+        // [tennishouse]
+        if (empty($this->_shipping_info['package_info']['packages'])) {
+            return false;
+        }
+        // [tennishouse]
+        
         $packages = $this->_shipping_info['package_info']['packages'];
 
         foreach ($packages as $key => $pack) {
@@ -432,6 +441,12 @@ class Edost implements IService
      */
     private function _fillSessionData($shipping_info, $company_id, $rates = array())
     {
+        // [tennishouse]
+        if (empty($shipping_info['keys']['group_key']) || empty($shipping_info['keys']['shipping_id'])) {
+            return false;
+        }
+        // [tennishouse]
+        
         $group_key = $shipping_info['keys']['group_key'];
         $shipping_id = $shipping_info['keys']['shipping_id'];
 

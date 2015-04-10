@@ -1,12 +1,6 @@
 {capture name="mainbox"}
 
-{if $runtime.mode == "new"}
-    <p>{__("text_admin_new_orders")}</p>
-{/if}
-
 <form action="{""|fn_url}" method="get" target="_self" name="balance_form">
-
-{assign var="c_url" value=$config.current_url|fn_query_remove:"sort_by":"sort_order"}
 
 <div class="sidebar-field">
     <label for="length">{__("length")}</label>
@@ -30,4 +24,4 @@
 </form>
 {/capture}
 
-{include file="common/mainbox.tpl" title=$page_title content=$smarty.capture.mainbox content_id="manage_orders"}
+{include file="common/mainbox.tpl" title={__("calculate_balance")} content=$smarty.capture.mainbox content_id="calculate_balance"}

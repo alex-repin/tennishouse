@@ -2804,6 +2804,9 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
                     if ($rate['price'] !== false) {
                         $rate['price'] += !empty($product_groups[$g_key]['package_info']['shipping_freight']) ? $product_groups[$g_key]['package_info']['shipping_freight'] : 0;
                         $product_groups[$g_key]['shippings'][$sh_id]['rate'] = empty($product_groups[$g_key]['shippings'][$sh_id]['free_shipping']) ? $rate['price'] : 0;
+                        // [tennishouse]
+                        $product_groups[$g_key]['shippings'][$sh_id]['delivery_time'] = !empty($rate['delivery_time']) ? $rate['delivery_time'] : $product_groups[$g_key]['shippings'][$sh_id]['rate'];
+                        // [tennishouse]
                     } else {
                         unset($product_groups[$g_key]['shippings'][$sh_id]);
                     }

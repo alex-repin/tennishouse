@@ -259,7 +259,7 @@ if ($mode == 'details') {
     if (!empty($order_info['shipping'])) {
         foreach ($order_info['shipping'] as $shipping) {
             if ($shipping['module'] == 'sdek') {
-                $sdek_pvz = $shipping['office_id'];                
+                $sdek_pvz = !empty($shipping['office_id']) ? $shipping['office_id'] : '';
             }
         }        
     }

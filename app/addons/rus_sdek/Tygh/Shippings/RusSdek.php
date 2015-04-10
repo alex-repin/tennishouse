@@ -139,31 +139,37 @@ class RusSdek
 
     public static function SdekCityId($location)
     {
-        if ($location['country'] != 'RU') {
-            fn_set_notification('E', __('notice'), __('shippings.sdek.country_error'));
-        } else {
-            if (preg_match('/^[a-zA-Z]+$/',$location['city'])) {
-                $lang_code = 'en';
+        // [tennishouse]
+        $result = '';
+        
+        if (!empty($location['country']) && !empty($location['city'])) {
+        // [tennishouse]
+            if ($location['country'] != 'RU') {
+                fn_set_notification('E', __('notice'), __('shippings.sdek.country_error'));
             } else {
-                $lang_code = 'ru';
-            }
-
-            if (($lang_code == 'en') && (Registry::get('addons.rus_cities.status') == 'A')) {
-                $d_city = db_get_field("SELECT a.city FROM ?:rus_city_descriptions as a LEFT JOIN ?:rus_city_descriptions as b ON a.city_id = b.city_id WHERE a.lang_code = ?s and b.lang_code = ?s and b.city LIKE ?l ", 'ru', $lang_code, $location['city']);
-                if (!empty($d_city)) {
-                    $location['city'] = $d_city;
+                if (preg_match('/^[a-zA-Z]+$/',$location['city'])) {
+                    $lang_code = 'en';
+                } else {
                     $lang_code = 'ru';
                 }
-            }
 
-            $condition = db_quote(" d.lang_code = ?s AND d.city LIKE ?l AND c.status = ?s", $lang_code , $location['city'] . "%", 'A');
-            if (!empty($location['country'])) {
-                $condition .= db_quote(" AND c.country_code = ?s", $location['country']);
-            }
+                if (($lang_code == 'en') && (Registry::get('addons.rus_cities.status') == 'A')) {
+                    $d_city = db_get_field("SELECT a.city FROM ?:rus_city_descriptions as a LEFT JOIN ?:rus_city_descriptions as b ON a.city_id = b.city_id WHERE a.lang_code = ?s and b.lang_code = ?s and b.city LIKE ?l ", 'ru', $lang_code, $location['city']);
+                    if (!empty($d_city)) {
+                        $location['city'] = $d_city;
+                        $lang_code = 'ru';
+                    }
+                }
 
-            $result = db_get_field("SELECT c.city_code FROM ?:rus_city_sdek_descriptions as d LEFT JOIN ?:rus_cities_sdek as c ON c.city_id = d.city_id WHERE ?p", $condition);
-            if (empty($result)) {
-                fn_set_notification('E', __('notice'), __('shippings.sdek.city_error'));
+                $condition = db_quote(" d.lang_code = ?s AND d.city LIKE ?l AND c.status = ?s", $lang_code , $location['city'] . "%", 'A');
+                if (!empty($location['country'])) {
+                    $condition .= db_quote(" AND c.country_code = ?s", $location['country']);
+                }
+
+                $result = db_get_field("SELECT c.city_code FROM ?:rus_city_sdek_descriptions as d LEFT JOIN ?:rus_cities_sdek as c ON c.city_id = d.city_id WHERE ?p", $condition);
+                if (empty($result)) {
+                    fn_set_notification('E', __('notice'), __('shippings.sdek.city_error'));
+                }
             }
         }
 

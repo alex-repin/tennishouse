@@ -1,3 +1,6 @@
+convert xls to csv - ssconvert -O 'quoting-mode=always' Остатки\ по\ складу\ 08.04.15.xls остатки1.txt
+
+
 1. cc and ctpl - fn.init.php
 2. обновить ссылки страниц.
 4. настроить рассылки когда придумаю название

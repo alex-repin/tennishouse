@@ -16,18 +16,23 @@ use Tygh\Registry;
 
 if (defined('PAYMENT_NOTIFICATION')) {
 
+    // [tennishouse]
     if (isset($_REQUEST['ordernumber'])) {
-        $order_id = reset(explode('_', $_REQUEST['ordernumber']));
+        $ordernumber = explode('_', $_REQUEST['ordernumber']);
+        $order_id = reset($ordernumber);
 
     } elseif (isset($_REQUEST['orderNumber'])) {
-        $order_id = reset(explode('_', $_REQUEST['orderNumber']));
+        $orderNumber = explode('_', $_REQUEST['orderNumber']);
+        $order_id = reset($orderNumber);
 
     } elseif (isset($_REQUEST['merchant_order_id'])) {
-        $order_id = reset(explode('_', $_REQUEST['merchant_order_id']));
+        $merchant_order_id = explode('_', $_REQUEST['orderNumber']);
+        $order_id = reset($merchant_order_id);
 
     } else {
         $order_id = 0;
     }
+    // [tennishouse]
 
     $payment_id = db_get_field("SELECT payment_id FROM ?:orders WHERE order_id = ?i", $order_id);
     $processor_data = fn_get_processor_data($payment_id);
