@@ -43,7 +43,7 @@ $schema['central']['products']['items']['players'] = array(
 );
 
 $schema['top']['administration']['items']['import_data']['subitems']['supplier_stocks'] = array(
-    'href' => 'development.update_stocks',
+    'href' => 'development.supplier_stocks',
     'position' => 1000,
 );
 return $schema;

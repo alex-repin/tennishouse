@@ -15,10 +15,266 @@
 use Tygh\Memcache;
 use Tygh\Registry;
 use Tygh\Bootstrap;
+use Tygh\FeaturesCache;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    if ($mode == 'update_stocks') {
+
+        if (!empty($_REQUEST['calculate'])) {
+            $file = fn_filter_uploaded_data('csv_file');
+            $missing_products = $updated_products = $broken_options_products = $trash = array();
+            if (!empty($file) && !empty($_REQUEST['brand_id'])) {
+                if ($_REQUEST['brand_id'] == BABOLAT_FV_ID) {
+                    $options = array(
+                        'delimiter' => 'C',
+                        'lang_code' => 'ru'
+                    );
+                    if (list($total_data, $trash) = fn_get_babolat_csv($file[0]['path'], $options)) {
+
+                        $params = array(
+                            'features_hash' => 'V' . $_REQUEST['brand_id'],
+                            //'force_get_by_ids' => 'Y',
+                        );
+                        list($products,) = fn_get_products($params);
+                        $in_stock = $all_ids = array();
+                        if (!empty($products)) {
+                            foreach ($products as $i => $p_data) {
+                                $all_ids[] = $p_data['product_id'];
+                            }
+                        }
+                        $ignore_list = db_get_field("SELECT ignore_list FROM ?:brand_ignore_list WHERE brand_id = ?i", $_REQUEST['brand_id']);
+                        $ignore_list = !empty($ignore_list) ? unserialize($ignore_list) : array();
+                        foreach ($total_data as $product_code => $data) {
+                            if (!empty($ignore_list) && in_array($product_code, $ignore_list)) {
+                                continue;
+                            }
+                            $ids = db_get_fields("SELECT product_id FROM ?:products WHERE product_code = ?s", $product_code);
+                            if (count($ids) == 0 || empty($data['data'])) {
+                                $missing_products[$product_code] = $data;
+                            } else {
+                                $combinations_data = array();
+                                foreach ($data['data'] as $i => $variant) {
+                                    $option_data = $var_id_tmp = $options_count = array();
+                                    $is_found = false;
+                                    foreach ($ids as $m => $product_id) {
+                                        $option_data[$product_id] = (empty($option_data[$product_id])) ? array() : $option_data[$product_id];
+                                        $product_data = fn_get_product_data($product_id, $auth, DESCR_SL, '', false, false, false, false, false, false, false);
+                                        $product_options = fn_get_product_options($product_id, DESCR_SL, true, true);
+                                        $options_count[$product_id] = array_keys($product_options);
+                                        $option_names = array();
+                                        if (!empty($product_options)) {
+                                            foreach ($product_options as $h => $option) {
+                                                $option_names[] = $option['option_name'];
+                                            }
+                                        }
+                                        if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
+                                            fn_print_r($variant);
+                                        }
+                                        if ($variant[0] != '' && !empty($product_options) && $product_data['tracking'] == 'O' && !empty($variant[4])) {
+                                            $variants = explode(',', $variant[0]);
+                                            if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
+                                                fn_print_r($variants);
+                                            }
+                                            foreach ($variants as $j => $variant_name) {
+                                                $variant_name = fn_format_variant_name($variant_name);
+                                                if (!empty($option_names)) {
+                                                    foreach ($option_names as $h => $o_name) {
+                                                        $variant_name = str_ireplace(fn_strtolower($o_name), '', fn_strtolower($variant_name));
+                                                    }
+                                                }
+                                                if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
+                                                    fn_print_r($variant_name);
+                                                }
+                                                foreach ($product_options as $k => $opt_data) {
+                                                    if (!empty($opt_data['variants'])) {
+                                                        foreach ($opt_data['variants'] as $kk => $vr_data) {
+                                                            $var_name = fn_format_variant_name($vr_data['variant_name']);
+                                                            if (strlen($var_name) > 1 && strpos($variant_name, $var_name) !== false) {
+                                                                $var_id_tmp[$opt_data['option_id']][round(strlen($var_name)/strlen($variant_name), 2) * 100] = $vr_data['variant_id'];
+                                                            }
+                                                            if (strlen($variant_name) > 1 && strpos($var_name, $variant_name) !== false) {
+                                                                $var_id_tmp[$opt_data['option_id']][round(strlen($variant_name)/strlen($var_name), 2) * 100] = $vr_data['variant_id'];
+                                                            }
+                                                            if ($var_name === $variant_name) {
+                                                                if (empty($option_data[$product_id][$opt_data['option_id']])) {
+                                                                    $option_data[$product_id][$opt_data['option_id']] = $vr_data['variant_id'];
+                                                                    break 2;
+                                                                } else {
+                                                                    $broken_options_products[$product_code] = $data;
+                                                                    break 5;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        } elseif (count($data['data']) == 1 && $product_data['tracking'] == 'B' && !empty($variant[4])) {
+                                            db_query("UPDATE ?:products SET amount = ?i WHERE product_id = ?i", $variant[4], $product_id);
+                                            $updated_products[$product_code] = array(
+                                                'code' => $product_code,
+                                                'data' => $data
+                                            );
+                                            $in_stock[] = $product_id;
+                                            break 2;
+                                        } else {
+                                            $missing_products[$product_code] = $data;
+                                            break 2;
+                                        }
+                                        if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
+                                            fn_print_r($option_data);
+                                        }
+                                    }
+                                    if (!empty($option_data)) {
+                                        $count = $count_id = 0;
+                                        foreach ($option_data as $product_id => $opt_data) {
+                                            if ($count <= count($opt_data)) {
+                                                $count = count($opt_data);
+                                                $count_id = $product_id;
+                                            }
+                                        }
+                                        $option_data = array($count_id => $option_data[$count_id]);
+                                        $combination_hash = false;
+                                        foreach ($option_data as $product_id => $opt_data) {
+                                            if (count($options_count[$product_id]) != count($option_data[$product_id])) {
+                                                $diff = array_diff($options_count[$product_id], array_keys($option_data[$product_id]));
+                                                if (!empty($diff)) {
+                                                    foreach ($diff as $b => $opt_id) {
+                                                        if (!empty($var_id_tmp[$opt_id])) {
+                                                            krsort($var_id_tmp[$opt_id]);
+                                                            $option_data[$product_id][$opt_id] = reset($var_id_tmp[$opt_id]);
+                                                        }
+                                                    }
+                                                }
+                                                if (count($options_count[$product_id]) != count($option_data[$product_id])) {
+                                                    $broken_options_products[$product_code] = $data;
+                                                    break 2;
+                                                }
+                                            }
+                                            if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
+                                                fn_print_r($options_count[$product_id], $option_data[$product_id]);
+                                            }
+                                            $combination_hash = fn_generate_cart_id($product_id, array('product_options' => $option_data[$product_id]));
+                                            $combinations_data[$product_id][$combination_hash]['amount'] = $variant[4];
+                                            $is_combination = true;
+                                        }
+                                        if (empty($combination_hash)) {
+                                            $broken_options_products[$product_code] = $data;
+                                            break;
+                                        }
+                                    } else {
+                                        $broken_options_products[$product_code] = $data;
+                                        break;
+                                    }
+                                }
+                                if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
+                                    fn_print_die($combinations_data);
+                                }
+                                if (!empty($combinations_data)) {
+                                    foreach ($combinations_data as $product_id => $comb_data) {
+                                        fn_rebuild_product_options_inventory($product_id);
+                                        $inventory = db_get_hash_array("SELECT amount, combination_hash FROM ?:product_options_inventory WHERE product_id = ?i", 'combination_hash', $product_id);
+
+                                        foreach ($inventory as $k => $v) {
+                                            if (!empty($comb_data[$k])) {
+                                                $inventory[$k]['amount'] = $comb_data[$k]['amount'];
+                                                unset($comb_data[$k]);
+                                            } else {
+                                                $inventory[$k]['amount'] = 0;
+                                            }
+                                            db_query("UPDATE ?:product_options_inventory SET ?u WHERE combination_hash = ?s", $inventory[$k], $k);
+                                        }
+                                        fn_update_product_exceptions($product_id, $inventory);
+                                        if (!empty($comb_data)) {
+                                            $broken_options_products[$product_code] = $data;
+                                        } else {
+                                            $updated_products[$product_code] = array(
+                                                'code' => $product_code,
+                                                'data' => $data
+                                            );
+                                            $in_stock[] = $product_id;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        $out_of_stock = array_diff($all_ids, $in_stock);
+                        if (!empty($in_stock)) {
+                            db_query("UPDATE ?:products SET status = 'A' WHERE product_id IN (?n)", $in_stock);
+                        }
+                        if (!empty($out_of_stock)) {
+                            db_query("UPDATE ?:products SET status = 'D' WHERE product_id IN (?n)", $out_of_stock);
+                        }
+                    }
+                }
+            } elseif (empty($_REQUEST['brand_id'])) {
+                fn_set_notification('E', __('error'), __('error_brand_undefined'));
+            } elseif (empty($file)) {
+                fn_set_notification('E', __('error'), __('error_exim_no_file_uploaded'));
+            }
+            $ignored_products = array();
+            if (!empty($ignore_list)) {
+                foreach ($ignore_list as $i => $pcode) {
+                    $ignored_products[$pcode] = $total_data[$pcode];
+                }
+            }
+            
+            FeaturesCache::generate(CART_LANGUAGE);
+            
+            Registry::get('view')->assign('out_of_stock', count($out_of_stock));
+            Registry::get('view')->assign('in_stock', count($in_stock));
+            Registry::get('view')->assign('brand_id', $_REQUEST['brand_id']);
+            Registry::get('view')->assign('calculate', true);
+            Registry::get('view')->assign('total', count($total_data));
+            Registry::get('view')->assign('ignore_list', $ignored_products);
+            Registry::get('view')->assign('trash', $trash);
+            Registry::get('view')->assign('missing_products', $missing_products);
+            Registry::get('view')->assign('updated_products', $updated_products);
+            Registry::get('view')->assign('broken_options_products', $broken_options_products);
+        }
+        
+        Registry::get('view')->assign('brands', fn_development_get_brands());
+        Registry::get('view')->display('addons/development/views/development/supplier_stocks.tpl');
+        exit;
+    }
+    
+    if ($mode == 'ignore_products') {
+        if (!empty($_REQUEST['brand_id'])) {
+            $ignore_list = db_get_field("SELECT ignore_list FROM ?:brand_ignore_list WHERE brand_id = ?i", $_REQUEST['brand_id']);
+            $ignore_list = !empty($ignore_list) ? unserialize($ignore_list) : array();
+            $ignore_list = array_merge($ignore_list, $_REQUEST['product_codes']);
+            $_data = array(
+                'brand_id' => $_REQUEST['brand_id'],
+                'ignore_list' => serialize($ignore_list)
+            );
+            db_query("REPLACE INTO ?:brand_ignore_list ?e", $_data);
+            fn_set_notification('N', __('notice'), __('added_to_ignore_list'));
+        }
+        exit;
+    }
+    
+    if ($mode == 'watch_products') {
+        if (!empty($_REQUEST['brand_id'])) {
+            $ignore_list = db_get_field("SELECT ignore_list FROM ?:brand_ignore_list WHERE brand_id = ?i", $_REQUEST['brand_id']);
+            $ignore_list = !empty($ignore_list) ? unserialize($ignore_list) : array();
+            if (!empty($ignore_list)) {
+                foreach ($ignore_list as $i => $pcode) {
+                    if (in_array($pcode, $_REQUEST['product_codes'])) {
+                        unset($ignore_list[$i]);
+                    }
+                }
+                $_data = array(
+                    'brand_id' => $_REQUEST['brand_id'],
+                    'ignore_list' => serialize($ignore_list)
+                );
+                db_query("REPLACE INTO ?:brand_ignore_list ?e", $_data);
+                fn_set_notification('N', __('notice'), __('updated_ignore_list'));
+            }
+        }
+        exit;
+    }
 }
 
 if ($mode == 'calculate_balance') {
@@ -34,118 +290,9 @@ if ($mode == 'calculate_balance') {
     }
     Registry::get('view')->assign('params', $params);
 
-} elseif ($mode == 'update_stocks') {
-
-    if (!empty($_REQUEST['calculate'])) {
-        $file = fn_filter_uploaded_data('csv_file');
-        if (!empty($file) && !empty($_REQUEST['brand_id'])) {
-            if ($_REQUEST['brand_id'] == BABOLAT_FV_ID) {
-                $options = array(
-                    'delimiter' => 'C',
-                    'lang_code' => 'ru'
-                );
-                if (list($data, $skipped) = fn_get_babolat_csv($file[0]['path'], $options)) {
-
-                    $missing_products = $duplicate_products = $updated_products = $broken_options_products = array();
-                    foreach ($data as $product_code => $data) {
-                        $ids = db_get_fields("SELECT product_id FROM ?:products WHERE product_code = ?s", $product_code);
-                        if (count($ids) == 0 || empty($data['data'])) {
-                            $missing_products[$product_code] = $data;
-                        } elseif (count($ids) > 1) {
-                            $duplicate_products[$product_code] = $data;
-                        } else {
-                            $product_id = reset($ids);
-                            $product_data = fn_get_product_data($product_id, $auth, DESCR_SL, '', false, false, false, false, false, false, false);
-                            $product_options = fn_get_product_options($product_id, DESCR_SL, true);
-                            $option_names = array();
-                            if (!empty($product_options)) {
-                                foreach ($product_options as $h => $option) {
-                                    $option_names[] = $option['option_name'];
-                                }
-                            }
-                            $combinations_data = array();
-                            foreach ($data['data'] as $i => $variant) {
-                                if (!empty($variant[0]) && !empty($product_options) && $product_data['tracking'] == 'O' && !empty($variant[4])) {
-                                    $variants = explode(',', $variant[0]);
-                                    $option_data = array();
-                                    foreach ($variants as $j => $variant_name) {
-                                        $variant_name = 'ручка: 45';
-                                        if (!empty($option_names)) {
-                                            foreach ($option_names as $h => $o_name) {
-                                                 $variant_name = str_ireplace(fn_strtolower($o_name), '', fn_strtolower($variant_name));
-                                            }
-                                        }
-                                        $variant_name = preg_replace('/:/', '', $variant_name);
-                                        fn_trim_helper($variant_name);
-                                        $is_found = false;
-                                        foreach ($product_options as $k => $opt_data) {
-                                            if (!empty($opt_data['variants'])) {
-                                                foreach ($opt_data['variants'] as $kk => $vr_data) {
-                                                    if ($vr_data['variant_name'] == $variant_name) {
-                                                        $option_data[$opt_data['option_id']] = $vr_data['variant_id'];
-                                                        $is_found = true;
-                                                        break 2;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        if (!$is_found) {
-                                            $broken_options_products[$product_code] = $data;
-                                            break 2;
-                                        }
-                                    }
-                                    if (!empty($option_data)) {
-                                        $combination_hash = fn_generate_cart_id($product_id, array('product_options' => $option_data));
-                                        $combinations_data[$combination_hash]['amount'] = $variant[4];
-                                    } else {
-                                        $broken_options_products[$product_code] = $data;
-                                        break;
-                                    }
-                                } elseif (count($data['data']) == 1 && $product_data['tracking'] == 'B' && !empty($variant[4])) {
-                                    db_query("UPDATE ?:products SET amount = ?i WHERE product_id = ?i", $variant[4], $product_id);
-                                    $updated_products[$product_code] = $data;
-                                } else {
-                                    $missing_products[$product_code] = $data;
-                                    break;
-                                }
-                            }
-                            if (!empty($combinations_data)) {
-                                $inventory = db_get_hash_array("SELECT amount, combination_hash FROM ?:product_options_inventory WHERE product_id = ?i", 'combination_hash', $product_id);
-
-                                foreach ($inventory as $k => $v) {
-                                    if (!empty($combinations_data[$k])) {
-                                        $inventory[$k]['amount'] = $combinations_data[$k]['amount'];
-                                        unset($combinations_data[$k]);
-                                    } else {
-                                        $inventory[$k]['amount'] = 0;
-                                    }
-                                    db_query("UPDATE ?:product_options_inventory SET ?u WHERE combination_hash = ?s", $inventory[$k], $k);
-                                }
-                                fn_update_product_exceptions($product_id, $inventory);
-                                if (!empty($combinations_data)) {
-                                    $missing_products[$product_code] = $data;
-                                }
-                            } else {
-                                $missing_products[$product_code] = $data;
-                            }
-                        }
-                        fn_print_die('iter');
-                    }
-                    fn_print_die($data, $skipped_lines, $missing_products, $duplicate_products);
-                }
-            }
-        } elseif (empty($_REQUEST['brand_id'])) {
-            fn_set_notification('E', __('error'), __('error_brand_undefined'));
-        } elseif (empty($file)) {
-            fn_set_notification('E', __('error'), __('error_exim_no_file_uploaded'));
-        }
-    }
-
-    Registry::get('view')->assign('brands', fn_development_get_brands());
-    
 } elseif ($mode == 'supplier_stocks') {
 
-    Registry::get('view')->assign('brands', fn_get_all_brands());
+    Registry::get('view')->assign('brands', fn_development_get_brands());
     
 } elseif ($mode == 'show_memcached') {
 //    fn_print_r(Memcache::instance()->call('getMemcacheKeys', 2000));
@@ -203,8 +350,27 @@ if ($mode == 'calculate_balance') {
 //         }
     }
     exit;
+} elseif ($mode == 'fix_tracking') {
+    $ids = db_get_fields("SELECT DISTINCT(product_id) FROM ?:product_options WHERE inventory = 'Y'");
+    if (!empty($ids)) {
+        db_query("UPDATE ?:products SET tracking = 'O' WHERE product_id IN (?n)", $ids);
+    }
+    exit;
 }
 
+function fn_format_variant_name($variant_name)
+{
+    $variant_name = fn_strtolower($variant_name);
+    $variant_name = preg_replace('/ /', '', $variant_name);
+    $variant_name = preg_replace('/:/', '', $variant_name);
+    $variant_name = preg_replace('/[\+\-]/', '/', $variant_name);
+    $variant_name = preg_replace('/ё/', 'е', $variant_name);
+    $variant_name = preg_replace('/голубой/', 'синий', $variant_name);
+    $variant_name = preg_replace('/черно/', 'черный', $variant_name);
+    $variant_name = preg_replace('/желто/', 'желтый', $variant_name);
+    fn_trim_helper($variant_name);
+    return $variant_name;
+}
 function fn_development_get_brands()
 {
     $params = array(
@@ -257,7 +423,7 @@ function fn_get_babolat_csv($file, $options)
         if ($f) {
 
             // Collect data
-            $skipped_lines = array();
+            $trash_lines = array();
             $line_it = 1;
             $current_product_code = '';
             $previous_row = array();
@@ -269,7 +435,7 @@ function fn_get_babolat_csv($file, $options)
                 }
                 $row = Bootstrap::stripSlashes($data);
                 if (empty($current_product_code) && empty($row[0])) {
-                    $skipped_lines[] = array(
+                    $trash_lines[] = array(
                         'line' => $line_it,
                         'data' => $row
                     );
@@ -294,7 +460,7 @@ function fn_get_babolat_csv($file, $options)
                 } else {
                     $current_product_code = '';
                     $previous_row = '';
-                    $skipped_lines[] = array(
+                    $trash_lines[] = array(
                         'line' => $line_it,
                         'data' => $row
                     );
@@ -303,7 +469,7 @@ function fn_get_babolat_csv($file, $options)
                 $previous_row = $row;
             }
 
-            return array($result, $skipped_lines);
+            return array($result, $trash_lines);
         } else {
             fn_set_notification('E', __('error'), __('error_exim_cant_open_file'));
 

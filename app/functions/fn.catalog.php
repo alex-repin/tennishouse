@@ -8457,9 +8457,11 @@ function fn_apply_exceptions_rules($product)
             A - Allowed
             F - Forbidden
     */
-    if (empty($product['selected_options']) && $product['options_type'] == 'S') {
-        return $product;
-    }
+    // [tennishouse]
+//     if (empty($product['selected_options']) && $product['options_type'] == 'S') {
+//         return $product;
+//     }
+    // [tennishouse]
 
     $exceptions = fn_get_product_exceptions($product['product_id'], true);
 
@@ -8486,64 +8488,85 @@ function fn_apply_exceptions_rules($product)
             // Sequential exceptions type
             $_selected = array();
 
-            foreach ($product['selected_options'] as $option_id => $variant_id) {
-                $disable = true;
-                $full = array();
+            // [tennishouse]
+            if (!empty($product['selected_options'])) {
+                foreach ($product['selected_options'] as $option_id => $variant_id) {
+                    $disable = true;
+                    $full = array();
 
-                $_selected[$option_id] = $variant_id;
-                $elms = array_diff($exception, $_selected);
-                $_exception = $exception;
+                    $_selected[$option_id] = $variant_id;
+                    $elms = array_diff($exception, $_selected);
+                    $_exception = $exception;
 
-                if (!empty($elms)) {
-                    foreach ($elms as $opt_id => $var_id) {
-                        if ($var_id != -2 && $var_id != -1) {
-                            $disable = false;
-                        }
-                        if ($var_id == -1) {
-                            $full[$opt_id] = $var_id;
-                        }
-                        if (($product['exceptions_type'] == 'A' && $var_id == -1 && isset($_selected[$opt_id])) || ($product['exceptions_type'] != 'A' && $var_id == -1)) {
-                            unset($elms[$opt_id]);
-                            if ($product['exceptions_type'] != 'A') {
-                                unset($_exception[$opt_id]);
+                    if (!empty($elms)) {
+                        foreach ($elms as $opt_id => $var_id) {
+                            if ($var_id != -2 && $var_id != -1) {
+                                $disable = false;
+                            }
+                            if ($var_id == -1) {
+                                $full[$opt_id] = $var_id;
+                            }
+                            if (($product['exceptions_type'] == 'A' && $var_id == -1 && isset($_selected[$opt_id])) || ($product['exceptions_type'] != 'A' && $var_id == -1)) {
+                                unset($elms[$opt_id]);
+                                if ($product['exceptions_type'] != 'A') {
+                                    unset($_exception[$opt_id]);
+                                }
                             }
                         }
                     }
-                }
 
-                if ($disable && !empty($elms) && count($elms) != count($full)) {
-                    $vars = array_diff($elms, $full);
-                    $disable = false;
-                    foreach ($vars as $var) {
-                        if ($var != -1) {
-                            $disable = true;
+                    if ($disable && !empty($elms) && count($elms) != count($full)) {
+                        $vars = array_diff($elms, $full);
+                        $disable = false;
+                        foreach ($vars as $var) {
+                            if ($var != -1) {
+                                $disable = true;
+                            }
                         }
                     }
-                }
 
-                if ($disable && !empty($elms) && count($elms) != count($full)) {
-                    foreach ($elms as $opt_id => $var_id) {
-                        $disabled[$opt_id] = true;
+                    if ($disable && !empty($elms) && count($elms) != count($full)) {
+                        foreach ($elms as $opt_id => $var_id) {
+                            $disabled[$opt_id] = true;
+                        }
+                    } elseif ($disable && !empty($full)) {
+                        foreach ($full as $opt_id => $var_id) {
+                            $options[$opt_id]['any'] = true;
+                        }
+                    } elseif (count($elms) == 1 && reset($elms) == -2) {
+                        $disabled[key($elms)] = true;
+                    } elseif (($product['exceptions_type'] == 'A' && count($elms) + count($_selected) != count($_exception)) || ($product['exceptions_type'] == 'F' && count($elms) != 1)) {
+                        continue;
                     }
-                } elseif ($disable && !empty($full)) {
-                    foreach ($full as $opt_id => $var_id) {
-                        $options[$opt_id]['any'] = true;
+
+                    if (!isset($product['simultaneous'][$option_id]) || (isset($product['simultaneous'][$option_id]) && !isset($elms[$product['simultaneous'][$option_id]]))) {
+                        continue;
                     }
-                } elseif (count($elms) == 1 && reset($elms) == -2) {
-                    $disabled[key($elms)] = true;
-                } elseif (($product['exceptions_type'] == 'A' && count($elms) + count($_selected) != count($_exception)) || ($product['exceptions_type'] == 'F' && count($elms) != 1)) {
-                    continue;
-                }
 
-                if (!isset($product['simultaneous'][$option_id]) || (isset($product['simultaneous'][$option_id]) && !isset($elms[$product['simultaneous'][$option_id]]))) {
-                    continue;
-                }
-
-                $elms[$product['simultaneous'][$option_id]] = ($elms[$product['simultaneous'][$option_id]] == -1) ? 'any' : $elms[$product['simultaneous'][$option_id]];
-                if (isset($product['simultaneous'][$option_id]) && !empty($elms) && isset($elms[$product['simultaneous'][$option_id]])) {
-                    $options[$product['simultaneous'][$option_id]][$elms[$product['simultaneous'][$option_id]]] = true;
+                    $elms[$product['simultaneous'][$option_id]] = ($elms[$product['simultaneous'][$option_id]] == -1) ? 'any' : $elms[$product['simultaneous'][$option_id]];
+                    if (isset($product['simultaneous'][$option_id]) && !empty($elms) && isset($elms[$product['simultaneous'][$option_id]])) {
+                        $options[$product['simultaneous'][$option_id]][$elms[$product['simultaneous'][$option_id]]] = true;
+                    }
                 }
             }
+            $_tmp = $product['product_options'];
+            $first_opt = array_shift($_tmp);
+            if (!empty($_tmp)) {
+                $second_opt = array_shift($_tmp);
+            } else {
+                $second_opt = array();
+            }
+            $variants_num = empty($second_opt) ? 1 : count($second_opt['variants']);
+            $disabled_variants = array();
+            foreach ($exceptions as $exception_id => $exception) {
+                $disabled_variants[$exception[$first_opt['option_id']]] = (empty($disabled_variants[$exception[$first_opt['option_id']]])) ? 1 : $disabled_variants[$exception[$first_opt['option_id']]] + 1;
+            }
+            foreach ($disabled_variants as $vr_id => $num) {
+                if ($num == $variants_num) {
+                    unset($product['product_options'][$first_opt['option_id']]['variants'][$vr_id]);
+                }
+            }
+            // [tennishouse]
         } else {
             // Parallel exceptions type
             $disable = true;

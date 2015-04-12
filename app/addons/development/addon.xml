@@ -192,6 +192,13 @@
         <item>
             ALTER TABLE `cscart_payments` ADD `website` VARCHAR( 128 ) NOT NULL ;
         </item>
+        <item>
+            CREATE TABLE IF NOT EXISTS `cscart_brand_ignore_list` (
+                `brand_id` mediumint(8) unsigned NOT NULL,
+                `ignore_list` text NOT NULL,
+                PRIMARY KEY (`brand_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -376,5 +383,19 @@
         <item lang="ru" id="update_stocks">Обновить остатки</item>
         <item lang="ru" id="error_brand_undefined">Бренд не выбран</item>
         <item lang="ru" id="error_duplicate_product_code">Одинаковый артикул [product_code] в строчках [line1] и [line2]</item>
+        <item lang="ru" id="update_stock_updated">Обновленные артикулы</item>
+        <item lang="ru" id="update_stock_missed">Артикулы отсутствуют</item>
+        <item lang="ru" id="update_stock_duplicated">Одинаковые артикулы</item>
+        <item lang="ru" id="update_stock_broken_options">Проблемы с опциями</item>
+        <item lang="ru" id="update_stock_trash">Мусор</item>
+        <item lang="ru" id="add_selected_to_ignore_list">Добавить выбранные в черный список</item>
+        <item lang="ru" id="products_added_to_ignore_list">Товары добавлены в черный список</item>
+        <item lang="ru" id="updated_ignore_list">Черный список обновлен</item>
+        <item lang="ru" id="delete_selected_from_ignore_list">Удалить выбранные из черного списка</item>
+        <item lang="ru" id="debug_id_code">Отладчик (ID товара или артикул)</item>
+        <item lang="ru" id="total_product_codes">Всего артикулов</item>
+        <item lang="ru" id="products_in_stock">Товаров в наличии</item>
+        <item lang="ru" id="products_out_of_stock">Товаров нет в наличии</item>
+        <item lang="ru" id="update_stock_trash">Мусор</item>
     </language_variables>
 </addon>
