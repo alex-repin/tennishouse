@@ -50,5 +50,7 @@ fn_register_hooks(
     'update_shipping',
     'prepare_checkout_payment_methods',
     'shippings_get_shippings_list_post',
-    'shippings_get_shippings_list_conditions'
+    'shippings_get_shippings_list_conditions',
+    'delete_product_option_post',
+    'clone_product_options_post'
 );

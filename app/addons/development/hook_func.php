@@ -17,6 +17,25 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_clone_product_options_post($from_product_id, $to_product_id, $from_global_option_id)
+{
+    $options_left = db_get_fields("SELECT option_id FROM ?:product_options WHERE product_id = ?i AND inventory = 'Y'", $to_product_id);
+    if (!empty($options_left)) {
+        db_query("UPDATE ?:products SET tracking = 'O' WHERE product_id = ?i", $to_product_id);
+    }
+}
+
+function fn_development_delete_product_option_post($option_id, $pid, $option_deleted)
+{
+    $options_left = db_get_fields("SELECT option_id FROM ?:product_options WHERE product_id = ?i AND inventory = 'Y'", $pid);
+    if (empty($options_left)) {
+        $tracking = db_get_field("SELECT tracking FROM ?:products WHERE product_id = ?i", $pid);
+        if ($tracking == 'O') {
+            db_query("UPDATE ?:products SET tracking = 'B' WHERE product_id = ?i", $pid);
+        }
+    }
+}
+
 function fn_development_shippings_get_shippings_list_conditions($group, $shippings, &$fields, $join, $condition, $order_by)
 {
     $fields[] = "?:shippings.website";

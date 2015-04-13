@@ -396,6 +396,7 @@
         <item lang="ru" id="total_product_codes">Всего артикулов</item>
         <item lang="ru" id="products_in_stock">Товаров в наличии</item>
         <item lang="ru" id="products_out_of_stock">Товаров нет в наличии</item>
-        <item lang="ru" id="update_stock_trash">Мусор</item>
+        <item lang="ru" id="ignore_list">Черный список</item>
+        <item lang="ru" id="missing">Отсутствует</item>
     </language_variables>
 </addon>

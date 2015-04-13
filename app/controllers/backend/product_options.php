@@ -248,7 +248,7 @@ if ($mode == 'inventory') {
             db_query("DELETE FROM ?:product_global_option_links WHERE product_id = ?i AND option_id = ?i", $_REQUEST['product_id'], $_REQUEST['option_id']);
 
         } else {
-            fn_delete_product_option($_REQUEST['option_id']);
+            fn_delete_product_option($_REQUEST['option_id'], $_REQUEST['product_id']);
         }
 
         if (empty($_REQUEST['product_id']) && empty($p_id)) { // we're deleting global option itself

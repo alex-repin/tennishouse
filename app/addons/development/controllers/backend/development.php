@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     }
                                                 }
                                             }
-                                        } elseif (count($data['data']) == 1 && $product_data['tracking'] == 'B' && !empty($variant[4])) {
+                                        } elseif (count($data['data']) == 1 && $product_data['tracking'] == 'B' && !empty($variant[4]) && empty($product_options)) {
                                             db_query("UPDATE ?:products SET amount = ?i WHERE product_id = ?i", $variant[4], $product_id);
                                             $updated_products[$product_code] = array(
                                                 'code' => $product_code,
@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             $in_stock[] = $product_id;
                                             break 2;
                                         } else {
-                                            $missing_products[$product_code] = $data;
+                                            $broken_options_products[$product_code] = $data;
                                             break 2;
                                         }
                                         if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
@@ -128,15 +128,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         }
                                     }
                                     if (!empty($option_data)) {
-                                        $count = $count_id = 0;
-                                        foreach ($option_data as $product_id => $opt_data) {
-                                            if ($count <= count($opt_data)) {
-                                                $count = count($opt_data);
-                                                $count_id = $product_id;
-                                            }
-                                        }
-                                        $option_data = array($count_id => $option_data[$count_id]);
                                         $combination_hash = false;
+                                        if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
+                                            fn_print_r($options_count, $option_data, $var_id_tmp);
+                                        }
                                         foreach ($option_data as $product_id => $opt_data) {
                                             if (count($options_count[$product_id]) != count($option_data[$product_id])) {
                                                 $diff = array_diff($options_count[$product_id], array_keys($option_data[$product_id]));
@@ -149,8 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     }
                                                 }
                                                 if (count($options_count[$product_id]) != count($option_data[$product_id])) {
-                                                    $broken_options_products[$product_code] = $data;
-                                                    break 2;
+                                                    continue;
                                                 }
                                             }
                                             if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
@@ -159,6 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             $combination_hash = fn_generate_cart_id($product_id, array('product_options' => $option_data[$product_id]));
                                             $combinations_data[$product_id][$combination_hash]['amount'] = $variant[4];
                                             $is_combination = true;
+                                            break;
                                         }
                                         if (empty($combination_hash)) {
                                             $broken_options_products[$product_code] = $data;
@@ -217,7 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $ignored_products = array();
             if (!empty($ignore_list)) {
                 foreach ($ignore_list as $i => $pcode) {
-                    $ignored_products[$pcode] = $total_data[$pcode];
+                    $ignored_products[$pcode] = !empty($total_data[$pcode]) ? $total_data[$pcode] : array('product' => __('missing'));
                 }
             }
             
