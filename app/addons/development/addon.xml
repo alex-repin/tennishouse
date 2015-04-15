@@ -199,6 +199,9 @@
                 PRIMARY KEY (`brand_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
         </item>
+        <item>
+            ALTER TABLE `cscart_products` ADD `import_divider` MEDIUMINT( 8 ) NOT NULL DEFAULT '1';
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -397,6 +400,9 @@
         <item lang="ru" id="products_in_stock">Товаров в наличии</item>
         <item lang="ru" id="products_out_of_stock">Товаров нет в наличии</item>
         <item lang="ru" id="ignore_list">Черный список</item>
+        <item lang="ru" id="missing">Отсутствует</item>
+        <item lang="ru" id="import_divider">Делитель для импорта</item>
+        <item lang="ru" id="missing">Отсутствует</item>
         <item lang="ru" id="missing">Отсутствует</item>
     </language_variables>
 </addon>

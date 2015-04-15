@@ -46,7 +46,7 @@ if ($mode == 'view') {
                 'AS' => array(),
             );
             foreach ($gear as $i => $prod) {
-                if (in_array($prod['type'], array('R'))) {
+                if (in_array($prod['type'], array('R')) && empty($player_data['gear']['R'])) {
                     $player_data['gear']['R'][] = $prod;
                 } elseif (in_array($prod['type'], array('A', 'S'))) {
                     $player_data['gear']['AS'][] = $prod;

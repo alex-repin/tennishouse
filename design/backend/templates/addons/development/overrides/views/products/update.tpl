@@ -202,6 +202,13 @@
                     </div>
 
                     <div class="control-group">
+                        <label class="control-label" for="elm_import_divider">{__("import_divider")}:</label>
+                        <div class="controls">
+                            <input type="text" name="product_data[import_divider]" id="elm_import_divider" size="10" value="{$product_data.import_divider|default:"1"}" class="input-small" />
+                        </div>
+                    </div>
+
+                    <div class="control-group">
                         <label class="control-label" for="elm_zero_price_action">{__("zero_price_action")}:</label>
                         <div class="controls">
                             <select class="span5" name="product_data[zero_price_action]" id="elm_zero_price_action">

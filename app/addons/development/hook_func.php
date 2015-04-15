@@ -725,6 +725,22 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
 
 function fn_development_update_category_post($category_data, $category_id, $lang_code)
 {
+    if (!empty($category_data['override_shipping_weight']) && $category_data['override_shipping_weight'] == 'Y') {
+        $products = array();
+        $_params = array (
+            'cid' => $category_id,
+            'subcats' => 'Y'
+        );
+        list($prods,) = fn_get_products($_params);
+        if (!empty($prods)) {
+            foreach ($prods as $i => $prod) {
+                $products[] = $prod['product_id'];
+            }
+        }
+        if (!empty($products)) {
+            db_query("UPDATE ?:products SET weight = ?d WHERE product_id IN (?n)", $category_data['shipping_weight'], $products);
+        }
+    }
     if (!empty($category_data['recalculate_margins']) && $category_data['recalculate_margins'] == 'Y') {
         $products = array();
         $_params = array (

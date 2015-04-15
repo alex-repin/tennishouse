@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 $combinations_data = array();
                                 foreach ($data['data'] as $i => $variant) {
                                     $option_data = $var_id_tmp = $options_count = array();
-                                    $is_found = false;
+                                    $break = false;
                                     foreach ($ids as $m => $product_id) {
                                         $option_data[$product_id] = (empty($option_data[$product_id])) ? array() : $option_data[$product_id];
                                         $product_data = fn_get_product_data($product_id, $auth, DESCR_SL, '', false, false, false, false, false, false, false);
@@ -112,13 +112,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 }
                                             }
                                         } elseif (count($data['data']) == 1 && $product_data['tracking'] == 'B' && !empty($variant[4]) && empty($product_options)) {
-                                            db_query("UPDATE ?:products SET amount = ?i WHERE product_id = ?i", $variant[4], $product_id);
+                                            db_query("UPDATE ?:products SET amount = ?i WHERE product_id = ?i", floor($variant[4] / $product_data['import_divider']), $product_id);
                                             $updated_products[$product_code] = array(
                                                 'code' => $product_code,
                                                 'data' => $data
                                             );
                                             $in_stock[] = $product_id;
-                                            break 2;
+                                            $break = true;
                                         } else {
                                             $broken_options_products[$product_code] = $data;
                                             break 2;
@@ -126,6 +126,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
                                             fn_print_r($option_data);
                                         }
+                                    }
+                                    if ($break) {
+                                        break;
                                     }
                                     if (!empty($option_data)) {
                                         $combination_hash = false;
@@ -200,7 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             db_query("UPDATE ?:products SET status = 'A' WHERE product_id IN (?n)", $in_stock);
                         }
                         if (!empty($out_of_stock)) {
-                            db_query("UPDATE ?:products SET status = 'D' WHERE product_id IN (?n)", $out_of_stock);
+                            db_query("UPDATE ?:products SET status = 'H' WHERE product_id IN (?n)", $out_of_stock);
                         }
                     }
                 }
