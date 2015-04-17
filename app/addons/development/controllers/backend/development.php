@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             } else {
                                 $combinations_data = array();
                                 foreach ($data['data'] as $i => $variant) {
-                                    $option_data = $var_id_tmp = $options_count = array();
+                                    $option_data = $var_id_tmp = $options_count = $missing_variants = $max = array();
                                     $break = false;
                                     foreach ($ids as $m => $product_id) {
                                         $option_data[$product_id] = (empty($option_data[$product_id])) ? array() : $option_data[$product_id];
@@ -75,10 +75,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         }
                                         if ($variant[0] != '' && !empty($product_options) && $product_data['tracking'] == 'O' && !empty($variant[4])) {
                                             $variants = explode(',', $variant[0]);
+                                            $prev_numeric = false;
+                                            $prev_id = '';
+                                            foreach ($variants as $j => $variant_name) {
+                                                if (is_numeric($variant_name) && $prev_numeric) {
+                                                    $variants[$prev_id] = $variants[$prev_id] . '.' . $variant_name;
+                                                    unset($variants[$j]);
+                                                    continue;
+                                                } elseif (is_numeric($variant_name)) {
+                                                    $prev_numeric = true;
+                                                }
+                                                $prev_id = $j;
+                                            }
                                             if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
                                                 fn_print_r($variants);
                                             }
                                             foreach ($variants as $j => $variant_name) {
+                                                $max[$j] = (isset($max[$j])) ? $max[$j] : 0;
                                                 $variant_name = fn_format_variant_name($variant_name);
                                                 if (!empty($option_names)) {
                                                     foreach ($option_names as $h => $o_name) {
@@ -88,19 +101,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
                                                     fn_print_r($variant_name);
                                                 }
+                                                $variant_found = false;
                                                 foreach ($product_options as $k => $opt_data) {
                                                     if (!empty($opt_data['variants'])) {
                                                         foreach ($opt_data['variants'] as $kk => $vr_data) {
                                                             $var_name = fn_format_variant_name($vr_data['variant_name']);
                                                             if (strlen($var_name) > 1 && strpos($variant_name, $var_name) !== false) {
-                                                                $var_id_tmp[$opt_data['option_id']][round(strlen($var_name)/strlen($variant_name), 2) * 100] = $vr_data['variant_id'];
+                                                                $prc = round(strlen($var_name)/strlen($variant_name), 2) * 100;
+                                                                $var_id_tmp[$j][$opt_data['option_id']][$prc] = $vr_data['variant_id'];
+                                                                if ($prc > $max[$j]) {
+                                                                    $max[$j] = $prc;
+                                                                }
                                                             }
                                                             if (strlen($variant_name) > 1 && strpos($var_name, $variant_name) !== false) {
-                                                                $var_id_tmp[$opt_data['option_id']][round(strlen($variant_name)/strlen($var_name), 2) * 100] = $vr_data['variant_id'];
+                                                                $prc = round(strlen($variant_name)/strlen($var_name), 2) * 100;
+                                                                $var_id_tmp[$j][$opt_data['option_id']][round(strlen($variant_name)/strlen($var_name), 2) * 100] = $vr_data['variant_id'];
+                                                                if ($prc > $max[$j]) {
+                                                                    $max[$j] = $prc;
+                                                                }
                                                             }
                                                             if ($var_name === $variant_name) {
                                                                 if (empty($option_data[$product_id][$opt_data['option_id']])) {
                                                                     $option_data[$product_id][$opt_data['option_id']] = $vr_data['variant_id'];
+                                                                    $variant_found = true;
                                                                     break 2;
                                                                 } else {
                                                                     $broken_options_products[$product_code] = $data;
@@ -109,6 +132,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             }
                                                         }
                                                     }
+                                                }
+                                                if (!$variant_found) {
+                                                    $missing_variants[$product_id][] = $j;
                                                 }
                                             }
                                         } elseif (count($data['data']) == 1 && $product_data['tracking'] == 'B' && !empty($variant[4]) && empty($product_options)) {
@@ -133,16 +159,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     if (!empty($option_data)) {
                                         $combination_hash = false;
                                         if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
-                                            fn_print_r($options_count, $option_data, $var_id_tmp);
+                                            fn_print_r($options_count, $option_data, $var_id_tmp, $missing_variants, $max);
                                         }
                                         foreach ($option_data as $product_id => $opt_data) {
-                                            if (count($options_count[$product_id]) != count($option_data[$product_id])) {
+                                            if (count($options_count[$product_id]) != count($option_data[$product_id]) && !empty($missing_variants[$product_id])) {
                                                 $diff = array_diff($options_count[$product_id], array_keys($option_data[$product_id]));
                                                 if (!empty($diff)) {
                                                     foreach ($diff as $b => $opt_id) {
-                                                        if (!empty($var_id_tmp[$opt_id])) {
-                                                            krsort($var_id_tmp[$opt_id]);
-                                                            $option_data[$product_id][$opt_id] = reset($var_id_tmp[$opt_id]);
+                                                        foreach ($missing_variants[$product_id] as $r => $var_num) {
+                                                            if (!empty($var_id_tmp[$var_num][$opt_id][$max[$var_num]])) {
+                                                                $option_data[$product_id][$opt_id] = $var_id_tmp[$var_num][$opt_id][$max[$var_num]];
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -150,11 +177,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     continue;
                                                 }
                                             }
-                                            if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
-                                                fn_print_r($options_count[$product_id], $option_data[$product_id]);
-                                            }
                                             $combination_hash = fn_generate_cart_id($product_id, array('product_options' => $option_data[$product_id]));
                                             $combinations_data[$product_id][$combination_hash]['amount'] = $variant[4];
+                                            if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
+                                                fn_print_r($combinations_data);
+                                            }
                                             $is_combination = true;
                                             break;
                                         }
@@ -171,7 +198,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     fn_print_die($combinations_data);
                                 }
                                 if (!empty($combinations_data)) {
+                                    $ttl_updated = 0;
                                     foreach ($combinations_data as $product_id => $comb_data) {
+                                        $ttl_updated += count($comb_data);
                                         fn_rebuild_product_options_inventory($product_id);
                                         $inventory = db_get_hash_array("SELECT amount, combination_hash FROM ?:product_options_inventory WHERE product_id = ?i", 'combination_hash', $product_id);
 
@@ -194,6 +223,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             );
                                             $in_stock[] = $product_id;
                                         }
+                                    }
+                                    if ($ttl_updated != count($data['data'])) {
+                                        $broken_options_products[$product_code] = $data;
                                     }
                                 }
                             }

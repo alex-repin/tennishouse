@@ -402,7 +402,7 @@
         <item lang="ru" id="ignore_list">Черный список</item>
         <item lang="ru" id="missing">Отсутствует</item>
         <item lang="ru" id="import_divider">Делитель для импорта</item>
-        <item lang="ru" id="missing">Отсутствует</item>
+        <item lang="ru" id="short_phone">Тел.</item>
         <item lang="ru" id="missing">Отсутствует</item>
     </language_variables>
 </addon>
