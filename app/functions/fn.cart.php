@@ -337,7 +337,9 @@ function fn_get_payment_methods(&$auth, $lang_code = CART_LANGUAGE)
         $condition .= fn_get_localizations_condition('?:payments.localization');
     }
 
-    $payment_methods = db_get_hash_array("SELECT ?:payments.payment_id, ?:payments.template, ?:payments.a_surcharge, ?:payments.p_surcharge, ?:payments.payment_category, ?:payment_descriptions.*, ?:payment_processors.processor, ?:payment_processors.type AS processor_type FROM ?:payments LEFT JOIN ?:payment_descriptions ON ?:payments.payment_id = ?:payment_descriptions.payment_id AND ?:payment_descriptions.lang_code = ?s LEFT JOIN ?:payment_processors ON ?:payment_processors.processor_id = ?:payments.processor_id WHERE 1 $condition ORDER BY ?:payments.position", 'payment_id', $lang_code);
+    // [tennishouse]
+    $payment_methods = db_get_hash_array("SELECT ?:payments.payment_id, ?:payments.template, ?:payments.a_surcharge, ?:payments.p_surcharge, ?:payments.payment_category, ?:payments.min_limit, ?:payments.max_limit, ?:payment_descriptions.*, ?:payment_processors.processor, ?:payment_processors.type AS processor_type FROM ?:payments LEFT JOIN ?:payment_descriptions ON ?:payments.payment_id = ?:payment_descriptions.payment_id AND ?:payment_descriptions.lang_code = ?s LEFT JOIN ?:payment_processors ON ?:payment_processors.processor_id = ?:payments.processor_id WHERE 1 $condition ORDER BY ?:payments.position", 'payment_id', $lang_code);
+    // [tennishouse]
 
     fn_set_hook('get_payment_methods', $payment_methods, $auth);
 
@@ -6498,9 +6500,11 @@ function fn_prepare_checkout_payment_methods(&$cart, &$auth, $lang_code = CART_L
     // Check if payment method has surcharge rates
     foreach ($payment_methods as $k => $v) {
 
-        if ($payment_methods[$k]['processor_type'] == 'C') {
+        // [tennishouse]
+        if ($payment_methods[$k]['processor_type'] == 'C' || (!empty($payment_methods[$k]['min_limit']) && $payment_methods[$k]['min_limit'] > $cart['total']) || (!empty($payment_methods[$k]['max_limit']) && $payment_methods[$k]['max_limit'] < $cart['total'])) {
             continue;
         }
+        // [tennishouse]
 
         $payment_methods[$k]['surcharge_value'] = 0;
         if (floatval($v['a_surcharge'])) {

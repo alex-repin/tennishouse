@@ -51,7 +51,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 // Destiantion data
 if ($mode == 'update') {
 
-    $destination = db_get_row("SELECT a.destination_id, a.status, destination, a.localization FROM ?:destinations as a LEFT JOIN ?:destination_descriptions as b ON b.destination_id = a.destination_id AND b.lang_code = ?s WHERE a.destination_id = ?i", DESCR_SL, $_REQUEST['destination_id']);
+    // [tennishouse]
+    $destination = db_get_row("SELECT a.destination_id, a.status, destination, a.localization, a.shipping_ids FROM ?:destinations as a LEFT JOIN ?:destination_descriptions as b ON b.destination_id = a.destination_id AND b.lang_code = ?s WHERE a.destination_id = ?i", DESCR_SL, $_REQUEST['destination_id']);
+    // [tennishouse]
 
     if (empty($destination)) {
         return array(CONTROLLER_STATUS_NO_PAGE);
@@ -115,6 +117,9 @@ function fn_delete_destinations($destination_ids)
 function fn_update_destination($data, $destination_id, $lang_code = DESCR_SL)
 {
     $data['localization'] = empty($data['localization']) ? '' : fn_implode_localizations($data['localization']);
+    // [tennishouse]
+    $data['shipping_ids'] = !empty($data['shipping_ids']) ? serialize($data['shipping_ids']) : serialize(array());
+    // [tennishouse]
 
     if (!empty($destination_id)) {
         db_query('UPDATE ?:destinations SET ?u WHERE destination_id = ?i', $data, $destination_id);

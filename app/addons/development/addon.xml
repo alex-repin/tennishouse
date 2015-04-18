@@ -202,6 +202,13 @@
         <item>
             ALTER TABLE `cscart_products` ADD `import_divider` MEDIUMINT( 8 ) NOT NULL DEFAULT '1';
         </item>
+        <item>
+            ALTER TABLE `cscart_payments` ADD `min_limit` MEDIUMINT( 8 ) NOT NULL ,
+            ADD `max_limit` MEDIUMINT( 8 ) NOT NULL ;            
+        </item>
+        <item>
+            ALTER TABLE `cscart_destinations` ADD `shipping_ids` TEXT NOT NULL ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -403,6 +410,6 @@
         <item lang="ru" id="missing">Отсутствует</item>
         <item lang="ru" id="import_divider">Делитель для импорта</item>
         <item lang="ru" id="short_phone">Тел.</item>
-        <item lang="ru" id="missing">Отсутствует</item>
+        <item lang="ru" id="total_limit">Ограничение на сумму заказа</item>
     </language_variables>
 </addon>

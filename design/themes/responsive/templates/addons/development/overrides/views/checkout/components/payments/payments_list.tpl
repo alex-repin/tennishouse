@@ -13,9 +13,12 @@
                         {if $payment.image}
                             {include file="common/image.tpl" obj_id=$payment.payment_id images=$payment.image image_width="100" image_height="35" keep_transparent=true}
                         {/if}
-                        <label for="payment_{$payment.payment_id}" class="ty-payments-list__item-title">
-                            {$payment.payment}{if $payment.description} ({$payment.description}){/if}
-                        </label>
+                        <div class="ty-payments-list__item-title-block">
+                            <label for="payment_{$payment.payment_id}" class="ty-payments-list__item-title">
+                                {$payment.payment}
+                            </label>
+                            {if $payment.description}<div class="ty-payments-list__item-description">{$payment.description}</div>{/if}
+                        </div>
                     </div>
                 </li>
 

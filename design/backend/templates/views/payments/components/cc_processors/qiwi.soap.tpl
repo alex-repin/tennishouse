@@ -1,37 +1,24 @@
+<p>{__("qiwi_soap_attention")}</p>
 {assign var="q_url" value="http"|fn_payment_url:"qiwi.php?parameter=update"}
 <p>{__("qiwi_url_notice", ["[qiwi_url]" => $q_url])}</p>
 <p>{__("qiwi_login_notice")}</p>
+<p>{__("qiwi_alarm_notify")}</p>
 <hr>
 
 <div class="control-group">
-    <label class="control-label" for="qiwi_login">{__("rus_payments.qiwi_rest_id")}:</label>
+    <label class="control-label" for="qiwi_login">{__("rus_payments.qiwi_api_id")}:</label>
     <div class="controls">
         <input type="text" name="payment_data[processor_params][login]" id="qiwi_login" value="{$processor_params.login}"  size="60">
     </div>
 </div>
 
 <div class="control-group">
-    <label class="control-label" for="qiwi_password">{__("rus_payments.qiwi_rest_password")}:</label>
+    <label class="control-label" for="qiwi_password">{__("password")}:</label>
     <div class="controls">
         <input type="text" name="payment_data[processor_params][passwd]" id="qiwi_password" value="{$processor_params.passwd}"  size="60">
     </div>
 </div>
 
-<div class="control-group">
-    <label class="control-label" for="qiwi_shop_id">{__("rus_payments.qiwi_shop_id")}:</label>
-    <div class="controls">
-        <input type="text" name="payment_data[processor_params][shop_id]" id="qiwi_shop_id" value="{$processor_params.shop_id}"  size="60">
-    </div>
-</div>
-
-<div class="control-group">
-    <label class="control-label" for="qiwi_notification_password">{__("rus_payments.qiwi_notification_password")}:</label>
-    <div class="controls">
-        <input type="text" name="payment_data[processor_params][notification_password]" id="qiwi_notification_password" value="{$processor_params.notification_password}"  size="60">
-    </div>
-</div>
-
-{*
 <div class="control-group">
     <label class="control-label" for="qiwi_alarm">{__("qiwi_select_alarm")}:</label>
     <div class="controls">
@@ -42,7 +29,6 @@
         </select>
     </div>
 </div>
-*}
 
 <div class="control-group">
     <label class="control-label" for="qiwi_lifetime">{__("qiwi_select_lifetime")}:</label>
@@ -58,7 +44,6 @@
     </div>
 </div>
 
-{*
 <div class="control-group">
     <label class="control-label" for="qiwi_location">{__("qiwi_select_location")}:</label>
     <div class="controls">
@@ -68,4 +53,3 @@
         </select>
     </div>
 </div>
-*}

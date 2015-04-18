@@ -113,6 +113,13 @@
             </div>
         </div>
 
+        <div class="control-group">
+            <label class="control-label" for="elm_payment_total_limit_{$id}">{__("total_limit")}:</label>
+            <div class="controls">
+                <input id="elm_payment_min_limit_{$id}" type="text" name="payment_data[min_limit]" class="input-mini" value="{$payment.min_limit}" size="4"> {$currencies.$primary_currency.symbol nofilter} - <input type="text" name="payment_data[max_limit]" value="{$payment.max_limit}" class="input-mini" size="4"> {$currencies.$primary_currency.symbol nofilter}
+            </div>
+        </div>
+        
         {hook name="payments:update"}
         {/hook}
 

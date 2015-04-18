@@ -43,7 +43,17 @@ function fn_development_shippings_get_shippings_list_conditions($group, $shippin
 
 function fn_development_shippings_get_shippings_list_post($group, $lang, $area, &$shippings_info)
 {
+    $destination_id = fn_get_available_destination($group['package_info']['location']);
+    $shipping_ids = db_get_field("SELECT shipping_ids FROM ?:destinations WHERE destination_id = ?i", $destination_id);
+    if (!empty($shipping_ids)) {
+        $shipping_ids = unserialize($shipping_ids);
+    }
+    
     foreach ($shippings_info as $key => $shipping_info) {
+        if (!empty($shipping_ids) && !in_array($shipping_info['shipping_id'], $shipping_ids)) {
+            unset($shippings_info[$key]);
+            continue;
+        }
         $shippings_info[$key]['icon'] = fn_get_image_pairs($shipping_info['shipping_id'], 'shipping', 'M', true, true, $lang);
     }
 }

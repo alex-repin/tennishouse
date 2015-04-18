@@ -12,44 +12,12 @@
 * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
 ****************************************************************************/
 
-// TennisHouse
+// rus_build_pack
 
 use Tygh\Registry;
-use Tygh\Http;
 
 if (defined('PAYMENT_NOTIFICATION')) {
-    // [tennishouse]
-    if (isset($_REQUEST['order_id'])) {
-        $ordernumber = explode('_', $_REQUEST['order_id']);
-        $order_id = reset($ordernumber);
-
-    } elseif (isset($_REQUEST['order'])) {
-        $orderNumber = explode('_', $_REQUEST['order']);
-        $order_id = reset($orderNumber);
-    } else {
-        $order_id = 0;
-    }
-    // [tennishouse]
-
-    if ($mode == 'notify') {
-
-        $order_info = fn_get_order_info($order_id);
-
-        if (fn_check_payment_script('qiwi.php', $order_id)) {
-            fn_order_placement_routines('route', $order_id);
-        }
-
-    } elseif ($mode == 'error') {
-
-        $pp_response['order_status'] = 'N';
-        $pp_response["reason_text"] = __('text_transaction_cancelled');
-
-        if (fn_check_payment_script('yandex_money.php', $order_id)) {
-            fn_finish_payment($order_id, $pp_response, false);
-        }
-
-        fn_order_placement_routines('route', $order_id);
-    }
+    die('Access denied');
 }
 
 if (!defined('BOOTSTRAP')) {
@@ -78,12 +46,12 @@ if (!defined('BOOTSTRAP')) {
 
                 $order_info = fn_get_order_info($param->txn, false, true, true, true);
                 $temp = '';
-                if (!empty($order_info['payment_method']['processor_params']['notification_password']) && !empty($order_info['payment_method']['processor_params']['shop_id'])) {
+                if (!empty($order_info['payment_method']['processor_params']['passwd']) && !empty($order_info['payment_method']['processor_params']['login'])) {
                     $txn = fn_convert_encoding('utf-8', 'windows-1251', $param->txn);
-                    $password = fn_convert_encoding('utf-8', 'windows-1251', $order_info['payment_method']['processor_params']['notification_password']);
+                    $password = fn_convert_encoding('utf-8', 'windows-1251', $order_info['payment_method']['processor_params']['passwd']);
                     $crc = strtoupper(md5($txn . strtoupper(md5($password))));
 
-                    if ($param->login == $order_info['payment_method']['processor_params']['shop_id'] && $param->password == $crc) {
+                    if ($param->login == $order_info['payment_method']['processor_params']['login'] && $param->password == $crc) {
                         $pp_response = array();
                         $status = 'qiwi_order_status_' . $param->status;
                         if ($param->status == 60) {
@@ -112,28 +80,34 @@ if (!defined('BOOTSTRAP')) {
         die('Access denied');
     }
 } else {
-    $dame_format = 'Y-m-d\TH:i:s';
-    //C0CRmNJC0FGlmU8SHh3e
-    
+    include(Registry::get('config.dir.payments') . 'qiwi_files/IShopServerWSService.php');
+    define('TRACE', 0);
+    $_location = (!empty($processor_data['processor_params']['location'])) ? $processor_data['processor_params']['location'] : 'http://ishop.qiwi.ru/services/ishop';
+
+    $dame_format = ($_location == "http://ishop.qiwi.ru/services/ishop") ? 'd.m.Y H:i:s' : 'Y.m.d H:i:s';
+
+    $service = new IShopServerWSService(Registry::get('config.dir.payments') . 'qiwi_files/IShopServerWS.wsdl', array('location' => $_location, 'trace' => TRACE));
+
+    include(Registry::get('config.dir.payments') . 'qiwi_files/qiwi_func.php');
+
     $_order_id = $order_info['repaid'] ? ($order_info['order_id'] . '_' . $order_info['repaid']) : $order_info['order_id'];
     $_order_total = fn_format_rate_value($order_info['total'], 'F', 2, '.', '', '');
     $_lifetime = date($dame_format, time() + ($processor_data['processor_params']['lifetime'] * 60));
-    $url = "https://w.qiwi.com/api/v2/prv/" . $processor_data['processor_params']['shop_id'] . "/bills/" . $_order_id;
-    
+
     $data = array(
-        "user" => "tel:+" . fn_qiwi_convert_phone($order_info['payment_info']['phone']),
-        "amount" => $_order_total,
-        "ccy" => $order_info['secondary_currency'],
-        "comment" => (!empty($order_info['notice']) ? $order_info['notice'] : ''),
-        "lifetime" => $_lifetime,
-        "pay_source" => "qw",
-        "prv_name" => "TennisHouse"
+        'login' => $processor_data['processor_params']['login'],
+        'password' => $processor_data['processor_params']['passwd'],
+        'phone' => fn_qiwi_convert_phone($order_info['payment_info']['phone']),
+        'amount' => $_order_total,
+        'txn_id' => $_order_id,
+        'comment' => (!empty($order_info['notice']) ? $order_info['notice'] : ''),
+        'lifetime' => $_lifetime,
+        'alarm' => $processor_data['processor_params']['alarm'],
+        'create' => 1
     );
-    $extra = array(
-        'basic_auth' => array($processor_data['processor_params']['login'] . ':' . $processor_data['processor_params']['passwd']),
-        'headers' => array('Accept: application/json')
-    );
-    $return = Http::put($url, $data, $extra);
+
+    $result = createBill($data, $service);
+
     $status = 'qiwi_result_status_' . $result;
 
     if ($result == 0) {
@@ -150,22 +124,15 @@ if (!defined('BOOTSTRAP')) {
         'data' => TIME
     );
     db_query("REPLACE INTO ?:order_data ?e", $idata);
-    
-    if ($result == 0) {
-        $redirect_url = "https://qiwi.com/order/external/main.action?shop=" . $processor_data['processor_params']['shop_id'] . '&transaction=' . $_order_id . '&successUrl=' . urlencode(fn_url("payment_notification.notify?payment=qiwi&order_id=$_order_id", AREA)) . '&failUrl=' . urlencode(fn_url("payment_notification.error?payment=qiwi&order_id=$_order_id", AREA));
-        fn_redirect($redirect_url, true);
-    } else {
-        fn_order_placement_routines('route', $order_id, false);
-    }
-    
+    fn_order_placement_routines('route', $order_id, false);
 }
 
 function fn_qiwi_convert_phone($phone)
 {
     $phone = str_replace(array('+', ' ', '(', ')', '-'), '', $phone);
 
-    if (strlen($phone) > 11) {
-        $phone = substr($phone, -11);
+    if (strlen($phone) > 10) {
+        $phone = substr($phone, -10);
     }
 
     return $phone;

@@ -16,7 +16,7 @@ function fn_calculate_total_shipping_cost() {
     }
 
     Tygh.$.ceAjax('request', url, {
-        result_ids: 'shipping_rates_list,checkout_info_summary_*,checkout_info_order_info_*',
+        result_ids: 'shipping_rates_list,checkout_info_summary_*,checkout_order_info_*',
         method: 'get',
         full_render: true
     });
