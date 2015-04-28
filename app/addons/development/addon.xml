@@ -59,7 +59,8 @@
                 `gear_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
                 `player_id` mediumint(8) unsigned NOT NULL,
                 `product_id` mediumint(8) unsigned NOT NULL,
-                PRIMARY KEY (`gear_id`)
+                PRIMARY KEY (`gear_id`),
+                UNIQUE KEY `gear` (`player_id`,`product_id`)
             ) ;
         </item>
         <item>
