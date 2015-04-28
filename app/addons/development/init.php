@@ -52,5 +52,6 @@ fn_register_hooks(
     'shippings_get_shippings_list_post',
     'shippings_get_shippings_list_conditions',
     'delete_product_option_post',
-    'clone_product_options_post'
+    'clone_product_options_post',
+    'validate_sef_object'
 );

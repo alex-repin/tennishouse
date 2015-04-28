@@ -149,7 +149,7 @@ $schema = array(
         'name' => 'feature',
 
         'html_options' => array('file'),
-        'option' => 'seo_players_type',
+        'option' => 'seo_other_type',
 
         'indexed_pages' => array(
             'product_features.view' => array(
@@ -188,13 +188,14 @@ $schema = array(
         'name' => 'player',
 
         'html_options' => array('file', 'players'),
-        'option' => 'seo_other_type',
+        'option' => 'seo_players_type',
 
         'tree' => true,
         'tree_options' => array('players_nohtml'),
         'path_function' => function($object_id) {
-            return 'players';
+            return '00';
         },
+        'parent_type' => 'l',
         
         'indexed_pages' => array(
             'players.view' => array(

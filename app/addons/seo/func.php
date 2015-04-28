@@ -1398,7 +1398,7 @@ function fn_check_seo_schema_option($seo_var, $option, $seo_settings = array())
     } else {
         $option_value = Registry::get('addons.seo.' . $seo_var['option']);
     }
-fn_print_r($seo_settings, $seo_var['option']);
+
     if (!empty($seo_var[$option]) && in_array($option_value, $seo_var[$option])) {
         return true;
     }

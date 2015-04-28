@@ -129,6 +129,10 @@ msgctxt "SettingsOptions::seo::seo_other_type"
 msgid "Other SEO URL format"
 msgstr "Формат SEO URL остальных страниц"
 
+msgctxt "SettingsOptions::seo::seo_players_type"
+msgid "Players SEO URL format"
+msgstr "Формат SEO URL игроков"
+
 msgctxt "SettingsOptions::seo::seo_language"
 msgid "Show language in the URL"
 msgstr "Отображать язык в URL"
@@ -180,6 +184,10 @@ msgstr "/parent-page/page/"
 msgctxt "SettingsVariants::seo::seo_page_type::root_page"
 msgid "/page/"
 msgstr "/page/"
+
+msgctxt "SettingsVariants::seo::seo_players_type::players_nohtml"
+msgid "/players/player-name"
+msgstr "/players/player-name"
 
 msgctxt "SettingsVariants::seo::seo_other_type::directory"
 msgid "/item"

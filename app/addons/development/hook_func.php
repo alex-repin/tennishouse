@@ -17,6 +17,13 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_validate_sef_object($path, $seo, $vars, &$result, $objects)
+{
+    if ($seo['type'] == 'l' && $path == '/players') {
+        $result = true;
+    }
+}
+
 function fn_development_clone_product_options_post($from_product_id, $to_product_id, $from_global_option_id)
 {
     $options_left = db_get_fields("SELECT option_id FROM ?:product_options WHERE product_id = ?i AND inventory = 'Y'", $to_product_id);

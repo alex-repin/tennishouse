@@ -12,3 +12,4 @@ REPLACE INTO ?:seo_names (`name`, `object_id`, `company_id`, `type`, `dispatch`,
 REPLACE INTO ?:seo_names (`name`, `object_id`, `company_id`, `type`, `dispatch`, `lang_code`) VALUES('wishlist-ru', 0, 0, 's', 'wishlist.view', 'ru');
 REPLACE INTO ?:seo_names (`name`, `object_id`, `company_id`, `type`, `dispatch`, `lang_code`) VALUES('sitemap-ru', 0, 0, 's', 'sitemap.view', 'ru');
 REPLACE INTO ?:seo_names (`name`, `object_id`, `company_id`, `type`, `dispatch`, `lang_code`) VALUES('catalog-ru', 0, 0, 's', 'categories.catalog', 'ru');
+REPLACE INTO ?:seo_names (`name`, `object_id`, `company_id`, `type`, `dispatch`, `lang_code`) VALUES('players-ru', 0, 0, 's', 'players.list', 'ru');
