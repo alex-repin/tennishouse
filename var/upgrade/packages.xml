@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <upgrade>
 	<packages>
-		<item id="129021">
-			<file md5="4d8b3fab6b82bbb458d6d4c88ec3192e">upgrade_4.2.3_ultimate-4.2.4_ultimate.tgz</file>
+		<item id="129368">
+			<file md5="26ccde855120b2f232681aedef9dabcb">upgrade_4.2.3_ultimate-4.2.4_ultimate.tgz</file>
 			<name>Upgrade 4.2.3 - 4.2.4</name>
-			<description>This minor release includes optimizations, improvements and bug fixes; introduces PayPal IPN support and new payment gateway Realex.</description>
+			<description>Этот минорная версия включает в себя оптимизации, улучшения и исправления, а также поддержку PayPal IPN и платежного шлюза Realex.</description>
 			<from_version>4.2.3</from_version>
 			<to_version>4.2.4</to_version>
-			<timestamp>1418736514</timestamp>
-			<size>4319205</size>
-			<is_avail>Y</is_avail>
-			<purchase_time_limit>N</purchase_time_limit>
+			<timestamp>1418396655</timestamp>
+			<size>4662934</size>
+			<is_avail>N</is_avail>
+			<purchase_time_limit>Y</purchase_time_limit>
 			<contents>
 				<item>htaccess</item>
 				<item>db_data.sql</item>
@@ -32,8 +32,6 @@
 				<item>db_lang_ro.sql</item>
 				<item>db_lang_ru.sql</item>
 				<item>db_lang_zh.sql</item>
-				<item>restore.php</item>
-				<item>uc_override.php</item>
 				<item>package/changelog.txt</item>
 				<item>package/config.php</item>
 				<item>package/var/themes_repository/responsive/templates/views/products/components/product_features.tpl</item>
@@ -48,6 +46,10 @@
 				<item>package/var/themes_repository/responsive/templates/common/scripts.tpl</item>
 				<item>package/var/themes_repository/responsive/templates/common/tooltip.tpl</item>
 				<item>package/var/themes_repository/responsive/templates/addons/seo/hooks/products/view_main_info.pre.tpl</item>
+				<item>package/var/themes_repository/responsive/templates/addons/rus_pickup/views/pickup/view.tpl</item>
+				<item>var/themes_repository/responsive/templates/addons/rus_pickup/views/pickup/components/maps/yandex.tpl</item>
+				<item>var/themes_repository/responsive/templates/addons/rus_pickup/hooks/checkout/shipping_method.post.tpl</item>
+				<item>package/var/themes_repository/responsive/templates/addons/rus_pickup/components/yandex.tpl</item>
 				<item>responsive/templates/addons/reward_points/views/products/components/product_representation.tpl</item>
 				<item>var/themes_repository/responsive/templates/addons/image_zoom/hooks/products/product_images.post.tpl</item>
 				<item>var/themes_repository/responsive/templates/addons/form_builder/hooks/pages/page_content.override.tpl</item>
@@ -57,6 +59,7 @@
 				<item>package/var/themes_repository/responsive/media/images/icons/payments@2x.png</item>
 				<item>package/var/themes_repository/responsive/css/styles.less</item>
 				<item>package/var/themes_repository/responsive/css/tygh/responsive.less</item>
+				<item>package/var/themes_repository/responsive/css/addons/rus_pickup/styles.less</item>
 				<item>package/var/themes_repository/basic/templates/views/orders/details.tpl</item>
 				<item>package/var/themes_repository/basic/templates/views/checkout/components/steps/step_four.tpl</item>
 				<item>package/var/themes_repository/basic/templates/views/checkout/components/payments/payments_list.tpl</item>
@@ -78,12 +81,17 @@
 				<item>package/var/langs/zh/addons/news_and_emails.po</item>
 				<item>package/var/langs/zh/addons/paypal.po</item>
 				<item>package/var/langs/zh/addons/polls.po</item>
+				<item>package/var/langs/zh/addons/rus_exim_1c.po</item>
+				<item>package/var/langs/zh/addons/rus_payments.po</item>
+				<item>package/var/langs/zh/addons/rus_pickup.po</item>
+				<item>package/var/langs/zh/addons/rus_russianpost.po</item>
 				<item>package/var/langs/zh/addons/searchanise.po</item>
 				<item>package/var/langs/zh/addons/store_locator.po</item>
 				<item>package/var/langs/zh/addons/watermarks.po</item>
 				<item>package/var/langs/ru/core.po</item>
 				<item>package/var/langs/ru/editions/mve.po</item>
 				<item>package/var/langs/ru/addons/access_restrictions.po</item>
+				<item>package/var/langs/ru/addons/address_on_map.po</item>
 				<item>package/var/langs/ru/addons/age_verification.po</item>
 				<item>package/var/langs/ru/addons/anti_fraud.po</item>
 				<item>package/var/langs/ru/addons/attachments.po</item>
@@ -108,6 +116,7 @@
 				<item>package/var/langs/ru/addons/hybrid_auth.po</item>
 				<item>package/var/langs/ru/addons/image_zoom.po</item>
 				<item>package/var/langs/ru/addons/janrain.po</item>
+				<item>package/var/langs/ru/addons/maps_provider.po</item>
 				<item>package/var/langs/ru/addons/my_changes.po</item>
 				<item>package/var/langs/ru/addons/myob.po</item>
 				<item>package/var/langs/ru/addons/news_and_emails.po</item>
@@ -119,6 +128,20 @@
 				<item>package/var/langs/ru/addons/reward_points.po</item>
 				<item>package/var/langs/ru/addons/rma.po</item>
 				<item>package/var/langs/ru/addons/rss_feed.po</item>
+				<item>package/var/langs/ru/addons/rus_cities.po</item>
+				<item>package/var/langs/ru/addons/rus_edost.po</item>
+				<item>package/var/langs/ru/addons/rus_exim_1c.po</item>
+				<item>package/var/langs/ru/addons/rus_kupivkredit.po</item>
+				<item>package/var/langs/ru/addons/rus_multiship.po</item>
+				<item>package/var/langs/ru/addons/rus_order_logs.po</item>
+				<item>package/var/langs/ru/addons/rus_payments.po</item>
+				<item>package/var/langs/ru/addons/rus_pickup.po</item>
+				<item>package/var/langs/ru/addons/rus_ruble.po</item>
+				<item>package/var/langs/ru/addons/rus_russianpost.po</item>
+				<item>package/var/langs/ru/addons/rus_sdek.po</item>
+				<item>package/var/langs/ru/addons/rus_tovary_mailru.po</item>
+				<item>package/var/langs/ru/addons/rus_unisender.po</item>
+				<item>package/var/langs/ru/addons/rus_yandex_metrika.po</item>
 				<item>package/var/langs/ru/addons/searchanise.po</item>
 				<item>package/var/langs/ru/addons/seo.po</item>
 				<item>package/var/langs/ru/addons/sms_notifications.po</item>
@@ -130,6 +153,8 @@
 				<item>package/var/langs/ru/addons/vendor_data_premoderation.po</item>
 				<item>package/var/langs/ru/addons/watermarks.po</item>
 				<item>package/var/langs/ru/addons/wishlist.po</item>
+				<item>package/var/langs/ru/addons/yandex_market.po</item>
+				<item>package/var/langs/ru/addons/yandex_search.po</item>
 				<item>package/var/langs/ro/core.po</item>
 				<item>package/var/langs/ro/editions/mve.po</item>
 				<item>package/var/langs/ro/addons/access_restrictions.po</item>
@@ -168,6 +193,10 @@
 				<item>package/var/langs/ro/addons/reward_points.po</item>
 				<item>package/var/langs/ro/addons/rma.po</item>
 				<item>package/var/langs/ro/addons/rss_feed.po</item>
+				<item>package/var/langs/ro/addons/rus_exim_1c.po</item>
+				<item>package/var/langs/ro/addons/rus_payments.po</item>
+				<item>package/var/langs/ro/addons/rus_pickup.po</item>
+				<item>package/var/langs/ro/addons/rus_russianpost.po</item>
 				<item>package/var/langs/ro/addons/searchanise.po</item>
 				<item>package/var/langs/ro/addons/seo.po</item>
 				<item>package/var/langs/ro/addons/sms_notifications.po</item>
@@ -233,6 +262,10 @@
 				<item>package/var/langs/pt/addons/news_and_emails.po</item>
 				<item>package/var/langs/pt/addons/paypal.po</item>
 				<item>package/var/langs/pt/addons/polls.po</item>
+				<item>package/var/langs/pt/addons/rus_exim_1c.po</item>
+				<item>package/var/langs/pt/addons/rus_payments.po</item>
+				<item>package/var/langs/pt/addons/rus_pickup.po</item>
+				<item>package/var/langs/pt/addons/rus_russianpost.po</item>
 				<item>package/var/langs/pt/addons/searchanise.po</item>
 				<item>package/var/langs/pt/addons/store_locator.po</item>
 				<item>package/var/langs/pt/addons/watermarks.po</item>
@@ -274,6 +307,10 @@
 				<item>package/var/langs/pl/addons/reward_points.po</item>
 				<item>package/var/langs/pl/addons/rma.po</item>
 				<item>package/var/langs/pl/addons/rss_feed.po</item>
+				<item>package/var/langs/pl/addons/rus_exim_1c.po</item>
+				<item>package/var/langs/pl/addons/rus_payments.po</item>
+				<item>package/var/langs/pl/addons/rus_pickup.po</item>
+				<item>package/var/langs/pl/addons/rus_russianpost.po</item>
 				<item>package/var/langs/pl/addons/searchanise.po</item>
 				<item>package/var/langs/pl/addons/seo.po</item>
 				<item>package/var/langs/pl/addons/sms_notifications.po</item>
@@ -323,6 +360,10 @@
 				<item>package/var/langs/no/addons/reward_points.po</item>
 				<item>package/var/langs/no/addons/rma.po</item>
 				<item>package/var/langs/no/addons/rss_feed.po</item>
+				<item>package/var/langs/no/addons/rus_exim_1c.po</item>
+				<item>package/var/langs/no/addons/rus_payments.po</item>
+				<item>package/var/langs/no/addons/rus_pickup.po</item>
+				<item>package/var/langs/no/addons/rus_russianpost.po</item>
 				<item>package/var/langs/no/addons/searchanise.po</item>
 				<item>package/var/langs/no/addons/seo.po</item>
 				<item>package/var/langs/no/addons/sms_notifications.po</item>
@@ -372,6 +413,10 @@
 				<item>package/var/langs/nl/addons/reward_points.po</item>
 				<item>package/var/langs/nl/addons/rma.po</item>
 				<item>package/var/langs/nl/addons/rss_feed.po</item>
+				<item>package/var/langs/nl/addons/rus_exim_1c.po</item>
+				<item>package/var/langs/nl/addons/rus_payments.po</item>
+				<item>package/var/langs/nl/addons/rus_pickup.po</item>
+				<item>package/var/langs/nl/addons/rus_russianpost.po</item>
 				<item>package/var/langs/nl/addons/searchanise.po</item>
 				<item>package/var/langs/nl/addons/seo.po</item>
 				<item>package/var/langs/nl/addons/sms_notifications.po</item>
@@ -421,6 +466,10 @@
 				<item>package/var/langs/ka/addons/reward_points.po</item>
 				<item>package/var/langs/ka/addons/rma.po</item>
 				<item>package/var/langs/ka/addons/rss_feed.po</item>
+				<item>package/var/langs/ka/addons/rus_exim_1c.po</item>
+				<item>package/var/langs/ka/addons/rus_payments.po</item>
+				<item>package/var/langs/ka/addons/rus_pickup.po</item>
+				<item>package/var/langs/ka/addons/rus_russianpost.po</item>
 				<item>package/var/langs/ka/addons/searchanise.po</item>
 				<item>package/var/langs/ka/addons/seo.po</item>
 				<item>package/var/langs/ka/addons/sms_notifications.po</item>
@@ -470,6 +519,10 @@
 				<item>package/var/langs/ja/addons/reward_points.po</item>
 				<item>package/var/langs/ja/addons/rma.po</item>
 				<item>package/var/langs/ja/addons/rss_feed.po</item>
+				<item>package/var/langs/ja/addons/rus_exim_1c.po</item>
+				<item>package/var/langs/ja/addons/rus_payments.po</item>
+				<item>package/var/langs/ja/addons/rus_pickup.po</item>
+				<item>package/var/langs/ja/addons/rus_russianpost.po</item>
 				<item>package/var/langs/ja/addons/searchanise.po</item>
 				<item>package/var/langs/ja/addons/seo.po</item>
 				<item>package/var/langs/ja/addons/sms_notifications.po</item>
@@ -519,6 +572,10 @@
 				<item>package/var/langs/it/addons/reward_points.po</item>
 				<item>package/var/langs/it/addons/rma.po</item>
 				<item>package/var/langs/it/addons/rss_feed.po</item>
+				<item>package/var/langs/it/addons/rus_exim_1c.po</item>
+				<item>package/var/langs/it/addons/rus_payments.po</item>
+				<item>package/var/langs/it/addons/rus_pickup.po</item>
+				<item>package/var/langs/it/addons/rus_russianpost.po</item>
 				<item>package/var/langs/it/addons/searchanise.po</item>
 				<item>package/var/langs/it/addons/seo.po</item>
 				<item>package/var/langs/it/addons/sms_notifications.po</item>
@@ -536,6 +593,10 @@
 				<item>package/var/langs/hu/addons/news_and_emails.po</item>
 				<item>package/var/langs/hu/addons/paypal.po</item>
 				<item>package/var/langs/hu/addons/polls.po</item>
+				<item>package/var/langs/hu/addons/rus_exim_1c.po</item>
+				<item>package/var/langs/hu/addons/rus_payments.po</item>
+				<item>package/var/langs/hu/addons/rus_pickup.po</item>
+				<item>package/var/langs/hu/addons/rus_russianpost.po</item>
 				<item>package/var/langs/hu/addons/searchanise.po</item>
 				<item>package/var/langs/hu/addons/store_locator.po</item>
 				<item>package/var/langs/hu/addons/watermarks.po</item>
@@ -545,6 +606,10 @@
 				<item>package/var/langs/he/addons/news_and_emails.po</item>
 				<item>package/var/langs/he/addons/paypal.po</item>
 				<item>package/var/langs/he/addons/polls.po</item>
+				<item>package/var/langs/he/addons/rus_exim_1c.po</item>
+				<item>package/var/langs/he/addons/rus_payments.po</item>
+				<item>package/var/langs/he/addons/rus_pickup.po</item>
+				<item>package/var/langs/he/addons/rus_russianpost.po</item>
 				<item>package/var/langs/he/addons/searchanise.po</item>
 				<item>package/var/langs/he/addons/store_locator.po</item>
 				<item>package/var/langs/he/addons/watermarks.po</item>
@@ -586,6 +651,10 @@
 				<item>package/var/langs/fr/addons/reward_points.po</item>
 				<item>package/var/langs/fr/addons/rma.po</item>
 				<item>package/var/langs/fr/addons/rss_feed.po</item>
+				<item>package/var/langs/fr/addons/rus_exim_1c.po</item>
+				<item>package/var/langs/fr/addons/rus_payments.po</item>
+				<item>package/var/langs/fr/addons/rus_pickup.po</item>
+				<item>package/var/langs/fr/addons/rus_russianpost.po</item>
 				<item>package/var/langs/fr/addons/searchanise.po</item>
 				<item>package/var/langs/fr/addons/seo.po</item>
 				<item>package/var/langs/fr/addons/sms_notifications.po</item>
@@ -603,11 +672,19 @@
 				<item>package/var/langs/es/addons/news_and_emails.po</item>
 				<item>package/var/langs/es/addons/paypal.po</item>
 				<item>package/var/langs/es/addons/polls.po</item>
+				<item>package/var/langs/es/addons/rus_exim_1c.po</item>
+				<item>package/var/langs/es/addons/rus_payments.po</item>
+				<item>package/var/langs/es/addons/rus_pickup.po</item>
+				<item>package/var/langs/es/addons/rus_russianpost.po</item>
 				<item>package/var/langs/es/addons/searchanise.po</item>
 				<item>package/var/langs/es/addons/store_locator.po</item>
 				<item>package/var/langs/es/addons/watermarks.po</item>
 				<item>package/var/langs/en/core.po</item>
 				<item>package/var/langs/en/addons/paypal.po</item>
+				<item>package/var/langs/en/addons/rus_exim_1c.po</item>
+				<item>package/var/langs/en/addons/rus_payments.po</item>
+				<item>package/var/langs/en/addons/rus_pickup.po</item>
+				<item>package/var/langs/en/addons/rus_russianpost.po</item>
 				<item>package/var/langs/el/core.po</item>
 				<item>package/var/langs/el/editions/mve.po</item>
 				<item>package/var/langs/el/addons/access_restrictions.po</item>
@@ -646,6 +723,10 @@
 				<item>package/var/langs/el/addons/reward_points.po</item>
 				<item>package/var/langs/el/addons/rma.po</item>
 				<item>package/var/langs/el/addons/rss_feed.po</item>
+				<item>package/var/langs/el/addons/rus_exim_1c.po</item>
+				<item>package/var/langs/el/addons/rus_payments.po</item>
+				<item>package/var/langs/el/addons/rus_pickup.po</item>
+				<item>package/var/langs/el/addons/rus_russianpost.po</item>
 				<item>package/var/langs/el/addons/searchanise.po</item>
 				<item>package/var/langs/el/addons/seo.po</item>
 				<item>package/var/langs/el/addons/sms_notifications.po</item>
@@ -663,6 +744,10 @@
 				<item>package/var/langs/de/addons/news_and_emails.po</item>
 				<item>package/var/langs/de/addons/paypal.po</item>
 				<item>package/var/langs/de/addons/polls.po</item>
+				<item>package/var/langs/de/addons/rus_exim_1c.po</item>
+				<item>package/var/langs/de/addons/rus_payments.po</item>
+				<item>package/var/langs/de/addons/rus_pickup.po</item>
+				<item>package/var/langs/de/addons/rus_russianpost.po</item>
 				<item>package/var/langs/de/addons/searchanise.po</item>
 				<item>package/var/langs/de/addons/store_locator.po</item>
 				<item>package/var/langs/de/addons/watermarks.po</item>
@@ -704,6 +789,10 @@
 				<item>package/var/langs/ar/addons/reward_points.po</item>
 				<item>package/var/langs/ar/addons/rma.po</item>
 				<item>package/var/langs/ar/addons/rss_feed.po</item>
+				<item>package/var/langs/ar/addons/rus_exim_1c.po</item>
+				<item>package/var/langs/ar/addons/rus_payments.po</item>
+				<item>package/var/langs/ar/addons/rus_pickup.po</item>
+				<item>package/var/langs/ar/addons/rus_russianpost.po</item>
 				<item>package/var/langs/ar/addons/searchanise.po</item>
 				<item>package/var/langs/ar/addons/seo.po</item>
 				<item>package/var/langs/ar/addons/sms_notifications.po</item>
@@ -722,6 +811,7 @@
 				<item>package/js/tygh/editors/ckeditor.editor.js</item>
 				<item>package/js/tygh/editors/redactor.editor.js</item>
 				<item>package/js/tygh/editors/tinymce.editor.js</item>
+				<item>package/js/addons/rus_pickup/yandex.js</item>
 				<item>package/design/themes/basic/templates/views/orders/details.tpl</item>
 				<item>package/design/themes/basic/templates/views/checkout/components/steps/step_four.tpl</item>
 				<item>package/design/themes/basic/templates/views/checkout/components/payments/payments_list.tpl</item>
@@ -739,10 +829,15 @@
 				<item>package/design/backend/templates/views/shippings/components/rates.tpl</item>
 				<item>package/design/backend/templates/views/sales_reports/components/amchart_pie.tpl</item>
 				<item>package/design/backend/templates/views/payments/processor.tpl</item>
+				<item>package/design/backend/templates/views/payments/components/cc_processors/assist.tpl</item>
 				<item>package/design/backend/templates/views/payments/components/cc_processors/realex_redirect.tpl</item>
 				<item>package/design/backend/templates/views/payments/components/cc_processors/realex_remote.tpl</item>
+				<item>package/design/backend/templates/views/payments/components/cc_processors/webmoney.tpl</item>
+				<item>package/design/backend/templates/views/payments/components/cc_processors/yandex_money.tpl</item>
 				<item>package/design/backend/templates/views/order_management/components/totals.tpl</item>
 				<item>package/design/backend/templates/common/attach_images.tpl</item>
+				<item>package/design/backend/templates/addons/rus_russianpost/views/shippings/components/services/ems.tpl</item>
+				<item>package/design/backend/templates/addons/rus_pickup/views/shippings/components/services/pickup.tpl</item>
 				<item>design/backend/templates/addons/paypal/views/payments/components/cc_processors/payflow_pro.tpl</item>
 				<item>package/design/backend/templates/addons/paypal/views/payments/components/cc_processors/paypal.tpl</item>
 				<item>design/backend/templates/addons/paypal/views/payments/components/cc_processors/paypal_advanced.tpl</item>
@@ -768,8 +863,11 @@
 				<item>package/app/schemas/menu/menu_ultimate.php</item>
 				<item>package/app/schemas/exim/orders.php</item>
 				<item>package/app/schemas/block_manager/blocks.php</item>
+				<item>package/app/payments/assist.php</item>
 				<item>package/app/payments/realex_redirect.php</item>
 				<item>package/app/payments/realex_remote.php</item>
+				<item>package/app/payments/webmoney.php</item>
+				<item>package/app/payments/yandex_money.php</item>
 				<item>package/app/functions/fn.cart.php</item>
 				<item>package/app/functions/fn.catalog.php</item>
 				<item>package/app/functions/fn.cms.php</item>
@@ -797,6 +895,8 @@
 				<item>package/app/controllers/backend/product_options.php</item>
 				<item>package/app/controllers/backend/products.php</item>
 				<item>package/app/controllers/backend/usergroups.php</item>
+				<item>package/app/addons/yandex_market/func.php</item>
+				<item>package/app/addons/yandex_market/Tygh/Ym/Yml.php</item>
 				<item>package/app/addons/tags/func.php</item>
 				<item>package/app/addons/suppliers/func.php</item>
 				<item>package/app/addons/store_locator/func.php</item>
@@ -817,6 +917,18 @@
 				<item>package/app/addons/seo/init.php</item>
 				<item>package/app/addons/seo/controllers/backend/seo_redirects.php</item>
 				<item>package/app/addons/seo/controllers/backend/seo_rules.php</item>
+				<item>package/app/addons/rus_unisender/controllers/backend/profiles.post.php</item>
+				<item>package/app/addons/rus_tovary_mailru/func.php</item>
+				<item>package/app/addons/rus_russianpost/Tygh/Shippings/Services/Ems.php</item>
+				<item>package/app/addons/rus_russianpost/Tygh/Shippings/Services/RussianPostCalc.php</item>
+				<item>package/app/addons/rus_pickup/controllers/frontend/pickup.php</item>
+				<item>package/app/addons/rus_payments/func.php</item>
+				<item>package/app/addons/rus_payments/schemas/settings/actions.functions.post.php</item>
+				<item>package/app/addons/rus_exim_1c/addon.xml</item>
+				<item>package/app/addons/rus_exim_1c/exim_1c.php</item>
+				<item>package/app/addons/rus_exim_1c/func.php</item>
+				<item>package/app/addons/rus_edost/Tygh/Shippings/Services/Edost.php</item>
+				<item>package/app/addons/rus_edost/schemas/edost/services.php</item>
 				<item>package/app/addons/rss_feed/func.php</item>
 				<item>package/app/addons/rma/func.php</item>
 				<item>package/app/addons/rma/init.php</item>
@@ -858,6 +970,8 @@
 				<item>package/app/addons/discussion/controllers/backend/index.post.php</item>
 				<item>package/app/addons/call_requests/func.php</item>
 				<item>package/app/addons/access_restrictions/controllers/backend/access_restrictions.php</item>
+				<item>restore.php</item>
+				<item>uc_override.php</item>
 			</contents>
 		</item>
 	</packages>

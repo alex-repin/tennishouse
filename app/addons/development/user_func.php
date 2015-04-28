@@ -798,7 +798,7 @@ function fn_update_player($player_data, $player_id = 0)
 
         $create = true;
 
-        $_data['feature_variant_id'] = fn_update_product_feature_variant(PLAYER_FEATURE_ID, 'M', $variant_data);
+        $variant_data['variant_id'] = $_data['feature_variant_id'] = fn_update_product_feature_variant(PLAYER_FEATURE_ID, 'M', $variant_data);
 
         $player_id = db_query("INSERT INTO ?:players ?e", $_data);
         $existing_gear = array();
@@ -826,9 +826,11 @@ function fn_update_player($player_data, $player_id = 0)
         
         $_data['gear'] = (empty($_data['gear'])) ? array() : explode(',', $_data['gear']);
         $to_delete = array_diff($existing_gear, $_data['gear']);
+        $to_update = array_merge($existing_gear, $_data['gear']);
 
         if (!empty($to_delete)) {
             db_query("DELETE FROM ?:players_gear WHERE product_id IN (?n) AND player_id = ?i", $to_delete, $player_id);
+            db_query("DELETE FROM ?:product_features_values WHERE feature_id = ?i AND product_id IN (?n)", PLAYER_FEATURE_ID, $to_delete);
         }
         $to_add = array_diff($_data['gear'], $existing_gear);
 
@@ -839,6 +841,20 @@ function fn_update_player($player_data, $player_id = 0)
                     'product_id' => $gr
                 );
                 db_query("REPLACE INTO ?:players_gear ?e", $__data);
+                $i_data = array(
+                    'feature_id' => PLAYER_FEATURE_ID,
+                    'product_id' => $gr,
+                    'variant_id' => $variant_data['variant_id'],
+                    'lang_code' => DESCR_SL
+                );
+                db_query("REPLACE INTO ?:product_features_values ?e", $i_data);
+            }
+        }
+        
+        if (!empty($to_update)) {
+            foreach ($to_update as $i => $pr_id) {
+                $features = db_get_array("SELECT * FROM ?:product_features_values WHERE product_id = ?i", $pr_id);
+                FeaturesCache::updateProductFeaturesValue($pr_id, $features, DESCR_SL);
             }
         }
     }
