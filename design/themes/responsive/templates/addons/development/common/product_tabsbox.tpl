@@ -13,7 +13,7 @@
     <ul class="ty-tabs__list" {if $tabs_section}id="tabs_{$tabs_section}"{/if}>
     {foreach from=$navigation.tabs item=tab key=key name=tabs}
         {if ((!$tabs_section && !$tab.section) || ($tabs_section == $tab.section)) && !$key|in_array:$empty_tab_ids && $tab.display}
-        {if !$active_tab && ($key != 'description' || ($key == 'description' && (($product.full_description || $product.short_description) || ($product.product_features|count <= 6 && (!$product.prices || !($product.full_description || $product.short_description))))))}
+        {if !$active_tab && ($key != 'description' || ($key == 'description' && (($product.full_description || $product.short_description) || ($product.product_features && (!$product.prices || !($product.full_description || $product.short_description))))))}
             {assign var="active_tab" value=$key}
         {/if}
         {assign var="_tabs" value=true}

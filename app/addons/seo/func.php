@@ -320,6 +320,11 @@ function fn_get_rewrite_rules()
  */
 function fn_seo_get_route(&$req, &$result, &$area, &$is_allowed_url)
 {
+    // [tennishouse]
+    if (!empty($_REQUEST['dispatch']) && $_REQUEST['dispatch'] == 'watermark.create') {
+        return true;
+    }
+    // [tennishouse]
     if (($area == 'C') && !$is_allowed_url) {
 
         $uri = fn_get_seo_request_uri($_SERVER['REQUEST_URI']);
@@ -1393,7 +1398,7 @@ function fn_check_seo_schema_option($seo_var, $option, $seo_settings = array())
     } else {
         $option_value = Registry::get('addons.seo.' . $seo_var['option']);
     }
-
+fn_print_r($seo_settings, $seo_var['option']);
     if (!empty($seo_var[$option]) && in_array($option_value, $seo_var[$option])) {
         return true;
     }
@@ -2027,6 +2032,73 @@ function fn_seo_update_language_post(&$language_data, &$lang_id, &$action)
     }
 }
 /* /Language hooks */
+
+/* Player hooks */
+function fn_seo_update_player_post(&$player_data, &$player_id)
+{
+    if (Registry::get('runtime.company_id')) {
+        $player_data['company_id'] = Registry::get('runtime.company_id');
+    }
+
+    fn_seo_update_object($player_data, $player_id, 'l', CART_LANGUAGE);
+}
+
+function fn_seo_get_player_data(&$player_id, &$field_list, &$join)
+{
+    $field_list .= ', ?:seo_names.name as seo_name, ?:seo_names.path as seo_path';
+
+    if (fn_allowed_for('ULTIMATE')) {
+        $company_join = 'AND ?:seo_names.company_id = ' . Registry::get('runtime.company_id');
+    } else {
+        $company_join = '';
+    }
+
+    $join .= db_quote(
+        " LEFT JOIN ?:seo_names ON ?:seo_names.object_id = ?i AND ?:seo_names.type = 'l' "
+        . "AND ?:seo_names.dispatch = '' AND ?:seo_names.lang_code = ?s $company_join",
+        $player_id, fn_get_corrected_seo_lang_code(CART_LANGUAGE)
+    );
+
+    return true;
+}
+
+function fn_seo_get_player_data_post(&$player_data)
+{
+    if (empty($player_data['seo_name']) && !empty($player_data['player_id'])) {
+        $player_data['seo_name'] = fn_seo_get_name('l', $player_data['player_id'], '', null, CART_LANGUAGE);
+    }
+
+    return true;
+}
+
+function fn_seo_delete_player(&$player_id)
+{
+    return fn_delete_seo_name($player_id, 'l');
+}
+
+function fn_seo_get_players(&$params, &$join, &$condition, &$fields)
+{
+    $lang_condition = db_quote(' AND ?:seo_names.lang_code = ?s', CART_LANGUAGE);
+    $fields[] = '?:seo_names.name as seo_name';
+    $fields[] = '?:seo_names.path as seo_path';
+
+    $join .= db_quote(
+        " LEFT JOIN ?:seo_names ON ?:seo_names.object_id = ?:players.player_id AND ?:seo_names.type = 'l' AND ?:seo_names.dispatch = '' ?p",
+        $lang_condition . fn_get_seo_company_condition('?:seo_names.company_id')
+    );
+}
+
+function fn_seo_get_players_post(&$players, &$params)
+{
+    if (AREA == 'C' && !empty($players)) {
+        foreach ($players as $k => $player) {
+            fn_seo_cache_name('l', $player['player_id'], $player,  '', CART_LANGUAGE);
+        }
+    }
+
+    return true;
+}
+/* Player hooks */
 
 /* Deprecated */
 function fn_seo_parced_query_unset(&$parts_array, $keys = array())

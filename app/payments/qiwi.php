@@ -118,7 +118,7 @@ if (!defined('BOOTSTRAP')) {
     $_order_id = $order_info['repaid'] ? ($order_info['order_id'] . '_' . $order_info['repaid']) : $order_info['order_id'];
     $_order_total = fn_format_rate_value($order_info['total'], 'F', 2, '.', '', '');
     $_lifetime = date($dame_format, time() + ($processor_data['processor_params']['lifetime'] * 60));
-    $url = "https://w.qiwi.com/api/v2/prv/" . $processor_data['processor_params']['shop_id'] . "/bills/" . $_order_id;
+    $url = "https://qiwi.com/api/v2/prv/" . $processor_data['processor_params']['shop_id'] . "/bills/" . $_order_id;
     
     $data = array(
         "user" => "tel:+" . fn_qiwi_convert_phone($order_info['payment_info']['phone']),
@@ -133,7 +133,7 @@ if (!defined('BOOTSTRAP')) {
         'basic_auth' => array($processor_data['processor_params']['login'] . ':' . $processor_data['processor_params']['passwd']),
         'headers' => array('Accept: application/json')
     );
-    $return = Http::put($url, $data, $extra);
+    $result = Http::put($url, $data, $extra);
     $status = 'qiwi_result_status_' . $result;
 
     if ($result == 0) {

@@ -51,7 +51,16 @@ fn_register_hooks(
     'delete_product_feature',
 
     'delete_languages_post',
-    'update_language_post'
+    'update_language_post',
+    
+    // [tennishouse]
+    'update_player_post',
+    'get_player_data',
+    'get_player_data_post',
+    'delete_player',
+    'get_players',
+    'get_players_post'
+    // [tennishouse]
 );
 
 if (fn_allowed_for('ULTIMATE')) {

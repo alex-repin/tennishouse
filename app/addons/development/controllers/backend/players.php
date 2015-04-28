@@ -88,6 +88,10 @@ if ($mode == 'add') {
             'title' => __('products'),
             'js' => true
         ),
+        'addons' => array (
+            'title' => __('addons'),
+            'js' => true
+        ),
     ));
     // [/Page sections]
 
@@ -113,7 +117,11 @@ if ($mode == 'add') {
         'products' => array (
             'title' => __('products'),
             'js' => true
-        )
+        ),
+        'addons' => array (
+            'title' => __('addons'),
+            'js' => true
+        ),
     );
 
     Registry::set('navigation.tabs', $tabs);

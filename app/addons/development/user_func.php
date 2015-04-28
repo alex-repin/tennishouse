@@ -645,12 +645,16 @@ function fn_get_player_data($player_id)
 {
     $field_list = "?:players.*";
 
-    $player_data = db_get_row("SELECT $field_list FROM ?:players LEFT JOIN ?:players_gear ON ?:players.player_id = ?:players_gear.player_id WHERE ?:players.player_id = ?i", $player_id);
+    fn_set_hook('get_player_data', $player_id, $field_list, $join, $condition);
+    
+    $player_data = db_get_row("SELECT $field_list FROM ?:players LEFT JOIN ?:players_gear ON ?:players.player_id = ?:players_gear.player_id ?p WHERE ?:players.player_id = ?i  ?p", $join, $player_id, $condition);
 
     if (!empty($player_data)) {
         $player_data['main_pair'] = fn_get_image_pairs($player_id, 'player', 'M', true, true);
         $player_data['gear'] = db_get_fields("SELECT product_id FROM ?:players_gear WHERE player_id = ?i", $player_id);
     }
+
+    fn_set_hook('get_player_data_post', $player_data);
 
     return (!empty($player_data) ? $player_data : false);
 }
@@ -719,8 +723,10 @@ function fn_get_players($params)
         $condition .= db_quote(' AND ?:players_gear.product_id IS NOT NULL');
     }
     
-    $limit = $group_by = '';
+    $limit = '';
 
+    fn_set_hook('get_players', $params, $join, $condition, $fields);
+    
     if (!empty($params['limit'])) {
         $limit = db_quote(' LIMIT 0, ?i', $params['limit']);
     }
@@ -738,6 +744,8 @@ function fn_get_players($params)
         }
     }
 
+    fn_set_hook('get_players_post', $players, $params);
+    
     return array($players, $params);
 }
 
@@ -762,6 +770,8 @@ function fn_delete_player($player_id)
 
     // Deleting player images
     fn_delete_image_pairs($player_id, 'player');
+    
+    fn_set_hook('delete_player', $player_id);
     
     return true;
 }
@@ -832,6 +842,8 @@ function fn_update_player($player_data, $player_id = 0)
             }
         }
     }
+    
+    fn_set_hook('update_player_post', $_data, $player_id);
     
     return $player_id;
 

@@ -56,6 +56,15 @@
                         </variants>
                     </item>
 
+                    <item id="seo_players_type">
+                        <type>selectbox</type>
+                        <default_value>players_nohtml</default_value>
+                        <variants>
+                            <item id="players_nohtml">
+                            </item>
+                        </variants>
+                    </item>
+
                     <item id="seo_other_type">
                         <type>selectbox</type>
                         <default_value>directory</default_value>

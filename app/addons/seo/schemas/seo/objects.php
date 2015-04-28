@@ -149,7 +149,7 @@ $schema = array(
         'name' => 'feature',
 
         'html_options' => array('file'),
-        'option' => 'seo_other_type',
+        'option' => 'seo_players_type',
 
         'indexed_pages' => array(
             'product_features.view' => array(
@@ -176,6 +176,34 @@ $schema = array(
             'sitemap.view' => array(),            
         )
     ), // custom    (plain)
+    // [tennishouse]
+    'l' => array(
+        'table' => '?:players',
+        'description' => 'player',
+        'dispatch' => 'players.view',
+        'item' => 'player_id',
+        'condition' => '',
+        'skip_lang_condition' => true,
+
+        'name' => 'player',
+
+        'html_options' => array('file', 'players'),
+        'option' => 'seo_other_type',
+
+        'tree' => true,
+        'tree_options' => array('players_nohtml'),
+        'path_function' => function($object_id) {
+            return 'players';
+        },
+        
+        'indexed_pages' => array(
+            'players.view' => array(
+                'index' => array('player_id'),
+            ),
+            'players.list' => array()
+        )
+    ), // player  (plain)
+    // [tennishouse]
 );
 
 if (fn_allowed_for('MULTIVENDOR')) {

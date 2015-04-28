@@ -79,7 +79,7 @@
             <div class="controls">
                 <label class="checkbox">
                     <input type="hidden" name="category_data[override_margin]" value="N" />
-                    <input type="checkbox" name="category_data[override_margin]" id="elm_category_override_margin" value="Y" {if $category_data.override_margin == "Y"}checked="checked"{/if} onclick="Tygh.$('#category_margin').toggleBy();"/>
+                    <input type="checkbox" name="category_data[override_margin]" id="elm_category_override_margin" value="Y" {if $category_data.override_margin == "Y"}checked="checked"{/if} onclick="Tygh.$('#category_margin').toggleBy();Tygh.$('#category_net_currency_code').toggleBy();"/>
                 </label>
             </div>
         </div>
@@ -92,7 +92,7 @@
                 </div>
             </div>
         </div>
-        <div class="control-group">
+        <div class="control-group {if $category_data.override_margin != "Y"}hidden{/if}" id="category_net_currency_code">
             <label class="control-label" for="elm_category_net_currency_code">{__("net_currency_code")}:</label>
             <div class="controls">
                 <select class="span3" name="category_data[net_currency_code]">

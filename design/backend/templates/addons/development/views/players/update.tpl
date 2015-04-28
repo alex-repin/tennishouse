@@ -126,6 +126,11 @@
     {include file="pickers/products/picker.tpl" data_id="added_products" input_name="player_data[gear]" no_item_text=__("text_no_items_defined", ["[items]" => __("products")]) type="links" placement="right" item_ids=$player_data.gear}
 </div>
 
+<div id="content_addons">
+{hook name="players:detailed_content"}
+{/hook}
+</div>
+
 {/capture}
 {include file="common/tabsbox.tpl" content=$smarty.capture.tabsbox active_tab=$smarty.request.selected_section track=true}
 </form>
