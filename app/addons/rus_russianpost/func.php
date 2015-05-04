@@ -160,7 +160,7 @@ function fn_rus_russianpost_calculate_cart_taxes_pre(&$cart, $cart_products, &$p
 
                     if (!empty($product_groups[$group_key]['shippings'][$shipping_id]['module'])) {
                         $module = $product_groups[$group_key]['shippings'][$shipping_id]['module'];
-                        if ($module == 'ems' && !empty($shippings_extra)) {
+                        if (($module == 'ems' || $module == 'russian_post_calc') && !empty($shippings_extra)) {
                             $product_groups[$group_key]['shippings'][$shipping_id]['data'] = $shippings_extra;
 
                             if (!empty($shippings_extra['delivery_time'])) {
@@ -177,7 +177,7 @@ function fn_rus_russianpost_calculate_cart_taxes_pre(&$cart, $cart_products, &$p
                 foreach ($group['chosen_shippings'] as $shipping_key => $shipping) {
                     $shipping_id = $shipping['shipping_id'];
                     $module = $shipping['module'];
-                    if ($module == 'ems' && !empty($cart['shippings_extra']['data'][$group_key][$shipping_id])) {
+                    if (($module == 'ems' || $module == 'russian_post_calc') && !empty($cart['shippings_extra']['data'][$group_key][$shipping_id])) {
                         $shipping_extra = $cart['shippings_extra']['data'][$group_key][$shipping_id];
                         $product_groups[$group_key]['chosen_shippings'][$shipping_key]['data'] = $shipping_extra;
                     }

@@ -87,9 +87,15 @@ class RussianPostCalc implements IService
                     }
 
                     $return['cost'] = $cost;
+                    $rates = array(
+                        'price' => $cost,
+                        'date' => $calc['days'] . ' ' . __('days')
+                    );
                     break;
                 }
             }
+
+            $this->_fillSessionData($rates);
 
         } else {
             $return['error'] = $this->processErrors($response);
@@ -98,6 +104,22 @@ class RussianPostCalc implements IService
         return $return;
     }
 
+    private function _fillSessionData($rates = array())
+    {
+        $shipping_info = $this->_shipping_info;
+
+        if (isset($shipping_info['keys']['group_key']) && !empty($shipping_info['keys']['shipping_id'])) {
+            $group_key = $shipping_info['keys']['group_key'];
+            $shipping_id = $shipping_info['keys']['shipping_id'];
+
+            if (!empty($rates['date'])) {
+                $_SESSION['cart']['shippings_extra']['data'][$group_key][$shipping_id]['delivery_time'] = $rates['date'];
+            }
+        }
+
+        return true;
+    }
+    
     /**
      * Gets error message from shipping service server
      *
@@ -172,16 +194,23 @@ class RussianPostCalc implements IService
     {
 
         $data = $this->getRequestData();
+        $key = $data['data']['hash'];
+        $rp_data = fn_get_session_data($key);
 
-        // Russian post server works very unstably, that is why we cannot use multithreading and should use cycle.
-        $retry = 0;
-        do {
-            $retry++;
-            $response = Http::get($data['url'], $data['data']);
-        } while (strpos($response, 'Результаты расчёта') == 0 && $retry <= $this->_max_num_requests);
+        if (empty($rp_data)) {
+            // Russian post server works very unstably, that is why we cannot use multithreading and should use cycle.
+            $retry = 0;
+            do {
+                $retry++;
+                $response = Http::get($data['url'], $data['data']);
+            } while (strpos($response, 'Результаты расчёта') == 0 && $retry <= $this->_max_num_requests);
 
-        if ($retry == $this->_max_num_requests) {
-            $this->_internalError(__('error_occurred'));
+            if ($retry == $this->_max_num_requests) {
+                $this->_internalError(__('error_occurred'));
+            }
+            fn_set_session_data($key, $response);
+        } else {
+            $response = $rp_data;
         }
 
         return $response;

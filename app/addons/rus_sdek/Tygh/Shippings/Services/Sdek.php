@@ -254,7 +254,6 @@ class Sdek implements IService
 
     private function _getRates($response)
     {
-
         $rates = array();
         if (!empty($response['result']['price'])) {
             $rates['price'] = $response['result']['price'];
@@ -262,7 +261,7 @@ class Sdek implements IService
                 $plus = $this->_shipping_info['service_params']['dateexecute'];
                 $min_time = $plus + $response['result']['deliveryPeriodMin'];
                 $max_time = $plus + $response['result']['deliveryPeriodMax'];
-                $date = $min_time . '-' . $max_time . ' (' . __('days') . ')';
+                $date = $min_time . (($min_time != $max_time) ? '-' . $max_time . ' ' : ' ' ) . __('days');
                 if (!empty($date)) {
                     $rates['date'] = $date;
                 }

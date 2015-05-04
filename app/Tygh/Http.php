@@ -426,8 +426,21 @@ class Http
                 $url .= '?' . $components['query'];
             }
         }
+        // [tennishouse]
+        $predata = '';
+        if (is_array($data) && !empty($data)) {
+            foreach ($data as $key => $par) {
+                if ($par == '') {
+                    $predata .= $key . '&';
+                    unset($data[$key]);
+                } else {
+                    break;
+                }
+            }
+        }
 
-        return array($url, is_array($data) ? http_build_query($data) : $data);
+        return array($url, $predata . (is_array($data) ? http_build_query($data) : $data));
+        // [tennishouse]
     }
 
     /**

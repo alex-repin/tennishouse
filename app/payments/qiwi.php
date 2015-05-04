@@ -33,84 +33,86 @@ if (defined('PAYMENT_NOTIFICATION')) {
 
     if ($mode == 'notify') {
 
-        $order_info = fn_get_order_info($order_id);
-
+        $pp_response['order_status'] = 'P';
         if (fn_check_payment_script('qiwi.php', $order_id)) {
-            fn_order_placement_routines('route', $order_id);
+            fn_finish_payment($order_id, $pp_response, false);
         }
 
+        fn_order_placement_routines('route', $order_id);
+        
     } elseif ($mode == 'error') {
 
-        $pp_response['order_status'] = 'N';
+        $pp_response['order_status'] = 'F';
         $pp_response["reason_text"] = __('text_transaction_cancelled');
 
-        if (fn_check_payment_script('yandex_money.php', $order_id)) {
+        if (fn_check_payment_script('qiwi.php', $order_id)) {
             fn_finish_payment($order_id, $pp_response, false);
         }
 
         fn_order_placement_routines('route', $order_id);
     }
+    exit;
 }
 
 if (!defined('BOOTSTRAP')) {
-    if (!empty($_REQUEST['parameter']) && $_REQUEST['parameter'] == 'update') {
-        require './init_payment.php';
-
-        class Response
-        {
-            public $updateBillResult;
-        }
-        class Param
-        {
-            public $login;
-            public $password;
-            public $txn;
-            public $status;
-        }
-
-        class UpdateServer
-        {
-            function updateBill($param)
-            {
-                if (!is_object($param)) {
-                    return false;
-                }
-
-                $order_info = fn_get_order_info($param->txn, false, true, true, true);
-                $temp = '';
-                if (!empty($order_info['payment_method']['processor_params']['notification_password']) && !empty($order_info['payment_method']['processor_params']['shop_id'])) {
-                    $txn = fn_convert_encoding('utf-8', 'windows-1251', $param->txn);
-                    $password = fn_convert_encoding('utf-8', 'windows-1251', $order_info['payment_method']['processor_params']['notification_password']);
-                    $crc = strtoupper(md5($txn . strtoupper(md5($password))));
-
-                    if ($param->login == $order_info['payment_method']['processor_params']['shop_id'] && $param->password == $crc) {
-                        $pp_response = array();
-                        $status = 'qiwi_order_status_' . $param->status;
-                        if ($param->status == 60) {
-                            $pp_response['order_status'] = 'P';
-                        } elseif ($param->status >= 50 && $param->status < 60) {
-                            $pp_response['order_status'] = 'O';
-                        } else {
-                            $pp_response['order_status'] = 'F';
-                        }
-
-                        $pp_response['reason_text'] = __($status);
-                        fn_finish_payment($param->txn, $pp_response);
-
-                        $temp = new Response();
-                        $temp->updateBillResult = 0;
-                    }
-                }
-
-                return $temp;
-            }
-        }
-        $server = new SoapServer('./qiwi_files/IShopClientWS.wsdl', array('classmap' => array('tns:updateBill' => 'Param', 'tns:updateBillResponse' => 'Response')));
-        $server->setClass('UpdateServer');
-        $server->handle();
-    } else {
-        die('Access denied');
-    }
+//     if (!empty($_REQUEST['parameter']) && $_REQUEST['parameter'] == 'update') {
+//         require './init_payment.php';
+// 
+//         class Response
+//         {
+//             public $updateBillResult;
+//         }
+//         class Param
+//         {
+//             public $login;
+//             public $password;
+//             public $txn;
+//             public $status;
+//         }
+// 
+//         class UpdateServer
+//         {
+//             function updateBill($param)
+//             {
+//                 if (!is_object($param)) {
+//                     return false;
+//                 }
+// 
+//                 $order_info = fn_get_order_info($param->txn, false, true, true, true);
+//                 $temp = '';
+//                 if (!empty($order_info['payment_method']['processor_params']['notification_password']) && !empty($order_info['payment_method']['processor_params']['shop_id'])) {
+//                     $txn = fn_convert_encoding('utf-8', 'windows-1251', $param->txn);
+//                     $password = fn_convert_encoding('utf-8', 'windows-1251', $order_info['payment_method']['processor_params']['notification_password']);
+//                     $crc = strtoupper(md5($txn . strtoupper(md5($password))));
+// 
+//                     if ($param->login == $order_info['payment_method']['processor_params']['shop_id'] && $param->password == $crc) {
+//                         $pp_response = array();
+//                         $status = 'qiwi_order_status_' . $param->status;
+//                         if ($param->status == 60) {
+//                             $pp_response['order_status'] = 'P';
+//                         } elseif ($param->status >= 50 && $param->status < 60) {
+//                             $pp_response['order_status'] = 'O';
+//                         } else {
+//                             $pp_response['order_status'] = 'F';
+//                         }
+// 
+//                         $pp_response['reason_text'] = __($status);
+//                         fn_finish_payment($param->txn, $pp_response);
+// 
+//                         $temp = new Response();
+//                         $temp->updateBillResult = 0;
+//                     }
+//                 }
+// 
+//                 return $temp;
+//             }
+//         }
+//         $server = new SoapServer('./qiwi_files/IShopClientWS.wsdl', array('classmap' => array('tns:updateBill' => 'Param', 'tns:updateBillResponse' => 'Response')));
+//         $server->setClass('UpdateServer');
+//         $server->handle();
+//     } else {
+//         die('Access denied');
+//     }
 } else {
     $dame_format = 'Y-m-d\TH:i:s';
     //C0CRmNJC0FGlmU8SHh3e
@@ -133,16 +135,15 @@ if (!defined('BOOTSTRAP')) {
         'basic_auth' => array($processor_data['processor_params']['login'] . ':' . $processor_data['processor_params']['passwd']),
         'headers' => array('Accept: application/json')
     );
-    $result = Http::put($url, $data, $extra);
-    $status = 'qiwi_result_status_' . $result;
+    $result = json_decode(Http::put($url, $data, $extra));
+    $pp_response['reason_text'] = __('qiwi_result_status_' . $result->response->result_code);
 
-    if ($result == 0) {
+    if ($result->response->result_code == 0) {
         $pp_response['order_status'] = 'O';
     } else {
         $pp_response['order_status'] = 'F';
     }
 
-    $pp_response['reason_text'] = __($status);
     fn_finish_payment($order_id, $pp_response);
     $idata = array (
         'order_id' => $_order_id,
@@ -151,7 +152,7 @@ if (!defined('BOOTSTRAP')) {
     );
     db_query("REPLACE INTO ?:order_data ?e", $idata);
     
-    if ($result == 0) {
+    if ($result->response->result_code == 0) {
         $redirect_url = "https://qiwi.com/order/external/main.action?shop=" . $processor_data['processor_params']['shop_id'] . '&transaction=' . $_order_id . '&successUrl=' . urlencode(fn_url("payment_notification.notify?payment=qiwi&order_id=$_order_id", AREA)) . '&failUrl=' . urlencode(fn_url("payment_notification.error?payment=qiwi&order_id=$_order_id", AREA));
         fn_redirect($redirect_url, true);
     } else {
