@@ -18,7 +18,7 @@ use Tygh\Registry;
 use Tygh\Http;
 
 if (defined('PAYMENT_NOTIFICATION')) {
-    // [tennishouse]
+
     if (isset($_REQUEST['order_id'])) {
         $ordernumber = explode('_', $_REQUEST['order_id']);
         $order_id = reset($ordernumber);
@@ -29,7 +29,6 @@ if (defined('PAYMENT_NOTIFICATION')) {
     } else {
         $order_id = 0;
     }
-    // [tennishouse]
 
     if ($mode == 'notify') {
 
@@ -55,67 +54,43 @@ if (defined('PAYMENT_NOTIFICATION')) {
 }
 
 if (!defined('BOOTSTRAP')) {
-//     if (!empty($_REQUEST['parameter']) && $_REQUEST['parameter'] == 'update') {
-//         require './init_payment.php';
-// 
-//         class Response
-//         {
-//             public $updateBillResult;
-//         }
-//         class Param
-//         {
-//             public $login;
-//             public $password;
-//             public $txn;
-//             public $status;
-//         }
-// 
-//         class UpdateServer
-//         {
-//             function updateBill($param)
-//             {
-//                 if (!is_object($param)) {
-//                     return false;
-//                 }
-// 
-//                 $order_info = fn_get_order_info($param->txn, false, true, true, true);
-//                 $temp = '';
-//                 if (!empty($order_info['payment_method']['processor_params']['notification_password']) && !empty($order_info['payment_method']['processor_params']['shop_id'])) {
-//                     $txn = fn_convert_encoding('utf-8', 'windows-1251', $param->txn);
-//                     $password = fn_convert_encoding('utf-8', 'windows-1251', $order_info['payment_method']['processor_params']['notification_password']);
-//                     $crc = strtoupper(md5($txn . strtoupper(md5($password))));
-// 
-//                     if ($param->login == $order_info['payment_method']['processor_params']['shop_id'] && $param->password == $crc) {
-//                         $pp_response = array();
-//                         $status = 'qiwi_order_status_' . $param->status;
-//                         if ($param->status == 60) {
-//                             $pp_response['order_status'] = 'P';
-//                         } elseif ($param->status >= 50 && $param->status < 60) {
-//                             $pp_response['order_status'] = 'O';
-//                         } else {
-//                             $pp_response['order_status'] = 'F';
-//                         }
-// 
-//                         $pp_response['reason_text'] = __($status);
-//                         fn_finish_payment($param->txn, $pp_response);
-// 
-//                         $temp = new Response();
-//                         $temp->updateBillResult = 0;
-//                     }
-//                 }
-// 
-//                 return $temp;
-//             }
-//         }
-//         $server = new SoapServer('./qiwi_files/IShopClientWS.wsdl', array('classmap' => array('tns:updateBill' => 'Param', 'tns:updateBillResponse' => 'Response')));
-//         $server->setClass('UpdateServer');
-//         $server->handle();
-//     } else {
-//         die('Access denied');
-//     }
+    if ((!empty($_REQUEST['parameter']) && $_REQUEST['parameter'] == 'update') && !empty($_REQUEST['status'])) {
+        require './init_payment.php';
+
+        if (!empty($_REQUEST['command']) && $_REQUEST['command'] == 'bill') {
+            if (isset($_REQUEST['bill_id'])) {
+                $ordernumber = explode('_', $_REQUEST['bill_id']);
+                $order_id = reset($ordernumber);
+            } else {
+                $order_id = 0;
+            }
+
+            if ($_REQUEST['status'] == 'paid') {
+
+                $pp_response['order_status'] = 'P';
+                if (fn_check_payment_script('qiwi.php', $order_id)) {
+                    fn_finish_payment($order_id, $pp_response, false);
+                }
+
+            } elseif (in_array($_REQUEST['status'], array('rejected', 'unpaid', 'expired'))) {
+
+                $pp_response['order_status'] = 'F';
+                $pp_response["reason_text"] = __('text_transaction_cancelled');
+
+                if (fn_check_payment_script('qiwi.php', $order_id)) {
+                    fn_finish_payment($order_id, $pp_response, false);
+                }
+            }
+            db_query("INSERT INTO ?:tmp ?e", array('data' => serialize($_REQUEST)));
+            header('Content-Type: text/xml; charset=utf-8');
+            fn_echo('<?xml version="1.0"?><result><result_code>0</result_code></result>');
+        }
+        exit;
+    } else {
+        die('Access denied');
+    }
 } else {
     $dame_format = 'Y-m-d\TH:i:s';
-    //C0CRmNJC0FGlmU8SHh3e
     
     $_order_id = $order_info['repaid'] ? ($order_info['order_id'] . '_' . $order_info['repaid']) : $order_info['order_id'];
     $_order_total = fn_format_rate_value($order_info['total'], 'F', 2, '.', '', '');
@@ -145,6 +120,7 @@ if (!defined('BOOTSTRAP')) {
     }
 
     fn_finish_payment($order_id, $pp_response);
+    fn_clear_cart($_SESSION['cart']);
     $idata = array (
         'order_id' => $_order_id,
         'type' => 'S',

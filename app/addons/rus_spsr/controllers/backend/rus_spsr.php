@@ -44,7 +44,6 @@ if ($mode == 'regenerate_cities_cache') {
                             $choice = $state['code'];
                         }
                     }
-                    fn_print_r($states, $choice, $city['RegionName']);
                     if ($choice != '') {
                         $state_codes[$city['Region_ID']] = $choice;
                     }

@@ -354,8 +354,8 @@ function fn_get_cross_sales($params)
         if (!empty($show_cat_ids)) {
             $limit = ceil($params['limit'] / count($show_cat_ids));
             $_params = array (
-                'bestsellers' => true,
-                'sales_amount_from' => 1,
+//                 'bestsellers' => true,
+//                 'sales_amount_from' => 1,
                 'sort_by' => 'sales_amount',
                 'sort_order' => 'desc',
                 'limit' => $limit,

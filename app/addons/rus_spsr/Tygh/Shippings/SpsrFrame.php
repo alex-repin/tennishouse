@@ -48,15 +48,13 @@ class SpsrFrame
             'msg' => '',
             'data' => array(),
         );
-        
-        $url = 'https://api.spsr.ru/test';
 
         $xml_request = '<root xmlns="http://spsr.ru/webapi/' . $params['suffix'] . '">' . $xml . '</root>';
         $extra = array(
             'headers' => array('Content-Type: application/xml')
         );
 
-        $response = simplexml_load_string(Http::post($url, $xml_request, $extra));
+        $response = simplexml_load_string(Http::post($params['url'], $xml_request, $extra));
         $_result = json_decode(json_encode((array) $response), true);
         $result_code = array_shift($_result);
 
@@ -86,7 +84,8 @@ class SpsrFrame
         $xml = '<p:Params Name="WAGetCities" Ver="1.0" xmlns:p="http://spsr.ru/webapi/WA/1.0" />' . SpsrFrame::arraySimpleXml('GetCities', $data);
         $params = array(
             'suffix' => 'Info/GetCities/1.0',
-            'inc' => 2
+            'inc' => 2,
+            'url' => 'https://api.spsr.ru'
         );
         $response = SpsrFrame::SpsrXmlRequest($xml, $params);
         

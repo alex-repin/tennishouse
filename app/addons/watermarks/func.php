@@ -322,13 +322,13 @@ function fn_watermarks_generate_thumbnail_post(&$relative_path, &$lazy)
 function fn_wt_get_image_company_id($image_data)
 {
     $image_data['object_type'] = (isset($image_data['object_type']))?$image_data['object_type']:'';
-    if ($image_data['object_type'] == 'category') {
+    if ($image_data['object_type'] == 'category' && !empty($image_data['object_id'])) {
         $company_id = db_get_field("SELECT company_id FROM ?:categories WHERE category_id = ?i", $image_data['object_id']);
-    } elseif ($image_data['object_type'] == 'product') {
+    } elseif ($image_data['object_type'] == 'product' && !empty($image_data['object_id'])) {
         $company_id = db_get_field("SELECT company_id FROM ?:products WHERE product_id = ?i", $image_data['object_id']);
-    } elseif ($image_data['object_type'] == 'variant_image') {
+    } elseif ($image_data['object_type'] == 'variant_image' && !empty($image_data['object_id'])) {
         $company_id = db_get_field("SELECT company_id FROM ?:product_option_variants AS ov LEFT JOIN ?:product_options AS po ON ov.option_id = po.option_id WHERE ov.variant_id = ?i", $image_data['object_id']);
-    } elseif ($image_data['object_type'] == 'product_option') {
+    } elseif ($image_data['object_type'] == 'product_option' && !empty($image_data['object_id'])) {
         $company_id = db_get_field("SELECT company_id FROM ?:product_options_inventory AS pi LEFT JOIN ?:products AS p ON pi.product_id = p.product_id WHERE pi.combination_hash = ?i", $image_data['object_id']);
     } else {
         // take any company_id

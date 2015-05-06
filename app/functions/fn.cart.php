@@ -6501,7 +6501,7 @@ function fn_prepare_checkout_payment_methods(&$cart, &$auth, $lang_code = CART_L
     foreach ($payment_methods as $k => $v) {
 
         // [tennishouse]
-        if ($payment_methods[$k]['processor_type'] == 'C' || (!empty($payment_methods[$k]['min_limit']) && $payment_methods[$k]['min_limit'] > $cart['total']) || (!empty($payment_methods[$k]['max_limit']) && $payment_methods[$k]['max_limit'] < $cart['total'])) {
+        if ($payment_methods[$k]['processor_type'] == 'C' || (!empty($payment_methods[$k]['min_limit']) && !empty($cart['total']) && $payment_methods[$k]['min_limit'] > $cart['total']) || (!empty($payment_methods[$k]['max_limit']) && !empty($cart['total']) && $payment_methods[$k]['max_limit'] < $cart['total'])) {
             continue;
         }
         // [tennishouse]

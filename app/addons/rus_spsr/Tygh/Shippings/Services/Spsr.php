@@ -165,7 +165,7 @@ class Spsr implements IService
                 $GabarythB = '1';
             }
         }
-        //$post['ICN'] = $icn;
+        $post['ICN'] = $icn;
 
         $request_data = array(
             'login' => $login,
@@ -177,7 +177,7 @@ class Spsr implements IService
         return $request_data;
     }
 
-    private function startSession($login, $psw)
+    private function startSession($login, $psw, $url)
     {
         $data = array(
             'Login' => $login,
@@ -187,17 +187,18 @@ class Spsr implements IService
         $xml = '<p:Params Name="WALogin" Ver="1.0" xmlns:p="http://spsr.ru/webapi/WA/1.0" />' . SpsrFrame::arraySimpleXml('Login', $data);
         
         $params = array(
-            'suffix' => 'usermanagment/login/1.0'
+            'suffix' => 'usermanagment/login/1.0',
+            'url' => $url
         );
         $response = SpsrFrame::SpsrXmlRequest($xml, $params);
-        if ($response['error'] == '0' && !empty($response['data'][0]['SID'])) {
+        if (!empty($response) && $response['error'] == '0' && !empty($response['data'][0]['SID'])) {
             $this->SID = $response['data'][0]['SID'];
         } else {
             $this->_internalError(!empty($response['data'][0]['ErrorMessageRU']) ? $response['data'][0]['ErrorMessageRU'] : $response['data'][0]['ErrorMessageEN']);
         }
     }
     
-    private function finishSession($login, $sid)
+    private function finishSession($login, $sid, $url)
     {
         $data = array(
             'Login' => $login,
@@ -206,7 +207,8 @@ class Spsr implements IService
         $xml = '<p:Params Name="WALogout" Ver="1.0" xmlns:p="http://spsr.ru/webapi/WA/1.0" />' . SpsrFrame::arraySimpleXml('Logout', $data);
         
         $params = array(
-            'suffix' => 'usermanagment/logout/1.0'
+            'suffix' => 'usermanagment/logout/1.0',
+            'url' => $url
         );
         $response = SpsrFrame::SpsrXmlRequest($xml, $params);
     }
@@ -214,11 +216,11 @@ class Spsr implements IService
     private function SpsrRequest($data)
     {
         $result = array();
-        $this->startSession($data['login'], $data['psw']);
+        $this->startSession($data['login'], $data['psw'], $data['url']);
         if (!empty($this->SID)) {
-            //$data['data']['SID'] = $this->SID;
-            $response = Http::get($data['url'], $data['data']);
-            $this->finishSession($data['login'], $this->SID);
+            $data['data']['SID'] = $this->SID;
+            $response = Http::get($data['r_url'], $data['data']);
+            $this->finishSession($data['login'], $this->SID, $data['url']);
         }
         
         return $response;
@@ -232,7 +234,7 @@ class Spsr implements IService
     public function getSimpleRates()
     {
         $data = $this->getRequestData();
-        $data['url'] = 'http://www.cpcr.ru/cgi-bin/postxml.pl';
+        $data['r_url'] = 'http://www.cpcr.ru/cgi-bin/postxml.pl';
         $key = md5(json_encode($data['data']));
         $spsr_data = fn_get_session_data($key);
 
@@ -266,25 +268,11 @@ class Spsr implements IService
         if (empty($_result['Error']) && empty($this->_error_stack) && !empty($_result['Tariff'])) {
 
             $rates = array();
-            if (!empty($shipping_info['service_params']['tarifftype'])) {
-                foreach ($_result['Tariff'] as $i => $tarif) {
-                    if ($tarif['TariffType'] == $shipping_info['service_params']['tarifftype']) {
-                        $dp = explode('-', $tarif['DP']);
-                        $rates = array(
-                            'price' => $tarif['Total_Dost'],
-                            'date' => $dp[0] . '-' . $dp[1] . ' ' . __('days')
-                        );
-                        break;
-                    }
-                }
-            } else {
-                $tarif = array_shift($_result['Tariff']);
-                $dp = explode('-', $tarif['DP']);
-                $rates = array(
-                    'price' => $tarif['Total_Dost'],
-                    'date' => $dp[0] . '-' . $dp[1] . ' ' . __('days')
-                );
-            }
+            $dp = explode('-', $_result['Tariff']['DP']);
+            $rates = array(
+                'price' => $_result['Tariff']['Total_Dost'],
+                'date' => $dp[0] . (($dp[0] != $dp[1]) ? '-' . $dp[1] . ' ' : ' ') . __('days')
+            );
 
             $this->_fillSessionData($rates);
 
@@ -292,7 +280,7 @@ class Spsr implements IService
                 $return['cost'] = $rates['price'];
             } else {
                 $this->_internalError(__('xml_error'));
-                $return['error'] = $_result['Error'];
+//                 $return['error'] = $_result['Error'];
             }
 
         } else {

@@ -59,11 +59,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             if (empty($data['data'])) {
                                 $missing_products[$product_code] = $data;
                             } elseif (count($ids) == 0) {
+                                $amount_num = count($data['data'][0]) - 1;
                                 $combination_hash = db_get_array("SELECT combination_hash, product_id FROM ?:product_options_inventory WHERE product_code = ?s", $product_code);
-                                if (count($combination_hash) != 1 || count($data['data']) > 1 || empty($data['data'][0][4])) {
+                                if (count($combination_hash) != 1 || count($data['data']) > 1 || empty($data['data'][0][$amount_num])) {
                                     $missing_products[$product_code] = $data;
                                 } else {
-                                    db_query("UPDATE ?:product_options_inventory SET amount = ?i WHERE combination_hash = ?i", $data['data'][0][4], $combination_hash[0]['combination_hash']);
+                                    db_query("UPDATE ?:product_options_inventory SET amount = ?i WHERE combination_hash = ?i", $data['data'][0][$amount_num], $combination_hash[0]['combination_hash']);
                                     $updated_products[$product_code] = array(
                                         'code' => $product_code,
                                         'data' => $data
@@ -79,6 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 foreach ($data['data'] as $i => $variant) {
                                     $option_data = $var_id_tmp = $options_count = $missing_variants = $max = array();
                                     $break = false;
+                                    $amount_num = count($variant) - 1;
                                     foreach ($ids as $m => $product_id) {
                                         $option_data[$product_id] = (empty($option_data[$product_id])) ? array() : $option_data[$product_id];
                                         $product_data = fn_get_product_data($product_id, $auth, DESCR_SL, '', false, false, false, false, false, false, false);
@@ -93,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
                                             fn_print_r($variant);
                                         }
-                                        if ($variant[0] != '' && !empty($product_options) && $product_data['tracking'] == 'O' && !empty($variant[4])) {
+                                        if ($variant[0] != '' && !empty($product_options) && $product_data['tracking'] == 'O' && !empty($variant[$amount_num])) {
                                             $variants = explode(',', $variant[0]);
                                             $prev_numeric = false;
                                             $prev_id = '';
@@ -157,8 +159,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     $missing_variants[$product_id][] = $j;
                                                 }
                                             }
-                                        } elseif (count($data['data']) == 1 && $product_data['tracking'] == 'B' && !empty($variant[4]) && empty($product_options)) {
-                                            db_query("UPDATE ?:products SET amount = ?i WHERE product_id = ?i", floor($variant[4] / $product_data['import_divider']), $product_id);
+                                        } elseif (count($data['data']) == 1 && $product_data['tracking'] == 'B' && !empty($variant[$amount_num]) && empty($product_options)) {
+                                            db_query("UPDATE ?:products SET amount = ?i WHERE product_id = ?i", floor($variant[$amount_num] / $product_data['import_divider']), $product_id);
                                             $updated_products[$product_code] = array(
                                                 'code' => $product_code,
                                                 'data' => $data
@@ -198,7 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 }
                                             }
                                             $combination_hash = fn_generate_cart_id($product_id, array('product_options' => $option_data[$product_id]));
-                                            $combinations_data[$product_id][$combination_hash]['amount'] = $variant[4];
+                                            $combinations_data[$product_id][$combination_hash]['amount'] = $variant[$amount_num];
                                             if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
                                                 fn_print_r($combinations_data);
                                             }
