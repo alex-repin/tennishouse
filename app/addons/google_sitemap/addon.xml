@@ -104,6 +104,21 @@
                         <type>selectbox</type>
                         <default_value>0.5</default_value>
                     </item>
+                    <item id="players_setting">
+                        <type>header</type>
+                    </item>
+                    <item id="include_players">
+                        <type>checkbox</type>
+                        <default_value>Y</default_value>
+                    </item>
+                    <item id="players_change">
+                        <type>selectbox</type>
+                        <default_value>daily</default_value>
+                    </item>
+                    <item id="players_priority">
+                        <type>selectbox</type>
+                        <default_value>0.5</default_value>
+                    </item>
                     <item id="companies_setting" edition_type="MVE:ROOT">
                         <type>header</type>
                     </item>

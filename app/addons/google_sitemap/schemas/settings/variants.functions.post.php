@@ -81,3 +81,13 @@ function fn_settings_variants_addons_google_sitemap_companies_priority()
 {
     return fn_google_sitemap_get_priority();
 }
+
+function fn_settings_variants_addons_google_sitemap_players_change()
+{
+    return fn_google_sitemap_get_frequency();
+}
+
+function fn_settings_variants_addons_google_sitemap_players_priority()
+{
+    return fn_google_sitemap_get_priority();
+}

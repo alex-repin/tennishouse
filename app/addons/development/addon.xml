@@ -210,6 +210,9 @@
         <item>
             ALTER TABLE `cscart_destinations` ADD `shipping_ids` TEXT NOT NULL ;
         </item>
+        <item>
+            ALTER TABLE `cscart_players` ADD `link` VARCHAR( 255 ) NOT NULL ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>

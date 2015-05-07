@@ -205,7 +205,7 @@
             <th>
                 <div id="on_st_{$id}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand cm-combinations-options-{$id} exicon-expand"></div><div id="off_st_{$id}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand hidden cm-combinations-options-{$id} exicon-collapse"></div>
             </th>
-            <th class="cm-non-cb{if $option_data.option_type == "C"} hidden{/if}">&nbsp;</th>
+            <th class="cm-non-cb{if $option_data.option_type == "C"} hidden{/if}">{include file="buttons/remove_item.tpl" only_delete="Y" but_class="cm-delete-table"}</th>
         </tr>
         </thead>
         {foreach from=$option_data.variants item="vr" name="fe_v"}

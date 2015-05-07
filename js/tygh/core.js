@@ -324,6 +324,22 @@ var Tygh = {
                     }
                 }
 
+                // [tennishouse]
+                if (jelm.hasClass('cm-delete-table') || jelm.parents('.cm-delete-row').length) {
+                    var holder;
+
+                    if (jelm.parents('thead').length) {
+                        holder = jelm.parents('thead');
+                    } else {
+                        return false;
+                    }
+                    
+                    holder.siblings('tbody.cm-row-item').each(function(){
+                        $(this).find('.cm-delete-row').click();
+                    });
+                }
+                // [tennishouse]
+                
                 if (jelm.hasClass('cm-save-and-close')) {
                     jelm.parents('form:first').append('<input type="hidden" name="return_to_list" value="Y" />');
                 }

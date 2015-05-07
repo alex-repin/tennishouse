@@ -10,6 +10,6 @@
 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
 {$url = fn_url($config.current_url, 'C', 'rel')}
-ga('create', '{$addons.google_analytics.tracking_code}', 'auto');
+ga('create', '{$addons.google_analytics.tracking_code}'{if $auth.user_id}, {$ldelim}'userId': '{$auth.user_id}'{$rdelim}{/if});
 ga('send', 'pageview', '{$url|escape:javascript nofilter}');
 </script>

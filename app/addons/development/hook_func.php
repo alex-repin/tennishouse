@@ -19,8 +19,12 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 function fn_development_validate_sef_object($path, $seo, $vars, &$result, $objects)
 {
-    if ($seo['type'] == 'l' && $path == '/players') {
-        $result = true;
+    if ($seo['type'] == 'l') {
+        if ($path == '/players' && !empty($seo['object_id'])) {
+            $result = true;
+        } else {
+            $result = false;
+        }
     }
 }
 

@@ -118,6 +118,14 @@
         </div>
     </div>
 
+    <div class="control-group">
+        <label for="elm_player_data_link" class="control-label">{__("link")}</label>
+        <div class="controls">
+            <input type="text" name="player_data[data_link]" id="elm_player_data_link" value="{$player_data.data_link}" size="25" class="input-long"/>
+            {if $player_data.data_link}<a href="{$player_data.data_link}" target="_blank">{$player_data.data_link}</a>{/if}
+        </div>
+    </div>
+
     {include file="common/select_status.tpl" input_name="player_data[status]" id="elm_player_status" obj_id=$id obj=$player_data hidden=true}
     
 </div>

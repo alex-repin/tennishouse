@@ -50,6 +50,10 @@ function fn_google_sitemap_generate_link($object, $value, $languages)
             $link = 'companies.view?company_id=' . $value;
 
             break;
+        case 'players':
+            $link = 'players.view?player_id=' . $value;
+
+            break;
         default:
             fn_set_hook('sitemap_link_object', $link, $object, $value);
     }
@@ -286,6 +290,22 @@ HEAD;
             foreach ($companies as $company_id) {
                 $links = fn_google_sitemap_generate_link('companies', $company_id, $languages);
                 $item = fn_google_sitemap_print_item_info($links, $lmod, $sitemap_settings['companies_change'], $sitemap_settings['companies_priority']);
+
+                fn_google_sitemap_check_counter($file, $link_counter, $file_counter, $links, $simple_head, $simple_foot);
+
+                fwrite($file, $item);
+            }
+        }
+    }
+
+    if ($sitemap_settings['include_players'] == 'Y') {
+        $params = array('plain' => true);
+        list($players, ) = fn_get_players($params);
+
+        if (!empty($players)) {
+            foreach ($players as $i => $data) {
+                $links = fn_google_sitemap_generate_link('players', $data['player_id'], $languages);
+                $item = fn_google_sitemap_print_item_info($links, $lmod, $sitemap_settings['players_change'], $sitemap_settings['players_priority']);
 
                 fn_google_sitemap_check_counter($file, $link_counter, $file_counter, $links, $simple_head, $simple_foot);
 
