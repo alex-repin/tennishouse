@@ -31,7 +31,12 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST' && $mode == 'update') {
     if (!empty($tabs['features'])) {
         $features_tab = $tabs['features'];
         unset($tabs['features']);
-        $tabs = fn_insert_before_key($tabs, 'seo', 'features', $features_tab);
+        $tabs = fn_insert_before_key($tabs, 'shippings', 'features', $features_tab);
+    }
+    if (!empty($tabs['seo'])) {
+        $seo_tab = $tabs['seo'];
+        unset($tabs['seo']);
+        $tabs = fn_insert_before_key($tabs, 'shippings', 'seo', $seo_tab);
     }
 //     $options_tab = $tabs['options'];
 //     unset($tabs['options']);
@@ -41,4 +46,16 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST' && $mode == 'update') {
     // [/Product tabs]
     Registry::set('navigation.tabs', $tabs);
     // [/Page sections]
+    
+    $product_options = Registry::get('view')->gettemplatevars('product_options');
+    $product_data = Registry::get('view')->gettemplatevars('product_data');
+    $product_data['hide_features'] = array(PLAYER_FEATURE_ID);
+    if (!empty($product_options)) {
+        foreach ($product_options as $i => $opt_data) {
+            if (!empty($opt_data['feature_id'])) {
+                $product_data['hide_features'][] = $opt_data['feature_id'];
+            }
+        }
+    }
+    $product_data = Registry::get('view')->assign('product_data', $product_data);
 }

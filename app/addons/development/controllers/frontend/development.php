@@ -33,6 +33,7 @@ if ($mode == 'update_rub_rate') {
         $params = array();
         fn_init_currency($params);
         fn_update_prices();
+        fn_echo("Цены и валюты обновлены");
     }
 
     exit;

@@ -130,6 +130,9 @@
                     </div>
                     {** /General info section **}
 
+                    {if !$product_data}
+                        {$product_data.status = 'H'}
+                    {/if}
                     {include file="common/select_status.tpl" input_name="product_data[status]" id="elm_product_status" obj=$product_data hidden=true}
 
                     {hook name="products:update_detailed_images"}

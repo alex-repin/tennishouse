@@ -8559,7 +8559,9 @@ function fn_apply_exceptions_rules($product)
             $variants_num = empty($second_opt) ? 1 : count($second_opt['variants']);
             $disabled_variants = array();
             foreach ($exceptions as $exception_id => $exception) {
-                $disabled_variants[$exception[$first_opt['option_id']]] = (empty($disabled_variants[$exception[$first_opt['option_id']]])) ? 1 : $disabled_variants[$exception[$first_opt['option_id']]] + 1;
+                if (!empty($exception[$first_opt['option_id']])) {
+                    $disabled_variants[$exception[$first_opt['option_id']]] = (empty($disabled_variants[$exception[$first_opt['option_id']]])) ? 1 : $disabled_variants[$exception[$first_opt['option_id']]] + 1;
+                }
             }
             foreach ($disabled_variants as $vr_id => $num) {
                 if ($num == $variants_num) {

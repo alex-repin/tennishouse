@@ -1,6 +1,6 @@
 {foreach from=$product_features item=feature key="feature_id"}
     {$allow_enter_variant = $feature|fn_allow_save_object:"product_features"}
-    {if $feature.feature_type != "G" && $feature.feature_id != $smarty.const.PLAYER_FEATURE_ID}
+    {if $feature.feature_type != "G" && !$feature.feature_id|in_array:$product_data.hide_features}
         <div class="control-group">
             <label class="control-label" for="feature_{$feature_id}">{$feature.description}</label>
             <div class="controls">

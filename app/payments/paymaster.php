@@ -21,7 +21,7 @@ if (defined('PAYMENT_NOTIFICATION')) {
         $payment_id = db_get_field("SELECT payment_id FROM ?:orders WHERE order_id = ?i", $order_id);
         $processor_data = fn_get_payment_method_data($payment_id);
 
-        $secure_string = $_REQUEST['LMI_MERCHANT_ID'].';'.$_REQUEST['order_id'].';'.$_REQUEST['LMI_SYS_PAYMENT_ID'].';'.$_REQUEST['LMI_SYS_PAYMENT_DATE'].';'.$_REQUEST['LMI_PAYMENT_AMOUNT'].';'.$_REQUEST['LMI_CURRENCY'].';'.$_REQUEST['LMI_PAID_AMOUNT'].';'.$_REQUEST['LMI_PAID_CURRENCY'].';'.$_REQUEST['LMI_PAYMENT_SYSTEM'].';'.$_REQUEST['LMI_SIM_MODE'].';'.$processor_data['processor_params']['paymaster_key'];
+        $secure_string = $_REQUEST['LMI_MERCHANT_ID'].';'.$_REQUEST['order_id'].';'.$_REQUEST['LMI_SYS_PAYMENT_ID'].';'.$_REQUEST['LMI_SYS_PAYMENT_DATE'].';'.$_REQUEST['LMI_PAYMENT_AMOUNT'].';'.$_REQUEST['LMI_CURRENCY'].';'.$_REQUEST['LMI_PAID_AMOUNT'].';'.$_REQUEST['LMI_PAID_CURRENCY'].';'.$_REQUEST['LMI_PAYMENT_SYSTEM'].';'.(!empty($_REQUEST['LMI_SIM_MODE']) ? $_REQUEST['LMI_SIM_MODE'] : '').';'.$processor_data['processor_params']['paymaster_key'];
 
         $secret_hash = base64_encode(md5($secure_string, true));
 

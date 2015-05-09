@@ -456,7 +456,7 @@ function fn_development_get_products($params, &$fields, &$sortings, &$condition,
             'BG' => array('72'),
         );
         $digit_features = array(R_WEIGHT_FEATURE_ID, R_STIFFNESS_FEATURE_ID, R_BALANCE_FEATURE_ID);
-        if (!empty($similar_products_features[$_SESSION['category_type']]) && !empty($_SESSION['product_features'])) {
+        if (!empty($_SESSION['category_type']) && !empty($similar_products_features[$_SESSION['category_type']]) && !empty($_SESSION['product_features'])) {
             foreach ($similar_products_features[$_SESSION['category_type']] as $i => $feature_id) {
                 if (!empty($_SESSION['product_features'][$feature_id])) {
                     if (!empty($_SESSION['product_features'][$feature_id]['variants'])) {
