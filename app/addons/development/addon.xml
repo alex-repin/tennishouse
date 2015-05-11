@@ -415,5 +415,6 @@
         <item lang="ru" id="import_divider">Делитель для импорта</item>
         <item lang="ru" id="short_phone">Тел.</item>
         <item lang="ru" id="total_limit">Ограничение на сумму заказа</item>
+        <item lang="ru" id="override_shipping_weight">Задать вес</item>
     </language_variables>
 </addon>

@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             fn_print_r($variant);
                                         }
                                         if ($variant[0] != '' && !empty($product_options) && $product_data['tracking'] == 'O' && !empty($variant[$amount_num])) {
-                                            $variants = explode(',', $variant[0]);
+                                            $variants = explode(',', fn_normalize_string($variant[0]));
                                             $prev_numeric = false;
                                             $prev_id = '';
                                             foreach ($variants as $j => $variant_name) {
@@ -257,7 +257,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             db_query("UPDATE ?:products SET status = 'A' WHERE product_id IN (?n)", $in_stock);
                         }
                         if (!empty($out_of_stock)) {
-                            db_query("UPDATE ?:products SET status = 'H' WHERE product_id IN (?n)", $out_of_stock);
+                            db_query("UPDATE ?:products SET status = 'H', amount = '0' WHERE product_id IN (?n)", $out_of_stock);
+                            foreach ($out_of_stock as $os_i => $pr_id) {
+                                $all_combs = db_get_hash_single_array("SELECT combination_hash, combination FROM ?:product_options_inventory WHERE product_id = ?i", array('combination_hash', 'combination'), $pr_id);
+                                db_query("DELETE FROM ?:product_options_exceptions WHERE product_id = ?i", $pr_id);
+                                db_query("UPDATE ?:product_options_inventory SET amount = '0' WHERE combination_hash IN (?n)", array_keys($all_combs));
+                                foreach ($all_combs as $t => $comb_hash) {
+                                    $options_array = fn_get_product_options_by_combination($comb_hash);
+                                    $_data = array(
+                                        'product_id' => $pr_id,
+                                        'combination' => serialize($options_array)
+                                    );
+                                    db_query("INSERT INTO ?:product_options_exceptions ?e", $_data);
+                                }
+                            }
                         }
                         if (!empty($updated_by_combinations)) {
                             foreach ($updated_by_combinations as $pr_id => $combs) {
@@ -426,6 +439,16 @@ if ($mode == 'calculate_balance') {
         db_query("UPDATE ?:products SET tracking = 'O' WHERE product_id IN (?n)", $ids);
     }
     exit;
+}
+
+function fn_normalize_string($string)
+{
+    if (preg_match("/\d,\d/", $string, $matches)) {
+        $rplc = str_replace(',', '.', $matches[0]);
+        $string = str_replace($matches[0], $rplc, $string);
+    }
+    
+    return $string;
 }
 
 function fn_format_variant_name($variant_name)
