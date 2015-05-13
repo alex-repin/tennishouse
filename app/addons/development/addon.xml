@@ -416,5 +416,9 @@
         <item lang="ru" id="short_phone">Тел.</item>
         <item lang="ru" id="total_limit">Ограничение на сумму заказа</item>
         <item lang="ru" id="override_shipping_weight">Задать вес</item>
+        <item lang="ru" id="stocks_updated_successfully">Остатки успешно обновлены</item>
+        <item lang="ru" id="currencies_updated_successfully">Цены и валюты обновлены</item>
+        <item lang="ru" id="rankings_updated_successfully">Рейтинги игроков обновлены: [updated] из [total]</item>
+        <item lang="ru" id="update_rankings">Обновить рейтинги игроков</item>
     </language_variables>
 </addon>

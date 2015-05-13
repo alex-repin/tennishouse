@@ -235,6 +235,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             }
                                             db_query("UPDATE ?:product_options_inventory SET ?u WHERE combination_hash = ?s", $inventory[$k], $k);
                                         }
+                                        //db_query("DELETE FROM ?:product_options_exceptions WHERE product_id = ?i", $product_id);
                                         fn_update_product_exceptions($product_id, $inventory);
                                         if (!empty($comb_data)) {
                                             $broken_options_products[$product_code] = $data;
@@ -259,8 +260,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         if (!empty($out_of_stock)) {
                             db_query("UPDATE ?:products SET status = 'H', amount = '0' WHERE product_id IN (?n)", $out_of_stock);
                             foreach ($out_of_stock as $os_i => $pr_id) {
+                                fn_rebuild_product_options_inventory($pr_id);
                                 $all_combs = db_get_hash_single_array("SELECT combination_hash, combination FROM ?:product_options_inventory WHERE product_id = ?i", array('combination_hash', 'combination'), $pr_id);
-                                db_query("DELETE FROM ?:product_options_exceptions WHERE product_id = ?i", $pr_id);
                                 db_query("UPDATE ?:product_options_inventory SET amount = '0' WHERE combination_hash IN (?n)", array_keys($all_combs));
                                 foreach ($all_combs as $t => $comb_hash) {
                                     $options_array = fn_get_product_options_by_combination($comb_hash);
@@ -268,7 +269,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         'product_id' => $pr_id,
                                         'combination' => serialize($options_array)
                                     );
-                                    db_query("INSERT INTO ?:product_options_exceptions ?e", $_data);
+                                    db_query("REPLACE INTO ?:product_options_exceptions ?e", $_data);
                                 }
                             }
                         }
@@ -316,6 +317,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Registry::get('view')->assign('missing_products', $missing_products);
             Registry::get('view')->assign('updated_products', $updated_products);
             Registry::get('view')->assign('broken_options_products', $broken_options_products);
+            fn_set_notification('N', __('notice'), __('stocks_updated_successfully'));
         }
         
         Registry::get('view')->assign('brands', fn_development_get_brands());
@@ -464,6 +466,7 @@ function fn_format_variant_name($variant_name)
     fn_trim_helper($variant_name);
     return $variant_name;
 }
+
 function fn_development_get_brands()
 {
     $params = array(

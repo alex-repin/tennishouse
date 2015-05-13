@@ -25,6 +25,12 @@ $schema['top']['administration']['items']['development'] = array(
         ),
         'update_exchange_rates' => array(
             'href' => fn_url('development.update_rub_rate', 'C'),
+            'ajax' => true,
+            'position' => 100,
+        ),
+        'update_rankings' => array(
+            'href' => fn_url('development.update_rankings', 'C'),
+            'ajax' => true,
             'position' => 100,
         ),
     ),
