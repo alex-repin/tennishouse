@@ -749,6 +749,7 @@ select {
 .ty-player-block__img-wrapper {
     position: absolute;
     left: -35px;
+    z-index: 100;
 }
 .ty-player-block__left {
     display: inline-block;
@@ -761,8 +762,29 @@ select {
     letter-spacing: -3px;
     word-spacing: 5px;
     text-transform: uppercase;
-    padding: 30px 0 10px 30px;
+    padding: 30px 0 10px 100px;
     text-align: center;
+    position: relative;
+}
+.ty-player-ranking {
+    bottom: 5px;
+    left: 50px;
+    float: left;
+    position: absolute;
+    letter-spacing: -6px;
+    color: darken(@base, 50%);
+}
+.ty-player-ranking-num {
+}
+.ty-player-ranking-hashtag {
+}
+.ty-player-ranking-title {
+    bottom: 2px;
+    font-size: 8px;
+    left: 50px;
+    letter-spacing: normal;
+    position: absolute;
+    color: darken(@base, 50%);
 }
 .ty-player-detail_wrapper {
     display: inline-block;
@@ -772,7 +794,7 @@ select {
     display: inline-block;
     min-height: 300px;
     padding-left: 150px;
-    width: 500px;
+    width: 550px;
     position: relative;
 }
 .ty-grid-list__item {

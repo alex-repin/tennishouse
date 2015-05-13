@@ -228,6 +228,7 @@
         <item lang="ru" id="players.editing_player">Редактирование игрока</item>
         <item lang="ru" id="player_name">Имя</item>
         <item lang="ru" id="atp_ranking">ATP рейтинг</item>
+        <item lang="ru" id="wta_ranking">WTA рейтинг</item>
         <item lang="ru" id="photo">Фото</item>
         <item lang="ru" id="gender">Пол</item>
         <item lang="ru" id="birthday">День рождения</item>

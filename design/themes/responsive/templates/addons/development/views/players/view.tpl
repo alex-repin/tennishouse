@@ -13,7 +13,18 @@
                 {/if}
             {/hook}
         </div>
-        <h1 class="ty-player-details-title">{$player_data.player}{if $player_data.titles}<span class="ty-player-titles">{$player_data.titles}</span>{/if}</h1>
+        <h1 class="ty-player-details-title">
+            {if $player_data.ranking}
+                {$font_size = 50 - ($player_data.ranking|strlen - 1) * 4}
+                <span class="ty-player-ranking">
+                    <span class="ty-player-ranking-hashtag">#</span>
+                    <span class="ty-player-ranking-num" style="font-size: {$font_size}px;">{$player_data.ranking}</span>
+                </span>
+                <span class="ty-player-ranking-title">{if $player_data.gender == 'M'}{__("atp_ranking")}{else}{__("wta_ranking")}{/if}</span>
+            {/if}
+            {$player_data.player}
+            {if $player_data.titles}<span class="ty-player-titles">{$player_data.titles}</span>{/if}
+        </h1>
         <div class="ty-player-block__left">
             <div class="ty-player-data">
                 <span class="ty-player-data__label">{__("date_of_birth")}:</span>
@@ -43,10 +54,12 @@
                 <span class="ty-player-data__label">{__("turned_pro")}:</span>
                 <div class="ty-player-data__value">{$player_data.turned_pro}</div>
             </div>
+            {if $player_data.coach}
             <div class="ty-player-data">
                 <span class="ty-player-data__label">{__("coach")}:</span>
                 <div class="ty-player-data__value">{$player_data.coach}</div>
             </div>
+            {/if}
         </div>
     </div>
     {if $player_data.news_feed}
