@@ -17,6 +17,32 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_cron_routine()
+{
+    $scheme = fn_get_schema('cron', 'schema');
+    
+    if (!empty($scheme)) {
+        foreach ($scheme as $type => $data) {
+            if (!empty($data['wday']) && $data['wday'] != date('N')) {
+                continue;
+            }
+            $is_executed = db_get_field("SELECT log_id FROM ?:cron_logs WHERE type = ?s AND status = 'F' AND timestamp > ?i", $type, TIME - $data['frequency']);
+            if (empty($is_executed)) {
+                $action = array(
+                    'type' => $type,
+                    'status' => 'S',
+                    'timestamp' => TIME
+                );
+                $log_id = db_query("INSERT INTO ?:cron_logs ?e", $action);
+                $result = call_user_func($data['function']);
+                if ($result) {
+                    db_query("UPDATE ?:cron_logs SET status = 'F' WHERE log_id = ?i", $log_id);
+                }
+            }
+        }
+    }
+}
+
 function fn_development_validate_sef_object($path, $seo, $vars, &$result, $objects)
 {
     if ($seo['type'] == 'l') {

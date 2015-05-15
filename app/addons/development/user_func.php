@@ -19,6 +19,80 @@ use Tygh\FeaturesCache;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_generate_features_cash()
+{
+    FeaturesCache::generate(CART_LANGUAGE);
+    return true;
+}
+
+function fn_update_rankings()
+{
+    $players = db_get_array("SELECT player_id, data_link, gender FROM ?:players WHERE data_link != ''");
+    $update = array();
+    if (!empty($players)) {
+        foreach ($players as $i => $player) {
+            $result = Http::get($player['data_link']);
+            if ($result) {
+                if ($player['gender'] == 'M') {
+                    preg_match('/<div id="playerBioInfoRank">.*?(\d+).*?<\/div>/', preg_replace('/[\r\n]/', '', $result), $match);
+                    if (!empty($match['1'])) {
+                        $update[] = array(
+                            'player_id' => $player['player_id'],
+                            'ranking' => $match['1']
+                        );
+                    }
+                } else {
+                    preg_match('/<div class="box ranking">.*?>(\d+)<.*?<\/div>/', preg_replace('/[\r\n]/', '', $result), $match);
+                    if (!empty($match['1'])) {
+                        $update[] = array(
+                            'player_id' => $player['player_id'],
+                            'ranking' => $match['1']
+                        );
+                    }
+                }
+            }
+        }
+    }
+    if (!empty($update)) {
+        foreach ($update as $i => $_dt) {
+            db_query("UPDATE ?:players SET ranking = ?i WHERE player_id = ?i", $_dt['ranking'], $_dt['player_id']);
+        }
+        fn_set_notification('N', __('notice'), __('rankings_updated_successfully', array('[total]' => count($players), '[updated]' => count($update))));
+        if (count($players) == count($update)) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+function fn_update_rub_rate()
+{
+    $update_limits = array(
+        'USD' => 2.5,
+        'EUR' => 2.5,
+    );
+    $rates = fn_get_currency_exchange_rates();
+    $update_prices = false;
+    if ($rates) {
+        foreach ($rates as $code => $rate) {
+            if (!empty(Registry::get('currencies.' . $code)) && (Registry::get('currencies.' . $code . '.coefficient') < $rate || (Registry::get('currencies.' . $code . '.coefficient') > $rate && (empty($update_limits[$code]) || Registry::get('currencies.' . $code . '.coefficient') - $rate > $update_limits[$code])))) {
+                $update_prices = true;
+                $currency_data = array('coefficient' => $rate);
+                db_query("UPDATE ?:currencies SET ?u WHERE currency_code = ?s", $currency_data, $code);
+            }
+        }
+    }
+    if ($update_prices) {
+        $params = array();
+        fn_init_currency($params);
+        fn_update_prices();
+        fn_set_notification('N', __('notice'), __('currencies_updated_successfully'));
+    }
+    
+    return true;
+}
+
 function fn_get_online_payment_methods()
 {
     $payment_methods = db_get_hash_array("SELECT payment_id, website FROM ?:payments WHERE status = 'A' AND processor_id != '0' ORDER BY position", 'payment_id');
