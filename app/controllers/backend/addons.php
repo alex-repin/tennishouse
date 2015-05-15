@@ -224,6 +224,13 @@ if ($mode == 'update') {
 
     return array(CONTROLLER_STATUS_OK, "addons.manage");
 
+} elseif ($mode == 'reinstall') {
+
+    fn_uninstall_addon($_REQUEST['addon']);
+    fn_install_addon($_REQUEST['addon']);
+
+    return array(CONTROLLER_STATUS_OK, "addons.manage");
+
 } elseif ($mode == 'update_status') {
 
     $is_snapshot_correct = fn_check_addon_snapshot($_REQUEST['id']);

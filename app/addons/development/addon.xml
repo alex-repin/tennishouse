@@ -430,5 +430,6 @@
         <item lang="ru" id="currencies_updated_successfully">Цены и валюты обновлены</item>
         <item lang="ru" id="rankings_updated_successfully">Рейтинги игроков обновлены: [updated] из [total]</item>
         <item lang="ru" id="update_rankings">Обновить рейтинги игроков</item>
+        <item lang="ru" id="reinstall">Переустановить</item>
     </language_variables>
 </addon>

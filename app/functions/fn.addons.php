@@ -852,6 +852,9 @@ function fn_get_addons($params, $items_per_page = 0, $lang_code = CART_LANGUAGE)
                 $addons[$addon]['url'] = fn_url("addons.update?addon=$addon&return_url=" . urlencode(Registry::get('config.current_url')));
                 if (!Registry::get('runtime.company_id')) {
                     $addons[$addon]['delete_url'] = fn_url("addons.uninstall?addon=$addon&redirect_url=" . urlencode(Registry::get('config.current_url')));
+                    // [tennishouse]
+                    $addons[$addon]['reinstall_url'] = fn_url("addons.reinstall?addon=$addon&redirect_url=" . urlencode(Registry::get('config.current_url')));
+                    // [tennishouse]
                 }
 
                 if ($addon_scheme != false && !$addon_scheme->getUnmanaged()) {
@@ -877,6 +880,9 @@ function fn_get_addons($params, $items_per_page = 0, $lang_code = CART_LANGUAGE)
                     $url_func = 'fn_addon_dynamic_url_' . $addon;
                     if (function_exists($url_func)) {
                         list($addons[$addon]['url'], $addons[$addon]['delete_url']) = $url_func($addons[$addon]['url'], $addons[$addon]['delete_url']);
+                        // [tennishouse]
+                        list($addons[$addon]['url'], $addons[$addon]['reinstall_url']) = $url_func($addons[$addon]['url'], $addons[$addon]['reinstall_url']);
+                        // [tennishouse]
                     }
                 }
             }
