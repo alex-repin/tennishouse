@@ -5058,11 +5058,11 @@ function fn_get_filters_products_count($params = array())
      */
     fn_set_hook('get_filters_products_count_pre', $params);
 
-    $key = 'pfilters_' . md5(serialize($params));
-
-    Registry::registerCache($key, array('products', 'product_features', 'product_filters', 'product_features_values', 'categories'), Registry::cacheLevel('user'));
-
-    if (Registry::isExist($key) == false) {
+//     $key = 'pfilters_' . md5(serialize($params));
+// 
+//     Registry::registerCache($key, array('products', 'product_features', 'product_filters', 'product_features_values', 'categories'), Registry::cacheLevel('user'));
+// 
+//     if (Registry::isExist($key) == false) {
         if (!empty($params['check_location'])) { // FIXME: this is bad style, should be refactored
             $valid_locations = array(
                 'index.index',
@@ -5860,10 +5860,10 @@ function fn_get_filters_products_count($params = array())
          * @param array $params Products filter search params
          */
         fn_set_hook('get_filters_products_count_before_select', $filters, $view_all, $params);
-        Registry::set($key, array($filters, $view_all));
-    } else {
-        list($filters, $view_all) = Registry::get($key);
-    }
+//         Registry::set($key, array($filters, $view_all));
+//     } else {
+//         list($filters, $view_all) = Registry::get($key);
+//     }
 
     return array($filters, $view_all);
 }
