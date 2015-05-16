@@ -19,8 +19,13 @@
     {$meta_descr = __('players_meta_description', ['[players]' => $meta_players])}
     <meta name="description" content="{$meta_descr}" />
 {elseif $runtime.controller == 'players' && $runtime.mode == 'view'}
-    <meta property="og:description" content="{$player_data.player}. {__("player_share_buttons_description")}" />
-    <meta name="description" content="{$player_data.player}. {__("player_share_buttons_description")}" />
+    {$meta_descr = __('player_share_buttons_description', ['[player]' => $player_data.player])}
+    <meta property="og:type"   content="profile" /> 
+    <meta property="og:url"    content="{$config.current_url|fn_url}" /> 
+    <meta property="og:title"  content="{$player_data.player}" /> 
+    <meta property="og:image"  content="{$player_data.main_pair.detailed.http_image_path}" /> 
+    <meta property="og:description" content="{$meta_descr}" />
+    <meta name="description" content="{$meta_descr}" />
 {elseif $meta_description}
     <meta name="description" content="{$meta_description|html_entity_decode:$smarty.const.ENT_COMPAT:"UTF-8"|default:$location_data.meta_description}" />
 {/if}
