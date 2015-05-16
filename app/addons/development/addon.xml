@@ -222,6 +222,13 @@
                 PRIMARY KEY (`log_id`)
             ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
         </item>
+        <item>
+            ALTER TABLE `cscart_cron_logs` ADD `errors` TEXT NOT NULL ;
+        </item>
+        <item>
+            ALTER TABLE `cscart_players` ADD `website` VARCHAR( 255 ) NOT NULL ,
+            ADD `data` TEXT NOT NULL ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -431,5 +438,7 @@
         <item lang="ru" id="rankings_updated_successfully">Рейтинги игроков обновлены: [updated] из [total]</item>
         <item lang="ru" id="update_rankings">Обновить рейтинги игроков</item>
         <item lang="ru" id="reinstall">Переустановить</item>
+        <item lang="ru" id="career_prize">Призовые</item>
+        <item lang="ru" id="won_lost">Побед - Поражений</item>
     </language_variables>
 </addon>

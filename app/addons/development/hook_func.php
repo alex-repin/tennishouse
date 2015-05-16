@@ -34,10 +34,8 @@ function fn_development_cron_routine()
                     'timestamp' => TIME
                 );
                 $log_id = db_query("INSERT INTO ?:cron_logs ?e", $action);
-                $result = call_user_func($data['function']);
-                if ($result) {
-                    db_query("UPDATE ?:cron_logs SET status = 'F' WHERE log_id = ?i", $log_id);
-                }
+                list($result, $errors) = call_user_func($data['function']);
+                db_query("UPDATE ?:cron_logs SET status = ?s, errors = ?s WHERE log_id = ?i", ($result ? 'F' : 'S'), serialize($errors), $log_id);
             }
         }
     }

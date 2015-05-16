@@ -22,7 +22,7 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 function fn_generate_features_cash()
 {
     FeaturesCache::generate(CART_LANGUAGE);
-    return true;
+    return array(true, array());
 }
 
 function fn_update_rankings()
@@ -33,37 +33,106 @@ function fn_update_rankings()
         foreach ($players as $i => $player) {
             $result = Http::get($player['data_link']);
             if ($result) {
+                //$player_data = array('data' => array());
                 if ($player['gender'] == 'M') {
-                    preg_match('/<div id="playerBioInfoRank">.*?(\d+).*?<\/div>/', preg_replace('/[\r\n]/', '', $result), $match);
-                    if (!empty($match['1'])) {
-                        $update[] = array(
+                    if (preg_match('/<div id="playerBioInfoRank">.*?(\d+).*?<\/div>/', preg_replace('/[\r\n]/', '', $result), $match)) {
+                        $player_data = array(
                             'player_id' => $player['player_id'],
-                            'ranking' => $match['1']
+                            'ranking' => isset($match['1']) ? $match['1'] : 'n/a'
                         );
                     }
+                    if (preg_match('/id="bioGridSingles".*?>(.*?)<\/table>/', preg_replace('/[\r\n]/', '', $result), $match)) {
+                        if (preg_match('/>Career<\/td>(.*)/', $match[1], $match)) {
+                            if (preg_match_all('/>(\d+)</', $match[1], $_match)) {
+                                $player_data['titles'] = $player_data['data']['career_titles'] = isset($_match[1][1]) ? $_match[1][1] : 'n/a';
+                            }
+                            if (preg_match('/>\$([\d,]+)</', $match[1], $_match)) {
+                                $player_data['data']['career_prize'] = isset($_match[1]) ? intval(str_replace(',', '', $_match[1])) : 'n/a';
+                            }
+                            if (preg_match('/>(\d+)-(\d+)</', $match[1], $_match)) {
+                                $player_data['data']['career_won'] = isset($_match[1]) ? $_match[1] : 'n/a';
+                                $player_data['data']['career_lost'] = isset($_match[2]) ? $_match[2] : 'n/a';
+                            }
+                        }
+                    }
+                    $update[] = $player_data;
                 } else {
-                    preg_match('/<div class="box ranking">.*?>(\d+)<.*?<\/div>/', preg_replace('/[\r\n]/', '', $result), $match);
-                    if (!empty($match['1'])) {
-                        $update[] = array(
+                    if (preg_match('/<div class="box ranking">.*?>(\d+)<.*?<\/div>/', preg_replace('/[\r\n]/', '', $result), $match)) {
+                        $player_data = array(
                             'player_id' => $player['player_id'],
-                            'ranking' => $match['1']
+                            'ranking' => isset($match['1']) ? $match['1'] : 'n/a'
                         );
                     }
+                    if (preg_match('/<tr>.*?WTA Singles Titles(.*?)<\/tr>/', preg_replace('/[\r\n]/', '', $result), $match)) {
+                        if (preg_match_all('/<td>(.*?)<\/td>/', $match[1], $match)) {
+                            $player_data['titles'] = $player_data['data']['career_titles'] = isset($match[1][1]) ? $match[1][1] : 'n/a';
+                        }
+                    }
+                    if (preg_match('/<tr>.*?Prize Money(.*?)<\/tr>/', preg_replace('/[\r\n]/', '', $result), $match)) {
+                        if (preg_match_all('/>\$(.*?)</', $match[1], $match)) {
+                            $player_data['data']['career_prize'] = isset($match[1][1]) ? intval(str_replace(',', '', $match[1][1])) : 'n/a';
+                        }
+                    }
+                    if (preg_match('/<tr>.*?W\/L - Singles(.*?)<\/tr>/', preg_replace('/[\r\n]/', '', $result), $match)) {
+                        if (preg_match_all('/<td>(.*?) - (.*?)<\/td>/', $match[1], $match)) {
+                            $player_data['data']['career_won'] = isset($match[1][1]) ? $match[1][1] : 'n/a';
+                            $player_data['data']['career_lost'] = isset($match[2][1]) ? $match[2][1] : 'n/a';
+                        }
+                    }
+                    $update[] = $player_data;
                 }
             }
         }
     }
+    $errors = array();
     if (!empty($update)) {
         foreach ($update as $i => $_dt) {
-            db_query("UPDATE ?:players SET ranking = ?i WHERE player_id = ?i", $_dt['ranking'], $_dt['player_id']);
+            if (fn_check_player_data($_dt)) {
+                if (!empty($_dt['data'])) {
+                    $_dt['data'] = serialize($_dt['data']);
+                }
+                db_query("UPDATE ?:players SET ?u WHERE player_id = ?i", $_dt, $_dt['player_id']);
+            } else {
+                $errors[] = $_dt;
+            }
         }
-        fn_set_notification('N', __('notice'), __('rankings_updated_successfully', array('[total]' => count($players), '[updated]' => count($update))));
-        if (count($players) == count($update)) {
-            return true;
+        if (empty($errors) && count($players) == count($update)) {
+            //fn_set_notification('N', __('notice'), __('rankings_updated_successfully', array('[total]' => count($players), '[updated]' => count($update))));
+        } else {
+            return array(false, $errors);
+        }
+    }
+    return array(true, $errors);
+}
+
+function fn_check_player_data($player_data)
+{
+    $scheme = array(
+        'player_id' => 1,
+        'ranking' => 1,
+        'titles' => 1,
+        'data' => array(
+            'career_titles' => 1,
+            'career_prize' => 1,
+            'career_won' => 1,
+            'career_lost' => 1
+        )
+        
+    );
+    
+    foreach ($scheme as $key => $value) {
+        if (!isset($player_data[$key]) || $player_data[$key] == 'n/a') {
+            return false;
+        } elseif (is_array($value)) {
+            foreach ($value as $_key => $_value) {
+                if (!isset($player_data[$key][$_key]) || $player_data[$key][$_key] == 'n/a') {
+                    return false;
+                }
+            }
         }
     }
     
-    return false;
+    return true;
 }
 
 function fn_update_rub_rate()
@@ -74,6 +143,7 @@ function fn_update_rub_rate()
     );
     $rates = fn_get_currency_exchange_rates();
     $update_prices = false;
+    $errors = array();
     if ($rates) {
         foreach ($rates as $code => $rate) {
             if (!empty(Registry::get('currencies.' . $code)) && (Registry::get('currencies.' . $code . '.coefficient') < $rate || (Registry::get('currencies.' . $code . '.coefficient') > $rate && (empty($update_limits[$code]) || Registry::get('currencies.' . $code . '.coefficient') - $rate > $update_limits[$code])))) {
@@ -90,7 +160,7 @@ function fn_update_rub_rate()
         fn_set_notification('N', __('notice'), __('currencies_updated_successfully'));
     }
     
-    return true;
+    return array(true, $errors);
 }
 
 function fn_get_online_payment_methods()
@@ -726,6 +796,7 @@ function fn_get_player_data($player_id)
     if (!empty($player_data)) {
         $player_data['main_pair'] = fn_get_image_pairs($player_id, 'player', 'M', true, true);
         $player_data['gear'] = db_get_fields("SELECT product_id FROM ?:players_gear WHERE player_id = ?i", $player_id);
+        $player_data['data'] = unserialize($player_data['data']);
     }
 
     fn_set_hook('get_player_data_post', $player_data);

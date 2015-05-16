@@ -36,8 +36,8 @@
 {if $page_title}
     {$page_title}
 {else}
-    {foreach from=$breadcrumbs item=i name="bkt"}
-        {if $smarty.foreach.bkt.iteration == '2' || $smarty.foreach.bkt.last}{$i.title|strip_tags}{if !$smarty.foreach.bkt.last} :: {/if}{/if}
+    {foreach from=$breadcrumbs|array_reverse item=i name="bkt"}
+        {if $smarty.foreach.bkt.iteration == $smarty.foreach.bkt.total - 1 || $smarty.foreach.bkt.first}{$i.title|strip_tags}{if $smarty.foreach.bkt.iteration != $smarty.foreach.bkt.total - 1} – {/if}{/if}
     {/foreach}
     {if !$skip_page_title && $location_data.title}{if $breadcrumbs|count > 1} - {/if}{$location_data.title}{/if}
 {/if}
