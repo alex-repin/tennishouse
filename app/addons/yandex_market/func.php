@@ -23,6 +23,17 @@ use Tygh\Ym\Yml;
  * Hooks
  */
 
+function fn_yandex_market_get_products($params, &$fields, $sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
+{
+    if (!empty($params['yml_export_yes'])) {
+        $condition .= db_quote(" AND products.yml_export_yes = ?s", $params['yml_export_yes']);
+        if ($params['yml_export_yes'] == 'Y') {
+            $fields[] = '?:category_descriptions.category';
+            $join .= db_quote(" LEFT JOIN ?:category_descriptions ON ?:category_descriptions.category_id = ?:categories.category_id AND ?:category_descriptions.lang_code = ?s", $lang_code);
+        }
+    }
+}
+
 function fn_yandex_market_get_rewrite_rules(&$rewrite_rules, &$prefix, &$extension)
 {
     // Yandex Market Pricelist
@@ -168,23 +179,10 @@ function fn_settings_variants_addons_yandex_market_feature_for_brand()
         . " FROM ?:product_features as a"
         . " LEFT JOIN ?:product_features_descriptions as b ON a.feature_id = b.feature_id"
         . " WHERE a.feature_type = ?s AND b.lang_code = ?s",
-        array('description', 'description'), 'E', DESCR_SL
+        array('feature_id', 'description'), 'E', DESCR_SL
     );
 
     return $brands;
-}
-
-function fn_settings_variants_addons_yandex_market_feature_for_vendor_code()
-{
-    $brands = db_get_hash_single_array(
-        "SELECT a.feature_id, b.description"
-        . " FROM ?:product_features as a"
-        . " LEFT JOIN ?:product_features_descriptions as b ON a.feature_id = b.feature_id"
-        . " WHERE b.lang_code = ?s",
-        array('description', 'description'), DESCR_SL
-    );
-
-    return array_merge(array('' => ' -- '), $brands);
 }
 
 function fn_yandex_market_get_order_statuses_for_setting()

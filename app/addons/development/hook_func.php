@@ -466,7 +466,7 @@ function fn_development_get_filters_products_count_before_select_filters(&$sf_fi
 
 function fn_development_get_products($params, &$fields, &$sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
 {
-    $fields[] = '?:categories.id_path';
+    //$fields[] = '?:categories.id_path';
     $sortings['random'] = 'RAND()';
     if (!empty($params['similar_pid'])) {
         $similar_products_features = array(
@@ -832,8 +832,14 @@ function fn_development_get_product_data_post(&$product_data, $auth, $preview, $
 function fn_development_get_products_post(&$products, $params, $lang_code)
 {
     if (!empty($products)) {
+        $main_ids = array();
         foreach ($products as $i => $product) {
-            $products[$i]['type'] = fn_identify_category_type($product['id_path']);
+            $main_ids[] = $product['main_category'];
+        }
+        $id_paths = db_get_hash_single_array("SELECT category_id, id_path FROM ?:categories WHERE category_id IN (?n)", array('category_id', 'id_path'), array_unique($main_ids));
+        foreach ($products as $i => $product) {
+            $products[$i]['id_path'] = $id_paths[$product['main_category']];
+            $products[$i]['type'] = fn_identify_category_type($products[$i]['id_path']);
         }
     }
     if (!empty($params['shuffle']) && $params['shuffle'] == 'Y') {

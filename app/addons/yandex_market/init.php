@@ -25,5 +25,6 @@ fn_register_hooks(
     'api_handle_request',
     'shippings_get_shippings_list_conditions',
     'place_order',
-    'get_order_info'
+    'get_order_info',
+    'get_products'
 );

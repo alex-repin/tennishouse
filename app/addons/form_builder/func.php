@@ -257,7 +257,9 @@ function fn_send_form($page_id, $form_values)
                         'data' => array(
                             'max_length' => $max_length,
                             'elements' => $page_data['form']['elements'],
-                            'form_title' => $page_data['page'],
+                            // [tennishouse]
+                            'form_title' => (!empty($form_values['12'])) ? $form_values['12'] : $page_data['page'],
+                            // [tennishouse]
                             'form_values' => $form_values,
                         ),
                         'attachments' => $attachments,

@@ -136,98 +136,35 @@ class Yml implements IYml
             $visible_categories = $this->getVisibleCategories();
         }
 
-        $fields = array(
-            'p.product_id',
-            'p.product_code',
-            'd.lang_code',
-            'pc.category_id',
-            'cd.category',
-            'pp.price',
-            'p.status',
-            'p.amount',
-            'p.weight',
-            'p.shipping_freight',
-            'p.free_shipping',
-            'd.product',
-            'd.full_description',
-            'p.company_id',
-            'p.tracking',
-            'p.list_price',
-            'p.yml_brand',
-            'p.yml_origin_country',
-            'p.yml_store',
-            'p.yml_pickup',
-            'p.yml_delivery',
-            'p.yml_cost',
-            'p.yml_export_yes',
-            'p.yml_bid',
-            'p.yml_cbid',
-            'p.yml_model',
-            'p.yml_sales_notes',
-            'p.yml_type_prefix',
-            'p.yml_market_category',
-            'p.yml_manufacturer_warranty',
-            'p.yml_seller_warranty',
+        $params = array(
+            'yml_export_yes' => 'Y'
         );
-
-        $joins = array(
-            db_quote(
-                "LEFT JOIN ?:product_descriptions as d ON d.product_id = p.product_id AND d.lang_code = ?s",
-                $this->lang_code
-            ),
-            db_quote(
-                "LEFT JOIN ?:product_prices as pp"
-                . " ON pp.product_id = p.product_id AND pp.lower_limit = 1 AND pp.usergroup_id = 0"
-            ),
-            db_quote(
-                "LEFT JOIN ?:products_categories as pc ON pc.product_id = p.product_id AND pc.link_type = ?s",
-                'M'
-            ),
-            db_quote(
-                "LEFT JOIN ?:category_descriptions as cd ON cd.category_id = pc.category_id AND cd.lang_code = ?s",
-                $this->lang_code
-            )
-        );
-
-        $condition = '';
-
-        if ($this->company_id > 0) {
-            $condition .= db_quote(' AND company_id = ?i', $this->company_id);
-        }
-
-        $product_ids = db_get_fields(
-            "SELECT product_id FROM ?:products WHERE yml_export_yes = ?s AND status = ?s " . $condition,
-            'Y', 'A'
-        );
+        list($products, ) = fn_get_products($params);
 
         $offset = 0;
-        while ($ids = array_slice($product_ids, $offset, self::ITERATION_ITEMS)) {
+        while ($prods_slice = array_slice($products, $offset, self::ITERATION_ITEMS)) {
             $offset += self::ITERATION_ITEMS;
-            $products = db_get_array(
-                'SELECT ' . implode(', ', $fields)
-                . ' FROM ?:products as p'
-                . ' ' . implode(' ', $joins)
-                . ' WHERE p.product_id IN(?n)'
-                , $ids
-            );
-
+            $ids = array();
+            foreach ($prods_slice as $k => &$product) {
+                $ids[] = $product['product_id'];
+            }
             $products_images_main = fn_get_image_pairs($ids, 'product', 'M', false, true, $this->lang_code);
             $products_images_additional = fn_get_image_pairs($ids, 'product', 'A', false, true, $this->lang_code);
 
-            foreach ($products as $k => &$product) {
+            foreach ($prods_slice as $k => &$product) {
                 $is_broken = false;
 
-                $price = !floatval($product['price']) ? fn_parse_price($product['price']) : intval($product['price']);
+                $product['price'] = fn_parse_price($product['price']);
 
-                if (empty($price)) {
+                if (empty($product['price'])) {
                     $is_broken = true;
                 }
 
-                if (in_array($product['category_id'], $this->disabled_category_ids)) {
+                if (in_array($product['main_category'], $this->disabled_category_ids)) {
                     $is_broken = true;
                 }
 
-                if ($this->options['disable_cat_d'] == 'Y' && !in_array($product['category_id'], $visible_categories)) {
+                if ($this->options['disable_cat_d'] == 'Y' && !in_array($product['main_category'], $visible_categories)) {
                     $is_broken = true;
                 }
 
@@ -254,7 +191,7 @@ class Yml implements IYml
                 }
 
                 if ($is_broken) {
-                    unset($products[$k]);
+                    unset($prods_slice[$k]);
                     continue;
                 }
                 $product['product_url'] = fn_url('products.view?product_id=' . $product['product_id']);
@@ -266,6 +203,24 @@ class Yml implements IYml
                 );
                 $product['images'] = array_slice($images, 0, self::IMAGES_LIMIT);
 
+                if ($this->options['market_category'] == "Y" && empty($product['yml_market_category']) && !empty($product['id_path'])) {
+                    $id_path = explode('/', $product['id_path']);
+                    $_data = db_get_hash_array("SELECT category_id, yml_market_category FROM ?:categories WHERE category_id IN (?n)", 'category_id', $id_path);
+                    if (!empty($_data)) {
+                        foreach (array_reverse($_data) as $caegory_id => $dt) {
+                            if (!empty($dt['yml_market_category'])) {
+                                $product['yml_market_category'] = $dt['yml_market_category'];
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if ($product['yml_cost'] == 0) {
+                    if ($product['price'] < Registry::get('addons.development.free_shipping_cost')) {
+                        $product['yml_cost'] = $this->options['global_local_delivery_cost'];
+                    }
+                }
                 list($key, $value) = $this->offer($product);
                 $offered[$key] = $value;
             }
@@ -357,6 +312,7 @@ class Yml implements IYml
         $params = array (
             'simple' => false,
             'plain' => true,
+            'skip_filter' => true
         );
 
         if ($this->options['disable_cat_d'] == "Y") {
@@ -409,7 +365,7 @@ class Yml implements IYml
 
         $product = array(
             'product_id' => $product['product_id'],
-            'main_category' => $product['category_id']
+            'main_category' => $product['main_category']
         );
 
         $product_features = fn_get_product_features_list($product, 'A', $lang_code);
@@ -425,16 +381,19 @@ class Yml implements IYml
                     if ($f['feature_type'] == "C") {
                         $result[] = array(
                             'description' => $f['description'],
+                            'feature_id' => $f['feature_id'],
                             'value' => ($f['value'] == "Y") ? __("yes") : __("no")
                         );
                     } elseif ($f['feature_type'] == "S" && !empty($f['variant'])) {
                         $result[] = array(
                             'description' => $f['description'],
+                            'feature_id' => $f['feature_id'],
                             'value' => $f['variant']
                         );
                     } elseif ($f['feature_type'] == "T" && !empty($f['value'])) {
                         $result[] = array(
                             'description' => $f['description'],
+                            'feature_id' => $f['feature_id'],
                             'value' => $f['value']
                         );
                     } elseif ($f['feature_type'] == "M") {
@@ -451,25 +410,29 @@ class Yml implements IYml
                             $_value = ($counter > 1) ? substr($_value, 0, -2) : $_value;
                             $result[] = array(
                                 'description' => $f['description'],
+                                'feature_id' => $f['feature_id'],
                                 'value' => $_value
                             );
                         }
                     } elseif ($f['feature_type'] == "N") {
                         $result[] = array(
                             'description' => $f['description'],
+                            'feature_id' => $f['feature_id'],
                             'value' => $f['variant']
                         );
                     } elseif ($f['feature_type'] == "O") {
                         $result[] = array(
                             'description' => $f['description'],
+                            'feature_id' => $f['feature_id'],
                             'value' => $f['value_int']
                         );
+                    } elseif ($f['feature_type'] == "E") {
+                        $result[] = array(
+                            'description' => $f['description'],
+                            'feature_id' => $f['feature_id'],
+                            'value' => $f['variant']
+                        );
                     }
-                } elseif ($f['feature_type'] == "E") {
-                    $result[] = array(
-                        'description' => $f['description'],
-                        'value' => $f['variant']
-                    );
                 }
             }
         }
@@ -576,7 +539,7 @@ class Yml implements IYml
             }
 
             foreach ($product['product_features'] as $feature) {
-                if (in_array($feature['description'], $brands)) {
+                if (in_array($feature['feature_id'], $brands)) {
                     $brand = $feature['value'];
                     break;
                 }
@@ -590,8 +553,6 @@ class Yml implements IYml
     {
         $yml_data = array();
         $offer_attrs = '';
-
-        $market_categories = $this->getMarketCategories();
 
         if (!empty($product['yml_bid'])) {
             $offer_attrs .= '@bid=' . $product['yml_bid'];
@@ -631,17 +592,10 @@ class Yml implements IYml
             $yml_data['oldprice'] = $product['list_price'];
         }
         $yml_data['currencyId'] = "RUB";
-        $yml_data['categoryId@type=Own'] = $product['category_id'];
+        $yml_data['categoryId@type=Own'] = $product['main_category'];
 
-        if ($this->options['market_category'] == "Y") {
-
-            if ($this->options['market_category_object'] == "category" && isset($market_categories[$product['category_id']])) {
-                $yml_data['market_category'] = $market_categories[$product['category_id']];
-
-            } elseif ($this->options['market_category_object'] == "product" && !empty($product['yml_market_category'])) {
-                $yml_data['market_category'] = $product['yml_market_category'];
-            }
-
+        if ($this->options['market_category'] == "Y" && !empty($product['yml_market_category'])) {
+            $yml_data['market_category'] = $product['yml_market_category'];
         }
 
         // Images
@@ -660,7 +614,7 @@ class Yml implements IYml
         $yml_data['pickup'] = ($product['yml_pickup'] == 'Y' ? 'true' : 'false');
         $yml_data['delivery'] = ($product['yml_delivery'] == 'Y' ? 'true' : 'false');
         if ($this->options['local_delivery_cost'] == "Y") {
-            $yml_data['local_delivery_cost'] = ($product['yml_cost'] == 0 ? '0' : $product['yml_cost']);
+            $yml_data['local_delivery_cost'] = $product['yml_cost'];
         }
 
         $type = '';
@@ -678,11 +632,8 @@ class Yml implements IYml
             }
 
             $yml_data['vendor'] = $product['brand'];
-            if ($this->options['export_vendor_code'] == 'Y') {
-                $vendor_code = $this->getVendorCode($product);
-                if (!empty($vendor_code)) {
-                    $yml_data['vendorCode'] = $vendor_code;
-                }
+            if ($this->options['export_vendor_code'] == 'Y' && !empty($product['product_code'])) {
+                $yml_data['vendorCode'] = $product['product_code'];
             }
             $yml_data['model'] = !empty($product['yml_model']) ? $product['yml_model'] : '';
 
@@ -693,11 +644,8 @@ class Yml implements IYml
                 $yml_data['vendor'] = $product['brand'];
             }
 
-            if ($this->options['export_vendor_code'] == 'Y') {
-                $vendor_code = $this->getVendorCode($product);
-                if (!empty($vendor_code)) {
-                    $yml_data['vendorCode'] = $vendor_code;
-                }
+            if ($this->options['export_vendor_code'] == 'Y' && !empty($product['product_code'])) {
+                $yml_data['vendorCode'] = $product['product_code'];
             }
         }
 
