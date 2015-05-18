@@ -213,56 +213,20 @@
                 ADD `yml_manufacturer_warranty` VARCHAR(20) NOT NULL,
                 ADD `yml_seller_warranty` VARCHAR(20) NOT NULL;
         </item>
-        <item for="uninstall">
-            ALTER TABLE `?:products`
-                DROP `yml_brand`,
-                DROP `yml_origin_country`,
-                DROP `yml_store`,
-                DROP `yml_pickup`,
-                DROP `yml_delivery`,
-                DROP `yml_cost`,
-                DROP `yml_export_yes`,
-                DROP `yml_bid`,
-                DROP `yml_cbid`,
-                DROP `yml_model`,
-                DROP `yml_sales_notes`,
-                DROP `yml_type_prefix`,
-                DROP `yml_market_category`,
-                DROP `yml_manufacturer_warranty`,
-                DROP `yml_seller_warranty`;
-        </item>
-        
         <item for="install">
             ALTER TABLE `?:categories`
                 ADD `yml_market_category` VARCHAR(255) NOT NULL,
                 ADD `yml_disable_cat` CHAR(1) NOT NULL DEFAULT 'N';
         </item>
-        <item for="uninstall">
-            ALTER TABLE `?:categories`
-                DROP `yml_market_category`,
-                DROP `yml_disable_cat`;
-        </item>
-
         <item for="install">
             ALTER TABLE `?:shippings`
                 ADD `yml_shipping_type` varchar(16) NOT NULL DEFAULT '',
                 ADD `yml_outlet_ids` text NOT NULL;
         </item>
-        <item for="uninstall">
-            ALTER TABLE `?:shippings`
-                DROP `yml_shipping_type`,
-                DROP `yml_outlet_ids`;
-        </item>
-
         <item for="install">
             ALTER TABLE `?:orders`
                 ADD `yml_order_id` int(11) unsigned NOT NULL DEFAULT 0;
         </item>
-        <item for="uninstall">
-            ALTER TABLE `?:orders`
-                DROP `yml_order_id`;
-        </item>
-
     </queries>
 
     <functions>

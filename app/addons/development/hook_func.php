@@ -834,11 +834,14 @@ function fn_development_get_products_post(&$products, $params, $lang_code)
     if (!empty($products)) {
         $main_ids = array();
         foreach ($products as $i => $product) {
-            $main_ids[] = $product['main_category'];
+            $main_ids = array_merge($main_ids, $product['category_ids']);
         }
         $id_paths = db_get_hash_single_array("SELECT category_id, id_path FROM ?:categories WHERE category_id IN (?n)", array('category_id', 'id_path'), array_unique($main_ids));
         foreach ($products as $i => $product) {
             $products[$i]['id_path'] = $id_paths[$product['main_category']];
+            foreach ($product['category_ids'] as $j => $cat_id) {
+                $products[$i]['all_path'][$cat_id] = $id_paths[$cat_id];
+            }
             $products[$i]['type'] = fn_identify_category_type($products[$i]['id_path']);
         }
     }

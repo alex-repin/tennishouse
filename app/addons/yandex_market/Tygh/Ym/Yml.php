@@ -109,8 +109,8 @@ class Yml implements IYml
             'name' => $this->getShopName(),
             'company' => Registry::get('settings.Company.company_name'),
             'url' => Registry::get('config.http_location'),
-            'platform' => PRODUCT_NAME,
-            'version' => PRODUCT_VERSION,
+            'platform' => 'Tennis-Cart',
+            'version' => '1.0',
             'agency' => 'Agency',
             'email' => Registry::get('settings.Company.company_orders_department'),
         );
@@ -203,14 +203,31 @@ class Yml implements IYml
                 );
                 $product['images'] = array_slice($images, 0, self::IMAGES_LIMIT);
 
-                if ($this->options['market_category'] == "Y" && empty($product['yml_market_category']) && !empty($product['id_path'])) {
-                    $id_path = explode('/', $product['id_path']);
-                    $_data = db_get_hash_array("SELECT category_id, yml_market_category FROM ?:categories WHERE category_id IN (?n)", 'category_id', $id_path);
-                    if (!empty($_data)) {
-                        foreach (array_reverse($_data) as $caegory_id => $dt) {
-                            if (!empty($dt['yml_market_category'])) {
-                                $product['yml_market_category'] = $dt['yml_market_category'];
-                                break;
+                if ($this->options['market_category'] == "Y" && empty($product['yml_market_category']) && !empty($product['all_path'])) {
+                    $id_path = $cats = array();
+                    foreach ($product['all_path'] as $i => $path) {
+                        $cats[$i] = explode('/', $path);
+                        $id_path = array_merge($id_path, explode('/', $path));
+                    }
+                    $main = $cats[$product['main_category']];
+                    unset($cats[$product['main_category']]);
+                    $invert = array();
+                    foreach (array_reverse($main) as $i => $cid) {
+                        $invert[$i][] = $cid;
+                    }
+                    if (!empty($cats)) {
+                        foreach ($cats as $_i => $cids) {
+                            foreach (array_reverse($cids) as $i => $cid) {
+                                $invert[$i][] = $cid;
+                            }
+                        }
+                    }
+                    $_data = db_get_hash_array("SELECT category_id, yml_market_category FROM ?:categories WHERE category_id IN (?n)", 'category_id', array_unique($id_path));
+                    foreach ($invert as $i => $cat_ids) {
+                        foreach ($cat_ids as $n => $cat_id) {
+                            if (!empty($_data[$cat_id]['yml_market_category'])) {
+                                $product['yml_market_category'] = $_data[$cat_id]['yml_market_category'];
+                                break 2;
                             }
                         }
                     }
