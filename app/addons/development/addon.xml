@@ -145,34 +145,6 @@
             ALTER TABLE `cscart_product_feature_variant_descriptions` ADD `womens_shoes_size_chart` TEXT NOT NULL ;
         </item>
         <item>
-            REPLACE INTO `cscart_product_tabs` (
-                `tab_id` ,
-                `tab_type` ,
-                `block_id` ,
-                `template` ,
-                `addon` ,
-                `position` ,
-                `status` ,
-                `is_primary` ,
-                `product_ids` ,
-                `company_id` ,
-                `show_in_popup`
-            ) VALUES (
-                '10' , 'T', '0', 'addons/development/blocks/product_tabs/size_chart.tpl', 'development', '4', 'A', 'Y', '', '1', 'N'
-            );
-        </item>
-        <item>
-            REPLACE INTO `cscart_product_tabs_descriptions` (
-                `tab_id` ,
-                `lang_code` ,
-                `name`
-            ) VALUES (
-                '10', 'ru', 'Таблица размеров'
-            ), (
-                '10', 'en', 'Size chart'
-            );
-        </item>
-        <item>
             ALTER TABLE `cscart_categories` ADD `net_currency_code` VARCHAR( 10 ) NOT NULL DEFAULT 'USD' ;
         </item>
         <item>
