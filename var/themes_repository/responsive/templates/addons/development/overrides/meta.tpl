@@ -26,7 +26,7 @@
     <meta property="og:image"  content="{$player_data.main_pair.detailed.http_image_path}" /> 
     <meta property="og:description" content="{$meta_descr}" />
     <meta name="description" content="{$meta_descr}" />
-{elseif $meta_description}
+{else}
     <meta name="description" content="{$meta_description|html_entity_decode:$smarty.const.ENT_COMPAT:"UTF-8"|default:$location_data.meta_description}" />
 {/if}
 {/hook}

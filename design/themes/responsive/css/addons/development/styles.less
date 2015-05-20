@@ -156,33 +156,10 @@ select {
 .bottom-ps-icons-row {
     margin: 7px 0;
 }
-.ty-vk {
-    float: left;
-}
-.ty-fb {
-    float: right;
-}
-.ty-vk img{
-    width: 45px;
+.ty-rate-us-ym {
     position: absolute;
-}
-.ty-fb img{
-    width: 45px;
-    position: absolute;
-}
-.ty-vk:hover img {
-    transition: all 100ms ease 0s;
-    width: 50px;
-}
-.ty-fb:hover img {
-    transition: all 100ms ease 0s;
-    width: 50px;
-}
-.ty-vk span {
-    margin: 15px 0 0 52px;
-}
-.ty-fb span {
-    margin: 15px 0 0 52px;
+    top: 0;
+    right:0;
 }
 /* Tooltip */
 /*
@@ -322,6 +299,52 @@ select {
 .ty-social-link-block {
     margin: 20px 30px 30px;
     width: 250px;
+    position: relative;
+}
+.ty-social-link {
+    position: absolute;
+    left: 0;
+    top: 35px;
+}
+.ty-vk, .ty-fb, .ty-tw {
+    width: 50px;
+}
+.ty-vk {
+
+}
+.ty-fb {
+    left: 15px;
+}
+.ty-tw {
+    left: 30px;
+}
+
+.ty-vk img{
+    left: 0;
+    width: 45px;
+    position: absolute;
+}
+.ty-fb img{
+    left: 50px;
+    width: 45px;
+    position: absolute;
+}
+.ty-tw img{
+    left: 100px;
+    width: 45px;
+    position: absolute;
+}
+.ty-vk:hover img {
+    transition: all 100ms ease 0s;
+    width: 50px;
+}
+.ty-fb:hover img {
+    transition: all 100ms ease 0s;
+    width: 50px;
+}
+.ty-tw:hover img {
+    transition: all 100ms ease 0s;
+    width: 50px;
 }
 /*.top-grid .span10 {
     width: 795px;
