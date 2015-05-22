@@ -85,8 +85,8 @@
         <label for="product_description_store" class="control-label">{__("yml_store")}:</label>
         <div class="controls">
             <select name="product_data[yml_store]" id="product_description_store">
-                <option value="Y" {if $product_data.yml_store == "Y"}selected="selected"{/if}>{__("yml_true")}</option>
                 <option value="N" {if $product_data.yml_store == "N"}selected="selected"{/if}>{__("yml_false")}</option>
+                <option value="Y" {if $product_data.yml_store == "Y"}selected="selected"{/if}>{__("yml_true")}</option>
             </select>
         </div>
     </div>
@@ -95,8 +95,8 @@
         <label for="product_description_pickup" class="control-label">{__("yml_pickup")}:</label>
         <div class="controls">
             <select name="product_data[yml_pickup]" id="product_description_pickup">
-                <option value="Y" {if $product_data.yml_pickup == "Y"}selected="selected"{/if}>{__("yml_true")}</option>
                 <option value="N" {if $product_data.yml_pickup == "N"}selected="selected"{/if}>{__("yml_false")}</option>
+                <option value="Y" {if $product_data.yml_pickup == "Y"}selected="selected"{/if}>{__("yml_true")}</option>
             </select>
         </div>
     </div>
