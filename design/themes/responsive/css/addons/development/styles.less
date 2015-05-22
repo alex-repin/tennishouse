@@ -378,6 +378,8 @@ select {
     padding-left: 11px;
 }
 .tygh-top-panel {
+    background: lighten(@top_menu_background, 5%);
+    .reset-filter();
     background: linear-gradient(lighten(@top_menu_background, 12%), @top_menu_background) repeat scroll 0 0 rgba(0, 0, 0, 0);
 }
 .top-menu .ty-menu__item {
@@ -1301,6 +1303,10 @@ select {
 .ty-image-title-breadcrumbs .ty-breadcrumbs__current, .ty-image-title-breadcrumbs .ty-breadcrumbs__current:hover{
     color: darken(@base, 40%);
 }
+.touch .cm-parallax {
+    background-attachment: scroll !important;
+    background-position: center 0 !important;
+}
 /*Category page*/
 
 /*Profile page*/
@@ -1559,7 +1565,7 @@ select {
     width: 300px;
 }
 .ty-menu__submenu-to-right {
-    position: initial;
+    position: static;
 }
 .ty-menu__submenu-to-right .ty-menu__submenu-items {
     right: initial;
@@ -2070,8 +2076,8 @@ select {
 }
 /*Roundabout*/
 
-@media only screen and (-webkit-min-device-pixel-ratio: 2),
-only screen and (min-device-pixel-ratio: 2) {
+@media screen 
+and (max-device-width : 1200px) {
     .ty-helper-container {
         width: 1200px;
     }

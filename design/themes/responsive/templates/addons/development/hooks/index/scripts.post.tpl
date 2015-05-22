@@ -61,19 +61,16 @@
                         }
                     });
                 });
+                $('.cm-parallax').each(function(){
+                    var bgobj = $(this); // создаем объект
+                    $(window).scroll(function() {
+                        var yPos = 109 -($(window).scrollTop() / bgobj.data('speed')); // вычисляем коэффициент 
+                        // Создаем эффект Parallax Scrolling
+                        bgobj.css({ backgroundPosition: 'center '+ yPos + 'px' });
+                    });
+                });
             }
         });
     }(Tygh, Tygh.$));
-    
-    $(document).ready(function(){
-        $('.cm-parallax').each(function(){
-            var bgobj = $(this); // создаем объект
-            $(window).scroll(function() {
-                var yPos = 109 -($(window).scrollTop() / bgobj.data('speed')); // вычисляем коэффициент 
-                // Создаем эффект Parallax Scrolling
-                bgobj.css({ backgroundPosition: 'center '+ yPos + 'px' });
-            });
-        });
-    });
 {/literal}
 </script>
