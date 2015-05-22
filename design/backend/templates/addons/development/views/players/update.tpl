@@ -27,6 +27,13 @@
             {include file="common/attach_images.tpl" image_name="player_main" image_object_type="player" image_pair=$player_data.main_pair image_object_id=$id no_detailed=false hide_titles=true}
         </div>
     </div>
+    
+    <div class="control-group">
+        <label class="control-label">{__("bg_image")}:</label>
+        <div class="controls">
+            {include file="common/attach_images.tpl" image_name="player_bg" image_object_type="player" image_pair=$player_data.bg_image image_object_id=$id  hide_titles=true no_thumbnail=true image_type="B"}
+        </div>
+    </div>
 
     <div class="control-group">
         <label for="elm_player_gender" class="control-label cm-required">{__("gender")}</label>

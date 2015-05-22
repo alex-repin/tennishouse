@@ -1,7 +1,7 @@
 <div id="breadcrumbs_{$block.block_id}">
 
 {if $breadcrumbs && $breadcrumbs|@sizeof > 1}
-    <div class="ty-breadcrumbs clearfix">
+    <div class="ty-breadcrumbs {if $image_title}ty-image-title-breadcrumbs{/if} clearfix">
         {strip}
             {foreach from=$breadcrumbs item="bc" name="bcn" key="key"}
                 {if $key != "0"}

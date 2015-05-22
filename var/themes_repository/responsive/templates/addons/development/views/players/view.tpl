@@ -1,6 +1,6 @@
 {assign var="obj_id" value=$player_data.player_id}
 {assign var="obj_id_prefix" value="`$obj_prefix``$obj_id`"}
-<div class="ty-player-details">
+<div class="ty-player-details {if $image_title}ty-player-details-it{/if}">
     <div class="ty-player-detail_wrapper">
     <div class="ty-player-detail">
         <div class="ty-player-block__img-wrapper">

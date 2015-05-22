@@ -40,28 +40,40 @@
         $('.tygh-top-panel').css({"left": - $(this).scrollLeft() + "px", "width": width});
         $('#tygh_main_container').css({"width": width});
     }
-(function(_, $) {
-    Tygh.$(document).ready(function() {
-        if (!$('#tygh_main_container').hasClass('touch')) {
-            $(document).ready(function() {
-                fn_fix_width();
-                $(window).resize(function() {
+    
+    (function(_, $) {
+        Tygh.$(document).ready(function() {
+            if (!$('#tygh_main_container').hasClass('touch')) {
+                $(document).ready(function() {
                     fn_fix_width();
-                    if ($(".ty-sticky").length > 0) {
-                        var init_position = 0;
-                        fn_stick_element();
-                    }
+                    $(window).resize(function() {
+                        fn_fix_width();
+                        if ($(".ty-sticky").length > 0) {
+                            var init_position = 0;
+                            fn_stick_element();
+                        }
+                    });
+                    $(window).scroll(function() {
+                        fn_fix_width();
+                        if ($(".ty-sticky").length > 0) {
+                            var init_position = 0;
+                            fn_stick_element();
+                        }
+                    });
                 });
-                $(window).scroll(function() {
-                    fn_fix_width();
-                    if ($(".ty-sticky").length > 0) {
-                        var init_position = 0;
-                        fn_stick_element();
-                    }
-                });
+            }
+        });
+    }(Tygh, Tygh.$));
+    
+    $(document).ready(function(){
+        $('.cm-parallax').each(function(){
+            var bgobj = $(this); // создаем объект
+            $(window).scroll(function() {
+                var yPos = 109 -($(window).scrollTop() / bgobj.data('speed')); // вычисляем коэффициент 
+                // Создаем эффект Parallax Scrolling
+                bgobj.css({ backgroundPosition: 'center '+ yPos + 'px' });
             });
-        }
+        });
     });
-}(Tygh, Tygh.$));
 {/literal}
 </script>

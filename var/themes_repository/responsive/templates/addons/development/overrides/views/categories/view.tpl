@@ -58,7 +58,7 @@
 {/if}
 <!--category_products_{$block.block_id}--></div>
 
-{if !$category_data.main_pair.detailed.image_path}
+{if !$image_title}
     {capture name="mainbox_title"}
     {if $category_data.brand.image_pair.icon.image_path}
         {if $category.brand_id == $smarty.const.KIRSCHBAUM_BRAND_ID}

@@ -27,6 +27,9 @@ if ($mode == 'view') {
     } elseif (!empty($category_data['brand_id'])) {
         unset($category_data['main_pair']);
     }
+    if (!empty($category_data['main_pair'])) {
+        Registry::get('view')->assign('image_title', true);
+    }
     $products = Registry::get('view')->gettemplatevars('products');
     $params = array (
         'category_id' => $category_data['category_id'],

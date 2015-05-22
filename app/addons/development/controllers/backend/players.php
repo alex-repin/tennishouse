@@ -35,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (!empty($player_id)) {
             fn_attach_image_pairs('player_main', 'player', $player_id);
+            fn_attach_image_pairs('player_bg', 'player', $player_id);
 
             $suffix = ".update?player_id=$player_id" . (!empty($_REQUEST['player_data']['block_id']) ? "&selected_block_id=" . $_REQUEST['player_data']['block_id'] : "");
         } else {

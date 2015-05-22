@@ -412,5 +412,7 @@
         <item lang="ru" id="reinstall">Переустановить</item>
         <item lang="ru" id="career_prize">Призовые</item>
         <item lang="ru" id="won_lost">Побед - Поражений</item>
+        <item lang="ru" id="bg_image">Фон</item>
+        <item lang="ru" id="player_title">Заголовок игрока</item>
     </language_variables>
 </addon>

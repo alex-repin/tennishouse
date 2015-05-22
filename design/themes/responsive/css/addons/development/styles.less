@@ -649,9 +649,11 @@ select {
     position: absolute;
     top: 1px;
 }
+.ty-sticky {
+}
 .sticky {
     position: fixed;
-    top: 135px;
+    top: 140px;
     width: 169px;
     z-index: 100;
 }
@@ -706,11 +708,6 @@ select {
 }
 .ty-product-description {
     margin-bottom: 50px;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    -o-user-select: none;
-    user-select: none;
 }
 .ty-mainbox-container {
     -moz-user-select: none;
@@ -800,7 +797,11 @@ select {
 .ty-player-block__img-wrapper {
     position: absolute;
     left: -35px;
+    top: -10px;
     z-index: 100;
+}
+.ty-player-details-it .ty-player-block__img-wrapper {
+    top: -40px;
 }
 .ty-player-block__left {
     display: inline-block;
@@ -813,7 +814,7 @@ select {
     letter-spacing: -3px;
     word-spacing: 5px;
     text-transform: uppercase;
-    padding: 30px 0 10px 100px;
+    padding: 20px 0 10px 100px;
     text-align: center;
     position: relative;
 }
@@ -1266,21 +1267,39 @@ select {
 .ty-category-title {
     margin: 0 -11px;
     position: relative;
-    height: 124px;
+    height: 140px;
+}
+.ty-player-title {
+    margin: 0 -11px;
+    position: relative;
+    height: 170px;
 }
 .ty-breadcrumbs {
     padding: 8px 105px 10px 0;
     margin-bottom: 0;
 }
+.ty-image-title-breadcrumbs {
+    background-color: #fff;
+    margin-top: 5px;
+    opacity: 0.9;
+    padding: 4px 10px;
+    position: absolute;
+    top: 0;
+}
 .ty-category-title__name {
-    background-color: #ffffff;
-    font-size: 160%;
+    color: #ffffff;
+    font-size: 30px;
     left: 230px;
-    opacity: 0.8;
     padding: 2px 10px;
     position: absolute;
     top: 85px;
-    box-shadow: 0 0 5px 1px @font;
+}
+.breadcrumbs-grid {
+    margin-bottom: 5px;
+    position: relative;
+}
+.ty-image-title-breadcrumbs .ty-breadcrumbs__current, .ty-image-title-breadcrumbs .ty-breadcrumbs__current:hover{
+    color: darken(@base, 40%);
 }
 /*Category page*/
 
@@ -1411,10 +1430,17 @@ select {
     margin-bottom: 5px;
     padding: 2px 15px 1px;
 }
+.ty-tennishouse-container .ty-tabs__item, .ty-tennishouse-container .ty-tabs .subtab {
+    margin: 2px 20px 0 0;
+    width: 260px;
+}
 .ty-tennishouse-container .ty-tabs__item h2 {
     background-color: @base;
     color: #7c7e80;
-    font-size: 18px;
+    font-size: 15px;
+    display: block;
+    text-align: center;
+    height: 25px;
 }
 .ty-tennishouse-container .ty-tabs__item h2:hover {
     background-color: lighten(@base, 2%);
@@ -1425,6 +1451,8 @@ select {
     color: #ffffff;
     border: 0;
     padding: 2px 15px 1px;
+    font-size: 18px;
+    transition: all 100ms linear 0s;
 }
 .ty-tp-block h2 {
     margin-bottom: 5px;
@@ -1733,6 +1761,13 @@ select {
 }
 .ty-product-block__img-wrapper {
     width: 452px;
+}
+.ty-product-block {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
 }
 .ty-product-block__img-wrapper .ty-tennishouse-container {
     margin: 10px 5px 0;

@@ -74,6 +74,9 @@ if ($mode == 'view') {
     fn_add_breadcrumb(__('professionals') . ' ' . (($player_data['gender'] == 'M') ? __("atp") : __("wta") ), 'players.list');
     fn_add_breadcrumb($player_data['player']);
 
+    if (!empty($player_data['bg_image'])) {
+        Registry::get('view')->assign('image_title', true);
+    }
     Registry::get('view')->assign('player_data', $player_data);
 
 } elseif ($mode == 'list') {

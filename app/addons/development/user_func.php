@@ -795,6 +795,7 @@ function fn_get_player_data($player_id)
 
     if (!empty($player_data)) {
         $player_data['main_pair'] = fn_get_image_pairs($player_id, 'player', 'M', true, true);
+        $player_data['bg_image'] = fn_get_image_pairs($player_id, 'player', 'B', false, true);
         $player_data['gear'] = db_get_fields("SELECT product_id FROM ?:players_gear WHERE player_id = ?i", $player_id);
         $player_data['data'] = unserialize($player_data['data']);
     }
