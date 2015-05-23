@@ -10,26 +10,26 @@
         });
     }
 
-    function fn_stick_element()
+    function fn_stick_element(sticky, footer)
     {
         var top_margin = 115;
         var bottom_margin = 20;
-        var topmenu_offset = $('.ty-sticky').parent().offset();
-        if (!$('.ty-sticky').hasClass('sticky') && $(this).scrollTop() + top_margin >= $('.ty-sticky').offset().top && $('.ty-sticky').outerHeight(true) < $('#tygh_footer').offset().top - $('.ty-sticky').offset().top - 50) {
-            init_position = $('.ty-sticky').offset().top;
-            $('.ty-sticky').addClass('sticky');
+        var topmenu_offset = sticky.parent().offset();
+        if (!sticky.hasClass('sticky') && $(this).scrollTop() + top_margin >= sticky.offset().top && sticky.outerHeight(true) < footer.offset().top - sticky.offset().top - 50) {
+            init_position = sticky.offset().top;
+            sticky.addClass('sticky');
         }
-        if ($('.ty-sticky').hasClass('sticky')) {
-            $('.ty-sticky').css('left', topmenu_offset.left - $(this).scrollLeft() + 'px');
-            if ($('.ty-sticky').outerHeight(true) > $('#tygh_footer').offset().top - init_position) {
-                $('.ty-sticky').removeClass('sticky');
-            } else if ($('.ty-sticky').outerHeight(true) + top_margin - bottom_margin > $('#tygh_footer').offset().top - $(this).scrollTop()) {
-                $('.ty-sticky').css('top', $('#tygh_footer').offset().top - $('.ty-sticky').outerHeight(true) - $(this).scrollTop() + bottom_margin + 'px');
+        if (sticky.hasClass('sticky')) {
+            sticky.css('left', topmenu_offset.left - $(this).scrollLeft() + 'px');
+            if (sticky.outerHeight(true) > footer.offset().top - init_position) {
+                sticky.removeClass('sticky');
+            } else if (sticky.outerHeight(true) + top_margin - bottom_margin > footer.offset().top - $(this).scrollTop()) {
+                sticky.css('top', footer.offset().top - sticky.outerHeight(true) - $(this).scrollTop() + bottom_margin + 'px');
             } else {
                 if ($(this).scrollTop() + top_margin < init_position) {
-                    $('.ty-sticky').css('top', init_position - $(this).scrollTop() + 'px');
+                    sticky.css('top', init_position - $(this).scrollTop() + 'px');
                 } else {
-                    $('.ty-sticky').css('top', top_margin + 'px');
+                    sticky.css('top', top_margin + 'px');
                 }
             }
         }
@@ -42,26 +42,33 @@
     }
     
     (function(_, $) {
-        if (!$('#tygh_main_container').hasClass('touch')) {
-            fn_fix_width();
-            $(window).resize(function() {
+        $(function() {
+            if (!$('#tygh_main_container').hasClass('touch')) {
                 fn_fix_width();
-                if ($(".ty-sticky").length > 0) {
-                    var init_position = 0;
-                    fn_stick_element();
-                }
-            });
-            $(window).scroll(function() {
-                fn_fix_width();
-                if ($(".ty-sticky").length > 0) {
-                    var init_position = 0;
-                    fn_stick_element();
-                }
-                $('.cm-parallax').each(function(){
-                    $(this).css({ backgroundPosition: 'center '+ 109 -($(window).scrollTop() / $(this).data('speed')) + 'px' });
+                var sticky = $(".ty-sticky");
+                var footer = $('#tygh_footer');
+                fn_stick_element(sticky, footer);
+                $(window).resize(function() {
+                    fn_fix_width();
+                    if (sticky.length > 0) {
+                        var init_position = 0;
+                        fn_stick_element(sticky, footer);
+                    }
                 });
-            });
-        }
+                $(window).scroll(function() {
+                    fn_fix_width();
+                    if (sticky.length > 0) {
+                        var init_position = 0;
+                        fn_stick_element(sticky, footer);
+                    }
+                    $('.cm-parallax').each(function(){
+                        if ($(window).scrollTop() < $(this).offset().top) {
+                            $(this).css({ backgroundPosition: 'center '+ (109 - $(window).scrollTop() / $(this).data('speed')) + 'px' });
+                        }
+                    });
+                });
+            }
+        });
     }(Tygh, Tygh.$));
 {/literal}
 </script>

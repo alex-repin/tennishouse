@@ -63,7 +63,6 @@
 (function(_, $) {$ldelim}
 
     $(document).ready(function() {$ldelim}
-        fn_stick_element();
         $('.ty-product-filters__block').click(function(e){$ldelim}
             $(this).toggleClass('is-hover');
             var block_id = $(this).find('.ty-product-filters__switch').prop('id').replace(/^(on_|off_|sw_)/, '');
