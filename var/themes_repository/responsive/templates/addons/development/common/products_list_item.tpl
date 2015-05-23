@@ -9,6 +9,15 @@
     {assign var="form_open" value="form_open_`$obj_id`"}
     {$smarty.capture.$form_open nofilter}
     <div class="ty-grid-list__image">
+        {if $product.option_images}
+            <div class="ty-list-options">
+            {foreach from=$product.option_images item="opt_icon"}
+                <div class="ty-list-options_box">
+                    {if $opt_icon.icon}{include file="common/image.tpl" show_detailed_link=false images=$opt_icon.icon no_ids=true image_height="15"}{/if}
+                </div>
+            {/foreach}
+            </div>
+        {/if}
         <div class="ty-grid-list__image-product">
             {include file="views/products/components/product_icon.tpl" product=$product show_gallery=false}
         </div>

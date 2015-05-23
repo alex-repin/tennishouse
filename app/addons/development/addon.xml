@@ -201,6 +201,9 @@
             ALTER TABLE `cscart_players` ADD `website` VARCHAR( 255 ) NOT NULL ,
             ADD `data` TEXT NOT NULL ;
         </item>
+        <item>
+            ALTER TABLE `cscart_product_options` ADD `show_on_catalog` CHAR( 1 ) NOT NULL DEFAULT 'N';
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -417,5 +420,8 @@
         <item lang="ru" id="scroller">Скроллер</item>
         <item lang="ru" id="grid_list">Список-сетка</item>
         <item lang="ru" id="player_title">Заголовок игрока</item>
+        <item lang="ru" id="is_capture">Скрытый</item>
+        <item lang="ru" id="columns_number">Количество колонок</item>
+        <item lang="ru" id="show_on_catalog">Показывать в списке</item>
     </language_variables>
 </addon>

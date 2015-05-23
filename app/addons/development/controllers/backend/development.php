@@ -444,6 +444,12 @@ if ($mode == 'calculate_balance') {
         db_query("UPDATE ?:products SET tracking = 'O' WHERE product_id IN (?n)", $ids);
     }
     exit;
+} elseif ($mode == 'show_colors') {
+    $ids = db_get_hash_array("SELECT * FROM ?:product_options AS a LEFT JOIN ?:product_options_descriptions AS b ON a.option_id = b.option_id AND b.lang_code = 'ru' WHERE b.option_name = 'Цвет'", 'option_id');
+    if (!empty($ids)) {
+        db_query("UPDATE ?:product_options SET show_on_catalog = 'Y' WHERE option_id IN (?n)", array_keys($ids));
+    }
+    exit;
 }
 
 function fn_normalize_string($string)

@@ -354,6 +354,32 @@ function fn_development_gather_additional_product_data_post(&$product, $auth, $p
         } elseif ($product['tracking'] == 'B') {
             $combination = 0;
         }
+        if (empty($params['get_for_one_product']) && $product['tracking'] == 'O' && !empty($product['product_options'])) {
+            $show_opt_id = false;
+            foreach ($product['product_options'] as $i => $opt_data) {
+                if ($opt_data['show_on_catalog'] == 'Y') {
+                    $show_opt_id = $opt_data['option_id'];
+                    break;
+                }
+            }
+            if (!empty($show_opt_id)) {
+                $avail_combinations = db_get_fields("SELECT combination FROM ?:product_options_inventory WHERE amount > 0 AND product_id = ?i", $product['product_id']);
+                $show_var_ids = array();
+                if (!empty($avail_combinations)) {
+                    foreach ($avail_combinations as $i => $combination) {
+                        $options = fn_get_product_options_by_combination($combination);
+                        if (!empty($options[$show_opt_id]) && !in_array($options[$show_opt_id], $show_var_ids)) {
+                            $show_var_ids[] = $options[$show_opt_id];
+                        }
+                    }
+                }
+                if (!empty($show_var_ids)) {
+                    foreach ($show_var_ids as $i  => $vt_id) {
+                        $product['option_images'][$vt_id] = fn_get_image_pairs($vt_id, 'variant_image', 'V', true, false, CART_LANGUAGE);
+                    }
+                }
+            }
+        }
         if (isset($combination)) {
             if ($auth['user_id'] == 0 && !empty($_SESSION['product_notifications']['email'])) {
                 $subscription_id = db_get_field("SELECT subscription_id FROM ?:product_subscriptions WHERE product_id = ?i AND combination_hash = ?i AND email = ?s", $product['product_id'], $combination, $_SESSION['product_notifications']['email']);
