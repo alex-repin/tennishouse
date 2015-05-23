@@ -12,24 +12,26 @@
 
     function fn_stick_element(sticky, footer)
     {
-        var top_margin = 115;
-        var bottom_margin = 20;
-        var topmenu_offset = sticky.parent().offset();
-        if (!sticky.hasClass('sticky') && $(this).scrollTop() + top_margin >= sticky.offset().top && sticky.outerHeight(true) < footer.offset().top - sticky.offset().top - 50) {
-            init_position = sticky.offset().top;
-            sticky.addClass('sticky');
-        }
-        if (sticky.hasClass('sticky')) {
-            sticky.css('left', topmenu_offset.left - $(this).scrollLeft() + 'px');
-            if (sticky.outerHeight(true) > footer.offset().top - init_position) {
-                sticky.removeClass('sticky');
-            } else if (sticky.outerHeight(true) + top_margin - bottom_margin > footer.offset().top - $(this).scrollTop()) {
-                sticky.css('top', footer.offset().top - sticky.outerHeight(true) - $(this).scrollTop() + bottom_margin + 'px');
-            } else {
-                if ($(this).scrollTop() + top_margin < init_position) {
-                    sticky.css('top', init_position - $(this).scrollTop() + 'px');
+        if (sticky.length > 0 && footer.length > 0) {
+            var top_margin = 115;
+            var bottom_margin = 20;
+            var topmenu_offset = sticky.parent().offset();
+            if (!sticky.hasClass('sticky') && $(this).scrollTop() + top_margin >= sticky.offset().top && sticky.outerHeight(true) < footer.offset().top - sticky.offset().top - 50) {
+                init_position = sticky.offset().top;
+                sticky.addClass('sticky');
+            }
+            if (sticky.hasClass('sticky')) {
+                sticky.css('left', topmenu_offset.left - $(this).scrollLeft() + 'px');
+                if (sticky.outerHeight(true) > footer.offset().top - init_position) {
+                    sticky.removeClass('sticky');
+                } else if (sticky.outerHeight(true) + top_margin - bottom_margin > footer.offset().top - $(this).scrollTop()) {
+                    sticky.css('top', footer.offset().top - sticky.outerHeight(true) - $(this).scrollTop() + bottom_margin + 'px');
                 } else {
-                    sticky.css('top', top_margin + 'px');
+                    if ($(this).scrollTop() + top_margin < init_position) {
+                        sticky.css('top', init_position - $(this).scrollTop() + 'px');
+                    } else {
+                        sticky.css('top', top_margin + 'px');
+                    }
                 }
             }
         }
@@ -50,17 +52,13 @@
                 fn_stick_element(sticky, footer);
                 $(window).resize(function() {
                     fn_fix_width();
-                    if (sticky.length > 0) {
-                        var init_position = 0;
-                        fn_stick_element(sticky, footer);
-                    }
+                    var init_position = 0;
+                    fn_stick_element(sticky, footer);
                 });
                 $(window).scroll(function() {
                     fn_fix_width();
-                    if (sticky.length > 0) {
-                        var init_position = 0;
-                        fn_stick_element(sticky, footer);
-                    }
+                    var init_position = 0;
+                    fn_stick_element(sticky, footer);
                     $('.cm-parallax').each(function(){
                         if ($(window).scrollTop() < $(this).offset().top) {
                             $(this).css({ backgroundPosition: 'center '+ (109 - $(window).scrollTop() / $(this).data('speed')) + 'px' });
