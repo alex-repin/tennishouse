@@ -123,7 +123,7 @@ if ($mode == 'view') {
     if (!empty($blocks[PRODUCT_BLOCK_TABS_GRID_ID])) {
         shuffle($blocks[PRODUCT_BLOCK_TABS_GRID_ID]);
         foreach ($blocks[PRODUCT_BLOCK_TABS_GRID_ID] as $i => $block_data) {
-            if ($block_data['properties']['template'] == 'addons/development/blocks/products/products_scroller_capture.tpl') {
+            if ($block_data['properties']['template'] == 'addons/development/blocks/products/th_products_block.tpl') {
                 $block_tabs['tabs']['block_tab_' . $block_data['block_id']] = array(
                     'title' => $block_data['name'],
                     'js' => true

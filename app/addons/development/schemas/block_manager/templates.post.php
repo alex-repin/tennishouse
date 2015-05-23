@@ -12,15 +12,33 @@
 * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
 ****************************************************************************/
 
-$schema['addons/development/blocks/products/products_scroller_capture.tpl'] = array (
+$schema['addons/development/blocks/products/th_products_block.tpl'] = array (
     'settings' => array(
-        'show_price' => array (
-            'type' => 'checkbox',
-            'default_value' => 'Y'
-        ),
-        'enable_quick_view' => array (
+        'is_capture' => array (
             'type' => 'checkbox',
             'default_value' => 'N'
+        ),
+        'format' => array (
+            'type' => 'selectbox',
+            'values' => array (
+                'S' => 'scroller',
+                'G' => 'grid_list',
+            ),
+            'default_value' => 'G'
+        ),
+        'mode' => array (
+            'type' => 'selectbox',
+            'values' => array (
+                'R' => 'regular',
+                'S' => 'small',
+                'N' => 'mini',
+                'M' => 'micro'
+            ),
+            'default_value' => 'R'
+        ),
+        'columns_number' =>  array (
+            'type' => 'input',
+            'default_value' => 5
         ),
         'not_scroll_automatically' => array (
             'type' => 'checkbox',

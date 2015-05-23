@@ -869,14 +869,18 @@ select {
 .ty-grid-list__image {
     padding: 10px 0 25px;
 }
-.ty-grid-list__item .ty-grid-list__image-product .ty-pict {
+.ty-grid-list__item .ty-grid-list__image-product .ty-pict, .ty-grid-list__item .ty-grid-list__image-product .ty-no-image {
     width: 187px;
     height: 187px;
+    min-height: 0 !important;
+    min-width: 0 !important;
 }
-.ty-grid-list__item:hover .ty-grid-list__image-product .ty-pict {
+.ty-grid-list__item:hover .ty-grid-list__image-product .ty-pict, .ty-grid-list__item:hover .ty-grid-list__image-product .ty-no-image {
     transition: all 200ms linear 0s;
     width: 197px;
     height: 197px;
+    min-height: 0 !important;
+    min-width: 0 !important;
 }
 .ty-grid-list__image a{
     display: inline;
@@ -1650,13 +1654,17 @@ select {
 .ty-products-scroller .ty-tennishouse-body .ty-small-mode .owl-prev, .ty-products-scroller .ty-tennishouse-body .ty-small-mode .owl-next {
     top: 80px;
 }
-.ty-small-mode .ty-grid-list__item .ty-grid-list__image-product .ty-pict {
-    width: 130px;
-    height: 130px;
+.ty-small-mode .ty-grid-list__item .ty-grid-list__image-product .ty-pict, .ty-small-mode .ty-grid-list__item .ty-grid-list__image-product .ty-no-image {
+    width: 130px !important;
+    height: 130px !important;
+    min-height: 0 !important;
+    min-width: 0 !important;
 }
-.ty-small-mode .ty-grid-list__item:hover .ty-grid-list__image-product .ty-pict {
-    width: 140px;
-    height: 140px;
+.ty-small-mode .ty-grid-list__item:hover .ty-grid-list__image-product .ty-pict, .ty-small-mode .ty-grid-list__item:hover .ty-grid-list__image-product .ty-no-image {
+    width: 140px !important;
+    height: 140px !important;
+    min-height: 0 !important;
+    min-width: 0 !important;
 }
 
 .ty-mini-mode .ty-grid-list__item-name .product-title {
@@ -1678,13 +1686,17 @@ select {
 .ty-products-scroller .ty-tennishouse-body .ty-mini-mode .owl-prev, .ty-products-scroller .ty-tennishouse-body .ty-mini-mode .owl-next {
     top: 80px;
 }
-.ty-mini-mode .ty-grid-list__item .ty-grid-list__image-product .ty-pict {
+.ty-mini-mode .ty-grid-list__item .ty-grid-list__image-product .ty-pict, .ty-mini-mode .ty-grid-list__item .ty-grid-list__image-product .ty-no-image {
     width: 103px;
     height: 103px;
+    min-height: 0 !important;
+    min-width: 0 !important;
 }
-.ty-mini-mode .ty-grid-list__item:hover .ty-grid-list__image-product .ty-pict {
+.ty-mini-mode .ty-grid-list__item:hover .ty-grid-list__image-product .ty-pict, .ty-mini-mode .ty-grid-list__item:hover .ty-grid-list__image-product .ty-no-image {
     width: 113px;
     height: 113px;
+    min-height: 0 !important;
+    min-width: 0 !important;
 }
 
 .ty-micro-mode .ty-grid-list__item-name .product-title {
@@ -1709,13 +1721,17 @@ select {
 .ty-products-scroller .ty-tennishouse-body .ty-micro-mode .owl-prev, .ty-products-scroller .ty-tennishouse-body .ty-micro-mode .owl-next {
     top: 25px;
 }
-.ty-micro-mode .ty-grid-list__item .ty-grid-list__image-product .ty-pict {
+.ty-micro-mode .ty-grid-list__item .ty-grid-list__image-product .ty-pict, .ty-micro-mode .ty-grid-list__item .ty-grid-list__image-product .ty-no-image {
     width: 70px;
     height: 70px;
+    min-height: 0 !important;
+    min-width: 0 !important;
 }
-.ty-micro-mode .ty-grid-list__item:hover .ty-grid-list__image-product .ty-pict {
+.ty-micro-mode .ty-grid-list__item:hover .ty-grid-list__image-product .ty-pict, .ty-micro-mode .ty-grid-list__item:hover .ty-grid-list__image-product .ty-no-image {
     width: 70px;
     height: 70px;
+    min-height: 0 !important;
+    min-width: 0 !important;
 }
 .ty-micro-mode .ty-grid-list__item-info {
     height: 70px;

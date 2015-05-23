@@ -296,6 +296,7 @@
         <item lang="ru" id="tennishouse_general">Основной контейнер TennisHouse</item>
         <item lang="ru" id="tennishouse_capture">Скрытый контейнер TennisHouse</item>
         <item lang="ru" id="tmpl_scroller_capture">Скрытый скроллер</item>
+        <item lang="ru" id="tmpl_th_products_block">Блок с товарами TennisHouse</item>
         <item lang="ru" id="similar_products">Похожие товары</item>
         <item lang="ru" id="player_share_buttons_description">Профиль игрока. Личная информация. Экипировка.</item>
         <item lang="ru" id="same_brand_products">Товары того же бренда</item>
@@ -413,6 +414,8 @@
         <item lang="ru" id="career_prize">Призовые</item>
         <item lang="ru" id="won_lost">Побед - Поражений</item>
         <item lang="ru" id="bg_image">Фон</item>
+        <item lang="ru" id="scroller">Скроллер</item>
+        <item lang="ru" id="grid_list">Список-сетка</item>
         <item lang="ru" id="player_title">Заголовок игрока</item>
     </language_variables>
 </addon>
