@@ -1,3 +1,6 @@
+.ty-tygh {
+    background: url("../../../media/images/addons/development/bg_clean.jpg") repeat-y scroll center top;
+}
 .owl-theme .owl-controls .owl-buttons div {
     border-radius: 0;
 }
@@ -41,17 +44,14 @@ select {
 .ty-footer-menu > .row {
     padding: 0;
 }
-.tygh_container {
-    width: 2500px;
-}
 .ty-helper-container {
-    max-width: 2500px;
+    width: 100%;
 }
 .my-account-grid {
     margin-left: 50px;
 }
 .tygh-footer {
-    max-width: 2500px;
+/*    max-width: 2500px;*/
 }
 .follow-us {
     float: none;
@@ -364,7 +364,10 @@ select {
     top: 0;
     width: 100%;
     z-index: 400;
-    max-width: 2500px;
+/*    max-width: 2500px;*/
+}
+.tygh_footer {
+    width: 100%;
 }
 .top-menu-grid {
     padding-top: 30px;
@@ -865,6 +868,30 @@ select {
     transition: all 200ms linear 0s;
     box-shadow: 0 0 5px 1px @font;
     z-index:20;
+}
+.ty-categorize__title {
+    border-bottom: 1px solid #edeff1;
+    padding: 0 30px 9px 0;
+    position: relative;
+    font-weight: bold;
+    text-decoration: none;
+}
+.ty-category__title {
+    display: inline-block;
+}
+.ty-category__title-descr p {
+    font-size: 12px;
+    color: lighten(@font, 20%);
+}
+.ty-category__title-logo {
+    float: left;
+    margin-right: 20px;}
+.ty-category__title-descr {
+    display: inline-block;
+    width: 530px;
+}
+.ty-categorize__section {
+    margin-bottom: 50px;
 }
 .ty-list-options {
     position: absolute;
@@ -2111,7 +2138,7 @@ select {
 
 @media screen 
 and (max-device-width : 1200px) {
-    .ty-helper-container {
+    .ty-tygh {
         width: 1200px;
     }
 }

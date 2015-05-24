@@ -61,12 +61,19 @@
 {if !$image_title}
     {capture name="mainbox_title"}
     {if $category_data.brand.image_pair.icon.image_path}
-        {if $category.brand_id == $smarty.const.KIRSCHBAUM_BRAND_ID}
-            {$img_height = "50"}
-        {else}
-            {$img_height = "35"}
-        {/if}
-        {include file="addons/development/common/brand_logo.tpl"  brand=$category_data.brand brand_variant_id=$category_data.brand_id img_height=$img_height}
+        <div class="ty-category__title">
+            <div class="ty-category__title-logo">
+                {if $category.brand_id == $smarty.const.KIRSCHBAUM_BRAND_ID}
+                    {$img_height = "70"}
+                {else}
+                    {$img_height = "50"}
+                {/if}
+                {include file="addons/development/common/brand_logo.tpl"  brand=$category_data.brand brand_variant_id=$category_data.brand_id img_height=$img_height}
+            </div>
+            {if $category_data.description}
+                <div class="ty-wysiwyg-content ty-category__title-descr" {live_edit name="category:description:{$category_data.category_id}"}>{$category_data.description nofilter}</div>
+            {/if}
+        </div>
     {else}
         <span {live_edit name="category:category:{$category_data.category_id}"}>{$category_data.category}</span>
     {/if}

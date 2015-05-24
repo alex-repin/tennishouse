@@ -38,7 +38,7 @@ if ($mode == 'view') {
         'skip_filter' => true
     );
     list($subcategories, ) = fn_get_categories($params, CART_LANGUAGE);
-    
+
     if (empty($subcategories) && empty($products)) {
         $cat_ids = explode('/', $category_data['id_path']);
         $main_parent = reset($cat_ids);
@@ -46,6 +46,23 @@ if ($mode == 'view') {
             return array(CONTROLLER_STATUS_REDIRECT, 'categories.view?category_id=' . $main_parent);
         }
     }
+    
+    if (!empty($category_data['categorize_by_feature_id']) && !empty($products)) {
+        $feature_categorization = array();
+        $feature_category = fn_get_product_feature_data($category_data['categorize_by_feature_id'], true);
+        if (!empty($feature_category['variants'])) {
+            foreach ($products as $i => $product) {
+                if (!empty($product['category_feature_id'])) {
+                    $feature_categorization[$product['category_feature_id']][] = $product;
+                } else {
+                    $feature_categorization['other'][] = $product;
+                }
+            }
+            Registry::get('view')->assign('feature_categorization', $feature_categorization);
+            Registry::get('view')->assign('feature_category', $feature_category);
+        }
+    }
+    
     Registry::get('view')->assign('subcategories', $subcategories);
     Registry::get('view')->assign('category_data', $category_data);
 }

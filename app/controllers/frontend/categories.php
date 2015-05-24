@@ -87,6 +87,11 @@ if ($mode == 'catalog') {
         $params['cid'] = $_REQUEST['category_id'];
         $params['extend'] = array('categories', 'description');
         $params['subcats'] = '';
+        // [tennishouse]
+        if (!empty($category_data['categorize_by_feature_id'])) {
+            $params['categorize_by_feature_id'] = $category_data['categorize_by_feature_id'];
+        }
+        // [tennishouse]
         if (Registry::get('settings.General.show_products_from_subcategories') == 'Y') {
             $params['subcats'] = 'Y';
         }

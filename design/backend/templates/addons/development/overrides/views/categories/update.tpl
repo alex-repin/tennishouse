@@ -125,6 +125,25 @@
     </div>
 
     <div class="control-group">
+        <label class="control-label" for="elm_category_categorize_by_feature_id">{__("categorize_by_feature_id")}:</label>
+
+        <div class="controls">
+        <select name="category_data[categorize_by_feature_id]" id="elm_category_categorize_by_feature_id">
+            <option value="" {if $category_data.categorize_by_feature_id == "0"}selected="selected"{/if}> - {__("none")} - </option>
+            {foreach from=$filter_features item=feature}
+                {if $feature.feature_type != 'G'}
+                    <option value="{$feature.feature_id}" {if $category_data.categorize_by_feature_id == $feature.feature_id}selected="selected"{/if}>{if $feature.group_description}{$feature.group_description}: {/if}{$feature.description}</option>
+                {elseif $feature.subfeatures}
+                    {foreach from=$feature.subfeatures item=subfeature}
+                        <option value="{$subfeature.feature_id}" {if $category_data.categorize_by_feature_id == $subfeature.feature_id}selected="selected"{/if}>{if $subfeature.group_description}{$subfeature.group_description}: {/if}{$subfeature.description}</option>
+                    {/foreach}
+                {/if}
+            {/foreach}
+        </select>
+        </div>
+    </div>
+
+    <div class="control-group">
         <label class="control-label" for="elm_category_note_url">{__("note_url")}:</label>
         <div class="controls">
             <input type="text" name="category_data[note_url]" id="elm_category_note_url" size="55" value="{$category_data.note_url}" class="input-text-short" />

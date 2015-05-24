@@ -9,7 +9,7 @@
     {assign var="form_open" value="form_open_`$obj_id`"}
     {$smarty.capture.$form_open nofilter}
     <div class="ty-grid-list__image">
-        {if $product.option_images}
+        {if $product.option_images && ($mode == 'R' || $mode  == 'S')}
             <div class="ty-list-options">
             {foreach from=$product.option_images item="opt_icon"}
                 <div class="ty-list-options_box">

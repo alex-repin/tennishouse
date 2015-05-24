@@ -16,11 +16,11 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-if ($mode == 'update') {
+if ($mode == 'update' || $mode == 'add') {
+
     $params = array(
         'variants' => false,
         'plain' => false,
-        'feature_types' => array('M'),
     );
 
     list($filter_features) = fn_get_product_features($params, 0, DESCR_SL);

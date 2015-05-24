@@ -490,8 +490,13 @@ function fn_development_get_filters_products_count_before_select_filters(&$sf_fi
     $sf_fields .= db_quote(", ?:product_filters.is_slider, ?:product_filters.units, ?:product_filters.note_url, ?:product_filters.note_text");
 }
 
-function fn_development_get_products($params, &$fields, &$sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
+function fn_development_get_products(&$params, &$fields, &$sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
 {
+    if (!empty($params['categorize_by_feature_id'])) {
+        $join .= db_quote(" LEFT JOIN ?:product_features_values AS ctgz ON ctgz.product_id = products.product_id AND ctgz.feature_id = ?i", $params['categorize_by_feature_id']);
+        $fields[] = 'ctgz.variant_id AS category_feature_id';
+        $params['items_per_page'] = 0;
+    }
     //$fields[] = '?:categories.id_path';
     $sortings['random'] = 'RAND()';
     if (!empty($params['similar_pid'])) {

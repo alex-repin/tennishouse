@@ -40,7 +40,7 @@
     {
         width = $(window).width() < 1200 ? "1200px" : "100%";
         $('.tygh-top-panel').css({"left": - $(this).scrollLeft() + "px", "width": width});
-        $('#tygh_main_container').css({"width": width});
+        $('#tygh_container').css({"width": width});
     }
     
     (function(_, $) {
