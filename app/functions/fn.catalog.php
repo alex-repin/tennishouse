@@ -4156,7 +4156,7 @@ function fn_get_product_features_list($product, $display_on = 'C', $lang_code = 
      */
     fn_set_hook('get_product_features_list_before_select', $fields, $join, $condition, $product, $display_on, $lang_code);
 
-    $_data = db_get_array("SELECT $fields FROM ?:product_features as f $join WHERE $condition ORDER BY fd.description, fv.position");
+    $_data = db_get_array("SELECT $fields FROM ?:product_features as f $join WHERE $condition ORDER BY f.position, fv.position");
 
     if (!empty($_data)) {
         foreach ($_data as $k => $feature) {
