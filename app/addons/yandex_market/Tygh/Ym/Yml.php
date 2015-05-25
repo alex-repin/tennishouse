@@ -169,10 +169,11 @@ class Yml implements IYml
                 }
 
                 $product['product'] = $this->escape($product['product']);
-                //$product['full_description'] = $this->escape($product['full_description']);
+                $product['full_description'] = $this->escape($product['full_description']);
                 $product['product_features'] = $this->getProductFeatures($product);
                 
                 if (!empty($product['product_features'])) {
+                    $product['full_description'] = '';
                     foreach ($product['product_features'] as $i => $f_data) {
                         $product['full_description'] .= (empty($product['full_description']) ? '' : '; ') . $f_data['description'] . ':' . $f_data['value'];
                     }
