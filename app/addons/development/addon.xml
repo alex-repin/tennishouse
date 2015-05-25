@@ -207,6 +207,16 @@
         <item>
             ALTER TABLE `cscart_categories` ADD `categorize_by_feature_id` MEDIUMINT( 8 ) UNSIGNED NOT NULL ;;
         </item>
+        <item>
+            ALTER TABLE `cscart_categories` DROP `categorize_by_feature_id`;
+        </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `tabs_categorization` MEDIUMINT( 8 ) UNSIGNED NOT NULL ,
+            ADD `sections_categorization` MEDIUMINT( 8 ) UNSIGNED NOT NULL ;
+        </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `subtabs_categorization` MEDIUMINT( 8 ) UNSIGNED NOT NULL ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -426,6 +436,8 @@
         <item lang="ru" id="is_capture">Скрытый</item>
         <item lang="ru" id="columns_number">Количество колонок</item>
         <item lang="ru" id="show_on_catalog">Показывать в списке</item>
-        <item lang="ru" id="categorize_by_feature_id">Категоризирвать по</item>
+        <item lang="ru" id="sections_categorization">Категоризирвать на секции</item>
+        <item lang="ru" id="tabs_categorization">Категоризирвать на вкладки</item>
+        <item lang="ru" id="other">Остальное</item>
     </language_variables>
 </addon>

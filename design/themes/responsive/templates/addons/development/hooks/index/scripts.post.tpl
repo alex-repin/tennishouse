@@ -60,7 +60,7 @@
                     var init_position = 0;
                     fn_stick_element(sticky, footer);
                     $('.cm-parallax').each(function(){
-                        if ($(window).scrollTop() < $(this).offset().top) {
+                        if ($(window).scrollTop() < $(this).offset().top + $(this).outerHeight() - 115) {
                             $(this).css({ backgroundPosition: 'center '+ (109 - $(window).scrollTop() / $(this).data('speed')) + 'px' });
                         }
                     });

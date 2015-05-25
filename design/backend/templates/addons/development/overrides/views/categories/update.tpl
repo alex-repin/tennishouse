@@ -125,17 +125,55 @@
     </div>
 
     <div class="control-group">
-        <label class="control-label" for="elm_category_categorize_by_feature_id">{__("categorize_by_feature_id")}:</label>
+        <label class="control-label" for="elm_category_tabs_categorization">{__("tabs_categorization")}:</label>
 
         <div class="controls">
-        <select name="category_data[categorize_by_feature_id]" id="elm_category_categorize_by_feature_id">
-            <option value="" {if $category_data.categorize_by_feature_id == "0"}selected="selected"{/if}> - {__("none")} - </option>
+        <select name="category_data[tabs_categorization]" id="elm_category_tabs_categorization">
+            <option value="" {if $category_data.tabs_categorization == "0"}selected="selected"{/if}> - {__("none")} - </option>
             {foreach from=$filter_features item=feature}
                 {if $feature.feature_type != 'G'}
-                    <option value="{$feature.feature_id}" {if $category_data.categorize_by_feature_id == $feature.feature_id}selected="selected"{/if}>{if $feature.group_description}{$feature.group_description}: {/if}{$feature.description}</option>
+                    <option value="{$feature.feature_id}" {if $category_data.tabs_categorization == $feature.feature_id}selected="selected"{/if}>{if $feature.group_description}{$feature.group_description}: {/if}{$feature.description}</option>
                 {elseif $feature.subfeatures}
                     {foreach from=$feature.subfeatures item=subfeature}
-                        <option value="{$subfeature.feature_id}" {if $category_data.categorize_by_feature_id == $subfeature.feature_id}selected="selected"{/if}>{if $subfeature.group_description}{$subfeature.group_description}: {/if}{$subfeature.description}</option>
+                        <option value="{$subfeature.feature_id}" {if $category_data.tabs_categorization == $subfeature.feature_id}selected="selected"{/if}>{if $subfeature.group_description}{$subfeature.group_description}: {/if}{$subfeature.description}</option>
+                    {/foreach}
+                {/if}
+            {/foreach}
+        </select>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="elm_category_tabs_categorization">{__("subtabs_categorization")}:</label>
+
+        <div class="controls">
+        <select name="category_data[subtabs_categorization]" id="elm_category_subtabs_categorization">
+            <option value="" {if $category_data.subtabs_categorization == "0"}selected="selected"{/if}> - {__("none")} - </option>
+            {foreach from=$filter_features item=feature}
+                {if $feature.feature_type != 'G'}
+                    <option value="{$feature.feature_id}" {if $category_data.subtabs_categorization == $feature.feature_id}selected="selected"{/if}>{if $feature.group_description}{$feature.group_description}: {/if}{$feature.description}</option>
+                {elseif $feature.subfeatures}
+                    {foreach from=$feature.subfeatures item=subfeature}
+                        <option value="{$subfeature.feature_id}" {if $category_data.subtabs_categorization == $subfeature.feature_id}selected="selected"{/if}>{if $subfeature.group_description}{$subfeature.group_description}: {/if}{$subfeature.description}</option>
+                    {/foreach}
+                {/if}
+            {/foreach}
+        </select>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="elm_category_sections_categorization">{__("sections_categorization")}:</label>
+
+        <div class="controls">
+        <select name="category_data[sections_categorization]" id="elm_category_sections_categorization">
+            <option value="" {if $category_data.sections_categorization == "0"}selected="selected"{/if}> - {__("none")} - </option>
+            {foreach from=$filter_features item=feature}
+                {if $feature.feature_type != 'G'}
+                    <option value="{$feature.feature_id}" {if $category_data.sections_categorization == $feature.feature_id}selected="selected"{/if}>{if $feature.group_description}{$feature.group_description}: {/if}{$feature.description}</option>
+                {elseif $feature.subfeatures}
+                    {foreach from=$feature.subfeatures item=subfeature}
+                        <option value="{$subfeature.feature_id}" {if $category_data.sections_categorization == $subfeature.feature_id}selected="selected"{/if}>{if $subfeature.group_description}{$subfeature.group_description}: {/if}{$subfeature.description}</option>
                     {/foreach}
                 {/if}
             {/foreach}

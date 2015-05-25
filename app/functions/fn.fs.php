@@ -1107,7 +1107,7 @@ function fn_rename($oldname, $newname, $context = null)
 {
     $result = ($context === null) ? rename($oldname, $newname) : rename($oldname, $newname, $context);
     if ($result !== false) {
-        @chmod($newname, is_dir($new_name) ? DEFAULT_DIR_PERMISSIONS : DEFAULT_FILE_PERMISSIONS);
+        @chmod($newname, is_dir($newname) ? DEFAULT_DIR_PERMISSIONS : DEFAULT_FILE_PERMISSIONS);
     }
 
     return $result;

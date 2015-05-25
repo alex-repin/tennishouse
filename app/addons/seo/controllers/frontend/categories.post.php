@@ -24,10 +24,10 @@ if ($mode == 'view' && !empty($_REQUEST['category_id'])) {
     if ($search['total_items'] > $search['items_per_page']) {
         $pagination = fn_generate_pagination($search);
 
-        if ($pagination['prev_page']) {
+        if (!empty($pagination['prev_page'])) {
             $seo_canonical['prev'] = fn_url('categories.view?category_id=' . $_REQUEST['category_id'] . '&page=' . $pagination['prev_page']);
         }
-        if ($pagination['next_page']) {
+        if (!empty($pagination['next_page'])) {
             $seo_canonical['next'] = fn_url('categories.view?category_id=' . $_REQUEST['category_id'] . '&page=' . $pagination['next_page']);
         }
     }

@@ -221,6 +221,28 @@ function fn_development_get_category_data_post($category_id, $field_list, $get_m
         ));
         $category_data['brand'] = $brands[$category_data['brand_id']];
     }
+    if (AREA == 'C')  {
+        if (!empty($category_data['id_path']) && (empty($category_data['tabs_categorization']) || empty($category_data['sections_categorization']))) {
+            $category_data['cat_ids'] = explode('/', $category_data['id_path']);
+            $categorization_data = db_get_hash_array("SELECT category_id, tabs_categorization, sections_categorization FROM ?:categories WHERE category_id IN (?n)", 'category_id', $category_data['cat_ids']);
+            if (empty($category_data['tabs_categorization'])) {
+                foreach (array_reverse($category_data['cat_ids']) as $i => $cat_id) {
+                    if (!empty($categorization_data[$cat_id]['tabs_categorization'])) {
+                        $category_data['tabs_categorization'] = $categorization_data[$cat_id]['tabs_categorization'];
+                        break;
+                    }
+                }
+            }
+            if (empty($category_data['sections_categorization'])) {
+                foreach (array_reverse($category_data['cat_ids']) as $i => $cat_id) {
+                    if (!empty($categorization_data[$cat_id]['sections_categorization'])) {
+                        $category_data['sections_categorization'] = $categorization_data[$cat_id]['sections_categorization'];
+                        break;
+                    }
+                }
+            }
+        }
+    }
 }
 
 function fn_development_get_product_feature_variants($fields, $join, &$condition, $group_by, $sorting, $lang_code, $limit)
@@ -357,7 +379,7 @@ function fn_development_gather_additional_product_data_post(&$product, $auth, $p
         if (empty($params['get_for_one_product']) && $product['tracking'] == 'O' && !empty($product['product_options'])) {
             $show_opt_id = false;
             foreach ($product['product_options'] as $i => $opt_data) {
-                if ($opt_data['show_on_catalog'] == 'Y') {
+                if (!empty($opt_data['show_on_catalog']) && $opt_data['show_on_catalog'] == 'Y') {
                     $show_opt_id = $opt_data['option_id'];
                     break;
                 }
@@ -492,10 +514,20 @@ function fn_development_get_filters_products_count_before_select_filters(&$sf_fi
 
 function fn_development_get_products(&$params, &$fields, &$sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
 {
-    if (!empty($params['categorize_by_feature_id'])) {
-        $join .= db_quote(" LEFT JOIN ?:product_features_values AS ctgz ON ctgz.product_id = products.product_id AND ctgz.feature_id = ?i", $params['categorize_by_feature_id']);
-        $fields[] = 'ctgz.variant_id AS category_feature_id';
+    if (!empty($params['tabs_categorization']) || !empty($params['subtabs_categorization']) || !empty($params['sections_categorization'])) {
         $params['items_per_page'] = 0;
+        if (!empty($params['tabs_categorization'])) {
+            $join .= db_quote(" LEFT JOIN ?:product_features_values AS tabs_categorization ON tabs_categorization.product_id = products.product_id AND tabs_categorization.feature_id = ?i", $params['tabs_categorization']);
+            $fields[] = 'tabs_categorization.variant_id AS tabs_categorization';
+        }
+        if (!empty($params['subtabs_categorization'])) {
+            $join .= db_quote(" LEFT JOIN ?:product_features_values AS subtabs_categorization ON subtabs_categorization.product_id = products.product_id AND subtabs_categorization.feature_id = ?i", $params['subtabs_categorization']);
+            $fields[] = 'subtabs_categorization.variant_id AS subtabs_categorization';
+        }
+        if (!empty($params['sections_categorization'])) {
+            $join .= db_quote(" LEFT JOIN ?:product_features_values AS sections_categorization ON sections_categorization.product_id = products.product_id AND sections_categorization.feature_id = ?i", $params['sections_categorization']);
+            $fields[] = 'sections_categorization.variant_id AS sections_categorization';
+        }
     }
     //$fields[] = '?:categories.id_path';
     $sortings['random'] = 'RAND()';

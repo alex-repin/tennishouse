@@ -125,7 +125,7 @@ function fn_rma_get_order_info(&$order, &$additional_data)
     if (!empty($order)) {
         $status_data = fn_get_status_params($order['status'], STATUSES_ORDER);
 
-        if (!empty($status_data) && $status_data['allow_return'] == 'Y' && isset($additional_data[ORDER_DATA_PRODUCTS_DELIVERY_DATE])) {
+        if (!empty($status_data) && !empty($status_data['allow_return']) && $status_data['allow_return'] == 'Y' && isset($additional_data[ORDER_DATA_PRODUCTS_DELIVERY_DATE])) {
             $order_returnable_products = fn_get_order_returnable_products($order['products'], $additional_data[ORDER_DATA_PRODUCTS_DELIVERY_DATE]);
             if (!empty($order_returnable_products['items'])) {
                 $order['allow_return'] = 'Y';

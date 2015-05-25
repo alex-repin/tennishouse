@@ -20,235 +20,237 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $params = $_REQUEST;
-    $order_info = fn_get_order_info($params['order_id'], false, true, true, true);
+    if (!empty($params['order_id'])) {
+        $order_info = fn_get_order_info($params['order_id'], false, true, true, true);
 
-    if ($mode == 'sdek_order_delivery') {
+        if ($mode == 'sdek_order_delivery') {
 
-        if (empty($params['add_sdek_info'])) {
-            return false;
-        }
-
-        foreach ($params['add_sdek_info'] as $shipment_id => $sdek_info) {
-
-            list($_shipments, $search) = fn_get_shipments_info(array('order_id' => $params['order_id'], 'advanced_info' => true, 'shipment_id' => $shipment_id));
-
-            $shipment = reset($_shipments);
-
-            $params_shipping = array(
-                'shipping_id' => $shipment['shipping_id'],
-                'Date' => date("Y-m-d", $shipment['shipment_timestamp'])
-            );
-
-            $data_auth = RusSdek::SdekDataAuth($params_shipping);
-
-            if (empty($data_auth)) {
-                continue;
-            } 
-
-            $order_for_sdek = $sdek_info['Order'];
-
-            $lastname = "";
-            if (!empty($order_info['lastname'])) {
-                $lastname = $order_info['lastname'];
-
-            } elseif (!empty($order_info['s_lastname'])) {
-                $lastname = $order_info['s_lastname'];
-
-            } elseif (!empty($order_info['b_lastname'])) {
-                $lastname = $order_info['b_lastname'];
-            }
-            $firstname = "";
-            if (!empty($order_info['firstname'])) {
-                $firstname = $order_info['firstname'];
-
-            } elseif (!empty($order_info['s_firstname'])) {
-                $firstname = $order_info['s_firstname'];
-
-            } elseif (!empty($order_info['b_firstname'])) {
-                $firstname = $order_info['b_firstname'];
+            if (empty($params['add_sdek_info'])) {
+                return false;
             }
 
-            $order_for_sdek['RecipientName'] = $lastname . ' ' . $firstname;
+            foreach ($params['add_sdek_info'] as $shipment_id => $sdek_info) {
 
-            if (!empty($order_info['phone'])) {
-                $order_for_sdek['Phone'] = $order_info['phone'];
+                list($_shipments, $search) = fn_get_shipments_info(array('order_id' => $params['order_id'], 'advanced_info' => true, 'shipment_id' => $shipment_id));
 
-            } elseif (!empty($order_info['s_phone'])) {
-                $order_for_sdek['Phone'] = $order_info['s_phone'];
+                $shipment = reset($_shipments);
 
-            } elseif (!empty($order_info['b_phone'])) {
-                $order_for_sdek['Phone'] = $order_info['b_phone'];
-            }
-
-            $sdek_products = array();
-            $weight = 0;
-
-            foreach ($shipment['products'] as $item_id => $amount) {
-                $data_product = $order_info['products'][$item_id];
-
-                $product_weight = db_get_field("SELECT weight FROM ?:products WHERE product_id = ?i", $data_product['product_id']);
-
-                if (!empty($product_weight) && $product_weight != 0) {
-                    $product_weight = $product_weight;
-                } else {
-                    $product_weight = 0.01;
-                }
-
-                $sdek_products[] = array(
-                    'ware_key' => $data_product['product_id'],
-                    'product' => $data_product['product'],
-                    'price' => $data_product['price'],
-                    'amount' => $amount,
-                    'total' => $data_product['price'] * $amount,
-                    'weight' => $amount * $product_weight,
-                    'order_id' => $params['order_id'],
-                    'shipment_id' => $shipment_id,
-                );
-                $weight = $weight + ($amount * $product_weight);
-            }
-
-            $order_for_sdek['SellerName'] = Registry::get('runtime.company_data.company');
-
-            $data_auth['Number'] = $params['order_id'] . '_' . $shipment_id;
-
-            $data_auth['OrderCount'] = "1";
-
-            $xml = '            ' . RusSdek::arraySimpleXml('DeliveryRequest', $data_auth, 'open');
-
-            $order_for_sdek['Number'] = $params['order_id'] . '_' . $shipment_id;
-            $order_for_sdek['DateInvoice'] = date("Y-m-d", $shipment['shipment_timestamp']);
-            $order_for_sdek['RecipientEmail'] = $order_info['email'];
-            $order_for_sdek['DeliveryRecipientCost'] = $order_for_sdek['DeliveryRecipientCost'];
-
-            $xml .= '            ' . RusSdek::arraySimpleXml('Order', $order_for_sdek, 'open');
-
-            if (!empty($sdek_info['Address'])) {
-                $xml .= '            ' . RusSdek::arraySimpleXml('Address', $sdek_info['Address']);
-            }
-
-            $package_for_xml = array (
-                'Number' => $shipment_id,
-                'BarCode' => $shipment_id,
-                'Weight' => $weight
-            );
-            $xml .= '            ' . RusSdek::arraySimpleXml('Package', $package_for_xml, 'open');
-
-            foreach ($sdek_products as $k => $product) {
-                $product_for_xml = array (
-                    'WareKey' => $product['ware_key'],
-                    'Cost' => $product['price'],
-                    'Payment' => $product['price'],
-                    'Weight' => $product['weight'],
-                    'Amount' => $product['amount'],
-                    'Comment' => $product['product'],
+                $params_shipping = array(
+                    'shipping_id' => $shipment['shipping_id'],
+                    'Date' => date("Y-m-d", $shipment['shipment_timestamp'])
                 );
 
-                $xml .= '            ' . RusSdek::arraySimpleXml('Item', $product_for_xml);
-            }
+                $data_auth = RusSdek::SdekDataAuth($params_shipping);
 
-            $xml .= '            ' . '</Package>';
-            $xml .= '            ' . '</Order>';
-            $xml .= '            ' . '</DeliveryRequest>';
+                if (empty($data_auth)) {
+                    continue;
+                } 
 
-            $response = RusSdek::SdekXmlRequest('http://gw.edostavka.ru:11443/new_orders.php', $xml, $data_auth);
-            
-            $result = RusSdek::resultXml($response);
+                $order_for_sdek = $sdek_info['Order'];
 
-            if (empty($result['error'])) {
+                $lastname = "";
+                if (!empty($order_info['lastname'])) {
+                    $lastname = $order_info['lastname'];
 
-                $register_data = array(
-                    'order_id' => $params['order_id'],
-                    'shipment_id' => $shipment_id,
-                    'dispatch_number' => $result['number'],
-                    'data' => date("Y-m-d", $shipment['shipment_timestamp']),
-                    'data_xml' => $xml,
-                    'timestamp' => TIME,
-                    'status' => 'S',
-                    'tariff' => $sdek_info['Order']['TariffTypeCode'],
-                    'file_sdek' => $shipment_id . '/' . $params['order_id'] . '.pdf',
-                    'notes' => $sdek_info['Order']['Comment'],
+                } elseif (!empty($order_info['s_lastname'])) {
+                    $lastname = $order_info['s_lastname'];
+
+                } elseif (!empty($order_info['b_lastname'])) {
+                    $lastname = $order_info['b_lastname'];
+                }
+                $firstname = "";
+                if (!empty($order_info['firstname'])) {
+                    $firstname = $order_info['firstname'];
+
+                } elseif (!empty($order_info['s_firstname'])) {
+                    $firstname = $order_info['s_firstname'];
+
+                } elseif (!empty($order_info['b_firstname'])) {
+                    $firstname = $order_info['b_firstname'];
+                }
+
+                $order_for_sdek['RecipientName'] = $lastname . ' ' . $firstname;
+
+                if (!empty($order_info['phone'])) {
+                    $order_for_sdek['Phone'] = $order_info['phone'];
+
+                } elseif (!empty($order_info['s_phone'])) {
+                    $order_for_sdek['Phone'] = $order_info['s_phone'];
+
+                } elseif (!empty($order_info['b_phone'])) {
+                    $order_for_sdek['Phone'] = $order_info['b_phone'];
+                }
+
+                $sdek_products = array();
+                $weight = 0;
+
+                foreach ($shipment['products'] as $item_id => $amount) {
+                    $data_product = $order_info['products'][$item_id];
+
+                    $product_weight = db_get_field("SELECT weight FROM ?:products WHERE product_id = ?i", $data_product['product_id']);
+
+                    if (!empty($product_weight) && $product_weight != 0) {
+                        $product_weight = $product_weight;
+                    } else {
+                        $product_weight = 0.01;
+                    }
+
+                    $sdek_products[] = array(
+                        'ware_key' => $data_product['product_id'],
+                        'product' => $data_product['product'],
+                        'price' => $data_product['price'],
+                        'amount' => $amount,
+                        'total' => $data_product['price'] * $amount,
+                        'weight' => $amount * $product_weight,
+                        'order_id' => $params['order_id'],
+                        'shipment_id' => $shipment_id,
+                    );
+                    $weight = $weight + ($amount * $product_weight);
+                }
+
+                $order_for_sdek['SellerName'] = Registry::get('runtime.company_data.company');
+
+                $data_auth['Number'] = $params['order_id'] . '_' . $shipment_id;
+
+                $data_auth['OrderCount'] = "1";
+
+                $xml = '            ' . RusSdek::arraySimpleXml('DeliveryRequest', $data_auth, 'open');
+
+                $order_for_sdek['Number'] = $params['order_id'] . '_' . $shipment_id;
+                $order_for_sdek['DateInvoice'] = date("Y-m-d", $shipment['shipment_timestamp']);
+                $order_for_sdek['RecipientEmail'] = $order_info['email'];
+                $order_for_sdek['DeliveryRecipientCost'] = $order_for_sdek['DeliveryRecipientCost'];
+
+                $xml .= '            ' . RusSdek::arraySimpleXml('Order', $order_for_sdek, 'open');
+
+                if (!empty($sdek_info['Address'])) {
+                    $xml .= '            ' . RusSdek::arraySimpleXml('Address', $sdek_info['Address']);
+                }
+
+                $package_for_xml = array (
+                    'Number' => $shipment_id,
+                    'BarCode' => $shipment_id,
+                    'Weight' => $weight
                 );
+                $xml .= '            ' . RusSdek::arraySimpleXml('Package', $package_for_xml, 'open');
 
-                if (!empty($result['number'])) {
-                    db_query('UPDATE ?:shipments SET tracking_number = ?s WHERE shipment_id = ?i', $result['number'], $shipment_id);
+                foreach ($sdek_products as $k => $product) {
+                    $product_for_xml = array (
+                        'WareKey' => $product['ware_key'],
+                        'Cost' => $product['price'],
+                        'Payment' => $product['price'],
+                        'Weight' => $product['weight'],
+                        'Amount' => $product['amount'],
+                        'Comment' => $product['product'],
+                    );
+
+                    $xml .= '            ' . RusSdek::arraySimpleXml('Item', $product_for_xml);
                 }
 
-                if ($sdek_info['Order']['TariffTypeCode'] != SDEK_STOCKROOM) {
-                    $register_data['address'] = $sdek_info['Address']['Street'];
-                } else {
-                    $register_data['address_pvz'] = "{$sdek_info['Address']['PvzCode']}";
+                $xml .= '            ' . '</Package>';
+                $xml .= '            ' . '</Order>';
+                $xml .= '            ' . '</DeliveryRequest>';
+
+                $response = RusSdek::SdekXmlRequest('http://gw.edostavka.ru:11443/new_orders.php', $xml, $data_auth);
+                
+                $result = RusSdek::resultXml($response);
+
+                if (empty($result['error'])) {
+
+                    $register_data = array(
+                        'order_id' => $params['order_id'],
+                        'shipment_id' => $shipment_id,
+                        'dispatch_number' => $result['number'],
+                        'data' => date("Y-m-d", $shipment['shipment_timestamp']),
+                        'data_xml' => $xml,
+                        'timestamp' => TIME,
+                        'status' => 'S',
+                        'tariff' => $sdek_info['Order']['TariffTypeCode'],
+                        'file_sdek' => $shipment_id . '/' . $params['order_id'] . '.pdf',
+                        'notes' => $sdek_info['Order']['Comment'],
+                    );
+
+                    if (!empty($result['number'])) {
+                        db_query('UPDATE ?:shipments SET tracking_number = ?s WHERE shipment_id = ?i', $result['number'], $shipment_id);
+                    }
+
+                    if ($sdek_info['Order']['TariffTypeCode'] != SDEK_STOCKROOM) {
+                        $register_data['address'] = $sdek_info['Address']['Street'];
+                    } else {
+                        $register_data['address_pvz'] = "{$sdek_info['Address']['PvzCode']}";
+                    }
+
+                    $register_id = db_query('INSERT INTO ?:rus_sdek_register ?e', $register_data);
+
+                    foreach ($sdek_products as $sdek_product) {
+                        $sdek_product['register_id'] = $register_id;
+                        db_query('INSERT INTO ?:rus_sdek_products ?e', $sdek_product);
+                    }
+
+                    fn_sdek_get_ticket_order($data_auth, $params['order_id'], $shipment_id);
                 }
 
-                $register_id = db_query('INSERT INTO ?:rus_sdek_register ?e', $register_data);
+                $date_status = RusSdek::orderStatusXml($data_auth, $params['order_id'], $shipment_id);
 
-                foreach ($sdek_products as $sdek_product) {
-                    $sdek_product['register_id'] = $register_id;
-                    db_query('INSERT INTO ?:rus_sdek_products ?e', $sdek_product);
+                RusSdek::SdekAddStatusOrders($date_status);
+            }
+
+        } elseif ($mode == 'sdek_order_delete') {
+            foreach ($params['add_sdek_info'] as $shipment_id => $sdek_info) {
+                list($_shipments) = fn_get_shipments_info(array('order_id' => $params['order_id'], 'advanced_info' => true, 'shipment_id' => $shipment_id));
+                $shipment = reset($_shipments);
+                $params_shipping = array(
+                    'shipping_id' => $shipment['shipping_id'],
+                    'Date' => date("Y-m-d", $shipment['shipment_timestamp']),
+                );
+                $data_auth = RusSdek::SdekDataAuth($params_shipping);
+                if (empty($data_auth)) {
+                    continue;
                 }
 
-                fn_sdek_get_ticket_order($data_auth, $params['order_id'], $shipment_id);
+                $data_auth['Number'] = $params['order_id'] . '_' . $shipment_id;
+                $data_auth['OrderCount'] = "1";
+                $xml = '            ' . RusSdek::arraySimpleXml('DeleteRequest', $data_auth, 'open');
+                $order_sdek = array (
+                    'Number' => $params['order_id'] . '_' . $shipment_id
+                );
+                $xml .= '            ' . RusSdek::arraySimpleXml('Order', $order_sdek);
+                $xml .= '            ' . '</DeleteRequest>';
+
+                $response = RusSdek::SdekXmlRequest('http://gw.edostavka.ru:11443/delete_orders.php', $xml, $data_auth);
+                $result = RusSdek::resultXml($response);
+                if (empty($result['error'])) {
+                    db_query('DELETE FROM ?:rus_sdek_products WHERE order_id = ?i and shipment_id = ?i ', $params['order_id'], $shipment_id);
+                    db_query('DELETE FROM ?:rus_sdek_register WHERE order_id = ?i and shipment_id = ?i ', $params['order_id'], $shipment_id);
+                    db_query('DELETE FROM ?:rus_sdek_status WHERE order_id = ?i and shipment_id = ?i ', $params['order_id'], $shipment_id);
+                }
             }
 
-            $date_status = RusSdek::orderStatusXml($data_auth, $params['order_id'], $shipment_id);
-
-            RusSdek::SdekAddStatusOrders($date_status);
-        }
-
-    } elseif ($mode == 'sdek_order_delete') {
-        foreach ($params['add_sdek_info'] as $shipment_id => $sdek_info) {
-            list($_shipments) = fn_get_shipments_info(array('order_id' => $params['order_id'], 'advanced_info' => true, 'shipment_id' => $shipment_id));
-            $shipment = reset($_shipments);
-            $params_shipping = array(
-                'shipping_id' => $shipment['shipping_id'],
-                'Date' => date("Y-m-d", $shipment['shipment_timestamp']),
-            );
-            $data_auth = RusSdek::SdekDataAuth($params_shipping);
-            if (empty($data_auth)) {
-                continue;
-            }
-
-            $data_auth['Number'] = $params['order_id'] . '_' . $shipment_id;
-            $data_auth['OrderCount'] = "1";
-            $xml = '            ' . RusSdek::arraySimpleXml('DeleteRequest', $data_auth, 'open');
-            $order_sdek = array (
-                'Number' => $params['order_id'] . '_' . $shipment_id
-            );
-            $xml .= '            ' . RusSdek::arraySimpleXml('Order', $order_sdek);
-            $xml .= '            ' . '</DeleteRequest>';
-
-            $response = RusSdek::SdekXmlRequest('http://gw.edostavka.ru:11443/delete_orders.php', $xml, $data_auth);
-            $result = RusSdek::resultXml($response);
-            if (empty($result['error'])) {
-                db_query('DELETE FROM ?:rus_sdek_products WHERE order_id = ?i and shipment_id = ?i ', $params['order_id'], $shipment_id);
-                db_query('DELETE FROM ?:rus_sdek_register WHERE order_id = ?i and shipment_id = ?i ', $params['order_id'], $shipment_id);
-                db_query('DELETE FROM ?:rus_sdek_status WHERE order_id = ?i and shipment_id = ?i ', $params['order_id'], $shipment_id);
+        } elseif ($mode == 'sdek_order_status') {
+            foreach ($params['add_sdek_info'] as $shipment_id => $sdek_info) {
+                list($_shipments) = fn_get_shipments_info(array('order_id' => $params['order_id'], 'advanced_info' => true, 'shipment_id' => $shipment_id));
+                $shipment = reset($_shipments);
+                $params_shipping = array(
+                    'shipping_id' => $shipment['shipping_id'],
+                    'Date' => date("Y-m-d", $shipment['shipment_timestamp']),
+                );
+                $data_auth = RusSdek::SdekDataAuth($params_shipping);
+                if (empty($data_auth)) {
+                    continue;
+                }
+                $date_status = RusSdek::orderStatusXml($data_auth, $params['order_id'], $shipment_id);
+                RusSdek::SdekAddStatusOrders($date_status);
             }
         }
 
-    } elseif ($mode == 'sdek_order_status') {
-        foreach ($params['add_sdek_info'] as $shipment_id => $sdek_info) {
-            list($_shipments) = fn_get_shipments_info(array('order_id' => $params['order_id'], 'advanced_info' => true, 'shipment_id' => $shipment_id));
-            $shipment = reset($_shipments);
-            $params_shipping = array(
-                'shipping_id' => $shipment['shipping_id'],
-                'Date' => date("Y-m-d", $shipment['shipment_timestamp']),
-            );
-            $data_auth = RusSdek::SdekDataAuth($params_shipping);
-            if (empty($data_auth)) {
-                continue;
-            }
-            $date_status = RusSdek::orderStatusXml($data_auth, $params['order_id'], $shipment_id);
-            RusSdek::SdekAddStatusOrders($date_status);
+        $url = fn_url("orders.details&order_id=" . $params['order_id'], 'A', 'current');
+        if (defined('AJAX_REQUEST') && !empty($url)) {
+            Registry::get('ajax')->assign('force_redirection', $url);
+            exit;
         }
+
+        return array(CONTROLLER_STATUS_OK, $url);
     }
-
-    $url = fn_url("orders.details&order_id=" . $params['order_id'], 'A', 'current');
-    if (defined('AJAX_REQUEST') && !empty($url)) {
-        Registry::get('ajax')->assign('force_redirection', $url);
-        exit;
-    }
-
-    return array(CONTROLLER_STATUS_OK, $url);
 }
 
 if ($mode == 'details') {

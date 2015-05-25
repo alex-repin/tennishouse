@@ -18,14 +18,12 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 if ($mode == 'view') {
     $category_data = Registry::get('view')->gettemplatevars('category_data');
-    if (empty($category_data['brand_id']) && !empty($category_data['parent_id'])) {
+    if (!empty($category_data['parent_id'])) {
         $cat_ids = explode('/', $category_data['id_path']);
         $main_parent = reset($cat_ids);
         if (!empty($main_parent)) {
             $category_data['main_pair'] = fn_get_image_pairs($main_parent, 'category', 'M', true, true, CART_LANGUAGE);
         }
-    } elseif (!empty($category_data['brand_id'])) {
-        unset($category_data['main_pair']);
     }
     if (!empty($category_data['main_pair'])) {
         Registry::get('view')->assign('image_title', true);
@@ -44,22 +42,6 @@ if ($mode == 'view') {
         $main_parent = reset($cat_ids);
         if (!empty($main_parent)) {
             return array(CONTROLLER_STATUS_REDIRECT, 'categories.view?category_id=' . $main_parent);
-        }
-    }
-    
-    if (!empty($category_data['categorize_by_feature_id']) && !empty($products)) {
-        $feature_categorization = array();
-        $feature_category = fn_get_product_feature_data($category_data['categorize_by_feature_id'], true);
-        if (!empty($feature_category['variants'])) {
-            foreach ($products as $i => $product) {
-                if (!empty($product['category_feature_id'])) {
-                    $feature_categorization[$product['category_feature_id']][] = $product;
-                } else {
-                    $feature_categorization['other'][] = $product;
-                }
-            }
-            Registry::get('view')->assign('feature_categorization', $feature_categorization);
-            Registry::get('view')->assign('feature_category', $feature_category);
         }
     }
     

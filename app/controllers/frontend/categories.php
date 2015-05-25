@@ -51,6 +51,7 @@ if ($mode == 'catalog') {
     );
 
     if (!empty($category_exists)) {
+        // [tennishouse]
 
         if (!empty($_REQUEST['features_hash'])) {
             $_REQUEST['features_hash'] = fn_correct_features_hash($_REQUEST['features_hash']);
@@ -69,6 +70,10 @@ if ($mode == 'catalog') {
         $category_data = fn_get_category_data($_REQUEST['category_id'], CART_LANGUAGE, '*', true, false, $preview);
 
         $category_parent_ids = fn_explode('/', $category_data['id_path']);
+        $main_parent_id = reset($category_parent_ids);
+        if (!empty($_REQUEST['tc_id'])) {
+            $_SESSION['tc_id'][$main_parent_id] = $_REQUEST['tc_id'];
+        }
         array_pop($category_parent_ids);
 
         if (!empty($category_data['meta_description']) || !empty($category_data['meta_keywords'])) {
@@ -87,11 +92,15 @@ if ($mode == 'catalog') {
         $params['cid'] = $_REQUEST['category_id'];
         $params['extend'] = array('categories', 'description');
         $params['subcats'] = '';
-        // [tennishouse]
-        if (!empty($category_data['categorize_by_feature_id'])) {
-            $params['categorize_by_feature_id'] = $category_data['categorize_by_feature_id'];
+        if (!empty($category_data['tabs_categorization'])) {
+            $params['tabs_categorization'] = $category_data['tabs_categorization'];
         }
-        // [tennishouse]
+        if (!empty($category_data['subtabs_categorization'])) {
+            $params['subtabs_categorization'] = $category_data['subtabs_categorization'];
+        }
+        if (!empty($category_data['sections_categorization'])) {
+            $params['sections_categorization'] = $category_data['sections_categorization'];
+        }
         if (Registry::get('settings.General.show_products_from_subcategories') == 'Y') {
             $params['subcats'] = 'Y';
         }
@@ -110,8 +119,88 @@ if ($mode == 'catalog') {
             'get_discounts' => true,
             'get_features' => false
         ));
-
-        $show_no_products_block = (!empty($params['features_hash']) && !$products);
+        if (!empty($products)) {
+            if (!empty($category_data['tabs_categorization']) && (empty($category_data['brand']) || $category_data['brand']['feature_id'] != $category_data['tabs_categorization'])) {
+                $tb_feature = fn_get_product_feature_data($category_data['tabs_categorization'], true);
+                if (!empty($tb_feature['variants'])) {
+                    $tabs_categorization = array();
+                    foreach ($products as $i => $product) {
+                        if (!empty($product['tabs_categorization'])) {
+                            $tabs_categorization[$product['tabs_categorization']][] = $product;
+                        } else {
+                            $tabs_categorization['other'][] = $product;
+                        }
+                    }
+                    $tb_feature['variants'] = array_intersect_assoc($tb_feature['variants'], $tabs_categorization);
+                    if (!empty($tabs_categorization['other'])) {
+                        $tb_feature['variants']['other'] = array('variant' => __("other"));
+                    }
+                    if (empty($params['tc_id'])) {
+                        if (!empty($_SESSION['tc_id'][$main_parent_id]) && !empty($tabs_categorization[$_SESSION['tc_id'][$main_parent_id]])) {
+                            $params['tc_id'] = $_SESSION['tc_id'][$main_parent_id];
+                        } elseif (!empty($tb_feature['variants'])) {
+                            $params['tc_id'] = $_SESSION['tc_id'][$main_parent_id] = reset(array_keys($tb_feature['variants']));
+                        }
+                    }
+                    if (!empty($params['tc_id']) && !empty($tabs_categorization[$params['tc_id']])) {
+                        $products = $tabs_categorization[$params['tc_id']];
+                    }
+        
+                    Registry::get('view')->assign('tb_feature', $tb_feature);
+                    Registry::get('view')->assign('active_tab', $params['tc_id']);
+                }
+            }
+            if (!empty($category_data['subtabs_categorization']) && (empty($category_data['brand']) || $category_data['brand']['feature_id'] != $category_data['subtabs_categorization'])) {
+                $stb_feature = fn_get_product_feature_data($category_data['subtabs_categorization'], true, true);
+                if (!empty($stb_feature['variants'])) {
+                    $subtabs_categorization = array();
+                    foreach ($products as $i => $product) {
+                        if (!empty($product['subtabs_categorization'])) {
+                            $subtabs_categorization[$product['subtabs_categorization']][] = $product;
+                        } else {
+                            $subtabs_categorization['other'][] = $product;
+                        }
+                    }
+                    $stb_feature['variants'] = array_intersect_assoc($stb_feature['variants'], $subtabs_categorization);
+                    if (!empty($subtabs_categorization['other'])) {
+                        $stb_feature['variants']['other'] = array('variant' => __("other"));
+                    }
+                    if (empty($params['stc_id'])) {
+                        if (!empty($_SESSION['stc_id'][$main_parent_id]) && !empty($subtabs_categorization[$_SESSION['stc_id'][$main_parent_id]])) {
+                            $params['stc_id'] = $_SESSION['stc_id'][$main_parent_id];
+                        } elseif (!empty($stb_feature['variants'])) {
+                            $params['stc_id'] = $_SESSION['stc_id'][$main_parent_id] = reset(array_keys($stb_feature['variants']));
+                        }
+                    }
+                    if (!empty($params['stc_id']) && !empty($subtabs_categorization[$params['stc_id']])) {
+                        $products = $subtabs_categorization[$params['stc_id']];
+                    }
+        
+                    Registry::get('view')->assign('tb_feature', $tb_feature);
+                    Registry::get('view')->assign('stb_feature', $stb_feature);
+                    Registry::get('view')->assign('active_tab', $params['tc_id']);
+                    Registry::get('view')->assign('active_subtab', $params['stc_id']);
+                }
+            }
+            if (!empty($category_data['sections_categorization'])) {
+                $sections_categorization = array();
+                $sc_feature = fn_get_product_feature_data($category_data['sections_categorization'], true);
+                if (!empty($sc_feature['variants'])) {
+                    foreach ($products as $i => $product) {
+                        if (!empty($product['sections_categorization'])) {
+                            $sections_categorization[$product['sections_categorization']][] = $product;
+                        } else {
+                            $sections_categorization['other'][] = $product;
+                        }
+                    }
+                    Registry::get('view')->assign('sections_categorization', $sections_categorization);
+                    Registry::get('view')->assign('sc_feature', $sc_feature);
+                }
+            }
+        }
+        // [tennishouse]
+    
+        $show_no_products_block = (!empty($params['features_hash'] || !empty($params['features_condition'])) && !$products);
         Registry::get('view')->assign('show_no_products_block', $show_no_products_block);
 
         $selected_layout = fn_get_products_layout($_REQUEST);
@@ -136,7 +225,6 @@ if ($mode == 'catalog') {
         if (!empty($category_parent_ids)) {
             Registry::set('runtime.active_category_ids', $category_parent_ids);
             $cats = fn_get_category_name($category_parent_ids);
-            // [tennishouse]
             $display_subheader = true;
             foreach ($category_parent_ids as $i => $c_id) {
                 if ($i == 0 && fn_display_subheaders($c_id)) {
@@ -148,7 +236,6 @@ if ($mode == 'catalog') {
                     fn_add_breadcrumb($cats[$c_id]);
                 }
             }
-            // [tennishouse]
         }
 
         fn_add_breadcrumb($category_data['category'], (empty($_REQUEST['features_hash']) && empty($_REQUEST['advanced_filter'])) ? '' : "categories.view?category_id=$_REQUEST[category_id]");

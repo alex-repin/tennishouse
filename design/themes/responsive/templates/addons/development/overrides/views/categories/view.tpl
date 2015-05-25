@@ -39,6 +39,35 @@
     {include file="views/products/components/product_filters_advanced_form.tpl" separate_form=true}
 {/if}
 
+{if $stb_feature.variants}
+    {if $smarty.server.QUERY_STRING|strpos:"dispatch=" !== false}
+        {assign var="filter_qstring" value=$config.current_url|fn_query_remove:"result_ids":"full_render":"filter_id":"view_all":"req_range_id":"advanced_filter":"subcats":"page":"stc_id"}
+    {else}
+        {assign var="filter_qstring" value="products.search"}
+    {/if}
+    <div class="ty-categorization-subtabs clearfix">
+        {foreach from=$stb_feature.variants item=tab key=key}
+            {if !$active_subtab}
+                {assign var="active_subtab" value=$key}
+            {/if}
+            {if $key == $active_subtab}
+                {if $tab.variant_id == $smarty.const.KIRSCHBAUM_BRAND_ID}
+                    {$img_ht = "50"}
+                {else}
+                    {$img_ht = "35"}
+                {/if}
+            {else}
+                {if $tab.variant_id == $smarty.const.KIRSCHBAUM_BRAND_ID}
+                    {$img_ht = "40"}
+                {else}
+                    {$img_ht = "30"}
+                {/if}
+            {/if}
+            <a class="ty-categorization-subtabs__a cm-ajax-force cm-ajax cm-ajax-full-render cm-history" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_subtab}href="{$filter_qstring|fn_link_attach:"stc_id=`$key`"|fn_url}"{/if} rel="nofollow">{include file="addons/development/common/brand_logo.tpl" brand=$tab brand_variant_id=$tab.variant_id img_height=$img_ht}</a>
+        {/foreach}
+    </div>
+{/if}
+
 {if $products}
 {assign var="layouts" value=""|fn_get_products_views:false:0}
 {if $category_data.product_columns}
@@ -58,24 +87,20 @@
 {/if}
 <!--category_products_{$block.block_id}--></div>
 
-{if !$image_title}
-    {capture name="mainbox_title"}
-    {if $category_data.brand.image_pair.icon.image_path}
-        <div class="ty-category__title">
-            <div class="ty-category__title-logo">
-                {if $category.brand_id == $smarty.const.KIRSCHBAUM_BRAND_ID}
-                    {$img_height = "70"}
-                {else}
-                    {$img_height = "50"}
-                {/if}
-                {include file="addons/development/common/brand_logo.tpl"  brand=$category_data.brand brand_variant_id=$category_data.brand_id img_height=$img_height}
-            </div>
-            {if $category_data.description}
-                <div class="ty-wysiwyg-content ty-category__title-descr" {live_edit name="category:description:{$category_data.category_id}"}>{$category_data.description nofilter}</div>
+{capture name="mainbox_title"}
+{if $category_data.brand.image_pair.icon.image_path}
+    <div class="ty-category__title">
+        <div class="ty-category__title-logo">
+            {if $category.brand_id == $smarty.const.KIRSCHBAUM_BRAND_ID}
+                {$img_height = "70"}
+            {else}
+                {$img_height = "50"}
             {/if}
+            {include file="addons/development/common/brand_logo.tpl"  brand=$category_data.brand brand_variant_id=$category_data.brand_id img_height=$img_height}
         </div>
-    {else}
-        <span {live_edit name="category:category:{$category_data.category_id}"}>{$category_data.category}</span>
-    {/if}
-    {/capture}
+        {if $category_data.description}
+            <div class="ty-wysiwyg-content ty-category__title-descr" {live_edit name="category:description:{$category_data.category_id}"}>{$category_data.description nofilter}</div>
+        {/if}
+    </div>
 {/if}
+{/capture}
