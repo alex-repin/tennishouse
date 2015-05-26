@@ -450,6 +450,24 @@ if ($mode == 'calculate_balance') {
         db_query("UPDATE ?:product_options SET show_on_catalog = 'Y' WHERE option_id IN (?n)", array_keys($ids));
     }
     exit;
+} elseif ($mode == 'check_exceptions') {
+    $products_exceptions = db_get_hash_multi_array("SELECT * FROM ?:product_options_exceptions", array('product_id', 'exception_id'));
+    $options_count = db_get_hash_single_array("SELECT COUNT(option_id) as count, product_id FROM ?:product_options GROUP BY product_id", array('product_id', 'count'));
+    $to_delete = array();
+    if (!empty($products_exceptions)) {
+        foreach ($products_exceptions as $product_id => $exps) {
+            foreach ($exps as $i => $exp) {
+                $combination = unserialize($exp['combination']);
+                if (empty($options_count[$exp['product_id']]) && count($combination) != $options_count[$exp['product_id']]) {
+                    $to_delete[$i] = $exp;
+                }
+            }
+        }
+    }
+    if (!empty($to_delete)) {
+        db_query("DELETE FROM ?:product_options_exceptions WHERE exception_id IN (?n)", array_keys($to_delete));
+    }
+    exit;
 }
 
 function fn_normalize_string($string)

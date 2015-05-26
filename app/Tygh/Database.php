@@ -109,27 +109,9 @@ class Database
     public static function getArray($query)
     {
         $_query = self::process($query, array_slice(func_get_args(), 1), true);
-        if (USE_DB_MEMCACHED) {
-            $hash = Memcache::instance()->call('validateSql',  $_query );
-            if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
-                $result = Memcache::instance()->call('get', $hash, 'D');
-            } else {
-                if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
-
-                    while ($arr = self::$_db->fetchRow($_result)) {
-                        $result[] = $arr;
-                    }
-
-                    self::$_db->freeResult($_result);
-                }
-                if (empty($result)) {
-                    $result = array();
-                }
-                
-                if ( !empty($hash) ) {
-                    Memcache::instance()->call('set', $hash, $result, 'D', DB_MEMCACHE_DURATION);
-                }
-            }
+        $hash = Memcache::instance()->call('validateSql',  $_query );
+        if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
+            $result = Memcache::instance()->call('get', $hash, 'D');
         } else {
             if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
 
@@ -138,6 +120,13 @@ class Database
                 }
 
                 self::$_db->freeResult($_result);
+            }
+            if (empty($result)) {
+                $result = array();
+            }
+            
+            if ( !empty($hash) ) {
+                Memcache::instance()->call('set', $hash, $result, 'D', DB_MEMCACHE_DURATION);
             }
         }
 
@@ -158,28 +147,9 @@ class Database
         array_unshift($args, $query);
 
         $_query = self::process($query, array_slice($args, 1), true);
-        if (USE_DB_MEMCACHED) {
-            $hash = Memcache::instance()->call('validateSql', $_query);
-            if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
-                $result = Memcache::instance()->call('get', $hash, 'D');
-            } else {
-                if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
-                    while ($arr = self::$_db->fetchRow($_result)) {
-                        if (isset($arr[$field])) {
-                            $result[$arr[$field]] = $arr;
-                        }
-                    }
-
-                    self::$_db->freeResult($_result);
-                }
-                if (empty($result)) {
-                    $result = array();
-                }
-                
-                if ( !empty($hash) ) {
-                    Memcache::instance()->call('set', $hash, $result, 'D', DB_MEMCACHE_DURATION);
-                }
-            }
+        $hash = Memcache::instance()->call('validateSql', $_query);
+        if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
+            $result = Memcache::instance()->call('get', $hash, 'D');
         } else {
             if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
                 while ($arr = self::$_db->fetchRow($_result)) {
@@ -189,6 +159,13 @@ class Database
                 }
 
                 self::$_db->freeResult($_result);
+            }
+            if (empty($result)) {
+                $result = array();
+            }
+            
+            if ( !empty($hash) ) {
+                Memcache::instance()->call('set', $hash, $result, 'D', DB_MEMCACHE_DURATION);
             }
         }
 
@@ -205,26 +182,9 @@ class Database
     public static function getRow($query)
     {
         $_query = self::process($query, array_slice(func_get_args(), 1), true);
-        if (USE_DB_MEMCACHED) {
-            $hash = Memcache::instance()->call('validateSql', $_query);
-            if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
-                $result = Memcache::instance()->call('get', $hash, 'D');
-            } else {
-                if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
-
-                    $result = self::$_db->fetchRow($_result);
-
-                    self::$_db->freeResult($_result);
-
-                }
-                if (!is_array($result)) {
-                    $result = array();
-                }
-                
-                if ( !empty($hash) ) {
-                    Memcache::instance()->call('set', $hash, $result, 'D', DB_MEMCACHE_DURATION);
-                }
-            }
+        $hash = Memcache::instance()->call('validateSql', $_query);
+        if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
+            $result = Memcache::instance()->call('get', $hash, 'D');
         } else {
             if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
 
@@ -232,6 +192,13 @@ class Database
 
                 self::$_db->freeResult($_result);
 
+            }
+            if (!is_array($result)) {
+                $result = array();
+            }
+            
+            if ( !empty($hash) ) {
+                Memcache::instance()->call('set', $hash, $result, 'D', DB_MEMCACHE_DURATION);
             }
         }
 
@@ -248,26 +215,9 @@ class Database
     public static function getField($query)
     {
         $_query = self::process($query, array_slice(func_get_args(), 1), true);
-        if (USE_DB_MEMCACHED) {
-           $hash = Memcache::instance()->call('validateSql', $_query . 'indexed');
-            if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
-                $result = Memcache::instance()->call('get', $hash, 'D');
-            } else {
-                if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
-
-                    $result = self::$_db->fetchRow($_result, 'indexed');
-
-                    self::$_db->freeResult($_result);
-
-                }
-                if (!(isset($result) && is_array($result))) {
-                    $result = '';
-                }
-                
-                if ( !empty($hash) ) {
-                    Memcache::instance()->call('set', $hash, $result, 'D', DB_MEMCACHE_DURATION);
-                }
-            }
+        $hash = Memcache::instance()->call('validateSql', $_query . 'indexed');
+        if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
+            $result = Memcache::instance()->call('get', $hash, 'D');
         } else {
             if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
 
@@ -275,6 +225,13 @@ class Database
 
                 self::$_db->freeResult($_result);
 
+            }
+            if (!(isset($result) && is_array($result))) {
+                $result = '';
+            }
+            
+            if ( !empty($hash) ) {
+                Memcache::instance()->call('set', $hash, $result, 'D', DB_MEMCACHE_DURATION);
             }
         }
 
@@ -293,26 +250,9 @@ class Database
         $result = array();
 
         $_query = self::process($query, array_slice(func_get_args(), 1), true);
-        if (USE_DB_MEMCACHED) {
-            $hash = Memcache::instance()->call('validateSql', $_query . 'indexed');
-            if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
-                $result = Memcache::instance()->call('get', $hash, 'D');
-            } else {
-                if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
-                    while ($arr = self::$_db->fetchRow($_result, 'indexed')) {
-                        $result[] = $arr[0];
-                    }
-
-                    self::$_db->freeResult($_result);
-                }
-                if ($result === false) {
-                    $result = array();
-                }
-
-                if ( !empty($hash) ) {
-                    Memcache::instance()->call('set', $hash, $result, 'D', DB_MEMCACHE_DURATION);
-                }
-            }
+        $hash = Memcache::instance()->call('validateSql', $_query . 'indexed');
+        if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
+            $result = Memcache::instance()->call('get', $hash, 'D');
         } else {
             if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
                 while ($arr = self::$_db->fetchRow($_result, 'indexed')) {
@@ -320,6 +260,13 @@ class Database
                 }
 
                 self::$_db->freeResult($_result);
+            }
+            if ($result === false) {
+                $result = array();
+            }
+
+            if ( !empty($hash) ) {
+                Memcache::instance()->call('set', $hash, $result, 'D', DB_MEMCACHE_DURATION);
             }
         }
 
@@ -346,31 +293,9 @@ class Database
         array_unshift($args, $query);
 
         $_query = self::process($query, array_slice($args, 1), true);
-        if (USE_DB_MEMCACHED) {
-            $hash = Memcache::instance()->call('validateSql', $_query);
-            if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
-                $result = Memcache::instance()->call('get', $hash, 'D');
-            } else {
-                if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
-                    while ($arr = self::$_db->fetchRow($_result)) {
-                        if (!empty($field_2)) {
-                            $result[$arr[$field]][$arr[$field_2]] = !empty($value) ? $arr[$value] : $arr;
-                        } else {
-                            $result[$arr[$field]][] = $arr;
-                        }
-                    }
-
-                    self::$_db->freeResult($_result);
-
-                }
-                if (empty($result)) {
-                    $result = array();
-                }
-                
-                if ( !empty($hash) ) {
-                    Memcache::instance()->call('set', $hash, $result, 'D', DB_MEMCACHE_DURATION);
-                }
-            }
+        $hash = Memcache::instance()->call('validateSql', $_query);
+        if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
+            $result = Memcache::instance()->call('get', $hash, 'D');
         } else {
             if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
                 while ($arr = self::$_db->fetchRow($_result)) {
@@ -383,6 +308,13 @@ class Database
 
                 self::$_db->freeResult($_result);
 
+            }
+            if (empty($result)) {
+                $result = array();
+            }
+            
+            if ( !empty($hash) ) {
+                Memcache::instance()->call('set', $hash, $result, 'D', DB_MEMCACHE_DURATION);
             }
         }
 
@@ -405,26 +337,9 @@ class Database
         array_unshift($args, $query);
 
         $_query = self::process($query, array_slice($args, 1), true);
-        if (USE_DB_MEMCACHED) {
-            $hash = Memcache::instance()->call('validateSql', $_query);
-            if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
-                $result = Memcache::instance()->call('get', $hash, 'D');
-            } else {
-                if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
-                    while ($arr = self::$_db->fetchRow($_result)) {
-                        $result[$arr[$key]] = $arr[$value];
-                    }
-
-                    self::$_db->freeResult($_result);
-                }
-                if (empty($result)) {
-                    $result = array();
-                }
-                
-                if ( !empty($hash) ) {
-                    Memcache::instance()->call('set', $hash, $result, 'D', DB_MEMCACHE_DURATION);
-                }
-            }
+        $hash = Memcache::instance()->call('validateSql', $_query);
+        if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
+            $result = Memcache::instance()->call('get', $hash, 'D');
         } else {
             if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
                 while ($arr = self::$_db->fetchRow($_result)) {
@@ -432,6 +347,13 @@ class Database
                 }
 
                 self::$_db->freeResult($_result);
+            }
+            if (empty($result)) {
+                $result = array();
+            }
+            
+            if ( !empty($hash) ) {
+                Memcache::instance()->call('set', $hash, $result, 'D', DB_MEMCACHE_DURATION);
             }
         }
 
@@ -497,7 +419,10 @@ class Database
             }
 
             $time_start = microtime(true);
-
+            if (SQL_NO_CACHE) {
+                $query = preg_replace('/^SELECT/', 'SELECT SQL_NO_CACHE', $query);
+            }
+            
             $result = self::$_db->query($query);
             $a_row = self::$_db->affectedRows($result);
 
@@ -512,18 +437,16 @@ class Database
                 fn_set_hook('db_query_executed', $query, $result);
             }
 
-            if (USE_DB_MEMCACHED) {
-                if ( preg_match("/^(INSERT|REPLACE|UPDATE|DELETE)/i",trim($query)) ) {
-                        $ignore_list = array(DEFAULT_TABLE_PREFIX . 'logs', DEFAULT_TABLE_PREFIX . 'stored_sessions', DEFAULT_TABLE_PREFIX . 'sessions', DEFAULT_TABLE_PREFIX . 'stat_', DEFAULT_TABLE_PREFIX . 'user_session_products', DEFAULT_TABLE_PREFIX . 'views', DEFAULT_TABLE_PREFIX . 'storage_data', DEFAULT_TABLE_PREFIX . 'user_data', DEFAULT_TABLE_PREFIX . 'product_popularity', DEFAULT_TABLE_PREFIX . 'twigmo_');
-                        foreach($ignore_list as $ignoreStr) {
-                            if ( strpos($query, $ignoreStr) !== false ) {
-                                $ignoreFlag = TRUE;
-                            }
-                        }
+            if ( preg_match("/^(INSERT|REPLACE|UPDATE|DELETE)/i",trim($query)) ) {
+                $ignore_list = array(DEFAULT_TABLE_PREFIX . 'logs', DEFAULT_TABLE_PREFIX . 'stored_sessions', DEFAULT_TABLE_PREFIX . 'sessions', DEFAULT_TABLE_PREFIX . 'stat_', DEFAULT_TABLE_PREFIX . 'user_session_products', DEFAULT_TABLE_PREFIX . 'views', DEFAULT_TABLE_PREFIX . 'storage_data', DEFAULT_TABLE_PREFIX . 'user_data', DEFAULT_TABLE_PREFIX . 'product_popularity', DEFAULT_TABLE_PREFIX . 'twigmo_');
+                foreach($ignore_list as $ignoreStr) {
+                    if ( strpos($query, $ignoreStr) !== false ) {
+                        $ignoreFlag = TRUE;
+                    }
+                }
 
-                        if ( empty($ignoreFlag) ) {
-                            Memcache::instance()->call('clear', 'D');
-                        }
+                if ( empty($ignoreFlag) ) {
+                    Memcache::instance()->call('clear', 'D');
                 }
             }
             

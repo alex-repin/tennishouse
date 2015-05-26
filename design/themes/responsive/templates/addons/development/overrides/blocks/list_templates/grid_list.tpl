@@ -11,7 +11,7 @@
             {$vt_id = $f_category.variant_id}
             {if $sections_categorization.$vt_id}
                 {$products = $sections_categorization.$vt_id}
-                <h2 class="ty-categorize__title">{$category_data.category} {$f_category.variant}</h2>
+                <h2 class="ty-categorize__title">{$sc_feature.description} {$f_category.variant}</h2>
                 <div class="ty-categorize__section">
                     {include file="addons/development/common/grid_list_section.tpl" products=$products}
                 </div>

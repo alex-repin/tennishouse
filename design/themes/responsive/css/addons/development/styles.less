@@ -881,13 +881,25 @@ select {
     margin-bottom: 1px;
     padding: 0 15px 0 200px;
     vertical-align: bottom;
+    position: relative;
 }
 .ty-categorization-subtabs {
-    border-bottom: 1px solid #555;
+    border-bottom: 1px solid #dadada;
+    display: inline-block;
     margin-top: 10px;
     vertical-align: top;
+    width: 91%;
+}
+.ty-categorization-subtabs__title {
+    display: inline-block;
+    font-size: 16px;
+    padding-top: 25px;
+    width: 8%;
+    color: lighten(@font, 22%);
 }
 .ty-categorization-tabs__list {
+    bottom: -2px;
+    position: absolute;
     vertical-align: bottom;
 }
 .ty-categorization-tabs__item {
@@ -901,15 +913,18 @@ select {
     position: relative;
     background: #333;
     opacity: 0.8;
-    border-left: 1px solid #000;
-    border-right: 1px solid #000;
-    border-top: 1px solid #000;
+    border-color: #000 #000 #333;
+    border-radius: 0;
+    border-style: solid;
+    border-width: 1px 1px 2px;
 }
 .ty-categorization-tabs__item:hover {
     background: darken(@base, 15%);
 }
 .ty-categorization-tabs__item.active {
-    background: @base;
+    background: #fff;
+    border-bottom: 2px solid #fff;
+    opacity: 1;
 }
 .ty-categorization-tabs__a {
     display: block;
@@ -920,6 +935,14 @@ select {
     text-decoration: none;
     width: 130px;
     color: #fff;
+}
+.ty-categorization-subtabs__item {
+    display: inline-block;
+    height: 40px;
+    line-height: 40px;
+    width: 200px;
+    text-align: center;
+    border-right: 1px solid #dadada;
 }
 .ty-categorization-tabs__item.active .ty-categorization-tabs__a {
     color: #000;

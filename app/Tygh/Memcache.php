@@ -25,7 +25,7 @@ class Memcache
     {
         if (empty(self::$_instance)) {
             self::$_instance = new Memcache();
-            if (class_exists('Memcached')) {
+            if (class_exists('Memcached') && USE_DB_MEMCACHED) {
                 self::$_instance->MemcachedServer = new \Memcached();
                 self::$_instance->MemcachedServer->addServer("localhost", 11211);
                 // GC

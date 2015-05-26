@@ -19,7 +19,7 @@
 {/if}
 
 {assign var="allow_ajax" value=true}
-{assign var="ajax_div_ids" value="product_filters_*,products_search_*,category_products_*,product_features_*,breadcrumbs_*,currencies_*,languages_*"}
+{assign var="ajax_div_ids" value="product_filters_*,products_search_*,category_products_*,product_features_*,breadcrumbs_*,currencies_*,languages_*,tabs_categorization"}
 
 {assign var="has_selected" value=false}
 {foreach from=$items item="filter" name="filters"}

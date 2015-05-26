@@ -54,5 +54,8 @@ fn_register_hooks(
     'delete_product_option_post',
     'clone_product_options_post',
     'validate_sef_object',
-    'cron_routine'
+    'cron_routine',
+    'get_filters_products_count_before_select',
+    'gather_additional_products_data_post',
+    'is_shared_product_pre'
 );

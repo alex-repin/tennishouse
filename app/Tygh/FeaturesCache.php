@@ -37,18 +37,24 @@ class FeaturesCache
 
     private static function set($result, $key = 'features', $type = 'F')
     {
-        Memcache::instance()->call('set', $key, $result, $type);
-        fn_put_contents(DIR_ROOT . '/var/features_cache/cache', serialize($result), '', 0777);
+        if (USE_FEATURE_CACHE) {
+            Memcache::instance()->call('set', $key, $result, $type);
+            fn_put_contents(DIR_ROOT . '/var/features_cache/cache', serialize($result), '', 0777);
+        }
     }
     
     private static function get($key = 'features', $type = 'F')
     {
-        $memcache_features = Memcache::instance()->call('get', $key, $type);
-        if (empty($memcache_features) && is_readable(DIR_ROOT . '/var/features_cache/cache')) {
-            $memcache_features = unserialize(fn_get_contents(DIR_ROOT . '/var/features_cache/cache'));
+        if (USE_FEATURE_CACHE) {
+            $memcache_features = Memcache::instance()->call('get', $key, $type);
+            if (empty($memcache_features) && is_readable(DIR_ROOT . '/var/features_cache/cache')) {
+                $memcache_features = unserialize(fn_get_contents(DIR_ROOT . '/var/features_cache/cache'));
+            }
+            
+            return $memcache_features;
         }
         
-        return $memcache_features;
+        return false;
     }
     
     public static function updateFeatureValueInt($feature_id, $old_value_int, $new_value_int, $lang_code)

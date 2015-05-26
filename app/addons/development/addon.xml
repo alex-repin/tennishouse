@@ -217,6 +217,9 @@
         <item>
             ALTER TABLE `cscart_categories` ADD `subtabs_categorization` MEDIUMINT( 8 ) UNSIGNED NOT NULL ;
         </item>
+        <item>
+            ALTER TABLE `cscart_product_feature_variants` ADD `variant_code` VARCHAR( 32 ) NOT NULL ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -438,6 +441,7 @@
         <item lang="ru" id="show_on_catalog">Показывать в списке</item>
         <item lang="ru" id="sections_categorization">Категоризирвать на секции</item>
         <item lang="ru" id="tabs_categorization">Категоризирвать на вкладки</item>
+        <item lang="ru" id="subtabs_categorization">Категоризирвать на подвкладки</item>
         <item lang="ru" id="other">Остальное</item>
     </language_variables>
 </addon>

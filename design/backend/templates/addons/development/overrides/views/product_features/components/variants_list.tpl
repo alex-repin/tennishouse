@@ -10,6 +10,7 @@
             <div name="plus_minus" id="on_st_{$id}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand hidden cm-combinations-features-{$id} exicon-expand"></div><div name="minus_plus" id="off_st_{$id}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand cm-combinations-features-{$id} exicon-collapse"></div>
         </th>
         <th width="5%">{__("position_short")}</th>
+        <th width="5%">{__("code")}</th>
         <th width="50%">{__("variant")}</th>
         <th>&nbsp;</th>
     </tr>
@@ -25,6 +26,8 @@
         <td width="5%">
             <input type="hidden" name="feature_data[variants][{$num}][variant_id]" value="{$var.variant_id}">
             <input type="text" name="feature_data[variants][{$num}][position]" value="{$var.position}" size="4" class="input-micro input-hidden"/></td>
+        <td width="5%">
+            <input type="text" name="feature_data[variants][{$num}][variant_code]" value="{$var.variant_code}" size="4" class="input-micro input-hidden"/></td>
         <td>
             <input type="text" name="feature_data[variants][{$num}][variant]" value="{$var.variant}" class="span6 input-hidden cm-feature-value {if $feature_type == "N"}cm-value-decimal{/if}"></td>
         <td>&nbsp;</td>
@@ -127,6 +130,8 @@
         </td>
         <td>
             <input type="text" name="feature_data[variants][{$num}][position]" value="" size="4" class="input-micro" /></td>
+        <td>
+            <input type="text" name="feature_data[variants][{$num}][variant_code]" value="" size="4" class="input-micro" /></td>
         <td>
             <input type="text" name="feature_data[variants][{$num}][variant]" value="" class="span6 cm-feature-value {if $feature_type == "N"}cm-value-decimal{/if}" /></td>
         <td>&nbsp;</td>

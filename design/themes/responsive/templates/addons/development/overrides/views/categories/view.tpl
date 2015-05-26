@@ -45,26 +45,31 @@
     {else}
         {assign var="filter_qstring" value="products.search"}
     {/if}
-    <div class="ty-categorization-subtabs clearfix">
-        {foreach from=$stb_feature.variants item=tab key=key}
-            {if !$active_subtab}
-                {assign var="active_subtab" value=$key}
-            {/if}
-            {if $key == $active_subtab}
-                {if $tab.variant_id == $smarty.const.KIRSCHBAUM_BRAND_ID}
-                    {$img_ht = "50"}
-                {else}
-                    {$img_ht = "35"}
+    <div class="clearfix">
+        <div class="ty-categorization-subtabs__title">{$stb_feature.description}:</div>
+        <div class="ty-categorization-subtabs">
+            {foreach from=$stb_feature.variants item=tab key=key}
+                {if !$active_subtab}
+                    {assign var="active_subtab" value=$key}
                 {/if}
-            {else}
-                {if $tab.variant_id == $smarty.const.KIRSCHBAUM_BRAND_ID}
-                    {$img_ht = "40"}
+                {if $key == $active_subtab}
+                    {if $tab.variant_id == $smarty.const.KIRSCHBAUM_BRAND_ID}
+                        {$img_ht = "50"}
+                    {else}
+                        {$img_ht = "35"}
+                    {/if}
                 {else}
-                    {$img_ht = "30"}
+                    {if $tab.variant_id == $smarty.const.KIRSCHBAUM_BRAND_ID}
+                        {$img_ht = "40"}
+                    {else}
+                        {$img_ht = "30"}
+                    {/if}
                 {/if}
-            {/if}
-            <a class="ty-categorization-subtabs__a cm-ajax-force cm-ajax cm-ajax-full-render cm-history" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_subtab}href="{$filter_qstring|fn_link_attach:"stc_id=`$key`"|fn_url}"{/if} rel="nofollow">{include file="addons/development/common/brand_logo.tpl" brand=$tab brand_variant_id=$tab.variant_id img_height=$img_ht}</a>
-        {/foreach}
+                <a class="ty-categorization-subtabs__a cm-ajax-force cm-ajax cm-ajax-full-render cm-history" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_subtab}href="{$filter_qstring|fn_link_attach:"stc_id=`$key`"|fn_url}"{/if}>
+                    <div class="ty-categorization-subtabs__item">{include file="addons/development/common/brand_logo.tpl" brand=$tab brand_variant_id=$tab.variant_id img_height=$img_ht}</div>
+                </a>
+            {/foreach}
+        </div>
     </div>
 {/if}
 

@@ -1307,6 +1307,16 @@ function fn_ult_apply_option_modifiers_get_option_modifiers(&$type, &$fields, &$
  */
 function fn_ult_is_shared_product($product_id, $company_id = 0)
 {
+    // [tennishouse]
+    $return = false;
+    
+    fn_set_hook('is_shared_product_pre', $product_id, $company_id, $return);
+    
+    if (!empty($return)) {
+        return $return;
+    }
+    // [tennishouse]
+    
     $company_condition = !empty($company_id) ? fn_get_company_condition('c.company_id', true, $company_id) : '';
     $companies = db_get_fields("SELECT c.company_id FROM ?:products_categories pc LEFT JOIN ?:categories c ON c.category_id = pc.category_id WHERE pc.product_id = ?i $company_condition GROUP BY c.company_id LIMIT 2", $product_id);
     $companies_count = count($companies);

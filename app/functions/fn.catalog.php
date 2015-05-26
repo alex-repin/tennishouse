@@ -406,6 +406,7 @@ function fn_translate_products(&$products, $fields = '',$lang_code = '', $transl
  * @param array $params Array of flags which determines which data should be gathered
  * @return array Array of products with additional information
  */
+ // [tennishouse]
 function fn_gather_additional_products_data(&$products, $params)
 {
     /**
@@ -480,6 +481,12 @@ function fn_gather_additional_products_data(&$products, $params)
      */
     fn_set_hook('gather_additional_products_data_params', $product_ids, $params, $products, $auth, $products_images, $additional_images, $product_options, $has_product_options, $has_product_options_links);
 
+    $combination_images = array();
+    
+    if (!fn_allowed_for('ULTIMATE:FREE')) {
+        $products_exceptions = fn_get_products_exceptions($product_ids, true);
+    }
+    
     // foreach $products
     foreach ($products as &$_product) {
         $product = $_product;
@@ -539,16 +546,17 @@ function fn_gather_additional_products_data(&$products, $params)
             if (!empty($params['get_icon']) || !empty($params['get_detailed'])) {
                 // Get product options images
                 if (!empty($product['combination_hash']) && !empty($product['product_options'])) {
-                    $image = fn_get_image_pairs($product['combination_hash'], 'product_option', 'M', $params['get_icon'], $params['get_detailed'], CART_LANGUAGE);
-                    if (!empty($image)) {
-                        $product['main_pair'] = $image;
-                    }
+                    $combination_images[$product_id] = $product['combination_hash'];
+//                     $image = fn_get_image_pairs($product['combination_hash'], 'product_option', 'M', $params['get_icon'], $params['get_detailed'], CART_LANGUAGE);
+//                     if (!empty($image)) {
+//                         $product['main_pair'] = $image;
+//                     }
                 }
             }
             $product['has_options'] = !empty($product['product_options']);
 
             if (!fn_allowed_for('ULTIMATE:FREE')) {
-                $product = fn_apply_exceptions_rules($product);
+                $product = fn_apply_exceptions_rules($product, $products_exceptions[$product_id]);
             }
 
             // Change price
@@ -664,6 +672,15 @@ function fn_gather_additional_products_data(&$products, $params)
         $_product = $product;
     }// \foreach $products
 
+    if (!empty($combination_images)) {
+        $comb_img = fn_get_image_pairs(array_values($combination_images), 'product_option', 'M', $params['get_icon'], $params['get_detailed'], CART_LANGUAGE);
+    }
+    
+    foreach ($products as &$_product) {
+        if ($comb_img[$_product['combination_hash']]) {
+            $product['main_pair'] = reset($comb_img[$_product['combination_hash']]);
+        }
+    }
     /**
      * Add additional data to products after gathering additional products data
      *
@@ -678,6 +695,7 @@ function fn_gather_additional_products_data(&$products, $params)
         $products = array_shift($products);
     }
 }
+ // [tennishouse]
 
 /**
  * Forms a drop-down list of possible product quantity values with the given quantity step
@@ -5058,6 +5076,7 @@ function fn_get_filters_products_count($params = array())
      */
     fn_set_hook('get_filters_products_count_pre', $params);
 
+//     Создает слишком много кеш файлов, которые переполнили иноды на сервере
 //     $key = 'pfilters_' . md5(serialize($params));
 // 
 //     Registry::registerCache($key, array('products', 'product_features', 'product_filters', 'product_features_values', 'categories'), Registry::cacheLevel('user'));
@@ -6300,6 +6319,54 @@ function fn_get_product_filter_fields()
 //
 //Gets all combinations of options stored in exceptions
 //
+function fn_get_products_exceptions($product_ids, $short_list = false)
+{
+    if (fn_allowed_for('ULTIMATE:FREE')) {
+        return array();
+    }
+
+    $product_ids = is_array($product_ids) ? $product_ids : array($product_ids);
+    /**
+     * Changes params before getting product exceptions
+     *
+     * @param int     $product_ids Product identifier
+     * @param boolean $short_list Flag determines if exceptions list should be returned in short format
+     */
+    fn_set_hook('get_products_exceptions_pre', $product_ids, $short_list);
+
+    $products_exceptions = db_get_hash_multi_array("SELECT * FROM ?:product_options_exceptions WHERE product_id IN (?n) ORDER BY exception_id", array('product_id', 'exception_id'), $product_ids);
+
+    foreach ($product_ids as $prod_id) {
+        if (!empty($products_exceptions[$prod_id])) {
+            $tmp_excp = array();
+            foreach ($products_exceptions[$prod_id] as $k => $v) {
+                $tmp = $products_exceptions[$prod_id][$k];
+                unset($products_exceptions[$prod_id][$k]);
+                $tmp['combination'] = unserialize($v['combination']);
+
+                if ($short_list) {
+                    $tmp = $tmp['combination'];
+                }
+                $tmp_excp[] = $tmp;
+            }
+            $products_exceptions[$prod_id] = $tmp_excp;
+        } else {
+            $products_exceptions[$prod_id] = array();
+        }
+    }
+
+    /**
+     * Changes product exceptions data
+     *
+     * @param int     $product_ids Product identifier
+     * @param array   $exceptions Exceptions data
+     * @param boolean $short_list Flag determines if exceptions list should be returned in short format
+     */
+    fn_set_hook('get_product_exceptions_post', $product_ids, $products_exceptions, $short_list);
+
+    return $products_exceptions;
+}
+
 function fn_get_product_exceptions($product_id, $short_list = false)
 {
     if (fn_allowed_for('ULTIMATE:FREE')) {
@@ -8444,7 +8511,7 @@ function fn_apply_options_rules($product)
     return $product;
 }
 
-function fn_apply_exceptions_rules($product)
+function fn_apply_exceptions_rules($product, $exceptions = array())
 {
     /**
      * Changes product data before applying options exceptions rules
@@ -8463,7 +8530,9 @@ function fn_apply_exceptions_rules($product)
 //     }
     // [tennishouse]
 
-    $exceptions = fn_get_product_exceptions($product['product_id'], true);
+    if (!isset($exceptions)) {
+        $exceptions = fn_get_product_exceptions($product['product_id'], true);
+    }
 
     if (empty($exceptions)) {
         return $product;

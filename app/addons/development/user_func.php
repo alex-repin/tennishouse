@@ -19,6 +19,31 @@ use Tygh\FeaturesCache;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_set_store_gender_mode($mode)
+{
+    $gender_mode = fn_get_store_gender_mode();
+    if (empty($gender_mode) || !(in_array($gender_mode, array('B', 'G')) && $mode == 'K')) {
+        fn_set_session_data('gender_mode', $mode);
+    }
+}
+
+function fn_get_store_gender_mode()
+{
+    return fn_get_session_data('gender_mode');
+}
+
+function fn_format_categorization(&$category_data, $ctz_data, $type)
+{
+    if (empty($category_data[$type])) {
+        foreach (array_reverse($category_data['cat_ids']) as $i => $cat_id) {
+            if (!empty($ctz_data[$cat_id][$type])) {
+                $category_data[$type] = $ctz_data[$cat_id][$type];
+                break;
+            }
+        }
+    }
+}
+
 function fn_generate_features_cash()
 {
     FeaturesCache::generate(CART_LANGUAGE);
