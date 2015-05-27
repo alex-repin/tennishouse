@@ -451,7 +451,7 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                 } elseif ($product['type'] == 'B') {
                     $product['subtitle'] = __("bag") .  ' - ' .  $brand;
                 } elseif ($product['type'] == 'ST') {
-                    if (!empty($series_feature) && count($series_feature['variants']) > 1 && $series_feature['feature_type'] == 'M') {
+                    if (!empty($series_feature['variants']) && count($series_feature['variants']) > 1 && $series_feature['feature_type'] == 'M') {
                         $product['subtitle'] = __("structure") .  ' - ' .  __("hybrid");
                     } else {
                         $product['subtitle'] = __("structure") .  ' - ' .  $series_feature['variant'];

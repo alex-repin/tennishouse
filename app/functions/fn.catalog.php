@@ -547,10 +547,6 @@ function fn_gather_additional_products_data(&$products, $params)
                 // Get product options images
                 if (!empty($product['combination_hash']) && !empty($product['product_options'])) {
                     $combination_images[$product_id] = $product['combination_hash'];
-//                     $image = fn_get_image_pairs($product['combination_hash'], 'product_option', 'M', $params['get_icon'], $params['get_detailed'], CART_LANGUAGE);
-//                     if (!empty($image)) {
-//                         $product['main_pair'] = $image;
-//                     }
                 }
             }
             $product['has_options'] = !empty($product['product_options']);
@@ -678,8 +674,8 @@ function fn_gather_additional_products_data(&$products, $params)
     
     if (!empty($comb_img)) {
         foreach ($products as &$_product) {
-            if ($comb_img[$_product['combination_hash']]) {
-                $product['main_pair'] = reset($comb_img[$_product['combination_hash']]);
+            if (!empty($_product['combination_hash']) && $comb_img[$_product['combination_hash']]) {
+                $_product['main_pair'] = reset($comb_img[$_product['combination_hash']]);
             }
         }
     }

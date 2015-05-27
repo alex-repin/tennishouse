@@ -158,7 +158,8 @@ if ($mode == 'catalog') {
                             if (!empty($_SESSION['tc_id'][$main_parent_id]) && !empty($tabs_categorization[$_SESSION['tc_id'][$main_parent_id]])) {
                                 $params['tc_id'] = $_SESSION['tc_id'][$main_parent_id];
                             } elseif (!empty($tb_feature['variants'])) {
-                                $params['tc_id'] = $_SESSION['tc_id'][$main_parent_id] = reset(array_keys($tb_feature['variants']));
+                                $keys = array_keys($tb_feature['variants']);
+                                $params['tc_id'] = $_SESSION['tc_id'][$main_parent_id] = reset($keys);
                             }
                             if (!empty($tb_feature['variants'][$params['tc_id']]['variant_code'])) {
                                 fn_set_store_gender_mode($tb_feature['variants'][$params['tc_id']]['variant_code']);
@@ -229,7 +230,7 @@ if ($mode == 'catalog') {
         }
         // [tennishouse]
     
-        $show_no_products_block = (!empty($params['features_hash'] || !empty($params['features_condition'])) && !$products);
+        $show_no_products_block = ((!empty($params['features_hash']) || !empty($params['features_condition'])) && !$products);
         Registry::get('view')->assign('show_no_products_block', $show_no_products_block);
 
         $selected_layout = fn_get_products_layout($_REQUEST);
