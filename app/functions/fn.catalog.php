@@ -1545,7 +1545,7 @@ function fn_get_categories($params = array(), $lang_code = CART_LANGUAGE)
         if ($params['get_images'] == true) {
             foreach ($categories_list as $k => $v) {
                 if (!empty($categories_images[$v['category_id']])) {
-                    $categories_list[$v['level']][$v['category_id']]['main_pair'] = reset($categories_images[$v['category_id']]);
+                    $categories_list[$k]['main_pair'] = reset($categories_images[$v['category_id']]);
                 }
             }
         }
