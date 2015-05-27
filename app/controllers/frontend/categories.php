@@ -128,7 +128,11 @@ if ($mode == 'catalog') {
                             $tabs_categorization['other'][] = $product;
                         }
                     }
-                    $tb_feature['variants'] = array_intersect_assoc($tb_feature['variants'], $tabs_categorization);
+                    foreach ($tb_feature['variants'] as $key => $vr_data) {
+                        if (empty($tabs_categorization[$key])) {
+                            unset($tb_feature['variants'][$key]);
+                        }
+                    }
                     if (!empty($tabs_categorization['other'])) {
                         $tb_feature['variants']['other'] = array('variant' => __("other"));
                     }
@@ -162,7 +166,6 @@ if ($mode == 'catalog') {
                         }
                     }
                     if (!empty($params['tc_id']) && !empty($tabs_categorization[$params['tc_id']])) {
-                        //$_REQUEST['features_hash'] = (!empty($params['features_hash']) ? '.' : '') . 'V' . $params['tc_id'];
                         $products = $tabs_categorization[$params['tc_id']];
                     }
         
@@ -182,7 +185,11 @@ if ($mode == 'catalog') {
                             $subtabs_categorization['other'][] = $product;
                         }
                     }
-                    $stb_feature['variants'] = array_intersect_assoc($stb_feature['variants'], $subtabs_categorization);
+                    foreach ($stb_feature['variants'] as $key => $vr_data) {
+                        if (empty($subtabs_categorization[$key])) {
+                            unset($stb_feature['variants'][$key]);
+                        }
+                    }
                     if (!empty($subtabs_categorization['other'])) {
                         $stb_feature['variants']['other'] = array('variant' => __("other"));
                     }
@@ -200,9 +207,7 @@ if ($mode == 'catalog') {
                         $products = $subtabs_categorization[$params['stc_id']];
                     }
         
-                    Registry::get('view')->assign('tb_feature', $tb_feature);
                     Registry::get('view')->assign('stb_feature', $stb_feature);
-                    Registry::get('view')->assign('active_tab', $params['tc_id']);
                     Registry::get('view')->assign('active_subtab', $params['stc_id']);
                 }
             }

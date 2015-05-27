@@ -676,11 +676,14 @@ function fn_gather_additional_products_data(&$products, $params)
         $comb_img = fn_get_image_pairs(array_values($combination_images), 'product_option', 'M', $params['get_icon'], $params['get_detailed'], CART_LANGUAGE);
     }
     
-    foreach ($products as &$_product) {
-        if ($comb_img[$_product['combination_hash']]) {
-            $product['main_pair'] = reset($comb_img[$_product['combination_hash']]);
+    if (!empty($comb_img)) {
+        foreach ($products as &$_product) {
+            if ($comb_img[$_product['combination_hash']]) {
+                $product['main_pair'] = reset($comb_img[$_product['combination_hash']]);
+            }
         }
     }
+    
     /**
      * Add additional data to products after gathering additional products data
      *

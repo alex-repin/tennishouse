@@ -22,7 +22,7 @@ function fn_development_get_filters_products_count_pre(&$params)
     $params['get_all'] = true;
     $tc_id = Registry::get('view')->gettemplatevars('active_tab');
     if (!empty($tc_id)) {
-        $params['features_hash'] .= (!empty($params['features_hash']) ? '.' : '') . 'V' . $tc_id;
+        $params['features_hash'] = (!empty($params['features_hash']) ? ($params['features_hash'] . '.') : '') . 'V' . $tc_id;
     }
 }
 
@@ -451,7 +451,7 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                 } elseif ($product['type'] == 'B') {
                     $product['subtitle'] = __("bag") .  ' - ' .  $brand;
                 } elseif ($product['type'] == 'ST') {
-                    if (count($series_feature['variants']) > 1 && $series_feature['feature_type'] == 'M') {
+                    if (!empty($series_feature) && count($series_feature['variants']) > 1 && $series_feature['feature_type'] == 'M') {
                         $product['subtitle'] = __("structure") .  ' - ' .  __("hybrid");
                     } else {
                         $product['subtitle'] = __("structure") .  ' - ' .  $series_feature['variant'];
