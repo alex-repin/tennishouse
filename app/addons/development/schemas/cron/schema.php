@@ -23,8 +23,8 @@ return array(
         'function' => 'fn_update_rankings',
         'wday' => '2'
     ),
-    'P' => array(
-        'frequency' => 60 * 60 * 24,
-        'function' => 'fn_update_rub_rate'
-    ),
+//     'P' => array(
+//         'frequency' => 60 * 60 * 24,
+//         'function' => 'fn_update_rub_rate'
+//     ),
 );

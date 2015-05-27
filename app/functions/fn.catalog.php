@@ -1497,6 +1497,12 @@ function fn_get_categories($params = array(), $lang_code = CART_LANGUAGE)
         $where_condition = !empty($params['except_id']) ? db_quote(' AND category_id != ?i', $params['except_id']) : '';
         $has_children = db_get_hash_array("SELECT category_id, parent_id FROM ?:categories WHERE parent_id IN(?n) ?p", 'parent_id', $child_for, $where_condition);
     }
+    
+    // [tennishouse]
+    if ($params['get_images'] == true) {
+        $categories_images = fn_get_image_pairs(array_keys($categories), 'category', 'M', true, true, $lang_code);
+    }
+    
     // Group categories by the level (simple)
     if ($params['simple'] == true) {
         foreach ($categories as $k => $v) {
@@ -1510,8 +1516,8 @@ function fn_get_categories($params = array(), $lang_code = CART_LANGUAGE)
             }
             // [tennishouse]
             $categories_list[$v['level']][$v['category_id']] = $v;
-            if ($params['get_images'] == true) {
-                $categories_list[$v['level']][$v['category_id']]['main_pair'] = fn_get_image_pairs($v['category_id'], 'category', 'M', true, true, $lang_code);
+            if (!empty($categories_images[$v['category_id']])) {
+                $categories_list[$v['level']][$v['category_id']]['main_pair'] = reset($categories_images[$v['category_id']]);
             }
         }
     } elseif ($params['group_by_level'] == true) {
@@ -1530,20 +1536,21 @@ function fn_get_categories($params = array(), $lang_code = CART_LANGUAGE)
                 $v['has_children'] = $has_children[$k]['category_id'];
             }
             $categories_list[$v['level']][$v['category_id']] = $v;
-            if ($params['get_images'] == true) {
-                $categories_list[$v['level']][$v['category_id']]['main_pair'] = fn_get_image_pairs($v['category_id'], 'category', 'M', true, true, $lang_code);
+            if (!empty($categories_images[$v['category_id']])) {
+                $categories_list[$v['level']][$v['category_id']]['main_pair'] = reset($categories_images[$v['category_id']]);
             }
         }
     } else {
         $categories_list = $categories;
         if ($params['get_images'] == true) {
             foreach ($categories_list as $k => $v) {
-                if ($params['get_images'] == true) {
-                    $categories_list[$k]['main_pair'] = fn_get_image_pairs($v['category_id'], 'category', 'M', true, true, $lang_code);
+                if (!empty($categories_images[$v['category_id']])) {
+                    $categories_list[$v['level']][$v['category_id']]['main_pair'] = reset($categories_images[$v['category_id']]);
                 }
             }
         }
     }
+    // [tennishouse]
 
     ksort($categories_list, SORT_NUMERIC);
     $categories_list = array_reverse($categories_list);
@@ -5142,11 +5149,13 @@ function fn_get_filters_products_count($params = array())
         }
 
         if (!empty($params['category_id'])) {
-            if (Registry::get('settings.General.show_products_from_subcategories') == 'Y') {
-                $id_path = db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $params['category_id']);
-                $category_ids = db_get_fields("SELECT category_id FROM ?:categories WHERE id_path LIKE ?l", $id_path . '/%');
-            } else {
-                $category_ids = array();
+            static $category_ids;
+            if (!isset($category_ids)) {
+                if (Registry::get('settings.General.show_products_from_subcategories') == 'Y') {
+                    $category_ids = db_get_fields("SELECT ct1.category_id FROM ?:categories AS ct LEFT JOIN ?:categories AS ct1 ON ct1.id_path LIKE CONCAT(ct.id_path, '/%') WHERE ct.category_id = ?i", $params['category_id']);
+                } else {
+                    $category_ids = array();
+                }
             }
             $category_ids[] = $params['category_id'];
 
@@ -5635,7 +5644,10 @@ function fn_get_filters_products_count($params = array())
 
         $filter_company_condition = "";
         if (fn_allowed_for('ULTIMATE') && Registry::get('runtime.company_id')) {
-            $filters_list = db_get_fields("SELECT ?:product_filters.filter_id FROM ?:product_filters");
+            static $filters_list;
+            if (!isset($filters_list)) {
+                $filters_list = db_get_fields("SELECT ?:product_filters.filter_id FROM ?:product_filters");
+            }
             if (!empty($filters_list)) {
                 $filter_company_condition = db_quote(" AND ?:product_filters.filter_id IN (?a)", $filters_list);
             }
@@ -7036,18 +7048,8 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
         $params['pid'] = $pids;
     }
 
-    if (!empty($params['features_hash']) || (!fn_is_empty($params['variants'])) || !empty($params['feature_code'])) {
-        $join .= db_quote(" LEFT JOIN ?:product_features_values ON ?:product_features_values.product_id = products.product_id AND ?:product_features_values.lang_code = ?s", $lang_code);
-    }
-
     if (!empty($params['variants'])) {
         $params['features_hash'] .= implode('.', $params['variants']);
-    }
-
-    // Feature code
-    if (!empty($params['feature_code'])) {
-        $join .= db_quote(" LEFT JOIN ?:product_features ON ?:product_features_values.feature_id = ?:product_features.feature_id");
-        $condition .= db_quote(" AND ?:product_features.feature_code = ?s", $params['feature_code']);
     }
 
     $advanced_variant_ids = $simple_variant_ids = $ranges_ids = $fields_ids = $fields_ids_revert = $slider_vals = array();
@@ -7076,6 +7078,16 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
         // [tennishouse]
         FeaturesCache::advancedVariantIds($advanced_variant_ids, $join, $condition, $lang_code);
         // [tennishouse]
+    } else {
+        if (!empty($params['features_hash']) || !empty($params['feature_code'])) {
+            $join .= db_quote(" LEFT JOIN ?:product_features_values ON ?:product_features_values.product_id = products.product_id AND ?:product_features_values.lang_code = ?s", $lang_code);
+        }
+    }
+    
+    // Feature code
+    if (!empty($params['feature_code'])) {
+        $join .= db_quote(" LEFT JOIN ?:product_features ON ?:product_features_values.feature_id = ?:product_features.feature_id");
+        $condition .= db_quote(" AND ?:product_features.feature_code = ?s", $params['feature_code']);
     }
 
     if (!empty($simple_variant_ids)) {

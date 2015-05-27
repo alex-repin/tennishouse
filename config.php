@@ -247,9 +247,9 @@ $config['current_host'] = (defined('HTTPS')) ? $config['https_host'] : $config['
 $config['allowed_pack_exts'] = array('tgz', 'gz', 'zip');
 
 //[tennishouse]
-define('USE_DB_MEMCACHED', true);
+define('USE_DB_MEMCACHED', false);
 define('USE_FEATURE_CACHE', true);
-define('SQL_NO_CACHE', false);
+define('SQL_NO_CACHE', true);
 define('DB_MEMCACHE_DURATION', time() + 60 * 60 * 24);
 //[tennishouse]
 

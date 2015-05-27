@@ -187,11 +187,13 @@ function fn_is_need_watermark($object_type, $is_detailed = true, $company_id = n
         $image_type = $is_detailed ? 'detailed' : 'icons';
         $option = 'use_for_' . $object_type . '_' . $image_type;
 
-        if (!empty($company_id)) {
-            $result = Settings::instance()->getValue($option, 'watermarks', $company_id) == 'Y';
-        } else {
+        // [tennishouse]
+//         if (!empty($company_id)) {
+//             $result = Settings::instance()->getValue($option, 'watermarks', $company_id) == 'Y';
+//         } else {
             $result = Registry::get('addons.watermarks.' . $option) == 'Y';
-        }
+//         }
+        // [tennishouse]
     }
 
     return $result;

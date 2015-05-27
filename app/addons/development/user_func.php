@@ -193,8 +193,11 @@ function fn_get_online_payment_methods()
     $payment_methods = db_get_hash_array("SELECT payment_id, website FROM ?:payments WHERE status = 'A' AND processor_id != '0' ORDER BY position", 'payment_id');
 
     if (!empty($payment_methods)) {
+        $payment_images = fn_get_image_pairs(array_keys($payment_methods), 'payment', 'M', true, false);
         foreach ($payment_methods as $i => $payment) {
-            $payment_methods[$i]['image'] = fn_get_image_pairs($payment['payment_id'], 'payment', 'M', true, true, CART_LANGUAGE);
+            if (!empty($payment_images[$payment['payment_id']])) {
+                $payment_methods[$i]['image'] = reset($payment_images[$payment['payment_id']]);
+            }
         }
     }
 
@@ -206,8 +209,11 @@ function fn_get_online_shipping_methods()
     $shipping_methods = db_get_hash_array("SELECT shipping_id, website FROM ?:shippings WHERE status = 'A' AND service_id != '0' ORDER BY position", 'shipping_id');
 
     if (!empty($shipping_methods)) {
+        $shipping_images = fn_get_image_pairs(array_keys($shipping_methods), 'shipping', 'M', true, false);
         foreach ($shipping_methods as $i => $shipping) {
-            $shipping_methods[$i]['image'] = fn_get_image_pairs($shipping['shipping_id'], 'shipping', 'M', true, true, CART_LANGUAGE);
+            if (!empty($shipping_images[$shipping['shipping_id']])) {
+                $shipping_methods[$i]['image'] = reset($shipping_images[$shipping['shipping_id']]);
+            }
         }
     }
 
@@ -909,8 +915,11 @@ function fn_get_players($params)
     }
 
     if (empty($params['plain'])) {
+        $players_images = fn_get_image_pairs(array_keys($players), 'player', 'M', true, false);
         foreach ($players as $k => $v) {
-            $players[$k]['main_pair'] = fn_get_image_pairs($v['player_id'], 'player', 'M', true, true);
+            if (!empty($players_images[$v['player_id']])) {
+                $players[$k]['main_pair'] = reset($players_images[$v['player_id']]);
+            }
             $players[$k]['gear'] = explode(',', $players[$k]['gear']);
         }
     }

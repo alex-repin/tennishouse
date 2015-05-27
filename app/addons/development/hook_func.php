@@ -22,7 +22,7 @@ function fn_development_get_filters_products_count_pre(&$params)
     $params['get_all'] = true;
     $tc_id = Registry::get('view')->gettemplatevars('active_tab');
     if (!empty($tc_id)) {
-//        $params['features_hash'] .= (!empty($params['features_hash']) ? '.' : '') . 'V' . $tc_id;
+        $params['features_hash'] .= (!empty($params['features_hash']) ? '.' : '') . 'V' . $tc_id;
     }
 }
 
@@ -352,7 +352,7 @@ function fn_development_get_product_options_post($product_ids, $lang_code, $only
             }
         }
     }
-    if (!empty($variant_ids)) {
+    if (!empty($variant_ids) && Registry::get('runtime.controller') == 'products') {
         $image_pairs = fn_get_image_pairs($variant_ids, 'variant_additional', 'Z', true, true, $lang_code);
         foreach ($options as $product_id => $_options) {
             foreach ($_options as $option_id => $_option) {
@@ -558,8 +558,12 @@ function fn_development_add_range_to_url_hash_pre(&$hash, $range, $field_type)
 
 function fn_development_get_product_filter_fields(&$filters)
 {
-    $fields = db_get_array("SELECT ?:product_filters.field_type, ?:product_filter_descriptions.filter, ?:product_filters.feature_id FROM ?:product_filters LEFT JOIN ?:product_features ON ?:product_features.feature_id = ?:product_filters.feature_id LEFT JOIN ?:product_filter_descriptions ON ?:product_filter_descriptions.filter_id = ?:product_filters.filter_id AND ?:product_filter_descriptions.lang_code = ?s WHERE ?:product_filters.is_slider = 'Y' AND ?:product_features.feature_type = 'N' AND ?:product_filters.field_type != ''", CART_LANGUAGE);
-
+    static $fields;
+    
+    if (!isset($fields)) {
+        $fields = db_get_array("SELECT ?:product_filters.field_type, ?:product_filter_descriptions.filter, ?:product_filters.feature_id FROM ?:product_filters LEFT JOIN ?:product_features ON ?:product_features.feature_id = ?:product_filters.feature_id LEFT JOIN ?:product_filter_descriptions ON ?:product_filter_descriptions.filter_id = ?:product_filters.filter_id AND ?:product_filter_descriptions.lang_code = ?s WHERE ?:product_filters.is_slider = 'Y' AND ?:product_features.feature_type = 'N' AND ?:product_filters.field_type != ''", CART_LANGUAGE);
+    }
+    
     if (!empty($fields)) {
         foreach ($fields as $i => $field) {
             $filters[$field['field_type']] = array(
