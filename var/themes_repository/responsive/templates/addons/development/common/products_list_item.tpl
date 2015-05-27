@@ -2,10 +2,6 @@
     {assign var="obj_id" value=$product.product_id}
     {include file="common/product_data.tpl" product=$product}
 
-    {$features = $product|fn_get_product_features_list}
-    {$series_feature = $features|fn_get_subtitle_feature:$product.type}
-    {$series_variant_id = $series_feature.variant_id}
-    {$type_variant_id = $features.$type_id.variant_id}
     {assign var="form_open" value="form_open_`$obj_id`"}
     {$smarty.capture.$form_open nofilter}
     <div class="ty-grid-list__image">
@@ -27,9 +23,7 @@
         
         <div class="ty-grid-list__brand-image">
             <a href="{"products.view?product_id=`$product.product_id`"|fn_url}">
-            {$brand_id = $smarty.const.BRAND_FEATURE_ID}
-            {$brand_variant_id = $features.$brand_id.variant_id}
-            {include file="addons/development/common/brand_logo.tpl"  brand=$features.$brand_id.variants.$brand_variant_id brand_variant_id=$brand_variant_id}
+            {include file="addons/development/common/brand_logo.tpl"  brand=$product.brand brand_variant_id=$product.brand.variant_id}
             </a>
         </div>
         
@@ -51,37 +45,7 @@
             {/if}
             
             {if $mode == 'R'}
-            <div class="ty-product-series">
-                {if $product.type == 'R'}
-                    {if $series_feature.variants.$series_variant_id}
-                        {__("series")} - {$series_feature.variants.$series_variant_id.variant}
-                    {else}
-                        {__("type")} - {$features.$type_id.variants.$type_variant_id.variant}
-                    {/if}
-                {elseif $product.type == 'A'}
-                    {$brand_id = $smarty.const.BRAND_FEATURE_ID}
-                    {$brand_variant_id = $features.$brand_id.variant_id}
-                    {$series_feature.variants.$series_variant_id.variant} - {$features.$brand_id.variants.$brand_variant_id.variant}
-                {elseif $product.type == 'S'}
-                        {__("surface")} - {$series_feature.variants.$series_variant_id.variant}
-                {elseif $product.type == 'B'}
-                    {$brand_id = $smarty.const.BRAND_FEATURE_ID}
-                    {$brand_variant_id = $features.$brand_id.variant_id}
-                    {__("bag")} - {$features.$brand_id.variants.$brand_variant_id.variant}
-                {elseif $product.type == 'ST'}
-                    {if $series_feature.variants|count > 1 && $series_feature.feature_type == 'M'}
-                        {__("structure")} - {__("hybrid")}
-                    {else}
-                        {__("structure")} - {$series_feature.variants.$series_variant_id.variant}
-                    {/if}
-                {elseif $product.type == 'BL'}
-                    {__("type")} - {$series_feature.variants.$series_variant_id.variant}
-                {elseif $product.type == 'OG'}
-                    {__("type")} - {$series_feature.variants.$series_variant_id.variant}
-                {elseif $product.type == 'BG'}
-                    {__("material")} - {$series_feature.variants.$series_variant_id.variant}
-                {/if}
-            </div>
+                <div class="ty-product-series">{$product.subtitle}</div>
             {/if}
             <div class="ty-grid-list__item-title">
                 {assign var="name" value="name_`$obj_id`"}

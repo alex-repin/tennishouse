@@ -501,6 +501,7 @@ select {
     font-size: 12px;
     padding: 3px 5px 3px 12px;
     display: block;
+    transition: none;
 }
 .no-touch .ty-menu__submenu-item .ty-menu__submenu-link:hover {
     background-color: lighten(#FBFF9A, 10%);/*#FFFA8A*/
@@ -869,15 +870,98 @@ select {
     box-shadow: 0 0 5px 1px @font;
     z-index:20;
 }
+.ty-categorization {
+    bottom: -3px;
+    margin: 0 -11px;
+    position: absolute;
+    width: 1009px;
+}
+.ty-categorization-tabs {
+    border-bottom: 2px solid #333;
+    margin-bottom: 1px;
+    padding: 0 15px 0 200px;
+    vertical-align: bottom;
+    position: relative;
+}
+.ty-categorization-subtabs {
+    border-bottom: 1px solid #dadada;
+    display: inline-block;
+    margin-top: 10px;
+    vertical-align: top;
+    width: 91%;
+}
+.ty-categorization-subtabs__title {
+    display: inline-block;
+    font-size: 16px;
+    padding-top: 25px;
+    width: 8%;
+    color: lighten(@font, 22%);
+}
+.ty-categorization-tabs__list {
+    bottom: -2px;
+    position: absolute;
+    vertical-align: bottom;
+}
+.ty-categorization-tabs__item {
+    float: left;
+    vertical-align: bottom;
+    white-space: nowrap;
+    cursor: pointer;
+    border-radius: 0;
+    margin: 2px 2px 0 0;
+    padding: 0 0 0 3px;
+    position: relative;
+    background: #333;
+    opacity: 0.8;
+    border-color: #000 #000 #333;
+    border-radius: 0;
+    border-style: solid;
+    border-width: 1px 1px 2px;
+}
+.ty-categorization-tabs__item:hover {
+    background: darken(@base, 15%);
+}
+.ty-categorization-tabs__item.active {
+    background: #fff;
+    border-bottom: 2px solid #fff;
+    opacity: 1;
+}
+.ty-categorization-tabs__a {
+    display: block;
+    font-size: 16px;
+    height: 38px;
+    line-height: 38px;
+    text-align: center;
+    text-decoration: none;
+    width: 130px;
+    color: #fff;
+}
+.ty-categorization-subtabs__item {
+    display: inline-block;
+    height: 40px;
+    line-height: 40px;
+    width: 200px;
+    text-align: center;
+    border-right: 1px solid #dadada;
+}
+.ty-categorization-tabs__item.active .ty-categorization-tabs__a {
+    color: #000;
+}
+.ty-categorization-tabs__a:hover {
+    text-decoration: none;
+    color: #000;
+}
 .ty-categorize__title {
     border-bottom: 1px solid #edeff1;
     padding: 0 30px 9px 0;
     position: relative;
     font-weight: bold;
     text-decoration: none;
+    font-size: 18px;
 }
 .ty-category__title {
     display: inline-block;
+    border-bottom: 2px solid #333;
 }
 .ty-category__title-descr p {
     font-size: 12px;
@@ -1317,7 +1401,7 @@ select {
 .ty-category-title {
     margin: 0 -11px;
     position: relative;
-    height: 140px;
+    height: 150px;
 }
 .ty-player-title {
     margin: 0 -11px;
@@ -1339,10 +1423,10 @@ select {
 .ty-category-title__name {
     color: #ffffff;
     font-size: 30px;
-    left: 230px;
+    left: 50px;
     padding: 2px 10px;
     position: absolute;
-    top: 85px;
+    top: 60px;
 }
 .breadcrumbs-grid {
     margin-bottom: 5px;

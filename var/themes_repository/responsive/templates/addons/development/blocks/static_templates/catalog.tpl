@@ -2,7 +2,7 @@
     <span>{__("catalog")}</span>
 </p>
 <ul class="ty-footer-menu__items">
-    {$categories = "0"|fn_get_subcategories}
+    {$categories = "0"|fn_get_categories_tree}
     {foreach from=$categories item="category"}
         <li class="ty-footer-menu__item"><a href="{"categories.view?category_id={$category.category_id}"|fn_url}">{$category.category}</a></li>
     {/foreach}

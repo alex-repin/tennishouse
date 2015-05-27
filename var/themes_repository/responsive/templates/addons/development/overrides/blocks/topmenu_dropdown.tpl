@@ -164,7 +164,7 @@
                 if ($('#tygh_main_container').hasClass('touch')) {$ldelim}
                     $('.ty-menu__item-link').click(function(e){$ldelim}
                         var submenu = $(this).parents('.ty-menu__item_full');
-                        submenu.find('.ty-menu__submenu-items').slideToggle(300);
+                        submenu.find('.ty-menu__submenu-items').slideToggle(200);
                         e.preventDefault();
                     {$rdelim});
                 {$rdelim}
@@ -173,7 +173,7 @@
                     var submenu = $(this);
                     setTimeout(function() {$ldelim}
                         if (submenu.hasClass('is-hover')) {
-                            submenu.find('.ty-menu__submenu-items').slideDown(300);
+                            submenu.find('.ty-menu__submenu-items').slideDown(200);
                         }
                     {$rdelim}, 300);
                 {$rdelim}, function(e){$ldelim}
