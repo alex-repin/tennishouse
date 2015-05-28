@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset={$smarty.const.CHARSET}" data-ca-mode="{$store_trigger}" />
 {hook name="index:meta_description"}
 {if $runtime.controller == 'products' && $runtime.mode == 'view'}
-    {$meta_descr = __('product_meta_description', ['[category]' => $product.category_main_title, '[product]' => $product.product, '[price]' => $product.price|fn_format_price, '[date]' => $smarty.const.TIME|date_format:$settings.Appearance.date_format, '[product_code]' => $product.product_code])}
+    {$meta_descr = __('product_meta_description', ['[category]' => $product.category_main_title|fn_strtolower, '[product]' => $product.product, '[price]' => $product.price|fn_format_price, '[date]' => $smarty.const.TIME|date_format:$settings.Appearance.date_format, '[product_code]' => $product.product_code])}
     <meta name="description" content="{$meta_descr}" />
     <meta property="og:title" content="{$product.product}" />
     <meta property="og:type" content="product" />
@@ -19,7 +19,7 @@
     {$meta_descr = __('players_meta_description', ['[players]' => $meta_players])}
     <meta name="description" content="{$meta_descr}" />
 {elseif $runtime.controller == 'players' && $runtime.mode == 'view'}
-    {$meta_descr = __('player_share_buttons_description', ['[player]' => $player_data.player])}
+    {$meta_descr = __('player_share_buttons_description', ['[player]' => $player_data.player, '[birthplace]' => {$player_data.birthplace}, '[racket]' => {$racket}])}
     <meta property="og:type"   content="profile" /> 
     <meta property="og:url"    content="{$config.current_url|fn_url}" /> 
     <meta property="og:title"  content="{$player_data.player}" /> 

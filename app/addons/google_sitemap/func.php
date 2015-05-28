@@ -302,6 +302,11 @@ HEAD;
         $params = array('plain' => true);
         list($players, ) = fn_get_players($params);
 
+        $links = array(fn_url('players.list', 'C', 'http', CART_LANGUAGE));
+        $item = fn_google_sitemap_print_item_info($links, $lmod, $sitemap_settings['players_change'], $sitemap_settings['players_priority']);
+        fn_google_sitemap_check_counter($file, $link_counter, $file_counter, $links, $simple_head, $simple_foot);
+        fwrite($file, $item);
+        
         if (!empty($players)) {
             foreach ($players as $i => $data) {
                 $links = fn_google_sitemap_generate_link('players', $data['player_id'], $languages);

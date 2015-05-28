@@ -13,6 +13,7 @@
             {if $sitemap_settings.show_site_info == "Y"}
                 <h3 class="ty-sitemap__section-sub-title">{__("players")}</h3>
                 <ul>
+                    <li><a href="{"players.list"|fn_url}">{__("list")}</a></li>
                     {include file="addons/development/views/players/components/players_tree.tpl" tree=$sitemap.players root=true no_delim=true}
                 </ul>
             {/if}

@@ -73,11 +73,6 @@ if ($mode == 'catalog') {
         $main_parent_id = reset($category_parent_ids);
         array_pop($category_parent_ids);
 
-        if (!empty($category_data['meta_description']) || !empty($category_data['meta_keywords'])) {
-            Registry::get('view')->assign('meta_description', $category_data['meta_description']);
-            Registry::get('view')->assign('meta_keywords', $category_data['meta_keywords']);
-        }
-
         $params = $_REQUEST;
 
         if (!empty($_REQUEST['items_per_page'])) {
@@ -117,9 +112,9 @@ if ($mode == 'catalog') {
             'get_features' => false
         ));
         if (!empty($products)) {
+            $subtabs_string = $tab_string = '';
             if (!empty($category_data['tabs_categorization']) && (empty($category_data['brand']) || $category_data['brand']['feature_id'] != $category_data['tabs_categorization'])) {
                 $tb_feature = fn_get_product_feature_data($category_data['tabs_categorization'], true);
-                
                 if (!empty($tb_feature['variants'])) {
                     $tabs_categorization = array();
                     foreach ($products as $i => $product) {
@@ -180,6 +175,7 @@ if ($mode == 'catalog') {
                     }
                     if (!empty($params['tc_id']) && !empty($tabs_categorization[$params['tc_id']])) {
                         $products = $tabs_categorization[$params['tc_id']];
+                        $tab_string = $tb_feature['variants'][$params['tc_id']]['variant'];
                     }
         
                     Registry::get('view')->assign('tb_feature', $tb_feature);
@@ -198,10 +194,16 @@ if ($mode == 'catalog') {
                             $subtabs_categorization['other'][] = $product;
                         }
                     }
+                    $sb_array = array();
                     foreach ($stb_feature['variants'] as $key => $vr_data) {
                         if (empty($subtabs_categorization[$key])) {
                             unset($stb_feature['variants'][$key]);
+                        } else {
+                            $sb_array[] = $stb_feature['variants'][$key]['variant'];
                         }
+                    }
+                    if (!empty($sb_array)) {
+                        $subtabs_string = implode(', ', $sb_array);
                     }
                     if (!empty($subtabs_categorization['other'])) {
                         $stb_feature['variants']['other'] = array('variant' => __("other"));
@@ -240,9 +242,23 @@ if ($mode == 'catalog') {
                     Registry::get('view')->assign('sc_feature', $sc_feature);
                 }
             }
+            $meta_description_suffix = '';
         }
         // [tennishouse]
     
+        // If page title for this category is exist than assign it to template
+        if (!empty($category_data['page_title'])) {
+             Registry::get('view')->assign('page_title', $category_data['page_title']);
+             $category_title = $category_data['page_title'];
+        } else {
+             $category_title = $category_data['category'];
+        }
+        $meta_description = __("category_meta_description", array('[category]' => fn_strtolower($category_title), '[tabs]' => '', '[subtabs]' => $subtabs_string));
+        Registry::get('view')->assign('meta_description', $meta_description);
+        if (!empty($category_data['meta_keywords'])) {
+            Registry::get('view')->assign('meta_keywords', $category_data['meta_keywords']);
+        }
+
         $show_no_products_block = ((!empty($params['features_hash']) || !empty($params['features_condition'])) && !$products);
         Registry::get('view')->assign('show_no_products_block', $show_no_products_block);
 
@@ -253,11 +269,6 @@ if ($mode == 'catalog') {
         Registry::get('view')->assign('selected_layout', $selected_layout);
 
         Registry::get('view')->assign('category_data', $category_data);
-
-        // If page title for this category is exist than assign it to template
-        if (!empty($category_data['page_title'])) {
-             Registry::get('view')->assign('page_title', $category_data['page_title']);
-        }
 
         fn_define('FILTER_CUSTOM_ADVANCED', true); // this constant means that extended filtering should be stayed on the same page
 

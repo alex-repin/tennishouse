@@ -47,6 +47,9 @@ if ($mode == 'view') {
             );
             foreach ($gear as $i => $prod) {
                 if (in_array($prod['type'], array('R')) && empty($player_data['gear']['R'])) {
+                    if (empty($player_data['gear']['R'])) {
+                        Registry::get('view')->assign('racket', '(' . $prod['product'] . ')');
+                    }
                     $player_data['gear']['R'][] = $prod;
                 } elseif (in_array($prod['type'], array('A', 'S'))) {
                     $player_data['gear']['AS'][] = $prod;

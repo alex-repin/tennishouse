@@ -311,7 +311,7 @@
         <item lang="ru" id="tmpl_scroller_capture">Скрытый скроллер</item>
         <item lang="ru" id="tmpl_th_products_block">Блок с товарами TennisHouse</item>
         <item lang="ru" id="similar_products">Похожие товары</item>
-        <item lang="ru" id="player_share_buttons_description">Профиль игрока. Личная информация и экипировка. Статистика, достижения и новости.</item>
+        <item lang="ru" id="player_share_buttons_description">Профиль игрока [player] ([birthplace]). Личная информация и экипировка [racket]. Статистика, достижения и новости.</item>
         <item lang="ru" id="same_brand_products">Товары того же бренда</item>
         <item lang="ru" id="shoes_for_hard">Обувь для харда</item>
         <item lang="ru" id="small_mode">Уменьшенный режим</item>
@@ -389,7 +389,8 @@
         <item lang="ru" id="strings_overgrips_discount_text">-20% на все струны и обмотки при покупке ракетки</item>
         <item lang="ru" id="ssl_seal_text">Эта страница работает через защищенное соединение(https). TennisHouse обеспечивает эту защиту для того, чтобы Вы были уверены в безопасности Ваших личных данных, платежей и заказов.</item>
         <item lang="ru" id="learning_center">Учебные материалы</item>
-        <item lang="ru" id="product_meta_description">Купить [category] [product] за [price] руб ([date]). Артикул: [product_code]. Бесплатная доставка и возврат по России*.</item>
+        <item lang="ru" id="product_meta_description">Купить [category] в интернет-магазине TennisHouse.ru [product] за [price] руб ([date]). Артикул: [product_code]. Бесплатная доставка и возврат по России*.</item>
+        <item lang="ru" id="category_meta_description">Всегда в наличии [category] [subtabs].[tabs] Каталог интернет-магазина TennisHouse.ru обновляется каждые 2-3 дня и поэтому всегда актуален. Бесплатная доставка и возврат по России*.</item>
         <item lang="ru" id="players_atp_wta">Игроки ATP и WTA тура</item>
         <item lang="ru" id="players_meta_description">Купить экипировку профессиональных теннисистов. [players] и другие. Бесплатная доставка и возврат по России*.</item>
         <item lang="ru" id="code_suffix">Код</item>
