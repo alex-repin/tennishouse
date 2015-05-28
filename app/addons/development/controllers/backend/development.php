@@ -382,19 +382,6 @@ if ($mode == 'calculate_balance') {
 
     Registry::get('view')->assign('brands', fn_development_get_brands());
     
-} elseif ($mode == 'show_memcached') {
-//    fn_print_r(Memcache::instance()->call('getMemcacheKeys', 2000));
-    $keys = Memcache::instance()->call('getAllKeys');
-    $result = array();
-    if (!empty($keys)) {
-        foreach ($keys as $i => $key) {
-            $result[$key] = Memcache::instance()->call('get', $key);
-        }
-    }
-    fn_print_r($result);
-    exit;
-} elseif ($mode == 'test_memcached') {
-    exit;
 } elseif ($mode == 'rebuild_combinations') {
     $product_ids = db_get_fields("SELECT DISTINCT(product_id) FROM ?:product_options_inventory");
     if (!empty($product_ids)) {
