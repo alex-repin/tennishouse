@@ -51,9 +51,20 @@ class Memcache
         }
     }
 
-    private function getAllKeys()
+    private function stats()
     {
-        return $this->MemcachedServer->getAllkeys();
+        return $this->MemcachedServer->getStats();
+    }
+
+    private function getAll($key = '')
+    {
+        $keys = !empty($key) ? array($key) : $this->MemcachedServer->getAllkeys();
+        $result = $this->MemcachedServer->getMulti($keys);
+        if (!empty($key)) {
+            $result = unserialize($result[$key]);
+        }
+        
+        return $result;
     }
 
     private function flush($delay = 0)

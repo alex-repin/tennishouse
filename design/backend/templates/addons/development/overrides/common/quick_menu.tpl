@@ -10,8 +10,8 @@
 <div class="quick-menu-container" id="quick_menu">
     <div class="quick-menu {if $settings.show_menu_mouseover == "Y"} quick-menu-show-on-hover{/if}">
         <div style="display: inline-block;">
-            {$active = ""|fn_get_memcached_status}
-            {__("memcached")}: {if $active}<span style="color: green;">{__("active")}</span>{else}<span style="color: red;">{__("disabled")}</span>{/if}
+            {$stats = ""|fn_get_memcached_stats}
+            {__("memcached")}: {if $stats.status}<span style="color: green;">{__("active")} ({$stats.used}Kb - {$stats.used_prc}% {__("used")})</span>{else}<span style="color: red;">{__("disabled")}</span>{/if}
             
         </div>
         <a id="sw_quick_menu_content"class="quick-menu-link {if $edit_quick_menu || $expand_quick_menu}open{/if} cm-combination">{__("quick_menu")}</a>

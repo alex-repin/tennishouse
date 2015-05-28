@@ -12,6 +12,7 @@
 * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
 ****************************************************************************/
 
+use Tygh\Memcache;
 use Tygh\Registry;
 use Tygh\LogFacade;
 use Tygh\Http;
@@ -22,7 +23,7 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 function fn_set_store_gender_mode($mode)
 {
     $gender_mode = fn_get_store_gender_mode();
-    if (empty($gender_mode) || !(in_array($gender_mode, array('B', 'G')) && $mode == 'K')) {
+    if (empty($gender_mode) || !(in_array($gender_mode, array('B', 'G')) && $mode == 'K') || !(in_array($gender_mode, array('M', 'F')) && $mode == 'A')) {
         fn_set_session_data('gender_mode', $mode);
     }
 }
@@ -333,9 +334,20 @@ function fn_feature_has_size_chart($feature_id)
     return in_array($feature_id, array(BRAND_FEATURE_ID, SHOES_GENDER_FEATURE_ID, CLOTHES_GENDER_FEATURE_ID));
 }
 
-function fn_get_memcached_status()
+function fn_get_memcached_stats()
 {
-    return (class_exists('Memcached')) ? true : false;
+    $result = array();
+    if (class_exists('Memcached')) {
+        $result['status'] = true;
+        $stats = Memcache::instance()->call('stats');
+        $localhost = $stats['localhost:11211'];
+        $result['used_prc'] = ceil($localhost['bytes'] / $localhost['limit_maxbytes'] * 100);
+        $result['used'] = ceil($localhost['bytes'] / 1024);
+    } else {
+        $result['status'] = false;
+    }
+    
+    return $result;
 }
 
 function fn_add_product_features($pid, $data)

@@ -35,8 +35,8 @@ $schema['top']['administration']['items']['development'] = array(
         ),
     ),
 );
-$active = fn_get_memcached_status();
-if ($active) {
+$stats = fn_get_memcached_stats();
+if ($stats['status']) {
     $schema['top']['administration']['items']['development']['subitems']['cache_features'] = array(
         'href' => fn_url('development.generate_features_cache', 'C'),
         'position' => 200,

@@ -468,6 +468,10 @@ if ($mode == 'calculate_balance') {
         db_query("DELETE FROM ?:product_options_exceptions WHERE exception_id IN (?n)", array_keys($to_delete));
     }
     exit;
+} elseif ($mode == 'memcached_stats') {
+    fn_print_die(Memcache::instance()->call('stats'));
+} elseif ($mode == 'get_memcached') {
+    fn_print_die(Memcache::instance()->call('getAll', $_REQUEST['key']));
 }
 
 function fn_normalize_string($string)
