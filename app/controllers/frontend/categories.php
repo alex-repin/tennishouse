@@ -242,7 +242,6 @@ if ($mode == 'catalog') {
                     Registry::get('view')->assign('sc_feature', $sc_feature);
                 }
             }
-            $meta_description_suffix = '';
         }
         // [tennishouse]
     
