@@ -410,13 +410,13 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
         }
         
         $condition = db_quote("f.display_on_catalog = 'Y' AND f.status = 'A' AND IF(f.parent_id, (SELECT status FROM ?:product_features as df WHERE df.feature_id = f.parent_id), 'A') = 'A' ?p AND (v.variant_id != 0 OR (f.feature_type != 'C' AND v.value != '') OR (f.feature_type = 'C') OR v.value_int != '') AND v.lang_code = ?s", db_quote(" AND (?p)", implode('OR', $features_condition)), CART_LANGUAGE);
-        $fields = db_quote("f.feature_type, v.variant_id, v.feature_id, vd.variant, v.product_id, gf.position as gposition");
+        $fields = db_quote("f.feature_type, v.variant_id, v.feature_id, GROUP_CONCAT(vd.variant SEPARATOR ',') as variants, v.product_id, gf.position as gposition");
         $join = db_quote(
             "LEFT JOIN ?:product_features_values as v ON v.feature_id = f.feature_id "
             . " LEFT JOIN ?:product_feature_variant_descriptions as vd ON vd.variant_id = v.variant_id AND vd.lang_code = ?s"
             . " LEFT JOIN ?:product_features as gf ON gf.feature_id = f.parent_id AND gf.feature_type = ?s ",
             CART_LANGUAGE, 'G');
-        $products_features = db_get_hash_multi_array("SELECT $fields FROM ?:product_features as f $join WHERE $condition ORDER BY f.position", array('product_id', 'feature_id'), $condition);
+        $products_features = db_get_hash_multi_array("SELECT $fields FROM ?:product_features as f $join WHERE $condition GROUP BY v.product_id, v.feature_id ORDER BY f.position", array('product_id', 'feature_id'), $condition);
         
         if (!empty($color_ids)) {
             $color_image_pairs = fn_get_image_pairs($color_ids, 'variant_image', 'V', true, false, CART_LANGUAGE);
@@ -436,32 +436,33 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
             
             if (!empty($products_features[$product['product_id']])) {
                 $series_feature = fn_get_subtitle_feature($products_features[$product['product_id']], $product['type']);
-                $brand = $products_features[$product['product_id']][BRAND_FEATURE_ID]['variant'];
+                $variants = explode(',', $series_feature['variants']);
+                $brand = $products_features[$product['product_id']][BRAND_FEATURE_ID]['variants'];
                 $product['brand'] = $brands['variants'][$products_features[$product['product_id']][BRAND_FEATURE_ID]['variant_id']];
                 if ($product['type'] == 'R') {
-                    if (!empty($series_feature)) {
-                        $product['subtitle'] = __("series") .  ' - ' .  $series_feature['variant'];
+                    if (!empty($variants)) {
+                        $product['subtitle'] = __("series") .  ' - ' .  reset($variants);
                     } else {
-                        $product['subtitle'] = __("type") .  ' - ' .  $products_features[$product['product_id']][TYPE_FEATURE_ID]['variant'];
+                        $product['subtitle'] = __("type") .  ' - ' .  $products_features[$product['product_id']][TYPE_FEATURE_ID]['variants'];
                     }
                 } elseif ($product['type'] == 'A') {
-                    $product['subtitle'] = $series_feature['variant'] .  ' - ' .  $brand;
+                    $product['subtitle'] = reset($variants) .  ' - ' .  $brand;
                 } elseif ($product['type'] == 'S') {
-                    $product['subtitle'] = __("surface") .  ' - ' .  $series_feature['variant'];
+                    $product['subtitle'] = __("surface") .  ' - ' .  reset($variants);
                 } elseif ($product['type'] == 'B') {
                     $product['subtitle'] = __("bag") .  ' - ' .  $brand;
                 } elseif ($product['type'] == 'ST') {
-                    if (!empty($series_feature['variants']) && count($series_feature['variants']) > 1 && $series_feature['feature_type'] == 'M') {
-                        $product['subtitle'] = __("structure") .  ' - ' .  __("hybrid");
+                    if (!empty($variants) && count($variants) > 1 && $series_feature['feature_type'] == 'M') {
+                        $product['subtitle'] = __("hybrid");
                     } else {
-                        $product['subtitle'] = __("structure") .  ' - ' .  $series_feature['variant'];
+                        $product['subtitle'] = __("structure") .  ' - ' .  reset($variants);
                     }
                 } elseif ($product['type'] == 'BL') {
-                    $product['subtitle'] = __("type") .  ' - ' .  $series_feature['variant'];
+                    $product['subtitle'] = __("type") .  ' - ' .  reset($variants);
                 } elseif ($product['type'] == 'OG') {
-                    $product['subtitle'] = __("type") .  ' - ' .  $series_feature['variant'];
+                    $product['subtitle'] = __("type") .  ' - ' .  reset($variants);
                 } elseif ($product['type'] == 'BG') {
-                    $product['subtitle'] = __("material") .  ' - ' .  $series_feature['variant'];
+                    $product['subtitle'] = __("material") .  ' - ' .  reset($variants);
                 }
             }
         }

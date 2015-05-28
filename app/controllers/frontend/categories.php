@@ -119,6 +119,7 @@ if ($mode == 'catalog') {
         if (!empty($products)) {
             if (!empty($category_data['tabs_categorization']) && (empty($category_data['brand']) || $category_data['brand']['feature_id'] != $category_data['tabs_categorization'])) {
                 $tb_feature = fn_get_product_feature_data($category_data['tabs_categorization'], true);
+                
                 if (!empty($tb_feature['variants'])) {
                     $tabs_categorization = array();
                     foreach ($products as $i => $product) {
@@ -128,9 +129,20 @@ if ($mode == 'catalog') {
                             $tabs_categorization['other'][] = $product;
                         }
                     }
+                    $tab_groups = array();
                     foreach ($tb_feature['variants'] as $key => $vr_data) {
                         if (empty($tabs_categorization[$key])) {
                             unset($tb_feature['variants'][$key]);
+                        } else {
+                            if (!empty($vr_data['variant_code']) && !in_array($vr_data['variant_code'], array_keys($tab_groups))) {
+                                $tab_groups[$vr_data['variant_code']] = $key;
+                                $lang_var = __("tab_groups_" . $tb_feature['feature_code'] . '_' . $vr_data['variant_code']);
+                                $tb_feature['variants'][$key]['variant'] = ($lang_var[0] !== '_') ? $lang_var : $tb_feature['variants'][$key]['variant'];
+                            } elseif (!empty($vr_data['variant_code'])) {
+                                $tabs_categorization[$tab_groups[$vr_data['variant_code']]] = array_merge($tabs_categorization[$tab_groups[$vr_data['variant_code']]], $tabs_categorization[$key]);
+                                unset($tabs_categorization[$key]);
+                                unset($tb_feature['variants'][$key]);
+                            }
                         }
                     }
                     if (!empty($tabs_categorization['other'])) {
@@ -201,7 +213,8 @@ if ($mode == 'catalog') {
                         if (!empty($_SESSION['stc_id'][$main_parent_id]) && !empty($subtabs_categorization[$_SESSION['stc_id'][$main_parent_id]])) {
                             $params['stc_id'] = $_SESSION['stc_id'][$main_parent_id];
                         } elseif (!empty($stb_feature['variants'])) {
-                            $params['stc_id'] = $_SESSION['stc_id'][$main_parent_id] = reset(array_keys($stb_feature['variants']));
+                            $keys = array_keys($stb_feature['variants']);
+                            $params['stc_id'] = $_SESSION['stc_id'][$main_parent_id] = reset($keys);
                         }
                     }
                     if (!empty($params['stc_id']) && !empty($subtabs_categorization[$params['stc_id']])) {
