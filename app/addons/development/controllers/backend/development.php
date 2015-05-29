@@ -459,6 +459,15 @@ if ($mode == 'calculate_balance') {
     fn_print_die(Memcache::instance()->call('stats'));
 } elseif ($mode == 'get_memcached') {
     fn_print_die(Memcache::instance()->call('getAll', $_REQUEST['key']));
+} elseif ($mode == 'fix_po') {
+    $options = db_get_array("SELECT * FROM ?:product_options_descriptions WHERE description LIKE '%page_id=58%'");
+    if (!empty($options)) {
+        foreach ($options as $i => $opt) {
+            $desc = str_replace('page_id=58', 'page_id=41', $opt['description']);
+            db_query("UPDATE ?:product_options_descriptions SET description = ?s WHERE option_id = ?i AND lang_code = ?s", $desc, $opt['option_id'], $opt['lang_code']);
+        }
+    }
+    fn_print_die($options);
 }
 
 function fn_normalize_string($string)
