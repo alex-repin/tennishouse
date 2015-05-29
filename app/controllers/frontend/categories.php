@@ -132,7 +132,9 @@ if ($mode == 'catalog') {
                             if (!empty($vr_data['variant_code']) && !in_array($vr_data['variant_code'], array_keys($tab_groups))) {
                                 $tab_groups[$vr_data['variant_code']] = $key;
                                 $lang_var = __("tab_groups_" . $tb_feature['feature_code'] . '_' . $vr_data['variant_code']);
-                                $tb_feature['variants'][$key]['variant'] = ($lang_var[0] !== '_') ? $lang_var : $tb_feature['variants'][$key]['variant'];
+                                if (!empty($lang_var) && $lang_var[0] != '_') {
+                                    $tb_feature['variants'][$key]['variant'] = $lang_var;
+                                }
                             } elseif (!empty($vr_data['variant_code'])) {
                                 $tabs_categorization[$tab_groups[$vr_data['variant_code']]] = array_merge($tabs_categorization[$tab_groups[$vr_data['variant_code']]], $tabs_categorization[$key]);
                                 unset($tabs_categorization[$key]);

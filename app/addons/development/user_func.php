@@ -837,7 +837,9 @@ function fn_get_player_data($player_id)
     $player_data = db_get_row("SELECT $field_list FROM ?:players LEFT JOIN ?:players_gear ON ?:players.player_id = ?:players_gear.player_id ?p WHERE ?:players.player_id = ?i  ?p", $join, $player_id, $condition);
 
     if (!empty($player_data)) {
-        $player_data['website'] = (strpos($player_data['website'], 'http://') === false) ? ('http://' . $player_data['website']) : $player_data['website'];
+        if (!empty($player_data['website'])) {
+            $player_data['website'] = (strpos($player_data['website'], 'http://') === false) ? ('http://' . $player_data['website']) : $player_data['website'];
+        }
         $player_data['main_pair'] = fn_get_image_pairs($player_id, 'player', 'M', true, true);
         $player_data['bg_image'] = fn_get_image_pairs($player_id, 'player', 'B', false, true);
         $player_data['gear'] = db_get_fields("SELECT product_id FROM ?:players_gear WHERE player_id = ?i", $player_id);
