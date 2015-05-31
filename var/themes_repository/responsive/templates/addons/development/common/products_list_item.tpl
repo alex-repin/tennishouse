@@ -22,7 +22,7 @@
         {$smarty.capture.$discount_label nofilter}
         
         <div class="ty-grid-list__brand-image">
-            <a href="{"products.view?product_id=`$product.product_id`"|fn_url}">
+            <a href="{"products.view?product_id=`$product.product_id`{if $product.ohash}&`$product.ohash`{/if}"|fn_url}">
             {include file="addons/development/common/brand_logo.tpl"  brand=$product.brand brand_variant_id=$product.brand.variant_id}
             </a>
         </div>

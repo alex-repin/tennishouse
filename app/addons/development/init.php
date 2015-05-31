@@ -47,6 +47,7 @@ fn_register_hooks(
     'update_product_option_post',
     'get_product_option_data_post',
     'get_product_options_post',
+    'get_product_options',
     'update_shipping',
     'prepare_checkout_payment_methods',
     'shippings_get_shippings_list_post',
@@ -57,5 +58,6 @@ fn_register_hooks(
     'cron_routine',
     'get_filters_products_count_before_select',
     'gather_additional_products_data_post',
-    'is_shared_product_pre'
+    'is_shared_product_pre',
+    'apply_option_modifiers_pre'
 );

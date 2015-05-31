@@ -129,6 +129,10 @@ if ($mode == 'search') {
 
     if (!empty($_REQUEST['combination'])) {
         $product['combination'] = $_REQUEST['combination'];
+    } elseif (!empty($_REQUEST['ohash'])) {
+        $product['selected_options'] = $_REQUEST['ohash'];
+    } else {
+        $product['get_default_options'] = 'Y';
     }
 
     fn_gather_additional_product_data($product, true, true);

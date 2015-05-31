@@ -10,7 +10,7 @@
                     <div class="controls">
                         <select name="global_option[id]" id="global_option_id">
                             {foreach from=$global_options item="option_" key="id"}
-                                <option value="{$option_.option_id}">{$option_.option_name}{if $option_.company_id} ({__("vendor")}: {$option_.company_id|fn_get_company_name}){/if}</option>
+                                <option value="{$option_.option_id}">{if $option_.option_note}{$option_.option_note}: {/if}{$option_.option_name}{if $option_.company_id} ({__("vendor")}: {$option_.company_id|fn_get_company_name}){/if}</option>
                             {/foreach}
                         </select>
                     </div>

@@ -485,6 +485,7 @@ function fn_gather_additional_products_data(&$products, $params)
     
     if (!fn_allowed_for('ULTIMATE:FREE')) {
         $products_exceptions = fn_get_products_exceptions($product_ids, true);
+//        $products_inventory = db_get_hash_multi_array("SELECT product_id, combination FROM ?:product_options_inventory WHERE product_id IN (?n) AND amount > 0 AND combination != ''", array('product_id', 'combination'), $product_ids);
     }
     
     // foreach $products
@@ -541,19 +542,23 @@ function fn_gather_additional_products_data(&$products, $params)
                 $product['product_options'] = (!empty($selected_options)) ? fn_get_selected_product_options($product['product_id'], $selected_options, CART_LANGUAGE) : $product_options[$product_id];
             }
 
+            $product['exceptions'] = $products_exceptions[$product_id];
+            $product['inventory_combinations'] = $products_inventory[$product_id];
             $product = fn_apply_options_rules($product);
 
             if (!empty($params['get_icon']) || !empty($params['get_detailed'])) {
                 // Get product options images
-                if (!empty($product['combination_hash']) && !empty($product['product_options'])) {
-                    $combination_images[$product_id] = $product['combination_hash'];
-                }
+//                 if (!empty($product['combination_hash']) && !empty($product['product_options'])) {
+//                     $combination_images[$product_id] = $product['combination_hash'];
+//                 }
             }
             $product['has_options'] = !empty($product['product_options']);
 
             if (!fn_allowed_for('ULTIMATE:FREE')) {
-                $product = fn_apply_exceptions_rules($product, $products_exceptions[$product_id]);
+                $product = fn_apply_exceptions_rules($product);
             }
+            unset($product['exceptions']);
+            unset($product['inventory_combinations']);
 
             // Change price
             $selected_options = isset($product['selected_options']) ? $product['selected_options'] : array();
@@ -2945,7 +2950,7 @@ function fn_get_product_options($product_ids, $lang_code = CART_LANGUAGE, $only_
         );
         if (!$skip_global) {
             $global_options = db_get_hash_multi_array(
-                "SELECT c.product_id AS cur_product_id, a.*, b.option_name, b.option_text, b.description, b.inner_hint, b.incorrect_message, b.comment"
+                "SELECT c.product_id AS cur_product_id, a.*, b.option_name, b.option_text, b.description, b.inner_hint, b.incorrect_message, b.comment, b.default_text"
                 . " FROM ?:product_options as a"
                 . " LEFT JOIN ?:product_options_descriptions as b ON a.option_id = b.option_id AND b.lang_code = ?s"
                 . " LEFT JOIN ?:product_global_option_links as c ON c.option_id = a.option_id"
@@ -2961,7 +2966,7 @@ function fn_get_product_options($product_ids, $lang_code = CART_LANGUAGE, $only_
     } else {
         //we need a separate query for global options
         $options = db_get_hash_multi_array(
-            "SELECT a.*, b.option_name, b.option_text, b.description, b.inner_hint, b.incorrect_message, b.comment"
+            "SELECT a.*, b.option_name, b.option_text, b.description, b.inner_hint, b.incorrect_message, b.comment, b.default_text"
             . " FROM ?:product_options as a"
             . $join
             . " WHERE a.product_id = 0" . $condition . $_status
@@ -3348,8 +3353,8 @@ function fn_apply_options_modifiers($product_options, $base_value, $type, $orig_
                 foreach ($orig_options as $_opt) {
                     if ($_opt['value'] == $variant_id && !empty($variant_id)) {
                         $_mod = array();
-                        $_mod['modifier'] = $_opt['modifier'];
-                        $_mod['modifier_type'] = $_opt['modifier_type'];
+                        $_mod['modifier'] = $_opt['variants'][$variant_id]['modifier'];
+                        $_mod['modifier_type'] = $_opt['variants'][$variant_id]['modifier_type'];
                     }
                 }
             }
@@ -3485,7 +3490,11 @@ function fn_get_default_product_options($product_id, $get_all = false, $product 
     fn_set_hook('get_default_product_options_pre', $product_id, $get_all, $product, $selectable_option_types);
 
     if (!fn_allowed_for('ULTIMATE:FREE')) {
-        $exceptions = fn_get_product_exceptions($product_id, true);
+        if (!isset($product['exceptions'])) {
+            $exceptions = fn_get_product_exceptions($product_id, true);
+        } else {
+            $exceptions = $product['exceptions'];
+        }
         $exceptions_type = (empty($product['exceptions_type']))? db_get_field('SELECT exceptions_type FROM ?:products WHERE product_id = ?i', $product_id) : $product['exceptions_type'];
     }
 
@@ -3506,9 +3515,9 @@ function fn_get_default_product_options($product_id, $get_all = false, $product 
         foreach ($product_options as $option_id => $option) {
             if (!empty($option['variants'])) {
                 // [tennishouse]
-                 if ($option['option_type'] != 'S' || $option['required'] !='Y') {
+//                  if ($option['option_type'] != 'S' || $option['required'] !='Y') {
                     $default[$option_id] = key($option['variants']);
-                 }
+//                  }
                 // [tennishouse]
                 foreach ($option['variants'] as $variant_id => $variant) {
                     $options[$option_id][$variant_id] = true;
@@ -3528,7 +3537,11 @@ function fn_get_default_product_options($product_id, $get_all = false, $product 
 
     $inventory_combinations = array();
     if ($track_with_options == ProductTracking::TRACK_WITH_OPTIONS) {
-        $inventory_combinations = db_get_array("SELECT combination FROM ?:product_options_inventory WHERE product_id = ?i AND amount > 0 AND combination != ''", $product_id);
+        if (!isset($product['inventory_combinations'])) {
+            $inventory_combinations = db_get_array("SELECT combination FROM ?:product_options_inventory WHERE product_id = ?i AND amount > 0 AND combination != ''", $product_id);
+        } else {
+            $inventory_combinations = $product['inventory_combinations'];
+        }
         if (!empty($inventory_combinations)) {
             $_combinations = array();
             foreach ($inventory_combinations as $_combination) {
@@ -8420,7 +8433,8 @@ function fn_apply_options_rules($product)
         }
     }
 
-    if (empty($selected_options) && $product['options_type'] == 'P') {
+    // [tennishouse]
+    if (empty($selected_options)/* && $product['options_type'] == 'P'*/ && $product['get_default_options'] == 'Y') {
         $selected_options = fn_get_default_product_options($product['product_id'], true, $product);
     }
 
@@ -8428,9 +8442,20 @@ function fn_apply_options_rules($product)
         $product['changed_option'] = '';
 
     } elseif (empty($product['changed_option'])) {
-        end($selected_options);
+        
+        if ($product['options_type'] == 'S') {
+            foreach ($selected_options as $opt_id => $vr_id) {
+                if ($product['product_options'][$opt_id]['show_on_catalog'] != 'Y') {
+                    unset($selected_options[$opt_id]);
+                }
+            }
+            reset($selected_options);
+        } else {
+            end($selected_options);
+        }
         $product['changed_option'] = key($selected_options);
     }
+    // [tennishouse]
 
     if ($product['options_type'] == 'S') {
         empty($product['changed_option']) ? $allow = 1 : $allow = 0;
@@ -8462,24 +8487,27 @@ function fn_apply_options_rules($product)
         $product['simultaneous'] = $simultaneous;
     }
 
+    $extra = array();
     // Restore selected values
     if (!empty($selected_options)) {
         foreach ($product['product_options'] as $_id => $option) {
             if (isset($selected_options[$option['option_id']])) {
+                $extra['inventories'][$option['option_id']] = $option['inventory'];
                 $product['product_options'][$_id]['value'] = $selected_options[$option['option_id']];
             }
         }
     }
 
+    $extra['product_options'] = $selected_options;
     // Generate combination hash to get images. (Also, if the tracking with options, get amount and product code)
-    $combination_hash = fn_generate_cart_id($product['product_id'], array('product_options' => $selected_options), true);
+    $combination_hash = fn_generate_cart_id($product['product_id'], $extra, true);
     $product['combination_hash'] = $combination_hash;
 
     // Change product code and amount
     if (!empty($product['tracking']) && $product['tracking'] == ProductTracking::TRACK_WITH_OPTIONS) {
         $product['hide_stock_info'] = false;
             //[tennishouse]
-//         if ($product['options_type'] == 'S') {
+        if ($product['options_type'] == 'S') {
             foreach ($product['product_options'] as $option) {
                 $option_id = $option['option_id'];
                 if ($option['inventory'] == 'Y' && empty($product['selected_options'][$option_id])) {
@@ -8488,7 +8516,7 @@ function fn_apply_options_rules($product)
                     break;
                 }
             }
-//         }
+        }
             //[tennishouse]
 
         if (!$product['hide_stock_info']) {
@@ -8522,7 +8550,7 @@ function fn_apply_options_rules($product)
     return $product;
 }
 
-function fn_apply_exceptions_rules($product, $exceptions = array())
+function fn_apply_exceptions_rules($product)
 {
     /**
      * Changes product data before applying options exceptions rules
@@ -8541,8 +8569,10 @@ function fn_apply_exceptions_rules($product, $exceptions = array())
 //     }
     // [tennishouse]
 
-    if (!isset($exceptions)) {
+    if (!isset($product['exceptions'])) {
         $exceptions = fn_get_product_exceptions($product['product_id'], true);
+    } else {
+        $exceptions = $product['exceptions'];
     }
 
     if (empty($exceptions)) {

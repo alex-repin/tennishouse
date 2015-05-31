@@ -124,18 +124,20 @@ if ($mode == 'catalog') {
                             $tabs_categorization['other'][] = $product;
                         }
                     }
-                    $tab_groups = array();
+                    $tab_groups = $tab_ids = array();
                     foreach ($tb_feature['variants'] as $key => $vr_data) {
                         if (empty($tabs_categorization[$key])) {
                             unset($tb_feature['variants'][$key]);
                         } else {
                             if (!empty($vr_data['variant_code']) && !in_array($vr_data['variant_code'], array_keys($tab_groups))) {
+                                $tab_ids[$key][] = $key;
                                 $tab_groups[$vr_data['variant_code']] = $key;
                                 $lang_var = __("tab_groups_" . $tb_feature['feature_code'] . '_' . $vr_data['variant_code']);
                                 if (!empty($lang_var) && $lang_var[0] != '_') {
                                     $tb_feature['variants'][$key]['variant'] = $lang_var;
                                 }
                             } elseif (!empty($vr_data['variant_code'])) {
+                                $tab_ids[$tab_groups[$vr_data['variant_code']]][] = $key;
                                 $tabs_categorization[$tab_groups[$vr_data['variant_code']]] = array_merge($tabs_categorization[$tab_groups[$vr_data['variant_code']]], $tabs_categorization[$key]);
                                 unset($tabs_categorization[$key]);
                                 unset($tb_feature['variants'][$key]);
@@ -179,9 +181,10 @@ if ($mode == 'catalog') {
                         $products = $tabs_categorization[$params['tc_id']];
                         $tab_string = $tb_feature['variants'][$params['tc_id']]['variant'];
                     }
-        
+                    
                     Registry::get('view')->assign('tb_feature', $tb_feature);
                     Registry::get('view')->assign('active_tab', $params['tc_id']);
+                    Registry::get('view')->assign('tab_ids', $tab_ids);
                 }
             }
 

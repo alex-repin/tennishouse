@@ -1,3 +1,5 @@
+{script src="js/addons/development/jquery.selectbox-0.2.js"}
+
 <script type="text/javascript">
 {literal}
 

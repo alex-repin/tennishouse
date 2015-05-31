@@ -1432,7 +1432,7 @@ var Tygh = {
             _.scrolling = true;
             if (!$.ceDialog('inside_dialog', {jelm: elm})) {
                 obj = $($.browser.opera ? 'html' : 'html,body');
-                elm_offset -= offset;
+                elm_offset -= $(window).height() / 2;
             } else {
 
                 obj = $.ceDialog('get_last').find('.object-container');

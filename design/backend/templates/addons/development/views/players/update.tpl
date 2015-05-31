@@ -161,6 +161,12 @@
     {if !$id}
         {include file="buttons/save_cancel.tpl" but_role="submit-link" but_target_form="players_form" but_name="dispatch[players.update]"}
     {else}
+        {$view_uri = "players.view?player_id=`$id`"|fn_get_preview_url:$player_data:$auth.user_id}
+
+        {capture name="tools_list"}
+            <li>{btn type="list" target="_blank" text=__("preview") href=$view_uri}</li>
+        {/capture}
+        {dropdown content=$smarty.capture.tools_list}
         {include file="buttons/save_cancel.tpl" but_name="dispatch[players.update]" but_role="submit-link" but_target_form="players_form" save=$id}
     {/if}
 {/capture}

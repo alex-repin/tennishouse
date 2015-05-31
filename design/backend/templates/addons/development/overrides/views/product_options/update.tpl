@@ -57,6 +57,13 @@
         </div>
 
         <div class="control-group">
+            <label for="elm_option_note_{$id}" class="control-label">{__("option_note")}</label>
+            <div class="controls">
+            <input class="span9" type="text" name="option_data[option_note]" id="elm_option_note_{$id}" value="{$option_data.option_note}"/>
+            </div>
+        </div>
+
+        <div class="control-group">
             <label class="control-label" for="elm_position_{$id}">{__("position")}</label>
             <div class="controls">
             <input type="text" name="option_data[position]" id="elm_position_{$id}" value="{$option_data.position}" size="3" class="input-small" />
@@ -136,6 +143,14 @@
                 {/if}
                 </div>
             </div>
+        {/if}
+        
+        {if !$option_data.option_type || $option_data.option_type == 'S'}
+        <div class="control-group">
+            <label class="control-label" for="elm_option_default_text_{$id}">{__("default_text")}</label>
+            <div class="controls">
+            <input type="text" name="option_data[default_text]" id="elm_option_default_text_{$id}" value="{$option_data.default_text}" class="span9" />
+        </div>
         {/if}
         
         <div id="extra_options_{$id}" {if $option_data.option_type != "I" && $option_data.option_type != "T"}class="hidden"{/if}>

@@ -20,6 +20,32 @@ use Tygh\FeaturesCache;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_update_product_tracking($product_id)
+{
+    $options_left = db_get_fields("SELECT po.option_id, go.option_id FROM ?:product_options AS po LEFT JOIN ?:product_global_option_links AS go ON go.option_id = po.option_id WHERE (po.product_id = ?i OR go.product_id = ?i) AND po.option_type IN ('S','R','C') AND po.inventory = 'Y'", $product_id, $product_id);
+    if (empty($options_left)) {
+        $tracking = db_get_field("SELECT tracking FROM ?:products WHERE product_id = ?i", $product_id);
+        if ($tracking == 'O') {
+            db_query("UPDATE ?:products SET tracking = 'B' WHERE product_id = ?i", $product_id);
+        }
+    } else {
+        db_query("UPDATE ?:products SET tracking = 'O' WHERE product_id = ?i", $product_id);
+    }
+}
+
+function fn_filter_categroies(&$categories)
+{
+    if (!empty($categories)) {
+        foreach ($categories as $i => $cat) {
+            if (empty($cat['subcategories']) && $cat['product_count'] == 0 && empty($cat['has_children'])) {
+                unset($categories[$i]);
+            } elseif (!empty($cat['subcategories'])) {
+                fn_filter_categroies($categories[$i]['subcategories']);
+            }
+        }
+    }
+}
+
 function fn_set_store_gender_mode($mode)
 {
     $gender_mode = fn_get_store_gender_mode();
@@ -816,11 +842,19 @@ function fn_insert_before_key($originalArray, $originalKey, $insertKey, $insertV
     foreach( $originalArray as $key => $value ) {
 
         if( !$inserted && $key === $originalKey ) {
-            $newArray[ $insertKey ] = $insertValue;
+            if (!empty($insertKey)) {
+                $newArray[$insertKey] = $insertValue;
+            } else {
+                $newArray[] = $insertValue;
+            }
             $inserted = true;
         }
 
-        $newArray[ $key ] = $value;
+        if (!empty($insertKey)) {
+            $newArray[ $key ] = $value;
+        } else {
+            $newArray[] = $value;
+        }
 
     }
 

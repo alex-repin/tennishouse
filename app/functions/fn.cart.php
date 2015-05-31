@@ -4174,13 +4174,20 @@ function fn_generate_cart_id($product_id, $extra, $only_selectable = false)
 
         // Try to select all options (including Globals)
         Registry::set('runtime.skip_sharing_selection', true);
-
+        // [tennishouse]
+        if (!isset($extra['inventories'])) {
+            $inventories = db_get_hash_single_array("SELECT inventory, option_id FROM ?:product_options WHERE option_id IN (?n)", array('option_id', 'inventory'), array_keys($extra['product_options']));
+        } else {
+            $inventories = $extra['inventories'];
+        }
+        
         foreach ($extra['product_options'] as $k => $v) {
-            if ($only_selectable == true && ((string) intval($v) != $v || db_get_field("SELECT inventory FROM ?:product_options WHERE option_id = ?i", $k) != 'Y')) {
+            if ($only_selectable == true && ((string) intval($v) != $v || $inventories[$k] != 'Y')) {
                 continue;
             }
             $_cid[] = $v;
         }
+        // [tennishouse]
 
         Registry::set('runtime.skip_sharing_selection', false);
     }

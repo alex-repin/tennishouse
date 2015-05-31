@@ -35,71 +35,75 @@
     <div class="ty-control-group ty-product-options__item{if !$capture_options_vs_qty} product-list-field{/if} clearfix" id="opt_{$obj_prefix}{$id}_{$po.option_id}">
         {if !("SRC"|strpos:$po.option_type !== false && !$po.variants && $po.missing_variants_handling == "H")}
             <label {if $po.option_type !== "R" && $po.option_type !== "F"}for="option_{$obj_prefix}{$id}_{$po.option_id}"{/if} class="ty-control-group__label ty-product-options__item-label{if $po.required == "Y"} cm-required{/if}{if $po.regexp} cm-regexp{/if}" {if $po.regexp}data-ca-regexp="{$po.regexp}" data-ca-message="{$po.incorrect_message}"{/if}>{$po.option_name}{if $po.description|trim}{include file="common/tooltip.tpl" tooltip=$po.description}{/if}:</label>
-        {if $po.option_type == "S"} {*Selectbox*}
-            {if $po.variants}
-                {if ($po.disabled || $disabled) && !$po.not_required}<input type="hidden" value="{$po.value}" name="{$name}[{$id}][product_options][{$po.option_id}]" id="option_{$obj_prefix}{$id}_{$po.option_id}" />{/if}
-                <select name="{$name}[{$id}][product_options][{$po.option_id}]" {if !$po.disabled && !$disabled}id="option_{$obj_prefix}{$id}_{$po.option_id}"{/if} onchange="{if $product.options_update}fn_change_options('{$obj_prefix}{$id}', '{$id}', '{$po.option_id}');{else} fn_change_variant_image('{$obj_prefix}{$id}', '{$po.option_id}');{/if}" {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}disabled="disabled" class="disabled"{/if}>
-                    {if $product.options_type == "S" || $po.required == "Y"}
-                        {if !$runtime.checkout || $po.disabled || $disabled || ($runtime.checkout && !$po.value) || $po.required == "Y"}
-                            <option value="">{if $po.disabled || $disabled}{__("select_option_above")}{else}{__("please_select_one")}{/if}</option>
+        {*if $product.options_type == "S" && (!$runtime.checkout || $po.disabled || $disabled || ($runtime.checkout && !$po.value))}
+            <div class="ty-product-options__select-above">{__("select_option_above")}</div>
+        {else*}
+            {if $po.option_type == "S"} {*Selectbox*}
+                {if $po.variants}
+                    {if ($po.disabled || $disabled) && !$po.not_required}<input type="hidden" value="{$po.value}" name="{$name}[{$id}][product_options][{$po.option_id}]" id="option_{$obj_prefix}{$id}_{$po.option_id}" />{/if}
+                    <select name="{$name}[{$id}][product_options][{$po.option_id}]" {if !$po.disabled && !$disabled}id="option_{$obj_prefix}{$id}_{$po.option_id}"{/if} onchange="{if $product.options_update}fn_change_options('{$obj_prefix}{$id}', '{$id}', '{$po.option_id}');{else} fn_change_variant_image('{$obj_prefix}{$id}', '{$po.option_id}');{/if}" class="cm-dropdown {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}disabled{/if}" {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}disabled="disabled"{/if}>
+                        {if $product.options_type == "S"}
+                            {if !$runtime.checkout || $po.disabled || $disabled || ($runtime.checkout && !$po.value)}
+                                <option value="">{if $po.disabled || $disabled}{__("select_option_above")}{elseif $po.default_text} - {$po.default_text} - {else}{__("please_select_one")}{/if}</option>
+                            {/if}
                         {/if}
-                    {/if}
-                    {foreach from=$po.variants item="vr" name=vars}
-                        {if !($po.disabled || $disabled) || (($po.disabled || $disabled) && $po.value && $po.value == $vr.variant_id)}
-                            <option value="{$vr.variant_id}" {if $po.value == $vr.variant_id}{assign var="selected_variant" value=$vr.variant_id}selected="selected"{/if}>{$vr.variant_name} {if $show_modifiers}{hook name="products:options_modifiers"}{if $vr.modifier|floatval}({include file="common/modifier.tpl" mod_type=$vr.modifier_type mod_value=$vr.modifier display_sign=true}){/if}{/hook}{/if}</option>
-                        {/if}
-                    {/foreach}
-                </select>
-            {else}
-                <input type="hidden" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$po.value}" id="option_{$obj_prefix}{$id}_{$po.option_id}" />
-                <span>{__("na")}</span>
-            {/if}
-        {elseif $po.option_type == "R"} {*Radiobutton*}
-            {if $po.variants}
-                <ul id="option_{$obj_prefix}{$id}_{$po.option_id}_group" class="ty-product-options__elem">
-                    {if !$po.disabled && !$disabled}
-                        <li class="hidden"><input type="hidden" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$po.value}" id="option_{$obj_prefix}{$id}_{$po.option_id}" /></li>
-                        
-                        {foreach from=$po.variants item="vr" name="vars"}
-                            <li><label id="option_description_{$obj_prefix}{$id}_{$po.option_id}_{$vr.variant_id}" class="ty-product-options__box option-items"><input type="radio" class="radio" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$vr.variant_id}" {if $po.value == $vr.variant_id }{assign var="selected_variant" value=$vr.variant_id}checked="checked"{/if} onclick="{if $product.options_update}fn_change_options('{$obj_prefix}{$id}', '{$id}', '{$po.option_id}');{else} fn_change_variant_image('{$obj_prefix}{$id}', '{$po.option_id}', '{$vr.variant_id}');{/if}" {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}disabled="disabled"{/if} />
-                            {$vr.variant_name}&nbsp;{if  $show_modifiers}{hook name="products:options_modifiers"}{if $vr.modifier|floatval}({include file="common/modifier.tpl" mod_type=$vr.modifier_type mod_value=$vr.modifier display_sign=true}){/if}{/hook}{/if}</label></li>
+                        {foreach from=$po.variants item="vr" name=vars}
+                            {if !($po.disabled || $disabled) || (($po.disabled || $disabled) && $po.value && $po.value == $vr.variant_id)}
+                                <option value="{$vr.variant_id}" {if $po.value == $vr.variant_id}{assign var="selected_variant" value=$vr.variant_id}selected="selected"{/if}>{$po.option_name} {$vr.variant_name} {if $show_modifiers}{hook name="products:options_modifiers"}{if $vr.modifier|floatval}({include file="common/modifier.tpl" mod_type=$vr.modifier_type mod_value=$vr.modifier display_sign=true}){/if}{/hook}{/if}</option>
+                            {/if}
                         {/foreach}
-                    {elseif $po.value}
-                        {$po.variants[$po.value].variant_name}
-                    {/if}
-                </ul>
-                {if !$po.value && $product.options_type == "S" && !($po.disabled || $disabled)}<p class="ty-product-options__description ty-clear-both">{__("please_select_one")}</p>{elseif !$po.value && $product.options_type == "S" && ($po.disabled || $disabled)}<p class="ty-product-options__description ty-clear-both">{__("select_option_above")}</p>{/if}
-            {else}
-                <input type="hidden" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$po.value}" id="option_{$obj_prefix}{$id}_{$po.option_id}" />
-                <span>{__("na")}</span>
-            {/if}
+                    </select>
+                {else}
+                    <input type="hidden" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$po.value}" id="option_{$obj_prefix}{$id}_{$po.option_id}" />
+                    <span>{__("na")}</span>
+                {/if}
+            {elseif $po.option_type == "R"} {*Radiobutton*}
+                {if $po.variants}
+                    <ul id="option_{$obj_prefix}{$id}_{$po.option_id}_group" class="ty-product-options__elem">
+                        {if !$po.disabled && !$disabled}
+                            <li class="hidden"><input type="hidden" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$po.value}" id="option_{$obj_prefix}{$id}_{$po.option_id}" /></li>
+                            
+                            {foreach from=$po.variants item="vr" name="vars"}
+                                <li><label id="option_description_{$obj_prefix}{$id}_{$po.option_id}_{$vr.variant_id}" class="ty-product-options__box option-items"><input type="radio" class="radio" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$vr.variant_id}" {if $po.value == $vr.variant_id }{assign var="selected_variant" value=$vr.variant_id}checked="checked"{/if} onclick="{if $product.options_update}fn_change_options('{$obj_prefix}{$id}', '{$id}', '{$po.option_id}');{else} fn_change_variant_image('{$obj_prefix}{$id}', '{$po.option_id}', '{$vr.variant_id}');{/if}" {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}disabled="disabled"{/if} />
+                                {$vr.variant_name}&nbsp;{if  $show_modifiers}{hook name="products:options_modifiers"}{if $vr.modifier|floatval}({include file="common/modifier.tpl" mod_type=$vr.modifier_type mod_value=$vr.modifier display_sign=true}){/if}{/hook}{/if}</label></li>
+                            {/foreach}
+                        {elseif $po.value}
+                            {$po.variants[$po.value].variant_name}
+                        {/if}
+                    </ul>
+                    {if !$po.value && $product.options_type == "S" && !($po.disabled || $disabled)}<p class="ty-product-options__description ty-clear-both">{__("please_select_one")}</p>{elseif !$po.value && $product.options_type == "S" && ($po.disabled || $disabled)}<p class="ty-product-options__description ty-clear-both">{__("select_option_above")}</p>{/if}
+                {else}
+                    <input type="hidden" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$po.value}" id="option_{$obj_prefix}{$id}_{$po.option_id}" />
+                    <span>{__("na")}</span>
+                {/if}
 
-        {elseif $po.option_type == "C"} {*Checkbox*}
-            {foreach from=$po.variants item="vr"}
-            {if $vr.position == 0}
-                <input id="unchecked_option_{$obj_prefix}{$id}_{$po.option_id}" type="hidden" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$vr.variant_id}" {if $po.disabled || $disabled}disabled="disabled"{/if} />
-            {else}
-                <label class="ty-product-options__box option-items">
-                    <span class="cm-field-container">
-                        <input id="option_{$obj_prefix}{$id}_{$po.option_id}" type="checkbox" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$vr.variant_id}" class="checkbox" {if $po.value == $vr.variant_id}checked="checked"{/if} {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}disabled="disabled"{/if} {if $product.options_update}onclick="fn_change_options('{$obj_prefix}{$id}', '{$id}', '{$po.option_id}');"{/if}/>
-                        {if $show_modifiers}{hook name="products:options_modifiers"}{if $vr.modifier|floatval}({include file="common/modifier.tpl" mod_type=$vr.modifier_type mod_value=$vr.modifier display_sign=true}){/if}{/hook}{/if}
-                    </span>
-                </label>
-            {/if}
-            {foreachelse}
-                <label class="ty-product-options__box option-items"><input type="checkbox" class="checkbox" disabled="disabled" />
-                {if $show_modifiers}{hook name="products:options_modifiers"}{if $vr.modifier|floatval}({include file="common/modifier.tpl" mod_type=$vr.modifier_type mod_value=$vr.modifier display_sign=true}){/if}{/hook}{/if}</label>
-            {/foreach}
+            {elseif $po.option_type == "C"} {*Checkbox*}
+                {foreach from=$po.variants item="vr"}
+                {if $vr.position == 0}
+                    <input id="unchecked_option_{$obj_prefix}{$id}_{$po.option_id}" type="hidden" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$vr.variant_id}" {if $po.disabled || $disabled}disabled="disabled"{/if} />
+                {else}
+                    <label class="ty-product-options__box option-items">
+                        <span class="cm-field-container">
+                            <input id="option_{$obj_prefix}{$id}_{$po.option_id}" type="checkbox" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$vr.variant_id}" class="checkbox" {if $po.value == $vr.variant_id}checked="checked"{/if} {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}disabled="disabled"{/if} {if $product.options_update}onclick="fn_change_options('{$obj_prefix}{$id}', '{$id}', '{$po.option_id}');"{/if}/>
+                            {if $show_modifiers}{hook name="products:options_modifiers"}{if $vr.modifier|floatval}({include file="common/modifier.tpl" mod_type=$vr.modifier_type mod_value=$vr.modifier display_sign=true}){/if}{/hook}{/if}
+                        </span>
+                    </label>
+                {/if}
+                {foreachelse}
+                    <label class="ty-product-options__box option-items"><input type="checkbox" class="checkbox" disabled="disabled" />
+                    {if $show_modifiers}{hook name="products:options_modifiers"}{if $vr.modifier|floatval}({include file="common/modifier.tpl" mod_type=$vr.modifier_type mod_value=$vr.modifier display_sign=true}){/if}{/hook}{/if}</label>
+                {/foreach}
 
-        {elseif $po.option_type == "I"} {*Input*}
-            <input id="option_{$obj_prefix}{$id}_{$po.option_id}" type="text" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$po.value|default:$po.inner_hint}" {if $product.exclude_from_calculate && !$product.aoc}disabled="disabled"{/if} class="ty-valign ty-input-text{if $po.inner_hint} cm-hint{/if}{if $product.exclude_from_calculate && !$product.aoc} disabled{/if}" {if $po.inner_hint}title="{$po.inner_hint}"{/if} />
-        {elseif $po.option_type == "T"} {*Textarea*}
-            <textarea id="option_{$obj_prefix}{$id}_{$po.option_id}" class="ty-product-options__textarea{if $po.inner_hint} cm-hint{/if}{if $product.exclude_from_calculate && !$product.aoc} disabled{/if}" rows="3" name="{$name}[{$id}][product_options][{$po.option_id}]" {if $product.exclude_from_calculate && !$product.aoc}disabled="disabled"{/if} {if $po.inner_hint}title="{$po.inner_hint}"{/if} >{$po.value|default:$po.inner_hint}</textarea>
-        {elseif $po.option_type == "F"} {*File*}
-            <div class="ty-product-options__elem ty-product-options__fileuploader">
-                {include file="common/fileuploader.tpl" images=$product.extra.custom_files[$po.option_id] var_name="`$name`[`$po.option_id``$id`]" multiupload=$po.multiupload hidden_name="`$name`[custom_files][`$po.option_id``$id`]" hidden_value="`$id`_`$po.option_id`" label_id="option_`$obj_prefix``$id`_`$po.option_id`" prefix=$obj_prefix}
-            </div>
-        {/if}
+            {elseif $po.option_type == "I"} {*Input*}
+                <input id="option_{$obj_prefix}{$id}_{$po.option_id}" type="text" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$po.value|default:$po.inner_hint}" {if $product.exclude_from_calculate && !$product.aoc}disabled="disabled"{/if} class="ty-valign ty-input-text{if $po.inner_hint} cm-hint{/if}{if $product.exclude_from_calculate && !$product.aoc} disabled{/if}" {if $po.inner_hint}title="{$po.inner_hint}"{/if} />
+            {elseif $po.option_type == "T"} {*Textarea*}
+                <textarea id="option_{$obj_prefix}{$id}_{$po.option_id}" class="ty-product-options__textarea{if $po.inner_hint} cm-hint{/if}{if $product.exclude_from_calculate && !$product.aoc} disabled{/if}" rows="3" name="{$name}[{$id}][product_options][{$po.option_id}]" {if $product.exclude_from_calculate && !$product.aoc}disabled="disabled"{/if} {if $po.inner_hint}title="{$po.inner_hint}"{/if} >{$po.value|default:$po.inner_hint}</textarea>
+            {elseif $po.option_type == "F"} {*File*}
+                <div class="ty-product-options__elem ty-product-options__fileuploader">
+                    {include file="common/fileuploader.tpl" images=$product.extra.custom_files[$po.option_id] var_name="`$name`[`$po.option_id``$id`]" multiupload=$po.multiupload hidden_name="`$name`[custom_files][`$po.option_id``$id`]" hidden_value="`$id`_`$po.option_id`" label_id="option_`$obj_prefix``$id`_`$po.option_id`" prefix=$obj_prefix}
+                </div>
+            {/if}
+        {*/if*}
         {/if}
 
         {if $po.comment}
@@ -121,6 +125,7 @@
             <script type="text/javascript">
             (function(_, $) {
                 $('#option_{$obj_prefix}{$id}_{$po.option_id}').css('display', 'none');
+                $('#option_{$obj_prefix}{$id}_{$po.option_id}').removeClass('cm-dropdown');
             }(Tygh, Tygh.$));
             </script>
             <div class="ty-product-variant-image">{$smarty.capture.variant_images nofilter}</div>
@@ -148,6 +153,9 @@
         }
             
         return true;
+    });
+    $('.cm-dropdown').each(function(){
+        $(this).selectbox();
     });
 }(Tygh, Tygh.$));
 </script>

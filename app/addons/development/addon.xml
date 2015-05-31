@@ -214,6 +214,40 @@
         <item>
             ALTER TABLE `cscart_product_feature_variants` ADD `variant_code` VARCHAR( 32 ) NOT NULL ;
         </item>
+        <item>
+            ALTER TABLE `cscart_product_options_descriptions` ADD `default_text` VARCHAR( 255 ) NOT NULL ;
+        </item>
+        <item>
+            ALTER TABLE `cscart_product_options_descriptions` ADD `option_note` VARCHAR( 255 ) NOT NULL ;
+        </item>
+        <item>
+            REPLACE INTO `cscart_settings_objects` (
+                `object_id` ,
+                `edition_type` ,
+                `name` ,
+                `section_id` ,
+                `section_tab_id` ,
+                `type` ,
+                `value` ,
+                `position` ,
+                `is_global` ,
+                `handler` ,
+                `parent_id`
+            ) VALUES (
+                '6589' , 'ROOT,ULT:VENDOR', 'catalog_options_mode', '4', '0', 'K', 'Y', '193', 'Y', '', '0'
+            );
+        </item>
+        <item>
+            REPLACE INTO `cscart_settings_descriptions` (
+                `object_id` ,
+                `object_type` ,
+                `lang_code` ,
+                `value` ,
+                `tooltip`
+            ) VALUES (
+                '6589', 'O', 'ru', 'Дублировать товары по главной опции в списке', ''
+            );
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -438,9 +472,11 @@
         <item lang="ru" id="tabs_categorization">Категоризирвать на вкладки</item>
         <item lang="ru" id="subtabs_categorization">Категоризирвать на подвкладки</item>
         <item lang="ru" id="other">Остальное</item>
+        <item lang="ru" id="default_text">Текст по умолчанию</item>
         <item lang="ru" id="tab_groups_st_l_s">12 метров</item>
         <item lang="ru" id="tab_groups_st_l_r">Бобины</item>
         <item lang="ru" id="tab_groups_r_t_a">Взрослые</item>
         <item lang="ru" id="tab_groups_r_t_k">Детские</item>
+        <item lang="ru" id="option_note">Пометка</item>
     </language_variables>
 </addon>

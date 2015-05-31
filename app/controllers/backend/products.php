@@ -51,6 +51,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             fn_clone_product_options(0, $_REQUEST['product_id'], $_REQUEST['global_option']['id']);
         } else {
             db_query("REPLACE INTO ?:product_global_option_links (option_id, product_id) VALUES(?i, ?i)", $_REQUEST['global_option']['id'], $_REQUEST['product_id']);
+            // [tennishouse]
+            fn_update_product_tracking($_REQUEST['product_id']);
+            // [tennishouse]
 
             if (fn_allowed_for('ULTIMATE')) {
                 fn_ult_share_product_option($_REQUEST['global_option']['id'], $_REQUEST['product_id']);

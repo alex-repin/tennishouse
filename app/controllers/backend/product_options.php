@@ -246,7 +246,9 @@ if ($mode == 'inventory') {
 
         if (!empty($_REQUEST['product_id']) && empty($p_id)) { // we're deleting global option from the product
             db_query("DELETE FROM ?:product_global_option_links WHERE product_id = ?i AND option_id = ?i", $_REQUEST['product_id'], $_REQUEST['option_id']);
-
+            // [tennishouse]
+            fn_update_product_tracking($_REQUEST['product_id']);
+            // [tennishouse]
         } else {
             fn_delete_product_option($_REQUEST['option_id'], $_REQUEST['product_id']);
         }

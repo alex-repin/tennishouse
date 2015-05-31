@@ -205,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             $combination_hash = fn_generate_cart_id($product_id, array('product_options' => $option_data[$product_id]));
                                             $combinations_data[$product_id][$combination_hash]['amount'] = $variant[$amount_num];
                                             if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
-                                                fn_print_r($combinations_data);
+                                                fn_print_r('generate', $combination_hash, $product_id, array('product_options' => $option_data[$product_id]));
                                             }
                                             $is_combination = true;
                                             break;
@@ -220,7 +220,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     }
                                 }
                                 if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
-                                    fn_print_die($combinations_data);
+                                    fn_print_r($combinations_data);
                                 }
                                 if (!empty($combinations_data)) {
                                     $ttl_updated = 0;
@@ -253,6 +253,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     if ($ttl_updated != count($data['data'])) {
                                         $broken_options_products[$product_code] = $data;
                                     }
+                                }
+                                if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
+                                    fn_print_die($broken_options_products);
                                 }
                             }
                         }
@@ -464,10 +467,94 @@ if ($mode == 'calculate_balance') {
     if (!empty($options)) {
         foreach ($options as $i => $opt) {
             $desc = str_replace('page_id=58', 'page_id=41', $opt['description']);
-            db_query("UPDATE ?:product_options_descriptions SET description = ?s WHERE option_id = ?i AND lang_code = ?s", $desc, $opt['option_id'], $opt['lang_code']);
+//            db_query("UPDATE ?:product_options_descriptions SET description = ?s WHERE option_id = ?i AND lang_code = ?s", $desc, $opt['option_id'], $opt['lang_code']);
         }
     }
     fn_print_die($options);
+} elseif ($mode == 'apply_r_go') {
+    $cat_ids = array(
+        'Ручка' => array(
+            '344' => '269',
+            '345' => '269',
+            '346' => '269',
+            '409' => '353',
+        ),
+        'Размер' => array(
+            '373' => '141',
+            '374' => '141',
+            '443' => '141',
+            '377' => '141',
+            '376' => '141',
+            '375' => '141',
+            '378' => '141',
+            '379' => '141',
+            '347' => '141',
+            '345' => '141',
+            '382' => '141',
+            '383' => '141',
+            '444' => '141',
+            '448' => '141',
+            '449' => '141',
+            '446' => '141',
+            '381' => '141',
+            '390' => '209',
+            '391' => '209',
+            '456' => '209',
+            '457' => '209',
+            '455' => '209',
+            '392' => '209',
+            '393' => '209',
+            '459' => '209',
+            '453' => '209',
+            '460' => '209',
+            '452' => '209',
+            '450' => '209',
+            '461' => '209',
+            '451' => '209',
+            '454' => '209',
+            '355' => '112',
+            '441' => '112',
+            '440' => '112',
+            '413' => '2',
+        ),
+    );
+    $params['cid'] = 0;
+    $params['extend'] = array('categories', 'description');
+    $params['subcats'] = 'Y';
+
+    list($products, $search) = fn_get_products($params);
+    fn_gather_additional_products_data($products, array(
+        'get_icon' => false,
+        'get_detailed' => false,
+        'get_additional' => false,
+        'get_options' => true,
+        'get_discounts' => false,
+        'get_features' => false
+    ));
+    if (!empty($products)) {
+        foreach ($products as $i => $product) {
+            if (!empty($product['product_options'])) {
+                foreach ($product['product_options'] as $j => $option)  {
+                    if (in_array($option['option_name'], array_keys($cat_ids)) && !empty($option['product_id'])) {
+                        foreach ($cat_ids[$option['option_name']] as $cid => $goid) {
+                            if (in_array($cid, $product['category_ids'])) {
+                                fn_delete_product_option($option['option_id'], $product['product_id']);
+                                db_query("REPLACE INTO ?:product_global_option_links (option_id, product_id) VALUES(?i, ?i)", $goid, $product['product_id']);
+                                // [tennishouse]
+                                fn_update_product_tracking($product['product_id']);
+                                // [tennishouse]
+
+                                if (fn_allowed_for('ULTIMATE')) {
+                                    fn_ult_share_product_option($goid, $product['product_id']);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    fn_print_die('done');
 }
 
 function fn_normalize_string($string)
