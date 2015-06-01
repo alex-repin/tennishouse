@@ -3644,7 +3644,7 @@ var Tygh = {
             return requirements;
         }
 
-        function _checkFields(form, requirements)
+        function _checkFields(form, requirements, clicked_elm)
         {
             var set_mark, elm, lbl, container, _regexp, _message;
             var message_set = false;
@@ -3808,12 +3808,25 @@ var Tygh = {
                 $('[id="' + elm_id + '_error_message"].help-inline', elm.parent()).remove();
 
                 if (set_mark == true) {
-                    lbl.parent().addClass('error');
-                    elm.addClass('cm-failed-field');
-                    lbl.addClass('cm-failed-label');
+                    if (elm.hasClass('cm-dropdown')) {
+                        var block = elm.parent();
+                        var new_elm = elm.clone();
+                        var option_id = new_elm.attr('id');
+                        new_elm.attr('onchange',"fn_change_notification_option('" + option_id + "', '" + clicked_elm.attr('id') + "');");
+                        var new_block = $('<div>').append(new_elm.clone()).append(block.find('script').clone()).html().str_replace(option_id, 'ntf_' + option_id)
+                        $.ceNotification('show', {
+                            type: 'I', 
+                            title: _.tr('define_option'), 
+                            message: new_block
+                        });
+                    } else {
+                        lbl.parent().addClass('error');
+                        elm.addClass('cm-failed-field');
+                        lbl.addClass('cm-failed-label');
 
-                    if (!elm.hasClass('cm-no-failed-msg')) {
-                        elm.after('<span id="' + elm_id + '_error_message" class="help-inline">' + _getMessage(elm_id) + '</span>');
+                        if (!elm.hasClass('cm-no-failed-msg')) {
+                            elm.after('<span id="' + elm_id + '_error_message" class="help-inline">' + _getMessage(elm_id) + '</span>');
+                        }
                     }
 
                     if (!message_set) {
@@ -3876,7 +3889,7 @@ var Tygh = {
                     form_result = false;
                 }
 
-                check_fields_result = _checkFields(form, requirements);
+                check_fields_result = _checkFields(form, requirements, clicked_elm);
             }
 
             if (check_fields_result == true && form_result == true) {

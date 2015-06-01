@@ -35,9 +35,6 @@
     <div class="ty-control-group ty-product-options__item{if !$capture_options_vs_qty} product-list-field{/if} clearfix" id="opt_{$obj_prefix}{$id}_{$po.option_id}">
         {if !("SRC"|strpos:$po.option_type !== false && !$po.variants && $po.missing_variants_handling == "H")}
             <label {if $po.option_type !== "R" && $po.option_type !== "F"}for="option_{$obj_prefix}{$id}_{$po.option_id}"{/if} class="ty-control-group__label ty-product-options__item-label{if $po.required == "Y"} cm-required{/if}{if $po.regexp} cm-regexp{/if}" {if $po.regexp}data-ca-regexp="{$po.regexp}" data-ca-message="{$po.incorrect_message}"{/if}>{$po.option_name}{if $po.description|trim}{include file="common/tooltip.tpl" tooltip=$po.description}{/if}:</label>
-        {*if $product.options_type == "S" && (!$runtime.checkout || $po.disabled || $disabled || ($runtime.checkout && !$po.value))}
-            <div class="ty-product-options__select-above">{__("select_option_above")}</div>
-        {else*}
             {if $po.option_type == "S"} {*Selectbox*}
                 {if $po.variants}
                     {if ($po.disabled || $disabled) && !$po.not_required}<input type="hidden" value="{$po.value}" name="{$name}[{$id}][product_options][{$po.option_id}]" id="option_{$obj_prefix}{$id}_{$po.option_id}" />{/if}
@@ -103,7 +100,6 @@
                     {include file="common/fileuploader.tpl" images=$product.extra.custom_files[$po.option_id] var_name="`$name`[`$po.option_id``$id`]" multiupload=$po.multiupload hidden_name="`$name`[custom_files][`$po.option_id``$id`]" hidden_value="`$id`_`$po.option_id`" label_id="option_`$obj_prefix``$id`_`$po.option_id`" prefix=$obj_prefix}
                 </div>
             {/if}
-        {*/if*}
         {/if}
 
         {if $po.comment}
@@ -130,6 +126,13 @@
             </script>
             <div class="ty-product-variant-image">{$smarty.capture.variant_images nofilter}</div>
         {/if}
+        <script type="text/javascript">
+        (function(_, $) {
+            if ($('#option_{$obj_prefix}{$id}_{$po.option_id}').hasClass('cm-dropdown')) {
+                $('#option_{$obj_prefix}{$id}_{$po.option_id}').selectbox();
+            };
+        }(Tygh, Tygh.$));
+        </script>
     </div>
     {/foreach}
 </div>
@@ -153,9 +156,6 @@
         }
             
         return true;
-    });
-    $('.cm-dropdown').each(function(){
-        $(this).selectbox();
     });
 }(Tygh, Tygh.$));
 </script>

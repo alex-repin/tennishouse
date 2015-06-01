@@ -200,3 +200,19 @@ function fn_change_variant_image(prefix, opt_id, var_id)
     }
     $('[id*=variant_image_' + prefix + '_' + opt_id + '_' + var_id + ']').removeClass('product-variant-image-unselected').addClass('product-variant-image-selected');
 }
+
+function fn_change_notification_option(obj_id, clicked_id)
+{
+    var ntf_el = $('#' + obj_id);
+    var parent_el = $('#' + obj_id.str_replace('ntf_', ''));
+    var _notification_container = $('.cm-notification-content-extended:visible');
+    if (_notification_container.length) {
+        $.ceNotification('close', _notification_container, false);
+    }
+    parent_el.find("option").attr('selected', false);
+    parent_el.find("option[value='" + ntf_el.val() + "']").attr('selected', 'selected').change();
+    if ($('#' + clicked_id).length > 0) {
+        $('#' + clicked_id).click();
+//         parent_el.parents("form").find("button").click();
+    }
+}

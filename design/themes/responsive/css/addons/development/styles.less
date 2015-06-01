@@ -7,6 +7,27 @@
 select {
     min-width: 2em;
 }
+.notification-body-extended {
+    overflow: visible;
+}
+.ty-cart-items__list-item-tools {
+    right: -10px;
+}
+.ty-icon-basket {
+    background: url("../../../media/images/addons/development/shopping_cart.png") no-repeat scroll center top;
+    content: none;
+    width: 30px;
+    height: 30px;
+    left: 0;
+    position: absolute;
+    top: 1px;
+}
+.ty-icon-basket::before {
+    content: none;
+}
+.ty-minicart-title {
+    padding-left: 30px;
+}
 .icon-question-sign {
     background-image: url("../../../media/images/addons/development/glyphicons-halflings.png");
     background-position: -96px  -96px;
@@ -470,6 +491,7 @@ label.cm-required::after {
     display: inline-block;
     width: 32px;
     padding: 1px 0;
+    vertical-align: bottom;
 }
 .ty-benefits-guarantees__top:hover {
     background: lighten(@top_menu_background, 17%);

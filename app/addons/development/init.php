@@ -59,5 +59,6 @@ fn_register_hooks(
     'get_filters_products_count_before_select',
     'gather_additional_products_data_post',
     'is_shared_product_pre',
-    'apply_option_modifiers_pre'
+    'apply_option_modifiers_pre',
+    'seo_is_indexed_page'
 );

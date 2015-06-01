@@ -478,5 +478,6 @@
         <item lang="ru" id="tab_groups_r_t_a">Взрослые</item>
         <item lang="ru" id="tab_groups_r_t_k">Детские</item>
         <item lang="ru" id="option_note">Пометка</item>
+        <item lang="ru" id="define_option">Укажите опцию</item>
     </language_variables>
 </addon>

@@ -542,8 +542,12 @@ function fn_gather_additional_products_data(&$products, $params)
                 $product['product_options'] = (!empty($selected_options)) ? fn_get_selected_product_options($product['product_id'], $selected_options, CART_LANGUAGE) : $product_options[$product_id];
             }
 
-            $product['exceptions'] = $products_exceptions[$product_id];
-            $product['inventory_combinations'] = $products_inventory[$product_id];
+            if (!empty($products_exceptions)) {
+                $product['exceptions'] = $products_exceptions[$product_id];
+            }
+            if (!empty($products_inventory)) {
+                $product['inventory_combinations'] = $products_inventory[$product_id];
+            }
             $product = fn_apply_options_rules($product);
 
             if (!empty($params['get_icon']) || !empty($params['get_detailed'])) {
@@ -8434,7 +8438,7 @@ function fn_apply_options_rules($product)
     }
 
     // [tennishouse]
-    if (empty($selected_options)/* && $product['options_type'] == 'P'*/ && $product['get_default_options'] == 'Y') {
+    if (empty($selected_options)/* && $product['options_type'] == 'P'*/ && !empty($product['get_default_options'])) {
         $selected_options = fn_get_default_product_options($product['product_id'], true, $product);
     }
 

@@ -53,6 +53,7 @@
         text_data_changed: '{__("text_data_changed")|escape:"javascript"}',
         file_browser: '{__("file_browser")|escape:"javascript"}',
         browse: '{__("browse")|escape:javascript}',
+        define_option: '{__("define_option")|escape:javascript}',
         more: '{__("more")|escape:"javascript"}'
     });
     

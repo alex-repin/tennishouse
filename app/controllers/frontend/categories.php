@@ -111,8 +111,8 @@ if ($mode == 'catalog') {
             'get_discounts' => true,
             'get_features' => false
         ));
+        $subtabs_string = $tab_string = '';
         if (!empty($products)) {
-            $subtabs_string = $tab_string = '';
             if (!empty($category_data['tabs_categorization']) && (empty($category_data['brand']) || $category_data['brand']['feature_id'] != $category_data['tabs_categorization'])) {
                 $tb_feature = fn_get_product_feature_data($category_data['tabs_categorization'], true);
                 if (!empty($tb_feature['variants'])) {
