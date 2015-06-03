@@ -1,5 +1,6 @@
 {script src="js/addons/development/jquery.selectbox-0.2.js"}
 {script src="js/addons/development/jquery.magnific-popup.js"}
+{script src="js/addons/development/jquery.mCustomScrollbar.concat.min.js"}
 
 <script type="text/javascript">
 {literal}

@@ -254,4 +254,23 @@ $schema['products']['content']['items']['fillings']['product_cross_sales'] = arr
 );
 $schema['testimonials']['templates']['addons/discussion/blocks/homepage_testimonials.tpl'] = array();
 
+$schema['news'] = array (
+    'templates' => array(
+        'addons/development/blocks/news.tpl' => array(),
+    ),
+    'settings' => array(
+        'rss_feed_link' => array (
+            'type' => 'input',
+            'default_value' => 'http://www.championat.com/xml/rss_tennis-article.xml'
+        )
+    ),
+    'wrappers' => 'blocks/wrappers',
+    'content' => array (
+        'news' => array (
+            'type' => 'enum',
+            'items_function' => 'fn_get_rss_news',
+        )
+    )
+);
+
 return $schema;

@@ -60,20 +60,7 @@ if ($mode == 'view') {
         }
     }
     
-    if (!empty($player_data['rss_link'])) {
-        $xml = @simplexml_load_string(fn_get_contents($player_data['rss_link']));
-        $news_feed = array();
-        foreach ($xml->channel->item as $item) {
-            $news = array();
-            $news['title'] = (string) $item->title;
-            $news['link'] = (string) $item->link;
-            $news['description'] = (string) $item->description;
-            $aResult = strptime((string) $item->pubDate, '%a, %d %b %Y %T %z');
-            $news['timestamp'] = gmmktime($aResult['tm_hour'], $aResult['tm_min'], $aResult['tm_sec'], $aResult['tm_mon'] + 1, $aResult['tm_mday'], $aResult['tm_year'] + 1900);
-            $news_feed[] = $news;
-        }
-        $player_data['news_feed'] = $news_feed;
-    }
+    list($player_data['news_feed'],) = fn_get_rss_news(array('rss_feed_link' => $player_data['rss_link']));
     fn_add_breadcrumb(__('professionals') . ' ' . (($player_data['gender'] == 'M') ? __("atp") : __("wta") ), 'players.list');
     fn_add_breadcrumb($player_data['player']);
 

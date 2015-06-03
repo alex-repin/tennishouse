@@ -34,7 +34,16 @@
     {assign var="selected_variant" value=""}
     <div class="ty-control-group ty-product-options__item{if !$capture_options_vs_qty} product-list-field{/if} clearfix" id="opt_{$obj_prefix}{$id}_{$po.option_id}">
         {if !("SRC"|strpos:$po.option_type !== false && !$po.variants && $po.missing_variants_handling == "H")}
-            <label {if $po.option_type !== "R" && $po.option_type !== "F"}for="option_{$obj_prefix}{$id}_{$po.option_id}"{/if} class="ty-control-group__label ty-product-options__item-label{if $po.required == "Y"} cm-required{/if}{if $po.regexp} cm-regexp{/if}" {if $po.regexp}data-ca-regexp="{$po.regexp}" data-ca-message="{$po.incorrect_message}"{/if}>{$po.option_name}{if $po.description|trim}{include file="common/tooltip.tpl" tooltip=$po.description}{/if}:</label>
+            <label {if $po.option_type !== "R" && $po.option_type !== "F"}for="option_{$obj_prefix}{$id}_{$po.option_id}"{/if} class="ty-control-group__label ty-product-options__item-label{if $po.required == "Y"} cm-required cm-requirement-popup{/if}{if $po.regexp} cm-regexp{/if}" {if $po.regexp}data-ca-regexp="{$po.regexp}" data-ca-message="{$po.incorrect_message}"{/if}>
+                {$po.option_name}
+                {if $po.note_url && $po.note_text}
+                    {capture name="option_note"}
+                        <a class="cm-notification-note" href="{"`$po.note_url`"|fn_url}" target="_blank">{$po.note_text}</a>
+                    {/capture}
+                    <div style="display: none;"><a class="cm-notification-note" href="{"`$po.note_url`"|fn_url}" target="_blank">{$po.note_text}</a></div>
+                    {include file="common/tooltip.tpl" tooltip=$smarty.capture.option_note}
+                {/if}:
+            </label>
             {if $po.option_type == "S"} {*Selectbox*}
                 {if $po.variants}
                     {if ($po.disabled || $disabled) && !$po.not_required}<input type="hidden" value="{$po.value}" name="{$name}[{$id}][product_options][{$po.option_id}]" id="option_{$obj_prefix}{$id}_{$po.option_id}" />{/if}

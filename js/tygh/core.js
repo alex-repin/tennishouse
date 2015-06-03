@@ -3808,17 +3808,20 @@ var Tygh = {
                 $('[id="' + elm_id + '_error_message"].help-inline', elm.parent()).remove();
 
                 if (set_mark == true) {
-                    if (elm.hasClass('cm-dropdown')) {
+                    if (lbl.hasClass('cm-requirement-popup')) {
                         var block = elm.parent();
                         var new_elm = elm.clone();
-                        var button = elm.parents('form').find('button');
+                        new_elm.find('option').each(function(){
+                            $(this).removeAttr('selected');
+                        });
+                        var note_html = block.find('.cm-notification-note');
                         var option_id = new_elm.attr('id');
                         new_elm.attr('onchange',"fn_change_notification_option('" + option_id + "', '" + clicked_elm.attr('id') + "');");
-                        var new_block = $('<div>' + '<span class="cm-ac-notification-label"style="margin-right: 50px;">' + _.tr('define_option') + '</span>').append(new_elm.clone()).append("<script type='text/javascript'>(function(_, $){$(function(){$('.cm-dropdown').each(function(){$(this).selectbox();});});}(Tygh, Tygh.$));</script>").html().str_replace(option_id, 'ntf_' + option_id);
+                        var new_block = $('<div>' + '<span class="cm-ac-notification-label"style="margin-right: 50px;">' + _.tr('define_option') + '</span>').append(block.find('.cm-notification-note')).append('</div>').append(new_elm.clone()).append(new_elm.hasClass('cm-dropdown') ? "<script type='text/javascript'>(function(_, $){$(function(){$('.cm-dropdown').each(function(){$(this).selectbox();});});}(Tygh, Tygh.$));</script>" : '').html().str_replace(option_id, 'ntf_' + option_id);
                         $.ceNotification('show', {
                             type: 'I', 
                             message: new_block,
-                            attach: button
+                            attach: clicked_elm
                         });
                     } else {
                         lbl.parent().addClass('error');
@@ -4233,6 +4236,7 @@ var Tygh = {
         var delay = 0;
         var oc_delay = 0.2;
         var close_class;
+        var attach = false;
 
         function _duplicateNotification(key)
         {
@@ -4332,7 +4336,7 @@ var Tygh = {
                 data.message = _processTranslation(data.message);
                 data.title = _processTranslation(data.title);
                 close_class = data.close_class;
-                attach = data.attach;
+                attach = data.attach || false;
 
                 // Popup message in the screen center - should be only one at time
                 if (data.type == 'I') {
@@ -4342,12 +4346,12 @@ var Tygh = {
                         methods.close($(this), false);
                     });
 
-                    if (!attach) {
-                        title = '<h1>' + data.title + '<span class="cm-notification-close close"></span></h1>';
-                    } else {
+                    if (attach.length > 0) {
                         title = '';
+                    } else {
+                        title = '<h1>' + data.title + '<span class="cm-notification-close close"></span></h1>';
                     }
-                    var notification = $('<div class="cm-notification-content cm-notification-content-extended notification-content-extended ' + (data.message_state == "I" ? ' cm-auto-hide' : '') + (attach ? ' cm-notification-content__add-to-cart' : '') + '" data-ca-notification-key="' + key + '">' +
+                    var notification = $('<div class="cm-notification-content cm-notification-content-extended notification-content-extended ' + (data.message_state == "I" ? ' cm-auto-hide' : '') + (attach.length > 0 ? ' cm-notification-content__add-to-cart' : '') + '" data-ca-notification-key="' + key + '">' +
                         title +
                         '<div class="notification-body-extended">' +
                         data.message +
@@ -4360,32 +4364,32 @@ var Tygh = {
                         'max-height': notificationMaxHeight
                     });
                     
-                    if (attach) {
-                        attach.after(
-                            '<div class="ui-widget-overlay" style="z-index:1010" data-ca-notification-key="' + key + '"></div>'
-                        );
-                        notification.css({
-                            'top': attach.offset().top - notification.outerHeight() - 20,
-                            'left': attach.offset().left,
-                            'position': 'absolute'
-                        });
-                    } else {
-                        $(_.body).append(
-                            '<div class="ui-widget-overlay" style="z-index:1010" data-ca-notification-key="' + key + '"></div>'
-                        );
-                        notification.css('top', w.view_height / 2 - (notification.height() / 2));
-                    }
-
                     // FIXME I-type notifications are embedded directly into the body and not into a container, because a container has low z-index and get overlapped by modal dialogs.
                     //container.append(notification);
                     $(_.body).append(notification);
 
-                    if (title == '') {
+                    if (attach.length > 0 && attach.is(':visible')) {
+                        attach.after(
+                            '<div class="ui-widget-overlay" style="z-index:500" data-ca-notification-key="' + key + '"></div>'
+                        );
+                        attach.addClass('cm-button-ontop');
+                        notification.addClass('cm-attached-notification');
+                        notification.css({
+                            'top': attach.offset().top - notification.height() - 11,
+                            'left': attach.offset().left + notification.width() / 2 - 50,
+                            'position': 'absolute'
+                        });
+                    } else {
+                        $(_.body).append(
+                            '<div class="ui-widget-overlay" style="z-index:500" data-ca-notification-key="' + key + '"></div>'
+                        );
+                        notification.css('top', w.view_height / 2 - (notification.height() / 2));
+                    }
+                    if (attach.length > 0) {
                         $(_.doc).on('click', '.ui-widget-overlay[data-ca-notification-key=' + key + ']', function() {
                             methods.close(notification, false);
                         })
                     }
-                    
                 } else {
                     var n_class = 'alert';
                     var b_class = '';
@@ -4452,6 +4456,9 @@ var Tygh = {
                     }, delay);
 
                     return true;
+                }
+                if (attach.length > 0) {
+                    attach.removeClass('cm-button-ontop');
                 }
 
                 _closeNotification(notification);

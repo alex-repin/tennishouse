@@ -1,5 +1,4 @@
 {$active_tabs = []}
-{script src="js/addons/development/jquery.mCustomScrollbar.concat.min.js"}
 {capture name="tabsbox"}
     {foreach from=$tabs item="tab" key="tab_id"}
         {if $tab.show_in_popup != "Y" && $tab.status == "A"}

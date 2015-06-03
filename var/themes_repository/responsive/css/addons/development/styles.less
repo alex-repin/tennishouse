@@ -7,6 +7,36 @@
 select {
     min-width: 2em;
 }
+.cm-ac-notification-label {
+    font-size: 20px;
+    line-height: 25px;
+    margin-right: 50px;
+}
+.cm-notification-content__add-to-cart {
+    padding: 20px;
+    width: auto;
+    min-height: 50px;
+}
+.cm-attached-notification::before {
+    background: rgba(0, 0, 0, 0) url("../../../media/images/addons/development/popup_tail.png") no-repeat scroll;
+    content: "";
+    display: block;
+    height: 16px;
+    left: 50%;
+    margin-left: -11px;
+    position: absolute;
+    bottom: -10px;
+    width: 19px;
+}
+.notification-body-extended {
+    overflow: visible;
+    position: relative;
+}
+.cm-notification-note {
+    left: 0;
+    position: absolute;
+    top: 30px;
+}
 .icon-question-sign {
     background-image: url("../../../media/images/addons/development/glyphicons-halflings.png");
     background-position: -96px  -96px;
@@ -161,12 +191,10 @@ select {
     top: 0;
     right:0;
 }
-.ui-widget-overlay {
-    opacity: 0.6;
-}
 .notification-content-extended {
     border: 1px solid #d6d6d6;
     box-shadow: 0 1px 16px rgba(0, 0, 0, 1);
+    z-index: 510;
 }
 .notification-content-extended h1 {
     background: #fff;
@@ -470,6 +498,7 @@ label.cm-required::after {
     display: inline-block;
     width: 32px;
     padding: 1px 0;
+    vertical-align: bottom;
 }
 .ty-benefits-guarantees__top:hover {
     background: lighten(@top_menu_background, 17%);
@@ -490,7 +519,23 @@ label.cm-required::after {
     display: none;
 }
 .ty-dropdown-box__title {
-    padding: 7px 11px 6px 8px;
+    padding: 7px 30px 6px 40px;
+    cursor: pointer;
+}
+.ty-icon-basket {
+    background: url("../../../media/images/addons/development/shopping_cart.png") no-repeat scroll center top;
+    content: none;
+    width: 30px;
+    height: 30px;
+    left: 20px;
+    position: absolute;
+    top: 1px;
+}
+.ty-icon-basket::before {
+    content: none;
+}
+.ty-minicart-title {
+    padding-left: 30px;
 }
 .ty-dropdown-box__title a {
     font-size: 14px;
@@ -677,7 +722,7 @@ label.cm-required::after {
 .sticky {
     position: fixed;
     top: 140px;
-    width: 169px;
+    width: 168px;
     z-index: 100;
 }
 .ty-filter-icon__check, .ty-filter-icon__delete {
@@ -1012,7 +1057,7 @@ label.cm-required::after {
     vertical-align: unset;
 }
 .ty-grid-list__image {
-    padding: 10px 0 25px;
+    padding: 5px 0 20px;
 }
 .ty-grid-list__item .ty-grid-list__image-product .ty-pict, .ty-grid-list__item .ty-grid-list__image-product .ty-no-image {
     width: 187px;
@@ -1112,7 +1157,7 @@ label.cm-required::after {
 .ty-grid-list__item-name {
     width: 100%;
     max-width: none;
-    margin-top: 0;
+    margin: 0;
 }
 .ty-product-series {
     color: lighten(@font, 35%);
@@ -1123,7 +1168,7 @@ label.cm-required::after {
 }
 .ty-grid-list__item-name .product-title {
     color: @font;
-    font-size: 125%;
+    font-size: 14px;
     display: block;
     height: 40px;
     overflow: hidden;
@@ -1131,6 +1176,7 @@ label.cm-required::after {
 .ty-grid-list__price {
     max-width: none;
     width: 100%;
+    margin-top: 0;
 }
 .ty-grid-list__item-info {
     background: lighten(@base, 3%);
@@ -1278,6 +1324,10 @@ label.cm-required::after {
     font-size: 16px;
     padding: 6px 50px;
 }
+.cm-button-ontop {
+    position: relative;
+    z-index: 510;
+}
 .ty-btn__add-to-cart:hover {
     transition: all 400ms linear 0s;
     border: 1px solid #bbb;
@@ -1413,7 +1463,7 @@ label.cm-required::after {
 .ty-grid-list__brand-image {
     left: 5px;
     position: absolute;
-    bottom: 5px;
+    bottom: 0;
     z-index: 100;
 }
 .grid-list__rating {
@@ -2282,3 +2332,100 @@ and (max-device-width : 480px) {
 /*.ty-range-slider .ui-slider-handle {
     background-color: lighten(@font, 22%);
 }*/
+
+// ANIMATIONS
+@keyframes notification-content-open {
+    from   {transform: scale(0.8);opacity: 0.5}
+    to   {transform: scale(1);opacity: 1}
+}
+@keyframes notification-content-close {
+    from   {transform: scale(1);opacity: 1}
+    to   {transform: scale(0.8);opacity: 0.5}
+}
+@keyframes notification-bg-open {
+    from   {opacity: 0}
+    to   {opacity: 0.6}
+}
+@keyframes notification-bg-close {
+    from   {opacity: 0.6}
+    to   {opacity: 0}
+}
+@keyframes ac-notification-close {
+    from   {transform: 1;opacity: 1}
+    to   {transform: 0.1; top: 5px; right: 0;opacity: 0.5}
+}
+@keyframes s-notification-open {
+    from   {transform: translateX(-50px);opacity: 0;}
+    to   {transform: translateX(0);opacity: 1;}
+}
+.notification-content-extended {
+    animation-name: notification-content-open;
+    animation-duration: 0.2s;
+    animation-timing-function: ease-in-out;
+}
+.ui-widget-overlay {
+    animation-name: notification-bg-open;
+    animation-duration: 0.2s;
+    animation-timing-function: ease-in-out;
+}
+.cm-close-notification {
+    animation-name: notification-content-close;
+    animation-duration: 0.2s;
+    animation-timing-function: ease-in-out;
+}
+.cm-close-notification-bg {
+    animation-name: notification-bg-close;
+    animation-duration: 0.2s;
+    animation-timing-function: ease-in-out;
+}
+.cm-close-ac-notification {
+    animation-name: ac-notification-close;
+    animation-duration: 0.5s;
+    animation-timing-function: ease-in-out;
+}
+.cm-notification-container {
+    animation-name: s-notification-open;
+    animation-duration: 0.3s;
+}
+
+/* NEWS FEED*/
+.ty-rss-news {
+    padding: 5px;
+    height: 480px;
+}
+.ty-rss-news__block {
+    display: inline-block;
+    padding: 3px 0;
+    position: relative;
+    margin-bottom: 7px;
+    border-bottom: 1px solid @base;
+    width: 100%
+}
+.ty-rss-news__block:hover {
+    background: lighten(@base, 4%);
+}
+.ty-rss-news__image {
+    display: inline-block;
+    width: 15%;
+}
+.ty-rss-news__text-block {
+    display: inline-block;
+    vertical-align: top;
+    width: 84%;
+}
+.ty-rss-news__title a {
+    color: @font;
+    font-size: 19px;
+    font-weight: bold;
+    text-decoration: underline;
+}
+.ty-rss-news__descr {
+    color: lighten(@font, 40%);
+}
+.ty-rss-news__date {
+    position: absolute;
+    bottom: 0;
+    right: 20px;
+    font-size: 20px;
+}
+/* NEWS FEED*/

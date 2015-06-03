@@ -17,12 +17,12 @@ select {
     width: auto;
     min-height: 50px;
 }
-.cm-notification-content__add-to-cart::before {
+.cm-attached-notification::before {
     background: rgba(0, 0, 0, 0) url("../../../media/images/addons/development/popup_tail.png") no-repeat scroll;
     content: "";
     display: block;
     height: 16px;
-    left: 70%;
+    left: 50%;
     margin-left: -11px;
     position: absolute;
     bottom: -10px;
@@ -30,9 +30,12 @@ select {
 }
 .notification-body-extended {
     overflow: visible;
+    position: relative;
 }
-.ty-cart-items__list-item-tools {
-    right: -10px;
+.cm-notification-note {
+    left: 0;
+    position: absolute;
+    top: 30px;
 }
 .icon-question-sign {
     background-image: url("../../../media/images/addons/development/glyphicons-halflings.png");
@@ -188,12 +191,10 @@ select {
     top: 0;
     right:0;
 }
-.ui-widget-overlay {
-    opacity: 0.6;
-}
 .notification-content-extended {
     border: 1px solid #d6d6d6;
     box-shadow: 0 1px 16px rgba(0, 0, 0, 1);
+    z-index: 510;
 }
 .notification-content-extended h1 {
     background: #fff;
@@ -721,7 +722,7 @@ label.cm-required::after {
 .sticky {
     position: fixed;
     top: 140px;
-    width: 169px;
+    width: 168px;
     z-index: 100;
 }
 .ty-filter-icon__check, .ty-filter-icon__delete {
@@ -1322,8 +1323,10 @@ label.cm-required::after {
 .ty-btn__add-to-cart {
     font-size: 16px;
     padding: 6px 50px;
+}
+.cm-button-ontop {
     position: relative;
-    z-index: 1011;
+    z-index: 510;
 }
 .ty-btn__add-to-cart:hover {
     transition: all 400ms linear 0s;
@@ -2361,7 +2364,7 @@ and (max-device-width : 480px) {
     animation-timing-function: ease-in-out;
 }
 .ui-widget-overlay {
-    animation-name: notification-bg;
+    animation-name: notification-bg-open;
     animation-duration: 0.2s;
     animation-timing-function: ease-in-out;
 }
@@ -2384,3 +2387,45 @@ and (max-device-width : 480px) {
     animation-name: s-notification-open;
     animation-duration: 0.3s;
 }
+
+/* NEWS FEED*/
+.ty-rss-news {
+    padding: 5px;
+    height: 480px;
+}
+.ty-rss-news__block {
+    display: inline-block;
+    padding: 3px 0;
+    position: relative;
+    margin-bottom: 7px;
+    border-bottom: 1px solid @base;
+    width: 100%
+}
+.ty-rss-news__block:hover {
+    background: lighten(@base, 4%);
+}
+.ty-rss-news__image {
+    display: inline-block;
+    width: 15%;
+}
+.ty-rss-news__text-block {
+    display: inline-block;
+    vertical-align: top;
+    width: 84%;
+}
+.ty-rss-news__title a {
+    color: @font;
+    font-size: 19px;
+    font-weight: bold;
+    text-decoration: underline;
+}
+.ty-rss-news__descr {
+    color: lighten(@font, 40%);
+}
+.ty-rss-news__date {
+    position: absolute;
+    bottom: 0;
+    right: 20px;
+    font-size: 20px;
+}
+/* NEWS FEED*/

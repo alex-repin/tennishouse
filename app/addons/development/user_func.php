@@ -20,6 +20,37 @@ use Tygh\FeaturesCache;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_get_rss_news($params)
+{
+    $news_feed = array();
+    if (!empty($params['rss_feed_link'])) {
+        $xml = @simplexml_load_string(fn_get_contents($params['rss_feed_link']));
+        foreach ($xml->channel->item as $item) {
+            $news = array();
+            $news['title'] = (string) $item->title;
+            $news['link'] = (string) $item->link;
+            $news['description'] = (string) $item->description;
+            $news['image'] = (string) $item->image->url;
+            $aResult = strptime((string) $item->pubDate, '%a, %d %b %Y %T %z');
+            $news['timestamp'] = mktime($aResult['tm_hour'], $aResult['tm_min'], $aResult['tm_sec'], $aResult['tm_mon'] + 1, $aResult['tm_mday'], $aResult['tm_year'] + 1900);
+            $news_date = date('Y-m-d', $news['timestamp']);
+            $today = date('Y-m-d');
+            $yesterday = date('Y-m-d', strtotime('yesterday'));
+            if ($news_date == $today) {
+                $news['today'] = true;
+            } elseif ($news_date == $yesterday) {
+                $news['yesterday'] = true;
+            }
+            $news_feed[] = $news;
+            if (count($news_feed) >= 10) {
+                break;
+            }
+        }
+    }
+    
+    return array($news_feed, );
+}
+
 function fn_update_product_tracking($product_id)
 {
     $options_left = db_get_fields("SELECT po.option_id, go.option_id FROM ?:product_options AS po LEFT JOIN ?:product_global_option_links AS go ON go.option_id = po.option_id WHERE (po.product_id = ?i OR go.product_id = ?i) AND po.option_type IN ('S','R','C') AND po.inventory = 'Y'", $product_id, $product_id);

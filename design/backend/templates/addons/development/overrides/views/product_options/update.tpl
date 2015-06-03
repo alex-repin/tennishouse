@@ -150,9 +150,22 @@
             <label class="control-label" for="elm_option_default_text_{$id}">{__("default_text")}</label>
             <div class="controls">
             <input type="text" name="option_data[default_text]" id="elm_option_default_text_{$id}" value="{$option_data.default_text}" class="span9" />
+            </div>
         </div>
         {/if}
         
+        <div class="control-group">
+            <label class="control-label" for="elm_option_note_url_{$id}">{__("note_url")}</label>
+            <div class="controls">
+            <input type="text" name="option_data[note_url]" id="elm_option_note_url_{$id}" value="{$option_data.note_url}" class="span9" />
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="elm_option_note_text_{$id}">{__("note_text")}</label>
+            <div class="controls">
+            <input type="text" name="option_data[note_text]" id="elm_option_note_text_{$id}" value="{$option_data.note_text}" class="span9" />
+            </div>
+        </div>
         <div id="extra_options_{$id}" {if $option_data.option_type != "I" && $option_data.option_type != "T"}class="hidden"{/if}>
             <div class="control-group">
                 <label class="control-label" for="elm_option_regexp_{$id}">{__("regexp")}</label>

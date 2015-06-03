@@ -63,16 +63,17 @@
 (function(_, $) {$ldelim}
 
     $(document).ready(function() {$ldelim}
-        $('.ty-product-filters__block').click(function(e){$ldelim}
-            $(this).toggleClass('is-hover');
-            var block_id = $(this).find('.ty-product-filters__switch').prop('id').replace(/^(on_|off_|sw_)/, '');
-            if ($(this).hasClass('is-hover')) {
+        $('.ty-product-filters__switch').click(function(e){$ldelim}
+            var block = $(this).parent();
+            block.toggleClass('is-hover');
+            var block_id = block.find('.ty-product-filters__switch').prop('id').replace(/^(on_|off_|sw_)/, '');
+            if (block.hasClass('is-hover')) {
                 $.cookie.set(block_id, 1);
             } else {
                 $.cookie.set(block_id, 0);
             }
-            $(this).find('.ty-product-filters').toggle('slide');
-            $(this).find('.ty-price-slider').toggle('slide');
+            block.find('.ty-product-filters').toggle('slide');
+            block.find('.ty-price-slider').toggle('slide');
         {$rdelim});
         $('.ty-product-filters__block').hover(function(e){$ldelim}
             $(this).addClass('is-hover');
@@ -86,16 +87,18 @@
                 }
             {$rdelim}, 150);
         {$rdelim}, function(e){$ldelim}
-            $(this).removeClass('is-hover');
-            var block_id = $(this).find('.ty-product-filters__switch').prop('id').replace(/^(on_|off_|sw_)/, '');
-            var submenu = $(this);
-            setTimeout(function() {$ldelim}
-                if (!submenu.hasClass('is-hover')) {
-                    $.cookie.remove(block_id);
-                    submenu.find('.ty-product-filters').hide('slide');
-                    submenu.find('.ty-price-slider').hide('slide');
-                }
-            {$rdelim}, 150);
+            if ($(this).find(":focus").length == 0) {$ldelim}
+                $(this).removeClass('is-hover');
+                var block_id = $(this).find('.ty-product-filters__switch').prop('id').replace(/^(on_|off_|sw_)/, '');
+                var submenu = $(this);
+                setTimeout(function() {$ldelim}
+                    if (!submenu.hasClass('is-hover')) {
+                        $.cookie.remove(block_id);
+                        submenu.find('.ty-product-filters').hide('slide');
+                        submenu.find('.ty-price-slider').hide('slide');
+                    }
+                {$rdelim}, 150);
+            {$rdelim}
         {$rdelim});
     {$rdelim});
     

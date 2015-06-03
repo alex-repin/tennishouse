@@ -248,6 +248,10 @@
                 '6589', 'O', 'ru', 'Дублировать товары по главной опции в списке', ''
             );
         </item>
+        <item>
+            ALTER TABLE `cscart_product_options` ADD `note_url` VARCHAR( 255 ) NOT NULL ,
+            ADD `note_text` VARCHAR( 255 ) NOT NULL ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -479,5 +483,6 @@
         <item lang="ru" id="tab_groups_r_t_k">Детские</item>
         <item lang="ru" id="option_note">Пометка</item>
         <item lang="ru" id="define_option">Укажите опцию</item>
+        <item lang="ru" id="rss_feed_link">Ссылка на RSS feed</item>
     </language_variables>
 </addon>
