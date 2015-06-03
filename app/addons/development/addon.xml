@@ -234,7 +234,7 @@
                 `handler` ,
                 `parent_id`
             ) VALUES (
-                '6589' , 'ROOT,ULT:VENDOR', 'catalog_options_mode', '4', '0', 'K', 'Y', '193', 'Y', '', '0'
+                '6589' , 'ROOT,ULT:VENDOR', 'catalog_options_mode', '4', '0', 'C', 'Y', '193', 'Y', '', '0'
             );
         </item>
         <item>

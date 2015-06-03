@@ -38,7 +38,7 @@
                 {$po.option_name}
                 {if $po.note_url && $po.note_text}
                     {capture name="option_note"}
-                        <a class="cm-notification-note" href="{"`$po.note_url`"|fn_url}" target="_blank">{$po.note_text}</a>
+                        <a href="{"`$po.note_url`"|fn_url}" target="_blank">{$po.note_text}</a>
                     {/capture}
                     <div style="display: none;"><a class="cm-notification-note" href="{"`$po.note_url`"|fn_url}" target="_blank">{$po.note_text}</a></div>
                     {include file="common/tooltip.tpl" tooltip=$smarty.capture.option_note}
