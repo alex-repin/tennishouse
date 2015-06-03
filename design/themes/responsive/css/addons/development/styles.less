@@ -2350,14 +2350,6 @@ and (max-device-width : 480px) {
     from   {opacity: 0.6}
     to   {opacity: 0}
 }
-@keyframes ac-notification-close {
-    from   {transform: 1;opacity: 1}
-    to   {transform: 0.1; top: 5px; right: 0;opacity: 0.5}
-}
-@keyframes s-notification-open {
-    from   {transform: translateX(-50px);opacity: 0;}
-    to   {transform: translateX(0);opacity: 1;}
-}
 .notification-content-extended {
     animation-name: notification-content-open;
     animation-duration: 0.2s;
@@ -2377,15 +2369,6 @@ and (max-device-width : 480px) {
     animation-name: notification-bg-close;
     animation-duration: 0.2s;
     animation-timing-function: ease-in-out;
-}
-.cm-close-ac-notification {
-    animation-name: ac-notification-close;
-    animation-duration: 0.5s;
-    animation-timing-function: ease-in-out;
-}
-.cm-notification-container {
-    animation-name: s-notification-open;
-    animation-duration: 0.3s;
 }
 
 /* NEWS FEED*/

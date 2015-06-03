@@ -3814,10 +3814,9 @@ var Tygh = {
                         new_elm.find('option').each(function(){
                             $(this).removeAttr('selected');
                         });
-                        var note_html = block.find('.cm-notification-note');
                         var option_id = new_elm.attr('id');
                         new_elm.attr('onchange',"fn_change_notification_option('" + option_id + "', '" + clicked_elm.attr('id') + "');");
-                        var new_block = $('<div>' + '<span class="cm-ac-notification-label"style="margin-right: 50px;">' + _.tr('define_option') + '</span>').append(block.find('.cm-notification-note')).append('</div>').append(new_elm.clone()).append(new_elm.hasClass('cm-dropdown') ? "<script type='text/javascript'>(function(_, $){$(function(){$('.cm-dropdown').each(function(){$(this).selectbox();});});}(Tygh, Tygh.$));</script>" : '').html().str_replace(option_id, 'ntf_' + option_id);
+                        var new_block = $('<div>' + '<span class="cm-ac-notification-label"style="margin-right: 50px;">' + _.tr('define_option') + '</span>').append(block.find('.cm-notification-note').clone()).append('</div>').append(new_elm.clone()).append(new_elm.hasClass('cm-dropdown') ? "<script type='text/javascript'>(function(_, $){$(function(){$('.cm-dropdown').each(function(){$(this).selectbox();});});}(Tygh, Tygh.$));</script>" : '').html().str_replace(option_id, 'ntf_' + option_id);
                         $.ceNotification('show', {
                             type: 'I', 
                             message: new_block,
@@ -4244,7 +4243,7 @@ var Tygh = {
             if (dups.length) {
 
                 if (!_addToDialog(dups)) {
-                    dups.fadeTo('fast', 0.5).fadeTo('fast', 1).fadeTo('fast', 0.5).fadeTo('fast', 1);
+                    //dups.fadeTo('fast', 0.5).fadeTo('fast', 1).fadeTo('fast', 0.5).fadeTo('fast', 1);
                 }
 
                 // Restart autoclose timer
@@ -4340,11 +4339,11 @@ var Tygh = {
 
                 // Popup message in the screen center - should be only one at time
                 if (data.type == 'I') {
-                    var w = $.getWindowSizes();
 
                     $('.cm-notification-content.cm-notification-content-extended').each(function() {
                         methods.close($(this), false);
                     });
+                    var w = $.getWindowSizes();
 
                     if (attach.length > 0) {
                         title = '';
