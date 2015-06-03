@@ -8447,7 +8447,7 @@ function fn_apply_options_rules($product)
 
     } elseif (empty($product['changed_option'])) {
         
-        if ($product['options_type'] == 'S') {
+        if ($product['options_type'] == 'S' && !empty($product['get_default_options'])) {
             foreach ($selected_options as $opt_id => $vr_id) {
                 if ($product['product_options'][$opt_id]['show_on_catalog'] != 'Y') {
                     unset($selected_options[$opt_id]);

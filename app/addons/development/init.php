@@ -60,5 +60,6 @@ fn_register_hooks(
     'gather_additional_products_data_post',
     'is_shared_product_pre',
     'apply_option_modifiers_pre',
-    'seo_is_indexed_page'
+    'seo_is_indexed_page',
+    'get_selected_product_options_post'
 );

@@ -126,13 +126,6 @@
             </script>
             <div class="ty-product-variant-image">{$smarty.capture.variant_images nofilter}</div>
         {/if}
-        <script type="text/javascript">
-        (function(_, $) {
-            if ($('#option_{$obj_prefix}{$id}_{$po.option_id}').hasClass('cm-dropdown')) {
-                $('#option_{$obj_prefix}{$id}_{$po.option_id}').selectbox();
-            };
-        }(Tygh, Tygh.$));
-        </script>
     </div>
     {/foreach}
 </div>
@@ -160,3 +153,12 @@
 }(Tygh, Tygh.$));
 </script>
 {/if}
+<script type="text/javascript">
+(function(_, $) {
+    $(function() {
+        $('.cm-dropdown').each(function() {
+            $(this).selectbox();
+        });
+    });
+}(Tygh, Tygh.$));
+</script>

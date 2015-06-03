@@ -109,7 +109,9 @@ if ($mode == 'catalog') {
             'get_additional' => true,
             'get_options' => true,
             'get_discounts' => true,
-            'get_features' => false
+            'get_features' => false,
+            'get_title_features' => true,
+            'allow_duplication' => true
         ));
         $subtabs_string = $tab_string = '';
         if (!empty($products)) {

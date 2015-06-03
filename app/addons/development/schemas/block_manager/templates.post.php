@@ -72,6 +72,7 @@ $schema['addons/development/blocks/products/th_products_block.tpl'] = array (
                 'get_icon' => true,
                 'get_detailed' => true,
                 'get_options' => true,
+                'get_title_features' => true,
             ),
         ),
     ),

@@ -340,6 +340,11 @@ function fn_development_get_product_options(&$fields, $condition, $join, $extra_
     $fields .= ", b.default_text";
 }
 
+function fn_development_get_selected_product_options_post(&$_opts, $product_id, $selected_options, $lang_code)
+{
+    $_opts = fn_sort_array_by_key($_opts, 'show_on_catalog', SORT_DESC);
+}
+
 function fn_development_get_product_options_post($product_ids, $lang_code, $only_selectable, $inventory, $only_avail, &$options)
 {
     $variant_ids = array();
@@ -359,6 +364,42 @@ function fn_development_get_product_options_post($product_ids, $lang_code, $only
                     foreach ($_option['variants'] as $variant_id => $variant) {
                         if (!empty($image_pairs[$variant_id])) {
                             $options[$product_id][$option_id]['variants'][$variant_id]['images'] = $image_pairs[$variant_id];
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+function fn_development_calculate_cart_items(&$cart, $cart_products, $auth)
+{
+    if (!empty($cart_products)) {
+        foreach ($cart_products as $i => $product) {
+            $cart['products'][$i]['main_category'] = $product['main_category'];
+            
+            $color_ids = $color_prod_image_pairs = array();
+            if ($product['tracking'] == 'O' && !empty($product['product_options'])) {
+                foreach ($product['product_options'] as $i => $opt_data) {
+                    if (!empty($opt_data['show_on_catalog']) && $opt_data['show_on_catalog'] == 'Y' && !empty($opt_data['variants']) && !empty($opt_data['value'])) {
+                        $color_ids[] = $opt_data['value'];
+                    }
+                }
+            }
+        }
+        if (!empty($color_ids)) {
+            $color_prod_image_pairs = fn_get_image_pairs($color_ids, 'variant_additional', 'Z', false, true, CART_LANGUAGE);
+        }
+
+        if (!empty($color_prod_image_pairs)) {
+            foreach ($cart_products as $cart_id => $product) {
+                if ($product['tracking'] == 'O' && !empty($product['product_options'])) {
+                    foreach ($product['product_options'] as $i => $opt_data) {
+                        if (!empty($opt_data['show_on_catalog']) && $opt_data['show_on_catalog'] == 'Y' && !empty($opt_data['variants']) && !empty($opt_data['value'])) {
+                            $cart['products'][$cart_id]['ohash'] = 'ohash[' . $opt_data['option_id'] . ']=' . $opt_data['value'];
+                            if (!empty($color_prod_image_pairs[$opt_data['value']])) {
+                                $cart['products'][$cart_id]['main_pair'] = reset($color_prod_image_pairs[$opt_data['value']]);
+                            }
                         }
                     }
                 }
@@ -400,7 +441,7 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                 }
             }
             
-            if (!empty($params['get_features'])) {
+            if (!empty($params['get_title_features'])) {
                 // Условие для хак-к
                 $find_set = array(
                     " f.categories_path = '' "
@@ -414,7 +455,7 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
             }
         }
         
-        if (!empty($params['get_features'])) {
+        if (!empty($params['get_title_features'])) {
             $condition = db_quote("f.display_on_catalog = 'Y' AND f.status = 'A' AND IF(f.parent_id, (SELECT status FROM ?:product_features as df WHERE df.feature_id = f.parent_id), 'A') = 'A' ?p AND (v.variant_id != 0 OR (f.feature_type != 'C' AND v.value != '') OR (f.feature_type = 'C') OR v.value_int != '') AND v.lang_code = ?s", db_quote(" AND (?p)", implode('OR', $features_condition)), CART_LANGUAGE);
             $fields = db_quote("f.feature_type, v.variant_id, v.feature_id, GROUP_CONCAT(vd.variant SEPARATOR ',') as variants, v.product_id, gf.position as gposition");
             $join = db_quote(
@@ -448,7 +489,7 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                 }
             }
             
-            if (!empty($params['get_features'])) {
+            if (!empty($params['get_title_features'])) {
                 if (!empty($products_features[$product['product_id']])) {
                     $series_feature = fn_get_subtitle_feature($products_features[$product['product_id']], $product['type']);
                     $variants = explode(',', $series_feature['variants']);
@@ -483,12 +524,21 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
             }
         }
 
-        if (Registry::get('settings.Appearance.catalog_options_mode') == 'Y') {
-            if (!empty($params['get_options'])) {
-                if (!empty($color_ids)) {
-                    $color_prod_image_pairs = fn_get_image_pairs($color_ids, 'variant_additional', 'Z', false, true, CART_LANGUAGE);
-                }
+        if (!empty($params['get_options'])) {
+            if (!empty($color_ids)) {
+                $color_prod_image_pairs = fn_get_image_pairs($color_ids, 'variant_additional', 'Z', false, true, CART_LANGUAGE);
+            }
 
+            if (!empty($product['selected_options']) && $product['tracking'] == 'O' && !empty($product['product_options'])) {
+                foreach ($product['product_options'] as $i => $opt_data) {
+                    if (!empty($product['selected_options'][$opt_data['option_id']]) && !empty($opt_data['show_on_catalog']) && $opt_data['show_on_catalog'] == 'Y') {
+                        $product['ohash'] = 'ohash[' . $opt_data['option_id'] . ']=' . $product['selected_options'][$opt_data['option_id']];
+                        if(!empty($color_prod_image_pairs[$product['selected_options'][$opt_data['option_id']]])) {
+                            $product['main_pair'] = reset($color_prod_image_pairs[$product['selected_options'][$opt_data['option_id']]]);
+                        }
+                    }
+                }
+            } elseif (Registry::get('settings.Appearance.catalog_options_mode') == 'Y' && !empty($params['allow_duplication'])) {
                 $new_products = array();
                 foreach ($products as $i => &$product) {
                     $found = false;
@@ -748,15 +798,6 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
     }
     if (!empty($params['features_condition'])) {
         FeaturesCache::getProductsConditions($params['features_condition'], $join, $condition, $lang_code);
-    }
-}
-
-function fn_development_calculate_cart_items(&$cart, $cart_products, $auth)
-{
-    if (!empty($cart_products)) {
-        foreach ($cart_products as $i => $product) {
-            $cart['products'][$i]['main_category'] = $product['main_category'];
-        }
     }
 }
 

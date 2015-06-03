@@ -3811,13 +3811,14 @@ var Tygh = {
                     if (elm.hasClass('cm-dropdown')) {
                         var block = elm.parent();
                         var new_elm = elm.clone();
+                        var button = elm.parents('form').find('button');
                         var option_id = new_elm.attr('id');
                         new_elm.attr('onchange',"fn_change_notification_option('" + option_id + "', '" + clicked_elm.attr('id') + "');");
-                        var new_block = $('<div>').append(new_elm.clone()).append(block.find('script').clone()).html().str_replace(option_id, 'ntf_' + option_id)
+                        var new_block = $('<div>' + '<span class="cm-ac-notification-label"style="margin-right: 50px;">' + _.tr('define_option') + '</span>').append(new_elm.clone()).append("<script type='text/javascript'>(function(_, $){$(function(){$('.cm-dropdown').each(function(){$(this).selectbox();});});}(Tygh, Tygh.$));</script>").html().str_replace(option_id, 'ntf_' + option_id);
                         $.ceNotification('show', {
                             type: 'I', 
-                            title: _.tr('define_option'), 
-                            message: new_block
+                            message: new_block,
+                            attach: button
                         });
                     } else {
                         lbl.parent().addClass('error');
@@ -4230,6 +4231,8 @@ var Tygh = {
         var container;
         var timers = {};
         var delay = 0;
+        var oc_delay = 0.2;
+        var close_class;
 
         function _duplicateNotification(key)
         {
@@ -4254,6 +4257,11 @@ var Tygh = {
 
         function _closeNotification(notification)
         {
+            if (close_class) {
+                notification.addClass(close_class);
+            } else {
+                notification.addClass('cm-close-notification');
+            }
             if (notification.find('.cm-notification-close-ajax').length) {
                 $.ceAjax('request', fn_url('notifications.close?notification_id=' + notification.data('caNotificationKey')), {
                     hidden: true
@@ -4267,6 +4275,7 @@ var Tygh = {
             if (notification.hasClass('cm-notification-content-extended')) {
                 var overlay = $('.ui-widget-overlay[data-ca-notification-key=' + notification.data('caNotificationKey') + ']');
                 if (overlay.length) {
+                    overlay.addClass('cm-close-notification-bg');
                     overlay.fadeOut('fast', function() {
                         overlay.remove();
                     });
@@ -4322,6 +4331,8 @@ var Tygh = {
 
                 data.message = _processTranslation(data.message);
                 data.title = _processTranslation(data.title);
+                close_class = data.close_class;
+                attach = data.attach;
 
                 // Popup message in the screen center - should be only one at time
                 if (data.type == 'I') {
@@ -4331,12 +4342,13 @@ var Tygh = {
                         methods.close($(this), false);
                     });
 
-                    $(_.body).append(
-                        '<div class="ui-widget-overlay" style="z-index:1010" data-ca-notification-key="' + key + '"></div>'
-                    );
-
-                    var notification = $('<div class="cm-notification-content cm-notification-content-extended notification-content-extended ' + (data.message_state == "I" ? ' cm-auto-hide' : '') + '" data-ca-notification-key="' + key + '">' +
-                        '<h1>' + data.title + '<span class="cm-notification-close close"></span></h1>' +
+                    if (!attach) {
+                        title = '<h1>' + data.title + '<span class="cm-notification-close close"></span></h1>';
+                    } else {
+                        title = '';
+                    }
+                    var notification = $('<div class="cm-notification-content cm-notification-content-extended notification-content-extended ' + (data.message_state == "I" ? ' cm-auto-hide' : '') + (attach ? ' cm-notification-content__add-to-cart' : '') + '" data-ca-notification-key="' + key + '">' +
+                        title +
                         '<div class="notification-body-extended">' +
                         data.message +
                         '</div>' +
@@ -4347,12 +4359,33 @@ var Tygh = {
                     $(notification).find('.cm-notification-max-height').css({
                         'max-height': notificationMaxHeight
                     });
+                    
+                    if (attach) {
+                        attach.after(
+                            '<div class="ui-widget-overlay" style="z-index:1010" data-ca-notification-key="' + key + '"></div>'
+                        );
+                        notification.css({
+                            'top': attach.offset().top - notification.outerHeight() - 20,
+                            'left': attach.offset().left,
+                            'position': 'absolute'
+                        });
+                    } else {
+                        $(_.body).append(
+                            '<div class="ui-widget-overlay" style="z-index:1010" data-ca-notification-key="' + key + '"></div>'
+                        );
+                        notification.css('top', w.view_height / 2 - (notification.height() / 2));
+                    }
 
                     // FIXME I-type notifications are embedded directly into the body and not into a container, because a container has low z-index and get overlapped by modal dialogs.
                     //container.append(notification);
                     $(_.body).append(notification);
-                    notification.css('top', w.view_height / 2 - (notification.height() / 2));
 
+                    if (title == '') {
+                        $(_.doc).on('click', '.ui-widget-overlay[data-ca-notification-key=' + key + ']', function() {
+                            methods.close(notification, false);
+                        })
+                    }
+                    
                 } else {
                     var n_class = 'alert';
                     var b_class = '';

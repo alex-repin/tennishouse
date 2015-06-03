@@ -209,10 +209,12 @@ function fn_change_notification_option(obj_id, clicked_id)
     if (_notification_container.length) {
         $.ceNotification('close', _notification_container, false);
     }
-    parent_el.find("option").attr('selected', false);
-    parent_el.find("option[value='" + ntf_el.val() + "']").attr('selected', 'selected').change();
-    if ($('#' + clicked_id).length > 0) {
-        $('#' + clicked_id).click();
-//         parent_el.parents("form").find("button").click();
-    }
+    setTimeout(function(){
+        parent_el.find("option").attr('selected', false);
+        parent_el.find("option[value='" + ntf_el.val() + "']").attr('selected', 'selected').change();
+        if ($('#' + clicked_id).length > 0) {
+            $('#' + clicked_id).click();
+    //         parent_el.parents("form").find("button").click();
+        }
+    }, 200);
 }
