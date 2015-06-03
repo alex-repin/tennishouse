@@ -4239,11 +4239,11 @@ var Tygh = {
 
         function _duplicateNotification(key)
         {
-            var dups = $('div[data-ca-notification-key=' + key + ']');
+            var dups = $('div.cm-notification-content.cm-notification-content-extended[data-ca-notification-key=' + key + ']');
             if (dups.length) {
 
                 if (!_addToDialog(dups)) {
-                    //dups.fadeTo('fast', 0.5).fadeTo('fast', 1).fadeTo('fast', 0.5).fadeTo('fast', 1);
+                    dups.fadeTo('fast', 0.5).fadeTo('fast', 1).fadeTo('fast', 0.5).fadeTo('fast', 1);
                 }
 
                 // Restart autoclose timer
