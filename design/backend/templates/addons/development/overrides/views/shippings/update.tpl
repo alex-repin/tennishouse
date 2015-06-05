@@ -147,6 +147,19 @@
     </div>
 </div>
 
+<div class="control-group">
+    <label class="control-label">{__("available_payments")}</label>
+    <div class="controls">
+        <input type="hidden" name="shipping_data[available_payments]" value="0" />
+        <label class="checkbox inline" for="elm_ship_data_available_payments_pod">
+            <input type="checkbox" name="shipping_data[available_payments][]" id="elm_ship_data_available_payments_pod" {if $shipping.available_payments && 'pod'|in_array:$shipping.available_payments} checked="checked"{/if} value="pod" />{__("payment_pod")}
+        </label>
+        <label class="checkbox inline" for="elm_ship_data_available_payments_po">
+            <input type="checkbox" name="shipping_data[available_payments][]" id="elm_ship_data_available_payments_po" {if $shipping.available_payments && 'po'|in_array:$shipping.available_payments} checked="checked"{/if} value="po" />{__("payment_po")}
+        </label>
+    </div>
+</div>
+
 {hook name="shippings:update"}
 {/hook}
 {if !"ULTIMATE:FREE"|fn_allowed_for}

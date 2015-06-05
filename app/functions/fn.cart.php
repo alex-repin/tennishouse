@@ -2140,6 +2140,7 @@ function fn_get_shipping_info($shipping_id, $lang_code = CART_LANGUAGE)
         }
 
         // [tennishouse]
+        $shipping['available_payments'] = unserialize($shipping['available_payments']);
         $payment_ids = unserialize($shipping['payment_ids']);
         $shipping['payment_ids'] = array();
         if (!empty($payment_ids)) {

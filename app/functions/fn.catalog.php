@@ -448,7 +448,9 @@ function fn_gather_additional_products_data(&$products, $params)
 
     $product_ids = array();
     foreach ($products as $v) {
+        if (!in_array($v['product_id'], $product_ids)) {
             $product_ids[] = $v['product_id'];
+        }
     }
 
     if ($params['get_icon'] || $params['get_detailed']) {

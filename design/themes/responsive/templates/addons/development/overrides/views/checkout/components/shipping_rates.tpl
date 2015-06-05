@@ -113,26 +113,40 @@ function fn_calculate_total_shipping_cost() {
 
                     {hook name="checkout:shipping_method"}
                         {if $display == "radio"}
-                            <p class="ty-shipping-options__method">
-                                <input type="radio" class="ty-valign" id="sh_{$group_key}_{$shipping.shipping_id}" name="shipping_ids[{$group_key}]" value="{$shipping.shipping_id}" onclick="fn_calculate_total_shipping_cost();" {$checked} />
-                                {if $shipping.icon}
-                                    {include file="common/image.tpl" obj_id=$shipping.shipping_id images=$shipping.icon image_width="70" image_height="35" keep_transparent=true}
-                                {/if}
-                                <label for="sh_{$group_key}_{$shipping.shipping_id}" class="ty-valign">{$shipping.shipping} {$delivery_time} - <b>{$rate nofilter}</b></label>
-                                {if $shipping.website}
-                                <div class="shipping_carrier_link">
-                                    <a target="_blank" href="{$shipping.website}">{$shipping.website}</a>
+                            <div class="ty-shipping-options__method">
+                                <div class="ty-shipping-options__method-info">
+                                    <input type="radio" class="ty-valign" id="sh_{$group_key}_{$shipping.shipping_id}" name="shipping_ids[{$group_key}]" value="{$shipping.shipping_id}" onclick="fn_calculate_total_shipping_cost();" {$checked} />
+                                    {if $shipping.icon}
+                                        {include file="common/image.tpl" obj_id=$shipping.shipping_id images=$shipping.icon image_width="70" image_height="35" keep_transparent=true}
+                                    {/if}
+                                    <label for="sh_{$group_key}_{$shipping.shipping_id}" class="ty-valign">{$shipping.shipping} {$delivery_time} - <b>{$rate nofilter}</b></label>
+                                    {if $shipping.website}
+                                    <div class="shipping_carrier_link">
+                                        <a target="_blank" href="{$shipping.website}">{$shipping.website}</a>
+                                    </div>
+                                    {/if}
                                 </div>
-                                {/if}
-                            </p>
+                                <div class="ty-shipping-options__method-payments">
+                                    {if 'pod'|in_array:$shipping.available_payments}
+                                        <div>
+                                            <div class="ty-shipping-options__method-payments-mark"><i class="ty-shipping-options__method-payments-icon"></i></div><div class="ty-shipping-options__method-payments-type">{__("payment_pod")}</div>
+                                        </div>
+                                    {/if}
+                                    {if 'po'|in_array:$shipping.available_payments}
+                                        <div>
+                                            <div class="ty-shipping-options__method-payments-mark"><i class="ty-shipping-options__method-payments-icon"></i></div><div class="ty-shipping-options__method-payments-type">{__("payment_po")}</div>
+                                        </div>
+                                    {/if}
+                                </div>
+                            </div>
 
                         {elseif $display == "select"}
                             <option value="{$shipping.shipping_id}" {$selected}>{$shipping.shipping} {$delivery_time} - {$rate nofilter}</option>
 
                         {elseif $display == "show"}
-                            <p>
+                            <div>
                                 {$strong_begin}{$rate.name} {$delivery_time} - {$rate nofilter}{$strong_begin}
-                            </p>
+                            </div>
                         {/if}
                     {/hook}
 

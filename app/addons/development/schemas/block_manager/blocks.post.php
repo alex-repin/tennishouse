@@ -267,8 +267,8 @@ $schema['news'] = array (
     'wrappers' => 'blocks/wrappers',
     'content' => array (
         'news' => array (
-            'type' => 'enum',
-            'items_function' => 'fn_get_rss_news',
+            'type' => 'function',
+            'function' => array('fn_get_block_rss_news')
         )
     )
 );

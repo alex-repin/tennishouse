@@ -20,6 +20,11 @@ use Tygh\FeaturesCache;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_get_block_rss_news($value, $block, $block_scheme)
+{
+    return fn_get_rss_news(array('rss_feed_link' => $block['properties']['rss_feed_link']));
+}
+
 function fn_get_rss_news($params)
 {
     $news_feed = array();
@@ -48,7 +53,7 @@ function fn_get_rss_news($params)
         }
     }
     
-    return array($news_feed, );
+    return $news_feed;
 }
 
 function fn_update_product_tracking($product_id)

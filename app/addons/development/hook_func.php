@@ -99,7 +99,7 @@ function fn_development_delete_product_option_post($option_id, $pid, $option_del
 
 function fn_development_shippings_get_shippings_list_conditions($group, $shippings, &$fields, $join, $condition, $order_by)
 {
-    $fields[] = "?:shippings.website";
+    $fields[] = "?:shippings.website, ?:shippings.available_payments";
 }
 
 function fn_development_shippings_get_shippings_list_post($group, $lang, $area, &$shippings_info)
@@ -116,6 +116,7 @@ function fn_development_shippings_get_shippings_list_post($group, $lang, $area, 
             continue;
         }
         $shippings_info[$key]['icon'] = fn_get_image_pairs($shipping_info['shipping_id'], 'shipping', 'M', true, true, $lang);
+        $shippings_info[$key]['available_payments'] = unserialize($shippings_info[$key]['available_payments']);
     }
 }
 
@@ -147,6 +148,7 @@ function fn_development_prepare_checkout_payment_methods($cart, $auth, &$payment
 function fn_development_update_shipping(&$shipping_data, $shipping_id, $lang_code)
 {
     $shipping_data['payment_ids'] = !empty($shipping_data['payment_ids']) ? serialize($shipping_data['payment_ids']) : serialize(array());
+    $shipping_data['available_payments'] = !empty($shipping_data['available_payments']) ? serialize($shipping_data['available_payments']) : serialize(array());
 }
 
 function fn_development_get_product_option_data_post(&$opt, $product_id, $lang_code)
