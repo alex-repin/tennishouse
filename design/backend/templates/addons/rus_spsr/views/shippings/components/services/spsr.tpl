@@ -59,7 +59,7 @@
 <!--spsr_city_div--></div>
 
 <div class="control-group">
-    <label class="control-label" for="sendercitypostcode">{__("shippings.spsr.sendercitypostcode")}</label>
+    <label class="control-label" for="sendercitypostcode">{__("shippings.spsr.sendercitypost")}</label>
     <div class="controls">
         <input id="sendercitypostcode" type="text" name="shipping_data[service_params][sendercitypostcode]" size="30" value="{$shipping.service_params.sendercitypostcode}" />
     </div>
