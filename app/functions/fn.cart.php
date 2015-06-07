@@ -695,11 +695,18 @@ function fn_update_product_amount($product_id, $amount, $product_options, $sign)
 
     if ($tracking == ProductTracking::TRACK_WITHOUT_OPTIONS) {
         db_query("UPDATE ?:products SET amount = ?i WHERE product_id = ?i", $new_amount, $product_id);
+        if ($new_amount <= 0) {
+            db_query("UPDATE ?:products SET status = 'H' WHERE product_id = ?i", $product_id);
+        }
     } else {
         db_query("UPDATE ?:product_options_inventory SET amount = ?i WHERE combination_hash = ?i", $new_amount, $cart_id);
         // [tennishouse]
         fn_update_product_exception($product_id, $product_options, $new_amount);
         // [tennishouse]
+        $in_stock = db_get_field("SELECT combination_hash FROM ?:product_options_inventory WHERE amount > 0 AND product_id = ?i", $product_id);
+        if (empty($in_stock)) {
+            db_query("UPDATE ?:products SET status = 'H' WHERE product_id = ?i", $product_id);
+        }
     }
 
     if (($current_amount <= 0) && ($new_amount > 0)) {

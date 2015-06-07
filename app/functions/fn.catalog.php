@@ -1366,7 +1366,9 @@ function fn_get_categories($params = array(), $lang_code = CART_LANGUAGE)
         $_statuses = array('A'); // Show enabled products/categories
         $condition .= fn_get_localizations_condition('?:categories.localization', true);
         $condition .= " AND (" . fn_find_array_in_set($auth['usergroup_ids'], '?:categories.usergroup_ids', true) . ")";
-        $condition .= db_quote(" AND ?:categories.status IN (?a)", $_statuses);
+        if (empty($params['skip_default_condition']) || empty($params['status'])) {
+            $condition .= db_quote(" AND ?:categories.status IN (?a)", $_statuses);
+        }
     }
 
     if (!empty($params['status'])) {

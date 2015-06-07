@@ -336,7 +336,8 @@ class Yml implements IYml
         $params = array (
             'simple' => false,
             'plain' => true,
-            'skip_filter' => true
+            'skip_filter' => true,
+            'skip_default_condition' => true
         );
 
         if ($this->options['disable_cat_d'] == "Y") {
@@ -506,6 +507,7 @@ class Yml implements IYml
 
             if ($this->options['disable_cat_d'] == "Y") {
                 $params['plain'] = true;
+                $params['skip_default_condition'] = true;
                 $params['status'] = array('A', 'H');
                 list($categories_tree, ) = fn_get_categories($params);
 

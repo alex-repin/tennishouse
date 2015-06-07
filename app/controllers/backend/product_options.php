@@ -92,6 +92,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }
         }
+        $in_stock = db_get_field("SELECT combination_hash FROM ?:product_options_inventory WHERE amount > 0 AND product_id = ?i", $_REQUEST['product_id']);
+        if (empty($in_stock)) {
+            db_query("UPDATE ?:products SET status = 'H' WHERE product_id = ?i", $_REQUEST['product_id']);
+        }
         // [tennishouse]
         fn_update_product_exceptions($_REQUEST['product_id'], $_REQUEST['inventory']);
         // [tennishouse]

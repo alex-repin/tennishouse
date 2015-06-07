@@ -238,7 +238,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             }
                                             db_query("UPDATE ?:product_options_inventory SET ?u WHERE combination_hash = ?s", $inventory[$k], $k);
                                         }
-                                        //db_query("DELETE FROM ?:product_options_exceptions WHERE product_id = ?i", $product_id);
+                                        db_query("DELETE FROM ?:product_options_exceptions WHERE product_id = ?i", $product_id);
                                         fn_update_product_exceptions($product_id, $inventory);
                                         if (!empty($comb_data)) {
                                             $broken_options_products[$product_code] = $data;

@@ -13,6 +13,10 @@
     </div>
 {/if}
 
+<div class="ty-cr-information">
+    {__("call_requests.information", ['[working_hours]' => __("working_hours")])}
+</div>
+
 <div class="ty-control-group">
     <label class="ty-control-group__title" for="call_data_{$id}_name">{__("your_name")}</label>
     <input id="call_data_{$id}_name" size="50" class="ty-input-text-full" type="text" name="call_data[name]" value="" />
