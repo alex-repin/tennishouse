@@ -403,7 +403,9 @@ function fn_get_memcached_stats()
         $result['status'] = true;
         $stats = Memcache::instance()->call('stats');
         $localhost = $stats['localhost:11211'];
-        $result['used_prc'] = ceil($localhost['bytes'] / $localhost['limit_maxbytes'] * 100);
+        if (!empty($localhost['limit_maxbytes'])) {
+            $result['used_prc'] = ceil($localhost['bytes'] / $localhost['limit_maxbytes'] * 100);
+        }
         $result['used'] = ceil($localhost['bytes'] / 1024);
     } else {
         $result['status'] = false;

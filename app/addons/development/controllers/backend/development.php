@@ -555,6 +555,14 @@ if ($mode == 'calculate_balance') {
         }
     }
     fn_print_die('done');
+} elseif ($mode == 'clone_catalog') {
+//     $params = array();
+// 
+//     list($products, $search) = fn_get_products(array());
+//     foreach ($products as $i => $product) {
+//         fn_clone_product($product['product_id']);
+//     }
+//     fn_print_die('Catalog cloned');
 }
 
 function fn_normalize_string($string)

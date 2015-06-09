@@ -267,6 +267,10 @@ function fn_is_watermarks_enabled($company_id = null)
 
 function fn_watermarks_generate_thumbnail_post(&$relative_path, &$lazy)
 {
+    // [tennishouse] NO WT FOR THUMBNAILS
+    return true;
+    // [tennishouse]
+    
     $image_path_info = fn_pathinfo($relative_path);
     $image_name = $image_path_info['filename'];
 

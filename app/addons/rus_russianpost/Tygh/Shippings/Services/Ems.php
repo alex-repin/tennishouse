@@ -345,7 +345,14 @@ class Ems implements IService
     public function getSimpleRates()
     {
         $data = $this->getRequestData();
-        $response = Http::get($data['url'], $data['data']);
+        $key = md5(json_encode($data['data']));
+        $ems_data = fn_get_session_data($key);
+        if (empty($ems_data)) {
+            $response = Http::get($data['url'], $data['data']);
+            fn_set_session_data($key, $response);
+        } else {
+            $response = $ems_data;
+        }
 
         return $response;
     }
@@ -358,15 +365,21 @@ class Ems implements IService
      */
     public function getEmsLocations($type = 'cities')
     {
-
         $url = 'http://www.emspost.ru/api/rest';
         $request = array (
             'method' => 'ems.get.locations',
             'type' => $type,
             'plain' => 'true'
         );
-        $result = Http::get($url, $request);
-        $result = json_decode($result, true);
+        $key = md5(json_encode($request));
+        $ems_locations = fn_get_session_data($key);
+        if (empty($ems_locations)) {
+            $result = Http::get($url, $request);
+            $result = json_decode($result, true);
+            fn_set_session_data($key, $result);
+        } else {
+            $result = $ems_locations;
+        }
 
         if (!empty($result['rsp'])) {
             if ($result['rsp']['stat'] == 'ok' && !empty($result['rsp']['locations'])) {

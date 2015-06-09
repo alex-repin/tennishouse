@@ -566,6 +566,9 @@ class Http
         if (!empty($extra['timeout'])) {
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $extra['timeout']);
         }
+        if (!empty($extra['request_timeout'])) {
+            curl_setopt($ch, CURLOPT_TIMEOUT, $extra['request_timeout']);
+        }
         if (!empty($extra['headers'])) {
             curl_setopt($ch, CURLOPT_HTTPHEADER, $extra['headers']);
         }

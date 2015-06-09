@@ -198,14 +198,15 @@ class RussianPostCalc implements IService
         $rp_data = fn_get_session_data($key);
 
         if (empty($rp_data)) {
-            // Russian post server works very unstably, that is why we cannot use multithreading and should use cycle.
-            $retry = 0;
-            do {
-                $retry++;
-                $response = Http::get($data['url'], $data['data']);
-            } while (strpos($response, 'Результаты расчёта') == 0 && $retry <= $this->_max_num_requests);
+            // Russian post server works very unstably, that is why we cannot use multithreading and should use cycle. !!! NO, THANK YOU
+            $tmp = time();
+            $extra = array(
+                'request_timeout' => 1
+            );
+            $response = Http::get($data['url'], $data['data'], $extra);
+            $res = json_decode($response, true);
 
-            if ($retry == $this->_max_num_requests) {
+            if ($res['msg']['type'] != 'done') {
                 $this->_internalError(__('error_occurred'));
             }
             fn_set_session_data($key, $response);

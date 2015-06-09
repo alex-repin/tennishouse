@@ -977,6 +977,12 @@ function fn_development_update_product_post($product_data, $product_id, $lang_co
             }
         }
     }
+    
+    // Generate thumbail to speed up the first loading of the products list
+    $main_pair = fn_get_image_pairs($product_id, 'product', 'M', true, true, $lang_code);
+    if (!empty($main_pair)) {
+        fn_image_to_display($main_pair, Registry::get('settings.Thumbnails.product_lists_thumbnail_width'), Registry::get('settings.Thumbnails.product_lists_thumbnail_height'));
+    }
 }
 
 function fn_development_update_product_pre(&$product_data, $product_id, $lang_code, $can_update)
