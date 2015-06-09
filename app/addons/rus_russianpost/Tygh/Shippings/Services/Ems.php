@@ -30,7 +30,7 @@ class Ems implements IService
      *
      * @var array $_allow_multithreading
      */
-    private $_allow_multithreading = true;
+    private $_allow_multithreading = false;
 
     /**
      * Stack for errors occured during the preparing rates process

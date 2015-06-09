@@ -189,6 +189,7 @@ class Sdek implements IService
             'method' => 'post',
             'url' => $url,
             'data' => json_encode($post),
+            'headers' => array('Content-Type: application/json',  'Content-Length: '.strlen(json_encode($post)))
         );
 
         return $request_data;
@@ -207,7 +208,7 @@ class Sdek implements IService
         $data_string = json_encode($data['data']);
 
         if (empty($sdek_data)) {
-            $response = Http::post($data['url'], $data['data'], array('Content-Type: application/json',  'Content-Length: '.strlen($data_string)));
+            $response = Http::post($data['url'], $data['data'], $data['headers']);
             fn_set_session_data($key, $response);
         } else {
             $response = $sdek_data;
