@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (!empty($_REQUEST['calculate'])) {
             $file = fn_filter_uploaded_data('csv_file');
-            $missing_products = $updated_products = $broken_options_products = $trash = array();
+            $missing_products = $updated_products = $broken_options_products = $broken_net_cost = $trash = array();
             if (!empty($file) && !empty($_REQUEST['brand_id'])) {
                 if ($_REQUEST['brand_id'] == BABOLAT_FV_ID) {
                     $options = array(
@@ -55,16 +55,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             if (!empty($ignore_list) && in_array($product_code, $ignore_list)) {
                                 continue;
                             }
-                            $ids = db_get_fields("SELECT product_id FROM ?:products WHERE product_code = ?s", $product_code);
+                            $ids = db_get_hash_single_array("SELECT product_id, net_cost FROM ?:products WHERE product_code = ?s", array('product_id', 'net_cost'), $product_code);
                             if (empty($data['data'])) {
                                 $missing_products[$product_code] = $data;
                             } elseif (count($ids) == 0) {
-                                $amount_num = count($data['data'][0]) - 1;
                                 $combination_hash = db_get_array("SELECT combination_hash, product_id FROM ?:product_options_inventory WHERE product_code = ?s", $product_code);
-                                if (count($combination_hash) != 1 || count($data['data']) > 1 || empty($data['data'][0][$amount_num])) {
+                                if (count($combination_hash) != 1 || count($data['data']) > 1 || empty($data['data'][0]['amount'])) {
                                     $missing_products[$product_code] = $data;
                                 } else {
-                                    db_query("UPDATE ?:product_options_inventory SET amount = ?i WHERE combination_hash = ?i", $data['data'][0][$amount_num], $combination_hash[0]['combination_hash']);
+                                    db_query("UPDATE ?:product_options_inventory SET amount = ?i WHERE combination_hash = ?i", $data['data'][0]['amount'], $combination_hash[0]['combination_hash']);
                                     $updated_products[$product_code] = array(
                                         'code' => $product_code,
                                         'data' => $data
@@ -80,8 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 foreach ($data['data'] as $i => $variant) {
                                     $option_data = $var_id_tmp = $options_count = $missing_variants = $max = array();
                                     $break = false;
-                                    $amount_num = count($variant) - 1;
-                                    foreach ($ids as $m => $product_id) {
+                                    foreach ($ids as $product_id => $product_net_cost) {
                                         $option_data[$product_id] = (empty($option_data[$product_id])) ? array() : $option_data[$product_id];
                                         $product_data = fn_get_product_data($product_id, $auth, DESCR_SL, '', false, false, false, false, false, false, false);
                                         $product_options = fn_get_product_options($product_id, DESCR_SL, true, true);
@@ -95,8 +93,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
                                             fn_print_r($variant);
                                         }
-                                        if ($variant[0] != '' && !empty($product_options) && $product_data['tracking'] == 'O' && !empty($variant[$amount_num])) {
-                                            $variants = explode(',', fn_normalize_string($variant[0]));
+                                        if ($variant['name'] != '' && !empty($product_options) && $product_data['tracking'] == 'O' && !empty($variant['amount'])) {
+                                            $variants = explode(',', fn_normalize_string($variant['name']));
                                             $prev_numeric = false;
                                             $prev_id = '';
                                             foreach ($variants as $j => $variant_name) {
@@ -157,10 +155,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 }
                                                 if (!$variant_found) {
                                                     $missing_variants[$product_id][] = $j;
+                                                } else {
+                                                    if (!empty($variant['price']) && $product_net_cost != $variant['price']) {
+                                                        $broken_net_cost[$product_code] = $data;
+                                                    }
                                                 }
                                             }
-                                        } elseif (count($data['data']) == 1 && $product_data['tracking'] == 'B' && !empty($variant[$amount_num]) && empty($product_options)) {
-                                            $amount = floor($variant[$amount_num] / $product_data['import_divider']);
+                                        } elseif (count($data['data']) == 1 && $product_data['tracking'] == 'B' && !empty($variant['amount']) && empty($product_options)) {
+                                            $amount = floor($variant['amount'] / $product_data['import_divider']);
                                             db_query("UPDATE ?:products SET amount = ?i, status = ?s WHERE product_id = ?i", $amount, ($amount > 0 ? 'A' : 'H'), $product_id);
                                             $updated_products[$product_code] = array(
                                                 'code' => $product_code,
@@ -203,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 }
                                             }
                                             $combination_hash = fn_generate_cart_id($product_id, array('product_options' => $option_data[$product_id]));
-                                            $combinations_data[$product_id][$combination_hash]['amount'] = $variant[$amount_num];
+                                            $combinations_data[$product_id][$combination_hash]['amount'] = $variant['amount'];
                                             if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
                                                 fn_print_r('generate', $combination_hash, $product_id, array('product_options' => $option_data[$product_id]));
                                             }
@@ -255,7 +257,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     }
                                 }
                                 if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
-                                    fn_print_die($broken_options_products);
+                                    fn_print_die('broken', $broken_options_products);
                                 }
                             }
                         }
@@ -323,6 +325,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Registry::get('view')->assign('missing_products', $missing_products);
             Registry::get('view')->assign('updated_products', $updated_products);
             Registry::get('view')->assign('broken_options_products', $broken_options_products);
+            Registry::get('view')->assign('broken_net_cost_products', $broken_net_cost);
             fn_set_notification('N', __('notice'), __('stocks_updated_successfully'));
         }
         
@@ -674,7 +677,16 @@ function fn_get_babolat_csv($file, $options)
                         'data' => array()
                     );
                 } elseif (!empty($current_product_code) && empty($row[1])/* && !empty($previous_row) && $row[2] == $previous_row[2] && $row[3] == $previous_row[3]*/) {
-                    $result[$current_product_code]['data'][] = $row;
+                    $item = array(
+                        'name' => $row[0],
+                        'amount' => $row[count($row) - 1]
+                    );
+                    if (count($row) == 4) {
+                        $item['price'] = str_replace(',', '.', $row[2]);
+                    } elseif (count($row) == 5) {
+                        $item['price'] = !empty($row[3]) ? str_replace(',', '.', $row[3]) : str_replace(',', '.', $row[2]);
+                    }
+                    $result[$current_product_code]['data'][] = $item;
                 } else {
                     $current_product_code = '';
                     $previous_row = '';

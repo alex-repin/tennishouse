@@ -86,6 +86,12 @@
                 {$broken_options_products|fn_print_r}
             {/if}
         </div>
+        {include file="common/subheader.tpl" title="{__("update_stock_broken_net_cost")}: `$broken_net_cost_products|count`" target="#res_broken_net_cost"}
+        <div id="res_broken_net_cost" class="collapse">
+            {if $broken_net_cost_products}
+                {$broken_net_cost_products|fn_print_r}
+            {/if}
+        </div>
         {include file="common/subheader.tpl" title="{__("update_stock_trash")}: `$trash|count`" target="#res_trash"}
         <div id="res_trash" class="collapse">
             {if $trash}

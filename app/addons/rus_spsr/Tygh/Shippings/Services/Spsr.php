@@ -219,7 +219,10 @@ class Spsr implements IService
         $this->startSession($data['login'], $data['psw'], $data['url']);
         if (!empty($this->SID)) {
             $data['data']['SID'] = $this->SID;
-            $response = Http::get($data['r_url'], $data['data']);
+            $extra = array(
+                'request_timeout' => 2
+            );
+            $response = Http::get($data['r_url'], $data['data'], $extra);
             $this->finishSession($data['login'], $this->SID, $data['url']);
         }
         

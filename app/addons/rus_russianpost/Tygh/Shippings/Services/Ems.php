@@ -348,7 +348,10 @@ class Ems implements IService
         $key = md5(json_encode($data['data']));
         $ems_data = fn_get_session_data($key);
         if (empty($ems_data)) {
-            $response = Http::get($data['url'], $data['data']);
+            $extra = array(
+                'request_timeout' => 1
+            );
+            $response = Http::get($data['url'], $data['data'], $extra);
             fn_set_session_data($key, $response);
         } else {
             $response = $ems_data;

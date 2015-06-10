@@ -208,7 +208,10 @@ class Sdek implements IService
         $data_string = json_encode($data['data']);
 
         if (empty($sdek_data)) {
-            $response = Http::post($data['url'], $data['data'], $data['headers']);
+            $extra = array(
+                'request_timeout' => 2
+            );
+            $response = Http::post($data['url'], $data['data'], $data['headers'], $extra);
             fn_set_session_data($key, $response);
         } else {
             $response = $sdek_data;
