@@ -227,6 +227,9 @@
         <item>
             ALTER TABLE `cscart_shippings` ADD `available_payments` TEXT NOT NULL ;
         </item>
+        <item>
+            ALTER TABLE `cscart_categories` CHANGE `sections_categorization` `sections_categorization` TEXT NOT NULL ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -464,5 +467,9 @@
         <item lang="ru" id="payment_po">Оплата на сайте</item>
         <item lang="ru" id="payment_pod">Оплата при получении</item>
         <item lang="ru" id="call_requests.information">Оставьте свои контактные данные, и наш менеджер свяжется с Вами в рабочее время ([working_hours]) для уточнения деталей заказа и доставки.</item>
+        <item lang="ru" id="womens_shoes_size_chart">Таблица размеров женской обуви</item>
+        <item lang="ru" id="mens_clothes_size_chart">Таблица размеров мужской одежды</item>
+        <item lang="ru" id="mens_shoes_size_chart">Таблица размеров мужской обуви</item>
+        <item lang="ru" id="womens_clothes_size_chart">Таблица размеров женской одежды</item>
     </language_variables>
 </addon>

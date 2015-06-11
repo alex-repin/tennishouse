@@ -235,19 +235,18 @@ if ($mode == 'catalog') {
                 }
             }
             if (!empty($category_data['sections_categorization'])) {
-                $sections_categorization = array();
-                $sc_feature = fn_get_product_feature_data($category_data['sections_categorization'], true);
-                if (!empty($sc_feature['variants'])) {
-                    foreach ($products as $i => $product) {
-                        if (!empty($product['sections_categorization'])) {
-                            $sections_categorization[$product['sections_categorization']][] = $product;
-                        } else {
-                            $sections_categorization['other'][] = $product;
-                        }
+                $sections_categorization = $other = array();
+                foreach ($products as $i => $product) {
+                    if (!empty($product['sections_categorization'])) {
+                        $sections_categorization[$product['sections_categorization']][] = $product;
+                    } else {
+                        $other[] = $product;
                     }
-                    Registry::get('view')->assign('sections_categorization', $sections_categorization);
-                    Registry::get('view')->assign('sc_feature', $sc_feature);
                 }
+                $sc_feature = db_get_hash_array("SELECT ?:product_features.feature_id, ?:product_features_descriptions.description, ?:product_feature_variants.variant_id, ?:product_feature_variant_descriptions.variant FROM ?:product_features LEFT JOIN ?:product_features_descriptions ON ?:product_features_descriptions.feature_id = ?:product_features.feature_id AND ?:product_features_descriptions.lang_code = ?s INNER JOIN ?:product_feature_variants ON ?:product_feature_variants.feature_id = ?:product_features.feature_id LEFT JOIN ?:product_feature_variant_descriptions ON ?:product_feature_variant_descriptions.variant_id = ?:product_feature_variants.variant_id AND ?:product_feature_variant_descriptions.lang_code = ?s WHERE ?:product_features.feature_id IN (?n) AND ?:product_feature_variants.variant_id IN (?n) ORDER BY ?:product_feature_variants.position", 'variant_id', CART_LANGUAGE, CART_LANGUAGE, $category_data['sections_categorization'], array_keys($sections_categorization));
+                $sections_categorization['other'] = $other;
+                Registry::get('view')->assign('sections_categorization', $sections_categorization);
+                Registry::get('view')->assign('sc_feature', $sc_feature);
             }
         }
         // [tennishouse]

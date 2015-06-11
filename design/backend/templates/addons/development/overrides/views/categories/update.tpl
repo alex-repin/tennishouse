@@ -166,18 +166,11 @@
         <label class="control-label" for="elm_category_sections_categorization">{__("sections_categorization")}:</label>
 
         <div class="controls">
-        <select name="category_data[sections_categorization]" id="elm_category_sections_categorization">
-            <option value="" {if $category_data.sections_categorization == "0"}selected="selected"{/if}> - {__("none")} - </option>
-            {foreach from=$filter_features item=feature}
-                {if $feature.feature_type != 'G'}
-                    <option value="{$feature.feature_id}" {if $category_data.sections_categorization == $feature.feature_id}selected="selected"{/if}>{if $feature.group_description}{$feature.group_description}: {/if}{$feature.description}</option>
-                {elseif $feature.subfeatures}
-                    {foreach from=$feature.subfeatures item=subfeature}
-                        <option value="{$subfeature.feature_id}" {if $category_data.sections_categorization == $subfeature.feature_id}selected="selected"{/if}>{if $subfeature.group_description}{$subfeature.group_description}: {/if}{$subfeature.description}</option>
-                    {/foreach}
-                {/if}
-            {/foreach}
-        </select>
+            {include file="common/double_selectboxes.tpl"
+            first_name="category_data[sections_categorization]"
+            first_data=$category_data.sections_categorization
+            second_name="sections_categorization"
+            second_data=$section_features}
         </div>
     </div>
 

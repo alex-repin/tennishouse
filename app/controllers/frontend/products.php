@@ -32,7 +32,16 @@ if ($mode == 'search') {
         $params['extend'] = array('description');
         list($products, $search) = fn_get_products($params, Registry::get('settings.Appearance.products_per_page'));
 
-        fn_gather_additional_products_data($products, array('get_icon' => true, 'get_detailed' => true, 'get_additional' => true, 'get_options'=> true));
+        fn_gather_additional_products_data($products, array(
+            'get_icon' => true,
+            'get_detailed' => true,
+            'get_additional' => true,
+            'get_options'=> true,
+            'get_discounts' => true,
+            'get_features' => false,
+            'get_title_features' => true,
+            'allow_duplication' => false
+        ));
 
         if (!empty($products)) {
             $_SESSION['continue_url'] = Registry::get('config.current_url');

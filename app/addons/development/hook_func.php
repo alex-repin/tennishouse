@@ -241,6 +241,9 @@ function fn_development_render_block_register_cache($block, $cache_name, &$block
 
 function fn_development_get_category_data_post($category_id, $field_list, $get_main_pair, $skip_company_condition, $lang_code, &$category_data)
 {
+    if (!empty($category_data['sections_categorization'])) {
+        $category_data['sections_categorization'] = unserialize($category_data['sections_categorization']);
+    }
     if (!empty($category_data['brand_id'])) {
         list($brands) = fn_get_product_feature_variants(array(
             'feature_id' => BRAND_FEATURE_ID,
@@ -261,7 +264,7 @@ function fn_development_get_category_data_post($category_id, $field_list, $get_m
     }
 }
 
-function fn_development_get_product_feature_variants($fields, $join, &$condition, $group_by, $sorting, $lang_code, $limit)
+function fn_development_get_product_feature_variants(&$fields, $join, &$condition, $group_by, $sorting, $lang_code, $limit)
 {
     if (!empty($params['variant_ids'])) {
         $params['variant_ids'] = is_array($params['variant_ids']) ? $params['variant_ids'] : array($params['variant_ids']);
@@ -465,10 +468,10 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                 . " LEFT JOIN ?:product_feature_variant_descriptions as vd ON vd.variant_id = v.variant_id AND vd.lang_code = ?s"
                 . " LEFT JOIN ?:product_features as gf ON gf.feature_id = f.parent_id AND gf.feature_type = ?s ",
                 CART_LANGUAGE, 'G');
-            $products_features = db_get_hash_multi_array("SELECT $fields FROM ?:product_features as f $join WHERE $condition GROUP BY v.product_id, v.feature_id ORDER BY f.position", array('product_id', 'feature_id'), $condition);
+            $products_features = db_get_hash_multi_array("SELECT $fields FROM ?:product_features as f $join WHERE $condition GROUP BY v.product_id, v.feature_id ORDER BY f.position", array('product_id', 'feature_id'));
             $brands = fn_get_product_feature_data(BRAND_FEATURE_ID, true, true);
         }
-        
+
         if (!empty($params['get_options'])) {
             if (!empty($color_ids)) {
                 $color_image_pairs = fn_get_image_pairs($color_ids, 'variant_image', 'V', true, false, CART_LANGUAGE);
@@ -709,6 +712,13 @@ function fn_development_get_filters_products_count_before_select_filters(&$sf_fi
     $sf_fields .= db_quote(", ?:product_filters.is_slider, ?:product_filters.units, ?:product_filters.note_url, ?:product_filters.note_text");
 }
 
+function fn_development_update_category_pre(&$category_data, $category_id, $lang_code)
+{
+    if (!empty($category_data['sections_categorization'])) {
+        $category_data['sections_categorization'] = serialize($category_data['sections_categorization']);
+    }
+}
+
 function fn_development_get_products(&$params, &$fields, &$sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
 {
     if (!empty($params['tabs_categorization']) || !empty($params['subtabs_categorization']) || !empty($params['sections_categorization'])) {
@@ -722,7 +732,7 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
             $fields[] = 'subtabs_categorization.variant_id AS subtabs_categorization';
         }
         if (!empty($params['sections_categorization'])) {
-            $join .= db_quote(" LEFT JOIN ?:product_features_values AS sections_categorization ON sections_categorization.product_id = products.product_id AND sections_categorization.feature_id = ?i", $params['sections_categorization']);
+            $join .= db_quote(" LEFT JOIN ?:product_features_values AS sections_categorization ON sections_categorization.product_id = products.product_id AND sections_categorization.feature_id IN (?n)", $params['sections_categorization']);
             $fields[] = 'sections_categorization.variant_id AS sections_categorization';
         }
     }
