@@ -40,6 +40,7 @@
 {/if}
 
 {if $stb_feature.variants}
+    {assign var="ajax_div_ids" value="product_filters_*,products_search_*,category_products_*,product_features_*,breadcrumbs_*,currencies_*,languages_*,tabs_categorization,subtabs_categorization"}
     {if $smarty.server.QUERY_STRING|strpos:"dispatch=" !== false}
         {assign var="filter_qstring" value=$config.current_url|fn_query_remove:"result_ids":"full_render":"filter_id":"view_all":"req_range_id":"advanced_filter":"subcats":"page":"stc_id"}
     {else}
@@ -47,29 +48,22 @@
     {/if}
     <div class="clearfix">
         <div class="ty-categorization-subtabs__title">{$stb_feature.description}:</div>
-        <div class="ty-categorization-subtabs">
+        <div class="ty-categorization-subtabs" id="subtabs_categorization">
             {foreach from=$stb_feature.variants item=tab key=key}
                 {if !$active_subtab}
                     {assign var="active_subtab" value=$key}
                 {/if}
-                {if $key == $active_subtab}
-                    {if $tab.variant_id == $smarty.const.KIRSCHBAUM_BRAND_ID}
-                        {$img_ht = "50"}
-                    {else}
-                        {$img_ht = "35"}
-                    {/if}
+                {if $tab.variant_id == $smarty.const.KIRSCHBAUM_BRAND_ID}
+                    {$img_ht = "50"}
                 {else}
-                    {if $tab.variant_id == $smarty.const.KIRSCHBAUM_BRAND_ID}
-                        {$img_ht = "40"}
-                    {else}
-                        {$img_ht = "30"}
-                    {/if}
+                    {$img_ht = "35"}
                 {/if}
-                <a class="ty-categorization-subtabs__a cm-ajax-force cm-ajax cm-ajax-full-render cm-history" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_subtab}href="{$filter_qstring|fn_link_attach:"stc_id=`$key`"|fn_url}"{/if}>
-                    <div class="ty-categorization-subtabs__item">{include file="addons/development/common/brand_logo.tpl" brand=$tab brand_variant_id=$tab.variant_id img_height=$img_ht}</div>
-                </a>
+                <div class="ty-categorization-subtabs__item {if $key == $active_subtab}ty-categorization-subtabs__item-active{/if}">
+                    <a class="ty-categorization-subtabs__a cm-ajax-force cm-ajax cm-ajax-full-render cm-history" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_subtab}href="{$filter_qstring|fn_link_attach:"stc_id=`$key`"|fn_url}"{/if}>
+                    {include file="addons/development/common/brand_logo.tpl" brand=$tab brand_variant_id=$tab.variant_id img_height=$img_ht}</a>
+                </div>
             {/foreach}
-        </div>
+        <!--subtabs_categorization--></div>
     </div>
 {/if}
 

@@ -26,3 +26,6 @@
                 '6589', 'O', 'ru', 'Дублировать товары по главной опции в списке', ''
             );
         </item>
+        <item>
+            ALTER TABLE `cscart_categories` CHANGE `sections_categorization` `sections_categorization` TEXT NOT NULL ;
+        </item>

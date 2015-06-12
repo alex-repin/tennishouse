@@ -206,7 +206,7 @@
         </item>
         <item>
             ALTER TABLE `cscart_categories` ADD `tabs_categorization` MEDIUMINT( 8 ) UNSIGNED NOT NULL ,
-            ADD `sections_categorization` MEDIUMINT( 8 ) UNSIGNED NOT NULL ;
+            ADD `sections_categorization` TEXT NOT NULL ;
         </item>
         <item>
             ALTER TABLE `cscart_categories` ADD `subtabs_categorization` MEDIUMINT( 8 ) UNSIGNED NOT NULL ;
@@ -226,9 +226,6 @@
         </item>
         <item>
             ALTER TABLE `cscart_shippings` ADD `available_payments` TEXT NOT NULL ;
-        </item>
-        <item>
-            ALTER TABLE `cscart_categories` CHANGE `sections_categorization` `sections_categorization` TEXT NOT NULL ;
         </item>
     </queries>
     <language_variables>
