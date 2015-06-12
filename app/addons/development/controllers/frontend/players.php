@@ -37,7 +37,8 @@ if ($mode == 'view') {
                 'get_additional' => true,
                 'get_options' => true,
                 'get_discounts' => true,
-                'get_features' => false
+                'get_features' => false,
+                'get_title_features' => true,
             ));
 
             $player_data['gear'] = array(

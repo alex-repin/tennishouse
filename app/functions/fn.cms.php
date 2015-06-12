@@ -1143,7 +1143,7 @@ function fn_top_menu_is_current_url($url, $active_for = '')
             $current_params = parse_url($_SERVER['REQUEST_URI']);
 
             // [tennishouse]
-            if (((!isset($params['path']) && !isset($current_params['path'])) || $params['path'] == $current_params['path']) && ((!isset($params['query']) && !isset($current_params['query'])) || (isset($params['query']) && isset($current_params['query']) && $params['query'] == $current_params['query']))) {
+            if (((!isset($params['path']) && !isset($current_params['path'])) || (isset($params['path']) && isset($current_params['path']) && $params['path'] == $current_params['path'])) && ((!isset($params['query']) && !isset($current_params['query'])) || (isset($params['query']) && isset($current_params['query']) && $params['query'] == $current_params['query']))) {
             // [tennishouse]
                 $active = true;
             }
