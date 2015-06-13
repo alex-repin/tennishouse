@@ -46,7 +46,7 @@
     </div>
     
     <div class="control-group">
-        <label for="elm_player_ranking" class="control-label">{__("atp_ranking")}</label>
+        <label for="elm_player_ranking" class="control-label">{__("ranking")}</label>
         <div class="controls">
             <input type="text" name="player_data[ranking]" id="elm_player_height" value="{$player_data.ranking}" size="3" class="input-small"/>
         </div>

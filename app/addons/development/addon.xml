@@ -241,6 +241,7 @@
         <item lang="ru" id="players.new_player">Новый игрок</item>
         <item lang="ru" id="players.editing_player">Редактирование игрока</item>
         <item lang="ru" id="player_name">Имя</item>
+        <item lang="ru" id="ranking">Рейтинг</item>
         <item lang="ru" id="atp_ranking">ATP рейтинг</item>
         <item lang="ru" id="wta_ranking">WTA рейтинг</item>
         <item lang="ru" id="photo">Фото</item>
@@ -258,6 +259,7 @@
         <item lang="ru" id="righty">Правша</item>
         <item lang="ru" id="lefty">Левша</item>
         <item lang="ru" id="add_players">Добавить игроков</item>
+        <item lang="ru" id="add_player">Добавить игрока</item>
         <item lang="ru" id="add_players_and_close">Добавить игроков и закрыть</item>
         <item lang="ru" id="R_played_by">Этой ракеткой играют</item>
         <item lang="ru" id="A_played_by">В этой одежде играют</item>

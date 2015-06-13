@@ -14,7 +14,7 @@
     <th width="1%" class="left">
         {include file="common/check_items.tpl" class="cm-no-hide-input"}</th>
     <th width="5%"><span>{__("image")}</span></th>
-    <th width="10%">{__("atp_ranking")}</th>
+    <th width="10%">{__("ranking")}</th>
     <th>{__("player_name")}</th>
     <th width="6%">&nbsp;</th>
     <th width="10%" class="right">{__("status")}</th>
