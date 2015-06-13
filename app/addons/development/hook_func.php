@@ -811,6 +811,9 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
     if (!empty($params['features_condition'])) {
         FeaturesCache::getProductsConditions($params['features_condition'], $join, $condition, $lang_code);
     }
+    if (!empty($params['show_hidden'])) {
+        $condition = str_replace("products.status IN ('A')", "products.status IN ('A', 'H')", $condition);
+    }
 }
 
 function fn_development_get_products_pre(&$params, $items_per_page, $lang_code)

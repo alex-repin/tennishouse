@@ -29,7 +29,11 @@ if ($mode == 'view') {
     }
 
     if (!empty($player_data['gear'])) {
-        list($gear,) = fn_get_products(array('item_ids' => implode(',', $player_data['gear'])));
+        $params = array(
+            'item_ids' => implode(',', $player_data['gear']),
+            'show_hidden' => true
+        );
+        list($gear,) = fn_get_products($params);
         if (!empty($gear)) {
             fn_gather_additional_products_data($gear, array(
                 'get_icon' => true,
@@ -47,15 +51,17 @@ if ($mode == 'view') {
                 'AS' => array(),
             );
             foreach ($gear as $i => $prod) {
-                if (in_array($prod['type'], array('R')) && empty($player_data['gear']['R'])) {
-                    if (empty($player_data['gear']['R'])) {
-                        Registry::get('view')->assign('racket', '(' . $prod['product'] . ')');
+                if ($prod['status'] == 'A' || $prod['type'] == 'R') {
+                    if (in_array($prod['type'], array('R')) && empty($player_data['gear']['R'])) {
+                        if (empty($player_data['gear']['R'])) {
+                            Registry::get('view')->assign('racket', '(' . $prod['product'] . ')');
+                        }
+                        $player_data['gear']['R'][] = $prod;
+                    } elseif (in_array($prod['type'], array('A', 'S'))) {
+                        $player_data['gear']['AS'][] = $prod;
+                    } else {
+                        $player_data['gear']['BC'][] = $prod;
                     }
-                    $player_data['gear']['R'][] = $prod;
-                } elseif (in_array($prod['type'], array('A', 'S'))) {
-                    $player_data['gear']['AS'][] = $prod;
-                } else {
-                    $player_data['gear']['BC'][] = $prod;
                 }
             }
         }

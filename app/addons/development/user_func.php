@@ -29,7 +29,7 @@ function fn_get_rss_news($params)
 {
     $news_feed = array();
     if (!empty($params['rss_feed_link'])) {
-        $response = fn_get_contents($params['rss_feed_link']);
+        $response = Http::get($params['rss_feed_link']);
         if (!empty($response)) {
             $xml = @simplexml_load_string($response);
             foreach ($xml->channel->item as $item) {
