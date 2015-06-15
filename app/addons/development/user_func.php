@@ -116,9 +116,13 @@ function fn_generate_features_cash()
     return array(true, array());
 }
 
-function fn_update_rankings()
+function fn_update_rankings($ids = array())
 {
-    $players = db_get_array("SELECT player_id, data_link, gender FROM ?:players WHERE data_link != ''");
+    if (!empty($ids)) {
+        $players = db_get_array("SELECT player_id, data_link, gender FROM ?:players WHERE data_link != '' AND player_id IN (?n)", $ids);
+    } else {
+        $players = db_get_array("SELECT player_id, data_link, gender FROM ?:players WHERE data_link != ''");
+    }
     $update = array();
     if (!empty($players)) {
         foreach ($players as $i => $player) {
@@ -126,14 +130,14 @@ function fn_update_rankings()
             if ($result) {
                 //$player_data = array('data' => array());
                 if ($player['gender'] == 'M') {
-                    if (preg_match('/<div id="playerBioInfoRank">.*?(\d+).*?<\/div>/', preg_replace('/[\r\n]/', '', $result), $match)) {
+                    if (preg_match('/<div class="player-ranking-position">.*?(\d+).*?<\/div>/', preg_replace('/[\r\n]/', '', $result), $match)) {
                         $player_data = array(
                             'player_id' => $player['player_id'],
                             'ranking' => isset($match['1']) ? $match['1'] : 'n/a'
                         );
                     }
-                    if (preg_match('/id="bioGridSingles".*?>(.*?)<\/table>/', preg_replace('/[\r\n]/', '', $result), $match)) {
-                        if (preg_match('/>Career<\/td>(.*)/', $match[1], $match)) {
+                    if (preg_match('/id="playersStatsTable".*?>(.*?)<\/table>/', preg_replace('/[\r\n\t]/', '', $result), $match)) {
+                        if (preg_match('/>Career<\/div>(.*)/', $match[1], $match)) {
                             if (preg_match_all('/>(\d+)</', $match[1], $_match)) {
                                 $player_data['titles'] = $player_data['data']['career_titles'] = isset($_match[1][1]) ? $_match[1][1] : 'n/a';
                             }
@@ -154,17 +158,17 @@ function fn_update_rankings()
                             'ranking' => isset($match['1']) ? $match['1'] : 'n/a'
                         );
                     }
-                    if (preg_match('/<tr>.*?WTA Singles Titles(.*?)<\/tr>/', preg_replace('/[\r\n]/', '', $result), $match)) {
+                    if (preg_match('/<tr>.*?<td>WTA Singles Titles<\/td>(.*?)<\/tr>/', preg_replace('/[\r\n]/', '', $result), $match)) {
                         if (preg_match_all('/<td>(.*?)<\/td>/', $match[1], $match)) {
                             $player_data['titles'] = $player_data['data']['career_titles'] = isset($match[1][1]) ? $match[1][1] : 'n/a';
                         }
                     }
-                    if (preg_match('/<tr>.*?Prize Money(.*?)<\/tr>/', preg_replace('/[\r\n]/', '', $result), $match)) {
+                    if (preg_match('/<tr>.*?<td>Prize Money<\/td>(.*?)<\/tr>/', preg_replace('/[\r\n]/', '', $result), $match)) {
                         if (preg_match_all('/>\$(.*?)</', $match[1], $match)) {
                             $player_data['data']['career_prize'] = isset($match[1][1]) ? intval(str_replace(',', '', $match[1][1])) : 'n/a';
                         }
                     }
-                    if (preg_match('/<tr>.*?W\/L - Singles(.*?)<\/tr>/', preg_replace('/[\r\n]/', '', $result), $match)) {
+                    if (preg_match('/<tr>.*?<td>W\/L - Singles<\/td>(.*?)<\/tr>/', preg_replace('/[\r\n]/', '', $result), $match)) {
                         if (preg_match_all('/<td>(.*?) - (.*?)<\/td>/', $match[1], $match)) {
                             $player_data['data']['career_won'] = isset($match[1][1]) ? $match[1][1] : 'n/a';
                             $player_data['data']['career_lost'] = isset($match[2][1]) ? $match[2][1] : 'n/a';

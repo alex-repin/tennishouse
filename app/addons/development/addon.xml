@@ -470,5 +470,8 @@
         <item lang="ru" id="mens_clothes_size_chart">Таблица размеров мужской одежды</item>
         <item lang="ru" id="mens_shoes_size_chart">Таблица размеров мужской обуви</item>
         <item lang="ru" id="womens_clothes_size_chart">Таблица размеров женской одежды</item>
+        <item lang="ru" id="update_player_info">Обновить детальную информацию игрока</item>
+        <item lang="ru" id="text_player_info_update_succeeded">Обновление данных игрока прошло успешно</item>
+        <item lang="ru" id="text_player_info_update_failed">Ошибка обновления данных игрока</item>
     </language_variables>
 </addon>

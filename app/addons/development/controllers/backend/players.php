@@ -153,6 +153,15 @@ elseif ($mode == 'delete') {
 
     Registry::get('view')->assign('players', $players);
     Registry::get('view')->assign('search', $search);
+    
+} elseif ($mode == 'update_info') {
+    list($result, $errors) = fn_update_rankings(array($_REQUEST['player_id']));
+    if ($result) {
+        fn_set_notification('N', __('notice'), __('text_player_info_update_succeeded'));
+    } else {
+        fn_set_notification('W', __('warning'), __('text_player_info_update_failed'));
+    }
+    exit;
 }
 
 //

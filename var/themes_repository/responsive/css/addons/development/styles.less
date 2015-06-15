@@ -1233,12 +1233,14 @@ label.cm-required::after {
 }
 .ty-atp-players-block, .ty-wta-players-block {
     margin-top: 15px;
+    display: inline-block;
+}
+.ty-players-row {
+    display: inline-block;
+    width: 100%;
 }
 .ty-players-list .ty-column2 {
     margin-right: -3px;
-}
-.ty-wta-players-block {
-    margin-left: 3px;
 }
 .ty-atp-players-block {
     border-right: 1px solid #ebebeb;
@@ -1250,9 +1252,24 @@ label.cm-required::after {
 .ty-players-list .ty-player-name {
     font-size: 110%;
     font-weight: bold;
+    height: 30px;
+    line-height: 15px;
+    padding: 0 5px;
 }
+.ty-columns (@index) when (@index > 0) {
+    .ty-columns(@index - 1);
+    .ty-players-list_column@{index} {
+            display: inline-block;
+            width: percentage((100 / @index) * 0.01);
+            vertical-align: top;
+            float: left;
+/*            margin-right: -0.25em;*/
+        }
+}
+.ty-columns(0) { }
+.ty-columns(@columns);
 .ty-players-list__item {
-    padding: 10px 0;
+    padding: 5px 0;
     text-align: center;
 }
 .ty-players-list__item:hover {
@@ -1260,7 +1277,7 @@ label.cm-required::after {
     margin-top: -1px;
     margin-left: -1px;
     margin-bottom: -1px;
-    margin-right: -4px;
+    margin-right: -1px;
     border-radius: 4px;
 }
 /*Player details*/
