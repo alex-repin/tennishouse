@@ -137,9 +137,9 @@
                                         </li>
                                     {/foreach}
                                     {if $item1.show_more && $item1_url}
-                                        <li class="ty-menu__submenu-dropdown-bottom">
-                                            <a href="{$item1_url}">{__("text_topmenu_more", ["[item]" => $item1.$name])}</a>
-                                        </li>
+                                        <a href="{$item1_url}"><li class="ty-menu__submenu-dropdown-bottom">
+                                            <div class="ty-menu__submenu-dropdown-bottom-block">{if $item1.show_more_text}{$item1.show_more_text}{else}{__("text_topmenu_more", ["[item]" => $item1.$name])}{/if}</div>
+                                        </li></a>
                                     {/if}
                                 </ul>
                                 <script type="text/javascript">

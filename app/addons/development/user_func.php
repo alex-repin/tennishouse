@@ -17,8 +17,42 @@ use Tygh\Registry;
 use Tygh\LogFacade;
 use Tygh\Http;
 use Tygh\FeaturesCache;
+use Tygh\Menu;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
+
+function fn_get_menu_items_th($value, $block, $block_scheme)
+{
+    $menu_items = array();
+
+    if (!empty($block['content']['menu']) && Menu::getStatus($block['content']['menu']) == 'A') {
+        $params = array(
+            'section' => 'A',
+            'get_params' => true,
+            'icon_name' => '',
+            'multi_level' => true,
+            'use_localization' => true,
+            'status' => 'A',
+            'generate_levels' => true,
+            'request' => array(
+                'menu_id' => $block['content']['menu'],
+            )
+        );
+
+        $menu_items = fn_top_menu_form(fn_get_static_data($params));
+        fn_dropdown_appearance_cut_second_third_levels($menu_items, 'subitems', $block['properties']);
+        
+        foreach ($menu_items as $i => $item) {
+            list($type, $id, $use_name) = fn_explode(':', $item['param_3']);
+            if ($type == 'P') {
+                $menu_items[$i]['show_more'] = true;
+                $menu_items[$i]['show_more_text'] = __('see_all_players');
+            }
+        }
+    }
+
+    return $menu_items;
+}
 
 function fn_get_block_rss_news($value, $block, $block_scheme)
 {

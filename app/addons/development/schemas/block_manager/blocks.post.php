@@ -272,5 +272,5 @@ $schema['news'] = array (
         )
     )
 );
-
+$schema['menu']['content']['items']['function'] = array('fn_get_menu_items_th');
 return $schema;
