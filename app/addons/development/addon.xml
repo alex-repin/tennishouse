@@ -471,5 +471,6 @@
         <item lang="ru" id="text_player_info_update_succeeded">Обновление данных игрока прошло успешно</item>
         <item lang="ru" id="text_player_info_update_failed">Ошибка обновления данных игрока</item>
         <item lang="ru" id="see_all_players">Посмотреть всех</item>
+        <item lang="ru" id="player_name_en">Имя (англ.)</item>
     </language_variables>
 </addon>
