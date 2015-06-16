@@ -179,7 +179,7 @@ $schema = array(
     // [tennishouse]
     'l' => array(
         'table' => '?:players',
-        'description' => 'player',
+        'description' => 'player_en',
         'dispatch' => 'players.view',
         'item' => 'player_id',
         'condition' => '',

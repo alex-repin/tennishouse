@@ -21,6 +21,12 @@
         <input type="text" name="player_data[player]" id="elm_player_name" value="{$player_data.player}" size="25" class="input-long" /></div>
     </div>
 
+    <div class="control-group">
+        <label for="elm_player_en" class="control-label cm-required">{__("player_name_en")}</label>
+        <div class="controls">
+        <input type="text" name="player_data[player_en]" id="elm_player_en" value="{$player_data.player_en}" size="25" class="input-long" /></div>
+    </div>
+
     <div class="control-group" id="player_photo">
         <label class="control-label">{__("photo")}</label>
         <div class="controls">

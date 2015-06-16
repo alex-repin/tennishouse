@@ -19,7 +19,7 @@
     {$meta_descr = __('players_meta_description', ['[players]' => $meta_players])}
     <meta name="description" content="{$meta_descr}" />
 {elseif $runtime.controller == 'players' && $runtime.mode == 'view'}
-    {$meta_descr = __('player_share_buttons_description', ['[player]' => $player_data.player, '[birthplace]' => {$player_data.birthplace}, '[racket]' => {$racket}])}
+    {$meta_descr = __('player_share_buttons_description', ['[player]' => "`$player_data.player`. `$player_data.player_en`", '[birthplace]' => {$player_data.birthplace}, '[racket]' => {$racket}])}
     <meta property="og:type"   content="profile" /> 
     <meta property="og:url"    content="{$config.current_url|fn_url}" /> 
     <meta property="og:title"  content="{$player_data.player}" /> 

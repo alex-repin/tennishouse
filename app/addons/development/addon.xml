@@ -76,13 +76,7 @@
             ALTER TABLE `cscart_products` CHANGE `return_period` `return_period` INT( 11 ) UNSIGNED NOT NULL DEFAULT '30';
         </item>
         <item>
-            ALTER TABLE `cscart_product_subscriptions` ADD `combination_hash` INT( 11 ) UNSIGNED NOT NULL ;
-        </item>
-        <item>
-            DROP TABLE IF EXISTS `cscart_product_subscriptions`;
-        </item>
-        <item>
-            CREATE TABLE `cscart_product_subscriptions` (
+            CREATE TABLE IF NOT EXISTS `cscart_product_subscriptions` (
             `subscription_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
             `product_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
             `combination_hash` INT( 11 ) UNSIGNED NOT NULL,
@@ -227,6 +221,9 @@
         <item>
             ALTER TABLE `cscart_shippings` ADD `available_payments` TEXT NOT NULL ;
         </item>
+        <item>
+            ALTER TABLE `cscart_players` ADD `player_en` VARCHAR( 128 ) NOT NULL AFTER `player` ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -326,7 +323,7 @@
         <item lang="ru" id="tmpl_scroller_capture">Скрытый скроллер</item>
         <item lang="ru" id="tmpl_th_products_block">Блок с товарами TennisHouse</item>
         <item lang="ru" id="similar_products">Похожие товары</item>
-        <item lang="ru" id="player_share_buttons_description">Профиль игрока [player] ([birthplace]). Личная информация и экипировка [racket]. Статистика, достижения и новости.</item>
+        <item lang="ru" id="player_share_buttons_description">Профиль игрока [player]. [birthplace]. Личная информация и экипировка [racket]. Статистика, достижения и новости.</item>
         <item lang="ru" id="same_brand_products">Товары того же бренда</item>
         <item lang="ru" id="shoes_for_hard">Обувь для харда</item>
         <item lang="ru" id="small_mode">Уменьшенный режим</item>
