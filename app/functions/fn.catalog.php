@@ -3718,7 +3718,7 @@ function fn_look_through_variants($product_id, $amount, $options, $variants)
                 $_data['product_code'] = (!empty($product_code)) ? $product_code : '';
                 foreach ($combination as $option_id => $variant_id) {
                     if (!empty($variant_codes[$option_id][$variant_id])) {
-                        $_data['product_code'] .= ((!empty($_data['product_code'])) ? '-' : '') . $variant_codes[$option_id][$variant_id];
+                        $_data['product_code'] .= $variant_codes[$option_id][$variant_id];
                     }
                 }
 

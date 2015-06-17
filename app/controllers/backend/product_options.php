@@ -254,7 +254,7 @@ if ($mode == 'inventory') {
             // [tennishouse]
             fn_update_product_tracking($_REQUEST['product_id']);
             // [tennishouse]
-        } else {
+        } elseif (!empty($_REQUEST['product_id'])) {
             fn_delete_product_option($_REQUEST['option_id'], $_REQUEST['product_id']);
         }
 
