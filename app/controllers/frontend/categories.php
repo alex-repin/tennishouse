@@ -238,7 +238,12 @@ if ($mode == 'catalog') {
                 $sections_categorization = $other = array();
                 foreach ($products as $i => $product) {
                     if (!empty($product['sections_categorization'])) {
-                        $sections_categorization[$product['sections_categorization']][] = $product;
+                        $sections = array_unique(explode(',', $product['sections_categorization']));
+                        foreach ($sections as $k => $section_id) {
+                            if (!empty($section_id)) {
+                                $sections_categorization[$section_id][] = $product;
+                            }
+                        }
                     } else {
                         $other[] = $product;
                     }

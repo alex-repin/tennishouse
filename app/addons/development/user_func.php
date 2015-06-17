@@ -43,10 +43,15 @@ function fn_get_menu_items_th($value, $block, $block_scheme)
         fn_dropdown_appearance_cut_second_third_levels($menu_items, 'subitems', $block['properties']);
         
         foreach ($menu_items as $i => $item) {
-            list($type, $id, $use_name) = fn_explode(':', $item['param_3']);
-            if ($type == 'P') {
-                $menu_items[$i]['show_more'] = true;
-                $menu_items[$i]['show_more_text'] = __('see_all_players');
+            if (!empty($item['param_3'])) {
+                list($type, $id, $use_name) = fn_explode(':', $item['param_3']);
+                if ($type == 'P') {
+                    $menu_items[$i]['show_more'] = true;
+                    $menu_items[$i]['show_more_text'] = __('see_all_players');
+                    foreach ($item['subitems'] as $j => $group) {
+                        $menu_items[$i]['subitems'][$j]['show_more'] = false;
+                    }
+                }
             }
         }
     }
@@ -63,28 +68,34 @@ function fn_get_rss_news($params)
 {
     $news_feed = array();
     if (!empty($params['rss_feed_link'])) {
-        $response = Http::get($params['rss_feed_link']);
+        $extra = array(
+            'request_timeout' => 2
+        );
+        $response = Http::get($params['rss_feed_link'], array(), $extra);
         if (!empty($response)) {
+            libxml_use_internal_errors(true);
             $xml = @simplexml_load_string($response);
-            foreach ($xml->channel->item as $item) {
-                $news = array();
-                $news['title'] = (string) $item->title;
-                $news['link'] = (string) $item->link;
-                $news['description'] = (string) $item->description;
-                $news['image'] = (string) $item->image->url;
-                $aResult = strptime((string) $item->pubDate, '%a, %d %b %Y %T %z');
-                $news['timestamp'] = mktime($aResult['tm_hour'], $aResult['tm_min'], $aResult['tm_sec'], $aResult['tm_mon'] + 1, $aResult['tm_mday'], $aResult['tm_year'] + 1900);
-                $news_date = date('Y-m-d', $news['timestamp']);
-                $today = date('Y-m-d');
-                $yesterday = date('Y-m-d', strtotime('yesterday'));
-                if ($news_date == $today) {
-                    $news['today'] = true;
-                } elseif ($news_date == $yesterday) {
-                    $news['yesterday'] = true;
-                }
-                $news_feed[] = $news;
-                if (count($news_feed) >= 10) {
-                    break;
+            if ($xml !== false) {
+                foreach ($xml->channel->item as $item) {
+                    $news = array();
+                    $news['title'] = (string) $item->title;
+                    $news['link'] = (string) $item->link;
+                    $news['description'] = (string) $item->description;
+                    $news['image'] = (string) $item->image->url;
+                    $aResult = strptime((string) $item->pubDate, '%a, %d %b %Y %T %z');
+                    $news['timestamp'] = mktime($aResult['tm_hour'], $aResult['tm_min'], $aResult['tm_sec'], $aResult['tm_mon'] + 1, $aResult['tm_mday'], $aResult['tm_year'] + 1900);
+                    $news_date = date('Y-m-d', $news['timestamp']);
+                    $today = date('Y-m-d');
+                    $yesterday = date('Y-m-d', strtotime('yesterday'));
+                    if ($news_date == $today) {
+                        $news['today'] = true;
+                    } elseif ($news_date == $yesterday) {
+                        $news['yesterday'] = true;
+                    }
+                    $news_feed[] = $news;
+                    if (count($news_feed) >= 10) {
+                        break;
+                    }
                 }
             }
         }
@@ -1097,9 +1108,10 @@ function fn_update_player($player_data, $player_id = 0)
         $_data['ranking'] = $_data['ranking'] + 1;
     }
     
-    $variant_data = array(
-        'variant' => $player_data['player']
-    );
+    $variant_data = array();
+    if (isset($player_data['player'])) {
+        $variant_data['variant'] = $player_data['player'];
+    }
 
     // create new player
     if (empty($player_id)) {

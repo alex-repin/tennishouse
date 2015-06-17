@@ -733,7 +733,7 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
         }
         if (!empty($params['sections_categorization'])) {
             $join .= db_quote(" LEFT JOIN ?:product_features_values AS sections_categorization ON sections_categorization.product_id = products.product_id AND sections_categorization.feature_id IN (?n)", $params['sections_categorization']);
-            $fields[] = 'sections_categorization.variant_id AS sections_categorization';
+            $fields[] = "GROUP_CONCAT(',', sections_categorization.variant_id) AS sections_categorization";
         }
     }
     $sortings['random'] = 'RAND()';
