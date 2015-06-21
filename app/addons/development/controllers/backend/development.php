@@ -561,7 +561,7 @@ if ($mode == 'calculate_balance') {
 } elseif ($mode == 'fix_babolat_variants') {
     $variants = db_get_hash_single_array("SELECT variant_id, code_suffix FROM ?:product_option_variants WHERE code_suffix != ''", array('variant_id', 'code_suffix'));
     foreach ($variants as $variant_id => $code) {
-        db_query("UPDATE ?:product_option_variants SET code_suffix = ?s WHERE variant_id = ?i", (strlen($code) == 3 ? '-' . $code : $code), $variant_id);
+//        db_query("UPDATE ?:product_option_variants SET code_suffix = ?s WHERE variant_id = ?i", (strlen($code) == 3 ? '-' . $code : $code), $variant_id);
     }
     exit;
 } elseif ($mode == 'clone_catalog') {
