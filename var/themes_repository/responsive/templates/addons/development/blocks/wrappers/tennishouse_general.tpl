@@ -6,7 +6,7 @@
                 {if $smarty.capture.title|trim}
                     {$smarty.capture.title nofilter}
                 {else}
-                    {$title nofilter}
+                    {$title|fn_read_title nofilter}
                 {/if}
                 {/hook}
             </h2>
