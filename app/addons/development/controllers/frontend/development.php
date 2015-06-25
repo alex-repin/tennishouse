@@ -13,6 +13,7 @@
 ****************************************************************************/
 
 use Tygh\FeaturesCache;
+use Tygh\Http;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
@@ -28,4 +29,13 @@ if ($mode == 'update_rub_rate') {
 } elseif ($mode == 'cron_routine') {
     fn_set_hook('cron_routine');
     exit;
+} elseif ($mode == 'test_curl') {
+    $extra = array(
+//        'request_timeout' => 2
+        'test' => true
+    );
+    // 'https://news.yandex.ru/hardware.rss'
+    // 'http://www.championat.com/xml/rss_tennis-article.xml'
+    $response = Http::get('https://news.yandex.ru/hardware.rss', array(), $extra);
+    fn_print_die($response);
 }

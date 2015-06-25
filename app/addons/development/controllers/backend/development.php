@@ -16,6 +16,7 @@ use Tygh\Memcache;
 use Tygh\Registry;
 use Tygh\Bootstrap;
 use Tygh\FeaturesCache;
+use Tygh\Http;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
@@ -572,6 +573,15 @@ if ($mode == 'calculate_balance') {
 //         fn_clone_product($product['product_id']);
 //     }
 //     fn_print_die('Catalog cloned');
+} elseif ($mode == 'test_curl') {
+    $extra = array(
+//        'request_timeout' => 2
+        'test' => true
+    );
+    // 'https://news.yandex.ru/hardware.rss'
+    // 'http://www.championat.com/xml/rss_tennis-article.xml'
+    $response = Http::get('https://news.yandex.ru/hardware.rss', array(), $extra);
+    fn_print_die($response);
 }
 
 function fn_normalize_string($string)

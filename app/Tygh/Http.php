@@ -340,7 +340,11 @@ class Http
         list($url, $data) = self::_prepareData($method, $url, $data);
 
         if (self::_curlExists()) {
-            $content = self::_curlRequest($method, $url, $data, $extra);
+            if (!empty($extra['test'])) {
+                $content = self::_curlRequest_tst($method, $url, $data, $extra);
+            } else {
+                $content = self::_curlRequest($method, $url, $data, $extra);
+            }
         } else {
             $content = self::_socketRequest($method, $url, $data, $extra);
         }
@@ -619,6 +623,93 @@ class Http
         $errno = curl_errno($ch);
         $error = curl_error($ch);
 
+        curl_close($ch);
+
+        if (!empty($content)) {
+            $content = self::_parseContent($content);
+            $content = self::_processHeadersRedirect($method, $url, $extra, $content);
+        }
+
+        if (!empty($error)) {
+            self::_setError('curl', $error, $errno);
+        }
+
+        return $content;
+    }
+
+    private static function _curlRequest_tst($method, $url, $data, $extra)
+    {
+        $ch = curl_init();
+
+        if (!empty($extra['basic_auth'])) {
+            curl_setopt($ch, CURLOPT_USERPWD, implode(':', $extra['basic_auth']));
+        }
+        if (!empty($extra['referer'])) {
+            curl_setopt($ch, CURLOPT_REFERER, $extra['referer']);
+        }
+        if (!empty($extra['ssl_cert'])) {
+            curl_setopt($ch, CURLOPT_SSLCERT, $extra['ssl_cert']);
+            if (!empty($extra['ssl_key'])) {
+                curl_setopt($ch, CURLOPT_SSLKEY, $extra['ssl_key']);
+            }
+        }
+        if (!empty($extra['timeout'])) {
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $extra['timeout']);
+        }
+        if (!empty($extra['request_timeout'])) {
+            curl_setopt($ch, CURLOPT_TIMEOUT, $extra['request_timeout']);
+        }
+        if (!empty($extra['headers'])) {
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $extra['headers']);
+        }
+        if (!empty($extra['cookie'])) {
+            curl_setopt($ch, CURLOPT_COOKIE, implode('; ', $extra['cookies']));
+        }
+        if (!empty($extra['binary_transfer'])) {
+            curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
+        }
+
+        if ($method == self::GET) {
+            curl_setopt($ch, CURLOPT_HTTPGET, 1);
+            $url .= '?' . $data;
+
+        } elseif ($method == self::POST) {
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+        } else {
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        }
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HEADER, 1);
+
+        if (self::$_curl_followlocation_support) {
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        }
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        $req_settings = self::_getSettings();
+        if (!empty($req_settings['proxy_host'])) {
+            curl_setopt($ch, CURLOPT_PROXY, $req_settings['proxy_host'] . ':' . (empty($req_settings['proxy_port']) ? 3128 : $req_settings['proxy_port']));
+            if (!empty($req_settings['proxy_user'])) {
+                curl_setopt($ch, CURLOPT_PROXYUSERPWD, $req_settings['proxy_user'] . (empty($req_settings['proxy_password']) ? '' : ':' . $req_settings['proxy_password']));
+            }
+        }
+
+        if (!empty($extra['return_handler'])) {
+            return $ch;
+        }
+
+        $content = curl_exec($ch);
+        $errno = curl_errno($ch);
+        $error = curl_error($ch);
+
+        fn_print_r(curl_getinfo($ch));
         curl_close($ch);
 
         if (!empty($content)) {

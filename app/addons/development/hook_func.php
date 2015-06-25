@@ -241,9 +241,6 @@ function fn_development_render_block_register_cache($block, $cache_name, &$block
 
 function fn_development_get_category_data_post($category_id, $field_list, $get_main_pair, $skip_company_condition, $lang_code, &$category_data)
 {
-    if (!empty($category_data['sections_categorization'])) {
-        $category_data['sections_categorization'] = unserialize($category_data['sections_categorization']);
-    }
     if (!empty($category_data['brand_id'])) {
         list($brands) = fn_get_product_feature_variants(array(
             'feature_id' => BRAND_FEATURE_ID,
@@ -260,6 +257,9 @@ function fn_development_get_category_data_post($category_id, $field_list, $get_m
             fn_format_categorization($category_data, $categorization_data, 'tabs_categorization');
             fn_format_categorization($category_data, $categorization_data, 'subtabs_categorization');
             fn_format_categorization($category_data, $categorization_data, 'sections_categorization');
+        }
+        if (!empty($category_data['sections_categorization'])) {
+            $category_data['sections_categorization'] = unserialize($category_data['sections_categorization']);
         }
     }
 }
