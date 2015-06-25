@@ -174,7 +174,7 @@ function fn_get_form_elements($page_id, $avail_only = false, $lang = CART_LANGUA
         }
 
         // Get general form options
-        if (strpos(FORM_SUBMIT, $data['element_type']) !== false) {
+        if (strpos(FORM_SUBMIT, $data['element_type']) !== false || strpos(FORM_SUBMIT_BUTTON, $data['element_type']) !== false) {
             $general_data[$data['element_type']] = $data['description'];
             unset($elms[$elm_id]);
             continue;

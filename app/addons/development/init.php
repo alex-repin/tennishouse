@@ -62,5 +62,7 @@ fn_register_hooks(
     'apply_option_modifiers_pre',
     'seo_is_indexed_page',
     'get_selected_product_options_post',
-    'update_category_pre'
+    'update_category_pre',
+    'update_page_post',
+    'get_page_data'
 );

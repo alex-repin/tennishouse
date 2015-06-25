@@ -26,6 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 if ($mode == 'view') {
 
     $page = Registry::get('view')->gettemplatevars('page');
+
+    if (!empty($page['image'])) {
+        Registry::get('view')->assign('image_title', $page['image']);
+        //Registry::get('view')->assign('image_title_text', $page['page']);
+    }
     if (empty($page['description'])) {
         $page['children'] = db_get_fields("SELECT page_id FROM ?:pages WHERE parent_id = ?i ORDER BY position ASC", $page['page_id']);
         if (!empty($page['children'])) {

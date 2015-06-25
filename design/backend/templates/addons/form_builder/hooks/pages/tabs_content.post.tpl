@@ -19,6 +19,14 @@
     </div>
 
     <div class="control-group">
+        <label for="form_submit_button" class="control-label">{__("button_text")}:</label>
+        {assign var="form_submit_button_const" value=$smarty.const.FORM_SUBMIT_BUTTON}
+        <div class="controls">
+            <input id="form_submit_button" class="input-text" type="text" name="page_data[form][general][{$form_submit_button_const}]" value="{$form.$form_submit_button_const}">
+        </div>
+    </div>
+
+    <div class="control-group">
         <label for="form_is_secure" class="control-label">{__("form_is_secure")}:</label>
         {assign var="form_secure_const" value=$smarty.const.FORM_IS_SECURE}
         <div class="controls">

@@ -42,6 +42,7 @@ define('FORM_VARIANT', 'G');
 define('FORM_RECIPIENT', 'J');
 define('FORM_IS_SECURE', 'U');
 define('FORM_SUBMIT', 'L');
+define('FORM_SUBMIT_BUTTON', 'E');
 
 fn_register_hooks(
     'delete_page',

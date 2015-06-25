@@ -6,7 +6,7 @@
     {/hook}
 </div>
 
-{capture name="mainbox_title"}<span {live_edit name="page:page:{$page.page_id}"}>{$page.page}</span>{/capture}
+{capture name="mainbox_title"}{if !$image_title_text}<span {live_edit name="page:page:{$page.page_id}"}>{$page.page}</span>{/if}{/capture}
     
 {hook name="pages:page_extra"}
 {/hook}

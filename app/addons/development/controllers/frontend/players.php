@@ -72,7 +72,7 @@ if ($mode == 'view') {
     fn_add_breadcrumb($player_data['player']);
 
     if (!empty($player_data['bg_image'])) {
-        Registry::get('view')->assign('image_title', true);
+        Registry::get('view')->assign('image_title', $player_data['bg_image']);
     }
     Registry::get('view')->assign('player_data', $player_data);
 

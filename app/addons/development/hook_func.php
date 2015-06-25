@@ -17,6 +17,16 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_get_page_data(&$page_data, $lang_code)
+{
+    $page_data['image'] = fn_get_image_pairs($page_data['page_id'], 'page', 'M', false, true, $lang_code);
+}
+
+function fn_development_update_page_post($page_data, $page_id, $lang_code, $create, $old_page_data)
+{
+    fn_attach_image_pairs('page_bg', 'page', $page_id, DESCR_SL);
+}
+
 function fn_development_seo_is_indexed_page(&$indexed_pages)
 {
     $indexed_pages['products.view']['noindex'][] = 'ohash';

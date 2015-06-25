@@ -19,6 +19,7 @@
     width: 30px;
     vertical-align: top;
     float: right;
+    border-radius: 2px;
 }
 .sbSelector{
     display: inline-block;

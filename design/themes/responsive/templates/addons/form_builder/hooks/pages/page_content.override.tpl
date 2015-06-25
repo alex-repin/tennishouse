@@ -87,7 +87,7 @@
                 {if $element.element_type == $smarty.const.FORM_EMAIL}
                 <input type="hidden" name="customer_email" value="{$element.element_id}" />
                 {/if}
-                <input id="elm_{$element.element_id}" class="ty-input-text" size="50" type="text" name="form_values[{$element.element_id}]" value="{$form_values.$element_id}" />
+                <input id="elm_{$element.element_id}" class="ty-input-text {if $element.element_type == $smarty.const.FORM_PHONE}cm-cr-mask-phone ty-coach-phone{/if}" size="50" type="text" name="form_values[{$element.element_id}]" value="{$form_values.$element_id}" />
                 
             {elseif $element.element_type == $smarty.const.FORM_COUNTRIES}
 
@@ -124,7 +124,9 @@
     {include file="common/image_verification.tpl" option="use_for_form_builder"}
 
     <div class="ty-form-builder__buttons buttons-container">
-        {include file="buttons/button.tpl" but_role="submit" but_text=__("submit") but_meta="ty-btn__secondary" but_name="dispatch[pages.send_form]"}
+        {assign var="form_submit_button_const" value=$smarty.const.FORM_SUBMIT_BUTTON}
+        {$button_text = $page.form.general.$form_submit_button_const|default:__("submit")}
+        {include file="buttons/button.tpl" but_role="submit" but_text=$button_text but_meta="ty-btn__secondary" but_name="dispatch[pages.send_form]"}
     </div>
 
     </form>
