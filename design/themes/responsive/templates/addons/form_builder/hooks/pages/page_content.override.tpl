@@ -6,9 +6,9 @@
         <p>{$page.form.general.$form_submit_const nofilter}</p>
         {/hook}
 
-        <div class="ty-form-builder__buttons buttons-container">
+        {*<div class="ty-form-builder__buttons buttons-container">
         {include file="buttons/button.tpl" but_text=__("continue") but_meta="ty-btn__secondary" but_href=$continue_url|fn_url but_role="action"}
-        </div>
+        </div>*}
     {else}
 
     {if $page.description}
