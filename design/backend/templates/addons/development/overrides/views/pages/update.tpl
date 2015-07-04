@@ -88,16 +88,6 @@
                 {include file="common/attach_images.tpl" image_name="page_bg" image_object_type="page" image_pair=$page_data.image image_object_id=$id hide_titles=true no_thumbnail=true}
             </div>
         </div>
-        
-        <div class="control-group">
-            <label class="control-label" for="elm_page_vk_comments">{__("vk_comments")}:</label>
-            <div class="controls">
-                <input type="hidden" name="page_data[vk_comments]" value="N" />
-                <span class="checkbox">
-                    <input type="checkbox" name="page_data[vk_comments]" id="elm_page_show_in_popup" {if $page_data.vk_comments == "Y"}checked="checked"{/if} value="Y">
-                </span>
-            </div>
-        </div>
     </fieldset>
     </div>
 

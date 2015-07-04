@@ -242,7 +242,7 @@
             ALTER TABLE `cscart_players` ADD `player_en` VARCHAR( 128 ) NOT NULL AFTER `player` ;
         </item>
         <item>
-            ALTER TABLE `cscart_pages` ADD `vk_comments` CHAR( 1 ) NOT NULL DEFAULT 'N';
+            ALTER TABLE `cscart_orders` ADD `net_total` DECIMAL(12,2) NOT NULL ;
         </item>
     </queries>
     <language_variables>
