@@ -11,6 +11,9 @@
     <settings edition_type="ROOT">
         <sections>
             <section id="general">
+                <translations>
+                    <item lang="ru">Основные</item>
+                </translations>
                 <items>
                     <item id="global_product_margin">
                         <type>input</type>
@@ -24,6 +27,20 @@
                         <default_value>5000</default_value>
                         <translations>
                             <item lang="ru">Бесплатная доставка</item>
+                        </translations>
+                    </item>
+                </items>
+            </section>
+            <section id="vk">
+                <translations>
+                    <item lang="ru">Настройки VK Open API</item>
+                </translations>
+                <items>
+                    <item id="application_id">
+                        <type>input</type>
+                        <default_value>4983272</default_value>
+                        <translations>
+                            <item lang="ru">ID приложения</item>
                         </translations>
                     </item>
                 </items>
@@ -223,6 +240,9 @@
         </item>
         <item>
             ALTER TABLE `cscart_players` ADD `player_en` VARCHAR( 128 ) NOT NULL AFTER `player` ;
+        </item>
+        <item>
+            ALTER TABLE `cscart_pages` ADD `vk_comments` CHAR( 1 ) NOT NULL DEFAULT 'N';
         </item>
     </queries>
     <language_variables>
@@ -462,7 +482,7 @@
         <item lang="ru" id="available_payments">Доступные способы оплаты</item>
         <item lang="ru" id="payment_po">Оплата на сайте</item>
         <item lang="ru" id="payment_pod">Оплата при получении</item>
-        <item lang="ru" id="call_requests.information">Оставьте свои контактные данные, и наш менеджер свяжется с Вами в рабочее время ([working_hours]) для уточнения деталей заказа и доставки.</item>
+        <item lang="ru" id="call_requests.information">Оставьте свои контактные данные, и наш менеджер свяжется с Вами в течение 24 часов в рабочее время ([working_hours]) для уточнения деталей заказа и доставки.</item>
         <item lang="ru" id="womens_shoes_size_chart">Таблица размеров женской обуви</item>
         <item lang="ru" id="mens_clothes_size_chart">Таблица размеров мужской одежды</item>
         <item lang="ru" id="mens_shoes_size_chart">Таблица размеров мужской обуви</item>
@@ -474,5 +494,6 @@
         <item lang="ru" id="player_name_en">Имя (англ.)</item>
         <item lang="ru" id="image_title">Заголовок картинка</item>
         <item lang="ru" id="button_text">Название кнопки</item>
+        <item lang="ru" id="vk_comments">Комментарии VK</item>
     </language_variables>
 </addon>
