@@ -64,5 +64,10 @@ fn_register_hooks(
     'get_selected_product_options_post',
     'update_category_pre',
     'update_page_post',
-    'get_page_data'
+    'get_page_data',
+    'pre_get_cart_product_data',
+    'calculate_cart_post',
+    'get_cart_product_data_post',
+    'get_order_info',
+    'pre_get_orders'
 );

@@ -17,6 +17,38 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_pre_get_orders($params, &$fields, $sortings, $get_totals, $lang_code)
+{
+    $fields[] = "?:orders.net_total";
+}
+
+function fn_development_get_order_info(&$order, $additional_data)
+{
+    $order['income'] = $order['total'] - $order['net_total'];
+}
+
+function fn_development_get_cart_product_data_post($hash, $product, $skip_promotion, &$cart, $auth, $promotion_amount, $_pdata)
+{
+    $net_cost = (!empty($_pdata['net_cost']) && !empty($_pdata['net_currency_code'])) ? $_pdata['net_cost'] * Registry::get('currencies.' . $_pdata['net_currency_code'] . '.coefficient') : $_pdata['price'];
+    $cart['net_subtotal'] += $net_cost;
+}
+
+function fn_development_calculate_cart_post(&$cart, $auth, $calculate_shipping, $calculate_taxes, $options_style, $apply_cart_promotions, $cart_products, $product_groups)
+{
+    $cart['net_total'] = $cart['net_subtotal'];
+    if (!empty($cart['shipping'])) {
+        foreach ($cart['shipping'] as $i => $shp) {
+            $cart['net_total'] += $shp['original_rate'];
+        }
+    }
+}
+
+function fn_development_pre_get_cart_product_data($hash, $product, $skip_promotion, $cart, $auth, $promotion_amount, &$fields, $join)
+{
+    $fields[] = '?:products.net_cost';
+    $fields[] = '?:products.net_currency_code';
+}
+
 function fn_development_get_page_data(&$page_data, $lang_code)
 {
     $page_data['image'] = fn_get_image_pairs($page_data['page_id'], 'page', 'M', false, true, $lang_code);

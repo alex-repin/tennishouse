@@ -495,5 +495,9 @@
         <item lang="ru" id="image_title">Заголовок картинка</item>
         <item lang="ru" id="button_text">Название кнопки</item>
         <item lang="ru" id="vk_comments">Комментарии VK</item>
+        <item lang="ru" id="net_total">Себестоимость</item>
+        <item lang="ru" id="income">Прибыль</item>
+        <item lang="ru" id="net_totally">Итого себестоимость</item>
+        <item lang="ru" id="total_income">Итого прибыль</item>
     </language_variables>
 </addon>

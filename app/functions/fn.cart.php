@@ -2665,7 +2665,7 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
     $shipping_rates = array();
     $product_groups = array();
     $cart_products = array();
-    $cart['subtotal'] = $cart['display_subtotal'] = $cart['original_subtotal'] = $cart['amount'] = $cart['total'] = $cart['discount'] = $cart['tax_subtotal'] = 0;
+    $cart['subtotal'] = $cart['display_subtotal'] = $cart['original_subtotal'] = $cart['amount'] = $cart['total'] = $cart['discount'] = $cart['tax_subtotal'] = $cart['net_subtotal'] = $cart['net_total'] = 0;
 
     $cart['use_discount'] = false;
     $cart['shipping_required'] = false;
@@ -2815,7 +2815,8 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
                         $rate['price'] += !empty($product_groups[$g_key]['package_info']['shipping_freight']) ? $product_groups[$g_key]['package_info']['shipping_freight'] : 0;
                         $product_groups[$g_key]['shippings'][$sh_id]['rate'] = empty($product_groups[$g_key]['shippings'][$sh_id]['free_shipping']) ? $rate['price'] : 0;
                         // [tennishouse]
-                        $product_groups[$g_key]['shippings'][$sh_id]['delivery_time'] = !empty($rate['delivery_time']) ? $rate['delivery_time'] : $product_groups[$g_key]['shippings'][$sh_id]['rate'];
+                        $product_groups[$g_key]['shippings'][$sh_id]['delivery_time'] = !empty($rate['delivery_time']) ? $rate['delivery_time'] : $product_groups[$g_key]['shippings'][$sh_id]['delivery_time'];
+                        $product_groups[$g_key]['shippings'][$sh_id]['original_rate'] = $rate['price'];
                         // [tennishouse]
                     } else {
                         unset($product_groups[$g_key]['shippings'][$sh_id]);
@@ -5442,6 +5443,8 @@ function fn_get_orders($params, $items_per_page = 0, $get_totals = false, $lang_
         $totals = array (
             'gross_total' => db_get_field("SELECT sum(t.total) FROM ( SELECT total FROM ?:orders $join WHERE 1 $condition $group) as t"),
             'totally_paid' => db_get_field("SELECT sum(t.total) FROM ( SELECT total FROM ?:orders $join WHERE ?:orders.status IN (?a) $condition $group) as t", $paid_statuses),
+            'net_totally' => db_get_field("SELECT sum(t.net_total) FROM ( SELECT net_total FROM ?:orders $join WHERE ?:orders.status IN (?a) $condition $group) as t", $paid_statuses),
+            'total_income' => db_get_field("SELECT sum(t.total - t.net_total) FROM ( SELECT total, net_total FROM ?:orders $join WHERE ?:orders.status IN (?a) $condition $group) as t", $paid_statuses),
         );
 
         $params['paid_statuses'] = $paid_statuses;
