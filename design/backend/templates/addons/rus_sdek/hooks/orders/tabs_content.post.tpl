@@ -13,7 +13,8 @@
                     <thead>
                     <tr>    
                         <th width="35%" class="shift-left">{__("sdek.sdek_address_shipping")}</th>
-                        <th width="20%">{__("sdek.sdek_tariff")}</th>
+                        <th width="10%">{__("sdek.sdek_tariff")}</th>
+                        <th width="15%">{__("dimensions")}</th>
                         <th width="25%">
                             {if !empty($shipment.register_id)}
                                 {if !empty($shipment.notes)}
@@ -24,7 +25,7 @@
                             {/if}
                         </th>
                         <th width="5%">{if !$shipment.register_id}{__("shipping_cost")}{/if}</th>
-                        <th width="15%">&nbsp;</th>
+                        <th width="10%">&nbsp;</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -51,6 +52,13 @@
                             <input type="hidden" name="add_sdek_info[{$shipment_id}][Order][TariffTypeCode]" value="{$shipment.tariff_id}" />
                             {$shipment.shipping}
                         </td>
+                        <td class="left nowrap {$no_hide_input}">
+                            {if !empty($shipment.register_id)}
+                                {$shipment.dimensions.size_a} X {$shipment.dimensions.size_b} X {$shipment.dimensions.size_c}
+                            {else}
+                                <input type="text" name="add_sdek_info[{$shipment_id}][Order][Size_A]" value="" class="input-mini" size="6"/>X<input type="text" name="add_sdek_info[{$shipment_id}][Order][Size_B]" value="" class="input-mini" size="6"/>X<input type="text" name="add_sdek_info[{$shipment_id}][Order][Size_C]" value="" class="input-mini" size="6"/>
+                            {/if}
+                        </td>
                         <td class="left nowrap">
                             {if !empty($shipment.register_id)}
                                 {$shipment.notes}
@@ -68,7 +76,7 @@
                                     {dropdown content=$smarty.capture.tools_list}
                                 </div>
                             {else}
-                                <input type="text" name="add_sdek_info[{$shipment_id}][Order][DeliveryRecipientCost]" value="{$shipment.delivery_cost}" class="input-mini" size="6"/>
+                                <input type="text" name="add_sdek_info[{$shipment_id}][Order][DeliveryRecipientCost]" value="{$order_info.shipping_cost}" class="input-mini" size="6"/>
                             {/if}
                         </td>
                         <td class="right nowrap">

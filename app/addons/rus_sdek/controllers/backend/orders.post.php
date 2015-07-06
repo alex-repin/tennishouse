@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     }
 
                     $sdek_products[] = array(
-                        'ware_key' => $data_product['product_id'],
+                        'ware_key' => $data_product['item_id'],
                         'product' => $data_product['product'],
                         'price' => $data_product['price'],
                         'amount' => $amount,
@@ -130,7 +130,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $package_for_xml = array (
                     'Number' => $shipment_id,
                     'BarCode' => $shipment_id,
-                    'Weight' => $weight
+                    'Weight' => $weight,
+                    'Size_A' => $sdek_info['Order']['Size_A'],
+                    'Size_B' => $sdek_info['Order']['Size_B'],
+                    'Size_C' => $sdek_info['Order']['Size_C'],
                 );
                 $xml .= '            ' . RusSdek::arraySimpleXml('Package', $package_for_xml, 'open');
 
@@ -168,6 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         'tariff' => $sdek_info['Order']['TariffTypeCode'],
                         'file_sdek' => $shipment_id . '/' . $params['order_id'] . '.pdf',
                         'notes' => $sdek_info['Order']['Comment'],
+                        'dimensions' => serialize(array('size_a' => $sdek_info['Order']['Size_A'], 'size_b' => $sdek_info['Order']['Size_B'], 'size_c' => $sdek_info['Order']['Size_C'])),
                     );
 
                     if (!empty($result['number'])) {
@@ -291,10 +295,11 @@ if ($mode == 'details') {
 
             foreach ($sdek_shipments as $key => $shipment) {
 
-                    $data_sdek = db_get_row("SELECT register_id, order_id, timestamp, status, tariff, address_pvz, address, file_sdek, notes FROM ?:rus_sdek_register WHERE order_id = ?i and shipment_id = ?i", $shipment['order_id'], $shipment['shipment_id']);
+                    $data_sdek = db_get_row("SELECT register_id, order_id, timestamp, status, tariff, address_pvz, address, file_sdek, notes, dimensions FROM ?:rus_sdek_register WHERE order_id = ?i and shipment_id = ?i", $shipment['order_id'], $shipment['shipment_id']);
 
                     if (!empty($data_sdek)) {
                         $data_shipments[$shipment['shipment_id']] = $data_sdek;
+                        $data_shipments[$shipment['shipment_id']]['dimensions'] = !empty($data_sdek['dimensions']) ? unserialize($data_sdek['dimensions']) : array();
                         $data_shipments[$shipment['shipment_id']]['shipping'] = $shipment['shipping'];
                         if ($data_shipments[$shipment['shipment_id']]['tariff'] == SDEK_STOCKROOM) {
                             $data_shipments[$shipment['shipment_id']]['address'] = $offices[$data_sdek['address_pvz']]['Address'];

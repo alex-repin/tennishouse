@@ -300,9 +300,9 @@ function fn_development_get_category_data_post($category_id, $field_list, $get_m
             fn_format_categorization($category_data, $categorization_data, 'subtabs_categorization');
             fn_format_categorization($category_data, $categorization_data, 'sections_categorization');
         }
-        if (!empty($category_data['sections_categorization'])) {
-            $category_data['sections_categorization'] = unserialize($category_data['sections_categorization']);
-        }
+    }
+    if (!empty($category_data['sections_categorization'])) {
+        $category_data['sections_categorization'] = unserialize($category_data['sections_categorization']);
     }
 }
 

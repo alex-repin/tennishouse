@@ -163,9 +163,11 @@
             Tygh.$(document).ready(function() {$ldelim}
                 if ($('#tygh_main_container').hasClass('touch')) {$ldelim}
                     $('.ty-menu__item-link').click(function(e){$ldelim}
-                        var submenu = $(this).parents('.ty-menu__item_full');
-                        submenu.find('.ty-menu__submenu-items').slideToggle(200);
-                        e.preventDefault();
+                        var submenu = $(this).parents('.ty-menu__item_full').find('.ty-menu__submenu-items');
+                        if (submenu.length) {$ldelim}
+                            submenu.slideToggle(200);
+                            e.preventDefault();
+                        {$rdelim}
                     {$rdelim});
                 {$rdelim}
                 Tygh.$('.ty-menu__item-parent .ty-menu__item_full').hover(function(e){$ldelim}

@@ -244,6 +244,9 @@
         <item>
             ALTER TABLE `cscart_orders` ADD `net_total` DECIMAL(12,2) NOT NULL ;
         </item>
+        <item>
+            ALTER TABLE `cscart_rus_sdek_register` ADD `dimensions` TEXT NOT NULL ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -499,5 +502,6 @@
         <item lang="ru" id="income">Прибыль</item>
         <item lang="ru" id="net_totally">Итого себестоимость</item>
         <item lang="ru" id="total_income">Итого прибыль</item>
+        <item lang="ru" id="dimensions_sdek">Габариты (см.)</item>
     </language_variables>
 </addon>
