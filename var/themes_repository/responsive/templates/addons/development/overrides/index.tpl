@@ -41,7 +41,7 @@
 {/capture}
 <title>{$smarty.capture.title|strip|trim nofilter}</title>
 {include file="meta.tpl"}
-<link href="{$logos.favicon.image.image_path}" rel="shortcut icon" />
+<link href="{$logos.favicon.image.image_path}" rel="shortcut icon" type="image/x-icon" />
 {include file="common/styles.tpl" include_dropdown=true}
 {include file="common/scripts.tpl"}
 </head>

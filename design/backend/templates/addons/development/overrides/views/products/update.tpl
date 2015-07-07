@@ -88,26 +88,27 @@
                         </div>
                     </div>
                     
+                    <div class="control-group">
+                        <label class="control-label cm-required" for="elm_net_cost">{__("net_cost")}:</label>
+                        <div class="controls">
+                            <input type="text" name="product_data[net_cost]" id="elm_net_price" size="10" value="{$product_data.net_cost|default:"0.00"}" class="input-long" />
+                            <select class="span3" name="product_data[net_currency_code]">
+                            <option value="">{__("default")}</option>
+                            {foreach from=$currencies item="cur"}
+                                <option value="{$cur.currency_code}" {if $product_data.net_currency_code == $cur.currency_code}selected="selected"{/if}>{$cur.description}</option>
+                            {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                    
                     {if $auth.is_root == 'Y'}
                         <div class="control-group">
                             <label class="control-label" for="elm_product_auto_price">{__("auto_price_calculation")}:</label>
                             <div class="controls">
                                 <label class="checkbox">
                                     <input type="hidden" name="product_data[auto_price]" value="N" />
-                                    <input type="checkbox" name="product_data[auto_price]" id="elm_product_auto_price" value="Y" {if !$product_data.auto_price || $product_data.auto_price == "Y"}checked="checked"{/if} onclick="Tygh.$('#net_cost').toggleBy();Tygh.$('#margin').toggleBy();"/>
+                                    <input type="checkbox" name="product_data[auto_price]" id="elm_product_auto_price" value="Y" {if !$product_data.auto_price || $product_data.auto_price == "Y"}checked="checked"{/if} onclick="Tygh.$('#margin').toggleBy();"/>
                                 </label>
-                            </div>
-                        </div>
-                        <div class="control-group {if $product_data.auto_price != "Y" && $runtime.mode != 'add'}hidden{/if}" id="net_cost">
-                            <label class="control-label cm-required" for="elm_net_cost">{__("net_cost")}:</label>
-                            <div class="controls">
-                                <input type="text" name="product_data[net_cost]" id="elm_net_price" size="10" value="{$product_data.net_cost|default:"0.00"}" class="input-long" />
-                                <select class="span3" name="product_data[net_currency_code]">
-                                <option value="">{__("default")}</option>
-                                {foreach from=$currencies item="cur"}
-                                    <option value="{$cur.currency_code}" {if $product_data.net_currency_code == $cur.currency_code}selected="selected"{/if}>{$cur.description}</option>
-                                {/foreach}
-                                </select>
                             </div>
                         </div>
 
