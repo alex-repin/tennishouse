@@ -141,6 +141,17 @@ class Yml implements IYml
         );
         list($products, ) = fn_get_products($params);
 
+        fn_gather_additional_products_data($products, array(
+            'get_icon' => false,
+            'get_detailed' => false,
+            'get_additional' => false,
+            'get_options'=> false,
+            'get_discounts' => true,
+            'get_features' => false,
+            'get_title_features' => false,
+            'allow_duplication' => false
+        ));
+
         $offset = 0;
         while ($prods_slice = array_slice($products, $offset, self::ITERATION_ITEMS)) {
             $offset += self::ITERATION_ITEMS;
