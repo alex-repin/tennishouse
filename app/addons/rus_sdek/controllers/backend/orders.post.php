@@ -130,10 +130,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $package_for_xml = array (
                     'Number' => $shipment_id,
                     'BarCode' => $shipment_id,
-                    'Weight' => $weight,
-                    'Size_A' => $sdek_info['Order']['Size_A'],
-                    'Size_B' => $sdek_info['Order']['Size_B'],
-                    'Size_C' => $sdek_info['Order']['Size_C'],
+                    'Weight' => (!empty($sdek_info['Order']['Weight']) ? $sdek_info['Order']['Weight'] : $weight) * 1000,
+                    'SizeA' => $sdek_info['Order']['Size_A'],
+                    'SizeB' => $sdek_info['Order']['Size_B'],
+                    'SizeC' => $sdek_info['Order']['Size_C'],
                 );
                 $xml .= '            ' . RusSdek::arraySimpleXml('Package', $package_for_xml, 'open');
 
@@ -172,6 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         'file_sdek' => $shipment_id . '/' . $params['order_id'] . '.pdf',
                         'notes' => $sdek_info['Order']['Comment'],
                         'dimensions' => serialize(array('size_a' => $sdek_info['Order']['Size_A'], 'size_b' => $sdek_info['Order']['Size_B'], 'size_c' => $sdek_info['Order']['Size_C'])),
+                        'weight' => $sdek_info['Order']['Weight']
                     );
 
                     if (!empty($result['number'])) {
@@ -295,7 +296,7 @@ if ($mode == 'details') {
 
             foreach ($sdek_shipments as $key => $shipment) {
 
-                    $data_sdek = db_get_row("SELECT register_id, order_id, timestamp, status, tariff, address_pvz, address, file_sdek, notes, dimensions FROM ?:rus_sdek_register WHERE order_id = ?i and shipment_id = ?i", $shipment['order_id'], $shipment['shipment_id']);
+                    $data_sdek = db_get_row("SELECT register_id, order_id, timestamp, status, tariff, address_pvz, address, file_sdek, notes, dimensions, weight FROM ?:rus_sdek_register WHERE order_id = ?i and shipment_id = ?i", $shipment['order_id'], $shipment['shipment_id']);
 
                     if (!empty($data_sdek)) {
                         $data_shipments[$shipment['shipment_id']] = $data_sdek;
@@ -325,11 +326,22 @@ if ($mode == 'details') {
 
                         $cost = fn_sdek_calculate_cost_by_shipment($order_info, $data_shipping, $shipment, $rec_city_code);
 
+                        $prod_ids = array();
+                        foreach ($shipment['products'] as $item_id => $amount) {
+                            $prod_ids[$item_id] = $order_info['products'][$item_id]['product_id'];
+                        }
+                        $weights = db_get_hash_single_array("SELECT product_id, weight FROM ?:products WHERE product_id IN (?n)", array('product_id', 'weight'), array_unique($prod_ids));
+                        $package_weight = 0;
+                        foreach ($shipment['products'] as $item_id => $amount) {
+                            $package_weight += $amount * $weights[$prod_ids[$item_id]];
+                        }
+                        
                         $data_shipments[$shipment['shipment_id']] = array(
                             'order_id' => $shipment['order_id'],
                             'shipping' => $shipment['shipping'],
                             'comments' => $shipment['comments'],
                             'delivery_cost' => $cost,
+                            'weight' => $package_weight,
                             'tariff_id' => $data_shipping['service_params']['tariffid'],
                             'send_city_code' => $data_shipping['service_params']['from_city_id'],
                         );

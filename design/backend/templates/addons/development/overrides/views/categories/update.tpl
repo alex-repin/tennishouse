@@ -60,18 +60,18 @@
 
     {if $auth.is_root == 'Y'}
         <div class="control-group">
+            <label class="control-label" for="elm_shipping_weight">{__("shipping_weight")}:</label>
+            <div class="controls">
+                <input type="text" name="category_data[shipping_weight]" id="elm_category_shipping_weight" size="10" value="{$category_data.shipping_weight}" class="input-long" />
+            </div>
+        </div>
+        <div class="control-group">
             <label class="control-label" for="elm_category_override_margin">{__("override_shipping_weight")}:</label>
             <div class="controls">
                 <label class="checkbox">
                     <input type="hidden" name="category_data[override_shipping_weight]" value="N" />
-                    <input type="checkbox" name="category_data[override_shipping_weight]" id="elm_category_override_shipping_weight" value="Y" {if $category_data.override_shipping_weight == "Y"}checked="checked"{/if} onclick="Tygh.$('#shipping_weight').toggleBy();"/>
+                    <input type="checkbox" name="category_data[override_shipping_weight]" id="elm_category_override_shipping_weight" value="Y"  />
                 </label>
-            </div>
-        </div>
-        <div class="control-group hidden" id="shipping_weight">
-            <label class="control-label" for="elm_shipping_weight">{__("shipping_weight")}:</label>
-            <div class="controls">
-                <input type="text" name="category_data[shipping_weight]" id="elm_category_shipping_weight" size="10" value="" class="input-long" />
             </div>
         </div>
         <div class="control-group">

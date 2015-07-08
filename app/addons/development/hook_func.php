@@ -1042,7 +1042,7 @@ function fn_development_update_product_post($product_data, $product_id, $lang_co
 
 function fn_development_update_product_pre(&$product_data, $product_id, $lang_code, $can_update)
 {
-    if (!empty($product_data['main_category'])) {
+    if (!empty($product_data['main_category'])) { // to exclude products list update
         $id_path = explode('/', db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $product_data['main_category']));
         $enable_discussion = array('254', '263', '265', '266', '312', '313');
         $intersection = array_intersect($id_path, $enable_discussion);
@@ -1075,6 +1075,10 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
                     }
                 }
             }
+        }
+        
+        if (empty($product_data['weight'])) {
+            $product_data['weight'] = fn_get_product_global_weight($product_data);
         }
     }
 }

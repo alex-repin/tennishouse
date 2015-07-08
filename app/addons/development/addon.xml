@@ -247,6 +247,12 @@
         <item>
             ALTER TABLE `cscart_rus_sdek_register` ADD `dimensions` TEXT NOT NULL ;
         </item>
+        <item>
+            ALTER TABLE `cscart_rus_sdek_register` ADD `weight` DECIMAL( 12, 2 ) NOT NULL ;
+        </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `shipping_weight` DECIMAL( 12, 2 ) NOT NULL ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -503,6 +509,8 @@
         <item lang="ru" id="net_totally">Итого себестоимость</item>
         <item lang="ru" id="total_income">Итого прибыль</item>
         <item lang="ru" id="dimensions_sdek">Габариты (см.)</item>
+        <item lang="ru" id="weight_sdek">Вес (кг.)</item>
         <item lang="ru" id="update_rrp">Обновить РРЦ</item>
+        <item lang="ru" id="shipping_weight">Вес доставки</item>
     </language_variables>
 </addon>

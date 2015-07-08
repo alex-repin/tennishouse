@@ -12,9 +12,10 @@
                     <table width="100%" class="table table-middle">
                     <thead>
                     <tr>    
-                        <th width="35%" class="shift-left">{__("sdek.sdek_address_shipping")}</th>
+                        <th width="30%" class="shift-left">{__("sdek.sdek_address_shipping")}</th>
                         <th width="10%">{__("sdek.sdek_tariff")}</th>
-                        <th width="15%">{__("dimensions")}</th>
+                        <th width="5%">{__("weight_sdek")}</th>
+                        <th width="15%">{__("dimensions_sdek")}</th>
                         <th width="25%">
                             {if !empty($shipment.register_id)}
                                 {if !empty($shipment.notes)}
@@ -51,6 +52,13 @@
                         <td class="left nowrap {$no_hide_input}">
                             <input type="hidden" name="add_sdek_info[{$shipment_id}][Order][TariffTypeCode]" value="{$shipment.tariff_id}" />
                             {$shipment.shipping}
+                        </td>
+                        <td class="left nowrap {$no_hide_input}">
+                            {if !empty($shipment.register_id)}
+                                {$shipment.weight}
+                            {else}
+                                <input type="text" name="add_sdek_info[{$shipment_id}][Order][Weight]" value="{$shipment.weight}" class="input-mini" size="6"/>
+                            {/if}
                         </td>
                         <td class="left nowrap {$no_hide_input}">
                             {if !empty($shipment.register_id)}

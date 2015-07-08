@@ -764,6 +764,38 @@ function fn_get_product_global_margin($category_id)
     return array($result, $currency);
 }
 
+function fn_get_product_global_weight($product_data)
+{
+    $result = 0;
+    $paths = db_get_hash_single_array("SELECT category_id, id_path FROM ?:categories WHERE category_id IN (?n)", array('category_id', 'id_path'), $product_data['category_ids']);
+    $all_ids = array();
+    $use_order = array();
+    if (!empty($paths)) {
+        foreach ($paths as $cat_id => $path) {
+            $ids = explode('/', $path);
+            foreach(array_reverse($ids) as $j => $cat_id) {
+                if (!in_array($cat_id, $use_order[$j])) {
+                    $use_order[$j][] = $cat_id;
+                }
+            }
+            $all_ids = array_merge($all_ids, $ids);
+        }
+    }
+    $weights = db_get_hash_single_array("SELECT category_id, shipping_weight FROM ?:categories WHERE category_id IN (?n)", array('category_id', 'shipping_weight'), array_unique($all_ids));
+    if (!empty($use_order)) {
+        foreach ($use_order as $lvl => $cat_ids) {
+            foreach ($cat_ids as $i => $ct_id) {
+                if (!empty(floatval($weights[$ct_id]))) {
+                    $result = $weights[$ct_id];
+                    break 2;
+                }
+            }
+        }
+    }
+    
+    return $result;
+}
+
 function fn_round_price($price)
 {
     return ceil(ceil($price) / 10) * 10;
