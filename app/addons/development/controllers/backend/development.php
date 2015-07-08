@@ -22,6 +22,51 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    if ($mode == 'process_rrp') {
+    
+        $file = fn_filter_uploaded_data('csv_file');
+        if (!empty($file) && file_exists($file[0]['path'])) {
+
+            $f = false;
+            if ($file[0]['path'] !== false) {
+                $f = fopen($file[0]['path'], 'rb');
+            }
+
+            if ($f) {
+                $max_line_size = 65536; // 64 Кб
+                $result = array();
+
+                $delimiter = ',';
+                while (($data = fn_fgetcsv($f, $max_line_size, $delimiter)) !== false) {
+                    if (!empty($data[1])) {
+                        $product_ids = db_get_fields("SELECT product_id FROM ?:products WHERE product_code = ?s AND import_divider = '1'", $data[0]);
+                        if (!empty($product_ids)) {
+                            foreach ($product_ids as $i => $product_id) {
+                                db_query("UPDATE ?:products SET auto_price = 'N' WHERE product_id = ?s", $product_id);
+                                $product_data = array(
+                                    'price' => $data[1]
+                                );
+                                fn_get_product_prices($product_id, $product_data, $auth);
+                                if (!empty($product_data['prices'])) {
+                                    foreach ($product_data['prices'] as $j => $pr) {
+                                        if (!empty($pr['percentage_discount'])) {
+                                            $product_data['prices'][$j]['price'] = $pr['percentage_discount'];
+                                            $product_data['prices'][$j]['type'] = 'P';
+                                        } else {
+                                            $product_data['prices'][$j]['type'] = 'A';
+                                        }
+                                    }
+                                }
+                                fn_update_product_prices($product_id, $product_data);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        exit;
+    }
+    
     if ($mode == 'update_stocks') {
 
         if (!empty($_REQUEST['calculate'])) {

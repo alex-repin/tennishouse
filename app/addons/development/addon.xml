@@ -503,5 +503,6 @@
         <item lang="ru" id="net_totally">Итого себестоимость</item>
         <item lang="ru" id="total_income">Итого прибыль</item>
         <item lang="ru" id="dimensions_sdek">Габариты (см.)</item>
+        <item lang="ru" id="update_rrp">Обновить РРЦ</item>
     </language_variables>
 </addon>

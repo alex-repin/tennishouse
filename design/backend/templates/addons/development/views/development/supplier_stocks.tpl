@@ -1,7 +1,7 @@
 {capture name="mainbox"}
 
 <div id="update_stocks_section">
-<form action="{""|fn_url}" method="post" name="update_stocks" id="update_stocks_form" enctype="multipart/form-data" class="cm-ajax {*cm-comet*} form-horizontal form-edit">
+<form action="{""|fn_url}" method="post" name="update_stocks" id="update_stocks_form" enctype="multipart/form-data" class="cm-ajax form-horizontal form-edit">
 <input type="hidden" name="calculate" value="Y">
 <input type="hidden" name="result_ids" value="update_stocks_section" />
 

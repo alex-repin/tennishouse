@@ -21,17 +21,21 @@ $schema['top']['administration']['items']['development'] = array(
     'subitems' => array(
         'calculate_racket_balance' => array(
             'href' => 'development.calculate_balance',
-            'position' => 100,
+            'position' => 200,
         ),
         'update_exchange_rates' => array(
             'href' => fn_url('development.update_rub_rate', 'C'),
             'ajax' => true,
             'position' => 100,
         ),
+        'update_rrp' => array(
+            'href' => 'development.update_rrp',
+            'position' => 120,
+        ),
         'update_rankings' => array(
             'href' => fn_url('development.update_rankings', 'C'),
             'ajax' => true,
-            'position' => 100,
+            'position' => 110,
         ),
     ),
 );
