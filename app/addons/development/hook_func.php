@@ -214,7 +214,7 @@ function fn_development_update_product_option_post($option_data, $option_id, $de
         $feature_data = fn_get_product_feature_data($option_data['feature_id'], true);
     }
     $option_variants = array();
-    if (!empty($option_data['variants'])) {
+    if (!empty($option_data['variants']) && !empty($feature_data)) {
         foreach ($option_data['variants'] as $i => $variant) {
             if (!empty($variant['variant_id'])) {
                 $feature_variant_id = 0;
@@ -1077,7 +1077,7 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
             }
         }
         
-        if (empty($product_data['weight'])) {
+        if ($product_data['weight'] == 0) {
             $product_data['weight'] = fn_get_product_global_weight($product_data);
         }
     }
