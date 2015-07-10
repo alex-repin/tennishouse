@@ -82,11 +82,11 @@
                     <optgroup label="{__("features")}">
                     {foreach from=$filter_features item=feature}
                         <option value="{if "ON"|strpos:$feature.feature_type !== false}R{elseif $feature.feature_type == "D"}D{else}F{/if}F-{$feature.feature_id}">{if $feature.group_description}{$feature.group_description}: {/if}{$feature.description}</option>
-                    {if $feature.subfeatures}
-                    {foreach from=$feature.subfeatures item=subfeature}
-                        <option value="{if "ON"|strpos:$feature.feature_type !== false}R{elseif $feature.feature_type == "D"}D{else}F{/if}F-{$subfeature.feature_id}">{$subfeature.description}</option>
-                    {/foreach}
-                    {/if}
+                        {if $feature.subfeatures}
+                            {foreach from=$feature.subfeatures item=subfeature}
+                                <option value="{if "ON"|strpos:$feature.feature_type !== false}R{elseif $feature.feature_type == "D"}D{else}F{/if}F-{$subfeature.feature_id}">{$subfeature.description}</option>
+                            {/foreach}
+                        {/if}
                     {/foreach}
                     </optgroup>
                 {/if}

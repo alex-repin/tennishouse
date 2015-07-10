@@ -17,6 +17,12 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_get_product_feature_data_before_select(&$fields, $join, $condition, $feature_id, $get_variants, $get_variant_images, $lang_code)
+{
+    $fields[] = '?:product_features.note_url';
+    $fields[] = '?:product_features.note_text';
+}
+
 function fn_development_pre_get_orders($params, &$fields, $sortings, $get_totals, $lang_code)
 {
     $fields[] = "?:orders.net_total";
@@ -247,6 +253,12 @@ function fn_development_get_product_option_data_pre($option_id, $product_id, &$f
 {
     $extra_variant_fields .= ' a.code_suffix,';
     $fields .= ', b.default_text, b.option_note';
+}
+
+function fn_development_get_product_features(&$fields, $join, $condition, $params)
+{
+    $fields[] = 'pf.note_url';
+    $fields[] = 'pf.note_text';
 }
 
 function fn_development_get_product_features_list_before_select(&$fields, $join, $condition, $product, $display_on, $lang_code)

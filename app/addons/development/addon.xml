@@ -128,10 +128,8 @@
             ADD `margin` DECIMAL( 4, 1 ) UNSIGNED NOT NULL ;
         </item>
         <item>
-            ALTER TABLE `cscart_categories` ADD `note_url` VARCHAR( 255 ) NOT NULL ;
-        </item>
-        <item>
-            ALTER TABLE `cscart_categories` ADD `note_text` VARCHAR( 255 ) NOT NULL ;
+            ALTER TABLE `cscart_categories` ADD `note_url` VARCHAR( 255 ) NOT NULL ,
+            ADD `note_text` VARCHAR( 255 ) NOT NULL ;
         </item>
         <item>
             ALTER TABLE `cscart_product_filters` ADD `note_url` VARCHAR( 255 ) NOT NULL ,
@@ -252,6 +250,10 @@
         </item>
         <item>
             ALTER TABLE `cscart_categories` ADD `shipping_weight` DECIMAL( 12, 2 ) NOT NULL ;
+        </item>
+        <item>
+            ALTER TABLE `cscart_product_features` ADD `note_url` VARCHAR( 255 ) NOT NULL ,
+            ADD `note_text` VARCHAR( 255 ) NOT NULL ;
         </item>
     </queries>
     <language_variables>

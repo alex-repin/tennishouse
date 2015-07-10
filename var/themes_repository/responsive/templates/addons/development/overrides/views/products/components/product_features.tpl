@@ -1,7 +1,7 @@
 {foreach from=$product_features item="feature"}
     {if $feature.feature_type != "G"}
         <div class="ty-product-feature">
-        <span class="ty-product-feature__label">{$feature.description nofilter}{if $feature.full_description|trim}{include file="common/help.tpl" text=$feature.description content=$feature.full_description id=$feature.feature_id show_brackets=true wysiwyg=true}{/if}:</span>
+        <span class="ty-product-feature__label">{$feature.description nofilter}{*if $feature.full_description|trim}{include file="common/help.tpl" text=$feature.description content=$feature.full_description id=$feature.feature_id show_brackets=true wysiwyg=true}{/if*}{include file="addons/development/common/tooltip.tpl" note_url=$feature.note_url note_text=$feature.note_text}:</span>
 
         {if $feature.feature_type == "M"}
             {assign var="hide_affix" value=true}
