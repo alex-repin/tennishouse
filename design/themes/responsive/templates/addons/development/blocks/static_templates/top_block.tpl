@@ -41,10 +41,18 @@
             <div class="ty-benefits-guarantees__text">{__("free_delivery_text")}</div>
         </div>
         </a>
+        {*
         <a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=4"|fn_url}">
         <div class="ty-benefits-guarantees__top">
             <div class="ty-benefits-guarantees__icon-block"><i class="ty-benefits-free-returns"></i></div>
             <div class="ty-benefits-guarantees__text ty-benefits-guarantees__text-single-line">{__("free_returns_text")}</div>
+        </div>
+        </a>
+        *}
+        <a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=73"|fn_url}">
+        <div class="ty-benefits-guarantees__top">
+            <div class="ty-benefits-guarantees__icon-block"><i class="ty-benefits-paymenton-delivery"></i></div>
+            <div class="ty-benefits-guarantees__text">{__("payment_on_delivery_text")}</div>
         </div>
         </a>
     </div>

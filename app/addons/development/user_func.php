@@ -21,6 +21,17 @@ use Tygh\Menu;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_gender_match($gender)
+{
+    $result = false;
+    $gender_mode = fn_get_store_gender_mode();
+    if (!empty($gender_mode) && !empty($gender) && ($gender == $gender_mode || ($gender_mode == 'K' && in_array($gender, array('B', 'G'))) || (in_array($gender_mode, array('B', 'G')) && $gender == 'K') || ($gender_mode == 'A' && in_array($gender, array('M', 'F'))) || (in_array($gender_mode, array('M', 'F')) && $gender == 'A'))) {
+        $result = true;
+    }
+    
+    return $result;
+}
+
 function fn_get_menu_items_th($value, $block, $block_scheme)
 {
     $menu_items = array();
@@ -50,6 +61,18 @@ function fn_get_menu_items_th($value, $block, $block_scheme)
                     $menu_items[$i]['show_more_text'] = __('see_all_players');
                     foreach ($item['subitems'] as $j => $group) {
                         $menu_items[$i]['subitems'][$j]['show_more'] = false;
+                    }
+                } elseif ($type == 'C') {
+                    foreach ($item['subitems'] as $j => $group) {
+                        if (!empty($group['subitems'])) {
+                            $menu_items[$i]['subitems'][$j]['expand'] = false;
+                            foreach ($group['subitems'] as $k => $item) {
+                                if (fn_gender_match($item['code'])) {
+                                    $menu_items[$i]['subitems'][$j]['expand'] = $k;
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -133,7 +156,8 @@ function fn_filter_categroies(&$categories)
 function fn_set_store_gender_mode($mode)
 {
     $gender_mode = fn_get_store_gender_mode();
-    if (empty($gender_mode) || !(in_array($gender_mode, array('B', 'G')) && $mode == 'K') || !(in_array($gender_mode, array('M', 'F')) && $mode == 'A')) {
+
+    if (empty($gender_mode) || (!(in_array($gender_mode, array('B', 'G')) && $mode == 'K') && !(in_array($gender_mode, array('M', 'F')) && $mode == 'A'))) {
         fn_set_session_data('gender_mode', $mode);
     }
 }
@@ -376,7 +400,7 @@ function fn_update_combinations($product_id)
             }
         }
         if (!empty($option_variants_avail)) {
-            $features = db_get_hash_single_array("SELECT feature_id, option_id FROM ?:product_options WHERE option_id IN (?n)", array('option_id', 'feature_id'), array_keys($option_variants_avail));
+            $features = db_get_hash_single_array("SELECT a.feature_id, option_id FROM ?:product_options AS a INNER JOIN ?:product_features ON ?:product_features.feature_id = a.feature_id WHERE option_id IN (?n)", array('option_id', 'feature_id'), array_keys($option_variants_avail));
             if (!empty($option_variants)) {
                 $feature_variants = db_get_hash_single_array("SELECT feature_variant_id, variant_id FROM ?:product_option_variants WHERE variant_id IN (?n)", array('variant_id', 'feature_variant_id'), $option_variants);
             }
@@ -644,26 +668,60 @@ function fn_get_result_products($params, $key, $param_array)
     return $result;
 }
 
+function fn_get_same_brand_products($params)
+{
+    $result = array();
+    $_limit = $params['limit'];
+    unset($params['limit']);
+    list($products, ) = fn_get_products($params);
+    $ids = array();
+    if (!empty($products)) {
+        foreach ($products as $i => $product) {
+            $ids[] = $product['product_id'];
+        }
+        $objective_cat_ids = array(RACKETS_CATEGORY_ID, APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, BAGS_CATEGORY_ID, STRINGS_CATEGORY_ID, ACCESSORIES_CATEGORY_ID);
+        $category_path = db_get_field("SELECT id_path FROM ?:categories AS c LEFT JOIN ?:products_categories AS pc ON pc.category_id = c.category_id AND pc.link_type = 'M' LEFT JOIN ?:products AS p ON p.product_id = pc.product_id WHERE p.product_id = ?i", $params['same_brand_pid']);
+        $show_cat_ids = array_diff($objective_cat_ids, explode('/', $category_path));
+        if (!empty($show_cat_ids)) {
+            fn_gender_categories($show_cat_ids);
+            $limit = ceil($_limit / count($show_cat_ids));
+            $_params = array (
+                'sort_by' => 'bestsellers',
+                'sort_order' => 'desc',
+                'limit' => $limit,
+                'subcats' => 'Y',
+                'item_ids' => implode(',', $ids)
+            );
+            $start = microtime();
+            foreach ($show_cat_ids as $id) {
+                $_params['cid'] = $id;
+                list($prods,) = fn_get_products($_params);
+                $result = array_merge($result, $prods);
+            }
+            shuffle($result);
+        }
+    }
+    $params['limit'] = $_limit;
+
+    return array($result, $params);
+}
+
 function fn_get_cross_sales($params)
 {
     $result = array();
     if (!empty($_SESSION['cart']['products'])) {
-        $objective_cat_ids = array(RACKETS_CATEGORY_ID, APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, BAGS_CATEGORY_ID, STRINGS_CATEGORY_ID, BALLS_CATEGORY_ID, OVERGRIPS_CATEGORY_ID, BASEGRIPS_CATEGORY_ID, DAMPENERS_CATEGORY_ID);
-        $cat_ids = array();
-        foreach ($_SESSION['cart']['products'] as $item_id => $item) {
-            $cat_ids[] = $item['main_category'];
-        }
-        $show_cat_ids = array_diff($objective_cat_ids, $cat_ids);
+        $objective_cat_ids = array(RACKETS_CATEGORY_ID, APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, BAGS_CATEGORY_ID, STRINGS_CATEGORY_ID, BALLS_CATEGORY_ID, OVERGRIPS_CATEGORY_ID, DAMPENERS_CATEGORY_ID);
+        $show_cat_ids = array_diff($objective_cat_ids, $_SESSION['cart']['product_categories']);
         if (!empty($show_cat_ids)) {
+            fn_gender_categories($show_cat_ids);
             $limit = ceil($params['limit'] / count($show_cat_ids));
             $_params = array (
-//                 'bestsellers' => true,
-//                 'sales_amount_from' => 1,
-                'sort_by' => 'sales_amount',
+                'sort_by' => 'bestsellers',
                 'sort_order' => 'desc',
                 'limit' => $limit,
                 'subcats' => 'Y'
             );
+            $start = microtime();
             foreach ($show_cat_ids as $id) {
                 $_params['cid'] = $id;
                 list($prods,) = fn_get_products($_params);
@@ -676,6 +734,42 @@ function fn_get_cross_sales($params)
     }
 
     return array($result, $params);
+}
+
+function fn_gender_categories(&$show_cat_ids)
+{
+    $a_id = array_search(APPAREL_CATEGORY_ID, $show_cat_ids);
+    $s_id = array_search(SHOES_CATEGORY_ID, $show_cat_ids);
+    $gender = fn_get_store_gender_mode();
+    if (!empty($gender) && ($a_id !== false || $s_id !== false)) {
+        $modes = array(
+            $gender,
+            'U'
+        );
+        if (in_array($gender, array('B', 'G'))) {
+            $modes[] = 'K';
+        }
+        if (in_array($gender, array('M', 'F'))) {
+            $modes[] = 'A';
+        }
+        $_condition = array();
+        foreach ($modes as $j => $mode) {
+            $_condition[] = db_quote("code = ?s", $mode);
+        }
+        $condition = "(" . implode(' OR ', $_condition) . ")";
+        if ($a_id !== false) {
+            $apparel_cid = db_get_fields("SELECT category_id FROM ?:categories WHERE $condition AND id_path LIKE ?l", APPAREL_CATEGORY_ID . '/%');
+            if (!empty($apparel_cid)) {
+                $show_cat_ids[$a_id] = $apparel_cid;
+            }
+        }
+        if ($s_id !== false) {
+            $shoes_cid = db_get_fields("SELECT category_id FROM ?:categories WHERE $condition AND id_path LIKE ?l", SHOES_CATEGORY_ID . '/%');
+            if (!empty($shoes_cid)) {
+                $show_cat_ids[$s_id] = $shoes_cid;
+            }
+        }
+    }
 }
 
 function fn_check_vars($description)

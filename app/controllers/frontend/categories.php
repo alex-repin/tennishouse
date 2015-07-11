@@ -157,14 +157,11 @@ if ($mode == 'catalog') {
                         }
                     }
                     if (empty($params['tc_id'])) {
-                        $gender_mode = fn_get_store_gender_mode();
-                        if (!empty($gender_mode)) {
-                            foreach ($tb_feature['variants'] as $j => $vt_data) {
-                                if (!empty($vt_data['variant_code']) && ($vt_data['variant_code'] == $gender_mode || ($gender_mode == 'K' && in_array($vt_data['variant_code'], array('B', 'G'))) || (in_array($gender_mode, array('B', 'G')) && $vt_data['variant_code'] == 'K') || ($gender_mode == 'A' && in_array($vt_data['variant_code'], array('M', 'F'))) || (in_array($gender_mode, array('M', 'F')) && $vt_data['variant_code'] == 'A')) && !empty($tabs_categorization[$vt_data['variant_id']])) {
-                                    $params['tc_id'] = $_SESSION['tc_id'][$main_parent_id] = $vt_data['variant_id'];
-                                    fn_set_store_gender_mode($vt_data['variant_code']);
-                                    break;
-                                }
+                        foreach ($tb_feature['variants'] as $j => $vt_data) {
+                            if (fn_gender_match($vt_data['variant_code']) && !empty($tabs_categorization[$vt_data['variant_id']])) {
+                                $params['tc_id'] = $_SESSION['tc_id'][$main_parent_id] = $vt_data['variant_id'];
+                                fn_set_store_gender_mode($vt_data['variant_code']);
+                                break;
                             }
                         }
                         if (empty($params['tc_id'])) {

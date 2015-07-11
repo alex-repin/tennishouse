@@ -82,10 +82,10 @@
                                                                     {$item3.$name nofilter}
                                                                 </a>
                                                                 {include file="addons/development/common/tooltip.tpl" note_url=$item3.note_url note_text=$item3.note_text}
-                                                                <div class="ty-icon-down-open {if $smarty.foreach.item3.first}hidden{/if}"></div>
-                                                                <div class="ty-icon-right-open {if !$smarty.foreach.item3.first}hidden{/if}"></div>
+                                                                <div class="ty-icon-down-open {if (!$item2.expand && $smarty.foreach.item3.first) || ($item2.expand && $item2.expand == $item3.object_id)}hidden{/if}"></div>
+                                                                <div class="ty-icon-right-open {if (!$item2.expand && !$smarty.foreach.item3.first) || ($item2.expand && $item2.expand != $item3.object_id)}hidden{/if}"></div>
                                                             </div>
-                                                            <div class="ty-menu__menu-subheader-items {if !$smarty.foreach.item3.first}hidden{/if}">
+                                                            <div class="ty-menu__menu-subheader-items {if (!$item2.expand && !$smarty.foreach.item3.first) || ($item2.expand && $item2.expand != $item3.object_id)}hidden{/if}">
                                                             {foreach from=$item3.$childs item="item4" name="item4"}
                                                                 {assign var="item4_url" value=$item4|fn_form_dropdown_object_link:$block.type}
                                                                 <li class="ty-menu__submenu-item{if $item4.active || $item4|fn_check_is_active_menu_item:$block.type} ty-menu__submenu-item-active{/if}">

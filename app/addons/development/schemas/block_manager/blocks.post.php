@@ -24,16 +24,6 @@ $schema['products']['content']['items']['fillings']['similar_products']['params'
     'shuffle' => 'Y',
     'limit' => 10,
 );
-$schema['products']['content']['items']['fillings']['same_brand_products']['params'] = array (
-    'sort_by' => 'price',
-    'sort_order' => 'desc',
-    'request' => array (
-        'same_brand_pid' => '%PRODUCT_ID%',
-        'exclude_pid' => '%PRODUCT_ID%'
-    ),
-    'shuffle' => 'Y',
-    'limit' => 10,
-);
 $schema['pages']['content']['items']['fillings']['dynamic_content'] = array (
     'params' => array (
         'status' => 'A',
@@ -242,8 +232,18 @@ $schema['products']['content']['items']['fillings']['synthetic_gut_strings']['pa
     'shuffle' => 'Y',
     'limit' => 10,
 );
+$schema['products']['content']['items']['fillings']['same_brand_products']['params'] = array (
+    'items_function' => 'fn_get_same_brand_products',
+    'request' => array (
+        'same_brand_pid' => '%PRODUCT_ID%',
+        'exclude_pid' => '%PRODUCT_ID%'
+    ),
+    'disable_cache' => 'Y',
+    'limit' => 10,
+);
 $schema['products']['content']['items']['fillings']['cross_sales']['params'] = array (
     'items_function' => 'fn_get_cross_sales',
+    'disable_cache' => 'Y',
     'limit' => 10,
 );
 $schema['products']['content']['items']['fillings']['product_cross_sales'] = array(

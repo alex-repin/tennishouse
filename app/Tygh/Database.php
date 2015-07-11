@@ -419,7 +419,7 @@ class Database
             }
 
             $time_start = microtime(true);
-            if (SQL_NO_CACHE) {
+            if (!USE_SQL_CACHE) {
                 $query = preg_replace('/^SELECT/', 'SELECT SQL_NO_CACHE', $query);
             }
             

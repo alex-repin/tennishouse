@@ -71,5 +71,6 @@ fn_register_hooks(
     'get_order_info',
     'pre_get_orders',
     'get_product_feature_data_before_select',
-    'get_product_features'
+    'get_product_features',
+    'delete_feature_post'
 );

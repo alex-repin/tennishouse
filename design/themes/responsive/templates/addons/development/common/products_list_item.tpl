@@ -18,8 +18,10 @@
             {include file="views/products/components/product_icon.tpl" product=$product show_gallery=false}
         </div>
 
-        {assign var="discount_label" value="discount_label_`$obj_id`"}
-        {$smarty.capture.$discount_label nofilter}
+        {if $mode == 'R'}
+            {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
+            {$smarty.capture.$discount_label nofilter}
+        {/if}
         
         <div class="ty-grid-list__brand-image">
             <a href="{"products.view?product_id=`$product.product_id`{if $product.ohash}&`$product.ohash`{/if}"|fn_url}">

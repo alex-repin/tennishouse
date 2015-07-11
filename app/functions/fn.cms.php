@@ -1089,11 +1089,12 @@ function fn_top_menu_standardize($items, $id_name, $name, $children_name, $href_
     $result = array();
     foreach ($items as $v) {
         $result[$v[$id_name]] = array(
-            // [dab]
+            // [tennishouse]
             'object_id' => $v[$id_name],
             'note_url' => empty($v['note_url']) ? '' : $v['note_url'],
             'note_text' => empty($v['note_text']) ? '' : $v['note_text'],
-            // [dab]
+            'code' => empty($v['code']) ? '' : $v['code'],
+            // [tennishouse]
             'descr' => $v[$name],
             'param' => empty($v['link']) ? $href_prefix . $v[$id_name] : $v['link'],
             'new_window' => isset($v['new_window']) ? $v['new_window'] : 0

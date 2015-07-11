@@ -17,6 +17,12 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_delete_feature_post($feature_id, $variant_ids)
+{
+    db_query("UPDATE ?:product_options SET feature_id = '0' WHERE feature_id = ?i", $feature_id);
+    db_query("UPDATE ?:product_option_variants SET feature_variant_id = '0' WHERE feature_variant_id IN (?n)", $variant_ids);
+}
+
 function fn_development_get_product_feature_data_before_select(&$fields, $join, $condition, $feature_id, $get_variants, $get_variant_images, $lang_code)
 {
     $fields[] = '?:product_features.note_url';
@@ -288,7 +294,7 @@ function fn_development_update_product_features_value($product_id, $product_feat
 
 function fn_development_render_block_register_cache($block, $cache_name, &$block_scheme, $register_cache, $display_block)
 {
-    if (!empty($block['properties']['random']) && $block['properties']['random'] == 'Y') {
+    if ((!empty($block['properties']['random']) && $block['properties']['random'] == 'Y') || (!empty($block_scheme['content']['items']['fillings'][$block['content']['items']['filling']]['params']['disable_cache']) && $block_scheme['content']['items']['fillings'][$block['content']['items']['filling']]['params']['disable_cache'] == 'Y')) {
         unset($block_scheme['cache']);
     }
 }
@@ -364,6 +370,7 @@ function fn_development_get_categories(&$params, $join, $condition, &$fields, $g
     $fields[] = '?:categories.note_url';
     $fields[] = '?:categories.note_text';
     $fields[] = '?:categories.product_count';
+    $fields[] = '?:categories.code';
     if (!empty($params['roundabout'])) {
         $params['get_images'] = true;
         $fields[] = '?:category_descriptions.description';
@@ -434,7 +441,9 @@ function fn_development_get_product_options_post($product_ids, $lang_code, $only
 function fn_development_calculate_cart_items(&$cart, $cart_products, $auth)
 {
     if (!empty($cart_products)) {
+        $main_ids = array();
         foreach ($cart_products as $i => $product) {
+            $main_ids[] = $product['main_category'];
             $cart['products'][$i]['main_category'] = $product['main_category'];
             
             $color_ids = $color_prod_image_pairs = array();
@@ -446,6 +455,15 @@ function fn_development_calculate_cart_items(&$cart, $cart_products, $auth)
                 }
             }
         }
+        $id_paths = db_get_hash_single_array("SELECT category_id, id_path FROM ?:categories WHERE category_id IN (?n)", array('category_id', 'id_path'), array_unique($main_ids));
+        $cart['product_categories'] = array();
+        if (!empty($id_paths)) {
+            foreach ($id_paths as $i => $path) {
+                $cart['product_categories'] = array_merge($cart['product_categories'], explode('/', $path));
+            }
+        }
+        $cart['product_categories'] = array_unique($cart['product_categories']);
+        
         if (!empty($color_ids)) {
             $color_prod_image_pairs = fn_get_image_pairs($color_ids, 'variant_additional', 'Z', false, true, CART_LANGUAGE);
         }

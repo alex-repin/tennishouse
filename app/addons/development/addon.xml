@@ -255,6 +255,9 @@
             ALTER TABLE `cscart_product_features` ADD `note_url` VARCHAR( 255 ) NOT NULL ,
             ADD `note_text` VARCHAR( 255 ) NOT NULL ;
         </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `code` CHAR( 1 ) NOT NULL ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -514,5 +517,6 @@
         <item lang="ru" id="weight_sdek">Вес (кг.)</item>
         <item lang="ru" id="update_rrp">Обновить РРЦ</item>
         <item lang="ru" id="shipping_weight">Вес доставки</item>
+        <item lang="ru" id="payment_on_delivery_text">Оплата наличными при получении по всей России</item>
     </language_variables>
 </addon>

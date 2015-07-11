@@ -1,5 +1,5 @@
 {if $filter.ranges|fn_is_not_empty}
-{split data=$filter.ranges size="10" assign="splitted_ranges" skip_complete=true}
+{split data=$filter.ranges size="15" assign="splitted_ranges" skip_complete=true}
 {$tot_width = 190 * $splitted_ranges|count}
 <div class="ty-product-filters {if $collapse}hidden{/if}" id="content_{$filter_uid}" style="width: {$tot_width}px;">
     <div id="ranges_{$filter_uid}" class="ty-product-filters__item-more" style="display: inline-block;">
