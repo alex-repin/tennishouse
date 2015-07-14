@@ -152,7 +152,13 @@ if ($mode == 'clear') {
         }
     }
 
-    fn_gather_additional_products_data($products, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => true));
+    fn_gather_additional_products_data($products, array(
+        'get_icon' => true,
+        'get_detailed' => true,
+        'get_options' => true,
+        'get_discounts' => true,
+        'get_title_features' => true,
+    ));
 
     Registry::get('view')->assign('show_qty', true);
     Registry::get('view')->assign('products', $products);

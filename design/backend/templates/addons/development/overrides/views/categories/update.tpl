@@ -192,6 +192,15 @@
             <input type="text" name="category_data[code]" id="elm_category_code" size="55" value="{$category_data.code}" class="input-text-short" />
         </div>
     </div>
+    <div class="control-group">
+        <label class="control-label" for="elm_category_is_virtual">{__("is_virtual")}:</label>
+        <div class="controls">
+            <label class="checkbox">
+                <input type="hidden" name="category_data[is_virtual]" value="N" />
+                <input type="checkbox" name="category_data[is_virtual]" id="elm_category_is_virtual" value="Y" {if $category_data.is_virtual == 'Y'} checked="checked"{/if} />
+            </label>
+        </div>
+    </div>
 
     {include file="common/select_status.tpl" input_name="category_data[status]" id="elm_category_status" obj=$category_data hidden=true}
 

@@ -3359,7 +3359,7 @@ function fn_apply_options_modifiers($product_options, $base_value, $type, $orig_
                 }
             } else {
                 foreach ($orig_options as $_opt) {
-                    if ($_opt['value'] == $variant_id && !empty($variant_id)) {
+                    if ($_opt['value'] == $variant_id && !empty($variant_id) && !empty($_opt['variants']) && !empty($_opt['variants'][$variant_id])) {
                         $_mod = array();
                         $_mod['modifier'] = $_opt['variants'][$variant_id]['modifier'];
                         $_mod['modifier_type'] = $_opt['variants'][$variant_id]['modifier_type'];

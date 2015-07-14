@@ -456,7 +456,8 @@ function fn_fill_user_fields(&$user_data)
 
     foreach ($fill as $k => $v) {
         if (!isset($user_data[$k])) {
-            @list($f, $s) = $v;
+            $f = !empty($v[0]) ? $v[0] : false;
+            $s = !empty($v[1]) ? $v[1] : false;
             $user_data[$k] = !empty($user_data[$f]) ? $user_data[$f] : (!empty($s) && !empty($user_data[$s]) ? $user_data[$s] : '');
         }
     }

@@ -232,19 +232,23 @@ $schema['products']['content']['items']['fillings']['synthetic_gut_strings']['pa
     'shuffle' => 'Y',
     'limit' => 10,
 );
-$schema['products']['content']['items']['fillings']['same_brand_products']['params'] = array (
-    'items_function' => 'fn_get_same_brand_products',
-    'request' => array (
-        'same_brand_pid' => '%PRODUCT_ID%',
-        'exclude_pid' => '%PRODUCT_ID%'
+$schema['products']['content']['items']['fillings']['same_brand_products'] = array(
+    'params' => array (
+        'items_function' => 'fn_get_same_brand_products',
+        'request' => array (
+            'same_brand_pid' => '%PRODUCT_ID%',
+            'exclude_pid' => '%PRODUCT_ID%'
+        ),
+        'limit' => 10,
     ),
-    'disable_cache' => 'Y',
-    'limit' => 10,
+    'disable_cache' => true,
 );
-$schema['products']['content']['items']['fillings']['cross_sales']['params'] = array (
-    'items_function' => 'fn_get_cross_sales',
-    'disable_cache' => 'Y',
-    'limit' => 10,
+$schema['products']['content']['items']['fillings']['cross_sales'] = array(
+    'params' => array (
+        'items_function' => 'fn_get_cross_sales',
+        'limit' => 10,
+    ),
+    'disable_cache' => true,
 );
 $schema['products']['content']['items']['fillings']['product_cross_sales'] = array(
     'params' => array (

@@ -112,8 +112,8 @@
                                                                         Tygh.$(this).next('.ty-menu__menu-subheader-items').slideToggle();
                                                                         Tygh.$(this).find('.ty-icon-down-open').hide();
                                                                         Tygh.$(this).find('.ty-icon-right-open').show();
+                                                                        return false;
                                                                     {$rdelim}
-                                                                    return false;
                                                                 {$rdelim});
                                                             {$rdelim});
                                                         </script>

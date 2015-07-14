@@ -1094,6 +1094,8 @@ function fn_top_menu_standardize($items, $id_name, $name, $children_name, $href_
             'note_url' => empty($v['note_url']) ? '' : $v['note_url'],
             'note_text' => empty($v['note_text']) ? '' : $v['note_text'],
             'code' => empty($v['code']) ? '' : $v['code'],
+            'is_virtual' => empty($v['is_virtual']) ? 'N' : $v['is_virtual'],
+            'parent_id' => empty($v['parent_id']) ? 0 : $v['parent_id'],
             // [tennishouse]
             'descr' => $v[$name],
             'param' => empty($v['link']) ? $href_prefix . $v[$id_name] : $v['link'],

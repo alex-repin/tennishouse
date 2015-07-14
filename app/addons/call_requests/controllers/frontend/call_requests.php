@@ -14,10 +14,15 @@
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+use Tygh\Registry;
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($mode == 'request') {
 
+        if (fn_image_verification('use_for_call_request', $_REQUEST) == false) {
+            return array(CONTROLLER_STATUS_REDIRECT);
+        }
         if (!empty($_REQUEST['call_data'])) {
             if ($res = fn_do_call_request($_REQUEST['call_data'], $_SESSION['cart'], $_SESSION['auth'])) {
                 if (!empty($res['error'])) {
@@ -26,9 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     fn_set_notification('N', __('notice'), $res['notice']);
                 }
             }
-            exit;
         }
-
+        return array(CONTROLLER_STATUS_OK, !empty($_REQUEST['redirect_url'])? $_REQUEST['redirect_url'] : fn_url());
     }
 
     return array(CONTROLLER_STATUS_OK);

@@ -190,6 +190,13 @@
         {assign var="hide_first_button" value=true}
     {/if}
     {include file="buttons/save_cancel.tpl" but_name="dispatch[product_features.update]" cancel_action="close" hide_first_button=$hide_first_button save=$feature.feature_id}
+    {if $feature.feature_id}
+        <div class="botton-picker-remove pull-left">
+            <a class="cm-confirm btn cm-tooltip" href="{"product_features.delete?feature_id=`$feature.feature_id`&group_id=`$feature.parent_id`"|fn_url}">
+                <i class="icon-trash"></i>
+            </a>
+        </div>
+    {/if}
 </div>
 </form>
 <!--content_group{$id}--></div>

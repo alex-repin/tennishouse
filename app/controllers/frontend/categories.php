@@ -68,7 +68,7 @@ if ($mode == 'catalog') {
 
         // Get full data for current category
         $category_data = fn_get_category_data($_REQUEST['category_id'], CART_LANGUAGE, '*', true, false, $preview);
-
+        
         $category_parent_ids = fn_explode('/', $category_data['id_path']);
         $main_parent_id = reset($category_parent_ids);
         array_pop($category_parent_ids);
@@ -284,17 +284,11 @@ if ($mode == 'catalog') {
 
         // [Breadcrumbs]
         if (!empty($category_parent_ids)) {
+            $cat_data = db_get_hash_array("SELECT a.category_id, a.is_virtual, b.category FROM ?:categories AS a LEFT JOIN ?:category_descriptions AS b ON a.category_id = b.category_id AND b.lang_code = ?s WHERE a.category_id IN (?n)", 'category_id', CART_LANGUAGE, $category_parent_ids);
             Registry::set('runtime.active_category_ids', $category_parent_ids);
-            $cats = fn_get_category_name($category_parent_ids);
-            $display_subheader = true;
             foreach ($category_parent_ids as $i => $c_id) {
-                if ($i == 0 && fn_display_subheaders($c_id)) {
-                    $display_subheader = false;
-                }
-                if ($i != 1 || $display_subheader) {
-                    fn_add_breadcrumb($cats[$c_id], "categories.view?category_id=$c_id");
-                } else {
-                    fn_add_breadcrumb($cats[$c_id]);
+                if ($cat_data[$c_id]['is_virtual'] != 'Y') {
+                    fn_add_breadcrumb($cat_data[$c_id]['category'], "categories.view?category_id=$c_id");
                 }
             }
         }

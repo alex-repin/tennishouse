@@ -19,6 +19,21 @@ input[type="text"], input[type="password"] {
 select {
     min-width: 2em;
 }
+.ty-shipping-country, .ty-billing-country {
+    display: none;
+}
+.ty-billing-country + .ty-billing-state, .ty-shipping-country + .ty-shipping-state {
+    margin-left: 0;
+}
+.ty-twishlist-item .ty-remove__txt {
+    font-size: 13px;
+}
+.ty-wishlist-grid {
+    margin-top: 30px;
+}
+.ty-grid-list__item-wrapper {
+    position: relative;
+}
 .pluso {
     z-index: 100 !important;
 }
@@ -837,6 +852,13 @@ label.cm-required::after {
     -o-user-select: none;
     user-select: none;
 }*/
+.ty-page-description {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
 .ty-product-qty {
     display: inline-block;
     margin-top: 2px;

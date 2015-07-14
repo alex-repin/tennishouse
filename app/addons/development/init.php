@@ -37,7 +37,6 @@ fn_register_hooks(
     'get_categories_post',
     'get_product_feature_variants',
     'get_category_data_post',
-    'render_block_register_cache',
     'update_product_features_value',
     'delete_product_feature_variants',
     'redirect_complete',
@@ -72,5 +71,6 @@ fn_register_hooks(
     'pre_get_orders',
     'get_product_feature_data_before_select',
     'get_product_features',
-    'delete_feature_post'
+    'delete_feature_post',
+    'pre_place_order'
 );

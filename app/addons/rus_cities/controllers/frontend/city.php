@@ -46,8 +46,8 @@ if ($mode == 'autocomplete_city') {
 
             $location['city'] = $params['q'];
             $cities = rus_spsr_get_cities($location);
-            $cities = array_slice( $cities , 0, 15);
             if (!empty($cities)) {
+                $cities = array_slice( $cities , 0, 15);
                 foreach ($cities as $city) {
                     $select[] = array(
                         'code' => $city['City_ID'],

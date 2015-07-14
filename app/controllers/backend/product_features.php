@@ -24,10 +24,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Update features
     if ($mode == 'update') {
-        fn_update_product_feature($_REQUEST['feature_data'], $_REQUEST['feature_id'], DESCR_SL);
+        $feature_id = fn_update_product_feature($_REQUEST['feature_data'], $_REQUEST['feature_id'], DESCR_SL);
+        if ($_REQUEST['feature_data']['feature_type'] == 'G') {
+            $group_id = $feature_id;
+        } else {
+            $group_id = !empty($_REQUEST['feature_data']['parent_id']) ? $_REQUEST['feature_data']['parent_id'] : 0;
+        }
     }
+    $active_tab = (!empty($group_id)) ? "&group_id=" . $group_id : '';
 
-    return array(CONTROLLER_STATUS_OK, "product_features.manage");
+    return array(CONTROLLER_STATUS_OK, "product_features.manage$active_tab");
 }
 
 if ($mode == 'update') {
@@ -45,17 +51,21 @@ if ($mode == 'update') {
     if (!empty($_REQUEST['feature_id'])) {
         fn_delete_feature($_REQUEST['feature_id']);
     }
+    $group_id = !empty($_REQUEST['group_id']) ? $_REQUEST['group_id'] : 0;
 
-    return array(CONTROLLER_STATUS_REDIRECT, "product_features.manage");
+    return array(CONTROLLER_STATUS_REDIRECT, "product_features.manage&group_id=" . $group_id);
 
 } elseif ($mode == 'manage') {
 
     $params = $_REQUEST;
+    $params['parent_id'] = !empty($params['group_id']) ? $params['group_id'] : 0;
     $params['exclude_group'] = true;
+    $params['plain'] = true;
     $params['get_descriptions'] = true;
     $params['search_in_subcats'] = true;
-    list($features, $search, $has_ungroupped) = fn_get_product_features($params, Registry::get('settings.Appearance.admin_elements_per_page'), DESCR_SL);
+    list($features, $search, $has_ungroupped) = fn_get_product_features($params);
 
+    Registry::get('view')->assign('active_tab', $params['parent_id']);
     Registry::get('view')->assign('features', $features);
     Registry::get('view')->assign('search', $search);
     Registry::get('view')->assign('has_ungroupped', $has_ungroupped);

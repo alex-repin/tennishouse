@@ -17,6 +17,13 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_pre_place_order($cart, &$allow, $product_groups)
+{
+    if (!$allow && !empty($cart['is_call_request'])) {
+        $allow = true;
+    }
+}
+
 function fn_development_delete_feature_post($feature_id, $variant_ids)
 {
     db_query("UPDATE ?:product_options SET feature_id = '0' WHERE feature_id = ?i", $feature_id);
@@ -292,13 +299,6 @@ function fn_development_update_product_features_value($product_id, $product_feat
     FeaturesCache::updateProductFeaturesValue($product_id, $features, $lang_code);
 }
 
-function fn_development_render_block_register_cache($block, $cache_name, &$block_scheme, $register_cache, $display_block)
-{
-    if ((!empty($block['properties']['random']) && $block['properties']['random'] == 'Y') || (!empty($block_scheme['content']['items']['fillings'][$block['content']['items']['filling']]['params']['disable_cache']) && $block_scheme['content']['items']['fillings'][$block['content']['items']['filling']]['params']['disable_cache'] == 'Y')) {
-        unset($block_scheme['cache']);
-    }
-}
-
 function fn_development_get_category_data_post($category_id, $field_list, $get_main_pair, $skip_company_condition, $lang_code, &$category_data)
 {
     if (!empty($category_data['brand_id'])) {
@@ -371,6 +371,7 @@ function fn_development_get_categories(&$params, $join, $condition, &$fields, $g
     $fields[] = '?:categories.note_text';
     $fields[] = '?:categories.product_count';
     $fields[] = '?:categories.code';
+    $fields[] = '?:categories.is_virtual';
     if (!empty($params['roundabout'])) {
         $params['get_images'] = true;
         $fields[] = '?:category_descriptions.description';
@@ -1170,6 +1171,8 @@ function fn_development_get_product_data_post(&$product_data, $auth, $preview, $
         $product_data['players'] = $players;
     }
     $types_ids = fn_get_categories_types($product_data['main_category']);
+    $product_data['id_path'] = db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $product_data['main_category']);
+    $product_data['type'] = fn_identify_category_type($product_data['id_path']);
     $product_data['category_type'] = fn_get_category_type($types_ids[$product_data['main_category']]);
     $product_data['category_main_id'] = $types_ids[$product_data['main_category']];
 }

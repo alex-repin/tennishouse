@@ -178,7 +178,7 @@ function fn_do_call_request($params, &$cart, &$auth)
 
     $params['cart_products'] = fn_call_request_get_cart_products($cart);
 
-    if (!empty($params['product_id']) && !empty($params['email'])) {
+    if (!empty($params['product_id']) && (!empty($params['email']) || !empty($params['phone']))) {
         $params['order_id'] = fn_call_requests_place_order($params, $cart, $auth);;
     }
 

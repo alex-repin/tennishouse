@@ -118,17 +118,11 @@ if ($mode == 'search') {
 
         if (!empty($parent_ids)) {
             Registry::set('runtime.active_category_ids', $parent_ids);
-            $cats = fn_get_category_name($parent_ids);
+            $cat_data = db_get_hash_array("SELECT a.category_id, a.is_virtual, b.category FROM ?:categories AS a LEFT JOIN ?:category_descriptions AS b ON a.category_id = b.category_id AND b.lang_code = ?s WHERE a.category_id IN (?n)", 'category_id', CART_LANGUAGE, $parent_ids);
             // [tennishouse]
-            $display_subheader = true;
             foreach ($parent_ids as $i => $c_id) {
-                if ($i == 0 && fn_display_subheaders($c_id)) {
-                    $display_subheader = false;
-                }
-                if ($i != 1 || $display_subheader) {
-                    fn_add_breadcrumb($cats[$c_id], "categories.view?category_id=$c_id");
-                } else {
-                    fn_add_breadcrumb($cats[$c_id]);
+                if ($cat_data[$c_id]['is_virtual'] != 'Y') {
+                    fn_add_breadcrumb($cat_data[$c_id]['category'], "categories.view?category_id=$c_id");
                 }
             }
             // [tennishouse]

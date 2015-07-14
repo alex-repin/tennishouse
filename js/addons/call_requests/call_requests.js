@@ -39,9 +39,11 @@
             allow = !!(val_email || val_phone),
             error_box = form.find('.cm-cr-error-box'),
             dlg = $.ceDialog('get_last');
-        
-        error_box.toggle(!allow);
-        dlg.ceDialog('reload');
+            
+        if (!allow) {
+            error_box.toggle(!allow);
+            dlg.ceDialog('reload');
+        }
 
         return allow;
     });

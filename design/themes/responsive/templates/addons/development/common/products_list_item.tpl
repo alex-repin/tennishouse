@@ -1,3 +1,6 @@
+<div class="ty-grid-list__item-wrapper">
+{hook name="products:product_multicolumns_list"}
+{/hook}
 <div class="ty-grid-list__item">
     {assign var="obj_id" value=$product.product_id}
     {include file="common/product_data.tpl" product=$product}
@@ -84,4 +87,5 @@
     </div>
     {assign var="form_close" value="form_close_`$obj_id`"}
     {$smarty.capture.$form_close nofilter}
+</div>
 </div>

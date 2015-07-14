@@ -71,6 +71,9 @@ function fn_get_menu_items_th($value, $block, $block_scheme)
                                     $menu_items[$i]['subitems'][$j]['expand'] = $k;
                                     break;
                                 }
+                                if ($item['is_virtual'] == 'Y' && !empty($item['parent_id'])) {
+                                    $menu_items[$i]['subitems'][$j]['subitems'][$k]['href'] = 'categories.view?category_id=' . $item['parent_id'];
+                                }
                             }
                         }
                     }
@@ -686,8 +689,9 @@ function fn_get_same_brand_products($params)
             fn_gender_categories($show_cat_ids);
             $limit = ceil($_limit / count($show_cat_ids));
             $_params = array (
-                'sort_by' => 'bestsellers',
-                'sort_order' => 'desc',
+//                 'sort_by' => 'bestsellers',
+//                 'sort_order' => 'desc',
+                'sort_by' => 'random',
                 'limit' => $limit,
                 'subcats' => 'Y',
                 'item_ids' => implode(',', $ids)
@@ -716,8 +720,9 @@ function fn_get_cross_sales($params)
             fn_gender_categories($show_cat_ids);
             $limit = ceil($params['limit'] / count($show_cat_ids));
             $_params = array (
-                'sort_by' => 'bestsellers',
-                'sort_order' => 'desc',
+//                 'sort_by' => 'bestsellers',
+//                 'sort_order' => 'desc',
+                'sort_by' => 'random',
                 'limit' => $limit,
                 'subcats' => 'Y'
             );
@@ -738,35 +743,39 @@ function fn_get_cross_sales($params)
 
 function fn_gender_categories(&$show_cat_ids)
 {
-    $a_id = array_search(APPAREL_CATEGORY_ID, $show_cat_ids);
-    $s_id = array_search(SHOES_CATEGORY_ID, $show_cat_ids);
+    $gender_categories = array(APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, RACKETS_CATEGORY_ID);
     $gender = fn_get_store_gender_mode();
-    if (!empty($gender) && ($a_id !== false || $s_id !== false)) {
-        $modes = array(
-            $gender,
-            'U'
-        );
-        if (in_array($gender, array('B', 'G'))) {
-            $modes[] = 'K';
-        }
-        if (in_array($gender, array('M', 'F'))) {
-            $modes[] = 'A';
-        }
-        $_condition = array();
-        foreach ($modes as $j => $mode) {
-            $_condition[] = db_quote("code = ?s", $mode);
-        }
-        $condition = "(" . implode(' OR ', $_condition) . ")";
-        if ($a_id !== false) {
-            $apparel_cid = db_get_fields("SELECT category_id FROM ?:categories WHERE $condition AND id_path LIKE ?l", APPAREL_CATEGORY_ID . '/%');
-            if (!empty($apparel_cid)) {
-                $show_cat_ids[$a_id] = $apparel_cid;
-            }
-        }
-        if ($s_id !== false) {
-            $shoes_cid = db_get_fields("SELECT category_id FROM ?:categories WHERE $condition AND id_path LIKE ?l", SHOES_CATEGORY_ID . '/%');
-            if (!empty($shoes_cid)) {
-                $show_cat_ids[$s_id] = $shoes_cid;
+    if (!empty($gender)) {
+        foreach ($gender_categories as $i => $c_id) {
+            $cat_it = array_search($c_id, $show_cat_ids);
+            if ($cat_it !== false) {
+                $modes = array(
+                    $gender,
+                    'U'
+                );
+                if (in_array($gender, array('B', 'G'))) {
+                    $modes[] = 'K';
+                }
+                if ($gender == 'K') {
+                    $modes[] = 'B';
+                    $modes[] = 'G';
+                }
+                if (in_array($gender, array('M', 'F'))) {
+                    $modes[] = 'A';
+                }
+                if ($gender == 'A') {
+                    $modes[] = 'M';
+                    $modes[] = 'F';
+                }
+                $_condition = array();
+                foreach ($modes as $j => $mode) {
+                    $_condition[] = db_quote("code = ?s", $mode);
+                }
+                $condition = "(" . implode(' OR ', $_condition) . ")";
+                $gender_cids = db_get_fields("SELECT category_id FROM ?:categories WHERE $condition AND id_path LIKE ?l", $c_id . '/%');
+                if (!empty($gender_cids)) {
+                    $show_cat_ids[$cat_it] = $gender_cids;
+                }
             }
         }
     }
@@ -868,7 +877,7 @@ function fn_get_product_global_weight($product_data)
         foreach ($paths as $cat_id => $path) {
             $ids = explode('/', $path);
             foreach(array_reverse($ids) as $j => $cat_id) {
-                if (!in_array($cat_id, $use_order[$j])) {
+                if (empty($use_order[$j]) || !in_array($cat_id, $use_order[$j])) {
                     $use_order[$j][] = $cat_id;
                 }
             }
