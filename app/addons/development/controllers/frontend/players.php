@@ -67,7 +67,7 @@ if ($mode == 'view') {
         }
     }
     
-    //$player_data['news_feed'] = fn_get_rss_news(array('rss_feed_link' => $player_data['rss_link']));
+    $player_data['news_feed'] = fn_get_rss_news(array('rss_feed_link' => $player_data['rss_link']));
     fn_add_breadcrumb(__('professionals') . ' ' . (($player_data['gender'] == 'M') ? __("atp") : __("wta") ), 'players.list');
     fn_add_breadcrumb($player_data['player']);
 
