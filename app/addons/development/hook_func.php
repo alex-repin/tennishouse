@@ -179,6 +179,20 @@ function fn_development_shippings_get_shippings_list_post($group, $lang, $area, 
         $shippings_info[$key]['icon'] = fn_get_image_pairs($shipping_info['shipping_id'], 'shipping', 'M', true, true, $lang);
         $shippings_info[$key]['available_payments'] = unserialize($shippings_info[$key]['available_payments']);
     }
+    
+    foreach ($shippings_info as $i => $shipping) {
+        if ($shipping['min_weight'] > 0) {
+            $keep = false;
+            foreach ($group['products'] as $j => $product) {
+                if ($product['weight'] >= $shipping['min_weight']) {
+                    $keep = true;
+                }
+            }
+            if (!$keep) {
+                unset($shippings_info[$i]);
+            }
+        }
+    }
 }
 
 function fn_development_prepare_checkout_payment_methods($cart, $auth, &$payment_groups)
