@@ -551,5 +551,28 @@
         <item lang="ru" id="payment_on_delivery_text">Оплата наличными при получении по всей России</item>
         <item lang="ru" id="is_virtual">Виртуальная</item>
         <item lang="ru" id="common_features">Общие</item>
+        <item lang="ru" id="sdek_online_stores_services">Тарифы только для Интернет-магазинов</item>
+        <item lang="ru" id="sdek_regular_services">Тарифы для обычной доставки</item>
+        <item lang="ru" id="sdek_tariff_136">Посылка склад-склад</item>
+        <item lang="ru" id="sdek_tariff_137">Посылка склад-дверь</item>
+        <item lang="ru" id="sdek_tariff_138">Посылка дверь-склад</item>
+        <item lang="ru" id="sdek_tariff_139">Посылка дверь-дверь</item>
+        <item lang="ru" id="sdek_tariff_1">Экспресс лайт дверь-дверь</item>
+        <item lang="ru" id="sdek_tariff_3">Супер-экспресс до 18</item>
+        <item lang="ru" id="sdek_tariff_5">Экономичный экспресс склад-склад</item>
+        <item lang="ru" id="sdek_tariff_10">Экспресс лайт склад-склад</item>
+        <item lang="ru" id="sdek_tariff_11">Экспресс лайт склад-дверь</item>
+        <item lang="ru" id="sdek_tariff_12">Экспресс лайт дверь-склад</item>
+        <item lang="ru" id="sdek_tariff_15">Экспресс тяжеловесы склад-склад</item>
+        <item lang="ru" id="sdek_tariff_16">Экспресс тяжеловесы склад-дверь</item>
+        <item lang="ru" id="sdek_tariff_17">Экспресс тяжеловесы дверь-склад</item>
+        <item lang="ru" id="sdek_tariff_18">Экспресс тяжеловесы дверь-дверь</item>
+        <item lang="ru" id="sdek_tariff_57">Супер-экспресс до 9</item>
+        <item lang="ru" id="sdek_tariff_58">Супер-экспресс до 10</item>
+        <item lang="ru" id="sdek_tariff_59">Супер-экспресс до 12</item>
+        <item lang="ru" id="sdek_tariff_60">Супер-экспресс до 14</item>
+        <item lang="ru" id="sdek_tariff_61">Супер-экспресс до 16</item>
+        <item lang="ru" id="sdek_tariff_62">Магистральный экспресс склад-склад</item>
+        <item lang="ru" id="sdek_tariff_63">Магистральный супер-экспресс склад-склад</item>
     </language_variables>
 </addon>

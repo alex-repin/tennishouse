@@ -1,5 +1,5 @@
-
-<form name="call_requests_form{if !$product}_main{/if}" id="form_{$id}" action="{""|fn_url}" method="post" class="cm-ajax">
+<form name="call_requests_form{if !$product}_main{/if}" id="form_{$id}" action="{""|fn_url}" method="post">
+<input type="hidden" name="redirect_url" value="{$config.current_url}" />
 
 {if $product}
     <input type="hidden" name="call_data[product_id]" value="{$product.product_id}" />
@@ -50,8 +50,10 @@
 
 {/if}
 
+{include file="common/image_verification.tpl" option="use_for_call_request" align="left"}
+
 <div class="buttons-container">
-    {include file="buttons/button.tpl" but_name="dispatch[call_requests.request]" but_text=__("submit") but_role="submit" but_meta="ty-btn__primary ty-btn__big cm-form-dialog-closer ty-btn"}
+    {include file="buttons/button.tpl" but_name="dispatch[call_requests.request]" but_text=__("submit") but_role="submit" but_meta="ty-btn__primary ty-btn__big ty-btn"}
 </div>
 
 </form>

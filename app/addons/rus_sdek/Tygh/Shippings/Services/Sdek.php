@@ -39,6 +39,7 @@ class Sdek implements IService
      * @var array $_error_stack
      */
     private $_error_stack = array();
+    private $packages_amount = array();
 
     protected static $_error_descriptions = array(
         '0' => 'Внутренняя ошибка на сервере. Обратитесь к программистам компании СДЭК для исправления',
@@ -152,6 +153,7 @@ class Sdek implements IService
         $height = !empty($shipping_settings['height']) ? $shipping_settings['height'] : 20;
 
         $goods = array();
+        $packages_count = 1;
         if (!empty($this->_shipping_info['package_info']['packages'])) {
             $packages = $this->_shipping_info['package_info']['packages'];
             $packages_count = count($packages);
@@ -167,16 +169,18 @@ class Sdek implements IService
                     $goods[$id]['length'] = $package_length;
                     $goods[$id]['width'] = $package_width;
                     $goods[$id]['height'] = $package_height;
+                    
+                    // fix for stupid sdek api that cant handle multiple packages
+                    break;
                 }
             } else {
-               $goods['weight'] = $weight;
-               $goods['length'] = $length;
-               $goods['width'] = $width;
-               $goods['height'] = $height;
-               $goods = array ($goods);
+                $goods['weight'] = $weight;
+                $goods['length'] = $length;
+                $goods['width'] = $width;
+                $goods['height'] = $height;
+                $goods = array ($goods);
             }
         } else {
-            $weight = round($weight_data['plain'] * Registry::get('settings.General.weight_symbol_grams') / 1000, 3);
             $goods['weight'] = $weight;
             $goods['length'] = $length;
             $goods['width'] = $width;
@@ -189,6 +193,7 @@ class Sdek implements IService
             'method' => 'post',
             'url' => $url,
             'data' => json_encode($post),
+            'amount' => $packages_count,
             'headers' => array('Content-Type: application/json',  'Content-Length: '.strlen(json_encode($post)))
         );
 
@@ -217,6 +222,10 @@ class Sdek implements IService
             $response = $sdek_data;
         }
 
+        $tmp = json_decode($response, true);
+        $tmp['amount'] = $data['amount'];
+        $response = json_encode($tmp);
+        
         return $response;
     }
 
@@ -260,7 +269,8 @@ class Sdek implements IService
     {
         $rates = array();
         if (!empty($response['result']['price'])) {
-            $rates['price'] = $response['result']['price'];
+            $amount = !empty($response['amount']) ? $response['amount'] : 1;
+            $rates['price'] = $response['result']['price'] * $amount;
             if (!empty($response['result']['deliveryPeriodMin']) && !empty($response['result']['deliveryPeriodMax'])) {
                 $plus = $this->_shipping_info['service_params']['dateexecute'];
                 $min_time = $plus + $response['result']['deliveryPeriodMin'];

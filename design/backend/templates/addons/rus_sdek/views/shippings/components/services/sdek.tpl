@@ -71,9 +71,39 @@
     <label class="control-label" for="ship_tariff">{__("shippings.sdek.tariffid")}</label>
     <div class="controls">
         <select id="ship_tariff" name="shipping_data[service_params][tariffid]">
-            <option value="136" {if ($shipping.service_params.tariffid) == 136}selected="selected"{/if}>{__("sdek_tariff_sklad")}</option>
-            <option value="137" {if ($shipping.service_params.tariffid) == 137}selected="selected"{/if}>{__("sdek_tariff_dver")}</option>
+            <optgroup label="{__("sdek_online_stores_services")}">
+                <option value="136" {if ($shipping.service_params.tariffid) == 136}selected="selected"{/if}>{__("sdek_tariff_136")}</option>
+                <option value="137" {if ($shipping.service_params.tariffid) == 137}selected="selected"{/if}>{__("sdek_tariff_137")}</option>
+                <option value="138" {if ($shipping.service_params.tariffid) == 138}selected="selected"{/if}>{__("sdek_tariff_138")}</option>
+                <option value="139" {if ($shipping.service_params.tariffid) == 139}selected="selected"{/if}>{__("sdek_tariff_139")}</option>
+            </optgroup>
+            <optgroup label="{__("sdek_regular_services")}">
+                <option value="1" {if ($shipping.service_params.tariffid) == 1}selected="selected"{/if}>{__("sdek_tariff_1")}</option>
+                <option value="3" {if ($shipping.service_params.tariffid) == 3}selected="selected"{/if}>{__("sdek_tariff_3")}</option>
+                <option value="5" {if ($shipping.service_params.tariffid) == 5}selected="selected"{/if}>{__("sdek_tariff_5")}</option>
+                <option value="10" {if ($shipping.service_params.tariffid) == 10}selected="selected"{/if}>{__("sdek_tariff_10")}</option>
+                <option value="11" {if ($shipping.service_params.tariffid) == 11}selected="selected"{/if}>{__("sdek_tariff_11")}</option>
+                <option value="12" {if ($shipping.service_params.tariffid) == 12}selected="selected"{/if}>{__("sdek_tariff_12")}</option>
+                <option value="15" {if ($shipping.service_params.tariffid) == 15}selected="selected"{/if}>{__("sdek_tariff_15")}</option>
+                <option value="16" {if ($shipping.service_params.tariffid) == 16}selected="selected"{/if}>{__("sdek_tariff_16")}</option>
+                <option value="17" {if ($shipping.service_params.tariffid) == 17}selected="selected"{/if}>{__("sdek_tariff_17")}</option>
+                <option value="18" {if ($shipping.service_params.tariffid) == 18}selected="selected"{/if}>{__("sdek_tariff_18")}</option>
+                <option value="57" {if ($shipping.service_params.tariffid) == 57}selected="selected"{/if}>{__("sdek_tariff_57")}</option>
+                <option value="58" {if ($shipping.service_params.tariffid) == 58}selected="selected"{/if}>{__("sdek_tariff_58")}</option>
+                <option value="59" {if ($shipping.service_params.tariffid) == 59}selected="selected"{/if}>{__("sdek_tariff_59")}</option>
+                <option value="60" {if ($shipping.service_params.tariffid) == 60}selected="selected"{/if}>{__("sdek_tariff_60")}</option>
+                <option value="61" {if ($shipping.service_params.tariffid) == 61}selected="selected"{/if}>{__("sdek_tariff_61")}</option>
+                <option value="62" {if ($shipping.service_params.tariffid) == 62}selected="selected"{/if}>{__("sdek_tariff_62")}</option>
+                <option value="63" {if ($shipping.service_params.tariffid) == 63}selected="selected"{/if}>{__("sdek_tariff_63")}</option>
+            </optgroup>
         </select>
+    </div>
+</div>
+
+<div class="control-group">
+    <label class="control-label" for="max_weight">{__("max_box_weight")}</label>
+    <div class="controls">
+    <input id="max_weight" type="text" name="shipping_data[service_params][max_weight_of_box]" size="30" value="{$shipping.service_params.max_weight_of_box|default:0}" />
     </div>
 </div>
 

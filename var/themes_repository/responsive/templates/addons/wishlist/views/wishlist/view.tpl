@@ -1,4 +1,4 @@
-{assign var="columns" value=4}
+{assign var="columns" value=5}
 {if !$wishlist_is_empty}
 
     {script src="js/tygh/exceptions.js"}
@@ -7,6 +7,7 @@
     {assign var="location" value="cart"}
 {/if}
 {if $products}
+    <div class="ty-wishlist-grid">
     {include file="blocks/list_templates/grid_list.tpl" 
         columns=$columns
         show_empty=true
@@ -15,10 +16,12 @@
         show_price=true 
         show_clean_price=true 
         show_list_discount=true
+        show_discount_label=true
         no_pagination=true
         no_sorting=true
         show_add_to_cart=false
         is_wishlist=true}
+    </div>
 {else}
     {math equation="100 / x" x=$columns|default:"2" assign="cell_width"}
     <div class="grid-list {if $wishlist_is_empty}wish-list-empty{/if}">

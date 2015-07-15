@@ -93,6 +93,24 @@ class Spsr implements IService
 
         $weight_data = fn_expand_weight($this->_shipping_info['package_info']['W']);
         $amount = $this->_shipping_info['package_info']['C'];
+        
+        $weight = round($weight_data['plain'] * Registry::get('settings.General.weight_symbol_grams') / 1000, 3);
+        $packages_count = 1;
+        if (!empty($this->_shipping_info['package_info']['packages'])) {
+            $packages = $this->_shipping_info['package_info']['packages'];
+            $packages_count = count($packages);
+            if ($packages_count > 0) {
+                foreach ($packages as $id => $package) {
+                    $weight_ar = fn_expand_weight($package['weight']);
+                    $weight = round($weight_ar['plain'] * Registry::get('settings.General.weight_symbol_grams') / 1000, 3);
+
+                    $amount = $package['cost'];
+                    // fix for stupid sdek api that cant handle multiple packages
+                    break;
+                }
+            }
+        }
+        
         $shipping_settings = $this->_shipping_info['service_params'];
         $origination = $this->_shipping_info['package_info']['origination'];
         $location = $this->_shipping_info['package_info']['location'];
@@ -121,7 +139,7 @@ class Spsr implements IService
         $post['TARIFFCOMPUTE_2'] = '';
         $post['ToCity'] = (int) $_code;
         $post['FromCity'] = (int) $_code_sender;
-        $post['Weight'] = round($weight_data['plain'] * Registry::get('settings.General.weight_symbol_grams') / 1000, 3);
+        $post['Weight'] = $weight;
         $post['Nature'] = '2';
         $post['Amount'] = $amount;
         $post['AmountCheck'] = '0';
@@ -171,6 +189,7 @@ class Spsr implements IService
             'login' => $login,
             'psw' => $psw,
             'url' => $url,
+            'amount' => $packages_count,
             'data' => $post
         );
 
@@ -247,6 +266,7 @@ class Spsr implements IService
         } else {
             $response = $spsr_data;
         }
+        $response = array('amount' => $data['amount'], 'response' => $response);
 
         return $response;
     }
@@ -264,16 +284,19 @@ class Spsr implements IService
             'error' => false,
         );
 
+        $amount = !empty($response['amount']) ? $response['amount'] : 1;
+        $response = $response['response'];
         $response = simplexml_load_string($response);
         $_result = json_decode(json_encode((array) $response), true);
 
         $shipping_info = $this->_shipping_info;
-        if (empty($_result['Error']) && empty($this->_error_stack) && !empty($_result['Tariff'])) {
+        
+        if (empty($_result['Error']) && empty($this->_error_stack) && !empty($_result['Tariff']) && $_result['Tariff']['Total_Dost'] != 'Error') {
 
             $rates = array();
             $dp = explode('-', $_result['Tariff']['DP']);
             $rates = array(
-                'price' => $_result['Tariff']['Total_Dost'],
+                'price' => $_result['Tariff']['Total_Dost'] * $amount,
                 'date' => $dp[0] . (($dp[0] != $dp[1]) ? '-' . $dp[1] . ' ' : ' ') . __('days')
             );
 

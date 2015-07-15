@@ -79,6 +79,13 @@
 </div>
 
 <div class="control-group">
+    <label class="control-label" for="max_weight">{__("max_box_weight")}</label>
+    <div class="controls">
+    <input id="max_weight" type="text" name="shipping_data[service_params][max_weight_of_box]" size="30" value="{$shipping.service_params.max_weight_of_box|default:0}" />
+    </div>
+</div>
+
+<div class="control-group">
     <label class="control-label" for="ship_width">{__("ship_width")}</label>
     <div class="controls">
         <input id="ship_width" type="text" name="shipping_data[service_params][width]" size="30" value="{$shipping.service_params.width}" />
