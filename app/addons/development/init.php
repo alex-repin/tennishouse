@@ -72,5 +72,6 @@ fn_register_hooks(
     'get_product_feature_data_before_select',
     'get_product_features',
     'delete_feature_post',
-    'pre_place_order'
+    'pre_place_order',
+    'complete'
 );

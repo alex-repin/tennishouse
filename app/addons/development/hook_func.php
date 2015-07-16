@@ -17,6 +17,22 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_complete()
+{
+    if (isset($_REQUEST['xhprof'])) {
+        
+        $xhprof_data = xhprof_disable();
+
+        include_once DIR_ROOT . "/xhprof/xhprof_lib/utils/xhprof_lib.php";
+        include_once DIR_ROOT . "/xhprof/xhprof_lib/utils/xhprof_runs.php";
+
+        $xhprof_runs = new XHProfRuns_Default();
+        $run_id = $xhprof_runs->save_run($xhprof_data, "xhprof_foo");
+
+        echo "<!--\n" . "/xhprof/xhprof_html/index.php?run=$run_id&source=xhprof_foo\n" . "--!>\n";
+    }
+}
+
 function fn_development_pre_place_order($cart, &$allow, $product_groups)
 {
     if (!$allow && !empty($cart['is_call_request'])) {
