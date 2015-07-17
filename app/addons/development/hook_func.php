@@ -240,8 +240,12 @@ function fn_development_prepare_checkout_payment_methods($cart, $auth, &$payment
 
 function fn_development_update_shipping(&$shipping_data, $shipping_id, $lang_code)
 {
-    $shipping_data['payment_ids'] = !empty($shipping_data['payment_ids']) ? serialize($shipping_data['payment_ids']) : serialize(array());
-    $shipping_data['available_payments'] = !empty($shipping_data['available_payments']) ? serialize($shipping_data['available_payments']) : serialize(array());
+    if (isset($shipping_data['payment_ids'])) {
+        $shipping_data['payment_ids'] = !empty($shipping_data['payment_ids']) ? serialize($shipping_data['payment_ids']) : serialize(array());
+    }
+    if (isset($shipping_data['available_payments'])) {
+        $shipping_data['available_payments'] = !empty($shipping_data['available_payments']) ? serialize($shipping_data['available_payments']) : serialize(array());
+    }
 }
 
 function fn_development_get_product_option_data_post(&$opt, $product_id, $lang_code)
