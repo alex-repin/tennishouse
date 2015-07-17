@@ -293,6 +293,18 @@
         </div>
 
         <div class="control-group">
+            <label class="control-label" for="elm_category_products_sorting">{__("products_sorting")}:</label>
+            <div class="controls">
+            <select id="elm_category_products_sorting" name="category_data[products_sorting]">
+                <option {if $category_data.products_sorting == ''}selected="selected"{/if} value="">{__("default")}</option>
+                {foreach from=$category_data.sortings key="key" item="name"}
+                    <option {if $category_data.products_sorting == $key}selected="selected"{/if} value="{$key}">{$name}</option>
+                {/foreach}
+            </select>
+            </div>
+        </div>
+
+        <div class="control-group">
             <label class="control-label" for="elm_category_use_custom_templates">{__("use_custom_view")}:</label>
             <div class="controls">
             <input type="hidden" value="N" name="category_data[use_custom_templates]"/>

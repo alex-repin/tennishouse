@@ -289,6 +289,13 @@
                 '6627', 'O', 'ru', 'Формы "Купить в один клик"', ''
             );
         </item>
+        <item>
+            ALTER TABLE `cscart_shippings` ADD `min_total` DECIMAL( 12, 2 ) NOT NULL ,
+            ADD `max_total` DECIMAL( 12, 2 ) NOT NULL ;
+        </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `products_sorting` VARCHAR( 32 ) NOT NULL ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -574,5 +581,6 @@
         <item lang="ru" id="sdek_tariff_61">Супер-экспресс до 16</item>
         <item lang="ru" id="sdek_tariff_62">Магистральный экспресс склад-склад</item>
         <item lang="ru" id="sdek_tariff_63">Магистральный супер-экспресс склад-склад</item>
+        <item lang="ru" id="products_sorting">Сортировка списка товаров</item>
     </language_variables>
 </addon>

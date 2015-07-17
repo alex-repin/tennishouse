@@ -174,9 +174,11 @@ function fn_development_delete_product_option_post($option_id, $pid, $option_del
     fn_update_product_tracking($pid);
 }
 
-function fn_development_shippings_get_shippings_list_conditions($group, $shippings, &$fields, $join, $condition, $order_by)
+function fn_development_shippings_get_shippings_list_conditions($group, $shippings, &$fields, $join, &$condition, $order_by)
 {
     $fields[] = "?:shippings.website, ?:shippings.available_payments";
+    $condition .= db_quote(' AND ((?:shippings.min_total <= ?d OR ?:shippings.min_total = 0.00)', $group['package_info']['C']);
+    $condition .= db_quote(' AND (?:shippings.max_total >= ?d OR ?:shippings.max_total = 0.00))', $group['package_info']['C']);
 }
 
 function fn_development_shippings_get_shippings_list_post($group, $lang, $area, &$shippings_info)

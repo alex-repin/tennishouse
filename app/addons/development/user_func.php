@@ -465,7 +465,8 @@ function fn_gather_additional_products_data_cs(&$products, $params)
 
 function fn_process_php_errors($errno, $errstr, $errfile, $errline, $errcontext)
 {
-    if (strpos($errfile, Registry::get('config.dir.var')) === false && strpos($errfile, Registry::get('config.dir.lib')) === false) {
+    $dirs = Registry::get('config.dir');
+    if (strpos($errfile, $dirs['var']) === false && strpos($errfile, $dirs['lib']) === false) {
         LogFacade::error("Error #" . $errno . ":" . $errstr . " in " . $errfile . " at line " . $errline);
     }
 }

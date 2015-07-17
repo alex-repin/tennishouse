@@ -102,6 +102,13 @@
 </div>
 
 <div class="control-group">
+    <label class="control-label" for="elm_min_total">{__("total_limit")}:</label>
+    <div class="controls">
+        {include file="common/price.tpl" value=$shipping.min_total view="input" input_name="shipping_data[min_total]" input_val=$shipping.min_total class="input-mini"}&nbsp;-&nbsp;{include file="common/price.tpl" value=$shipping.max_total view="input" input_name="shipping_data[max_total]" input_val=$shipping.max_total class="input-mini"}
+    </div>
+</div>
+
+<div class="control-group">
     <label class="control-label">{__("rate_calculation")}</label>
     <div class="controls">
         <label class="radio inline" for="elm_rate_calculation_M">

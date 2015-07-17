@@ -96,6 +96,13 @@ if ($mode == 'catalog') {
         if (Registry::get('settings.General.show_products_from_subcategories') == 'Y') {
             $params['subcats'] = 'Y';
         }
+        if (!empty($category_data['products_sorting'])) {
+            $sorting = explode('-', $category_data['products_sorting']);
+            if (is_array($sorting) && count($sorting) == 2) {
+                $params['sort_by'] = array_shift($sorting);
+                $params['sort_order'] = array_shift($sorting);
+            }
+        }
 
         list($products, $search) = fn_get_products($params, Registry::get('settings.Appearance.products_per_page'), CART_LANGUAGE);
 

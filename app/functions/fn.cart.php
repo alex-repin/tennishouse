@@ -6643,7 +6643,7 @@ function fn_get_available_shippings($company_id = null)
         $condition .= ')';
     }
 
-    $res = db_get_hash_array("SELECT a.shipping_id, a.company_id, a.min_weight, a.max_weight, a.position, a.status, a.tax_ids, b.shipping, b.delivery_time, a.usergroup_ids, c.company as company_name FROM ?:shippings as a LEFT JOIN ?:shipping_descriptions as b ON a.shipping_id = b.shipping_id AND b.lang_code = ?s LEFT JOIN ?:companies c ON c.company_id = a.company_id WHERE 1 $condition ORDER BY a.position", 'shipping_id', DESCR_SL);
+    $res = db_get_hash_array("SELECT a.shipping_id, a.company_id, a.min_weight, a.max_weight, a.min_total, a.max_total, a.position, a.status, a.tax_ids, b.shipping, b.delivery_time, a.usergroup_ids, c.company as company_name FROM ?:shippings as a LEFT JOIN ?:shipping_descriptions as b ON a.shipping_id = b.shipping_id AND b.lang_code = ?s LEFT JOIN ?:companies c ON c.company_id = a.company_id WHERE 1 $condition ORDER BY a.position", 'shipping_id', DESCR_SL);
 
     return $res;
 }

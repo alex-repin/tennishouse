@@ -44,6 +44,10 @@ if ($mode == 'update' || $mode == 'add') {
         }
         $category_data['sections_categorization'] = $f_ids;
     }
+    
+    fn_get_schema('settings', 'variants.functions', 'php', true);
+    $category_data['sortings'] = fn_settings_variants_appearance_available_product_list_sortings();
+    
     Registry::get('view')->assign('category_data', $category_data);
     Registry::get('view')->assign('section_features', $section_features);
 }
