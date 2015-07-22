@@ -5103,12 +5103,12 @@ function fn_get_filters_products_count($params = array())
      */
     fn_set_hook('get_filters_products_count_pre', $params);
 
-//     Создает слишком много кеш файлов, которые переполнили иноды на сервере
-//     $key = 'pfilters_' . md5(serialize($params));
-// 
-//     Registry::registerCache($key, array('products', 'product_features', 'product_filters', 'product_features_values', 'categories'), Registry::cacheLevel('user'));
-// 
-//     if (Registry::isExist($key) == false) {
+    //Создает слишком много кеш файлов, которые переполнили иноды на сервере
+    $key = 'pfilters_' . md5(serialize($params));
+
+    Registry::registerCache($key, array('products', 'product_features', 'product_filters', 'product_features_values', 'categories'), Registry::cacheLevel('user'));
+
+    if (Registry::isExist($key) == false) {
         if (!empty($params['check_location'])) { // FIXME: this is bad style, should be refactored
             $valid_locations = array(
                 'index.index',
@@ -5234,7 +5234,7 @@ function fn_get_filters_products_count($params = array())
             return array(array(), false);
         } else {
             foreach ($filters as $k => $v) {
-                if (!empty($v['feature_id']) && $v['is_slider'] != 'Y') {
+                if (!empty($v['feature_id']) && (empty($v['is_slider']) || $v['is_slider'] != 'Y')) {
                     // Feature filters
                     $feature_ids[] = $v['feature_id'];
                 } else {
@@ -5911,10 +5911,10 @@ function fn_get_filters_products_count($params = array())
          * @param array $params Products filter search params
          */
         fn_set_hook('get_filters_products_count_before_select', $filters, $view_all, $params);
-//         Registry::set($key, array($filters, $view_all));
-//     } else {
-//         list($filters, $view_all) = Registry::get($key);
-//     }
+        Registry::set($key, array($filters, $view_all));
+    } else {
+        list($filters, $view_all) = Registry::get($key);
+    }
 
     return array($filters, $view_all);
 }
@@ -10342,4 +10342,21 @@ function fn_check_owner_categories($company_id, $category_ids)
     $linked_to_categories =  db_get_field('SELECT COUNT(*) FROM ?:categories WHERE company_id = ?i AND category_id IN (?a)', $company_id, $category_ids);
 
     return !empty($linked_to_categories);
+}
+
+// TENNISHOUSE
+function fn_gender_match($gender)
+{
+    $result = false;
+    $gender_mode = fn_get_store_gender_mode();
+    if (!empty($gender_mode) && !empty($gender) && ($gender == $gender_mode || ($gender_mode == 'K' && in_array($gender, array('B', 'G'))) || (in_array($gender_mode, array('B', 'G')) && $gender == 'K') || ($gender_mode == 'A' && in_array($gender, array('M', 'F'))) || (in_array($gender_mode, array('M', 'F')) && $gender == 'A'))) {
+        $result = true;
+    }
+    
+    return $result;
+}
+
+function fn_get_store_gender_mode()
+{
+    return fn_get_session_data('gender_mode');
 }

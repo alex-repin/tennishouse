@@ -111,9 +111,9 @@ if ($mode == 'catalog') {
         }
 
         fn_gather_additional_products_data($products, array(
-            'get_icon' => true,
+            'get_icon' => false,
             'get_detailed' => true,
-            'get_additional' => true,
+            'get_additional' => false,
             'get_options' => true,
             'get_discounts' => true,
             'get_features' => false,
@@ -165,7 +165,7 @@ if ($mode == 'catalog') {
                     }
                     if (empty($params['tc_id'])) {
                         foreach ($tb_feature['variants'] as $j => $vt_data) {
-                            if (fn_gender_match($vt_data['variant_code']) && !empty($tabs_categorization[$vt_data['variant_id']])) {
+                            if (!empty($vt_data['variant_code']) && fn_gender_match($vt_data['variant_code']) && !empty($tabs_categorization[$vt_data['variant_id']])) {
                                 $params['tc_id'] = $_SESSION['tc_id'][$main_parent_id] = $vt_data['variant_id'];
                                 fn_set_store_gender_mode($vt_data['variant_code']);
                                 break;

@@ -5441,7 +5441,7 @@ function fn_get_orders($params, $items_per_page = 0, $get_totals = false, $lang_
         $paid_statuses = array('P', 'C');
         fn_set_hook('get_orders_totals', $paid_statuses, $join, $condition, $group);
         $totals = array (
-            'gross_total' => db_get_field("SELECT sum(t.total) FROM ( SELECT total FROM ?:orders $join WHERE 1 $condition $group) as t"),
+            'gross_total' => db_get_field("SELECT sum(t.total) FROM ( SELECT total FROM ?:orders LEFT JOIN ?:status_data ON ?:status_data.status = ?:orders.status AND ?:status_data.type = 'O' AND ?:status_data.param = 'inventory' $join WHERE ?:status_data.value = 'D' $condition $group) as t"),
             'totally_paid' => db_get_field("SELECT sum(t.total) FROM ( SELECT total FROM ?:orders $join WHERE ?:orders.status IN (?a) $condition $group) as t", $paid_statuses),
             'net_totally' => db_get_field("SELECT sum(t.net_total) FROM ( SELECT net_total FROM ?:orders $join WHERE ?:orders.status IN (?a) $condition $group) as t", $paid_statuses),
             'total_income' => db_get_field("SELECT sum(t.total - t.net_total) FROM ( SELECT total, net_total FROM ?:orders $join WHERE ?:orders.status IN (?a) $condition $group) as t", $paid_statuses),
@@ -7137,3 +7137,38 @@ function fn_get_shipping_hash($product_groups)
 
     return $shipping_hash;
 }
+
+// TENNISHOUSE
+
+function fn_get_online_shipping_methods()
+{
+    $shipping_methods = db_get_hash_array("SELECT shipping_id, website FROM ?:shippings WHERE status = 'A' AND service_id != '0' ORDER BY position", 'shipping_id');
+
+    if (!empty($shipping_methods)) {
+        $shipping_images = fn_get_image_pairs(array_keys($shipping_methods), 'shipping', 'M', true, false);
+        foreach ($shipping_methods as $i => $shipping) {
+            if (!empty($shipping_images[$shipping['shipping_id']])) {
+                $shipping_methods[$i]['image'] = reset($shipping_images[$shipping['shipping_id']]);
+            }
+        }
+    }
+
+    return $shipping_methods;
+}
+
+function fn_get_online_payment_methods()
+{
+    $payment_methods = db_get_hash_array("SELECT payment_id, website FROM ?:payments WHERE status = 'A' AND processor_id != '0' ORDER BY position", 'payment_id');
+
+    if (!empty($payment_methods)) {
+        $payment_images = fn_get_image_pairs(array_keys($payment_methods), 'payment', 'M', true, false);
+        foreach ($payment_methods as $i => $payment) {
+            if (!empty($payment_images[$payment['payment_id']])) {
+                $payment_methods[$i]['image'] = reset($payment_images[$payment['payment_id']]);
+            }
+        }
+    }
+
+    return $payment_methods;
+}
+

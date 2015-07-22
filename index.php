@@ -13,7 +13,9 @@
 ****************************************************************************/
 
 // [tennishouse]
-xhprof_enable(XHPROF_FLAGS_NO_BUILTINS | XHPROF_FLAGS_CPU | XHPROF_FLAGS_MEMORY);
+if (isset($_REQUEST['xhprof'])) {
+    xhprof_enable(XHPROF_FLAGS_NO_BUILTINS | XHPROF_FLAGS_CPU | XHPROF_FLAGS_MEMORY);
+}
 // [tennishouse]
 
 $php_value = phpversion();

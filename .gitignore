@@ -6,3 +6,4 @@ var/logs/
 var/features_cache
 images/.htaccess
 images/watermarked/.htaccess
+xhprof/

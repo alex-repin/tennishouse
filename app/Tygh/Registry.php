@@ -73,6 +73,11 @@ class Registry
     public static function get($key)
     {
         $val = self::_varByKey('get', $key);
+//         $bt = debug_backtrace();
+// //         if ($bt[0]['file'] == '/var/www/html/test/app/functions/fn.control.php') {
+// //             fn_print_die($bt);
+// //         }
+//         fn_put_contents('registry.txt', $bt[0]['file'] . '->' . $bt[1]['function'] . "\n", '', DEFAULT_FILE_PERMISSIONS, true);
 
         return ($val !== self::NOT_FOUND) ? $val : null;
     }

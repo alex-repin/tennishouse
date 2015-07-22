@@ -5775,3 +5775,43 @@ function fn_live_editor_prepare_callback_args($schema, $vars)
 
     return $schema;
 }
+
+// TENNISHOUSE
+
+function fn_show_age($age)
+{
+    if ($age > 4 && $age < 21) {
+        $word = __("years_old_5");
+    } else {
+        $low_age = $age % 10;
+        if ($low_age == 1) {
+            $word = __("years_old_1");
+        } elseif ($low_age > 1 && $low_age < 5) {
+            $word = __("years_old_2_4");
+        } else {
+            $word = __("years_old_5");
+        }
+    }
+    
+    return $age . ' ' . $word;
+}
+
+function fn_get_age($birth_date)
+{
+    if (empty($birth_date)) {
+        return false;
+    }
+    $now = time();
+    $years = fn_date_format(time(), "%Y") - fn_date_format($birth_date, "%Y");
+
+    if (fn_date_format(time(), "%m") < fn_date_format($birth_date, "%m") || (fn_date_format(time(), "%m") == fn_date_format($birth_date, "%d") && fn_date_format(time(), "%d") < fn_date_format($birth_date, "%m"))) {
+        $years--;
+    }
+    return $years;
+}
+
+function fn_read_title($title)
+{
+    $brand = !empty($_SESSION['product_features'][BRAND_FEATURE_ID]['variant_name']) ? $_SESSION['product_features'][BRAND_FEATURE_ID]['variant_name'] : __("this_brand");
+    return str_replace(array('[brand]'), array($brand), $title);
+}

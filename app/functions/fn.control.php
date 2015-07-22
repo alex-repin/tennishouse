@@ -510,6 +510,19 @@ function fn_dispatch($controller = '', $mode = '', $action = '', $dispatch_extra
 
     fn_set_hook('complete');
 
+    if (isset($_REQUEST['xhprof'])) {
+        
+        $xhprof_data = xhprof_disable();
+
+        include_once DIR_ROOT . "/xhprof/xhprof_lib/utils/xhprof_lib.php";
+        include_once DIR_ROOT . "/xhprof/xhprof_lib/utils/xhprof_runs.php";
+
+        $xhprof_runs = new XHProfRuns_Default();
+        $run_id = $xhprof_runs->save_run($xhprof_data, "xhprof_foo");
+
+        echo "<!--\n" . "/xhprof/xhprof_html/index.php?run=$run_id&source=xhprof_foo\n" . "--!>\n";
+    }
+    
     exit; // stop execution
 }
 
@@ -870,16 +883,8 @@ function fn_set_storage_data($key, $data = '')
  */
 function fn_get_storage_data($key)
 {
-    // FOR TESTING ONLY
-    if ($key == 'store_mode') {
-        $vl = 'full';
-    } else {
-        $vl = db_get_field('SELECT `data` FROM ?:storage_data WHERE `data_key` = ?s', $key);
-    }
-    // FOR TESTING ONLY
-
     if (!Registry::isExist('storage_data.' . $key)) {
-        Registry::set('storage_data.' . $key, $vl);
+        Registry::set('storage_data.' . $key, ($key == 'store_mode') ? 'full' : db_get_field('SELECT `data` FROM ?:storage_data WHERE `data_key` = ?s', $key));
     }
 
     return Registry::get('storage_data.' . $key);

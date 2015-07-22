@@ -21,15 +21,12 @@ use Tygh\Menu;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-function fn_gender_match($gender)
+function fn_process_php_errors($errno, $errstr, $errfile, $errline, $errcontext)
 {
-    $result = false;
-    $gender_mode = fn_get_store_gender_mode();
-    if (!empty($gender_mode) && !empty($gender) && ($gender == $gender_mode || ($gender_mode == 'K' && in_array($gender, array('B', 'G'))) || (in_array($gender_mode, array('B', 'G')) && $gender == 'K') || ($gender_mode == 'A' && in_array($gender, array('M', 'F'))) || (in_array($gender_mode, array('M', 'F')) && $gender == 'A'))) {
-        $result = true;
-    }
-    
-    return $result;
+//     $dirs = Registry::get('config.dir');
+//     if (strpos($errfile, $dirs['var']) === false && strpos($errfile, $dirs['lib']) === false) {
+//         LogFacade::error("Error #" . $errno . ":" . $errstr . " in " . $errfile . " at line " . $errline);
+//     }
 }
 
 function fn_get_menu_items_th($value, $block, $block_scheme)
@@ -163,11 +160,6 @@ function fn_set_store_gender_mode($mode)
     if (empty($gender_mode) || (!(in_array($gender_mode, array('B', 'G')) && $mode == 'K') && !(in_array($gender_mode, array('M', 'F')) && $mode == 'A'))) {
         fn_set_session_data('gender_mode', $mode);
     }
-}
-
-function fn_get_store_gender_mode()
-{
-    return fn_get_session_data('gender_mode');
 }
 
 function fn_format_categorization(&$category_data, $ctz_data, $type)
@@ -330,38 +322,6 @@ function fn_update_rub_rate()
     return array(true, $errors);
 }
 
-function fn_get_online_payment_methods()
-{
-    $payment_methods = db_get_hash_array("SELECT payment_id, website FROM ?:payments WHERE status = 'A' AND processor_id != '0' ORDER BY position", 'payment_id');
-
-    if (!empty($payment_methods)) {
-        $payment_images = fn_get_image_pairs(array_keys($payment_methods), 'payment', 'M', true, false);
-        foreach ($payment_methods as $i => $payment) {
-            if (!empty($payment_images[$payment['payment_id']])) {
-                $payment_methods[$i]['image'] = reset($payment_images[$payment['payment_id']]);
-            }
-        }
-    }
-
-    return $payment_methods;
-}
-
-function fn_get_online_shipping_methods()
-{
-    $shipping_methods = db_get_hash_array("SELECT shipping_id, website FROM ?:shippings WHERE status = 'A' AND service_id != '0' ORDER BY position", 'shipping_id');
-
-    if (!empty($shipping_methods)) {
-        $shipping_images = fn_get_image_pairs(array_keys($shipping_methods), 'shipping', 'M', true, false);
-        foreach ($shipping_methods as $i => $shipping) {
-            if (!empty($shipping_images[$shipping['shipping_id']])) {
-                $shipping_methods[$i]['image'] = reset($shipping_images[$shipping['shipping_id']]);
-            }
-        }
-    }
-
-    return $shipping_methods;
-}
-
 function fn_update_product_exception($product_id, $product_options, $new_amount)
 {
     $exist = fn_check_combination($product_options, $product_id);
@@ -463,14 +423,6 @@ function fn_gather_additional_products_data_cs(&$products, $params)
     }
 }
 
-function fn_process_php_errors($errno, $errstr, $errfile, $errline, $errcontext)
-{
-    $dirs = Registry::get('config.dir');
-    if (strpos($errfile, $dirs['var']) === false && strpos($errfile, $dirs['lib']) === false) {
-        LogFacade::error("Error #" . $errno . ":" . $errstr . " in " . $errfile . " at line " . $errline);
-    }
-}
-
 function fn_feature_has_size_chart($feature_id)
 {
     return in_array($feature_id, array(BRAND_FEATURE_ID, SHOES_GENDER_FEATURE_ID, CLOTHES_GENDER_FEATURE_ID));
@@ -563,12 +515,6 @@ function fn_get_brands()
     ));
     
     return $variants;
-}
-
-function fn_read_title($title)
-{
-    $brand = !empty($_SESSION['product_features'][BRAND_FEATURE_ID]['variant_name']) ? $_SESSION['product_features'][BRAND_FEATURE_ID]['variant_name'] : __("this_brand");
-    return str_replace(array('[brand]'), array($brand), $title);
 }
 
 function fn_get_currency_exchange_rates()
@@ -812,37 +758,6 @@ function fn_render_page_blocks($description, $smarty_capture)
     }
 
     return $description;
-}
-
-function fn_show_age($age)
-{
-    if ($age > 4 && $age < 21) {
-        $word = __("years_old_5");
-    } else {
-        $low_age = $age % 10;
-        if ($low_age == 1) {
-            $word = __("years_old_1");
-        } elseif ($low_age > 1 && $low_age < 5) {
-            $word = __("years_old_2_4");
-        } else {
-            $word = __("years_old_5");
-        }
-    }
-    
-    return $age . ' ' . $word;
-}
-function fn_get_age($birth_date)
-{
-    if (empty($birth_date)) {
-        return false;
-    }
-    $now = time();
-    $years = fn_date_format(time(), "%Y") - fn_date_format($birth_date, "%Y");
-
-    if (fn_date_format(time(), "%m") < fn_date_format($birth_date, "%m") || (fn_date_format(time(), "%m") == fn_date_format($birth_date, "%d") && fn_date_format(time(), "%d") < fn_date_format($birth_date, "%m"))) {
-        $years--;
-    }
-    return $years;
 }
 
 function fn_get_product_global_margin($category_id)

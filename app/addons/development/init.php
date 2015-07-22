@@ -15,25 +15,26 @@
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 fn_register_hooks(
-    'update_product_post',
-    'get_product_data_post',
-    'delete_product_post',
+    'get_categories',
+    'top_menu_form',
     'get_products',
+    
+    'get_lang_var_post',
+    'get_products_pre',
+    'gather_additional_product_data_post',
     'get_products_post',
     'get_filters_products_count_before_select_filters',
     'get_filter_range_name_post',
     'get_product_filter_fields',
+    'calculate_cart_items',
+    'get_filters_products_count_pre',
+    'update_product_pre',
     'add_range_to_url_hash_pre',
     'update_product_filter',
     'get_product_features_list_post',
-    'gather_additional_product_data_post',
-    'get_filters_products_count_pre',
-    'update_product_pre',
-    'top_menu_form',
-    'get_products_pre',
-    'get_categories',
-    'get_lang_var_post',
-    'calculate_cart_items',
+    'update_product_post',
+    'get_product_data_post',
+    'delete_product_post',
     'get_categories_post',
     'get_product_feature_variants',
     'get_category_data_post',
@@ -72,6 +73,5 @@ fn_register_hooks(
     'get_product_feature_data_before_select',
     'get_product_features',
     'delete_feature_post',
-    'pre_place_order',
-    'complete'
+    'pre_place_order'
 );

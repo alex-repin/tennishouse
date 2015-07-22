@@ -164,7 +164,7 @@ function fn_get_carts($params, $items_per_page = 0)
         $sortings['company_id'] = "?:user_session_products.company_id";
     }
 
-    $sorting = db_sort($params, $sortings, 'customer', 'asc');
+    $sorting = db_sort($params, $sortings, 'date', 'desc');
 
     $condition = $join = '';
 

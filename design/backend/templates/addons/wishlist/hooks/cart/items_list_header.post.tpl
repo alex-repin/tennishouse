@@ -1,1 +1,1 @@
-<th width="25%">{__("wishlist_content")}</th>
+<th width="15%">{__("wishlist_content")}</th>

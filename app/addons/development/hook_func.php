@@ -17,22 +17,6 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-function fn_development_complete()
-{
-    if (isset($_REQUEST['xhprof'])) {
-        
-        $xhprof_data = xhprof_disable();
-
-        include_once DIR_ROOT . "/xhprof/xhprof_lib/utils/xhprof_lib.php";
-        include_once DIR_ROOT . "/xhprof/xhprof_lib/utils/xhprof_runs.php";
-
-        $xhprof_runs = new XHProfRuns_Default();
-        $run_id = $xhprof_runs->save_run($xhprof_data, "xhprof_foo");
-
-        echo "<!--\n" . "/xhprof/xhprof_html/index.php?run=$run_id&source=xhprof_foo\n" . "--!>\n";
-    }
-}
-
 function fn_development_pre_place_order($cart, &$allow, $product_groups)
 {
     if (!$allow && !empty($cart['is_call_request'])) {
@@ -65,7 +49,7 @@ function fn_development_get_order_info(&$order, $additional_data)
 function fn_development_get_cart_product_data_post($hash, $product, $skip_promotion, &$cart, $auth, $promotion_amount, $_pdata)
 {
     $net_cost = (!empty($_pdata['net_cost']) && !empty($_pdata['net_currency_code'])) ? $_pdata['net_cost'] * Registry::get('currencies.' . $_pdata['net_currency_code'] . '.coefficient') : $_pdata['price'];
-    $cart['net_subtotal'] += $net_cost;
+    $cart['net_subtotal'] += $net_cost * $product['amount'];
 }
 
 function fn_development_calculate_cart_post(&$cart, $auth, $calculate_shipping, $calculate_taxes, $options_style, $apply_cart_promotions, $cart_products, $product_groups)
