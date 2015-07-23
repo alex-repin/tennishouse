@@ -22,7 +22,7 @@
             {foreach from=$sproducts item="product" name="sproducts"}
                 <div class="ty-column{$columns}">
                     {if $product}
-                        {include file="addons/development/common/products_list_item.tpl" mode=$block.properties.mode|default:"R"}
+                        {include file="addons/development/common/products_list_item.tpl" mode=$block.properties.mode|default:"R" hide_form=true}
                     {/if}
                 </div>
             {/foreach}
