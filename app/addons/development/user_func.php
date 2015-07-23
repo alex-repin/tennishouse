@@ -1235,3 +1235,167 @@ function fn_update_player($player_data, $player_id = 0)
     return $player_id;
 
 }
+
+function fn_get_technology_data($technology_id)
+{
+    $field_list = "?:technologies.*";
+
+    fn_set_hook('get_technology_data', $technology_id, $field_list, $join, $condition);
+    
+    $technology_data = db_get_row("SELECT $field_list FROM ?:technologies LEFT JOIN ?:product_technologies ON ?:technologies.technology_id = ?:product_technologies.technology_id ?p WHERE ?:technologies.technology_id = ?i  ?p", $join, $technology_id, $condition);
+
+    if (!empty($technology_data)) {
+        $technology_data['main_pair'] = fn_get_image_pairs($technology_id, 'technology', 'M', true, true);
+        $technology_data['products'] = db_get_fields("SELECT product_id FROM ?:product_technologies WHERE technology_id = ?i", $technology_id);
+    }
+
+    fn_set_hook('get_technology_data_post', $technology_data);
+
+    return (!empty($technology_data) ? $technology_data : false);
+}
+
+function fn_delete_technology($technology_id)
+{
+    if (empty($technology_id)) {
+        return false;
+    }
+
+    // Log technology deletion
+    fn_log_event('technologies', 'delete', array(
+        'technology_id' => $technology_id,
+    ));
+
+    // Deleting technology
+    db_query("DELETE FROM ?:technologies WHERE technology_id = ?i", $technology_id);
+    db_query("DELETE FROM ?:product_technologies WHERE technology_id = ?i", $technology_id);
+
+    // Deleting technology images
+    fn_delete_image_pairs($technology_id, 'technology');
+    
+    fn_set_hook('delete_technology', $technology_id);
+    
+    return true;
+}
+
+function fn_get_technologies($params)
+{
+    $fields = array (
+        '?:technologies.*',
+        'GROUP_CONCAT(?:product_technologies.product_id) as products'
+    );
+
+    $condition = $join = '';
+    $join .= db_quote(" LEFT JOIN ?:product_technologies ON ?:product_technologies.technology_id = ?:technologies.technology_id ");
+
+    if (!empty($params['technology'])) {
+        $condition .= db_quote(" AND ?:technologies.name LIKE ?l", "%".trim($params['technology'])."%");
+    }
+
+    if (!empty($params['item_ids'])) {
+        $condition .= db_quote(' AND ?:technologies.technology_id IN (?n)', explode(',', $params['item_ids']));
+    }
+
+    if (!empty($params['product_id'])) {
+        $condition .= db_quote(' AND ?:product_technologies.product_id = ?i', $params['product_id']);
+    }
+
+    if (!empty($params['except_id']) && (empty($params['item_ids']) || !empty($params['item_ids']) && !in_array($params['except_id'], explode(',', $params['item_ids'])))) {
+        $condition .= db_quote(' AND ?:technologies.technology_id != ?i', $params['except_id']);
+    }
+
+    if (AREA == 'C') {
+        $condition .= db_quote(' AND ?:product_technologies.product_id IS NOT NULL');
+    }
+    
+    $limit = '';
+
+    fn_set_hook('get_technologies', $params, $join, $condition, $fields);
+    
+    if (!empty($params['limit'])) {
+        $limit = db_quote(' LIMIT 0, ?i', $params['limit']);
+    }
+
+    $technologies = db_get_hash_array('SELECT ' . implode(',', $fields) . " FROM ?:technologies ?p WHERE 1 ?p GROUP BY ?:technologies.technology_id ORDER BY ?:technologies.name ASC ?p", 'technology_id', $join, $condition, $limit);
+
+    if (empty($technologies)) {
+        return array(array(), $params);
+    }
+
+    if (empty($params['plain'])) {
+        $technologies_images = fn_get_image_pairs(array_keys($technologies), 'technology', 'M', true, false);
+        foreach ($technologies as $k => $v) {
+            if (!empty($technologies_images[$v['technology_id']])) {
+                $technologies[$k]['main_pair'] = reset($technologies_images[$v['technology_id']]);
+                $ratio = $technologies[$k]['main_pair']['icon']['image_x'] / $technologies[$k]['main_pair']['icon']['image_y'];
+                if ($ratio > 1) {
+                    $technologies[$k]['width'] = 100;
+                    $technologies[$k]['height'] = round((100 - 50 / $ratio) / $ratio);
+                } else {
+                    $technologies[$k]['width'] = round((100 - 50 * $ratio) * $ratio);
+                    $technologies[$k]['height'] = 100;
+                }
+            }
+            $technologies[$k]['products'] = explode(',', $technologies[$k]['products']);
+        }
+    }
+
+    fn_set_hook('get_technologies_post', $technologies, $params);
+    
+    return array($technologies, $params);
+}
+
+function fn_update_technology($technology_data, $technology_id = 0)
+{
+    $_data = $technology_data;
+
+    // create new technology
+    if (empty($technology_id)) {
+
+        $create = true;
+
+        $technology_id = db_query("INSERT INTO ?:technologies ?e", $_data);
+        $existing_products = array();
+        
+    // update existing technology
+    } else {
+
+        $arow = db_query("UPDATE ?:technologies SET ?u WHERE technology_id = ?i", $_data, $technology_id);
+
+        if ($arow === false) {
+            fn_set_notification('E', __('error'), __('object_not_found', array('[object]' => __('technology'))),'','404');
+            $technology_id = false;
+        }
+        $existing_products = db_get_fields("SELECT product_id FROM ?:product_technologies WHERE technology_id = ?i", $technology_id);
+    }
+
+    if (!empty($technology_id) && isset($_data['products'])) {
+
+        // Log technology add/update
+        fn_log_event('technologies', !empty($create) ? 'create' : 'update', array(
+            'technology_id' => $technology_id,
+        ));
+        
+        $_data['products'] = (empty($_data['products'])) ? array() : explode(',', $_data['products']);
+        $to_delete = array_diff($existing_products, $_data['products']);
+
+        if (!empty($to_delete)) {
+            db_query("DELETE FROM ?:product_technologies WHERE product_id IN (?n) AND technology_id = ?i", $to_delete, $technology_id);
+        }
+        $to_add = array_diff($_data['products'], $existing_products);
+
+        if (!empty($to_add)) {
+            foreach ($to_add as $i => $gr) {
+                $__data = array(
+                    'technology_id' => $technology_id,
+                    'product_id' => $gr
+                );
+                db_query("REPLACE INTO ?:product_technologies ?e", $__data);
+            }
+        }
+    }
+    
+    fn_set_hook('update_technology_post', $_data, $technology_id);
+    
+    return $technology_id;
+
+}

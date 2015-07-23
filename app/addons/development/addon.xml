@@ -296,6 +296,23 @@
         <item>
             ALTER TABLE `cscart_categories` ADD `products_sorting` VARCHAR( 32 ) NOT NULL ;
         </item>
+        <item>
+            CREATE TABLE IF NOT EXISTS `cscart_technologies` (
+                `technology_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+                `name` varchar(255) NOT NULL,
+                `description` mediumtext NOT NULL,
+                PRIMARY KEY (`technology_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+        </item>
+        <item>
+            CREATE TABLE IF NOT EXISTS `cscart_product_technologies` (
+                `pair_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+                `technology_id` mediumint(8) unsigned NOT NULL,
+                `product_id` mediumint(8) unsigned NOT NULL,
+                PRIMARY KEY (`pair_id`),
+                UNIQUE KEY `technology_id` (`technology_id`,`product_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -582,5 +599,15 @@
         <item lang="ru" id="sdek_tariff_62">Магистральный экспресс склад-склад</item>
         <item lang="ru" id="sdek_tariff_63">Магистральный супер-экспресс склад-склад</item>
         <item lang="ru" id="products_sorting">Сортировка списка товаров</item>
+        <item lang="ru" id="technology">Технология</item>
+        <item lang="ru" id="technologies_menu_description">Технологии, используемые в товарах</item>
+        <item lang="ru" id="technologies">Технологии</item>
+        <item lang="ru" id="technologies.editing_technology">Общие</item>
+        <item lang="ru" id="text_technologies_has_been_deleted">Технология была успешно удалена.</item>
+        <item lang="ru" id="technologies.new_technology">Новая технология</item>
+        <item lang="ru" id="add_technologies">Добавить технологии</item>
+        <item lang="ru" id="add_technology">Добавить технологию</item>
+        <item lang="ru" id="add_technologies_and_close">Добавить технологии и закрыть</item>
+        <item lang="ru" id="technology_name">Название технологии</item>
     </language_variables>
 </addon>

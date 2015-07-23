@@ -314,7 +314,7 @@ label.cm-required::after {
 }
 .arrow-down.right .tooltip-arrow {
     right: auto;
-    top: -4px;
+    top: -10px;
     left: 3px;
     border-width: 10px 0 0 10px;
     border-color: transparent transparent transparent rgba(0, 0, 0, 0.8);
@@ -1357,6 +1357,33 @@ label.cm-required::after {
 /*Player details*/
 
 /*Product page*/
+.ty-technologies__tooltip .tooltip-arrow {
+    display: none;
+}
+.ty-technologies__tooltip {
+    max-width: 350px;
+}
+.ty-technologies {
+    position: absolute;
+    left: -115px;
+    top: 0;
+    text-align: center;
+}
+.ty-technologies__title {
+    color: lighten(@font, 35%);
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.ty-technologies__item {
+    padding: 10px 0;
+}
+.ty-technologies img {
+    height: auto !important;
+    width: auto !important;
+}
 .ty-product-feature__label {
     width: 230px;
 }

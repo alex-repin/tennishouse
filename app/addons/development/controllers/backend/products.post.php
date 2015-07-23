@@ -38,6 +38,11 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST' && $mode == 'update') {
         unset($tabs['seo']);
         $tabs = fn_insert_before_key($tabs, 'shippings', 'seo', $seo_tab);
     }
+    $technologies_tab = array (
+        'title' => __('technologies'),
+        'js' => true
+    );
+    $tabs = fn_insert_before_key($tabs, 'seo', 'technologies', $technologies_tab);
 //     $options_tab = $tabs['options'];
 //     unset($tabs['options']);
 //     $tabs['options'] = $options_tab;

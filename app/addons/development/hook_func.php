@@ -1053,6 +1053,7 @@ function fn_development_delete_product_post($product_id, $product_deleted)
 {
     if ($product_deleted) {
         db_query("DELETE FROM ?:players_gear WHERE product_id = ?i", $product_id);
+        db_query("DELETE FROM ?:product_technologies WHERE product_id = ?i", $product_id);
         FeaturesCache::deleteProduct($product_id);
     }
 }
@@ -1080,6 +1081,31 @@ function fn_development_update_product_post($product_data, $product_id, $lang_co
                     'player_id' => $gr
                 );
                 db_query("REPLACE INTO ?:players_gear ?e", $__data);
+            }
+        }
+    }
+    
+    if (isset($product_data['technologies'])) {
+        if ($create) {
+            $existing_products = array();
+        } else {
+            $existing_products = db_get_fields("SELECT technology_id FROM ?:product_technologies WHERE product_id = ?i", $product_id);
+        }
+        $product_data['technologies'] = (empty($product_data['technologies'])) ? array() : explode(',', $product_data['technologies']);
+        $to_delete = array_diff($existing_products, $product_data['technologies']);
+
+        if (!empty($to_delete)) {
+            db_query("DELETE FROM ?:product_technologies WHERE technology_id IN (?n) AND product_id = ?i", $to_delete, $product_id);
+        }
+        $to_add = array_diff($product_data['technologies'], $existing_products);
+
+        if (!empty($to_add)) {
+            foreach ($to_add as $i => $gr) {
+                $__data = array(
+                    'product_id' => $product_id,
+                    'technology_id' => $gr
+                );
+                db_query("REPLACE INTO ?:product_technologies ?e", $__data);
             }
         }
     }
@@ -1185,10 +1211,13 @@ function fn_development_get_product_data_post(&$product_data, $auth, $preview, $
         $plain = false;
     }
     list($players, ) = fn_get_players(array('product_id' => $product_data['product_id'], 'plain' => $plain));
+    list($technologies, ) = fn_get_technologies(array('product_id' => $product_data['product_id'], 'plain' => $plain));
     if (AREA == 'A') {
         $product_data['players'] = implode(',', array_keys($players));
+        $product_data['technologies'] = implode(',', array_keys($technologies));
     } else {
         $product_data['players'] = $players;
+        $product_data['technologies'] = $technologies;
     }
     $types_ids = fn_get_categories_types($product_data['main_category']);
     $product_data['id_path'] = db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $product_data['main_category']);

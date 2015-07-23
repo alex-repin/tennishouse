@@ -3408,6 +3408,9 @@ var Tygh = {
                         params.position = 'bottom left';
                     }
 
+                    if (elm.data('cetooltipclass')) {
+                        params.tipClass = params.tipClass + ' ' + elm.data('cetooltipclass');
+                    }
                     elm.tooltip(params).dynamic({
                         right: {},
                         left: {}

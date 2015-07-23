@@ -52,6 +52,11 @@ $schema['central']['products']['items']['players'] = array(
     'position' => 350,
 );
 
+$schema['central']['products']['items']['technologies'] = array(
+    'href' => 'technologies.manage',
+    'position' => 360,
+);
+
 $schema['top']['administration']['items']['import_data']['subitems']['supplier_stocks'] = array(
     'href' => 'development.supplier_stocks',
     'position' => 1000,
