@@ -35,8 +35,8 @@
     <div class="ty-technologies">
         <div class="ty-technologies__title">{__("technologies")}</div>
         {foreach from=$product.technologies item="tec"}
-            <div class="ty-technologies__item">
-                <span class="ty-tooltip-block"><a class="cm-tooltip" data-ceTooltipClass="ty-technologies__tooltip" data-ceTooltipPosition="center" title="{$tec.description}">{include file="common/image.tpl" obj_id=$tec.technology_id images=$tec.main_pair image_width=$tec.width image_height=$tec.height keep_transparent=true show_detailed_link=false}</a></span>
+            <div class="ty-technologies__item" style="width: {$tec.width}px; height: {$tec.height}px;line-height: {$tec.height}px;">
+                <span class="ty-tooltip-block"><a class="cm-tooltip" data-ceTooltipClass="ty-technologies__tooltip" data-ceTooltipPosition="center" title="{$tec.description}">{if $tec.main_pair}{include file="common/image.tpl" obj_id=$tec.technology_id images=$tec.main_pair image_width=$tec.width image_height=$tec.height keep_transparent=true show_detailed_link=false}{else}{$tec.name}{/if}</a></span>
             </div>
         {/foreach}
     </div>

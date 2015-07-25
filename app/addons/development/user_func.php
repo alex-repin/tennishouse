@@ -1350,16 +1350,20 @@ function fn_get_technologies($params)
     if (empty($params['plain'])) {
         $technologies_images = fn_get_image_pairs(array_keys($technologies), 'technology', 'M', true, false);
         foreach ($technologies as $k => $v) {
+            $technologies[$k]['width'] = 80;
+            $technologies[$k]['height'] = 80;
             if (!empty($technologies_images[$v['technology_id']])) {
                 $technologies[$k]['main_pair'] = reset($technologies_images[$v['technology_id']]);
                 $ratio = $technologies[$k]['main_pair']['icon']['image_x'] / $technologies[$k]['main_pair']['icon']['image_y'];
-                if ($ratio > 1) {
-                    $technologies[$k]['width'] = 100;
-                    $technologies[$k]['height'] = round((100 - 50 / $ratio) / $ratio);
-                } else {
-                    $technologies[$k]['width'] = round((100 - 50 * $ratio) * $ratio);
-                    $technologies[$k]['height'] = 100;
-                }
+//                 if ($ratio > 1) {
+//                     $technologies[$k]['width'] = 80;
+//                     $technologies[$k]['height'] = 80;
+//                     $technologies[$k]['height'] = round((100 - 50 / $ratio) / $ratio);
+//                 } else {
+//                     $technologies[$k]['width'] = round((100 - 50 * $ratio) * $ratio);
+//                     $technologies[$k]['height'] = 80;
+//                     $technologies[$k]['height'] = 80;
+//                 }
             }
             $technologies[$k]['products'] = explode(',', $technologies[$k]['products']);
         }
