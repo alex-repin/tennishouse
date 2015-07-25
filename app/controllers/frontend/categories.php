@@ -122,8 +122,15 @@ if ($mode == 'catalog') {
         ));
         $subtabs_string = $tab_string = '';
         if (!empty($products)) {
-            if (!empty($category_data['tabs_categorization']) && (empty($category_data['brand']) || $category_data['brand']['feature_id'] != $category_data['tabs_categorization'])) {
-                $tb_feature = fn_get_product_feature_data($category_data['tabs_categorization'], true);
+            if (empty($category_data['brand']) || $category_data['brand']['feature_id'] != $category_data['tabs_categorization']) {
+                if (!empty($category_data['tabs_categorization'])) {
+                    $tb_feature = fn_get_product_feature_data($category_data['tabs_categorization'], true);
+                } else {
+                    $tb_feature = array();
+                    $tb_feature['variants']['all'] = array(
+                        'variant' => __('all')
+                    );
+                }
                 if (!empty($tb_feature['variants'])) {
                     $tab_groups = $tab_ids = array();
                     foreach ($tb_feature['variants'] as $key => $vr_data) {
@@ -140,12 +147,22 @@ if ($mode == 'catalog') {
                             $tab_ids[$key] = $tab_groups[$vr_data['variant_code']];
                         }
                     }
+                    $tb_feature['variants']['discounts'] = array(
+                        'variant' => __("discounts")
+                    );
                     $tabs_categorization = array();
                     foreach ($products as $i => $product) {
                         if (!empty($product['tabs_categorization'])) {
                             $tabs_categorization[$tab_ids[$product['tabs_categorization']]][] = $product;
                         } else {
-                            $tabs_categorization['other'][] = $product;
+                            if (!empty($category_data['tabs_categorization'])) {
+                                $tabs_categorization['other'][] = $product;
+                            } else {
+                                $tabs_categorization['all'][] = $product;
+                            }
+                        }
+                        if ($product['base_price'] > $product['price']) {
+                            $tabs_categorization['discounts'][] = $product;
                         }
                     }
                     foreach ($tb_feature['variants'] as $key => $vr_data) {

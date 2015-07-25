@@ -29,6 +29,32 @@ function fn_process_php_errors($errno, $errstr, $errfile, $errline, $errcontext)
 //     }
 }
 
+function fn_get_discounted_products($params)
+{
+    list($products, $search) = fn_get_products($params);
+    fn_gather_additional_products_data($products, array(
+        'get_icon' => false,
+        'get_detailed' => false,
+        'get_additional' => false,
+        'get_options' => false,
+        'get_discounts' => true,
+        'get_features' => false,
+        'get_title_features' => false,
+        'allow_duplication' => false
+    ));
+    $result = array();
+    foreach ($products as $i => $product) {
+        if ($product['base_price'] > $product['price']) {
+            $result[] = $product;
+        }
+        if (count($result) >= $params['products_limit']) {
+            break;
+        }
+    }
+    
+    return array($result, $params);
+}
+
 function fn_get_menu_items_th($value, $block, $block_scheme)
 {
     $menu_items = array();

@@ -609,5 +609,7 @@
         <item lang="ru" id="add_technology">Добавить технологию</item>
         <item lang="ru" id="add_technologies_and_close">Добавить технологии и закрыть</item>
         <item lang="ru" id="technology_name">Название технологии</item>
+        <item lang="ru" id="discounted_products">Уцененные товары</item>
+        <item lang="ru" id="products_limit">Количество товаров</item>
     </language_variables>
 </addon>
