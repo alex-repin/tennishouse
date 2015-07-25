@@ -313,32 +313,6 @@
                 UNIQUE KEY `technology_id` (`technology_id`,`product_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
         </item>
-        <item>
-            REPLACE INTO `cscart_product_tabs` (
-                `tab_id` ,
-                `tab_type` ,
-                `block_id` ,
-                `template` ,
-                `addon` ,
-                `position` ,
-                `status` ,
-                `is_primary` ,
-                `product_ids` ,
-                `company_id` ,
-                `show_in_popup`
-            ) VALUES (
-                '42' , 'T', '0', 'addons/development/blocks/product_tabs/technologies.tpl', 'development', '5', 'A', 'Y', '', '1', 'N'
-            );
-        </item>
-        <item>
-            REPLACE INTO `cscart_product_tabs_descriptions` (
-                `tab_id` ,
-                `lang_code` ,
-                `name`
-            ) VALUES (
-                '42', 'ru', 'Технологии'
-            );
-        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
