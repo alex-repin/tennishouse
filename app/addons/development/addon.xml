@@ -15,7 +15,7 @@
                     <item lang="ru">Основные</item>
                 </translations>
                 <items>
-                    <item id="global_product_margin">
+                    <item id="margin">
                         <type>input</type>
                         <default_value>2:85;203:60</default_value>
                         <translations>
@@ -312,6 +312,18 @@
                 PRIMARY KEY (`pair_id`),
                 UNIQUE KEY `technology_id` (`technology_id`,`product_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+        </item>
+        <item>
+            ALTER TABLE `cscart_categories` CHANGE `net_currency_code` `net_currency_code` VARCHAR( 32 ) NOT NULL ;
+        </item>
+        <item>
+            UPDATE `cscart_categories` SET `net_currency_code` = '' WHERE `net_currency_code` = 'USD';
+        </item>
+        <item>
+            ALTER TABLE `cscart_categories` DROP `override_margin`;
+        </item>
+        <item>
+            UPDATE `cscart_categories` SET `margin` = '' WHERE `margin` = '0.0' OR `margin` = '0';
         </item>
     </queries>
     <language_variables>

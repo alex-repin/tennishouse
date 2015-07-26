@@ -63,42 +63,28 @@
             <label class="control-label" for="elm_shipping_weight">{__("shipping_weight")}:</label>
             <div class="controls">
                 <input type="text" name="category_data[shipping_weight]" id="elm_category_shipping_weight" size="10" value="{$category_data.shipping_weight}" class="input-long" />
+                <div class="checkbox" style="display: inline-block;">
+                    {__("override_shipping_weight")} <input type="checkbox" name="category_data[override_shipping_weight]" id="elm_category_override_shipping_weight" value="Y" />
+                </div>
             </div>
         </div>
         <div class="control-group">
-            <label class="control-label" for="elm_category_override_margin">{__("override_shipping_weight")}:</label>
-            <div class="controls">
-                <label class="checkbox">
-                    <input type="hidden" name="category_data[override_shipping_weight]" value="N" />
-                    <input type="checkbox" name="category_data[override_shipping_weight]" id="elm_category_override_shipping_weight" value="Y"  />
-                </label>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="elm_category_override_margin">{__("override_global_margin")}:</label>
-            <div class="controls">
-                <label class="checkbox">
-                    <input type="hidden" name="category_data[override_margin]" value="N" />
-                    <input type="checkbox" name="category_data[override_margin]" id="elm_category_override_margin" value="Y" {if $category_data.override_margin == "Y"}checked="checked"{/if} onclick="Tygh.$('#category_margin').toggleBy();Tygh.$('#category_net_currency_code').toggleBy();"/>
-                </label>
-            </div>
-        </div>
-        <div class="control-group {if $category_data.override_margin != "Y"}hidden{/if}" id="category_margin">
             <label class="control-label" for="elm_category_margin">{__("price_margin")}(%):</label>
             <div class="controls">
-                <input type="text" name="category_data[margin]" id="elm_category_margin" size="10" value="{$category_data.margin|default:"0"}" class="input-long" />
+                <input type="text" name="category_data[margin]" id="elm_category_margin" size="10" value="{$category_data.margin}" class="input-long" />
                 <div class="checkbox" style="display: inline-block;">
                     {__("recalculate_margins")} <input type="checkbox" name="category_data[recalculate_margins]" id="elm_category_recalculate_margins" value="Y" />
                 </div>
             </div>
         </div>
-        <div class="control-group {if $category_data.override_margin != "Y"}hidden{/if}" id="category_net_currency_code">
+        <div class="control-group">
             <label class="control-label" for="elm_category_net_currency_code">{__("net_currency_code")}:</label>
             <div class="controls">
                 <select class="span3" name="category_data[net_currency_code]">
-                {foreach from=$currencies item="cur"}
-                    <option value="{$cur.currency_code}" {if $category_data.net_currency_code == $cur.currency_code}selected="selected"{/if}>{$cur.description}</option>
-                {/foreach}
+                    <option value="">{__("default")}</option>
+                    {foreach from=$currencies item="cur"}
+                        <option value="{$cur.currency_code}" {if $category_data.net_currency_code == $cur.currency_code}selected="selected"{/if}>{$cur.description}</option>
+                    {/foreach}
                 </select>
             </div>
         </div>

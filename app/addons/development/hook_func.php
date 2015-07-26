@@ -1133,7 +1133,12 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
         $variant_ids = db_get_fields("SELECT feature_variant_id FROM ?:players WHERE player_id IN (?n)", $players);
         $product_data['product_features'][PLAYER_FEATURE_ID] = array_combine($variant_ids, $variant_ids);
         
-        if (!empty($product_data['auto_price']) && $product_data['auto_price'] == 'Y' && (empty($product_data['margin']) || $product_data['margin'] == 0) && $product_data['net_cost'] > 0) {
+        $global_data = fn_get_product_global_data($product_data, array('shipping_weight', 'margin', 'net_currency_code'));
+        $product_data['global_margin'] = $global_data['margin'];
+        if (empty($product_data['net_currency_code'])) {
+            $product_data['net_currency_code'] = $global_data['net_currency_code'];
+        }
+        if (empty($product_data['margin']) || $product_data['margin'] == 0) {
             fn_get_product_margin($product_data);
         }
 
@@ -1155,7 +1160,7 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
         }
         
         if ($product_data['weight'] == 0) {
-            $product_data['weight'] = fn_get_product_global_weight($product_data);
+            $product_data['weight'] = $global_data['shipping_weight'];
         }
     }
 }
@@ -1194,11 +1199,7 @@ function fn_development_update_category_post($category_data, $category_id, $lang
             }
         }
         if (!empty($products)) {
-            $result = fn_process_update_prices($products);
-            
-            if (!empty($result)) {
-                db_query("REPLACE INTO ?:product_prices ?m", $result);
-            }
+            fn_process_update_prices($products);
         }
     }
 }

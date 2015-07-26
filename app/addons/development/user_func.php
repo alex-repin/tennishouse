@@ -786,55 +786,46 @@ function fn_render_page_blocks($description, $smarty_capture)
     return $description;
 }
 
-function fn_get_product_global_margin($category_id)
+function fn_get_product_global_data($product_data, $data_names)
 {
-    $path = db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $category_id);
-    $result = Registry::get('addons.development.global_product_margin');
-    $currency = '';
-    if (!empty($path)) {
-        $cat_ids = explode('/', $path);
-        $cat_data = db_get_hash_array("SELECT margin, category_id, net_currency_code, override_margin FROM ?:categories WHERE category_id IN (?n)", 'category_id', $cat_ids);
-        foreach (array_reverse($cat_ids) as $i => $cat_id) {
-            if (empty($currency)) {
-                $currency = $cat_data[$cat_id]['net_currency_code'];
+    if (empty($product_data['category_ids']) && !empty($product_data['product_id'])) {
+        $product_data['category_ids'] = db_get_fields("SELECT category_id FROM ?:products_categories WHERE product_id = ?i ORDER BY link_type DESC", $product_data['product_id']);
+    }
+    $result = array();
+    if (!empty($product_data['category_ids'])) {
+        $paths = db_get_hash_single_array("SELECT category_id, id_path FROM ?:categories WHERE category_id IN (?n)", array('category_id', 'id_path'), $product_data['category_ids']);
+        $all_ids = array();
+        $use_order = array();
+        if (!empty($paths)) {
+            foreach ($paths as $cat_id => $path) {
+                $ids = explode('/', $path);
+                foreach(array_reverse($ids) as $j => $cat_id) {
+                    if (empty($use_order[$j]) || !in_array($cat_id, $use_order[$j])) {
+                        $use_order[$j][] = $cat_id;
+                    }
+                }
+                $all_ids = array_merge($all_ids, $ids);
             }
-            if ($cat_data[$cat_id]['override_margin'] == 'Y' && !empty($cat_data[$cat_id]['margin'])) {
-                $result = $cat_data[$cat_id]['margin'];
-                $currency = $cat_data[$cat_id]['net_currency_code'];
-                break;
+        }
+        $fields = implode(', ', $data_names);
+        $data = db_get_hash_array("SELECT category_id, $fields FROM ?:categories WHERE category_id IN (?n)", 'category_id', array_unique($all_ids));
+        $types = db_get_hash_single_array("SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '?:categories'", array('COLUMN_NAME', 'DATA_TYPE'));
+        if (!empty($use_order)) {
+            foreach ($data_names as $j => $dt_name) {
+                foreach ($use_order as $lvl => $cat_ids) {
+                    foreach ($cat_ids as $i => $ct_id) {
+                        if (empty($result[$dt_name]) && ((in_array($types[$dt_name], array('int', 'mediumint', 'smallint', 'tinyint', 'bigint', 'float', 'decimal', 'double', 'real', 'bit', 'boolean', 'serial')) && !empty(floatval($data[$ct_id][$dt_name]))) || ($types[$dt_name] != 'decimal' && !empty($data[$ct_id][$dt_name])))) {
+                            $result[$dt_name] = $data[$ct_id][$dt_name];
+                            break 2;
+                        }
+                    }
+                }
             }
         }
     }
-    
-    return array($result, $currency);
-}
-
-function fn_get_product_global_weight($product_data)
-{
-    $result = 0;
-    $paths = db_get_hash_single_array("SELECT category_id, id_path FROM ?:categories WHERE category_id IN (?n)", array('category_id', 'id_path'), $product_data['category_ids']);
-    $all_ids = array();
-    $use_order = array();
-    if (!empty($paths)) {
-        foreach ($paths as $cat_id => $path) {
-            $ids = explode('/', $path);
-            foreach(array_reverse($ids) as $j => $cat_id) {
-                if (empty($use_order[$j]) || !in_array($cat_id, $use_order[$j])) {
-                    $use_order[$j][] = $cat_id;
-                }
-            }
-            $all_ids = array_merge($all_ids, $ids);
-        }
-    }
-    $weights = db_get_hash_single_array("SELECT category_id, shipping_weight FROM ?:categories WHERE category_id IN (?n)", array('category_id', 'shipping_weight'), array_unique($all_ids));
-    if (!empty($use_order)) {
-        foreach ($use_order as $lvl => $cat_ids) {
-            foreach ($cat_ids as $i => $ct_id) {
-                if (!empty(floatval($weights[$ct_id]))) {
-                    $result = $weights[$ct_id];
-                    break 2;
-                }
-            }
+    foreach ($data_names as $i => $dt_name) {
+        if (empty($result[$dt_name]) && !empty(Registry::get('addons.development.' . $dt_name))) {
+            $result[$dt_name] = Registry::get('addons.development.' . $dt_name);
         }
     }
     
@@ -856,19 +847,15 @@ function fn_calculate_base_price($product_data)
 
 function fn_get_product_margin(&$product)
 {
-    list($md, $currency) = fn_get_product_global_margin($product['main_category']);
-    if (empty($product['net_currency_code']) && !empty($currency)) {
-        $product['net_currency_code'] = $currency;
-    }
     $error = false;
-    if (!empty($md) && !empty($currency)) {
-        $_md = explode(';', $md);
+    if (!empty($product['global_margin']) && !empty($product['net_currency_code'])) {
+        $_md = explode(';', $product['global_margin']);
         if (count($_md) == 2) {
             $min_md = explode(':', $_md[0]);
             $max_md = explode(':', $_md[1]);
             if (count($min_md) == 2 && count($max_md) == 2) {
-                $min_md[0] = $min_md[0] * Registry::get('currencies.' . $currency . '.coefficient');
-                $max_md[0] = $max_md[0] * Registry::get('currencies.' . $currency . '.coefficient');
+                $min_md[0] = $min_md[0] * Registry::get('currencies.' . $product['net_currency_code'] . '.coefficient');
+                $max_md[0] = $max_md[0] * Registry::get('currencies.' . $product['net_currency_code'] . '.coefficient');
                 $net_cost = $product['net_cost'] * Registry::get('currencies.' . $product['net_currency_code'] . '.coefficient');
                 if ($net_cost <= $min_md[0]) {
                     $product['margin'] = $min_md[1];
@@ -900,6 +887,11 @@ function fn_process_update_prices($products)
             foreach ($prices as $product_id => $prs) {
                 if (!empty($prs)) {
                     if (empty($products[$product_id]['margin']) || $products[$product_id]['margin'] == 0) {
+                        $global_data = fn_get_product_global_data($products[$product_id], array('margin', 'net_currency_code'));
+                        $products[$product_id]['global_margin'] = $global_data['margin'];
+                        if (empty($products[$product_id]['net_currency_code'])) {
+                            $products[$product_id]['net_currency_code'] = $global_data['net_currency_code'];
+                        }
                         fn_get_product_margin($products[$product_id]);
                         if ($products[$product_id]['margin'] > 0) {
                             db_query("UPDATE ?:products SET margin = ?d, net_currency_code = ?s WHERE product_id = ?i", $products[$product_id]['margin'], $products[$product_id]['net_currency_code'], $product_id);
@@ -919,17 +911,15 @@ function fn_process_update_prices($products)
         }
     }
     
-    return $result;
+    if (!empty($result)) {
+        db_query("REPLACE INTO ?:product_prices ?m", $result);
+    }
 }
 
 function fn_update_prices()
 {
     $products = db_get_hash_array("SELECT prods.product_id, prods.margin, prods.net_cost, prods.net_currency_code, prods.auto_price, cats.category_id AS main_category FROM ?:products AS prods LEFT JOIN ?:products_categories AS cats ON prods.product_id = cats.product_id AND cats.link_type = 'M' WHERE prods.auto_price = 'Y' AND prods.net_cost > 0", 'product_id');
     $result = fn_process_update_prices($products);
-    
-    if (!empty($result)) {
-        db_query("REPLACE INTO ?:product_prices ?m", $result);
-    }
 }
 
 function fn_get_categories_types($category_ids)
