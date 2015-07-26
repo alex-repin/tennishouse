@@ -124,8 +124,7 @@
             ALTER TABLE `cscart_products` ADD `auto_price` CHAR( 1 ) NOT NULL DEFAULT 'Y';
         </item>
         <item>
-            ALTER TABLE `cscart_categories` ADD `override_margin` CHAR( 1 ) NOT NULL DEFAULT 'N',
-            ADD `margin` DECIMAL( 4, 1 ) UNSIGNED NOT NULL ;
+            ALTER TABLE `cscart_categories` ADD `margin` DECIMAL( 4, 1 ) UNSIGNED NOT NULL ;
         </item>
         <item>
             ALTER TABLE `cscart_categories` ADD `note_url` VARCHAR( 255 ) NOT NULL ,
@@ -154,7 +153,7 @@
             ALTER TABLE `cscart_product_feature_variant_descriptions` ADD `womens_shoes_size_chart` TEXT NOT NULL ;
         </item>
         <item>
-            ALTER TABLE `cscart_categories` ADD `net_currency_code` VARCHAR( 10 ) NOT NULL DEFAULT 'USD' ;
+            ALTER TABLE `cscart_categories` ADD `net_currency_code` VARCHAR( 32 ) NOT NULL ;
         </item>
         <item>
             ALTER TABLE `cscart_product_option_variants` ADD `code_suffix` VARCHAR( 32 ) NOT NULL ;
@@ -312,18 +311,6 @@
                 PRIMARY KEY (`pair_id`),
                 UNIQUE KEY `technology_id` (`technology_id`,`product_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-        </item>
-        <item>
-            ALTER TABLE `cscart_categories` CHANGE `net_currency_code` `net_currency_code` VARCHAR( 32 ) NOT NULL ;
-        </item>
-        <item>
-            UPDATE `cscart_categories` SET `net_currency_code` = '' WHERE `net_currency_code` = 'USD';
-        </item>
-        <item>
-            ALTER TABLE `cscart_categories` DROP `override_margin`;
-        </item>
-        <item>
-            UPDATE `cscart_categories` SET `margin` = '' WHERE `margin` = '0.0' OR `margin` = '0';
         </item>
     </queries>
     <language_variables>
