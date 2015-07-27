@@ -214,11 +214,29 @@
     <!--content_shipping_charges--></div>
 
     <div id="content_payments">
-        {include file="common/double_selectboxes.tpl"
-            first_name="shipping_data[payment_ids]"
-            first_data=$shipping.payment_ids
-            second_name="all_payment_methods"
-            second_data=$payment_methods}
+        <table class="table table-middle">
+            <thead>
+            <tr>
+                <th width="20%">{__("shipping_method")}</th>
+                <th width="5%">{__("enabled")}</th>
+                <th width="10%">{__("payment_surcharge")}</th>
+                <th width="5%">{__("payment_surcharge_included")}</th>
+            </tr>
+            </thead>
+            {foreach from=$payment_methods item="payment" key="payment_id" name="rdf"}
+                <tr>
+                    <td>{$payment}</td>
+                    <td class="nowrap">
+                        <input type="hidden" name="shipping_data[payment_ids][{$payment_id}][enabled]" value="N" />
+                        <input type="checkbox" name="shipping_data[payment_ids][{$payment_id}][enabled]" value="Y" {if $shipping.payment_ids.$payment_id.enabled == "Y"}checked="checked"{/if}/></td>
+                    <td>
+                        <input type="text" name="shipping_data[payment_ids][{$payment_id}][p_surcharge]" class="cm-numeric input-mini" value="{$shipping.payment_ids.$payment_id.p_surcharge}" size="4"> % + <input type="text" name="shipping_data[payment_ids][{$payment_id}][a_surcharge]" value="{$shipping.payment_ids.$payment_id.a_surcharge}" class="cm-numeric input-mini" size="4"> {$currencies.$primary_currency.symbol nofilter}</td>
+                    <td class="nowrap">
+                        <input type="hidden" name="shipping_data[payment_ids][{$payment_id}][included]" value="N" />
+                        <input type="checkbox" name="shipping_data[payment_ids][{$payment_id}][included]" value="Y" {if $shipping.payment_ids.$payment_id.included != "N"}checked="checked"{/if}/></td>
+                </tr>
+            {/foreach}
+        </table>
     <!--content_payments--></div>
     {hook name="shippings:tabs_content"}
     {/hook}

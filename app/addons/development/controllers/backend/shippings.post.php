@@ -27,12 +27,6 @@ if ($mode == 'update') {
         'js' => true
     );
     $tabs = Registry::set('navigation.tabs', $tabs);
-    $shipping = Registry::get('view')->gettemplatevars('shipping');
     $payments = fn_get_simple_payment_methods(false);
-    if (!empty($shipping['payment_ids'])) {
-        foreach ($shipping['payment_ids'] as $id => $s_name) {
-            unset($payments[$id]);
-        }
-    }
     Registry::get('view')->assign('payment_methods', $payments);
 }

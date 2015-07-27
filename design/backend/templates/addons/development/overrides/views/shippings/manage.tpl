@@ -41,7 +41,7 @@
         {include file="views/companies/components/company_name.tpl" object=$shipping}
     </td>
     <td class="nowrap">
-        {include file="common/price.tpl" value=$shipping.min_total view="input" input_name="shipping_data[`$shipping.shipping_id`][min_total]" input_val=$shipping.min_total class="input-mini input-hidden"}&nbsp;-&nbsp;{include file="common/price.tpl" value=$shipping.max_total view="input" input_name="shipping_data[`$shipping.shipping_id`][max_total]" input_val=$shipping.max_total class="input-mini input-hidden right"}
+        <input type="text" name="shipping_data[{$shipping.shipping_id}][min_total]" class="input-mini input-hidden" value="{$shipping.min_total}" size="4">{$currencies.$primary_currency.symbol nofilter}&nbsp;-&nbsp;<input type="text" name="shipping_data[{$shipping.shipping_id}][max_total]" class="input-mini input-hidden" value="{$shipping.max_total}" size="4">{$currencies.$primary_currency.symbol nofilter}
     <td class="nowrap">
         <input type="text" name="shipping_data[{$shipping.shipping_id}][min_weight]" size="4" value="{$shipping.min_weight}" class="input-mini input-hidden" />&nbsp;-&nbsp;<input type="text" name="shipping_data[{$shipping.shipping_id}][max_weight]" size="4" value="{if $shipping.max_weight != "0.00"}{$shipping.max_weight}{/if}" class="input-mini input-hidden right" /></td>
     {if !"ULTIMATE:FREE"|fn_allowed_for}

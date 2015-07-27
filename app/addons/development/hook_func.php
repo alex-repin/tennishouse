@@ -54,7 +54,7 @@ function fn_development_get_cart_product_data_post($hash, $product, $skip_promot
 
 function fn_development_calculate_cart_post(&$cart, $auth, $calculate_shipping, $calculate_taxes, $options_style, $apply_cart_promotions, $cart_products, $product_groups)
 {
-    $cart['net_total'] = $cart['net_subtotal'];
+    $cart['net_total'] = $cart['net_subtotal'] + $cart['org_payment_surcharge'];
     if (!empty($cart['shipping'])) {
         foreach ($cart['shipping'] as $i => $shp) {
             $cart['net_total'] += $shp['original_rate'];
@@ -197,6 +197,33 @@ function fn_development_shippings_get_shippings_list_post($group, $lang, $area, 
     }
 }
 
+function fn_development_update_payment_surcharge(&$cart, $auth, $lang_code)
+{
+    $cart['org_payment_surcharge'] = $cart['payment_surcharge'];
+    if (!empty($cart['chosen_shipping']) && !empty($cart['payment_id'])) {
+        $ids = db_get_hash_single_array("SELECT payment_ids, shipping_id FROM ?:shippings WHERE shipping_id IN (?a)", array('shipping_id', 'payment_ids'), $cart['chosen_shipping']);
+        foreach ($cart['chosen_shipping'] as $i => $sh_id) {
+            if (!empty($ids[$sh_id])) {
+                $payments = unserialize($ids[$sh_id]);
+                if (!empty($payments[$cart['payment_id']]) && $payments[$cart['payment_id']]['enabled'] == 'Y') {
+                    if (floatval($payments[$cart['payment_id']]['a_surcharge'])) {
+                        if ($payments[$cart['payment_id']]['included'] == 'N') {
+                            $cart['payment_surcharge'] += $payments[$cart['payment_id']]['a_surcharge'];
+                        }
+                        $cart['org_payment_surcharge'] += $payments[$cart['payment_id']]['a_surcharge'];
+                    }
+                    if (floatval($payments[$cart['payment_id']]['p_surcharge']) && !empty($cart['total'])) {
+                        if ($payments[$cart['payment_id']]['included'] == 'N') {
+                            $cart['payment_surcharge'] += fn_format_price($cart['total'] * $payments[$cart['payment_id']]['p_surcharge'] / 100);
+                        }
+                        $cart['org_payment_surcharge'] += fn_format_price($cart['total'] * $payments[$cart['payment_id']]['p_surcharge'] / 100);
+                    }
+                }
+            }
+        }
+    }
+}
+
 function fn_development_prepare_checkout_payment_methods($cart, $auth, &$payment_groups)
 {
     if (!empty($cart['chosen_shipping'])) {
@@ -204,14 +231,28 @@ function fn_development_prepare_checkout_payment_methods($cart, $auth, &$payment
         $ids = db_get_hash_single_array("SELECT payment_ids, shipping_id FROM ?:shippings WHERE shipping_id IN (?a)", array('shipping_id', 'payment_ids'), $cart['chosen_shipping']);
         foreach ($cart['chosen_shipping'] as $i => $sh_id) {
             if (!empty($ids[$sh_id])) {
-                $allowed_payments = array_merge($allowed_payments, unserialize($ids[$sh_id]));
+                $payments = unserialize($ids[$sh_id]);
+                foreach ($payments as $p_id => $p_data) {
+                    if ($p_data['enabled'] == 'Y') {
+                        $allowed_payments[$p_id][] = $p_data;
+                    }
+                }
             }
         }
         if (!empty($allowed_payments) && !empty($payment_groups)) {
             foreach ($payment_groups as $i => $tab) {
                 foreach ($tab as $j => $sh) {
-                    if (!in_array($sh['payment_id'], $allowed_payments)) {
+                    if (!in_array($sh['payment_id'], array_keys($allowed_payments))) {
                         unset($payment_groups[$i][$j]);
+                    } else {
+                        foreach ($allowed_payments[$sh['payment_id']] as $k => $sg) {
+                            if (floatval($sg['a_surcharge'])) {
+                                $payment_groups[$i][$j]['surcharge_value'] += $sg['a_surcharge'];
+                            }
+                            if (floatval($sg['p_surcharge']) && !empty($cart['total'])) {
+                                $payment_groups[$i][$j]['surcharge_value'] += fn_format_price($cart['total'] * $sg['p_surcharge'] / 100);
+                            }
+                        }
                     }
                 }
                 if (empty($payment_groups[$i])) {

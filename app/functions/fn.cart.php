@@ -2148,14 +2148,7 @@ function fn_get_shipping_info($shipping_id, $lang_code = CART_LANGUAGE)
 
         // [tennishouse]
         $shipping['available_payments'] = unserialize($shipping['available_payments']);
-        $payment_ids = unserialize($shipping['payment_ids']);
-        $shipping['payment_ids'] = array();
-        if (!empty($payment_ids)) {
-            $names = fn_get_simple_payment_methods($_SESSION['auth']);
-            foreach ($payment_ids as $i => $s_id) {
-                $shipping['payment_ids'][$s_id] = $names[$s_id];
-            }
-        }
+        $shipping['payment_ids'] = unserialize($shipping['payment_ids']);
         // [tennishouse]
 
         $destinations = array();
@@ -6482,6 +6475,8 @@ function fn_update_payment_surcharge(&$cart, $auth, $lang_code = CART_LANGUAGE)
             }
         }
     }
+    
+    fn_set_hook('update_payment_surcharge', $cart, $auth, $lang_code);
 
     if (!empty($cart['payment_surcharge'])) {
         $cart['payment_surcharge_title'] = db_get_field("SELECT surcharge_title FROM ?:payment_descriptions WHERE payment_id = ?i AND lang_code = ?s", $cart['payment_id'], $lang_code);

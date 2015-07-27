@@ -610,5 +610,6 @@
         <item lang="ru" id="technology_name">Название технологии</item>
         <item lang="ru" id="discounted_products">Уцененные товары</item>
         <item lang="ru" id="products_limit">Количество товаров</item>
+        <item lang="ru" id="payment_surcharge_included">Доп. сбор включен в итого</item>
     </language_variables>
 </addon>

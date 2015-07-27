@@ -1,5 +1,5 @@
 <div class="ty-other-pay clearfix">
-    <ul class="ty-payments-list">
+    <div class="ty-payments-list">
         {hook name="checkout:payment_method"}
             {foreach from=$payments item="payment"}
 
@@ -7,7 +7,7 @@
                     {$instructions = $payment.instructions}
                 {/if}
 
-                <li class="ty-payments-list__item">
+                <div class="ty-payments-list__item">
                     <div class="ty-payments-list__item-group">
                         <input id="payment_{$payment.payment_id}" class="cm-select-payment" type="radio" name="payment_id" value="{$payment.payment_id}" {if $payment_id == $payment.payment_id}checked="checked"{/if} />
                         {if $payment.image}
@@ -20,7 +20,7 @@
                             {if $payment.description}<div class="ty-payments-list__item-description">{$payment.description}</div>{/if}
                         </div>
                     </div>
-                </li>
+                </div>
 
                 {if $payment_id == $payment.payment_id}
                     {if $payment.template && $payment.template != "cc_outside.tpl"}
@@ -32,7 +32,7 @@
 
             {/foreach}
         {/hook}
-    </ul>
+    </div>
     <div class="ty-payments-list__instruction">
         {$instructions nofilter}
     </div>
