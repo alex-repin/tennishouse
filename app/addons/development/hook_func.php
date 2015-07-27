@@ -199,28 +199,30 @@ function fn_development_shippings_get_shippings_list_post($group, $lang, $area, 
 
 function fn_development_update_payment_surcharge(&$cart, $auth, $lang_code)
 {
-    $cart['org_payment_surcharge'] = $cart['payment_surcharge'];
+    $surcharge = $cart['payment_surcharge'];
+    $included = true;
     if (!empty($cart['chosen_shipping']) && !empty($cart['payment_id'])) {
         $ids = db_get_hash_single_array("SELECT payment_ids, shipping_id FROM ?:shippings WHERE shipping_id IN (?a)", array('shipping_id', 'payment_ids'), $cart['chosen_shipping']);
         foreach ($cart['chosen_shipping'] as $i => $sh_id) {
             if (!empty($ids[$sh_id])) {
                 $payments = unserialize($ids[$sh_id]);
                 if (!empty($payments[$cart['payment_id']]) && $payments[$cart['payment_id']]['enabled'] == 'Y') {
+                    if ($payments[$cart['payment_id']]['included'] == 'N') {
+                        $included = false;
+                    }
                     if (floatval($payments[$cart['payment_id']]['a_surcharge'])) {
-                        if ($payments[$cart['payment_id']]['included'] == 'N') {
-                            $cart['payment_surcharge'] += $payments[$cart['payment_id']]['a_surcharge'];
-                        }
-                        $cart['org_payment_surcharge'] += $payments[$cart['payment_id']]['a_surcharge'];
+                        $surcharge += $payments[$cart['payment_id']]['a_surcharge'];
                     }
                     if (floatval($payments[$cart['payment_id']]['p_surcharge']) && !empty($cart['total'])) {
-                        if ($payments[$cart['payment_id']]['included'] == 'N') {
-                            $cart['payment_surcharge'] += fn_format_price($cart['total'] * $payments[$cart['payment_id']]['p_surcharge'] / 100);
-                        }
-                        $cart['org_payment_surcharge'] += fn_format_price($cart['total'] * $payments[$cart['payment_id']]['p_surcharge'] / 100);
+                        $surcharge += fn_format_price($cart['total'] * $payments[$cart['payment_id']]['p_surcharge'] / 100);
                     }
                 }
             }
         }
+    }
+    $cart['org_payment_surcharge'] = $cart['payment_surcharge'] = $surcharge;
+    if ($included) {
+        $cart['payment_surcharge'] = 0;
     }
 }
 
