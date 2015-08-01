@@ -2,11 +2,11 @@
 
 {__("dear")} {$order_info.firstname},<br /><br />
 
-{$order_status.email_header nofilter}<br />
+{$order_status.email_header nofilter}
 {if $order_info.user_id && $order_info.status == 'A'}
-    {__("order_status_tracking_info", ["[order_page_link]" => "orders.details?order_id=`$order_info.order_id`"|fn_url:"C"])}<br />
+    {__("order_status_tracking_info", ["[order_page_link]" => "orders.details?order_id=`$order_info.order_id`"|fn_url:"C"])}
 {/if}
-<br />
+<br /><br />
 
 
 {assign var="order_header" value=__("invoice")}
