@@ -1,3 +1,5 @@
+{$carrier_info = ""}
+
 {hook name="carriers:list"}
 
 {if $carrier == "usps"}
@@ -33,10 +35,16 @@
 
 {/hook}
 
-{capture name="carrier_name"}
-{$carrier_name}
-{/capture}
+{hook name="carriers:capture"}
+    {capture name="carrier_name"}
+        {$carrier_name}
+    {/capture}
 
-{capture name="carrier_url"}
-{$url nofilter}
-{/capture}
+    {capture name="carrier_url"}
+        {$url nofilter}
+    {/capture}
+
+    {capture name="carrier_info"}
+        {$carrier_info nofilter}
+    {/capture}
+{/hook}

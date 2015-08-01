@@ -1,36 +1,7 @@
 <div id="content_sdek_information" >
-{if $data_status}
-{foreach from=$data_status item="d_status" key="id"}
-    {math equation="id + 1" id=$id assign="shipment_display_id"}
-    {include file="common/subheader.tpl" title="{__("shipment")} #`$shipment_display_id`"}
-    <table class="ty-orders-detail__table ty-table">
-    <thead>
-    <tr>
-        <th>{__("sdek.lang_status_code")}</th>
-        <th>{__("sdek.lang_status_order")}</th>
-        <th class="left">{__("sdek.date")}</th>
-        <th class="left">{__("sdek.lang_city")}<br/></th>
-    </tr>
-    </thead>
+<div class="ty-float-right">
+{include file="buttons/button.tpl" but_meta="ty-btn__secondary cm-ajax" but_href="orders.sdek_order_status?order_id=`$order_info.order_id`" but_target_id="sdek_data_statuses" but_text=__("update_info") but_role="tool"}
+</div>
 
-    {foreach from=$d_status item="status"}
-    {cycle values=",class=\"table-row\"" name="class_cycle" assign="_class"}
-        <tr {$_class} style="vertical-align: top;">
-            <td>
-                {$status.id} ({$status.shipment_id})
-            </td>
-            <td class="nowrap">
-                {$status.status}
-            </td>
-            <td class="nowrap">
-                {$status.date|date_format:"`$settings.Appearance.date_format`"}
-            </td>
-            <td class="nowrap">
-                {$status.city}
-            </td>
-        </tr>
-    {/foreach}
-    </table>
-{/foreach}
-{/if}
+{include file="addons/rus_sdek/components/data_statuses.tpl" data_status=$data_status}
 <!--content_sdek_information--></div>

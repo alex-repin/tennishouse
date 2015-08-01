@@ -611,5 +611,8 @@
         <item lang="ru" id="discounted_products">Уцененные товары</item>
         <item lang="ru" id="products_limit">Количество товаров</item>
         <item lang="ru" id="payment_surcharge_included">Доп. сбор включен в итого</item>
+        <item lang="ru" id="update_info">Обновить информацию</item>
+        <item lang="ru" id="free_shipping_product_text">Этот товар доставляется бесплатно по всей России</item>
+        <item lang="ru" id="order_status_tracking_info"><![CDATA[Информация по отслеживанию посылки находится на <a href="[order_page_link]" target="_blank">детальной странице заказа</a>.]]></item>
     </language_variables>
 </addon>

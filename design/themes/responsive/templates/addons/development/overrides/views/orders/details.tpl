@@ -167,7 +167,7 @@
                                             {if $shipments[$shipping.group_key].carrier && $shipments[$shipping.group_key].tracking_number}
                                                 {include file="common/carriers.tpl" carrier=$shipments[$shipping.group_key].carrier tracking_number=$shipments[$shipping.group_key].tracking_number}
 
-                                                {$shipping.shipping}&nbsp;({__("tracking_num")}<a {if $smarty.capture.carrier_url|strpos:"://"}target="_blank"{/if} href="{$smarty.capture.carrier_url nofilter}">{$shipments[$shipping.group_key].tracking_number}</a>)
+                                                {$shipping.shipping}&nbsp;({__("tracking_num")}&nbsp;<a {if $smarty.capture.carrier_url|strpos:"://"}target="_blank"{/if} href="{$smarty.capture.carrier_url nofilter}">{$shipments[$shipping.group_key].tracking_number}</a>)
 
                                                 {$smarty.capture.carrier_info nofilter}
                                             {else}
@@ -325,7 +325,7 @@
 
                         {if $shipment.carrier}
                             {include file="common/carriers.tpl" carrier=$shipment.carrier tracking_number=$shipment.tracking_number shipment_id=$shipment.shipment_id}
-                            <p>{__("carrier")}: {$smarty.capture.carrier_name nofilter}{if $shipment.tracking_number}({__("tracking_num")}{if $smarty.capture.carrier_url|trim != ""}<a {if $smarty.capture.carrier_url|strpos:"://"}target="_blank"{/if} href="{$smarty.capture.carrier_url nofilter}">{/if}{$shipment.tracking_number}{if $smarty.capture.carrier_url|trim != ""}</a>{/if}){/if}</p>
+                            <p>{if $shipment.tracking_number}{__("tracking_num")}&nbsp;{if $smarty.capture.carrier_url|trim != ""}<a {if $smarty.capture.carrier_url|strpos:"://"}target="_blank"{/if} href="{$smarty.capture.carrier_url nofilter}">{/if}{$shipment.tracking_number}{if $smarty.capture.carrier_url|trim != ""}</a>{/if}{/if}</p>
 
                             {$smarty.capture.carrier_info nofilter}
                         {/if}

@@ -76,6 +76,9 @@
                         <div class="ty-product__share-buttons">
                             {include file="addons/development/common/share_buttons.tpl" title=$product.product description=$product.full_description|strip_tags|truncate:160 image=$product.main_pair}
                         </div>
+                        {if $product.price > $addons.development.free_shipping_cost}
+                        <div class="ty-product-free-shipping">{__("free_shipping_product_text")}</div>
+                        {/if}
                     </h1>
                 {/if}
 

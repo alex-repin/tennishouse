@@ -6137,7 +6137,7 @@ function fn_get_shipments_info($params, $items_per_page = 0)
             }
         }
 
-        if (Settings::instance()->getValue('use_shipments', '', $order_info['company_id']) != 'Y') {
+        if (Settings::instance()->getValue('use_shipments', '', $order_info['company_id']) == 'Y') {
             foreach ($shipments as $id => $shipment) {
                 $shipments[$id]['one_full'] = true;
 

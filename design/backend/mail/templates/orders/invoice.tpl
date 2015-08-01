@@ -21,7 +21,6 @@
             <tr>
                 <td align="left" style="padding-bottom: 3px;" valign="middle"><img src="{$logos.mail.image.image_path}" width="{$logos.mail.image.image_x}" height="{$logos.mail.image.image_y}" border="0" alt="{$logos.mail.image.alt}" /></td>
                 <td width="100%" valign="bottom" style="text-align: right;  font: bold 26px Arial; text-transform: uppercase;  margin: 0px;">{$order_header|default:__("invoice_title")}</td>
-
             </tr>
             </table>
 
@@ -97,7 +96,16 @@
                             <td style="font-size: 12px; font-family: verdana, helvetica, arial, sans-serif; text-transform: uppercase; color: #000000; padding-right: 10px; white-space: nowrap;">{__("tracking_number")}:</td>
                             <td style="font-size: 12px; font-family: Arial;">
                                 {foreach from=$order_info.shipping item="shipping" name="f_shipp"}
-                                    {if $shipments[$shipping.group_key].tracking_number}{$shipments[$shipping.group_key].tracking_number}{if !$smarty.foreach.f_shipp.last},{/if}{/if}
+                                    {include file="common/carriers.tpl" carrier=$shipments[$shipping.group_key].carrier tracking_number=$shipments[$shipping.group_key].tracking_number}
+                                    {if !empty($smarty.capture.carrier_url)}
+                                        <a {if $smarty.capture.carrier_url|strpos:"://"}target="_blank"{/if} href="{$smarty.capture.carrier_url nofilter}">{$shipments[$shipping.group_key].tracking_number}</a>
+                                    {else}
+                                        {$shipments[$shipping.group_key].tracking_number}
+                                    {/if}
+
+                                    {$smarty.capture.carrier_info nofilter}
+                                    
+                                    {if !$smarty.foreach.f_shipp.last}, {/if}
                                 {/foreach}</td>
                         </tr>
                     {/if}
@@ -299,7 +307,7 @@
                     <td style="text-align: right; white-space: nowrap; font-size: 12px; font-family: Arial;">&nbsp;</td>
                 </tr>
                 {/if}
-            
+
                 {if $order_info.payment_surcharge|floatval && !$take_surcharge_from_vendor}
                 <tr>
                     <td style="text-align: right; white-space: nowrap; font-size: 12px; font-family: Arial;">{$order_info.payment_method.surcharge_title|default:__("payment_surcharge")}:&nbsp;</td>
