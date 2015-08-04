@@ -20,7 +20,7 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 function fn_bestsellers_change_order_status(&$status_to, &$status_from, &$order_info, &$force_notification, &$order_statuses)
 {
 
-    $product_ids = db_get_fields("SELECT product_id FROM ?:order_details WHERE order_id = ?i GROUP BY product_id", $order_info['order_id']);
+    $product_ids = db_get_hash_single_array("SELECT product_id, amount FROM ?:order_details WHERE order_id = ?i GROUP BY product_id", array('product_id', 'amount'), $order_info['order_id']);
 
     if ($order_statuses[$status_to]['params']['inventory'] == 'D' && $order_statuses[$status_from]['params']['inventory'] == 'I') {
         $increase = true;
@@ -30,12 +30,12 @@ function fn_bestsellers_change_order_status(&$status_to, &$status_from, &$order_
         return true;
     }
 
-    foreach ($product_ids as $product_id) {
+    foreach ($product_ids as $product_id => $amount) {
         $cids = db_get_fields("SELECT category_id FROM ?:products_categories WHERE product_id = ?i", $product_id);
         if (!empty($cids)) {
             foreach ($cids as $cid) {
                 $c_amount = db_get_field("SELECT amount FROM ?:product_sales WHERE category_id = ?i AND product_id = ?i", $cid, $product_id);
-                $c_amount = ($increase == true) ? ($c_amount + 1) : ($c_amount - 1);
+                $c_amount = ($increase == true) ? ($c_amount + $amount) : ($c_amount - $amount);
                 db_query("REPLACE INTO ?:product_sales (category_id, product_id, amount) VALUES (?i, ?i, ?i)", $cid, $product_id, $c_amount);
             }
         }
@@ -72,10 +72,12 @@ function fn_bestsellers_get_products(&$params, &$fields, &$sortings, &$condition
     if (!empty($params['bestsellers'])) {
         $fields[] = 'SUM(?:product_sales.amount) as sales_amount';
         $sortings['sales_amount'] = 'sales_amount';
-        $join .= ' INNER JOIN ?:product_sales ON ?:product_sales.product_id = products.product_id AND ?:product_sales.category_id = products_categories.category_id ';
         $group_by = '?:product_sales.product_id';
         if (!empty($params['category_id'])) {
             $condition .= db_quote(" AND ?:product_sales.category_id = ?i", $params['category_id']);
+            $join .= ' INNER JOIN ?:product_sales ON ?:product_sales.product_id = products.product_id AND ?:product_sales.category_id = products_categories.category_id ';
+        } else {
+            $join .= " INNER JOIN ?:product_sales ON ?:product_sales.product_id = products.product_id AND ?:product_sales.category_id = products_categories.category_id AND products_categories.link_type = 'M'";
         }
 
     } elseif (!empty($params['on_sale'])) {
