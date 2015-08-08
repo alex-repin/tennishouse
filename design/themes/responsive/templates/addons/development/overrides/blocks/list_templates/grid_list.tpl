@@ -11,7 +11,10 @@
             {$vt_id = $f_category.variant_id}
             {if $sections_categorization.$vt_id}
                 {$products = $sections_categorization.$vt_id}
-                <h2 class="ty-categorize__title">{$f_category.description} {$f_category.variant}</h2>
+                <div class="ty-categorize">
+                    <div class="ty-categorize__title">{$f_category.description} {$f_category.variant}</div>
+                    <div class="ty-categorize__description">{$f_category.variant_description}</div>
+                </div>
                 <div class="ty-categorize__section">
                     {include file="addons/development/common/grid_list_section.tpl" products=$products}
                 </div>
@@ -19,7 +22,9 @@
         {/foreach}
         {if $sections_categorization.other}
             {$products = $sections_categorization.other}
-            <h2 class="ty-categorize__title">{__("other")}</h2>
+            <div class="ty-categorize">
+                <div class="ty-categorize__title">{__("other")}</div>
+            </div>
             <div class="ty-categorize__section">
                 {include file="addons/development/common/grid_list_section.tpl" products=$products}
             </div>

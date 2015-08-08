@@ -64,8 +64,9 @@ if ($mode == 'catalog') {
         $_SESSION['current_category_id'] = $_SESSION['breadcrumb_category_id'] = $_REQUEST['category_id'];
 
         // Get subcategories list for current category
-        Registry::get('view')->assign('subcategories', fn_get_subcategories($_REQUEST['category_id']));
-
+        $subcategories = fn_get_subcategories($_REQUEST['category_id']);
+        Registry::get('view')->assign('subcategories', $subcategories);
+        
         // Get full data for current category
         $category_data = fn_get_category_data($_REQUEST['category_id'], CART_LANGUAGE, '*', true, false, $preview);
         
@@ -73,209 +74,210 @@ if ($mode == 'catalog') {
         $main_parent_id = reset($category_parent_ids);
         array_pop($category_parent_ids);
 
-        $params = $_REQUEST;
+        if (empty($subcategories) || !empty($category_data['parent_id']) || fn_display_subheaders($category_data['category_id'])) {
+            $params = $_REQUEST;
 
-        if (!empty($_REQUEST['items_per_page'])) {
-            $_SESSION['items_per_page'] = $_REQUEST['items_per_page'];
-        } elseif (!empty($_SESSION['items_per_page'])) {
-            $params['items_per_page'] = $_SESSION['items_per_page'];
-        }
-
-        $params['cid'] = $_REQUEST['category_id'];
-        $params['extend'] = array('categories', 'description');
-        $params['subcats'] = '';
-        if (!empty($category_data['tabs_categorization'])) {
-            $params['tabs_categorization'] = $category_data['tabs_categorization'];
-        }
-        if (!empty($category_data['subtabs_categorization'])) {
-            $params['subtabs_categorization'] = $category_data['subtabs_categorization'];
-        }
-        if (!empty($category_data['sections_categorization'])) {
-            $params['sections_categorization'] = $category_data['sections_categorization'];
-        }
-        if (Registry::get('settings.General.show_products_from_subcategories') == 'Y') {
-            $params['subcats'] = 'Y';
-        }
-        if (!empty($category_data['products_sorting'])) {
-            $sorting = explode('-', $category_data['products_sorting']);
-            if (is_array($sorting) && count($sorting) == 2) {
-                $params['sort_by'] = array_shift($sorting);
-                $params['sort_order'] = array_shift($sorting);
+            if (!empty($_REQUEST['items_per_page'])) {
+                $_SESSION['items_per_page'] = $_REQUEST['items_per_page'];
+            } elseif (!empty($_SESSION['items_per_page'])) {
+                $params['items_per_page'] = $_SESSION['items_per_page'];
             }
-        }
 
-        list($products, $search) = fn_get_products($params, Registry::get('settings.Appearance.products_per_page'), CART_LANGUAGE);
-
-        if (isset($search['page']) && ($search['page'] > 1) && empty($products)) {
-            return array(CONTROLLER_STATUS_NO_PAGE);
-        }
-
-        fn_gather_additional_products_data($products, array(
-            'get_icon' => false,
-            'get_detailed' => true,
-            'get_additional' => false,
-            'get_options' => true,
-            'get_discounts' => true,
-            'get_features' => false,
-            'get_title_features' => true,
-            'allow_duplication' => true
-        ));
-        $subtabs_string = $tab_string = '';
-        if (!empty($products)) {
-            if (empty($category_data['brand']) || $category_data['brand']['feature_id'] != $category_data['tabs_categorization']) {
-                if (!empty($category_data['tabs_categorization'])) {
-                    $tb_feature = fn_get_product_feature_data($category_data['tabs_categorization'], true);
-                } else {
-                    $tb_feature = array();
-                    $tb_feature['variants']['all'] = array(
-                        'variant' => __('all')
-                    );
+            $params['cid'] = $_REQUEST['category_id'];
+            $params['extend'] = array('categories', 'description');
+            $params['subcats'] = '';
+            if (!empty($category_data['tabs_categorization'])) {
+                $params['tabs_categorization'] = $category_data['tabs_categorization'];
+            }
+            if (!empty($category_data['subtabs_categorization'])) {
+                $params['subtabs_categorization'] = $category_data['subtabs_categorization'];
+            }
+            if (!empty($category_data['sections_categorization'])) {
+                $params['sections_categorization'] = $category_data['sections_categorization'];
+            }
+            if (Registry::get('settings.General.show_products_from_subcategories') == 'Y') {
+                $params['subcats'] = 'Y';
+            }
+            if (!empty($category_data['products_sorting'])) {
+                $sorting = explode('-', $category_data['products_sorting']);
+                if (is_array($sorting) && count($sorting) == 2) {
+                    $params['sort_by'] = array_shift($sorting);
+                    $params['sort_order'] = array_shift($sorting);
                 }
-                if (!empty($tb_feature['variants'])) {
-                    $tab_groups = $tab_ids = array();
-                    foreach ($tb_feature['variants'] as $key => $vr_data) {
-                        if (empty($vr_data['variant_code'])) {
-                            $tab_ids[$key] = $key;
-                        } elseif (!empty($vr_data['variant_code']) && !in_array($vr_data['variant_code'], array_keys($tab_groups))) {
-                            $tab_ids[$key] = $key;
-                            $tab_groups[$vr_data['variant_code']] = $key;
-                            $lang_var = __("tab_groups_" . $tb_feature['feature_code'] . '_' . $vr_data['variant_code']);
-                            if (!empty($lang_var) && $lang_var[0] != '_') {
-                                $tb_feature['variants'][$key]['variant'] = $lang_var;
-                            }
-                        } elseif (!empty($vr_data['variant_code'])) {
-                            $tab_ids[$key] = $tab_groups[$vr_data['variant_code']];
-                        }
+            }
+            
+            list($products, $search) = fn_get_products($params, Registry::get('settings.Appearance.products_per_page'), CART_LANGUAGE);
+            if (isset($search['page']) && ($search['page'] > 1) && empty($products)) {
+                return array(CONTROLLER_STATUS_NO_PAGE);
+            }
+
+            fn_gather_additional_products_data($products, array(
+                'get_icon' => false,
+                'get_detailed' => true,
+                'get_additional' => false,
+                'get_options' => true,
+                'get_discounts' => true,
+                'get_features' => false,
+                'get_title_features' => true,
+                'allow_duplication' => true
+            ));
+            $subtabs_string = $tab_string = '';
+            if (!empty($products)) {
+                if (empty($category_data['brand']) || $category_data['brand']['feature_id'] != $category_data['tabs_categorization']) {
+                    if (!empty($category_data['tabs_categorization'])) {
+                        $tb_feature = fn_get_product_feature_data($category_data['tabs_categorization'], true);
+                    } else {
+                        $tb_feature = array();
+                        $tb_feature['variants']['all'] = array(
+                            'variant' => __('all')
+                        );
                     }
-                    $tb_feature['variants']['discounts'] = array(
-                        'variant' => __("discounts")
-                    );
-                    $tabs_categorization = array();
-                    foreach ($products as $i => $product) {
-                        if (!empty($product['tabs_categorization'])) {
-                            $tabs_categorization[$tab_ids[$product['tabs_categorization']]][] = $product;
-                        } else {
-                            if (!empty($category_data['tabs_categorization'])) {
-                                $tabs_categorization['other'][] = $product;
+                    if (!empty($tb_feature['variants'])) {
+                        $tab_groups = $tab_ids = array();
+                        foreach ($tb_feature['variants'] as $key => $vr_data) {
+                            if (empty($vr_data['variant_code'])) {
+                                $tab_ids[$key] = $key;
+                            } elseif (!empty($vr_data['variant_code']) && !in_array($vr_data['variant_code'], array_keys($tab_groups))) {
+                                $tab_ids[$key] = $key;
+                                $tab_groups[$vr_data['variant_code']] = $key;
+                                $lang_var = __("tab_groups_" . $tb_feature['feature_code'] . '_' . $vr_data['variant_code']);
+                                if (!empty($lang_var) && $lang_var[0] != '_') {
+                                    $tb_feature['variants'][$key]['variant'] = $lang_var;
+                                }
+                            } elseif (!empty($vr_data['variant_code'])) {
+                                $tab_ids[$key] = $tab_groups[$vr_data['variant_code']];
+                            }
+                        }
+                        $tb_feature['variants']['discounts'] = array(
+                            'variant' => __("discounts")
+                        );
+                        $tabs_categorization = array();
+                        foreach ($products as $i => $product) {
+                            if (!empty($product['tabs_categorization'])) {
+                                $tabs_categorization[$tab_ids[$product['tabs_categorization']]][] = $product;
                             } else {
-                                $tabs_categorization['all'][] = $product;
+                                if (!empty($category_data['tabs_categorization'])) {
+                                    $tabs_categorization['other'][] = $product;
+                                } else {
+                                    $tabs_categorization['all'][] = $product;
+                                }
+                            }
+                            if ($product['base_price'] > $product['price']) {
+                                $tabs_categorization['discounts'][] = $product;
                             }
                         }
-                        if ($product['base_price'] > $product['price']) {
-                            $tabs_categorization['discounts'][] = $product;
+                        foreach ($tb_feature['variants'] as $key => $vr_data) {
+                            if (empty($tabs_categorization[$key])) {
+                                unset($tb_feature['variants'][$key]);
+                            }
                         }
-                    }
-                    foreach ($tb_feature['variants'] as $key => $vr_data) {
-                        if (empty($tabs_categorization[$key])) {
-                            unset($tb_feature['variants'][$key]);
+                        if (!empty($tabs_categorization['other'])) {
+                            $tb_feature['variants']['other'] = array('variant' => __("other"));
                         }
-                    }
-                    if (!empty($tabs_categorization['other'])) {
-                        $tb_feature['variants']['other'] = array('variant' => __("other"));
-                    }
-                    if (!empty($_REQUEST['tc_id'])) {
-                        $_SESSION['tc_id'][$main_parent_id] = $params['tc_id'] = $_REQUEST['tc_id'];
-                        // Store gender mode
-                        if (!empty($tb_feature['variants'][$_REQUEST['tc_id']]['variant_code'])) {
-                            fn_set_store_gender_mode($tb_feature['variants'][$_REQUEST['tc_id']]['variant_code']);
-                        }
-                    }
-                    if (empty($params['tc_id'])) {
-                        foreach ($tb_feature['variants'] as $j => $vt_data) {
-                            if (!empty($vt_data['variant_code']) && fn_gender_match($vt_data['variant_code']) && !empty($tabs_categorization[$vt_data['variant_id']])) {
-                                $params['tc_id'] = $_SESSION['tc_id'][$main_parent_id] = $vt_data['variant_id'];
-                                fn_set_store_gender_mode($vt_data['variant_code']);
-                                break;
+                        if (!empty($_REQUEST['tc_id'])) {
+                            $_SESSION['tc_id'][$main_parent_id] = $params['tc_id'] = $_REQUEST['tc_id'];
+                            // Store gender mode
+                            if (!empty($tb_feature['variants'][$_REQUEST['tc_id']]['variant_code'])) {
+                                fn_set_store_gender_mode($tb_feature['variants'][$_REQUEST['tc_id']]['variant_code']);
                             }
                         }
                         if (empty($params['tc_id'])) {
-                            if (!empty($_SESSION['tc_id'][$main_parent_id]) && !empty($tabs_categorization[$_SESSION['tc_id'][$main_parent_id]])) {
-                                $params['tc_id'] = $_SESSION['tc_id'][$main_parent_id];
-                            } elseif (!empty($tb_feature['variants'])) {
-                                $keys = array_keys($tb_feature['variants']);
-                                $params['tc_id'] = $_SESSION['tc_id'][$main_parent_id] = reset($keys);
+                            foreach ($tb_feature['variants'] as $j => $vt_data) {
+                                if (!empty($vt_data['variant_code']) && fn_gender_match($vt_data['variant_code']) && !empty($tabs_categorization[$vt_data['variant_id']])) {
+                                    $params['tc_id'] = $_SESSION['tc_id'][$main_parent_id] = $vt_data['variant_id'];
+                                    fn_set_store_gender_mode($vt_data['variant_code']);
+                                    break;
+                                }
                             }
-                            if (!empty($tb_feature['variants'][$params['tc_id']]['variant_code'])) {
-                                fn_set_store_gender_mode($tb_feature['variants'][$params['tc_id']]['variant_code']);
+                            if (empty($params['tc_id'])) {
+                                if (!empty($_SESSION['tc_id'][$main_parent_id]) && !empty($tabs_categorization[$_SESSION['tc_id'][$main_parent_id]])) {
+                                    $params['tc_id'] = $_SESSION['tc_id'][$main_parent_id];
+                                } elseif (!empty($tb_feature['variants'])) {
+                                    $keys = array_keys($tb_feature['variants']);
+                                    $params['tc_id'] = $_SESSION['tc_id'][$main_parent_id] = reset($keys);
+                                }
+                                if (!empty($tb_feature['variants'][$params['tc_id']]['variant_code'])) {
+                                    fn_set_store_gender_mode($tb_feature['variants'][$params['tc_id']]['variant_code']);
+                                }
                             }
                         }
+                        if (!empty($params['tc_id']) && !empty($tabs_categorization[$params['tc_id']])) {
+                            $products = $tabs_categorization[$params['tc_id']];
+                            $tab_string = $tb_feature['variants'][$params['tc_id']]['variant'];
+                        }
+                        
+                        Registry::get('view')->assign('tb_feature', $tb_feature);
+                        Registry::get('view')->assign('active_tab', $params['tc_id']);
+                        //Registry::get('view')->assign('tab_ids', $tab_ids);
                     }
-                    if (!empty($params['tc_id']) && !empty($tabs_categorization[$params['tc_id']])) {
-                        $products = $tabs_categorization[$params['tc_id']];
-                        $tab_string = $tb_feature['variants'][$params['tc_id']]['variant'];
-                    }
-                    
-                    Registry::get('view')->assign('tb_feature', $tb_feature);
-                    Registry::get('view')->assign('active_tab', $params['tc_id']);
-                    //Registry::get('view')->assign('tab_ids', $tab_ids);
                 }
-            }
 
-            if (!empty($category_data['subtabs_categorization']) && (empty($category_data['brand']) || $category_data['brand']['feature_id'] != $category_data['subtabs_categorization'])) {
-                $stb_feature = fn_get_product_feature_data($category_data['subtabs_categorization'], true, true);
-                if (!empty($stb_feature['variants'])) {
-                    $subtabs_categorization = array();
-                    foreach ($products as $i => $product) {
-                        if (!empty($product['subtabs_categorization'])) {
-                            $subtabs_categorization[$product['subtabs_categorization']][] = $product;
-                        } else {
-                            $subtabs_categorization['other'][] = $product;
-                        }
-                    }
-                    $sb_array = array();
-                    foreach ($stb_feature['variants'] as $key => $vr_data) {
-                        if (empty($subtabs_categorization[$key])) {
-                            unset($stb_feature['variants'][$key]);
-                        } else {
-                            $sb_array[] = $stb_feature['variants'][$key]['variant'];
-                        }
-                    }
-                    if (!empty($sb_array)) {
-                        $subtabs_string = implode(', ', $sb_array);
-                    }
-                    if (!empty($subtabs_categorization['other'])) {
-                        $stb_feature['variants']['other'] = array('variant' => __("other"));
-                    }
-                    if (!empty($_REQUEST['stc_id'])) {
-                        $_SESSION['stc_id'][$main_parent_id] = $_REQUEST['stc_id'];
-                    }
-                    if (empty($params['stc_id'])) {
-                        if (!empty($_SESSION['stc_id'][$main_parent_id]) && !empty($subtabs_categorization[$_SESSION['stc_id'][$main_parent_id]])) {
-                            $params['stc_id'] = $_SESSION['stc_id'][$main_parent_id];
-                        } elseif (!empty($stb_feature['variants'])) {
-                            $keys = array_keys($stb_feature['variants']);
-                            $params['stc_id'] = $_SESSION['stc_id'][$main_parent_id] = reset($keys);
-                        }
-                    }
-                    if (!empty($params['stc_id']) && !empty($subtabs_categorization[$params['stc_id']])) {
-                        $products = $subtabs_categorization[$params['stc_id']];
-                    }
-        
-                    Registry::get('view')->assign('stb_feature', $stb_feature);
-                    Registry::get('view')->assign('active_subtab', $params['stc_id']);
-                }
-            }
-            if (!empty($category_data['sections_categorization'])) {
-                $sections_categorization = $other = array();
-                foreach ($products as $i => $product) {
-                    if (!empty($product['sections_categorization'])) {
-                        $sections = array_unique(explode(',', $product['sections_categorization']));
-                        foreach ($sections as $k => $section_id) {
-                            if (!empty($section_id)) {
-                                $sections_categorization[$section_id][] = $product;
+                if (!empty($category_data['subtabs_categorization']) && (empty($category_data['brand']) || $category_data['brand']['feature_id'] != $category_data['subtabs_categorization'])) {
+                    $stb_feature = fn_get_product_feature_data($category_data['subtabs_categorization'], true, true);
+                    if (!empty($stb_feature['variants'])) {
+                        $subtabs_categorization = array();
+                        foreach ($products as $i => $product) {
+                            if (!empty($product['subtabs_categorization'])) {
+                                $subtabs_categorization[$product['subtabs_categorization']][] = $product;
+                            } else {
+                                $subtabs_categorization['other'][] = $product;
                             }
                         }
-                    } else {
-                        $other[] = $product;
+                        $sb_array = array();
+                        foreach ($stb_feature['variants'] as $key => $vr_data) {
+                            if (empty($subtabs_categorization[$key])) {
+                                unset($stb_feature['variants'][$key]);
+                            } else {
+                                $sb_array[] = $stb_feature['variants'][$key]['variant'];
+                            }
+                        }
+                        if (!empty($sb_array)) {
+                            $subtabs_string = implode(', ', $sb_array);
+                        }
+                        if (!empty($subtabs_categorization['other'])) {
+                            $stb_feature['variants']['other'] = array('variant' => __("other"));
+                        }
+                        if (!empty($_REQUEST['stc_id'])) {
+                            $_SESSION['stc_id'][$main_parent_id] = $_REQUEST['stc_id'];
+                        }
+                        if (empty($params['stc_id'])) {
+                            if (!empty($_SESSION['stc_id'][$main_parent_id]) && !empty($subtabs_categorization[$_SESSION['stc_id'][$main_parent_id]])) {
+                                $params['stc_id'] = $_SESSION['stc_id'][$main_parent_id];
+                            } elseif (!empty($stb_feature['variants'])) {
+                                $keys = array_keys($stb_feature['variants']);
+                                $params['stc_id'] = $_SESSION['stc_id'][$main_parent_id] = reset($keys);
+                            }
+                        }
+                        if (!empty($params['stc_id']) && !empty($subtabs_categorization[$params['stc_id']])) {
+                            $products = $subtabs_categorization[$params['stc_id']];
+                        }
+            
+                        Registry::get('view')->assign('stb_feature', $stb_feature);
+                        Registry::get('view')->assign('active_subtab', $params['stc_id']);
                     }
                 }
-                $sc_feature = db_get_hash_array("SELECT ?:product_features.feature_id, ?:product_features_descriptions.description, ?:product_feature_variants.variant_id, ?:product_feature_variant_descriptions.variant FROM ?:product_features LEFT JOIN ?:product_features_descriptions ON ?:product_features_descriptions.feature_id = ?:product_features.feature_id AND ?:product_features_descriptions.lang_code = ?s INNER JOIN ?:product_feature_variants ON ?:product_feature_variants.feature_id = ?:product_features.feature_id LEFT JOIN ?:product_feature_variant_descriptions ON ?:product_feature_variant_descriptions.variant_id = ?:product_feature_variants.variant_id AND ?:product_feature_variant_descriptions.lang_code = ?s WHERE ?:product_features.feature_id IN (?n) AND ?:product_feature_variants.variant_id IN (?n) ORDER BY ?:product_feature_variants.position", 'variant_id', CART_LANGUAGE, CART_LANGUAGE, $category_data['sections_categorization'], array_keys($sections_categorization));
-                $sections_categorization['other'] = $other;
-                Registry::get('view')->assign('sections_categorization', $sections_categorization);
-                Registry::get('view')->assign('sc_feature', $sc_feature);
+                if (!empty($category_data['sections_categorization'])) {
+                    $sections_categorization = $other = array();
+                    foreach ($products as $i => $product) {
+                        if (!empty($product['sections_categorization'])) {
+                            $sections = array_unique(explode(',', $product['sections_categorization']));
+                            foreach ($sections as $k => $section_id) {
+                                if (!empty($section_id)) {
+                                    $sections_categorization[$section_id][] = $product;
+                                }
+                            }
+                        } else {
+                            $other[] = $product;
+                        }
+                    }
+                    $sc_feature = db_get_hash_array("SELECT ?:product_features.feature_id, ?:product_features_descriptions.description, ?:product_feature_variants.variant_id, ?:product_feature_variant_descriptions.variant, ?:product_feature_variant_descriptions.description AS variant_description FROM ?:product_features LEFT JOIN ?:product_features_descriptions ON ?:product_features_descriptions.feature_id = ?:product_features.feature_id AND ?:product_features_descriptions.lang_code = ?s INNER JOIN ?:product_feature_variants ON ?:product_feature_variants.feature_id = ?:product_features.feature_id LEFT JOIN ?:product_feature_variant_descriptions ON ?:product_feature_variant_descriptions.variant_id = ?:product_feature_variants.variant_id AND ?:product_feature_variant_descriptions.lang_code = ?s WHERE ?:product_features.feature_id IN (?n) AND ?:product_feature_variants.variant_id IN (?n) ORDER BY ?:product_feature_variants.position", 'variant_id', CART_LANGUAGE, CART_LANGUAGE, $category_data['sections_categorization'], array_keys($sections_categorization));
+                    $sections_categorization['other'] = $other;
+                    Registry::get('view')->assign('sections_categorization', $sections_categorization);
+                    Registry::get('view')->assign('sc_feature', $sc_feature);
+                }
             }
+            // [tennishouse]
         }
-        // [tennishouse]
     
         // If page title for this category is exist than assign it to template
         if (!empty($category_data['page_title'])) {

@@ -637,11 +637,12 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                     $brand = $products_features[$product['product_id']][BRAND_FEATURE_ID]['variants'];
                     $product['brand'] = $brands['variants'][$products_features[$product['product_id']][BRAND_FEATURE_ID]['variant_id']];
                     if ($product['type'] == 'R') {
-                        if (!empty($variants)) {
-                            $product['subtitle'] = __("series") .  ' - ' .  reset($variants);
-                        } else {
-                            $product['subtitle'] = __("type") .  ' - ' .  $products_features[$product['product_id']][TYPE_FEATURE_ID]['variants'];
-                        }
+                        $product['subtitle'] = __("type") .  ' - ' .  $products_features[$product['product_id']][TYPE_FEATURE_ID]['variants'];
+//                         if (!empty($variants)) {
+//                             $product['subtitle'] = __("series") .  ' - ' .  reset($variants);
+//                         } else {
+//                             $product['subtitle'] = __("type") .  ' - ' .  $products_features[$product['product_id']][TYPE_FEATURE_ID]['variants'];
+//                         }
                     } elseif ($product['type'] == 'A') {
                         $product['subtitle'] = reset($variants) .  ' - ' .  $brand;
                     } elseif ($product['type'] == 'S') {

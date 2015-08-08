@@ -54,6 +54,7 @@ function fn_bestsellers_delete_product_post(&$product_id)
 function fn_bestsellers_get_products_pre(&$params, &$items_per_page, &$lang_code)
 {
     if (!empty($params['bestsellers'])) {
+        $params['subcats'] = 'Y';
         $params['extend'][] = 'categories';
     } elseif (empty($params['sort_by']) || empty($sortings[$params['sort_by']])) {
         $default_sorting_params = fn_get_default_products_sorting();

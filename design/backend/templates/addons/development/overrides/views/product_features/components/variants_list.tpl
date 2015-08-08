@@ -11,7 +11,8 @@
         </th>
         <th width="5%">{__("position_short")}</th>
         <th width="5%">{__("code")}</th>
-        <th width="50%">{__("variant")}</th>
+        <th width="10%">{__("variant")}</th>
+        <th width="40%">{__("description")}</th>
         <th>&nbsp;</th>
     </tr>
     </thead>
@@ -28,8 +29,10 @@
             <input type="text" name="feature_data[variants][{$num}][position]" value="{$var.position}" size="4" class="input-micro input-hidden"/></td>
         <td width="5%">
             <input type="text" name="feature_data[variants][{$num}][variant_code]" value="{$var.variant_code}" size="4" class="input-micro input-hidden"/></td>
-        <td>
-            <input type="text" name="feature_data[variants][{$num}][variant]" value="{$var.variant}" class="span6 input-hidden cm-feature-value {if $feature_type == "N"}cm-value-decimal{/if}"></td>
+        <td width="10%">
+            <input type="text" name="feature_data[variants][{$num}][variant]" value="{$var.variant}" class="input-hidden cm-feature-value {if $feature_type == "N"}cm-value-decimal{/if}"></td>
+        <td width="40%">
+            <textarea id="elm_description_{$id}_{$num}" name="feature_data[variants][{$num}][description]" cols="50" rows="1" style="width: auto; height: 20px;" class="input-hidden">{$var.description}</textarea></td>
         <td>
             <span id="on_extra_feature_variants_{$id}_{$num}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand cm-combination-options-{$id}"><span class="exicon-expand"></span></span>
             <span id="off_extra_feature_variants_{$id}_{$num}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand hidden cm-combination-options-{$id}"><span class="exicon-collapse"></span> </span>
@@ -43,7 +46,7 @@
     </tr>
     <tr {if $feature_type != "E" && !$id|fn_feature_has_size_chart}class="hidden"{/if} id="extra_feature_{$id}_{$num}">
         {if $feature_type == "E"}
-        <td colspan="6">
+        <td colspan="7">
             <div class="control-group">
                 <label class="control-label" for="elm_image_{$id}_{$num}">{__("image")}</label>
                 <div class="controls">
@@ -78,13 +81,6 @@
                     </div>
                 {/if}
                 <div class="control-group">
-                    <label class="control-label" for="elm_description_{$id}_{$num}">{__("description")}</label>
-                    <div class="controls">
-                    <!--processForm-->
-                    <textarea id="elm_description_{$id}_{$num}" name="feature_data[variants][{$num}][description]" cols="55" rows="8" class="cm-wysiwyg">{$var.description}</textarea>
-                    </div>
-                </div>
-                <div class="control-group">
                     <label class="control-label" for="elm_page_title_{$id}_{$num}">{__("page_title")}</label>
                     <div class="controls">
                         <input type="text" name="feature_data[variants][{$num}][page_title]" id="elm_page_title_{$id}_{$num}" size="55" value="{$var.page_title}" />
@@ -113,7 +109,7 @@
         </td>
         {/if}
         {if $id == $smarty.const.CLOTHES_GENDER_FEATURE_ID || $id == $smarty.const.SHOES_GENDER_FEATURE_ID}
-        <td colspan="6">
+        <td colspan="7">
             <div class="control-group">
                 <label class="control-label" for="elm_size_chart_{$id}_{$num}">{__("size_chart")}</label>
                 <div class="controls">
@@ -139,7 +135,9 @@
         <td>
             <input type="text" name="feature_data[variants][{$num}][variant_code]" value="" size="4" class="input-micro" /></td>
         <td>
-            <input type="text" name="feature_data[variants][{$num}][variant]" value="" class="span6 cm-feature-value {if $feature_type == "N"}cm-value-decimal{/if}" /></td>
+            <input type="text" name="feature_data[variants][{$num}][variant]" value="" class="cm-feature-value {if $feature_type == "N"}cm-value-decimal{/if}" /></td>
+        <td>
+            <textarea name="feature_data[variants][{$num}][description]" cols="50" rows="1" style="width: auto; height: 20px;">{$var.description}</textarea></td>
         <td>&nbsp;</td>
         <td class="right">
             <div class="hidden-tools">

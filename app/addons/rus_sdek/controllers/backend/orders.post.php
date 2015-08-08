@@ -306,7 +306,7 @@ if ($mode == 'details') {
                             $data_shipments[$shipment['shipment_id']]['address'] = $offices[$data_sdek['address_pvz']]['Address'];
                         }
 
-                        $data_status = db_get_array("SELECT * FROM ?:rus_sdek_status WHERE order_id = ?i AND shipment_id = ?i ", $params['order_id'], $shipment['shipment_id']);
+                        $data_status = db_get_array("SELECT * FROM ?:rus_sdek_status WHERE order_id = ?i AND shipment_id = ?i ORDER BY timestamp ASC", $params['order_id'], $shipment['shipment_id']);
                         if (!empty($data_status)) {
                             foreach ($data_status as $k => $status) {
                                 $status['city'] = db_get_field("SELECT city FROM ?:rus_city_sdek_descriptions as a LEFT JOIN ?:rus_cities_sdek as b ON a.city_id=b.city_id WHERE b.city_code = ?s", $status['city_code']);

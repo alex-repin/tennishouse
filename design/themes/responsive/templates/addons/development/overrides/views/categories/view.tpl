@@ -5,32 +5,30 @@
 {/if*}
 
 {if $subcategories && !$category_data.category_id|fn_display_subheaders && !$category_data.parent_id}
-    {math equation="ceil(n/c)" assign="rows" n=$subcategories|count c=$columns|default:"2"}
+    {math equation="ceil(n/c)" assign="rows" n=$subcategories|count c="2"}
     {split data=$subcategories size=$rows assign="splitted_subcategories"}
     <ul class="subcategories clearfix">
     {foreach from=$splitted_subcategories item="ssubcateg"}
-        <div class="subcategories-column">
         {foreach from=$ssubcateg item=category name="ssubcateg"}
             {if $category}
-                <li class="ty-subcategories__item">
-                    <a href="{"categories.view?category_id=`$category.category_id`"|fn_url}">
-                    {if $category.main_pair}
-                        {include file="common/image.tpl"
-                            show_detailed_link=false
-                            images=$category.main_pair
-                            no_ids=true
-                            image_id="category_image"
-                            image_width=$settings.Thumbnails.category_lists_thumbnail_width
-                            image_height=$settings.Thumbnails.category_lists_thumbnail_height
-                            class="ty-subcategories-img"
-                        }
-                    {/if}
-                    <span {live_edit name="category:category:{$category.category_id}"}>{$category.category}</span>
-                    </a>
-                </li>
+                <div class="ty-column2">
+                    <div class="ty-category-block-wrapper" id="category_block_{$category.category_id}" style="background: url('{$category.main_pair.detailed.http_image_path}')">
+                        <div class="ty-block-categories__overlay"></div>
+                        <div class="ty-block-categories-bottom-right">
+                            <a href="{"categories.view?category_id=`$category.category_id`"|fn_url}"><div class="ty-block-categories__item ty-block-categories__title">{$category.category}</div></a>
+                        </div>
+                    </div>
+                    <a href="{"categories.view?category_id=`$category.category_id`"|fn_url}"  id="category_block_link_{$category.category_id}"></a>
+                    <script type="text/javascript">
+                        Tygh.$(document).ready(function() {$ldelim}
+                            $('#category_block_' + '{$category.category_id}').click(function(){$ldelim}
+                                $('#category_block_link_' + '{$category.category_id}').click();
+                            {$rdelim});
+                        {$rdelim});
+                    </script>
+                </div>
             {/if}
         {/foreach}
-        </div>
     {/foreach}
     </ul>
 {/if}
