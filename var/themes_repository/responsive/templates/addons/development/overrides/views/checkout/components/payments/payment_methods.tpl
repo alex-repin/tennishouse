@@ -70,25 +70,28 @@
                     
                     {if $payment.template}
                         {capture name="payment_template"}
-                            {if $payment.description}
-                                <div class="ty-payments-list__description">
-                                    {$payment.description}
-                                </div>
-                            {/if}
 
-                            {if $payment.image}
-                                <div class="clearfix">
-                                    {include file="common/image.tpl" obj_id=$payment.payment_id images=$payment.image image_width="100" image_height="35" keep_transparent=true}
+                            <div class="ty-payments-list__item">
+                                <div class="ty-payments-list__item-group">
+                                    {if $payment.image}
+                                        {include file="common/image.tpl" obj_id=$payment.payment_id images=$payment.image image_width="100" image_height="35" keep_transparent=true}
+                                    {/if}
+                                    <div class="ty-payments-list__item-title-block">
+                                        <label for="payment_{$payment.payment_id}" class="ty-payments-list__item-title">
+                                            {$payment.payment}
+                                        </label>
+                                        {if $payment.description}<div class="ty-payments-list__item-description">{$payment.description}</div>{/if}
+                                    </div>
                                 </div>
-                            {/if}
-                            
+                            </div>
+                                    
                             {include file=$payment.template card_id=$payment.payment_id}
                         {/capture}
                     {/if}
 
                     {if $payment.template && $smarty.capture.payment_template|trim != ""}
                         <div class="clearfix">
-                            <div class="ty-payments-list__instruction other-text">{$payment.instructions nofilter}</div>
+                            {$payment.instructions nofilter}
                             {$smarty.capture.payment_template nofilter}
                         </div>
                     {else}

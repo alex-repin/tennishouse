@@ -2800,22 +2800,37 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
             if (!empty($cart['calculate_shipping'])) {
                 $rates = Shippings::calculateRates($shippings);
 
+                // [tennishouse]
+                $free_shippings = array();
+                foreach ($rates as $rate) {
+                    $g_key = $rate['keys']['group_key'];
+                    $sh_id = $rate['keys']['shipping_id'];
+
+                    if (!empty($product_groups[$g_key]['shippings'][$sh_id]['free_shipping']) && $rate['price'] !== false) {
+                        $rate['price'] += !empty($product_groups[$g_key]['package_info']['shipping_freight']) ? $product_groups[$g_key]['package_info']['shipping_freight'] : 0;
+                        $free_shippings[] = $rate['price'];
+                    }
+                }
+                if (!empty($free_shippings)) {
+                    $min_free_shipping = min($free_shippings);
+                }
+
                 foreach ($rates as $rate) {
                     $g_key = $rate['keys']['group_key'];
                     $sh_id = $rate['keys']['shipping_id'];
 
                     if ($rate['price'] !== false) {
                         $rate['price'] += !empty($product_groups[$g_key]['package_info']['shipping_freight']) ? $product_groups[$g_key]['package_info']['shipping_freight'] : 0;
-                        $product_groups[$g_key]['shippings'][$sh_id]['rate'] = empty($product_groups[$g_key]['shippings'][$sh_id]['free_shipping']) ? $rate['price'] : 0;
-                        // [tennishouse]
+                        $product_groups[$g_key]['shippings'][$sh_id]['rate'] = empty($product_groups[$g_key]['shippings'][$sh_id]['free_shipping']) ? $rate['price'] : (!empty($min_free_shipping) ? $rate['price'] - $min_free_shipping : 0);
                         $product_groups[$g_key]['shippings'][$sh_id]['delivery_time'] = !empty($rate['delivery_time']) ? $rate['delivery_time'] : $product_groups[$g_key]['shippings'][$sh_id]['delivery_time'];
                         $product_groups[$g_key]['shippings'][$sh_id]['original_rate'] = $rate['price'];
-                        // [tennishouse]
                     } else {
                         unset($product_groups[$g_key]['shippings'][$sh_id]);
                     }
                 }
+                // [tennishouse]
             }
+            
             $cart['product_groups'] = $product_groups;
         }
 
@@ -7137,7 +7152,7 @@ function fn_get_shipping_hash($product_groups)
 
 function fn_get_online_shipping_methods()
 {
-    $shipping_methods = db_get_hash_array("SELECT shipping_id, website FROM ?:shippings WHERE status = 'A' AND service_id != '0' ORDER BY position", 'shipping_id');
+    $shipping_methods = db_get_hash_array("SELECT shipping_id, website FROM ?:shippings WHERE status = 'A' AND service_id != '0' GROUP BY service_id ORDER BY position", 'shipping_id');
 
     if (!empty($shipping_methods)) {
         $shipping_images = fn_get_image_pairs(array_keys($shipping_methods), 'shipping', 'M', true, false);

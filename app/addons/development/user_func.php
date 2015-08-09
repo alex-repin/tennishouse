@@ -23,10 +23,10 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 function fn_process_php_errors($errno, $errstr, $errfile, $errline, $errcontext)
 {
-//     $dirs = Registry::get('config.dir');
-//     if (strpos($errfile, $dirs['var']) === false && strpos($errfile, $dirs['lib']) === false) {
-//         LogFacade::error("Error #" . $errno . ":" . $errstr . " in " . $errfile . " at line " . $errline);
-//     }
+    $dirs = Registry::get('config.dir');
+    if (strpos($errfile, $dirs['var']) === false && strpos($errfile, $dirs['lib']) === false) {
+        LogFacade::error("Error #" . $errno . ":" . $errstr . " in " . $errfile . " at line " . $errline);
+    }
 }
 
 function fn_get_discounted_products($params)

@@ -41,7 +41,7 @@
                                     <input type="hidden" name="add_sdek_info[{$shipment_id}][Address][Flat]" value="-" />
                                     {$shipment.rec_address}
                                 {else}
-                                    <select name="add_sdek_info[{$shipment_id}][Address][PvzCode]" class="input-slarge" id="item_modifier_type">
+                                    <select name="add_sdek_info[{$shipment_id}][Address][PvzCode]" class="input-medium" id="item_modifier_type">
                                         {foreach from=$shipment.offices item=address_shipping}
                                             <option value="{$address_shipping.Code}" {if $address_shipping.Code == $sdek_pvz}selected="selected"{/if}>{$address_shipping.Address}</option>
                                         {/foreach}

@@ -111,9 +111,9 @@ function fn_calculate_total_shipping_cost() {
                         {assign var="rate" value=__("free_shipping")}
                     {/if}
 
+                    <div class="ty-shipping-options__method">
                     {hook name="checkout:shipping_method"}
                         {if $display == "radio"}
-                            <div class="ty-shipping-options__method">
                                 <div class="ty-shipping-options__method-info">
                                     <input type="radio" class="ty-valign" id="sh_{$group_key}_{$shipping.shipping_id}" name="shipping_ids[{$group_key}]" value="{$shipping.shipping_id}" onclick="fn_calculate_total_shipping_cost();" {$checked} />
                                     {if $shipping.icon}
@@ -138,7 +138,6 @@ function fn_calculate_total_shipping_cost() {
                                         </div>
                                     {/if}
                                 </div>
-                            </div>
 
                         {elseif $display == "select"}
                             <option value="{$shipping.shipping_id}" {$selected}>{$shipping.shipping} {$delivery_time} - {$rate nofilter}</option>
@@ -149,6 +148,7 @@ function fn_calculate_total_shipping_cost() {
                             </div>
                         {/if}
                     {/hook}
+                    </div>
 
                 {/foreach}
 
