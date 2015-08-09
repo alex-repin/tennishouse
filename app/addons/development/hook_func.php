@@ -54,7 +54,10 @@ function fn_development_get_cart_product_data_post($hash, $product, $skip_promot
 
 function fn_development_calculate_cart_post(&$cart, $auth, $calculate_shipping, $calculate_taxes, $options_style, $apply_cart_promotions, $cart_products, $product_groups)
 {
-    $cart['net_total'] = $cart['net_subtotal'] + $cart['org_payment_surcharge'];
+    $cart['net_total'] = $cart['net_subtotal'];
+    if (!empty($cart['org_payment_surcharge'])) {
+        $cart['net_total'] += $cart['org_payment_surcharge'];
+    }
     if (!empty($cart['shipping'])) {
         foreach ($cart['shipping'] as $i => $shp) {
             $cart['net_total'] += $shp['original_rate'];
