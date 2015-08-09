@@ -1683,6 +1683,22 @@ label.cm-required::after {
     position: relative;
     height: 150px;
 }
+.ty-category-title__note-block {
+    bottom: 0;
+    right: 0;
+    position: fixed;
+    z-index: 100;
+    opacity: 0.87;
+}
+.ty-category-title__note {
+    background: url("../../../media/images/addons/development/help.png") no-repeat scroll right 5px center #333;
+    font-size: 15px;
+    padding: 7px 44px 7px 20px;
+    color: #fff;
+}
+.ty-category-title__note-url:hover {
+    color: #fff;
+}
 .ty-image-title {
     margin: 0 -11px;
     position: relative;
@@ -2014,7 +2030,24 @@ label.cm-required::after {
     background-color: darken(@category_menu, 5%);
 }
 /*Category menu*/
+
 /* Pages*/
+
+.ty-text-links {
+    margin: 3px 0;
+    padding: 0 !important;
+}
+.ty-text-links__item {
+    margin: 0 !important;
+    padding: 0;
+}
+.ty-text-links__item a {
+    padding: 5px 15px;
+    display: block;
+}
+.ty-text-links__item:hover a {
+    background-color: darken(@category_menu, 5%);
+}
 .ty-wysiwyg-content .ty-page-products h2 {
     font-size: 110%;
 }

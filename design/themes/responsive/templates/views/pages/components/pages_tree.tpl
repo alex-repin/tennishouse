@@ -9,7 +9,7 @@
 
 {foreach from=$tree item="page" key="key" name="fe`$not_root`"}
     {math equation="x*10" x=$page.level assign="shift"}
-    <li>
+    <div>
         <a href="{if $page.page_type == $smarty.const.PAGE_TYPE_LINK}{$page.link|fn_url}{else}{"pages.view?page_id=`$page.page_id`"|fn_url}{/if}"{if $page.new_window} target="_blank"{/if}{if $page.level != "0"} style="padding-left: {$shift}px;"{/if}>{$page.page}</a>
-    </li>
+    </div>
 {/foreach}

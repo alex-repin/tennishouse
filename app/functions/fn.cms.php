@@ -242,17 +242,12 @@ function fn_get_pages($params = array(), $items_per_page = 0, $lang_code = CART_
     if (!empty($params['neighbours'])) {
         $parent_ids = array();
         if (!empty($params['neighbours_page_id'])) {
-            $id_path = db_get_field("SELECT id_path FROM ?:pages WHERE page_id = ?i", $params['neighbours_page_id']);
-            $parent_ids = explode('/', $id_path);
-            if (count($parent_ids) == 1) {
-                array_unshift($parent_ids, 0);
-            }
-            $params['root_id'] = $parent_ids[0];
+            $params['root_id'] = $parent_id = db_get_field("SELECT parent_id FROM ?:pages WHERE page_id = ?i", $params['neighbours_page_id']);
         } else {
-            $parent_ids[] = 0;
+            $parent_id = 0;
         }
 
-        $condition .= db_quote(" AND ?:pages.parent_id IN (?n)", array_unique($parent_ids));
+        $condition .= db_quote(" AND ?:pages.parent_id = ?i AND ?:pages.page_id != ?i", $parent_id, $params['neighbours_page_id']);
     }
 
     fn_set_hook('get_pages', $params, $join, $condition, $fields, $group_by, $sortings, $lang_code);

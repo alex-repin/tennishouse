@@ -832,6 +832,35 @@ function fn_get_product_global_data($product_data, $data_names)
     return $result;
 }
 
+function fn_get_category_global_data($category_data, $data_names)
+{
+    $cat_ids = array();
+    if (!empty($category_data['path'])) {
+        $cat_ids = explode('/', $category_data['path']);
+    }
+    $result = array();
+    if (!empty($cat_ids)) {
+        $fields = implode(', ', $data_names);
+        $data = db_get_hash_array("SELECT category_id, $fields FROM ?:categories WHERE category_id IN (?n)", 'category_id', $cat_ids);
+        $types = db_get_hash_single_array("SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '?:categories'", array('COLUMN_NAME', 'DATA_TYPE'));
+        foreach ($data_names as $j => $dt_name) {
+            foreach (array_reverse($cat_ids) as $i => $ct_id) {
+                if (empty($result[$dt_name]) && ((in_array($types[$dt_name], array('int', 'mediumint', 'smallint', 'tinyint', 'bigint', 'float', 'decimal', 'double', 'real', 'bit', 'boolean', 'serial')) && !empty(floatval($data[$ct_id][$dt_name]))) || (!in_array($types[$dt_name], array('int', 'mediumint', 'smallint', 'tinyint', 'bigint', 'float', 'decimal', 'double', 'real', 'bit', 'boolean', 'serial')) && !empty($data[$ct_id][$dt_name])))) {
+                    $result[$dt_name] = $data[$ct_id][$dt_name];
+                    break;
+                }
+            }
+        }
+    }
+    foreach ($data_names as $i => $dt_name) {
+        if (empty($result[$dt_name]) && !empty(Registry::get('addons.development.' . $dt_name))) {
+            $result[$dt_name] = Registry::get('addons.development.' . $dt_name);
+        }
+    }
+    
+    return $result;
+}
+
 function fn_round_price($price)
 {
     return ceil(ceil($price) / 10) * 10;
