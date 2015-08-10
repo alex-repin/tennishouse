@@ -385,13 +385,13 @@ function fn_development_get_category_data_post($category_id, $field_list, $get_m
             fn_format_categorization($category_data, $categorization_data, 'sections_categorization');
         }
         $data = fn_get_category_global_data($category_data, array('note_url', 'note_text', 'products_sorting'));
-        if (empty($category_data['note_url'])) {
+        if (empty($category_data['note_url']) && !empty($data['note_url'])) {
             $category_data['note_url'] = $data['note_url'];
         }
-        if (empty($category_data['note_text'])) {
+        if (empty($category_data['note_text']) && !empty($data['note_text'])) {
             $category_data['note_text'] = $data['note_text'];
         }
-        if (empty($category_data['products_sorting'])) {
+        if (empty($category_data['products_sorting']) && !empty($data['products_sorting'])) {
             $category_data['products_sorting'] = $data['products_sorting'];
         }
     }
