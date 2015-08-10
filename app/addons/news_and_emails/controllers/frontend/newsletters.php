@@ -14,47 +14,45 @@
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+Use Tygh\Registry;
 
-    // Add email to maillist
-    if ($mode == 'add_subscriber') {
+// Add email to maillist
+if ($mode == 'add_subscriber') {
 
-        if (empty($_REQUEST['subscribe_email']) || fn_validate_email($_REQUEST['subscribe_email']) == false) {
-            fn_set_notification('E', __('error'), __('error_invalid_emails', array(
-                '[emails]' => $_REQUEST['subscribe_email']
-            )));
+    if (empty($_REQUEST['subscribe_email']) || fn_validate_email($_REQUEST['subscribe_email']) == false) {
+        fn_set_notification('E', __('error'), __('error_invalid_emails', array(
+            '[emails]' => $_REQUEST['subscribe_email']
+        )));
+    } else {
+        // First check if subscriber's email already in the list
+        $subscriber = db_get_row("SELECT * FROM ?:subscribers WHERE email = ?s", $_REQUEST['subscribe_email']);
+        if (empty($subscriber)) {
+            $_data = array(
+                'email' => $_REQUEST['subscribe_email'],
+                'timestamp' => TIME,
+            );
+
+            $subscriber_id = db_query("INSERT INTO ?:subscribers ?e", $_data);
+            $subscriber = db_get_row("SELECT * FROM ?:subscribers WHERE subscriber_id = ?i", $subscriber_id);
         } else {
-            // First check if subscriber's email already in the list
-            $subscriber = db_get_row("SELECT * FROM ?:subscribers WHERE email = ?s", $_REQUEST['subscribe_email']);
-            if (empty($subscriber)) {
-                $_data = array(
-                    'email' => $_REQUEST['subscribe_email'],
-                    'timestamp' => TIME,
-                );
-
-                $subscriber_id = db_query("INSERT INTO ?:subscribers ?e", $_data);
-                $subscriber = db_get_row("SELECT * FROM ?:subscribers WHERE subscriber_id = ?i", $subscriber_id);
-            } else {
-                $subscriber_id = $subscriber['subscriber_id'];
-            }
-
-            // update subscription data. If there is no any registration autoresponders, we set confirmed=1
-            // so user doesn't need to activate subscription
-            list($lists) = fn_get_mailing_lists();
-            fn_update_subscriptions($subscriber_id, array_keys($lists), NULL, fn_get_notification_rules(true));
-
-            fn_set_notification('N', __('congratulations'), __('text_subscriber_added'));
-
-            /*} else {
-                fn_set_notification('E', __('error'), __('error_email_already_subscribed'));
-            }*/
+            $subscriber_id = $subscriber['subscriber_id'];
         }
+
+        // update subscription data. If there is no any registration autoresponders, we set confirmed=1
+        // so user doesn't need to activate subscription
+        list($lists) = fn_get_mailing_lists();
+        fn_update_subscriptions($subscriber_id, array_keys($lists), NULL, fn_get_notification_rules(true));
+
+        fn_set_notification('N', __('congratulations'), __('text_subscriber_added'));
+
+        Registry::get('view')->display('addons/news_and_emails/blocks/static_templates/subscribe.tpl');
+        /*} else {
+            fn_set_notification('E', __('error'), __('error_email_already_subscribed'));
+        }*/
     }
-
-    return array(CONTROLLER_STATUS_REDIRECT);
-}
-
-if ($mode == 'unsubscribe') {
+    
+    exit;
+} elseif ($mode == 'unsubscribe') {
     if (!empty($_REQUEST['key']) && !empty($_REQUEST['list_id']) && !empty($_REQUEST['s_id'])) {
         if (!empty($_REQUEST['list_id'])) {
             $num = db_get_field("SELECT COUNT(*) FROM ?:user_mailing_lists WHERE unsubscribe_key = ?s AND list_id = ?i AND subscriber_id = ?i", $_REQUEST['key'], $_REQUEST['list_id'], $_REQUEST['s_id']);
