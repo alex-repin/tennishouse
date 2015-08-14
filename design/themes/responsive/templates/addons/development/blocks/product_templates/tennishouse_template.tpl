@@ -132,6 +132,7 @@
                 </div>
                 *}
 
+                {hook name="products:options_avail_container"}
                 <div class="ty-options-avail-container-wrap">
                     {if $product.product_options}
                     <div class="ty-options-container">
@@ -163,6 +164,7 @@
                         {$smarty.capture.$follow nofilter}
                     </div>
                 </div>
+                {/hook}
 
                 {if $capture_buttons}{capture name="buttons"}{/if}
                 <div class="ty-product-block__button">

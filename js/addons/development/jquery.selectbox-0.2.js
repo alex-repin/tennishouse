@@ -167,11 +167,14 @@
                     
                     function getOptions () {
                             var sub = arguments[1] && arguments[1].sub ? true : false,
-                                    disabled = arguments[1] && arguments[1].disabled ? true : false;
+                            disabled = arguments[1] && arguments[1].disabled ? true : false;
                             arguments[0].each(function (i) {
                                     var that = $(this),
                                             li = $("<li>"),
                                             child;
+                                    if (that.attr('id') != '') {
+                                        li.attr('id', 'opt_' + that.attr('id'));
+                                    }
                                     if (that.is(":selected")) {
                                             sbSelector.text(that.text());
                                             s = TRUE;

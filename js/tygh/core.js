@@ -612,10 +612,19 @@ var Tygh = {
                     if(inp.data('caMinQty')) {
                         min_qty = parseInt(inp.data('caMinQty'));
                     }
+                    if(inp.data('caMinQty')) {
+                        max_qty = parseInt(inp.data('caMaxQty'));
+                    }
                     var new_val = parseInt(inp.val()) + ((jelm.is('a.cm-increase') || jelm.parents('a.cm-increase').length) ? step : -step);
 
-                    inp.val(new_val > min_qty ? new_val : min_qty);
-                    inp.keypress();
+                    if (new_val < min_qty) {
+                        new_val = min_qty;
+                    }
+                    if (new_val > max_qty) {
+                        new_val = max_qty;
+                    }
+                    inp.val(new_val);
+                    inp.change();
 
                     return true;
 
@@ -3409,7 +3418,7 @@ var Tygh = {
                     }
 
                     if (elm.data('cetooltipclass')) {
-                        params.tipClass = params.tipClass + ' ' + elm.data('cetooltipclass');
+                        params.tipClass = elm.data('cetooltipclass') + ' ' + params.tipClass;
                     }
                     elm.tooltip(params).dynamic({
                         right: {},
@@ -3649,7 +3658,7 @@ var Tygh = {
 
         function _checkFields(form, requirements, clicked_elm)
         {
-            var set_mark, elm, lbl, container, _regexp, _message;
+            var set_mark, elm, lbl, container, _regexp, _message, popup_shown;
             var message_set = false;
 
             // Reset all failed fields
@@ -3812,19 +3821,22 @@ var Tygh = {
 
                 if (set_mark == true) {
                     if (lbl.hasClass('cm-requirement-popup')) {
-                        var block = elm.parent();
-                        var new_elm = elm.clone();
-                        new_elm.find('option').each(function(){
-                            $(this).removeAttr('selected');
-                        });
-                        var option_id = new_elm.attr('id');
-                        new_elm.attr('onchange',"fn_change_notification_option('" + option_id + "', '" + clicked_elm.attr('id') + "');");
-                        var new_block = $('<div>' + '<span class="cm-ac-notification-label"style="margin-right: 50px;">' + _.tr('define_option') + '</span>').append(block.find('.cm-notification-note').clone()).append('</div>').append(new_elm.clone()).append(new_elm.hasClass('cm-dropdown') ? "<script type='text/javascript'>(function(_, $){$(function(){$('.cm-dropdown').each(function(){$(this).selectbox();});});}(Tygh, Tygh.$));</script>" : '').html().str_replace(option_id, 'ntf_' + option_id);
-                        $.ceNotification('show', {
-                            type: 'I', 
-                            message: new_block,
-                            attach: clicked_elm
-                        });
+                        if (!popup_shown) {
+                            var popup_shown = true;
+                            var block = elm.parent();
+                            var new_elm = elm.clone();
+                            new_elm.find('option').each(function(){
+                                $(this).removeAttr('selected');
+                            });
+                            var option_id = new_elm.attr('id');
+                            new_elm.attr('onchange',"fn_change_notification_option('" + option_id + "', '" + clicked_elm.attr('id') + "');");
+                            var new_block = $('<div>' + '<span class="cm-ac-notification-label"style="margin-right: 50px;">' + _.tr('define_option') + '</span>').append(block.find('.cm-notification-note').clone()).append('</div>').append(new_elm.clone()).append(new_elm.hasClass('cm-dropdown') ? "<script type='text/javascript'>(function(_, $){$(function(){$('.cm-dropdown').each(function(){$(this).selectbox();});});}(Tygh, Tygh.$));</script>" : '').html().str_replace(option_id, 'ntf_' + option_id);
+                            $.ceNotification('show', {
+                                type: 'I', 
+                                message: new_block,
+                                attach: clicked_elm
+                            });
+                        }
                     } else {
                         lbl.parent().addClass('error');
                         elm.addClass('cm-failed-field');

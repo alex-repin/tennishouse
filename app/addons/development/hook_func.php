@@ -1192,7 +1192,7 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
         
         $global_data = fn_get_product_global_data($product_data, array('shipping_weight', 'margin', 'net_currency_code'));
         $product_data['global_margin'] = $global_data['margin'];
-        if (empty($product_data['net_currency_code'])) {
+        if (empty($product_data['net_currency_code']) && !empty($global_data['net_currency_code'])) {
             $product_data['net_currency_code'] = $global_data['net_currency_code'];
         }
         if (empty($product_data['margin']) || $product_data['margin'] == 0) {
@@ -1216,7 +1216,7 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
             }
         }
         
-        if ($product_data['weight'] == 0) {
+        if ($product_data['weight'] == 0 && !empty($global_data['shipping_weight'])) {
             $product_data['weight'] = $global_data['shipping_weight'];
         }
     }
