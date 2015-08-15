@@ -103,7 +103,7 @@
                     
                     sbHolder = $("<div>", {
                             "id": "sbHolder_" + inst.uid,
-                            "class": inst.settings.classHolder + (inst.isDisabled ? ' ' + inst.settings.classHolderDisabled : ''),
+                            "class": $target.data('cesbclass') + ' ' + inst.settings.classHolder + (inst.isDisabled ? ' ' + inst.settings.classHolderDisabled : ''),
                             "tabindex": $target.attr("tabindex")
                     });
                     

@@ -1,4 +1,3 @@
-<div id="content_description_{$group_id}_{$product.product_id}">
 <a class="ty-pc-group__products-item-link" href="{"products.view?product_id=`$product.product_id`"|fn_url}" target="_blank">
 <div class="ty-product-info">
     <div class="ty-product-info__image">
@@ -29,4 +28,3 @@
     </div>
 </div>
 </a>
-<!--content_description_{$group_id}_{$product.product_id}--></div>

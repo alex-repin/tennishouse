@@ -3,6 +3,7 @@
 {/if}
 
 <input type="hidden" name="appearance[details_page]" value="{$details_page}" />
+<input type="hidden" name="appearance[auto_process]" id="auto_process_form" value="" />
 {foreach from=$product.detailed_params key="param" item="value"}
     <input type="hidden" name="additional_info[{$param}]" value="{$value}" />
 {/foreach}
@@ -47,7 +48,7 @@
             {if $po.option_type == "S"} {*Selectbox*}
                 {if $po.variants}
                     {if ($po.disabled || $disabled) && !$po.not_required}<input type="hidden" value="{$po.value}" name="{$name}[{$id}][product_options][{$po.option_id}]" id="option_{$obj_prefix}{$id}_{$po.option_id}" />{/if}
-                    <select name="{$name}[{$id}][product_options][{$po.option_id}]" {if !$po.disabled && !$disabled}id="option_{$obj_prefix}{$id}_{$po.option_id}"{/if} onchange="{if $product.options_update}fn_change_options('{$obj_prefix}{$id}', '{$id}', '{$po.option_id}');{else} fn_change_variant_image('{$obj_prefix}{$id}', '{$po.option_id}');{/if}" class="cm-dropdown {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}disabled{/if}" {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}disabled="disabled"{/if}>
+                    <select name="{$name}[{$id}][product_options][{$po.option_id}]" {if !$po.disabled && !$disabled}id="option_{$obj_prefix}{$id}_{$po.option_id}"{/if} onchange="{if $product.options_update}fn_change_options('{$obj_prefix}{$id}', '{$id}', '{$po.option_id}');{else} fn_change_variant_image('{$obj_prefix}{$id}', '{$po.option_id}');{/if}" class="cm-dropdown {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}disabled{/if}{if $product.options_update} cm-options-update{/if}" {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}disabled="disabled"{/if}>
                         {if $product.options_type == "S"}
                             {if !$runtime.checkout || $po.disabled || $disabled || ($runtime.checkout && !$po.value)}
                                 <option value="">{if $po.disabled || $disabled}{__("select_option_above")}{elseif $po.default_text} - {$po.default_text} - {else}{__("please_select_one")}{/if}</option>

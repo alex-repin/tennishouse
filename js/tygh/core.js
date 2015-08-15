@@ -3660,6 +3660,7 @@ var Tygh = {
         {
             var set_mark, elm, lbl, container, _regexp, _message, popup_shown;
             var message_set = false;
+            var popups = [];
 
             // Reset all failed fields
             $('.cm-failed-field', form).removeClass('cm-failed-field');
@@ -3821,22 +3822,7 @@ var Tygh = {
 
                 if (set_mark == true) {
                     if (lbl.hasClass('cm-requirement-popup')) {
-                        if (!popup_shown) {
-                            var popup_shown = true;
-                            var block = elm.parent();
-                            var new_elm = elm.clone();
-                            new_elm.find('option').each(function(){
-                                $(this).removeAttr('selected');
-                            });
-                            var option_id = new_elm.attr('id');
-                            new_elm.attr('onchange',"fn_change_notification_option('" + option_id + "', '" + clicked_elm.attr('id') + "');");
-                            var new_block = $('<div>' + '<span class="cm-ac-notification-label"style="margin-right: 50px;">' + _.tr('define_option') + '</span>').append(block.find('.cm-notification-note').clone()).append('</div>').append(new_elm.clone()).append(new_elm.hasClass('cm-dropdown') ? "<script type='text/javascript'>(function(_, $){$(function(){$('.cm-dropdown').each(function(){$(this).selectbox();});});}(Tygh, Tygh.$));</script>" : '').html().str_replace(option_id, 'ntf_' + option_id);
-                            $.ceNotification('show', {
-                                type: 'I', 
-                                message: new_block,
-                                attach: clicked_elm
-                            });
-                        }
+                        popups.push(elm);
                     } else {
                         lbl.parent().addClass('error');
                         elm.addClass('cm-failed-field');
@@ -3845,25 +3831,58 @@ var Tygh = {
                         if (!elm.hasClass('cm-no-failed-msg')) {
                             elm.after('<span id="' + elm_id + '_error_message" class="help-inline">' + _getMessage(elm_id) + '</span>');
                         }
-                    }
+                        if (!message_set) {
+                            $.scrollToElm(elm);
+                            message_set = true;
+                        }
 
-                    if (!message_set) {
-                        $.scrollToElm(elm);
-                        message_set = true;
-                    }
+                        // Resize dialog if we have errors
+                        var dlg = $.ceDialog('get_last');
+                        var dlg_target = $('.cm-dialog-auto-size[data-ca-target-id="'+ dlg.attr('id') +'"]');
 
-                    // Resize dialog if we have errors
-                    var dlg = $.ceDialog('get_last');
-                    var dlg_target = $('.cm-dialog-auto-size[data-ca-target-id="'+ dlg.attr('id') +'"]');
-
-                    if(dlg_target.length) {
-                        dlg.ceDialog('reload');
+                        if(dlg_target.length) {
+                            dlg.ceDialog('reload');
+                        }
                     }
 
                 } else {
                     lbl.parent().removeClass('error');
                     elm.removeClass('cm-failed-field');
                     lbl.removeClass('cm-failed-label');
+                }
+            }
+            if (popups.length) {
+                for (var i = 0; i < popups.length; i++) {
+                    var block = popups[i].parent();
+                    var new_elm = popups[i].clone();
+                    new_elm.find('option').each(function(){
+                        $(this).removeAttr('selected');
+                    });
+                    var option_id = new_elm.attr('id');
+                    var trigger_change = false;
+                    if (popups.length == 1) {
+                        trigger_change = true;
+                    }
+                    new_elm.attr('onchange',"fn_change_notification_option('" + option_id + "', '" + clicked_elm.attr('id') + "', " + trigger_change + ");");
+                    var new_block = $('<div>' + '<span class="cm-ac-notification-label"style="margin-right: 50px;">' + _.tr('define_option') + '</span>').append(block.find('.cm-notification-note').clone()).append('</div>').append(new_elm.clone()).append(new_elm.hasClass('cm-dropdown') ? "<script type='text/javascript'>(function(_, $){$('.cm-dropdown').each(function(){$(this).selectbox();});}(Tygh, Tygh.$));</script>" : '').html().str_replace(option_id, 'ntf_' + option_id);
+                    $.ceNotification('show', {
+                        type: 'I', 
+                        message: new_block,
+                        attach: clicked_elm
+                    });
+                    if (!message_set) {
+                        $.scrollToElm(popups[i]);
+                        message_set = true;
+                    }
+                    break;
+                }
+                
+                // Resize dialog if we have errors
+                var dlg = $.ceDialog('get_last');
+                var dlg_target = $('.cm-dialog-auto-size[data-ca-target-id="'+ dlg.attr('id') +'"]');
+
+                if(dlg_target.length) {
+                    dlg.ceDialog('reload');
                 }
             }
             return !message_set;
@@ -4389,15 +4408,15 @@ var Tygh = {
                         attach.addClass('cm-button-ontop');
                         notification.addClass('cm-attached-notification');
                         notification.css({
-                            'top': attach.offset().top - notification.height() - 11,
-                            'left': attach.offset().left + notification.width() / 2 - 50,
+                            'top': attach.offset().top - notification.outerHeight() - 10,
+                            'left': attach.offset().left + attach.outerWidth() / 2 - notification.outerWidth() / 2,
                             'position': 'absolute'
                         });
                     } else {
                         $(_.body).append(
                             '<div class="ui-widget-overlay" style="z-index:500" data-ca-notification-key="' + key + '"></div>'
                         );
-                        notification.css('top', w.view_height / 2 - (notification.height() / 2));
+                        notification.css({'top': w.view_height / 2 - (notification.outerHeight() / 2) + 'px', 'left': w.view_width / 2 - (notification.outerWidth() / 2) + 'px'});
                     }
                     if (attach.length > 0) {
                         $(_.doc).on('click', '.ui-widget-overlay[data-ca-notification-key=' + key + ']', function() {

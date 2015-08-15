@@ -11,6 +11,12 @@
     vertical-align: top;
     width: 250px;
 }
+.ty-sb-popup-large.sbHolder {
+    width: 345px;
+}
+.ty-sb-popup-large.sbHolder .sbSelector {
+    width: 300px;
+}
 .sbToggle {
     background: url("../../../media/images/addons/development/select-icons.png") -64px 0 no-repeat #fff;
     display: inline-block;

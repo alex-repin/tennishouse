@@ -3,6 +3,7 @@
         <input type="hidden" name="redirect_url" value="{$config.current_url}" />
     {/if*}
     <input type="hidden" name="appearance[details_page]" value="{$details_page}" />
+    <input type="hidden" name="appearance[auto_process]" id="auto_process_form" value="" />
     {foreach from=$product.detailed_params key="param" item="value"}
         <input type="hidden" name="additional_info[{$param}]" value="{$value}" />
     {/foreach}
@@ -15,7 +16,7 @@
             {if $po.configurator_group_type == "S"}
                 {if $po.products}
                     <div class="ty-pc-group__products-item-block">
-                        <select name="product_data[{$product.product_id}][configuration][{$po.group_id}][product_ids]" id="group_{$po.group_id}" onchange="fn_change_options('{$obj_prefix}{$obj_id}', '{$obj_id}', '0');">
+                        <select name="product_data[{$product.product_id}][configuration][{$po.group_id}][product_ids]" id="group_{$po.group_id}" class="cm-dropdown cm-options-update" onchange="fn_change_options('{$obj_prefix}{$obj_id}', '{$obj_id}', '0');"  data-cesbClass="ty-sb-popup-large">
                             <option id="product_{$po.group_id}_0" value=""> - {$po.full_description nofilter} - </option>
                             {foreach from=$po.products item="group_product"}
                                 <option id="product_{$po.group_id}_{$group_product.product_id}" value="{$group_product.product_id}" {if $group_product.selected == "Y"}selected="selected"{/if} {if $group_product.disabled}disabled="disabled"{/if}>{$group_product.product}{if $show_price_values == true} - {include file="common/price.tpl" value=$group_product.price}{/if}{if $group_product.recommended == "Y"} ({__("recommended")}){/if}</option>
@@ -26,21 +27,6 @@
                                 {include file="addons/product_configurator/views/products/components/configuration_product.tpl" product=$group_product group_id=$po.group_id}
                             </div>
                         {/foreach}
-                        <script type="text/javascript">
-                        (function(_, $) {
-                            $(function() {
-                                $('#group_{$po.group_id}').selectbox();
-                                {foreach from=$po.products item="group_product"}
-                                    if ($('#product_info_{$po.group_id}_{$group_product.product_id}').length) {
-                                        $('#opt_product_{$po.group_id}_{$group_product.product_id}').addClass('cm-tooltip');
-                                        $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('title', $('#product_info_{$po.group_id}_{$group_product.product_id}').html());
-                                        $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('data-cetooltipclass', 'ty-pc-product-info');
-                                        $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('data-cetooltipposition', 'center');
-                                    }
-                                {/foreach}
-                            });
-                        }(Tygh, Tygh.$));
-                        </script>
                     </div>
                     {if $po.selected_product}
                     <div class="ty-pc-group__products-item-link-block">
@@ -79,6 +65,23 @@
                             </div>
                         </div>
                     {/if}
+                    <script type="text/javascript">
+                    (function(_, $) {
+                        $(function() {
+                            $('.cm-dropdown').each(function() {
+                                $(this).selectbox();
+                            });
+                            {foreach from=$po.products item="group_product"}
+                                if ($('#product_info_{$po.group_id}_{$group_product.product_id}').length) {
+                                    $('#opt_product_{$po.group_id}_{$group_product.product_id}').addClass('cm-tooltip');
+                                    $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('title', $('#product_info_{$po.group_id}_{$group_product.product_id}').html());
+                                    $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('data-cetooltipclass', 'ty-pc-product-info');
+                                    $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('data-cetooltipposition', 'center');
+                                }
+                            {/foreach}
+                        });
+                    }(Tygh, Tygh.$));
+                    </script>
                 {else}
                     <span class="price strong">{__("text_no_products_defined")}</span>
                 {/if}
@@ -135,15 +138,6 @@
         </div>
     </div>
     {/foreach}
-    <script type="text/javascript">
-    (function(_, $) {
-        $(function() {
-            $('.cm-dropdown').each(function() {
-                $(this).selectbox();
-            });
-        });
-    }(Tygh, Tygh.$));
-    </script>
 <!--product_configuration_{$product.product_id}_update--></div>
 
 <script type="text/javascript">

@@ -245,6 +245,7 @@ select {
     border: 1px solid #d6d6d6;
     box-shadow: 0 1px 16px rgba(0, 0, 0, 1);
     z-index: 510;
+    margin: 0;
 }
 .notification-content-extended h1 {
     background: #fff;
@@ -1295,7 +1296,6 @@ label.cm-required::after {
     color: @font;
     font-size: 14px;
     display: block;
-    height: 40px;
     overflow: hidden;
 }
 .ty-grid-list__price {
@@ -1311,9 +1311,11 @@ label.cm-required::after {
 }
 .ty-grid-list__item-title {
     display: block;
-    height: 40px;
+    height: 30px;
+    line-height: 15px;
     overflow: hidden;
     font-size: 14px;
+    margin-bottom: 10px;
 }
 .ty-grid-list__price .ty-price-update {
     float: left;
@@ -2087,10 +2089,6 @@ label.cm-required::after {
 .ty-small-mode .ty-grid-list__item-info {
     width: 124px;
 }
-.ty-small-mode .ty-grid-list__item-title {
-    line-height: 15px;
-    height: 30px;
-}
 .ty-small-mode .ty-grid-list__item-name {
     font-size: 100%;
 }
@@ -2125,10 +2123,6 @@ label.cm-required::after {
 .ty-mini-mode .ty-price-num {
     font-size: 14px;
 }
-.ty-mini-mode .ty-grid-list__item-title {
-    line-height: 15px;
-    height: 30px;
-}
 .ty-mini-mode .ty-grid-list__item-info {
     width: 100px;
 }
@@ -2156,10 +2150,6 @@ label.cm-required::after {
 
 .ty-micro-mode .ty-grid-list__item-name .product-title {
     font-size: 100%;
-}
-.ty-micro-mode .ty-grid-list__item-title {
-    line-height: 15px;
-    height
 }
 .ty-micro-mode .ty-price-num {
     font-size: 14px;
@@ -2213,7 +2203,7 @@ label.cm-required::after {
     bottom: 5px;
     display: inline-block;
     position: absolute;
-    right: 5px;
+    left: 0;
     max-width: 110px;
 }
 .ty-micro-mode .ty-grid-list__item:hover {

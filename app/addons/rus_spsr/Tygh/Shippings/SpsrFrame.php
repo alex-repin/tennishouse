@@ -228,7 +228,7 @@ class SpsrFrame
 
                 $result = db_get_field("SELECT c.city_code FROM ?:rus_spsr_city_descriptions as d LEFT JOIN ?:rus_spsr_cities as c ON c.city_id = d.city_id WHERE ?p", $condition);
                 if (empty($result)) {
-                    fn_set_notification('E', __('notice'), __('shippings.spsr.city_error'));
+//                     fn_set_notification('E', __('notice'), __('shippings.spsr.city_error'));
                 }
             }
         }
