@@ -21,6 +21,13 @@
         <div class="controls"><input type="text" name="configurator_group_data[configurator_group_name]" id="elm_configurator_group_name" value="{$configurator_group.configurator_group_name}" class="input-text-large main-input" size="25" />
             {assign var="pair" value=$configurator_group.image_pairs}</div>
     </div>
+    <div class="control-group">
+        <label class="control-label" for="elm_configurator_group_subtitle">{__("subtitle")}:</label>
+        <div class="controls">
+            <input type="text" name="configurator_group_data[subtitle]" id="elm_configurator_group_subtitle" value="{$configurator_group.subtitle}" class="input-text-large main-input" size="25" />
+        </div>
+    </div>
+    
     
     <div class="control-group">
         <label class="control-label" >{__("images")}:</label>
@@ -30,10 +37,16 @@
     <div class="control-group">
         <label class="control-label" for="elm_configurator_group_full_descr">{__("full_description")}:</label>
         <div class="controls">
-            <textarea id="elm_configurator_group_full_descr" name="configurator_group_data[full_description]" cols="55" rows="8" class="cm-wysiwyg input-textarea-long">{$configurator_group.full_description}</textarea>
+            <input type="text" name="configurator_group_data[full_description]" id="elm_configurator_group_full_descr" value="{$configurator_group.full_description}" class="input-text-large main-input" size="25" />
         </div>
-        
     </div>
+    <div class="control-group">
+        <label class="control-label" for="elm_configurator_group_amount_field">{__("amount_field")}:</label>
+        <div class="controls">
+            <input type="text" name="configurator_group_data[amount_field]" id="elm_configurator_group_amount_field" value="{$configurator_group.amount_field}" class="input-text-large main-input" size="25" />
+        </div>
+    </div>
+    
     
     <div class="control-group">
         <label class="control-label" for="elm_configurator_group_type">{__("display_type")}:</label>

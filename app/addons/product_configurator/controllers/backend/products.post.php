@@ -74,7 +74,7 @@ if ($mode == 'update') {
         $company_condition = fn_get_ult_company_condition('?:conf_groups.company_id', true, $product_data['company_id']);
 
         $configurator_groups = db_get_array(
-                "SELECT ?:conf_groups.group_id, ?:conf_group_descriptions.configurator_group_name,"
+                "SELECT ?:conf_groups.group_id, ?:conf_group_descriptions.configurator_group_name, ?:conf_group_descriptions.subtitle,"
                 . " ?:conf_groups.configurator_group_type"
                 . " FROM ?:conf_groups"
                 . " LEFT JOIN ?:conf_group_descriptions ON ?:conf_group_descriptions.group_id ="
@@ -86,7 +86,7 @@ if ($mode == 'update') {
 
         $conf_product_groups = db_get_array(
                 "SELECT ?:conf_groups.group_id,"
-                . " ?:conf_group_descriptions.configurator_group_name, ?:conf_groups.configurator_group_type,"
+                . " ?:conf_group_descriptions.configurator_group_name, ?:conf_group_descriptions.subtitle, ?:conf_groups.configurator_group_type,"
                 . " ?:conf_product_groups.position, ?:conf_product_groups.required, ?:conf_product_groups.max_amount,"
                 . " ?:conf_product_groups.default_product_ids"
                 . " FROM ?:conf_groups"

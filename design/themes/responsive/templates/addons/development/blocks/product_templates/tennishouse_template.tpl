@@ -132,8 +132,8 @@
                 </div>
                 *}
 
-                {hook name="products:options_avail_container"}
                 <div class="ty-options-avail-container-wrap">
+                    {hook name="products:options_avail_container"}
                     {if $product.product_options}
                     <div class="ty-options-container">
                         {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
@@ -163,8 +163,8 @@
                         {assign var="follow" value="follow_`$obj_id`"}
                         {$smarty.capture.$follow nofilter}
                     </div>
+                    {/hook}
                 </div>
-                {/hook}
 
                 {if $capture_buttons}{capture name="buttons"}{/if}
                 <div class="ty-product-block__button">

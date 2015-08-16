@@ -254,6 +254,17 @@ select {
 .ty-product-notification__buttons {
     background: #fff;
 }
+.ty-product-notification__content {
+    display: inline-block;
+    width: 500px;
+}
+.ty-product-notification__content-item {
+    display: inline-block;
+    width: 100%;
+}
+.ty-product-notification__body .ty-product-options-content {
+    width: auto;
+}
 label.cm-required::after {
     content: none;
 }
@@ -1456,7 +1467,7 @@ label.cm-required::after {
 .ty-product-block__price-actual {
     margin: 3px 0;
 }
-.ty-prices-container-wrap, .ty-options-avail-container-wrap, .ty-pc-container-wrap {
+.ty-prices-container-wrap, .ty-options-avail-container-wrap {
     border-bottom:  1px solid darken(@base, 5%);
     display: inline-block;
     margin: 0;
@@ -1470,13 +1481,13 @@ label.cm-required::after {
 }
 .ty-options-container {
     display: inline-block;
-    float: left;
-    vertical-align: top;
-    width: 400px;
 }
 .ty-avail-container {
     display: inline-block;
-    vertical-align: top;
+}
+.ty-qty-in-stock div {
+    color: @in_stock;
+    font-weight: bold;
 }
 .ty-product-options__select-above {
     display: inline-block;

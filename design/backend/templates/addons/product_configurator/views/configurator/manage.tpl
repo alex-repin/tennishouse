@@ -14,12 +14,12 @@
 {/capture}
 
 {capture name="sidebar"}
-	<div class="sidebar-row">
-		<h6>{__("choose_action")}</h6>
-		<ul class="nav nav-list">
-			<li><a href="{"products.manage?type=extended&configurable=Y"|fn_url}">{__("all_configurable")}</a></li>
-			<li><a href="{"products.add?product_type=C"|fn_url}">{__("add_configurable_product")}</a></li>
-		</ul>
+    <div class="sidebar-row">
+        <h6>{__("choose_action")}</h6>
+        <ul class="nav nav-list">
+            <li><a href="{"products.manage?type=extended&configurable=Y"|fn_url}">{__("all_configurable")}</a></li>
+            <li><a href="{"products.add?product_type=C"|fn_url}">{__("add_configurable_product")}</a></li>
+        </ul>
     </div>
     <hr>
 {/capture}

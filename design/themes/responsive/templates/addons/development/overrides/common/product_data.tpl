@@ -354,15 +354,15 @@
                 {if $product.tracking != "ProductTracking::DO_NOT_TRACK"|enum}
                     {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y" || $details_page}
                         {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y"}
-                            <div class="ty-control-group product-list-field">
-                                <label class="ty-control-group__label">{__("availability")}:</label>
+                            <div class="ty-control-group product-list-field ty-available-text">
+                                {*<label class="ty-control-group__label">{__("availability")}:</label>*}
                                 <span id="qty_in_stock_{$obj_prefix}{$obj_id}" class="ty-qty-in-stock ty-control-group__item">
-                                    {$product_amount}&nbsp;{__("items")}
+                                    {__("in_stock")}&nbsp;{if $product_amount < 5}{$product_amount}{else}4+{/if}&nbsp;{__("items")}{if $product_amount == 1}&nbsp;{include file="common/tooltip.tpl" tooltip=__("last_item_notification")}{/if}
                                 </span>
                             </div>
                         {elseif $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y"}
                             <div class="ty-control-group product-list-field">
-                                <label class="ty-control-group__label">{__("in_stock")}:</label>
+                                {*<label class="ty-control-group__label">{__("in_stock")}:</label>*}
                                 <span class="ty-qty-out-of-stock ty-control-group__item">{$out_of_stock_text}</span>
                             </div>
                         {/if}

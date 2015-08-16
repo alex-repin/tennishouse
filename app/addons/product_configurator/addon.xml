@@ -80,6 +80,8 @@
                 `lang_code` char(2) NOT NULL default '',
                 `configurator_group_name` varchar(255) NOT NULL default '',
                 `full_description` mediumtext NOT NULL,
+                `amount_field` VARCHAR( 128 ) NOT NULL ,
+                `subtitle` VARCHAR( 64 ) NOT NULL ,
                 PRIMARY KEY  (`group_id`,`lang_code`)
             ) DEFAULT CHARSET UTF8;
         </item>
@@ -136,5 +138,7 @@
         <item lang="ru" id="editing_class">Редактирование класса</item>
         <item lang="ru" id="maximum_amount">Макс. кол-во</item>
         <item lang="ru" id="go_product_details">Посмотреть товар</item>
+        <item lang="ru" id="subtitle">Подзаголовок</item>
+        <item lang="ru" id="amount_field">Поле "Кол-во"</item>
     </language_variables>
 </addon>

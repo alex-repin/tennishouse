@@ -43,7 +43,7 @@
                     {if $po.show_amount}
                         <div class="ty-pc-group__products-item-amount">
                             <div class="ty-qty clearfix{if $settings.Appearance.quantity_changer == "Y"} changer{/if}">
-                                <label class="ty-control-group__label" for="pc_qty_{$po.group_id}">{$quantity_text|default:__("quantity")}:</label>
+                                <label class="ty-control-group__label" for="pc_qty_{$po.group_id}">{$po.amount_field|default:__("quantity")}:</label>
                                 <div class="ty-center ty-value-changer cm-value-changer">
                                     {if $settings.Appearance.quantity_changer == "Y"}
                                         <a class="cm-increase ty-value-changer__increase">&#43;</a>
@@ -67,19 +67,17 @@
                     {/if}
                     <script type="text/javascript">
                     (function(_, $) {
-                        $(function() {
-                            $('.cm-dropdown').each(function() {
-                                $(this).selectbox();
-                            });
-                            {foreach from=$po.products item="group_product"}
-                                if ($('#product_info_{$po.group_id}_{$group_product.product_id}').length) {
-                                    $('#opt_product_{$po.group_id}_{$group_product.product_id}').addClass('cm-tooltip');
-                                    $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('title', $('#product_info_{$po.group_id}_{$group_product.product_id}').html());
-                                    $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('data-cetooltipclass', 'ty-pc-product-info');
-                                    $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('data-cetooltipposition', 'center');
-                                }
-                            {/foreach}
+                        $('.cm-dropdown').each(function() {
+                            $(this).selectbox();
                         });
+                        {foreach from=$po.products item="group_product"}
+                            if ($('#product_info_{$po.group_id}_{$group_product.product_id}').length) {
+                                $('#opt_product_{$po.group_id}_{$group_product.product_id}').addClass('cm-tooltip');
+                                $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('title', $('#product_info_{$po.group_id}_{$group_product.product_id}').html());
+                                $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('data-cetooltipclass', 'ty-pc-product-info');
+                                $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('data-cetooltipposition', 'center');
+                            }
+                        {/foreach}
                     }(Tygh, Tygh.$));
                     </script>
                 {else}

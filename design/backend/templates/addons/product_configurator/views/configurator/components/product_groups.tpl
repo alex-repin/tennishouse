@@ -40,7 +40,7 @@
     <td class="left">
         <input type="checkbox" name="group_ids[]" value="{$group.group_id}" class="cm-item" /></td>
     <td>
-        <a href="{"configurator.update_group?group_id=`$gr_id`"|fn_url}">{$group.configurator_group_name}</a>
+        <a href="{"configurator.update_group?group_id=`$gr_id`"|fn_url}">{$group.configurator_group_name}</a>{if $group.subtitle}<span class="cm-hint"> {$group.subtitle}</span>{/if}
     </td>
     <td>
         <select name="configurator_group_data[{$group.group_id}][configurator_group_type]">

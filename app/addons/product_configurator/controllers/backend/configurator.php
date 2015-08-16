@@ -103,7 +103,7 @@ if ($mode == 'update_group') {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
 
-    $configurator_group = db_get_row("SELECT ?:conf_groups.group_id, ?:conf_group_descriptions.configurator_group_name, ?:conf_group_descriptions.full_description, ?:conf_groups.status, ?:conf_groups.configurator_group_type FROM ?:conf_groups LEFT JOIN ?:conf_group_descriptions ON ?:conf_group_descriptions.group_id = ?:conf_groups.group_id WHERE ?:conf_group_descriptions.lang_code = ?s AND ?:conf_groups.group_id = ?i", DESCR_SL, $_REQUEST['group_id']);
+    $configurator_group = db_get_row("SELECT ?:conf_groups.group_id, ?:conf_group_descriptions.configurator_group_name, ?:conf_group_descriptions.full_description, ?:conf_group_descriptions.amount_field, ?:conf_group_descriptions.subtitle, ?:conf_groups.status, ?:conf_groups.configurator_group_type FROM ?:conf_groups LEFT JOIN ?:conf_group_descriptions ON ?:conf_group_descriptions.group_id = ?:conf_groups.group_id WHERE ?:conf_group_descriptions.lang_code = ?s AND ?:conf_groups.group_id = ?i", DESCR_SL, $_REQUEST['group_id']);
 
     Registry::set('navigation.tabs', array (
         'general' => array (
@@ -255,8 +255,8 @@ function fn_get_configurator_groups($params, $items_per_page = 0)
     }
 
     $groups = db_get_hash_array(
-            "SELECT ?:conf_groups.group_id, ?:conf_group_descriptions.configurator_group_name,"
-            . " ?:conf_group_descriptions.full_description, ?:conf_groups.status,"
+            "SELECT ?:conf_groups.group_id, ?:conf_groups.status,"
+            . " ?:conf_group_descriptions.full_description, ?:conf_group_descriptions.configurator_group_name, ?:conf_group_descriptions.subtitle,"
             . " ?:conf_groups.configurator_group_type"
             . " FROM ?:conf_groups"
             . " LEFT JOIN ?:conf_group_descriptions ON ?:conf_group_descriptions.group_id = ?:conf_groups.group_id"

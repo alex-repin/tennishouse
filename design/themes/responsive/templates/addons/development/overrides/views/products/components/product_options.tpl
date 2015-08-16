@@ -42,7 +42,7 @@
                         <a href="{"`$po.note_url`"|fn_url}" target="_blank">{$po.note_text}</a>
                     {/capture}
                     <div style="display: none;"><a class="cm-notification-note" href="{"`$po.note_url`"|fn_url}" target="_blank">{$po.note_text}</a></div>
-                    {include file="common/tooltip.tpl" tooltip=$smarty.capture.option_note}
+                    {include file="common/tooltip.tpl" tooltip=$smarty.capture.option_note url=$po.note_url}
                 {/if}:
             </label>
             {if $po.option_type == "S"} {*Selectbox*}
@@ -165,10 +165,8 @@
 {/if}
 <script type="text/javascript">
 (function(_, $) {
-    $(function() {
-        $('.cm-dropdown').each(function() {
-            $(this).selectbox();
-        });
+    $('.cm-dropdown').each(function() {
+        $(this).selectbox();
     });
 }(Tygh, Tygh.$));
 </script>

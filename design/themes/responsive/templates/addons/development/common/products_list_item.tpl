@@ -1,7 +1,7 @@
 <div class="ty-grid-list__item-wrapper">
-<a href="{"products.view?product_id=`$product.product_id`{if $product.ohash}&`$product.ohash`{/if}"|fn_url}">
 {hook name="products:product_multicolumns_list"}
 {/hook}
+<a href="{"products.view?product_id=`$product.product_id`{if $product.ohash}&`$product.ohash`{/if}"|fn_url}">
 <div class="ty-grid-list__item">
     {assign var="obj_id" value=$product.product_id}
     {include file="common/product_data.tpl" product=$product}

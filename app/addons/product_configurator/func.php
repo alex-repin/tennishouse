@@ -13,6 +13,7 @@
 ****************************************************************************/
 
 use Tygh\Registry;
+use Tygh\Enum\ProductTracking;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
@@ -880,7 +881,7 @@ function fn_get_configuration_groups(&$product, $selected_configuration)
 {
     $_tmp = microtime();
     $product_configurator_groups = db_get_array(
-        "SELECT ?:conf_groups.group_id, ?:conf_group_descriptions.configurator_group_name, "
+        "SELECT ?:conf_groups.group_id, ?:conf_group_descriptions.configurator_group_name, ?:conf_group_descriptions.amount_field, "
             . "?:conf_group_descriptions.full_description, ?:conf_groups.configurator_group_type, "
             . "?:conf_product_groups.position, ?:conf_product_groups.default_product_ids, ?:conf_product_groups.required, ?:conf_product_groups.max_amount "
         . "FROM ?:conf_groups "
@@ -894,10 +895,11 @@ function fn_get_configuration_groups(&$product, $selected_configuration)
         CART_LANGUAGE, $product['product_id']
     );
 
+    $product['hide_stock_info'] = false;
     if (!empty($product_configurator_groups)) {
         $c_price = 0;
 
-        $params = array();
+        $params = $inventory = array();
         foreach ($product_configurator_groups as $k => $v) {
 
             $params['pc_group_id'] = $v['group_id'];
@@ -914,11 +916,13 @@ function fn_get_configuration_groups(&$product, $selected_configuration)
             $amount = !empty($selected_configuration[$v['group_id']]['amount']) ? $selected_configuration[$v['group_id']]['amount'] : 1;
             
             $class_ids = array();
+            $is_selected = false;
             foreach ($_products as $_k => $_v) {
 
                 $_products[$_k] = $_v;
 
                 if (in_array($_v['product_id'], $selected_ids)) {
+                    $is_selected = true;
                     $_products[$_k]['selected'] = 'Y';
                     if (!empty($selected_options[$_v['product_id']]['product_options'])) {
                         $_products[$_k]['selected_options'] = $selected_options[$_v['product_id']]['product_options'];
@@ -938,6 +942,9 @@ function fn_get_configuration_groups(&$product, $selected_configuration)
                 }
             }
             
+            if (!$is_selected) {
+                $product['hide_stock_info'] = true;
+            }
             fn_gather_additional_products_data($_products, array(
                 'get_icon' => false,
                 'get_detailed' => true,
@@ -954,11 +961,14 @@ function fn_get_configuration_groups(&$product, $selected_configuration)
             foreach ($_products as $_k => $_v) {
                 $_products[$_k]['compatible_classes'] = array();
                 if ($_v['selected'] == 'Y') {
-                    if (empty($_products[$_k]['product_options'])) {
-                        $max_amount = $_products[$_k]['amount'];
-                    }
-                    if (!empty($_products[$_k]['product_options']) && count($_products[$_k]['product_options']) == count($_products[$_k]['selected_options'])) {
-                        $max_amount = $_products[$_k]['inventory_amount'];
+                    if ($_v['hide_stock_info']) {
+                        $product['hide_stock_info'] = true;
+                    } else {
+                        if (!empty($_v['tracking']) && $_v['tracking'] == ProductTracking::TRACK_WITH_OPTIONS) {
+                            $max_amount = $_v['inventory_amount'];
+                        } else {
+                            $max_amount = $_v['amount'];
+                        }
                     }
                 }
                 if (!empty($_v['class_ids'])) {
@@ -977,6 +987,10 @@ function fn_get_configuration_groups(&$product, $selected_configuration)
                 $product_configurator_groups[$k]['max_amount'] = $max_amount;
             }
             $product_configurator_groups[$k]['amount'] = ($product_configurator_groups[$k]['max_amount'] < $amount) ? $product_configurator_groups[$k]['max_amount'] : $amount;
+            if (isset($max_amount)) {
+            fn_print_r($max_amount);
+                $inventory[] = floor($max_amount / $product_configurator_groups[$k]['amount']);
+            }
             foreach ($_products as $_k => $_v) {
                 if ($_v['selected'] == 'Y') {
                     $product_configurator_groups[$k]['selected_product'] = $_v['product_id'];
@@ -987,6 +1001,9 @@ function fn_get_configuration_groups(&$product, $selected_configuration)
             $product_configurator_groups[$k]['products_count'] = count($_products);
             $product_configurator_groups[$k]['products'] = $_products;
             $product_configurator_groups[$k]['main_pair'] = fn_get_image_pairs($v['group_id'], 'conf_group', 'M');
+        }
+        if (!empty($inventory)) {
+            $product['amount'] = min($inventory);
         }
     }
     

@@ -21,7 +21,7 @@
                     <div class="controls">
                         <select name="add_group_id" id="add_group_id">
                             {foreach from=$configurator_groups item="group_" key="group_id"}
-                            <option value="{$group_.group_id}">{$group_.configurator_group_name}</option>
+                            <option value="{$group_.group_id}">{$group_.configurator_group_name}{if $group_.subtitle}: {$group_.subtitle}{/if}</option>
                             {/foreach}
                         </select>
                         <p><small>
@@ -67,7 +67,7 @@
             <input type="checkbox" name="group_ids[]" value="{$po.group_id}" class="cm-item"></td>
         <td class="center">
             <input type="text" name="conf_product_groups[{$po.group_id}][position]" value="{$po.position}" size="3" class="input-micro"></td>
-        <td class="nowrap"><div class="text-type-value">{$po.configurator_group_name}</div></td>
+        <td class="nowrap"><div class="text-type-value">{$po.configurator_group_name}{if $po.subtitle}<span class="cm-hint">&nbsp;{$po.subtitle}</span>{/if}</div></td>
         <td class="nowrap">
                 {if $po.configurator_group_type == "S" || $po.configurator_group_type == "R"}
                     {if $po.products}
