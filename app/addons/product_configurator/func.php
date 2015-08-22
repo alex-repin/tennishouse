@@ -124,44 +124,6 @@ function fn_product_configurator_get_class_name($class_id, $lang_code = CART_LAN
     return false;
 }
 
-function fn_product_configurator_calculate_cart(&$cart, &$cart_products)
-{
-    if (isset($cart['products']) && is_array($cart['products'])) {
-        foreach ($cart['products'] as $key => $value) {
-            if (!empty($value['extra']['configuration'])) {
-                foreach ($cart_products as $k => $v) {
-                    if (!empty($cart['products'][$k]['extra']['parent']['configuration']) && $cart['products'][$k]['extra']['parent']['configuration'] == $key) {
-                        $cart_products[$key]['subtotal'] += $cart_products[$k]['subtotal'];
-                        $cart_products[$key]['display_subtotal'] += $cart_products[$k]['display_subtotal'];
-                        $cart_products[$key]['original_price'] += $cart_products[$k]['original_price'] * $cart['products'][$k]['extra']['step'];
-                        $cart_products[$key]['price'] += $cart_products[$k]['price'] * $cart['products'][$k]['extra']['step'];
-                        $cart_products[$key]['display_price'] += $cart_products[$k]['display_price'] * $cart['products'][$k]['extra']['step'];
-
-                        if (!empty($cart_products[$k]['tax_summary'])) {
-                            if (isset($cart_products[$key]['tax_summary'])) {
-                                $cart_products[$key]['tax_summary']['included'] += $cart_products[$k]['tax_summary']['included'];
-                                $cart_products[$key]['tax_summary']['added'] += $cart_products[$k]['tax_summary']['added'];
-                                $cart_products[$key]['tax_summary']['total'] += $cart_products[$k]['tax_summary']['total'];
-                            } else {
-                                $cart_products[$key]['tax_summary']['included'] = $cart_products[$k]['tax_summary']['included'];
-                                $cart_products[$key]['tax_summary']['added'] = $cart_products[$k]['tax_summary']['added'];
-                                $cart_products[$key]['tax_summary']['total'] = $cart_products[$k]['tax_summary']['total'];
-                            }
-                        }
-                        if (!empty($cart_products[$k]['discount'])) {
-                            $cart_products[$key]['discount'] = (!empty($cart_products[$key]['discount']) ? $cart_products[$key]['discount'] : 0) + $cart_products[$k]['discount'];
-                        }
-                        if (!empty($cart_products[$k]['tax_value'])) {
-                            $cart_products[$key]['tax_value'] = (!empty($cart_products[$key]['tax_value']) ? $cart_products[$key]['tax_value'] : 0) + $cart_products[$k]['tax_value'];
-                        }
-                    }
-                }
-                $cart['products'][$key]['display_price'] = $cart_products[$key]['display_price'];
-            }
-        }
-    }
-}
-
 //
 // If product is configurable and we want to delete it then delete all its subproducts
 //
@@ -252,26 +214,26 @@ function fn_update_conf_amount(&$cart, $prev_amount)
 function fn_product_configurator_generate_cart_id(&$_cid, $extra, $only_selectable)
 {
     // Configurable product
-    if (!empty($extra['configuration']) && is_array($extra['configuration'])) {
+    if (!empty($extra['configuration'])) {
         foreach ($extra['configuration'] as $k => $v) {
             $_cid[] = $k;
-            if (is_array($v)) {
-                foreach ($v as $_val) {
-                    $_cid[] = $_val;
+            if (!empty($v['product_ids'])) {
+                foreach ($v['product_ids'] as $_id) {
+                    $_cid[] = $_id;
+                    if (!empty($v['options'][$_id]['product_options'])) {
+                        foreach ($v['options'][$_id]['product_options'] as $opt => $vrt) {
+                            $_cid[] = $vrt;
+                        }
+                    }
                 }
-            } else {
-                $_cid[] = $v;
             }
-
         }
     }
-
-    // Product in configuration
-    if (!empty($extra['parent']['configuration'])) {
-        $_cid[] = $extra['parent']['configuration'];
+    if (!empty($extra['parent'])) {
+        foreach ($extra['parent'] as $k => $v) {
+            $_cid[] = $v;
+        }
     }
-
-    return true;
 }
 
 //
@@ -447,37 +409,66 @@ function fn_product_configurator_add_product_to_cart_check_price($data, $price, 
     return true;
 }
 
+function fn_product_configurator_get_cart_product_data($product_id, &$_pdata, &$product, $auth, &$cart, $hash)
+{
+    if (!empty($product['configuration'])) {
+        $cart['products'][$hash]['amount_total'] = 0;
+        $tmp_cart = $cart;
+        $_pdata['weight'] = 0;
+        foreach ($product['configuration'] as $item_id => $_data) {
+            $cart['products'][$hash]['amount_total'] += $_data['amount'];
+
+            $_cproduct = fn_get_cart_product_data($item_id, $product['configuration'][$item_id], false, $tmp_cart, $auth);
+
+            if (empty($_cproduct)) { // FIXME - for deleted products for OM
+                unset($product['configuration'][$item_id]);
+
+                continue;
+            }
+
+            $cart['products'][$hash]['price'] += $_cproduct['price'] * $_data['extra']['step'];
+            $_pdata['price'] += $_cproduct['price'] * $_data['extra']['step'];
+            $_pdata['base_price'] += $_cproduct['base_price'] * $_data['extra']['step'];
+            $_pdata['weight'] += $_cproduct['weight'] * $_data['extra']['step'];
+            
+            
+            $_tax = (!empty($_cproduct['tax_summary']) ? ($_cproduct['tax_summary']['added'] / $_cproduct['amount']) : 0);
+            $_cproduct['display_price'] = $_cproduct['price'] + (Registry::get('settings.Appearance.cart_prices_w_taxes') == 'Y' ? $_tax : 0);
+            $_cproduct['step'] = $_data['extra']['step'];
+            $_cproduct['subtotal'] = $_cproduct['price'] * $_data['extra']['step'];
+            $_cproduct['display_subtotal'] = $_cproduct['display_price'] * $_data['extra']['step'];
+            $_pdata['configuration'][$item_id] = $_cproduct;
+        }
+    }
+}
+
 function fn_product_configurator_pre_add_to_cart(&$product_data, &$cart, $auth, $update)
 {
-    if ($update == true) {
+    if (!empty($update)) {
         foreach ($product_data as $key => $value) {
             if (!empty($cart['products'][$key]['extra']['configuration']) && !empty($value['product_id'])) {
-
                 $product_data[$key]['extra']['configuration'] = $cart['products'][$key]['extra']['configuration'];
                 if (!empty($value['product_options'])) {
                     $product_data[$key]['extra']['product_options'] = $value['product_options'];
                 }
-
-                $cart_id = fn_generate_cart_id($value['product_id'], $product_data[$key]['extra'], false);
-
-                foreach ($cart['products'] as $k => $v) {
-                    if (isset($v['extra']['parent']['configuration']) && $v['extra']['parent']['configuration'] == $key) {
-                        $cart['products'][$k]['amount'] = $v['extra']['step'] * $value['amount'];
-                        $product_data[$k] = array(
-                            'product_id' => $v['product_id'],
-                            'amount' => $v['extra']['step'] * $value['amount'],
-                            'extra' => array(
-                                'parent' => array(
-                                    'configuration' => $cart_id,
-                                    'id' => $key
-                                ),
-                                'step' => $v['extra']['step']
+                foreach ($cart['products'][$key]['configuration'] as $k => $v) {
+                    $product_data[$k] = array(
+                        'product_id' => $v['product_id'],
+                        'amount' => $v['extra']['step'] * $value['amount'],
+                        'extra' => array(
+                            'parent' => array(
+                                'configuration' => $cart['products'][$key]['extra']['configuration_id'],
+                                'id' => $key
                             ),
-                        );
+                            'step' => $v['extra']['step'],
+                        ),
+                    );
+                    if (!empty($v['product_options'])) {
+                        $product_data[$k]['product_options'] = $v['product_options'];
                     }
                 }
 
-                $product_data[$key]['extra']['configuration_id'] = $cart_id;
+                $product_data[$key]['extra']['configuration_id'] = $cart['products'][$key]['extra']['configuration_id'];
             }
         }
 
@@ -496,29 +487,20 @@ function fn_product_configurator_pre_add_to_cart(&$product_data, &$cart, $auth, 
 
                 $cart_id = fn_generate_cart_id($key, $product_data[$key]['extra'], false);
 
-                foreach ($value['configuration'] as $group_id => $_product_id) {
-                    if (is_array($_product_id)) {
-                        foreach ($_product_id as $_id) {
-                            if (!isset($product_data[$_id])) {
-                                $product_data[$_id] = array();
-                                $product_data[$_id]['product_id'] = $_id;
-                                $product_data[$_id]['amount'] = $value['amount'];
-                                $product_data[$_id]['extra']['parent']['configuration'] = $cart_id;
-                            } elseif (isset($product_data[$_id]['extra']['parent']['configuration']) && $product_data[$_id]['extra']['parent']['configuration'] == $cart_id) {
-                                $product_data[$_id]['amount'] += $value['amount'];
-                            }
-                            $product_data[$_id]['extra']['parent']['id'] = $value['product_id'];
+                foreach ($value['configuration'] as $group_id => $_data) {
+                    foreach ($_data['product_ids'] as $_id) {
+                        if (!isset($product_data[$_id])) {
+                            $product_data[$_id] = array();
+                            $product_data[$_id]['product_id'] = $_id;
+                            $product_data[$_id]['amount'] = (!empty($_data['amount']) ? $_data['amount'] : 1) * $value['amount'];
+                            $product_data[$_id]['extra']['parent']['configuration'] = $cart_id;
+                        } elseif (isset($product_data[$_id]['extra']['parent']['configuration']) && $product_data[$_id]['extra']['parent']['configuration'] == $cart_id) {
+                            $product_data[$_id]['amount'] += (!empty($_data['amount']) ? $_data['amount'] : 1) * $value['amount'];
                         }
-                    } else {
-                        if (!isset($product_data[$_product_id])) {
-                            $product_data[$_product_id] = array();
-                            $product_data[$_product_id]['product_id'] = $_product_id;
-                            $product_data[$_product_id]['amount'] = $value['amount'];
-                            $product_data[$_product_id]['extra']['parent']['configuration'] = $cart_id;
-                        } elseif (isset($product_data[$_product_id]['extra']['parent']['configuration']) &&  $product_data[$_product_id]['extra']['parent']['configuration'] == $cart_id) {
-                            $product_data[$_product_id]['amount'] += $value['amount'];
+                        $product_data[$_id]['extra']['parent']['id'] = $value['product_id'];
+                        if (!empty($_data['options'][$_id]['product_options'])) {
+                            $product_data[$_id]['product_options'] = $_data['options'][$_id]['product_options'];
                         }
-                        $product_data[$_product_id]['extra']['parent']['id'] = $value['product_id'];
                     }
                 }
                 $product_data[$key]['extra']['configuration_id'] = $cart_id;
@@ -539,6 +521,7 @@ function fn_product_configurator_pre_add_to_cart(&$product_data, &$cart, $auth, 
             $product_data[$key]['extra']['step'] = $value['amount'];
         }
     }
+
 }
 
 function fn_product_configurator_add_to_cart(&$cart, $product_id, $_id)
@@ -557,6 +540,48 @@ function fn_product_configurator_add_to_cart(&$cart, $product_id, $_id)
             foreach ($cart['product_groups'] as $key_group => $group) {
                 if (in_array($_id, array_keys($group['products']))) {
                     unset($cart['product_groups'][$key_group]['products'][$_id]);
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Chack main product product amount after adding product to cart
+ *
+ * @param array $product_data Product data
+ * @param array $cart Cart data
+ * @param array $auth Auth data
+ * @param bool $update Flag the determains if cart data are updated
+ * @return bool Always true
+ */
+function fn_product_configurator_post_add_to_cart($product_data, &$cart, $auth, $update)
+{
+    foreach ($cart['products'] as $key => $value) {
+        if (!empty($value['extra']['configuration'])) {
+
+            $total_amount = $value['amount'];
+            $is_changed = false;
+
+            foreach ($cart['products'] as $k => $v) {
+                if (isset($v['extra']['parent']['configuration']) && $v['extra']['parent']['configuration'] == $value['extra']['configuration_id']) {
+                    $amount = ceil($v['amount'] / $v['extra']['step']);
+                    if ($total_amount != $amount) {
+                        if ($total_amount > $amount) {
+                            $total_amount = $amount;
+                        }
+                        $is_changed =  true;
+                    }
+                    $v['product_option_data'] = fn_get_selected_product_options_info($v['product_options']);
+                    $cart['products'][$key]['configuration'][$k] = $v;
+                    unset($cart['products'][$k]);
+                }
+            }
+
+            if ($is_changed) {
+                $cart['products'][$key]['amount'] = $total_amount;
+                foreach ($cart['products'][$key]['configuration'] as $k => $v) {
+                    $cart['products'][$k]['amount'] = (int) $cart['products'][$k]['extra']['step'] * $total_amount;
                 }
             }
         }
@@ -599,56 +624,6 @@ function fn_product_configurator_get_order_info(&$order, $additional_data)
    }
 
    return true;
-}
-
-/**
- * Chack main product product amount after adding product to cart
- *
- * @param array $product_data Product data
- * @param array $cart Cart data
- * @param array $auth Auth data
- * @param bool $update Flag the determains if cart data are updated
- * @return bool Always true
- */
-function fn_product_configurator_post_add_to_cart($product_data, $cart, $auth, $update)
-{
-    if (!empty($value['product_id'])) {
-        foreach ($product_data as $key => $value) {
-            if (!empty($value['extra']['configuration'])) {
-                $cart_id = fn_generate_cart_id($value['product_id'], $product_data[$key]['extra'], false);
-
-                if (empty($cart['products'][$cart_id])) {
-                    continue;
-                }
-
-                $total_amount = $cart['products'][$cart_id]['amount'];
-                $is_changed = false;
-
-                foreach ($cart['products'] as $k => $v) {
-                    if (isset($v['extra']['parent']['configuration']) && $v['extra']['parent']['configuration'] == $cart_id) {
-                        $amount = ceil($v['amount'] / $cart['products'][$k]['extra']['step']);
-                        if ($total_amount != $amount) {
-                            if ($total_amount > $amount) {
-                                $total_amount = $amount;
-                            }
-                            $is_changed =  true;
-                        }
-                    }
-                }
-
-                if ($is_changed) {
-                    $cart['products'][$cart_id]['amount'] = $total_amount;
-                    foreach ($cart['products'] as $k => $v) {
-                        if (isset($v['extra']['parent']['configuration']) && $v['extra']['parent']['configuration'] == $cart_id) {
-                            $cart['products'][$k]['amount'] = (int) $cart['products'][$k]['extra']['step'] * $total_amount;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    return true;
 }
 
 /**
@@ -749,6 +724,7 @@ function fn_product_configurator_update_product_pre(&$product_data, $product_id,
     if ($product_data['product_type'] == 'C') {
         $product_data['zero_price_action'] = 'P';
         $product_data['auto_price'] = 'N';
+        $product_data['tracking'] = 'D';
         
         if (fn_allowed_for('ULTIMATE')) {
             if (!empty($product_id) && !empty($product_data['company_id'])) {
@@ -779,28 +755,28 @@ function fn_product_configurator_update_product_pre(&$product_data, $product_id,
 
 function fn_product_configurator_check_add_to_cart_post($cart, $product, $product_id, &$result)
 {
-    if (!$result && fn_allowed_for('ULTIMATE') && Registry::get('runtime.company_id')) {
-        if (!empty($product['extra']['parent']['configuration'])) {
-            $cart_id = $product['extra']['parent']['configuration'];
-            $parent_id = 0;
-
-            foreach ($cart['products'] as $k => $v) {
-                if ($k == $cart_id) {
-                    $parent_id = $v['product_id'];
-                    break;
-                }
-            }
-
-            if (!empty($parent_id)) {
-                $product_company_id = db_get_field('SELECT company_id FROM ?:products WHERE product_id = ?i', $parent_id);
-                if ($product_company_id == Registry::get('runtime.company_id') || fn_ult_is_shared_product($parent_id, Registry::get('runtime.company_id')) == 'Y') {
-                    $result = true;
-                }
-            }
-        }
-    }
-
-    return true;
+//     if (!$result && fn_allowed_for('ULTIMATE') && Registry::get('runtime.company_id')) {
+//         if (!empty($product['extra']['parent']['configuration'])) {
+//             $cart_id = $product['extra']['parent']['configuration'];
+//             $parent_id = 0;
+// 
+//             foreach ($cart['products'] as $k => $v) {
+//                 if ($k == $cart_id) {
+//                     $parent_id = $v['product_id'];
+//                     break;
+//                 }
+//             }
+// 
+//             if (!empty($parent_id)) {
+//                 $product_company_id = db_get_field('SELECT company_id FROM ?:products WHERE product_id = ?i', $parent_id);
+//                 if ($product_company_id == Registry::get('runtime.company_id') || fn_ult_is_shared_product($parent_id, Registry::get('runtime.company_id')) == 'Y') {
+//                     $result = true;
+//                 }
+//             }
+//         }
+//     }
+// 
+//     return true;
 }
 
 function fn_check_pconf_access($db_field, $value, $show_notification = true)
@@ -988,7 +964,6 @@ function fn_get_configuration_groups(&$product, $selected_configuration)
             }
             $product_configurator_groups[$k]['amount'] = ($product_configurator_groups[$k]['max_amount'] < $amount) ? $product_configurator_groups[$k]['max_amount'] : $amount;
             if (isset($max_amount)) {
-            fn_print_r($max_amount);
                 $inventory[] = floor($max_amount / $product_configurator_groups[$k]['amount']);
             }
             foreach ($_products as $_k => $_v) {

@@ -1,7 +1,7 @@
+{if $edit_configuration}
+    <input type="hidden" name="product_data[{$product.product_id}][cart_id]" value="{$edit_configuration}" />
+{/if}
 <div class="cm-reload-{$product.product_id}" id="product_configuration_{$product.product_id}_update">
-    {*if !$edit_configuration}
-        <input type="hidden" name="redirect_url" value="{$config.current_url}" />
-    {/if*}
     <input type="hidden" name="appearance[details_page]" value="{$details_page}" />
     <input type="hidden" name="appearance[auto_process]" id="auto_process_form" value="" />
     {foreach from=$product.detailed_params key="param" item="value"}
@@ -16,7 +16,7 @@
             {if $po.configurator_group_type == "S"}
                 {if $po.products}
                     <div class="ty-pc-group__products-item-block">
-                        <select name="product_data[{$product.product_id}][configuration][{$po.group_id}][product_ids]" id="group_{$po.group_id}" class="cm-dropdown cm-options-update" onchange="fn_change_options('{$obj_prefix}{$obj_id}', '{$obj_id}', '0');"  data-cesbClass="ty-sb-popup-large">
+                        <select name="product_data[{$product.product_id}][configuration][{$po.group_id}][product_ids][]" id="group_{$po.group_id}" class="cm-dropdown cm-options-update" onchange="fn_change_options('{$obj_prefix}{$obj_id}', '{$obj_id}', '0');"  data-cesbClass="ty-sb-popup-large">
                             <option id="product_{$po.group_id}_0" value=""> - {$po.full_description nofilter} - </option>
                             {foreach from=$po.products item="group_product"}
                                 <option id="product_{$po.group_id}_{$group_product.product_id}" value="{$group_product.product_id}" {if $group_product.selected == "Y"}selected="selected"{/if} {if $group_product.disabled}disabled="disabled"{/if}>{$group_product.product}{if $show_price_values == true} - {include file="common/price.tpl" value=$group_product.price}{/if}{if $group_product.recommended == "Y"} ({__("recommended")}){/if}</option>

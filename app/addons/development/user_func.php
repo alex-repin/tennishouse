@@ -242,7 +242,7 @@ function fn_update_rankings($ids = array())
                     }
                     $update[] = $player_data;
                 } else {
-                    if (preg_match('/<div class="box ranking">.*?>(\d+)<.*?<\/div>/', preg_replace('/[\r\n]/', '', $result), $match)) {
+                    if (preg_match('/<div class="box ranking">.*?>([\d-]+)<.*?<\/div>/', preg_replace('/[\r\n]/', '', $result), $match)) {
                         $player_data = array(
                             'player_id' => $player['player_id'],
                             'ranking' => isset($match['1']) ? $match['1'] : 'n/a'
@@ -1143,7 +1143,7 @@ function fn_get_players($params)
         $limit = db_quote(' LIMIT 0, ?i', $params['limit']);
     }
 
-    $players = db_get_hash_array('SELECT ' . implode(',', $fields) . " FROM ?:players ?p WHERE 1 ?p GROUP BY ?:players.player_id ORDER BY ?:players.ranking ASC ?p", 'player_id', $join, $condition, $limit);
+    $players = db_get_hash_array('SELECT ' . implode(',', $fields) . " FROM ?:players ?p WHERE 1 ?p GROUP BY ?:players.player_id ORDER BY ?:players.ranking != '0' DESC, ?:players.ranking ASC ?p", 'player_id', $join, $condition, $limit);
 
     if (empty($players)) {
         return array(array(), $params);

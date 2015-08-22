@@ -50,4 +50,8 @@ if ($mode == 'configuration_group') {
         Registry::get('view')->display('addons/product_configurator/views/products/components/configuration_product.tpl');
         exit;
     }
+} elseif ($mode == 'view') {
+    if (!empty($_REQUEST['cart_id'])) {
+        Registry::get('view')->assign('edit_configuration', $_REQUEST['cart_id']);
+    }
 }

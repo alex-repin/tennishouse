@@ -620,7 +620,7 @@ var Tygh = {
                     if (new_val < min_qty) {
                         new_val = min_qty;
                     }
-                    if (new_val > max_qty) {
+                    if (typeof(max_qty) != 'undefined' && new_val > max_qty) {
                         new_val = max_qty;
                     }
                     inp.val(new_val);

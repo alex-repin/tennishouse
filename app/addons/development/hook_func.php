@@ -299,7 +299,8 @@ function fn_development_update_product_option_post($option_data, $option_id, $de
         $feature_data = fn_get_product_feature_data($option_data['feature_id'], true);
     }
     $option_variants = array();
-    if (!empty($option_data['variants']) && !empty($feature_data)) {
+            
+    if (!empty($option_data['variants'])) {
         foreach ($option_data['variants'] as $i => $variant) {
             if (!empty($variant['variant_id'])) {
                 $feature_variant_id = 0;
@@ -320,7 +321,7 @@ function fn_development_update_product_option_post($option_data, $option_id, $de
                     }
                 }
                 db_query('UPDATE ?:product_option_variants SET feature_variant_id = ?i WHERE variant_id = ?i', $feature_variant_id, $variant['variant_id']);
-                
+
                 fn_attach_image_pairs('variant_additional_' . $variant['variant_id'], 'variant_additional', $variant['variant_id'], $lang_code);
                 fn_attach_image_pairs('variant_add_additional_' . $variant['variant_id'], 'variant_additional', $variant['variant_id'], $lang_code);
             }
