@@ -1,7 +1,7 @@
-{if $edit_configuration}
-    <input type="hidden" name="product_data[{$product.product_id}][cart_id]" value="{$edit_configuration}" />
-{/if}
 <div class="cm-reload-{$product.product_id}" id="product_configuration_{$product.product_id}_update">
+    {if $product.edit_configuration}
+        <input type="hidden" name="product_data[{$product.product_id}][cart_id]" value="{$product.edit_configuration}" />
+    {/if}
     <input type="hidden" name="appearance[details_page]" value="{$details_page}" />
     <input type="hidden" name="appearance[auto_process]" id="auto_process_form" value="" />
     {foreach from=$product.detailed_params key="param" item="value"}

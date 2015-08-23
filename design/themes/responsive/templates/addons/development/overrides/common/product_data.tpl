@@ -130,6 +130,7 @@
 
 {strip}
 {capture name="buttons_product"}
+    {capture name="button_name"}{__("add_to_cart")}{/capture}
     {hook name="products:add_to_cart"}
         {if $product.has_options && !$show_product_options && !$details_page}
             {if $but_role == "text"}
@@ -140,7 +141,7 @@
             {include file="buttons/button.tpl" but_id="button_cart_`$obj_prefix``$obj_id`" but_text=__("select_options") but_href="products.view?product_id=`$product.product_id`" but_role=$opt_but_role but_name="" but_meta="ty-btn__primary ty-btn__big"}
         {else}
             {if $extra_button}{$extra_button nofilter}&nbsp;{/if}
-                {include file="buttons/add_to_cart.tpl" but_id="button_cart_`$obj_prefix``$obj_id`" but_name="dispatch[checkout.add..`$obj_id`]" but_role=$but_role block_width=$block_width obj_id=$obj_id product=$product but_meta=$add_to_cart_meta}
+                {include file="buttons/add_to_cart.tpl" but_id="button_cart_`$obj_prefix``$obj_id`" but_name="dispatch[checkout.add..`$obj_id`]" but_role=$but_role block_width=$block_width obj_id=$obj_id product=$product but_meta=$add_to_cart_meta but_text=$smarty.capture.button_name}
                 
                 {if $auto_process}
                 <script type="text/javascript">

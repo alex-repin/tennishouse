@@ -179,8 +179,11 @@ function fn_get_product_data($product_id, &$auth, $lang_code = CART_LANGUAGE, $f
 
         if ($features) {
             // Get product features
-
-            $path = !empty($product_data['main_category']) ? explode('/', db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $product_data['main_category'])) : '';
+            $id_paths = db_get_hash_single_array("SELECT category_id, id_path FROM ?:categories WHERE category_id IN (?n)", array('category_id', 'id_path'), $product_data['category_ids']);
+            $path = array();
+            foreach ($id_paths as $j => $cat_ids) {
+                $path = array_merge($path, explode('/', $cat_ids));
+            }
 
             if (fn_allowed_for('ULTIMATE')) {
                 $product_data['shared_product'] = fn_ult_is_shared_product($product_id);
@@ -191,7 +194,7 @@ function fn_get_product_data($product_id, &$auth, $lang_code = CART_LANGUAGE, $f
             }
 
             $_params = array(
-                'category_ids' => $path,
+                'category_ids' => array_unique($path),
                 'product_id' => $product_id,
                 'product_company_id' => !empty($product_data['company_id']) ? $product_data['company_id'] : 0,
                 'statuses' => AREA == 'C' ? array('A') : array('A', 'H'),

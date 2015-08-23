@@ -125,90 +125,6 @@ function fn_product_configurator_get_class_name($class_id, $lang_code = CART_LAN
 }
 
 //
-// If product is configurable and we want to delete it then delete all its subproducts
-//
-function fn_product_configurator_delete_cart_product(&$cart, &$cart_id, $full_erase)
-{
-    if ($full_erase == false) {
-        return false;
-    }
-
-    if (!empty($cart['products'][$cart_id]['extra']['configuration'])) {
-        foreach ($cart['products'] as $key => $item) {
-            if (!empty($item['extra']['parent']['configuration']) && $item['extra']['parent']['configuration'] == $cart_id) {
-                unset($cart['products'][$key]);
-                foreach ($cart['product_groups'] as $key_group => $group) {
-                    if (in_array($key, array_keys($group['products']))) {
-                        unset($cart['product_groups'][$key_group]['products'][$key]);
-                    }
-                }
-            }
-        }
-    }
-    if (!empty($cart['products'][$cart_id]['extra']['parent']['configuration'])) {
-        // find the group of the product in configuration
-        $product_id = $cart['products'][$cart_id]['product_id'];
-        $conf_id = $cart['products'][$cart['products'][$cart_id]['extra']['parent']['configuration']]['product_id'];
-        $groups = db_get_fields("SELECT group_id FROM ?:conf_group_products WHERE product_id = ?i", $product_id);
-        // If this group is required then do not unset the product
-        $required = db_get_field("SELECT required FROM ?:conf_product_groups WHERE group_id IN (?n) AND product_id = ?i", $groups, $conf_id);
-        if ($required == 'Y') {
-            $product_name = db_get_field("SELECT product FROM ?:product_descriptions WHERE product_id = ?i AND lang_code = ?s", $product_id, CART_LANGUAGE);
-            fn_set_notification('W', __('warning'), __('required_configuration_group', array(
-                '[product_name]' => $product_name
-            )));
-            $cart_id = 0;
-        }
-    }
-
-    return true;
-}
-
-//
-// Update amount of all products in configuration due to the configurable product amount
-//
-function fn_update_conf_amount(&$cart, $prev_amount)
-{
-    $rollback = array();
-    foreach ($cart['products'] as $cart_id => $cart_item) {
-        if (!empty($cart['products'][$cart_id]['extra']['configuration'])) {
-            $coef = $cart['products'][$cart_id]['amount']/$prev_amount[$cart_id];
-            foreach ($cart['products'] as $key => $item) {
-                if (!empty($item['extra']['parent']['configuration']) && $item['extra']['parent']['configuration'] == $cart_id) {
-                    $new_amount = round($cart['products'][$key]['amount'] * $coef);
-                    $new_amount = (empty($new_amount)) ? 1 : $new_amount;
-
-                    $checked_amount = fn_check_amount_in_stock($item['product_id'], $new_amount, @$item['product_options'], $key, (!empty($item['is_edp']) && $item['is_edp'] == 'Y' ? 'Y' : 'N'), 0, $cart);
-
-                    if ($checked_amount < $new_amount) {
-                        $rollback[] = $cart_id;
-                        break;
-                    }
-
-                    $cart['products'][$key]['amount'] = $new_amount;
-                }
-            }
-        }
-    }
-
-    // If amount of products is less than we try to update to, roll back to previous state
-    if (!empty($rollback)) {
-        foreach ($rollback as $cart_id) {
-            if (!empty($cart['products'][$cart_id]['extra']['configuration'])) {
-                foreach ($cart['products'] as $key => $item) {
-                    if (!empty($item['extra']['parent']['configuration']) && $item['extra']['parent']['configuration'] == $cart_id) {
-                        $cart['products'][$key]['amount'] = $prev_amount[$cart_id];
-                    }
-                }
-                $cart['products'][$cart_id]['amount'] = $prev_amount[$cart_id];
-            }
-        }
-    }
-
-    return true;
-}
-
-//
 // This function regenerates the cart ID tahing into account the confirable properties of an item
 //
 function fn_product_configurator_generate_cart_id(&$_cid, $extra, $only_selectable)
@@ -226,13 +142,13 @@ function fn_product_configurator_generate_cart_id(&$_cid, $extra, $only_selectab
                         }
                     }
                 }
+                $_cid[] = $v['amount'];
             }
         }
     }
-    if (!empty($extra['parent'])) {
-        foreach ($extra['parent'] as $k => $v) {
-            $_cid[] = $v;
-        }
+    if (!empty($extra['parent']['configuration'])) {
+        $_cid[] = $extra['parent']['configuration'];
+        $_cid[] = $v['step'];
     }
 }
 
@@ -257,8 +173,14 @@ function fn_product_configurator_clone_product($product_id, $pid)
 
 function fn_product_configurator_get_products($params, &$fields, &$sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
 {
+    if (AREA == 'C') {
+        foreach ($sortings as $type => $field) {
+            $sortings[$type] = array('products.product_type', $field);
+        }
+    }
+    
     $sortings['configurable'] = 'products.product_type';
-
+    
     if (!empty($params['configurable'])) {
         if ($params['configurable'] == 'Y') {
             $condition .= db_quote(' AND products.product_type = ?s', 'C');
@@ -277,23 +199,25 @@ function fn_product_configurator_get_products($params, &$fields, &$sortings, &$c
 
 function fn_product_configurator_gather_additional_product_data_before_discounts(&$product, $auth, $params)
 {
-    if (AREA == 'C' && !empty($params['get_for_one_product'])) {
-        if (!empty($product['product_type']) && $product['product_type'] == 'C') {
-            $product['configuration_mode'] = true;
-            $selected_configuration = array();
-            if (!empty($_REQUEST['cart_id'])) {
-                $product['edit_configuration'] = $_REQUEST['cart_id'];
-                $cart = & $_SESSION['cart'];
-                if (isset($cart['products'][$product['edit_configuration']]['extra'])) {
-                    $product['extra'] = $cart['products'][$product['edit_configuration']]['extra'];
-                    $product['selected_amount'] = $cart['products'][$product['edit_configuration']]['amount'];
-                }
+    if (!empty($product['product_type']) && $product['product_type'] == 'C') {
+        if (AREA == 'C' && !empty($params['get_for_one_product'])) {
+                $product['configuration_mode'] = true;
+                $selected_configuration = array();
+                $product['edit_configuration'] = !empty($product['cart_id']) ? $product['cart_id'] : $_REQUEST['cart_id'];;
+                if (!empty($_REQUEST['cart_id'])) {
+                    $cart = & $_SESSION['cart'];
+                    if (isset($cart['products'][$product['edit_configuration']]['extra'])) {
+                        $product['extra'] = $cart['products'][$product['edit_configuration']]['extra'];
+                        $product['selected_amount'] = $cart['products'][$product['edit_configuration']]['amount'];
+                    }
 
-                $selected_configuration = $cart['products'][$_REQUEST['cart_id']]['extra']['configuration'];
-            } elseif (!empty($product['selected_configuration'])) {
-                $selected_configuration = $product['selected_configuration'];
-            }
-            fn_get_configuration_groups($product, $selected_configuration);
+                    $selected_configuration = $cart['products'][$_REQUEST['cart_id']]['extra']['configuration'];
+                } elseif (!empty($product['selected_configuration'])) {
+                    $selected_configuration = $product['selected_configuration'];
+                }
+                fn_get_configuration_groups($product, $selected_configuration);
+        } elseif (AREA == 'C') {
+            $product['price'] = $product['base_price'] = 1;
         }
     }
 
@@ -365,33 +289,7 @@ function fn_pconf_gather_default_configuration_price(&$product)
     return true;
 }
 
-/**
- * Calculates price of selected configuration products
- *
- * @param array $conf_product_groups Product groups with selected products identifiers
- * @return float Calculated price
- */
-function fn_pconf_get_configuration_price($conf_product_groups)
-{
-    $price = 0;
-    $auth = & $_SESSION['auth'];
-    foreach ($conf_product_groups as $k => $v) {
-        if (!empty($v)) {
-            $_products = db_get_hash_single_array("SELECT ?:product_prices.product_id, IF(?:product_prices.percentage_discount = 0, ?:product_prices.price, ?:product_prices.price - (?:product_prices.price * ?:product_prices.percentage_discount)/100) as price FROM ?:product_prices LEFT JOIN ?:conf_group_products ON ?:conf_group_products.product_id = ?:product_prices.product_id WHERE ?:conf_group_products.group_id = ?i AND ?:product_prices.lower_limit = 1 AND ?:product_prices.usergroup_id IN (?n)", array('product_id', 'price'), $k, (AREA == 'A' ? USERGROUP_ALL : array_merge(array(USERGROUP_ALL), $auth['usergroup_ids'])));
-            $tmp = is_array($v) ? $v : explode(':', $v);
-            foreach ($tmp as $pid) {
-                if (!empty($pid) && !empty($_products[$pid]) && AREA != 'A') {
-                    $price += $_products[$pid];
-                }
-            }
-        }
-    }
-
-    return $price;
-}
-
-/**
- * Recalculates price and checks if product can be added with the current price
+/** * Recalculates price and checks if product can be added with the current price
  *
  * @param array $data Adding product data
  * @param float $price Calculated product price
@@ -401,9 +299,7 @@ function fn_pconf_get_configuration_price($conf_product_groups)
 function fn_product_configurator_add_product_to_cart_check_price($data, $price, &$allow_add)
 {
     if (!$allow_add && empty($price) && !empty($data['configuration'])) {
-        if ($conf_price = fn_pconf_get_configuration_price($data['configuration'])) {
-            $allow_add = true;
-        }
+        $allow_add = true;
     }
 
     return true;
@@ -562,20 +458,21 @@ function fn_product_configurator_post_add_to_cart($product_data, &$cart, $auth, 
 
             $total_amount = $value['amount'];
             $is_changed = false;
-
             foreach ($cart['products'] as $k => $v) {
                 if (isset($v['extra']['parent']['configuration']) && $v['extra']['parent']['configuration'] == $value['extra']['configuration_id']) {
-                    $amount = ceil($v['amount'] / $v['extra']['step']);
-                    if ($total_amount != $amount) {
-                        if ($total_amount > $amount) {
-                            $total_amount = $amount;
-                        }
+                    $amount = floor($v['amount'] / $v['extra']['step']);
+                    if ($total_amount > $amount) {
+                        $total_amount = $amount;
                         $is_changed =  true;
                     }
                     $v['product_option_data'] = fn_get_selected_product_options_info($v['product_options']);
                     $cart['products'][$key]['configuration'][$k] = $v;
                     unset($cart['products'][$k]);
                 }
+            }
+            if (count($value['extra']['configuration']) > count($cart['products'][$key]['configuration'])) {
+                unset($cart['products'][$key]);
+                continue;
             }
 
             if ($is_changed) {
@@ -753,32 +650,6 @@ function fn_product_configurator_update_product_pre(&$product_data, $product_id,
     return true;
 }
 
-function fn_product_configurator_check_add_to_cart_post($cart, $product, $product_id, &$result)
-{
-//     if (!$result && fn_allowed_for('ULTIMATE') && Registry::get('runtime.company_id')) {
-//         if (!empty($product['extra']['parent']['configuration'])) {
-//             $cart_id = $product['extra']['parent']['configuration'];
-//             $parent_id = 0;
-// 
-//             foreach ($cart['products'] as $k => $v) {
-//                 if ($k == $cart_id) {
-//                     $parent_id = $v['product_id'];
-//                     break;
-//                 }
-//             }
-// 
-//             if (!empty($parent_id)) {
-//                 $product_company_id = db_get_field('SELECT company_id FROM ?:products WHERE product_id = ?i', $parent_id);
-//                 if ($product_company_id == Registry::get('runtime.company_id') || fn_ult_is_shared_product($parent_id, Registry::get('runtime.company_id')) == 'Y') {
-//                     $result = true;
-//                 }
-//             }
-//         }
-//     }
-// 
-//     return true;
-}
-
 function fn_check_pconf_access($db_field, $value, $show_notification = true)
 {
     if (fn_allowed_for('ULTIMATE') && !empty($value)) {
@@ -798,53 +669,6 @@ function fn_check_pconf_access($db_field, $value, $show_notification = true)
 
                         return false;
                     }
-                }
-            }
-        }
-    }
-
-    return true;
-}
-
-/**
- * Update product configurator products
- *
- * @param array $cart Array of cart content and user information necessary for purchase
- * @param array $product_data Array of new products data
- * @param array $auth Array of user authentication data (e.g. uid, usergroup_ids, etc.)
- * @return boolean Always true
- */
-function fn_product_configurator_update_cart_products_post(&$cart, $product_data, $auth)
-{
-    if (!empty($cart['products'])) {
-        foreach ($cart['products'] as $_id => $product) {
-            if (!empty($product['extra']['configuration']) && !empty($product['prev_cart_id']) && $product['prev_cart_id'] != $_id) {
-                foreach ($cart['products'] as $aux_id => $aux_product) {
-                    if (!empty($aux_product['extra']['parent']['configuration']) && $aux_product['extra']['parent']['configuration'] == $product['prev_cart_id']) {
-                        $cart['products'][$aux_id]['extra']['parent']['configuration'] = $_id;
-                        $cart['products'][$aux_id]['update_c_id'] = true;
-                    }
-                }
-            }
-        }
-
-        foreach ($cart['products'] as $upd_id => $upd_product) {
-            if (!empty($upd_product['update_c_id']) && $upd_product['update_c_id'] == true) {
-                $new_id = fn_generate_cart_id($upd_product['product_id'], $upd_product['extra'], false);
-
-                if (!isset($cart['products'][$new_id])) {
-                    unset($upd_product['update_c_id']);
-                    $cart['products'][$new_id] = $upd_product;
-                    unset($cart['products'][$upd_id]);
-                    foreach ($cart['product_groups'] as $key_group => $group) {
-                        if (in_array($upd_id, array_keys($group['products']))) {
-                            unset($cart['product_groups'][$key_group]['products'][$upd_id]);
-                            $cart['product_groups'][$key_group]['products'][$new_id] = $upd_product;
-                        }
-                    }
-
-                    // update taxes
-                    fn_update_stored_cart_taxes($cart, $upd_id, $new_id, false);
                 }
             }
         }
@@ -1020,4 +844,80 @@ function fn_product_configurator_get_additional_information(&$product, $product_
     if (!empty($product_data['product_data'][$product['product_id']]['configuration'])) {
         $product['selected_configuration'] = $product_data['product_data'][$product['product_id']]['configuration'];
     }
+    if (!empty($product_data['product_data'][$product['product_id']]['cart_id'])) {
+        $product['cart_id'] = $product_data['product_data'][$product['product_id']]['cart_id'];
+    }
 }
+
+/**
+ * Calculates price of selected configuration products
+ *
+ * @param array $conf_product_groups Product groups with selected products identifiers
+ * @return float Calculated price
+ */
+function fn_pconf_get_configuration_price($conf_product_groups)
+{
+    $price = 0;
+    $auth = & $_SESSION['auth'];
+    foreach ($conf_product_groups as $k => $v) {
+        if (!empty($v)) {
+            $_products = db_get_hash_single_array("SELECT ?:product_prices.product_id, IF(?:product_prices.percentage_discount = 0, ?:product_prices.price, ?:product_prices.price - (?:product_prices.price * ?:product_prices.percentage_discount)/100) as price FROM ?:product_prices LEFT JOIN ?:conf_group_products ON ?:conf_group_products.product_id = ?:product_prices.product_id WHERE ?:conf_group_products.group_id = ?i AND ?:product_prices.lower_limit = 1 AND ?:product_prices.usergroup_id IN (?n)", array('product_id', 'price'), $k, (AREA == 'A' ? USERGROUP_ALL : array_merge(array(USERGROUP_ALL), $auth['usergroup_ids'])));
+            $tmp = is_array($v) ? $v : explode(':', $v);
+            foreach ($tmp as $pid) {
+                if (!empty($pid) && !empty($_products[$pid]) && AREA != 'A') {
+                    $price += $_products[$pid];
+                }
+            }
+        }
+    }
+
+    return $price;
+}
+
+/**
+ * Update product configurator products
+ *
+ * @param array $cart Array of cart content and user information necessary for purchase
+ * @param array $product_data Array of new products data
+ * @param array $auth Array of user authentication data (e.g. uid, usergroup_ids, etc.)
+ * @return boolean Always true
+ */
+function fn_product_configurator_update_cart_products_post(&$cart, $product_data, $auth)
+{
+    if (!empty($cart['products'])) {
+        foreach ($cart['products'] as $_id => $product) {
+            if (!empty($product['extra']['configuration']) && !empty($product['prev_cart_id']) && $product['prev_cart_id'] != $_id) {
+                foreach ($cart['products'] as $aux_id => $aux_product) {
+                    if (!empty($aux_product['extra']['parent']['configuration']) && $aux_product['extra']['parent']['configuration'] == $product['prev_cart_id']) {
+                        $cart['products'][$aux_id]['extra']['parent']['configuration'] = $_id;
+                        $cart['products'][$aux_id]['update_c_id'] = true;
+                    }
+                }
+            }
+        }
+
+        foreach ($cart['products'] as $upd_id => $upd_product) {
+            if (!empty($upd_product['update_c_id']) && $upd_product['update_c_id'] == true) {
+                $new_id = fn_generate_cart_id($upd_product['product_id'], $upd_product['extra'], false);
+
+                if (!isset($cart['products'][$new_id])) {
+                    unset($upd_product['update_c_id']);
+                    $cart['products'][$new_id] = $upd_product;
+                    unset($cart['products'][$upd_id]);
+                    foreach ($cart['product_groups'] as $key_group => $group) {
+                        if (in_array($upd_id, array_keys($group['products']))) {
+                            unset($cart['product_groups'][$key_group]['products'][$upd_id]);
+                            $cart['product_groups'][$key_group]['products'][$new_id] = $upd_product;
+                        }
+                    }
+
+                    // update taxes
+                    fn_update_stored_cart_taxes($cart, $upd_id, $new_id, false);
+                }
+            }
+        }
+    }
+
+    return true;
+}
+

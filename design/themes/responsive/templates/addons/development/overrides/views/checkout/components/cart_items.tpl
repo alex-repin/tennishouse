@@ -49,9 +49,6 @@
                                     </a>
                                 {/if}
                             {/strip}
-                            <div class="ty-cart-content__sku ty-sku{if !$product.product_code} hidden{/if}" id="sku_{$key}">
-                                {__("sku")}: <span class="cm-reload-{$obj_id}" id="product_code_update_{$obj_id}">{$product.product_code}<!--product_code_update_{$obj_id}--></span>
-                            </div>
                             {if $product.product_options}
                                 <div class="cm-reload-{$obj_id} ty-cart-content__options" id="options_update_{$obj_id}">
                                 {include file="views/products/components/product_options.tpl" product_options=$product.product_options product=$product name="cart_products" id=$key location="cart" disable_ids=$disable_ids form_name="checkout_form"}

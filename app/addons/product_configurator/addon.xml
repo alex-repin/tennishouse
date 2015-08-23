@@ -140,5 +140,6 @@
         <item lang="ru" id="go_product_details">Посмотреть товар</item>
         <item lang="ru" id="subtitle">Подзаголовок</item>
         <item lang="ru" id="amount_field">Поле "Кол-во"</item>
+        <item lang="ru" id="choose_your_package">Собери свой комплект</item>
     </language_variables>
 </addon>

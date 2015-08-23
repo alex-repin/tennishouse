@@ -16,7 +16,6 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 fn_register_hooks(
     'clone_product',
-    'delete_cart_product',
     'delete_wishlist_product',
     'generate_cart_id',
     'get_products',
@@ -31,7 +30,6 @@ fn_register_hooks(
     'calculate_options',
     'amazon_products',
     'update_product_pre',
-//    'check_add_to_cart_post',
     'add_product_to_cart_check_price',
     'get_order_info',
     'update_cart_products_post',

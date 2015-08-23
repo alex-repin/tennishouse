@@ -42,6 +42,7 @@
     </div>
     
     <div class="ty-grid-list__item-info">
+        {hook name="products:product_multicolumns_list_item_info"}
         <div class="ty-grid-list__item-name">
             {if $mode == 'R'}
                 <div class="ty-product-series">{$product.subtitle}</div>
@@ -78,7 +79,9 @@
                 </div>
             {/if}
         </div>
+        {/hook}
     </div>
+    
     {assign var="form_close" value="form_close_`$obj_id`"}
     {$smarty.capture.$form_close nofilter}
 </div>
