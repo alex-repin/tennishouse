@@ -239,7 +239,8 @@ class Spsr implements IService
         if (!empty($this->SID)) {
             $data['data']['SID'] = $this->SID;
             $extra = array(
-                'request_timeout' => 2
+                'request_timeout' => 2,
+                'timeout' => 1
             );
             $response = Http::get($data['r_url'], $data['data'], $extra);
             $this->finishSession($data['login'], $this->SID, $data['url']);

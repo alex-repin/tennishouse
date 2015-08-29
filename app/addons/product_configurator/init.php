@@ -16,7 +16,6 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 fn_register_hooks(
     'clone_product',
-    'delete_wishlist_product',
     'generate_cart_id',
     'get_products',
     'prepare_product_quick_view',
@@ -25,13 +24,17 @@ fn_register_hooks(
     'get_cart_product_data',
     'add_to_cart',
     'pre_add_to_wishlist',
+    'post_add_to_wishlist',
     'gather_additional_product_data_before_discounts',
     'buy_together_restricted_product',
     'calculate_options',
     'amazon_products',
     'update_product_pre',
     'add_product_to_cart_check_price',
-    'get_order_info',
     'update_cart_products_post',
-    'get_additional_information'
+    'get_additional_information',
+    'create_order_details',
+    'get_order_items_info_post',
+    'reorder_item',
+    'change_order_status'
 );

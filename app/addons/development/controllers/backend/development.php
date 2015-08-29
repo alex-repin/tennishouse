@@ -308,11 +308,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             }
                         }
                         $out_of_stock = array_diff($all_ids, $in_stock);
-                        if (!empty($in_stock)) {
-                            db_query("UPDATE ?:products SET status = 'A' WHERE product_id IN (?n)", $in_stock);
-                        }
+//                         if (!empty($in_stock)) {
+//                             db_query("UPDATE ?:products SET status = 'A' WHERE product_id IN (?n)", $in_stock);
+//                         }
                         if (!empty($out_of_stock)) {
-                            db_query("UPDATE ?:products SET status = 'H', amount = '0' WHERE product_id IN (?n)", $out_of_stock);
+//                             db_query("UPDATE ?:products SET status = 'H', amount = '0' WHERE product_id IN (?n)", $out_of_stock);
                             foreach ($out_of_stock as $os_i => $pr_id) {
                                 fn_rebuild_product_options_inventory($pr_id);
                                 $all_combs = db_get_hash_single_array("SELECT combination_hash, combination FROM ?:product_options_inventory WHERE product_id = ?i", array('combination_hash', 'combination'), $pr_id);

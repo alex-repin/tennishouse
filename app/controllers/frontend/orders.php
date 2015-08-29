@@ -499,6 +499,8 @@ function fn_reorder($order_id, &$cart, &$auth)
                     }
                 }
             }
+            
+            fn_set_hook('reorder_item', $cart['products'][$k]);
         } else {
             unset($cart['products'][$k]);
         }

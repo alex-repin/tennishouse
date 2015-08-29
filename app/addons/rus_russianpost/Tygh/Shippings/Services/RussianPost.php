@@ -223,7 +223,11 @@ class RussianPost implements IService
             $retry = 0;
             do {
                 $retry++;
-                $response = Http::get($data['url'], $data['data'], array('timeout' => $this->_timeout));
+                $extra = array(
+                    'request_timeout' => 2,
+                    'timeout' => 1
+                );
+                $response = Http::get($data['url'], $data['data'], $extra);
             } while (strpos($response, 'Результаты расчёта') == 0 && $retry <= $this->_max_num_requests);
 
             if ($retry == $this->_max_num_requests) {

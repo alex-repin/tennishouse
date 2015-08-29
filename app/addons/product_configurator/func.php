@@ -171,15 +171,36 @@ function fn_product_configurator_clone_product($product_id, $pid)
     return true;
 }
 
-function fn_product_configurator_get_products($params, &$fields, &$sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
+function fn_product_configurator_get_products(&$params, &$fields, &$sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
 {
     if (AREA == 'C') {
         foreach ($sortings as $type => $field) {
             $sortings[$type] = array('products.product_type', $field);
         }
+        $sortings['configurable'] = 'products.product_type';
+        
+        if (empty($params['sort_by']) || empty($sortings[$params['sort_by']])) {
+            $params = array_merge($params, fn_get_default_products_sorting());
+            if (empty($sortings[$params['sort_by']])) {
+                $_products_sortings = fn_get_products_sorting();
+                $params['sort_by'] = key($_products_sortings);
+            }
+        }
+
+        $default_sorting = fn_get_products_sorting();
+
+        if (empty($params['sort_order'])) {
+            if (!empty($default_sorting[$params['sort_by']]['default_order'])) {
+                $params['sort_order'] = $default_sorting[$params['sort_by']]['default_order'];
+            } else {
+                $params['sort_order'] = 'asc';
+            }
+        }
+        
+        if ($params['sort_order'] == 'asc') {
+            $params['sort_order'] = 'descasc';
+        }
     }
-    
-    $sortings['configurable'] = 'products.product_type';
     
     if (!empty($params['configurable'])) {
         if ($params['configurable'] == 'Y') {
@@ -311,6 +332,8 @@ function fn_product_configurator_get_cart_product_data($product_id, &$_pdata, &$
         $cart['products'][$hash]['amount_total'] = 0;
         $tmp_cart = $cart;
         $_pdata['weight'] = 0;
+        $total_amount = $product['amount'];
+        $is_changed = false;
         foreach ($product['configuration'] as $item_id => $_data) {
             $cart['products'][$hash]['amount_total'] += $_data['amount'];
 
@@ -321,6 +344,11 @@ function fn_product_configurator_get_cart_product_data($product_id, &$_pdata, &$
 
                 continue;
             }
+            $amount = floor($product['configuration'][$item_id]['amount'] / $product['configuration'][$item_id]['extra']['step']);
+            if ($total_amount > $amount) {
+                $total_amount = $amount;
+                $is_changed =  true;
+            }
 
             $cart['products'][$hash]['price'] += $_cproduct['price'] * $_data['extra']['step'];
             $_pdata['price'] += $_cproduct['price'] * $_data['extra']['step'];
@@ -329,11 +357,19 @@ function fn_product_configurator_get_cart_product_data($product_id, &$_pdata, &$
             
             
             $_tax = (!empty($_cproduct['tax_summary']) ? ($_cproduct['tax_summary']['added'] / $_cproduct['amount']) : 0);
+            $product['configuration'][$item_id]['original_price'] = $_cproduct['original_price'];
             $_cproduct['display_price'] = $_cproduct['price'] + (Registry::get('settings.Appearance.cart_prices_w_taxes') == 'Y' ? $_tax : 0);
             $_cproduct['step'] = $_data['extra']['step'];
             $_cproduct['subtotal'] = $_cproduct['price'] * $_data['extra']['step'];
-            $_cproduct['display_subtotal'] = $_cproduct['display_price'] * $_data['extra']['step'];
+            $product['configuration'][$item_id]['display_subtotal'] = $_cproduct['display_subtotal'] = $_cproduct['display_price'] * $_data['extra']['step'];
             $_pdata['configuration'][$item_id] = $_cproduct;
+            $product['configuration'][$item_id]['product'] = $_cproduct['product'];
+        }
+        if ($is_changed) {
+            $product['amount'] = $total_amount;
+            foreach ($product['configuration'] as $item_id => $_data) {
+                $_pdata['configuration'][$item_id]['amount'] = $product['configuration'][$item_id]['amount'] = (int) $product['configuration'][$item_id]['extra']['step'] * $total_amount;
+            }
         }
     }
 }
@@ -362,6 +398,7 @@ function fn_product_configurator_pre_add_to_cart(&$product_data, &$cart, $auth, 
                     if (!empty($v['product_options'])) {
                         $product_data[$k]['product_options'] = $v['product_options'];
                     }
+                    $cart['products'][$k] = $product_data[$k];
                 }
 
                 $product_data[$key]['extra']['configuration_id'] = $cart['products'][$key]['extra']['configuration_id'];
@@ -417,7 +454,6 @@ function fn_product_configurator_pre_add_to_cart(&$product_data, &$cart, $auth, 
             $product_data[$key]['extra']['step'] = $value['amount'];
         }
     }
-
 }
 
 function fn_product_configurator_add_to_cart(&$cart, $product_id, $_id)
@@ -455,72 +491,91 @@ function fn_product_configurator_post_add_to_cart($product_data, &$cart, $auth, 
 {
     foreach ($cart['products'] as $key => $value) {
         if (!empty($value['extra']['configuration'])) {
-
-            $total_amount = $value['amount'];
-            $is_changed = false;
             foreach ($cart['products'] as $k => $v) {
                 if (isset($v['extra']['parent']['configuration']) && $v['extra']['parent']['configuration'] == $value['extra']['configuration_id']) {
-                    $amount = floor($v['amount'] / $v['extra']['step']);
-                    if ($total_amount > $amount) {
-                        $total_amount = $amount;
-                        $is_changed =  true;
-                    }
                     $v['product_option_data'] = fn_get_selected_product_options_info($v['product_options']);
                     $cart['products'][$key]['configuration'][$k] = $v;
                     unset($cart['products'][$k]);
-                }
-            }
-            if (count($value['extra']['configuration']) > count($cart['products'][$key]['configuration'])) {
-                unset($cart['products'][$key]);
-                continue;
-            }
-
-            if ($is_changed) {
-                $cart['products'][$key]['amount'] = $total_amount;
-                foreach ($cart['products'][$key]['configuration'] as $k => $v) {
-                    $cart['products'][$k]['amount'] = (int) $cart['products'][$k]['extra']['step'] * $total_amount;
+                    $conf_count++;
                 }
             }
         }
     }
 }
 
-/**
- * Compares order items
- *
- * @param array $item1 First item
- * @param array $item2 Second item
- * @return int The result of comparison
- */
-function fn_pconf_compare_order_items($item1, $item2)
+function fn_product_configurator_reorder_item(&$product)
 {
-   $result = 0;
-
-   if (isset($item1['extra']['configuration_id']) && isset($item2['extra']['parent']['configuration']) && $item1['extra']['configuration_id'] == $item2['extra']['parent']['configuration']) {
-       $result = -1;
-   } elseif (isset($item2['extra']['configuration_id']) && isset($item1['extra']['parent']['configuration']) && $item2['extra']['configuration_id'] == $item1['extra']['parent']['configuration']) {
-       $result = 1;
-   } else {
-       $result = strnatcasecmp($item1['product'], $item2['product']);
-   }
-
-   return $result;
+    if (!empty($product['extra']['configuration_data'])) {
+        $product['configuration'] = $product['extra']['configuration_data'];
+        unset($product['extra']['configuration_data']);
+    }
 }
 
-/**
- * Sorts order items
- *
- * @param array $order Order information
- * @param array $additional_data Additional order data
- * @return bool Always true
- */
-function fn_product_configurator_get_order_info(&$order, $additional_data)
+function fn_product_configurator_change_order_status(&$status_to, $status_from, $order_info, $force_notification, $order_statuses, $place_order)
 {
-   if (!empty($order['products'])) {
-       uasort($order['products'], 'fn_pconf_compare_order_items');
-   }
+    $_updated_ids = array();
+    $_error = false;
 
-   return true;
+    foreach ($order_info['products'] as $k => $v) {
+        if (!empty($v['extra']['configuration_data'])) {
+            foreach ($v['extra']['configuration_data'] as $i => $_product) {
+                // Generate ekey if EDP is ordered
+                if (!empty($_product['extra']['is_edp']) && $_product['extra']['is_edp'] == 'Y') {
+                    continue; // don't track inventory
+                }
+
+                // Update product amount if inventory tracking is enabled
+                if (Registry::get('settings.General.inventory_tracking') == 'Y') {
+                    if ($order_statuses[$status_to]['params']['inventory'] == 'D' && $order_statuses[$status_from]['params']['inventory'] == 'I') {
+                        // decrease amount
+                        if (fn_update_product_amount($_product['product_id'], $_product['amount'], @$_product['extra']['product_options'], '-') == false) {
+                            $status_to = 'B'; //backorder
+                            $_error = true;
+                            fn_set_notification('W', __('warning'), __('low_stock_subj', array(
+                                '[product]' => fn_get_product_name($_product['product_id']) . ' #' . $_product['product_id']
+                            )));
+
+                            break;
+                        } else {
+                            $_updated_ids[$k][] = $i;
+                        }
+                    } elseif ($order_statuses[$status_to]['params']['inventory'] == 'I' && $order_statuses[$status_from]['params']['inventory'] == 'D') {
+                        // increase amount
+                        fn_update_product_amount($_product['product_id'], $_product['amount'], @$_product['extra']['product_options'], '+');
+                    }
+                }
+            }
+        }
+    }
+
+    if ($_error) {
+        if (!empty($_updated_ids)) {
+            foreach ($_updated_ids as $id => $ids) {
+                foreach ($ids as $i => $_id) {
+                    // increase amount
+                    fn_update_product_amount($order_info['products'][$id]['extra']['configuration_data'][$_id]['product_id'], $order_info['products'][$id]['extra']['configuration_data'][$_id]['amount'], @$order_info['products'][$id]['extra']['configuration_data'][$_id]['extra']['product_options'], '+');
+                }
+            }
+        }
+    }
+}
+
+function fn_product_configurator_get_order_items_info_post(&$order, $v, $k)
+{
+    if (!empty($v['extra']['configuration_data'])) {
+        foreach ($v['extra']['configuration_data'] as $i => $cp) {
+            $order['products'][$k]['extra']['configuration_data'][$i]['is_accessible'] = fn_is_accessible_product($cp);
+        }
+    }
+}
+
+function fn_product_configurator_create_order_details(&$order_details, $item_id, $order_id, $cart)
+{
+    if (!empty($cart['products'][$item_id]['configuration'])) {
+        $extra = unserialize($order_details['extra']);
+        $extra['configuration_data'] = $cart['products'][$item_id]['configuration'];
+        $order_details['extra'] = serialize($extra);
+    }
 }
 
 /**
@@ -535,28 +590,11 @@ function fn_product_configurator_pre_add_to_wishlist(&$product_data, &$wishlist,
 {
     $update = false;
     fn_product_configurator_pre_add_to_cart($product_data, $wishlist, $auth, $update);
-
-    return true;
 }
 
-/**
- * Delete configurable product from the wishlist
- *
- * @param array $wishlist wishlist storage
- * @param array $wishlist_id ID of the product to delete
- * @return boolean always true
- */
-function fn_product_configurator_delete_wishlist_product(&$wishlist, $wishlist_id)
+function fn_product_configurator_post_add_to_wishlist(&$product_data, &$wishlist, $auth)
 {
-    if (!empty($wishlist['products'][$wishlist_id]['extra']['configuration'])) {
-        foreach ($wishlist['products'] as $key => $item) {
-            if (!empty($item['extra']['parent']['configuration']) && $item['extra']['parent']['configuration'] == $wishlist_id) {
-                unset($wishlist['products'][$key]);
-            }
-        }
-    }
-
-    return true;
+    fn_product_configurator_post_add_to_cart($product_data, $wishlist, $auth);
 }
 
 function fn_product_configurator_buy_together_restricted_product($product_id, $auth, &$is_restricted, $show_notification)
@@ -622,6 +660,7 @@ function fn_product_configurator_update_product_pre(&$product_data, $product_id,
         $product_data['zero_price_action'] = 'P';
         $product_data['auto_price'] = 'N';
         $product_data['tracking'] = 'D';
+        $product_data['discussion_type'] = 'D';
         
         if (fn_allowed_for('ULTIMATE')) {
             if (!empty($product_id) && !empty($product_data['company_id'])) {
@@ -641,33 +680,6 @@ function fn_product_configurator_update_product_pre(&$product_data, $product_id,
                     if ($is_in_conf) {
                         $product_data['company_id'] = $product_company_id;
                         fn_set_notification('W', __('warning'), __('pconf_company_update_denied'));
-                    }
-                }
-            }
-        }
-    }
-
-    return true;
-}
-
-function fn_check_pconf_access($db_field, $value, $show_notification = true)
-{
-    if (fn_allowed_for('ULTIMATE') && !empty($value)) {
-        list($table, $field) = explode('.', $db_field);
-        if (!empty($table) && !empty($field)) {
-            $condition = fn_get_company_condition($table . '.company_id');
-            if ($condition) {
-                if (!is_array($value)) {
-                    $value = explode(',', $value);
-                }
-                foreach ($value as $v) {
-                    $result = db_get_field("SELECT COUNT(1) FROM $table WHERE $db_field = ?s" . $condition, $v);
-                    if (!$result) {
-                        if ($show_notification) {
-                            fn_set_notification('E', __('error'), __('access_denied'));
-                        }
-
-                        return false;
                     }
                 }
             }
@@ -872,6 +884,33 @@ function fn_pconf_get_configuration_price($conf_product_groups)
     }
 
     return $price;
+}
+
+function fn_check_pconf_access($db_field, $value, $show_notification = true)
+{
+    if (fn_allowed_for('ULTIMATE') && !empty($value)) {
+        list($table, $field) = explode('.', $db_field);
+        if (!empty($table) && !empty($field)) {
+            $condition = fn_get_company_condition($table . '.company_id');
+            if ($condition) {
+                if (!is_array($value)) {
+                    $value = explode(',', $value);
+                }
+                foreach ($value as $v) {
+                    $result = db_get_field("SELECT COUNT(1) FROM $table WHERE $db_field = ?s" . $condition, $v);
+                    if (!$result) {
+                        if ($show_notification) {
+                            fn_set_notification('E', __('error'), __('access_denied'));
+                        }
+
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+
+    return true;
 }
 
 /**

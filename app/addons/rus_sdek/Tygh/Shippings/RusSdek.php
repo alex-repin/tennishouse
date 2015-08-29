@@ -42,7 +42,6 @@ class RusSdek
 
     public static function resultXml($response)
     {
-
         $result = array(
             'error' => false,
             'msg' => false,
@@ -51,6 +50,11 @@ class RusSdek
 
         $xml_result = simplexml_load_string($response);
 
+        if (empty($xml_result)) {
+            $result['error'] = true;
+            
+            return $result;
+        }
         $attribut = $xml_result->children()->getName();
 
         $_result = json_decode(json_encode((array) $xml_result), true);
@@ -187,14 +191,22 @@ class RusSdek
             'xml_request' => '<?xml version="1.0" encoding="UTF-8" ?>' . $xml
         );
 
-        $response = Http::post($url, $xml_request);
+        $extra = array(
+            'request_timeout' => 2,
+            'timeout' => 1
+        );
+        $response = Http::post($url, $xml_request, $extra);
 
         return $response;
     }
 
     public static function SdekPvzOffices($city)
     {
-        $result = Http::get('http://gw.edostavka.ru:11443/pvzlist.php', $city);
+        $extra = array(
+            'request_timeout' => 2,
+            'timeout' => 1
+        );
+        $result = Http::get('http://gw.edostavka.ru:11443/pvzlist.php', $city, $extra);
         $xml = simplexml_load_string($result);
         if (!empty($xml)) {
             $count = count($xml->Pvz);

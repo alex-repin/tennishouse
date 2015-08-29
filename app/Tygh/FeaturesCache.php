@@ -145,84 +145,99 @@ class FeaturesCache
         $memcache_features = self::get();
         if (!empty($memcache_features[$lang_code])) {
             $memcache_features = $memcache_features[$lang_code];
-            $product_ids = array();
-            foreach ($features_condition as $feature_id => $feature_data) {
-                if (!empty($memcache_features[$feature_id])) {
-                    if (!empty($feature_data['variants'])) {
-                        $pr_ids = array();
-                        foreach ($feature_data['variants'] as $i => $variant) {
-                            if (!empty($memcache_features[$feature_id]['variants'][$variant['variant_id']])) {
-                                $pr_ids = array_merge($pr_ids, $memcache_features[$feature_id]['variants'][$variant['variant_id']]);
-                            }
-                        }
-                        $product_ids[] = $pr_ids;
-                    } elseif (!empty($feature_data['variant_id']) && !empty($memcache_features[$feature_id]['variants'][$feature_data['variant_id']])) {
-                        $product_ids[] = $memcache_features[$feature_id]['variants'][$feature_data['variant_id']];
-                    } elseif (!empty($feature_data['value']) && !empty($memcache_features[$feature_id]['values'][$feature_data['value']])) {
-                        $product_ids[] = $memcache_features[$feature_id]['values'][$feature_data['value']];
-                    } else {
-                        $_prod_ids = array();
-                        if (!empty($feature_data['not_variant']) && !empty($memcache_features[$feature_id]['variants'])) {
-                            foreach ($memcache_features[$feature_id]['variants'] as $variant_id => $_product_ids) {
-                                if (!empty($_product_ids) && $feature_data['not_variant'] != $variant_id) {
-                                    $_prod_ids = array_merge($_prod_ids, $_product_ids);
+            $_product_conditions = array();
+            foreach ($features_condition as $i => $features) {
+                $product_ids = array();
+                foreach ($features as $feature_id => $feature_data) {
+                    if (!empty($memcache_features[$feature_id])) {
+                        if (!empty($feature_data['variants'])) {
+                            $pr_ids = array();
+                            foreach ($feature_data['variants'] as $i => $variant) {
+                                if (!empty($memcache_features[$feature_id]['variants'][$variant['variant_id']])) {
+                                    $pr_ids = array_merge($pr_ids, $memcache_features[$feature_id]['variants'][$variant['variant_id']]);
                                 }
                             }
-                        } elseif ((!empty($feature_data['not_value']) || !empty($feature_data['min_value']) || !empty($feature_data['max_value'])) && !empty($memcache_features[$feature_id]['values'])) {
-                            foreach ($memcache_features[$feature_id]['values'] as $variant_id => $_product_ids) {
-                                if (!empty($_product_ids)) {
-                                    $use = true;
-                                    if (!empty($feature_data['min_value']) && $variant_id < $feature_data['min_value']) {
-                                        $use = false;
-                                    }
-                                    if (!empty($feature_data['max_value']) && $variant_id > $feature_data['max_value']) {
-                                        $use = false;
-                                    }
-                                    if ($use) {
+                            $product_ids[] = $pr_ids;
+                        } elseif (!empty($feature_data['variant_id']) && !empty($memcache_features[$feature_id]['variants'][$feature_data['variant_id']])) {
+                            $product_ids[] = $memcache_features[$feature_id]['variants'][$feature_data['variant_id']];
+                        } elseif (!empty($feature_data['value']) && !empty($memcache_features[$feature_id]['values'][$feature_data['value']])) {
+                            $product_ids[] = $memcache_features[$feature_id]['values'][$feature_data['value']];
+                        } else {
+                            $_prod_ids = array();
+                            if (!empty($feature_data['not_variant']) && !empty($memcache_features[$feature_id]['variants'])) {
+                                foreach ($memcache_features[$feature_id]['variants'] as $variant_id => $_product_ids) {
+                                    if (!empty($_product_ids) && $feature_data['not_variant'] != $variant_id) {
                                         $_prod_ids = array_merge($_prod_ids, $_product_ids);
                                     }
                                 }
+                            } elseif ((!empty($feature_data['not_value']) || !empty($feature_data['min_value']) || !empty($feature_data['max_value'])) && !empty($memcache_features[$feature_id]['values'])) {
+                                foreach ($memcache_features[$feature_id]['values'] as $variant_id => $_product_ids) {
+                                    if (!empty($_product_ids)) {
+                                        $use = true;
+                                        if (!empty($feature_data['min_value']) && $variant_id < $feature_data['min_value']) {
+                                            $use = false;
+                                        }
+                                        if (!empty($feature_data['max_value']) && $variant_id > $feature_data['max_value']) {
+                                            $use = false;
+                                        }
+                                        if ($use) {
+                                            $_prod_ids = array_merge($_prod_ids, $_product_ids);
+                                        }
+                                    }
+                                }
+                            }
+                            $product_ids[] = $_prod_ids;
+                        }
+                    }
+                }
+                if (!empty($product_ids)) {
+                    $result = array_shift($product_ids);
+                    foreach ($product_ids as $i => $pr_ids) {
+                        $result = array_intersect($result, $pr_ids);
+                    }
+                    $_product_conditions[] = db_quote("$products_table.product_id IN (?n)", $result);
+                }
+            }
+            if (!empty($_product_conditions)) {
+                $condition .= db_quote(" AND (?p) ", implode(' OR ', $_product_conditions));
+            }
+        } else {
+            $_conditions = array();
+            foreach ($features_condition as $i => $features) {
+                $conditions = array();
+                foreach ($features as $feature_id => $feature_data) {
+                    $join .= db_quote(" LEFT JOIN ?:product_features_values AS feature_?i ON feature_?i.product_id = $products_table.product_id AND feature_?i.feature_id = ?i AND feature_?i.lang_code = ?s", $feature_id, $feature_id, $feature_id, $feature_id, $feature_id, $lang_code);
+                    if (!empty($feature_data['variants'])) {
+                        $where_conditions = array();
+                        foreach ($feature_data['variants'] as $i => $variant) {
+                            if (!empty($variant['variant_id'])) {
+                                $where_conditions[] = db_quote("feature_?i.variant_id = ?i", $feature_id, $variant['variant_id']);
                             }
                         }
-                        $product_ids[] = $_prod_ids;
-                    }
-                }
-            }
-            if (!empty($product_ids)) {
-                $result = array_shift($product_ids);
-                foreach ($product_ids as $i => $pr_ids) {
-                    $result = array_intersect($result, $pr_ids);
-                }
-                $product_ids = $result;
-            }
-            $condition .= db_quote(" AND $products_table.product_id IN (?n) ", $product_ids);
-        } else {
-            foreach ($features_condition as $feature_id => $feature_data) {
-                $join .= db_quote(" LEFT JOIN ?:product_features_values AS feature_?i ON feature_?i.product_id = $products_table.product_id AND feature_?i.feature_id = ?i AND feature_?i.lang_code = ?s", $feature_id, $feature_id, $feature_id, $feature_id, $feature_id, $lang_code);
-                if (!empty($feature_data['variants'])) {
-                    $where_conditions = array();
-                    foreach ($feature_data['variants'] as $i => $variant) {
-                        if (!empty($variant['variant_id'])) {
-                            $where_conditions[] = db_quote(" feature_?i.variant_id = ?i ", $feature_id, $variant['variant_id']);
+                        $conditions[] = db_quote("(?p)", implode(" OR ", $where_conditions));
+                    } elseif (!empty($feature_data['variant_id'])) {
+                        $conditions[] = db_quote("feature_?i.variant_id = ?i", $feature_id, $feature_data['variant_id']);
+                    } elseif (!empty($feature_data['value'])) {
+                        $conditions[] = db_quote("feature_?i.value = ?i", $feature_id, $feature_data['value']);
+                    } elseif (!empty($feature_data['not_variant'])) {
+                        $conditions[] = db_quote("feature_?i.variant_id != ?i", $feature_id, $feature_data['not_variant']);
+                    } elseif (!empty($feature_data['not_value'])) {
+                        $conditions[] = db_quote("feature_?i.value != ?i", $feature_id, $feature_data['not_value']);
+                    } elseif (!empty($feature_data['min_value']) || !empty($feature_data['max_value'])) {
+                        if (!empty($feature_data['min_value'])) {
+                            $conditions[] = db_quote("feature_?i.value_int >= ?d", $feature_id, $feature_data['min_value']);
+                        }
+                        if (!empty($feature_data['max_value'])) {
+                            $conditions[] = db_quote("feature_?i.value_int <= ?d", $feature_id, $feature_data['max_value']);
                         }
                     }
-                    $condition .= db_quote(" AND (?p)", implode(" OR ", $where_conditions));
-                } elseif (!empty($feature_data['variant_id'])) {
-                    $condition .= db_quote(" AND feature_?i.variant_id = ?i ", $feature_id, $feature_data['variant_id']);
-                } elseif (!empty($feature_data['value'])) {
-                    $condition .= db_quote(" AND feature_?i.value = ?i ", $feature_id, $feature_data['value']);
-                } elseif (!empty($feature_data['not_variant'])) {
-                    $condition .= db_quote(" AND feature_?i.variant_id != ?i ", $feature_id, $feature_data['not_variant']);
-                } elseif (!empty($feature_data['not_value'])) {
-                    $condition .= db_quote(" AND feature_?i.value != ?i ", $feature_id, $feature_data['not_value']);
-                } elseif (!empty($feature_data['min_value']) || !empty($feature_data['max_value'])) {
-                    if (!empty($feature_data['min_value'])) {
-                        $condition .= db_quote(" AND feature_?i.value_int >= ?d ", $feature_id, $feature_data['min_value']);
-                    }
-                    if (!empty($feature_data['max_value'])) {
-                        $condition .= db_quote(" AND feature_?i.value_int <= ?d ", $feature_id, $feature_data['max_value']);
-                    }
                 }
+                if (!empty($conditions)) {
+                    $_conditions[] = db_quote("?p", implode('AND', $conditions));
+                }
+            }
+            if (!empty($_conditions)) {
+                $condition .= db_quote(" AND (?p)", implode(' OR ', $_conditions));
             }
         }
     }

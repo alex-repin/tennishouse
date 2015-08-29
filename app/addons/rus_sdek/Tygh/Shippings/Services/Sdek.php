@@ -214,9 +214,11 @@ class Sdek implements IService
 
         if (empty($sdek_data)) {
             $extra = array(
-                'request_timeout' => 2
+                'headers' => $data['headers'],
+                'request_timeout' => 2,
+                'timeout' => 1
             );
-            $response = Http::post($data['url'], $data['data'], $data['headers'], $extra);
+            $response = Http::post($data['url'], $data['data'], $extra);
             fn_set_session_data($key, $response);
         } else {
             $response = $sdek_data;

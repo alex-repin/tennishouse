@@ -213,7 +213,9 @@ function fn_change_notification_option(obj_id, clicked_id, trigger_change)
     setTimeout(function(){
         parent_el.find("option").attr('selected', false);
         if (trigger_change && parent_el.hasClass('cm-options-update'))  {
-            $('#auto_process_form').val('1');
+            if ($('#' + clicked_id).hasClass('ty-btn__add-to-cart')) {
+                $('#auto_process_form').val('1');
+            }
             parent_el.val(ntf_el.val()).change();
         } else {
             parent_el.val(ntf_el.val());

@@ -200,7 +200,8 @@ class RussianPostCalc implements IService
         if (empty($rp_data)) {
             // Russian post server works very unstably, that is why we cannot use multithreading and should use cycle. !!! NO, THANK YOU
             $extra = array(
-                'request_timeout' => 1
+                'request_timeout' => 2,
+                'timeout' => 1
             );
             $response = Http::get($data['url'], $data['data'], $extra);
             $res = json_decode($response, true);

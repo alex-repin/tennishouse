@@ -159,13 +159,6 @@ select {
     color: #ffff20;
     font-size: 68px;
 }
-.tooltip-ssl {
-    font-size: 11px;
-/*    background-color: #2db227 !important;*/
-}
-.tooltip-ssl .tooltip-arrow {
-/*    border-color: transparent transparent #2db227;*/
-}
 .margin-top-100 {
     margin-top: 100px !important;
 }
@@ -275,9 +268,9 @@ label.cm-required::after {
 
 .tooltip {
     display: none;
-    max-width: 250px;
+    max-width: 270px;
     z-index: 10000;
-    padding: 9px;
+    padding: 0;
     background: rgba(0, 0, 0, 0.8);
     color: #fff;
     text-align: left;
@@ -287,8 +280,14 @@ label.cm-required::after {
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
+    margin: 0;
 }
 .tooltip a {
+    color: #fff;
+}
+.tooltip-content {
+    display: inline-block;
+    padding: 9px;
     color: #fff;
 }
 .tooltip p {
@@ -296,22 +295,28 @@ label.cm-required::after {
     padding: 0px;
 }
 .tooltip-arrow {
-    position: absolute;
-    top: -10px;
-    right: 3px;
-    display: block;
-    width: 0px;
-    height: 0px;
-    border-style: solid;
-    border-width: 0 0 10px 10px;
-    border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent;
-}
-.tooltip.arrow-top .tooltip-arrow  {
     top: auto;
     left: auto;
+    bottom: auto;
+    right: auto;
+    border: none;
+}
+.arrow-up .tooltip-arrow, .down .tooltip-arrow {
+    top: -10px;
+    right: 3px;
+    left: auto;
+    bottom: auto;
+    border-width: 0 0 10px 10px;
+    border-style: solid;
+    border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent;
+}
+.arrow-down .tooltip-arrow, .top .tooltip-arrow  {
     bottom: -10px;
     right: 3px;
+    top: auto;
+    left: auto;
     border-width: 0 10px 10px 0;
+    border-style: solid;
     border-color: transparent rgba(0, 0, 0, 0.8) transparent transparent;
 }
 .tooltip.right {
@@ -331,6 +336,10 @@ label.cm-required::after {
     border-width: 10px 0 0 10px;
     border-color: transparent transparent transparent rgba(0, 0, 0, 0.8);
 }
+.tooltip-ssl .tooltip-content{
+    font-size: 11px;
+/*    background-color: #2db227 !important;*/
+}
 
 /* width image */
 .tooltip img {
@@ -341,6 +350,7 @@ label.cm-required::after {
 }
 .ty-tooltip-block {
     vertical-align: middle;
+    position: relative;
 }
 /* /Tooltip */
 
@@ -1313,6 +1323,7 @@ label.cm-required::after {
     max-width: none;
     width: 100%;
     margin-top: 0;
+    height: 20px;
 }
 .ty-grid-list__item-info {
     background: lighten(@base, 3%);
@@ -1922,25 +1933,41 @@ label.cm-required::after {
     position: relative;
 }
 .ty-products-scroller .ty-tennishouse-body .owl-prev {
-    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_right.png") no-repeat 0 12px #ffffff !important;
+    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat 0 10px #ffffff !important;
     top: 120px;
-    height: 77px;
+    height: 90px;
 }
+/*.ty-products-scroller .ty-tennishouse-body .owl-prev:hover {
+    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat -50px 10px #ffffff !important;
+}*/
+
 .ty-products-scroller .ty-tennishouse-body .owl-next {
-    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_left.png") no-repeat 0 12px #ffffff !important;
+    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat -25px 10px #ffffff !important;
     top: 120px;
-    height: 77px;
+    height: 90px;
 }
+/*.ty-products-scroller .ty-tennishouse-body .owl-next:hover {
+    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat -75px 10px #ffffff !important;
+}*/
+
 .ty-news-feed .ty-tennishouse-body .owl-prev {
-    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_right.png") no-repeat scroll 0 0 #ffffff !important;
-    top: 10px;
-    height: 50px;
+    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat 0 2px #ffffff !important;
+    top: 1px;
+    height: 74px;
 }
+/*.ty-news-feed .ty-tennishouse-body .owl-prev:hover {
+    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat -50px 2px #ffffff !important;
+}*/
+
 .ty-news-feed .ty-tennishouse-body .owl-next {
-    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_left.png") no-repeat scroll 0 0 #ffffff !important;
-    top: 10px;
-    height: 50px;
+    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat -25px 2px #ffffff !important;
+    top: 1px;
+    height: 74px;
 }
+/*.ty-news-feed .ty-tennishouse-body .owl-next:hover {
+    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat -75px 2px #ffffff !important;
+}*/
+
 .ty-tennishouse-body .owl-prev {
     border: 1px solid #ebebeb;
     border-radius: none !important;
@@ -1966,7 +1993,7 @@ label.cm-required::after {
     margin: 0;
 }
 .ty-news-feed .owl-carousel .owl-wrapper-outer {
-    padding: 5px;
+    padding: 7px;
 }
 .ty-products-scroller .owl-carousel .owl-wrapper-outer {
     padding: 10px 6px 0;
@@ -2175,7 +2202,7 @@ label.cm-required::after {
     vertical-align: top;
 }
 .ty-products-scroller .ty-tennishouse-body .ty-micro-mode .owl-prev, .ty-products-scroller .ty-tennishouse-body .ty-micro-mode .owl-next {
-    top: 25px;
+    top: 13px;
 }
 .ty-micro-mode .ty-grid-list__item .ty-grid-list__image-product .ty-pict, .ty-micro-mode .ty-grid-list__item .ty-grid-list__image-product .ty-no-image {
     width: 70px;
@@ -2214,7 +2241,7 @@ label.cm-required::after {
     bottom: 5px;
     display: inline-block;
     position: absolute;
-    left: 0;
+    left: 79px;
     max-width: 110px;
 }
 .ty-micro-mode .ty-grid-list__item:hover {

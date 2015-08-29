@@ -4,7 +4,7 @@
         <div class="control-group">
             <label for="product_product_type" class="control-label">{__("configurable")}:</label>
             <div class="controls">
-                    <input type="hidden" name="product_data[product_type]" value="">
+                    <input type="hidden" name="product_data[product_type]" value="P">
                     <input type="checkbox" name="product_data[product_type]" id="product_product_type" value="C" {if $product_data.product_type == "C" || $smarty.request.product_type == "C"}checked="checked"{/if}>
             </div>
         </div>

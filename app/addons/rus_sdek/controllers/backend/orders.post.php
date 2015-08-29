@@ -94,18 +94,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     } else {
                         $product_weight = 0.01;
                     }
-
-                    $sdek_products[] = array(
+ 
+                    $price = $data_product['price'] - $order_info['subtotal_discount'] * $data_product['price'] / $order_info['subtotal'];
+                    $sdek_product = array(
                         'ware_key' => $data_product['item_id'],
                         'product' => $data_product['product'],
-                        'price' => $data_product['price'],
+                        'price' => $price,
                         'amount' => $amount,
-                        'total' => $data_product['price'] * $amount,
+                        'total' => $price * $amount,
                         'weight' => $amount * $product_weight,
                         'order_id' => $params['order_id'],
                         'shipment_id' => $shipment_id,
                     );
                     $weight = $weight + ($amount * $product_weight);
+                    
+                    if (!empty($data_product['extra']['configuration_data'])) {
+                        $sdek_product['product'] .= ' (';
+                        $iter = 0;
+                        foreach ($data_product['extra']['configuration_data'] as $pc_id => $pdata) {
+                            $sdek_product['product'] .= ($iter > 0 ? '; ' : '') . $pdata['product'] . ' - ' . $pdata['extra']['step'] . __("items");
+                            $iter++;
+                        }
+                        $sdek_product['product'] .= ')';
+                    }
+                    
+                    $sdek_products[] = $sdek_product;
                 }
 
                 $order_for_sdek['SellerName'] = Registry::get('runtime.company_data.company');

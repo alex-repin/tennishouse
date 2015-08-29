@@ -94,31 +94,28 @@
         /* calculate tip position relative to the trigger */    
         function getPosition(trigger, tip, conf) {      
 
-                
                 // get origin top/left position 
                 var top = conf.relative ? trigger.position().top : trigger.offset().top, 
-                         left = conf.relative ? trigger.position().left : trigger.offset().left,
-                         pos = conf.position[0];
+                         left = conf.relative ? trigger.position().left : trigger.offset().left;
 
-                top  -= tip.outerHeight() - conf.offset[0];
-                left += trigger.outerWidth() + conf.offset[1];
+                top  += conf.offset[0];
+                left += conf.offset[1];
                 
                 // iPad position fix
                 if (/iPad/i.test(navigator.userAgent)) {
-                        top -= $(window).scrollTop();
+                    top -= $(window).scrollTop();
                 }
                 
                 // adjust Y             
-                var height = tip.outerHeight() + trigger.outerHeight();
-                if (pos == 'center')    { top += height / 2; }
-                if (pos == 'bottom')    { top += height; }
+                pos = conf.position[0];         
+                if (pos == 'center')    { top += (trigger.outerHeight() - tip.outerHeight()) / 2; }
+                if (pos == 'bottom')    { top += trigger.outerHeight(); }
+                if (pos == 'top')    { top -= tip.outerHeight(); }
                 
                 
                 // adjust X
                 pos = conf.position[1];         
-                var width = tip.outerWidth() + trigger.outerWidth();
-                if (pos == 'center')    { left -= width / 2; }
-                if (pos == 'left')      { left -= width; }       
+                if (pos == 'left')      { left -= tip.outerWidth(); }       
                 
                 return {top: top, left: left};
         }               

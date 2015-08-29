@@ -31,7 +31,7 @@
     <div class="row-fluid">
         <div class="span8">
             {* Products info *}
-            <table width="100%" class="table table-middle">
+            <table width="100%" class="table">
             <thead>
                 <tr>
                     <th width="50%">{__("product")}</th>
@@ -49,7 +49,7 @@
             {foreach from=$order_info.products item="oi" key="key"}
             {hook name="orders:items_list_row"}
             {if !$oi.extra.parent}
-            <tr>
+            <tr class="ty-valign-top">
                 <td>
                     {if !$oi.deleted_product}<a href="{"products.update?product_id=`$oi.product_id`"|fn_url}">{/if}{$oi.product nofilter}{if !$oi.deleted_product}</a>{/if}
                     <div class="products-hint">
@@ -75,7 +75,7 @@
                 <td class="nowrap">
                     {if $oi.tax_value|floatval}{include file="common/price.tpl" value=$oi.tax_value}{else}-{/if}</td>
                 {/if}
-                <td class="right">&nbsp;<span>{if $oi.extra.exclude_from_calculate}{__("free")}{else}{include file="common/price.tpl" value=$oi.display_subtotal}{/if}</span></td>
+                <td class="nowrap">&nbsp;{if $oi.extra.exclude_from_calculate}{__("free")}{else}{include file="common/price.tpl" value=$oi.display_subtotal}{/if}</td>
             </tr>
             {/if}
             {/hook}

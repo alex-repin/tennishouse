@@ -204,6 +204,11 @@ function fn_get_product_data($product_id, &$auth, $lang_code = CART_LANGUAGE, $f
                 'existent_only' => (AREA != 'A'),
                 'variants_selected_only' => $feature_variants_selected_only
             );
+            // [tennishouse]
+            if (AREA == 'C') {
+                $_params['plain'] = true;
+            }
+            // [tennishouse]
             list($product_data['product_features']) = fn_get_product_features($_params, 0, $lang_code);
             $product_data['header_features'] = fn_get_product_features_list($product_data, 'H');
         } else {

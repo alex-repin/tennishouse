@@ -51,7 +51,9 @@ class SpsrFrame
 
         $xml_request = '<root xmlns="http://spsr.ru/webapi/' . $params['suffix'] . '">' . $xml . '</root>';
         $extra = array(
-            'headers' => array('Content-Type: application/xml')
+            'headers' => array('Content-Type: application/xml'),
+            'request_timeout' => 2,
+            'timeout' => 1
         );
 
         $response = simplexml_load_string(Http::post($params['url'], $xml_request, $extra));

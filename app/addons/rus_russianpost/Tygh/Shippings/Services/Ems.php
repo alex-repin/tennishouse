@@ -349,7 +349,8 @@ class Ems implements IService
         $ems_data = fn_get_session_data($key);
         if (empty($ems_data)) {
             $extra = array(
-                'request_timeout' => 1
+                'request_timeout' => 1,
+                'timeout' => 1
             );
             $response = Http::get($data['url'], $data['data'], $extra);
             fn_set_session_data($key, $response);
@@ -377,7 +378,11 @@ class Ems implements IService
         $key = md5(json_encode($request));
         $ems_locations = fn_get_session_data($key);
         if (empty($ems_locations)) {
-            $result = Http::get($url, $request);
+            $extra = array(
+                'request_timeout' => 1,
+                'timeout' => 1
+            );
+            $result = Http::get($url, $request, $extra);
             $result = json_decode($result, true);
             fn_set_session_data($key, $result);
         } else {

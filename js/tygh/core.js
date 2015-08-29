@@ -559,7 +559,11 @@ var Tygh = {
                     }
 
                     // [tennishouse]
-                    container.slideToggle();
+                    if (container.hasClass('cm-no-slide')) {
+                        container.toggle();
+                    } else {
+                        container.slideToggle();
+                    }
 
                     $.ceEvent('trigger', 'ce.switch_' + id, [flag]);
 
@@ -3370,7 +3374,7 @@ var Tygh = {
                         def: 'mouseover, mouseout',
                         input: 'focus, blur'
                     },
-                    offset: [-2, -8],
+                    offset: [0, 7],
                     layout: '<div><span class="tooltip-arrow"></span></div>'
                 };
 
@@ -3397,24 +3401,21 @@ var Tygh = {
 
                     if (elm.data('cetooltipposition') === 'top') {
                         params.position = 'top left';
-                        params.tipClass = 'tooltip arrow-top';
-                        params.offset=[-10, 7];
-                    } else if (elm.data('cetooltipposition') === 'center') {
-                        params.offset=[10, 7];
                         params.tipClass = 'tooltip arrow-down';
+                    } else if (elm.data('cetooltipposition') === 'center') {
                         params.position = 'center left';
+                        params.tipClass = 'tooltip';
                     } else if (elm.data('cetooltipposition') === 'ssl') {
-                        params.offset=[-10, -60];
-                        params.tipClass = 'tooltip-ssl tooltip arrow-down';
-                        params.position = 'bottom center';
+                        params.position = 'bottom left';
+                        params.tipClass = 'tooltip-ssl tooltip arrow-up';
+                        params.offset = [0, 95];
                         params.effect = 'fade';
                         params.fadeOutSpeed = '1000';
                         params.fadeInSpeed = '1000';
                     // [tennishouse]
                     } else {
-                        params.offset=[10, 7];
-                        params.tipClass = 'tooltip arrow-down';
                         params.position = 'bottom left';
+                        params.tipClass = 'tooltip arrow-up';
                     }
 
                     if (elm.data('cetooltipclass')) {

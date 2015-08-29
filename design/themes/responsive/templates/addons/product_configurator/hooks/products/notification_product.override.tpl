@@ -37,6 +37,4 @@
         </div>
     </div>
 </div>
-{elseif $product.extra.parent.configuration}
-    &nbsp;
 {/if}

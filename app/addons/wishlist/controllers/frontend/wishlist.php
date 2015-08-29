@@ -36,50 +36,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $prev_wishlist = $wishlist['products'];
 
-        $product_ids = fn_add_product_to_wishlist($_REQUEST['product_data'], $wishlist, $auth);
-
+        $product_ids = fn_add_product_to_cart($_REQUEST['product_data'], $wishlist, $auth);
         fn_save_cart_content($wishlist, $auth['user_id'], 'W');
+        
+        $previous_state = md5(serialize($wishlist['products']));
+        $wishlist['change_cart_products'] = true;
+        fn_calculate_cart_content($wishlist, $auth, 'S', true, 'F', true);
 
-        $product_cnt = 0;
-        $added_products = array();
-        foreach ($wishlist['products'] as $key => $data) {
-            if (empty($prev_wishlist[$key]) || !empty($prev_wishlist[$key]) && $prev_wishlist[$key]['amount'] != $data['amount']) {
-                $added_products[$key] = $data;
-                $added_products[$key]['product_option_data'] = fn_get_selected_product_options_info($data['product_options']);
-                if (!empty($prev_wishlist[$key])) {
-                    $added_products[$key]['amount'] = $data['amount'] - $prev_wishlist[$key]['amount'];
-                }
-                $product_cnt += $added_products[$key]['amount'];
-            }
-        }
-
-        if (defined('AJAX_REQUEST')) {
-            if (!empty($added_products)) {
-                foreach ($added_products as $key => $data) {
-                    $product = fn_get_product_data($data['product_id'], $auth);
-                    $product['extra'] = !empty($data['extra']) ? $data['extra'] : array();
-                    fn_gather_additional_product_data($product, true, true);
+        if (md5(serialize($wishlist['products'])) != $previous_state && empty($wishlist['skip_notification'])) {
+            $product_cnt = 0;
+            $added_products = array();
+            foreach ($wishlist['products'] as $key => $data) {
+                if (empty($prev_wishlist[$key]) || !empty($prev_wishlist[$key]) && $prev_wishlist[$key]['amount'] != $data['amount']) {
+                    $added_products[$key] = $data;
                     $added_products[$key]['product_option_data'] = fn_get_selected_product_options_info($data['product_options']);
-                    $added_products[$key]['display_price'] = $product['price'];
-                    $added_products[$key]['amount'] = empty($data['amount']) ? 1 : $data['amount'];
-                    $added_products[$key]['main_pair'] = fn_get_cart_product_icon($data['product_id'], $data);
-                }
-                Registry::get('view')->assign('added_products', $added_products);
-
-                if (Registry::get('settings.General.allow_anonymous_shopping') == 'hide_price_and_add_to_cart') {
-                    Registry::get('view')->assign('hide_amount', true);
-                }
-
-                $title = __('product_added_to_wl');
-                $msg = Registry::get('view')->fetch('addons/wishlist/views/wishlist/components/product_notification.tpl');
-                fn_set_notification('I', $title, $msg, 'I');
-            } else {
-                if ($product_ids) {
-                    fn_set_notification('W', __('notice'), __('product_in_wishlist'));
+                    if (!empty($prev_wishlist[$key])) {
+                        $added_products[$key]['amount'] = $data['amount'] - $prev_wishlist[$key]['amount'];
+                    }
+                    $product_cnt += $added_products[$key]['amount'];
                 }
             }
-        } else {
-            unset($_REQUEST['redirect_url']);
+
+            if (defined('AJAX_REQUEST')) {
+                if (!empty($added_products)) {
+                    foreach ($added_products as $key => $data) {
+                        $added_products[$key]['product_option_data'] = fn_get_selected_product_options_info($data['product_options']);
+                        $added_products[$key]['amount'] = empty($data['amount']) ? 1 : $data['amount'];
+                    }
+                    Registry::get('view')->assign('added_products', $added_products);
+
+                    if (Registry::get('settings.General.allow_anonymous_shopping') == 'hide_price_and_add_to_cart') {
+                        Registry::get('view')->assign('hide_amount', true);
+                    }
+
+                    $title = __('product_added_to_wl');
+                    $msg = Registry::get('view')->fetch('addons/wishlist/views/wishlist/components/product_notification.tpl');
+                    fn_set_notification('I', $title, $msg);
+                } else {
+                    if ($product_ids) {
+                        fn_set_notification('W', __('notice'), __('product_in_wishlist'));
+                    }
+                }
+            } else {
+                unset($_REQUEST['redirect_url']);
+            }
         }
     }
 
@@ -257,7 +257,11 @@ function fn_add_product_to_wishlist($product_data, &$wishlist, &$auth)
             $wishlist['products'][$_id]['product_options'] = $data['product_options'];
             $wishlist['products'][$_id]['extra'] = $data['extra'];
             $wishlist['products'][$_id]['amount'] = $data['amount'];
+            // add image for minicart
+            $wishlist['products'][$_id]['main_pair'] = fn_get_cart_product_icon($product_id, $data);
         }
+        
+        fn_set_hook('post_add_to_wishlist', $product_data, $wishlist, $auth);
 
         return $wishlist_ids;
     } else {

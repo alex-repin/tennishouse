@@ -68,7 +68,7 @@
     box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.45);
 }
 .sbOptions li{
-    padding: 1px 7px;
+    padding: 0;
     height: 30px;
     line-height: 30px;
     border-bottom: dotted 1px #ddd;
@@ -78,6 +78,9 @@
 }
 .sbOptions li:last-of-type{
     border-bottom: none;
+}
+.sbOptions li div {
+    padding: 1px 7px;
 }
 .sb-selected {
     background: #fbfbfb;

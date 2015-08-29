@@ -32,3 +32,31 @@
 #res_ignore_list .form-edit .control-group, #res_missed .form-edit .control-group {
     margin-bottom: 0;
 }
+.ty-valign-top {
+    vertical-align: top;
+}
+.ty-orders-detail__pc-link {
+    display: inline-block;
+    position: relative;
+}
+.ty-orders-detail__pc-detail {
+    background: #fff none repeat scroll 0 0;
+    border: 1px solid #ecf0f1;
+    box-shadow: 0 0 12px -2px #888888;
+    padding: 10px;
+    position: absolute;
+    left: 0;
+    width: 600px;
+    top: 27px;
+}
+.ty-orders-detail__pc-detail::before {
+    background: rgba(0, 0, 0, 0) url("../../../media/images/addons/development/popup_tail_top.png") no-repeat scroll;
+    content: "";
+    display: block;
+    height: 16px;
+    left: 60px;
+    margin-left: -11px;
+    position: absolute;
+    top: -12px;
+    width: 19px;
+}
