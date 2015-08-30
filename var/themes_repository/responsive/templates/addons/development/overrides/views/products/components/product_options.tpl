@@ -3,6 +3,7 @@
 {/if}
 
 <input type="hidden" name="appearance[details_page]" value="{$details_page}" />
+<input type="hidden" name="appearance[auto_process]" id="auto_process_form" value="" />
 {foreach from=$product.detailed_params key="param" item="value"}
     <input type="hidden" name="additional_info[{$param}]" value="{$value}" />
 {/foreach}
@@ -37,31 +38,26 @@
             <label {if $po.option_type !== "R" && $po.option_type !== "F"}for="option_{$obj_prefix}{$id}_{$po.option_id}"{/if} class="ty-control-group__label ty-product-options__item-label{if $po.required == "Y"} cm-required cm-requirement-popup{/if}{if $po.regexp} cm-regexp{/if}" {if $po.regexp}data-ca-regexp="{$po.regexp}" data-ca-message="{$po.incorrect_message}"{/if}>
                 {$po.option_name}
                 {if $po.note_url && $po.note_text}
-                    {capture name="option_note"}
-                        <a href="{"`$po.note_url`"|fn_url}" target="_blank">{$po.note_text}</a>
-                    {/capture}
                     <div style="display: none;"><a class="cm-notification-note" href="{"`$po.note_url`"|fn_url}" target="_blank">{$po.note_text}</a></div>
-                    {include file="common/tooltip.tpl" tooltip=$smarty.capture.option_note}
+                    {include file="addons/development/common/tooltip.tpl" note_text=$po.note_text note_url=$po.note_url}
                 {/if}:
             </label>
             {if $po.option_type == "S"} {*Selectbox*}
-                {if $po.variants}
-                    {if ($po.disabled || $disabled) && !$po.not_required}<input type="hidden" value="{$po.value}" name="{$name}[{$id}][product_options][{$po.option_id}]" id="option_{$obj_prefix}{$id}_{$po.option_id}" />{/if}
-                    <select name="{$name}[{$id}][product_options][{$po.option_id}]" {if !$po.disabled && !$disabled}id="option_{$obj_prefix}{$id}_{$po.option_id}"{/if} onchange="{if $product.options_update}fn_change_options('{$obj_prefix}{$id}', '{$id}', '{$po.option_id}');{else} fn_change_variant_image('{$obj_prefix}{$id}', '{$po.option_id}');{/if}" class="cm-dropdown {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}disabled{/if}" {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}disabled="disabled"{/if}>
-                        {if $product.options_type == "S"}
-                            {if !$runtime.checkout || $po.disabled || $disabled || ($runtime.checkout && !$po.value)}
-                                <option value="">{if $po.disabled || $disabled}{__("select_option_above")}{elseif $po.default_text} - {$po.default_text} - {else}{__("please_select_one")}{/if}</option>
-                            {/if}
+                {if ($po.disabled || $disabled) && !$po.not_required}<input type="hidden" value="{$po.value}" name="{$name}[{$id}][product_options][{$po.option_id}]" id="option_{$obj_prefix}{$id}_{$po.option_id}" />{/if}
+                <select name="{$name}[{$id}][product_options][{$po.option_id}]" {if !$po.disabled && !$disabled}id="option_{$obj_prefix}{$id}_{$po.option_id}"{/if} onchange="{if $product.options_update}fn_change_options('{$obj_prefix}{$id}', '{$id}', '{$po.option_id}');{else} fn_change_variant_image('{$obj_prefix}{$id}', '{$po.option_id}');{/if}" class="cm-dropdown {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}disabled{/if}{if $product.options_update} cm-options-update{/if}" {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled || !$po.variants}disabled="disabled"{/if}>
+                    {if $product.options_type == "S"}
+                        {if !$runtime.checkout || $po.disabled || $disabled || ($runtime.checkout && !$po.value)}
+                            <option value="">{if $po.disabled || $disabled}{__("select_option_above")}{elseif $po.default_text} - {$po.default_text} - {else}{__("please_select_one")}{/if}</option>
                         {/if}
-                        {foreach from=$po.variants item="vr" name=vars}
-                            {if !($po.disabled || $disabled) || (($po.disabled || $disabled) && $po.value && $po.value == $vr.variant_id)}
-                                <option value="{$vr.variant_id}" {if $po.value == $vr.variant_id}{assign var="selected_variant" value=$vr.variant_id}selected="selected"{/if}>{$po.option_name} {$vr.variant_name} {if $show_modifiers}{hook name="products:options_modifiers"}{if $vr.modifier|floatval}({include file="common/modifier.tpl" mod_type=$vr.modifier_type mod_value=$vr.modifier display_sign=true}){/if}{/hook}{/if}</option>
-                            {/if}
-                        {/foreach}
-                    </select>
-                {else}
+                    {/if}
+                    {foreach from=$po.variants item="vr" name=vars}
+                        {if !($po.disabled || $disabled) || (($po.disabled || $disabled) && $po.value && $po.value == $vr.variant_id)}
+                            <option value="{$vr.variant_id}" {if $po.value == $vr.variant_id}{assign var="selected_variant" value=$vr.variant_id}selected="selected"{/if}>{$po.option_name} {$vr.variant_name} {if $show_modifiers}{hook name="products:options_modifiers"}{if $vr.modifier|floatval}({include file="common/modifier.tpl" mod_type=$vr.modifier_type mod_value=$vr.modifier display_sign=true}){/if}{/hook}{/if}</option>
+                        {/if}
+                    {/foreach}
+                </select>
+                {if !$po.variants}
                     <input type="hidden" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$po.value}" id="option_{$obj_prefix}{$id}_{$po.option_id}" />
-                    <span>{__("na")}</span>
                 {/if}
             {elseif $po.option_type == "R"} {*Radiobutton*}
                 {if $po.variants}
@@ -164,10 +160,8 @@
 {/if}
 <script type="text/javascript">
 (function(_, $) {
-    $(function() {
-        $('.cm-dropdown').each(function() {
-            $(this).selectbox();
-        });
+    $('.cm-dropdown').each(function() {
+        $(this).selectbox();
     });
 }(Tygh, Tygh.$));
 </script>

@@ -1491,10 +1491,10 @@ label.cm-required::after {
     vertical-align: top;
 }
 .ty-options-container {
-    display: inline-block;
+    display: inline;
 }
 .ty-avail-container {
-    display: inline-block;
+    display: inline;
 }
 .ty-qty-in-stock div {
     color: @in_stock;
@@ -1570,6 +1570,40 @@ label.cm-required::after {
 /*Product page*/
 
 /* Checkout */
+.ty-product-extra-info-link {
+    border-bottom: 1px dotted transparent;
+    cursor: pointer;
+    display: inline-block;
+    margin: 5px 0;
+    text-decoration: none;
+}
+.ty-product-extra-info {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+}
+.ty-product-extra-info-block {
+    background: #fff none repeat scroll 0 0;
+    border: 1px solid #ecf0f1;
+    box-shadow: 0 0 12px -2px #888888;
+    padding: 10px;
+    position: absolute;
+    left: 0;
+    width: 600px;
+    top: 25px;
+    z-index: 100;
+}
+.ty-product-extra-info-block::before {
+    background: rgba(0, 0, 0, 0) url("../../../media/images/addons/development/popup_tail_top.png") no-repeat scroll;
+    content: "";
+    display: block;
+    height: 16px;
+    left: 30px;
+    margin-left: -11px;
+    position: absolute;
+    top: -12px;
+    width: 19px;
+}
 .ty-checkout-select-office {
     padding: 10px 0 0 30px;
 }

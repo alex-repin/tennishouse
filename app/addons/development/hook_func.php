@@ -48,8 +48,15 @@ function fn_development_get_order_info(&$order, $additional_data)
 
 function fn_development_get_cart_product_data_post($hash, $product, $skip_promotion, &$cart, $auth, $promotion_amount, $_pdata)
 {
+    $net_cost_rub = 0;
+    if (!empty($_pdata['configuration'])) {
+        foreach ($_pdata['configuration'] as $i => $pc) {
+            $nc = (!empty($pc['net_cost']) && !empty($pc['net_currency_code'])) ? $pc['net_cost'] * Registry::get('currencies.' . $pc['net_currency_code'] . '.coefficient') : $pc['price'];
+            $net_cost_rub += $nc * $pc['step'];
+        }
+    }
     $net_cost = (!empty($_pdata['net_cost']) && !empty($_pdata['net_currency_code'])) ? $_pdata['net_cost'] * Registry::get('currencies.' . $_pdata['net_currency_code'] . '.coefficient') : $_pdata['price'];
-    $cart['net_subtotal'] += $net_cost * $product['amount'];
+    $cart['net_subtotal'] += ($net_cost + $net_cost_rub) * $product['amount'];
 }
 
 function fn_development_calculate_cart_post(&$cart, $auth, $calculate_shipping, $calculate_taxes, $options_style, $apply_cart_promotions, $cart_products, $product_groups)
@@ -902,6 +909,7 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
                 array('54' => 'self')
             ),
             'B' => array(
+                array('84' => 'self', '58' => '940'),
                 array('58' => 'self')
             ),
             'ST' => array(

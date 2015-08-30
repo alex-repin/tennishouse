@@ -133,6 +133,7 @@
                 *}
 
                 <div class="ty-options-avail-container-wrap">
+                    {hook name="products:options_avail_container"}
                     {if $product.product_options}
                     <div class="ty-options-container">
                         {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
@@ -158,14 +159,15 @@
                             {$smarty.capture.$product_amount nofilter}
                         </div>
                         {if $capture_options_vs_qty}{/capture}{/if}
-                        
-                        {assign var="follow" value="follow_`$obj_id`"}
-                        {$smarty.capture.$follow nofilter}
                     </div>
+                    {/hook}
                 </div>
 
                 {if $capture_buttons}{capture name="buttons"}{/if}
                 <div class="ty-product-block__button">
+                    {assign var="follow" value="follow_`$obj_id`"}
+                    {$smarty.capture.$follow nofilter}
+                    
                     {if $show_details_button}
                         {include file="buttons/button.tpl" but_href="products.view?product_id=`$product.product_id`" but_text=__("view_details") but_role="submit"}
                     {/if}

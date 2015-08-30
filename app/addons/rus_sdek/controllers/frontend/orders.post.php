@@ -36,6 +36,7 @@ if ($mode == 'details') {
             }
 
             Registry::get('view')->assign('data_status', $data_status);
+            Registry::get('view')->assign('show_shipments', true);
             $navigation_tabs = Registry::get('navigation.tabs');
             $navigation_tabs['sdek_information'] = array(
                 'title' => __('shipping_information'),

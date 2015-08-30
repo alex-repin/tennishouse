@@ -4036,6 +4036,9 @@ function fn_check_amount_in_stock($product_id, $amount, $product_options, $cart_
         if (!empty($cart['products']) && is_array($cart['products'])) {
             $product_not_in_cart = true;
             foreach ($cart['products'] as $k => $v) {
+                if (!isset($v['product_id'])) {
+                    continue;
+                }
                 // Check if the product with the same selectable options already exists ( for tracking = O)
                 if ($k != $cart_id) {
                     if (isset ($product['tracking']) &&

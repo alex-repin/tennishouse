@@ -8694,6 +8694,9 @@ function fn_apply_exceptions_rules($product)
                     unset($product['product_options'][$first_opt['option_id']]['variants'][$vr_id]);
                 }
             }
+            if (empty($product['product_options'][$first_opt['option_id']]['variants'])) {
+                $product['hide_stock_info'] = false;
+            }
             // [tennishouse]
         } else {
             // Parallel exceptions type

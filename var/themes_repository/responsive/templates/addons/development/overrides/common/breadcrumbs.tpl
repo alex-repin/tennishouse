@@ -13,7 +13,7 @@
                     <span class="ty-breadcrumbs__current">{$bc.title|strip_tags|escape:"html" nofilter}</span>
                 {/if}
             {/foreach}
-            {include file="common/view_tools.tpl"}
+            {*include file="common/view_tools.tpl"*}
         {/strip}
     </div>
 {/if}

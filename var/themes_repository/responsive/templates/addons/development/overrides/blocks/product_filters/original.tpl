@@ -26,19 +26,18 @@
     {if $filter.slider || $filter.selected_ranges || $filter.ranges}
         {assign var="filter_uid" value="`$block.block_id`_`$filter.filter_id`"}
         {assign var="cookie_name_show_filter" value="content_`$filter_uid`"}
-        {if $filter.display == "N"}
-            {* default behaviour of cm-combination *}
+        {assign var="collapse" value=true}
+        {*if $filter.display == "N"}
             {assign var="collapse" value=true}
             {if $smarty.cookies.$cookie_name_show_filter}
                 {assign var="collapse" value=false}
             {/if}
         {else}
-            {* reverse behaviour of cm-combination *}
             {assign var="collapse" value=false}
             {if $smarty.cookies.$cookie_name_show_filter}
                 {assign var="collapse" value=true}
             {/if}
-        {/if}
+        {/if*}
 
         <div class="ty-product-filters__block {if !$collapse}is-hover{/if}">
             <div id="sw_content_{$filter_uid}" class="ty-product-filters__switch">

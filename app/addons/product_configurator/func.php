@@ -142,13 +142,13 @@ function fn_product_configurator_generate_cart_id(&$_cid, $extra, $only_selectab
                         }
                     }
                 }
-                $_cid[] = $v['amount'];
+                $_cid[] = !empty($v['amount']) ? $v['amount'] : 1;
             }
         }
     }
     if (!empty($extra['parent']['configuration'])) {
         $_cid[] = $extra['parent']['configuration'];
-        $_cid[] = $v['step'];
+        $_cid[] = $extra['step'];
     }
 }
 
@@ -224,7 +224,11 @@ function fn_product_configurator_gather_additional_product_data_before_discounts
         if (AREA == 'C' && !empty($params['get_for_one_product'])) {
                 $product['configuration_mode'] = true;
                 $selected_configuration = array();
-                $product['edit_configuration'] = !empty($product['cart_id']) ? $product['cart_id'] : $_REQUEST['cart_id'];;
+                if (!empty($product['cart_id'])) {
+                    $product['edit_configuration'] = $product['cart_id'];
+                } elseif (!empty($_REQUEST['cart_id'])) {
+                    $product['edit_configuration'] = $_REQUEST['cart_id'];
+                }
                 if (!empty($_REQUEST['cart_id'])) {
                     $cart = & $_SESSION['cart'];
                     if (isset($cart['products'][$product['edit_configuration']]['extra'])) {
@@ -232,7 +236,9 @@ function fn_product_configurator_gather_additional_product_data_before_discounts
                         $product['selected_amount'] = $cart['products'][$product['edit_configuration']]['amount'];
                     }
 
-                    $selected_configuration = $cart['products'][$_REQUEST['cart_id']]['extra']['configuration'];
+                    if (!empty($cart['products'][$_REQUEST['cart_id']]['extra']['configuration'])) {
+                        $selected_configuration = $cart['products'][$_REQUEST['cart_id']]['extra']['configuration'];
+                    }
                 } elseif (!empty($product['selected_configuration'])) {
                     $selected_configuration = $product['selected_configuration'];
                 }
@@ -338,6 +344,7 @@ function fn_product_configurator_get_cart_product_data($product_id, &$_pdata, &$
             $cart['products'][$hash]['amount_total'] += $_data['amount'];
 
             $_cproduct = fn_get_cart_product_data($item_id, $product['configuration'][$item_id], false, $tmp_cart, $auth);
+            $_cproduct['is_accessible'] = fn_is_accessible_product($_cproduct);
 
             if (empty($_cproduct)) { // FIXME - for deleted products for OM
                 unset($product['configuration'][$item_id]);
@@ -398,7 +405,6 @@ function fn_product_configurator_pre_add_to_cart(&$product_data, &$cart, $auth, 
                     if (!empty($v['product_options'])) {
                         $product_data[$k]['product_options'] = $v['product_options'];
                     }
-                    $cart['products'][$k] = $product_data[$k];
                 }
 
                 $product_data[$key]['extra']['configuration_id'] = $cart['products'][$key]['extra']['configuration_id'];
@@ -407,11 +413,11 @@ function fn_product_configurator_pre_add_to_cart(&$product_data, &$cart, $auth, 
 
     } else {
         foreach ($product_data as $key => $value) {
-            if (!empty($value['cart_id'])) { // if we're editing the configuration, just delete it and add new
-                fn_delete_cart_product($cart, $value['cart_id']);
-            }
-
             if (!empty($value['configuration']) && !empty($value['product_id'])) {
+                if (!empty($value['cart_id'])) {
+                    fn_delete_cart_product($cart, $value['cart_id']);
+                }
+
                 $product_data[$key]['extra']['configuration'] = $value['configuration'];
 
                 if (!empty($value['product_options'])) {
@@ -420,15 +426,18 @@ function fn_product_configurator_pre_add_to_cart(&$product_data, &$cart, $auth, 
 
                 $cart_id = fn_generate_cart_id($key, $product_data[$key]['extra'], false);
 
+                if (!empty($cart['products'][$cart_id])) {
+                    $product_data[$key]['amount'] += $cart['products'][$cart_id]['amount'];
+                }
                 foreach ($value['configuration'] as $group_id => $_data) {
                     foreach ($_data['product_ids'] as $_id) {
                         if (!isset($product_data[$_id])) {
                             $product_data[$_id] = array();
                             $product_data[$_id]['product_id'] = $_id;
-                            $product_data[$_id]['amount'] = (!empty($_data['amount']) ? $_data['amount'] : 1) * $value['amount'];
+                            $product_data[$_id]['amount'] = (!empty($_data['amount']) ? $_data['amount'] : 1) * $product_data[$key]['amount'];
                             $product_data[$_id]['extra']['parent']['configuration'] = $cart_id;
                         } elseif (isset($product_data[$_id]['extra']['parent']['configuration']) && $product_data[$_id]['extra']['parent']['configuration'] == $cart_id) {
-                            $product_data[$_id]['amount'] += (!empty($_data['amount']) ? $_data['amount'] : 1) * $value['amount'];
+                            $product_data[$_id]['amount'] += (!empty($_data['amount']) ? $_data['amount'] : 1) * $product_data[$key]['amount'];
                         }
                         $product_data[$_id]['extra']['parent']['id'] = $value['product_id'];
                         if (!empty($_data['options'][$_id]['product_options'])) {
@@ -496,7 +505,6 @@ function fn_product_configurator_post_add_to_cart($product_data, &$cart, $auth, 
                     $v['product_option_data'] = fn_get_selected_product_options_info($v['product_options']);
                     $cart['products'][$key]['configuration'][$k] = $v;
                     unset($cart['products'][$k]);
-                    $conf_count++;
                 }
             }
         }
@@ -718,7 +726,14 @@ function fn_get_configuration_groups(&$product, $selected_configuration)
             list($_products, $search) = fn_get_products($params);
 
             if (empty($_products)) {
-                unset($product_configurator_groups[$k]);
+                if ($v['required'] == 'Y') {
+                    $product['amount'] = 0;
+                    $product['tracking'] = 'B';
+                    $product['configuration_out_of_stock'] = true;
+                    $product['hide_stock_info'] = false;
+                    $inventory = array();
+                    break;
+                }
                 continue;
             }
 
@@ -773,7 +788,7 @@ function fn_get_configuration_groups(&$product, $selected_configuration)
             foreach ($_products as $_k => $_v) {
                 $_products[$_k]['compatible_classes'] = array();
                 if ($_v['selected'] == 'Y') {
-                    if ($_v['hide_stock_info']) {
+                    if (!empty($_v['hide_stock_info'])) {
                         $product['hide_stock_info'] = true;
                     } else {
                         if (!empty($_v['tracking']) && $_v['tracking'] == ProductTracking::TRACK_WITH_OPTIONS) {

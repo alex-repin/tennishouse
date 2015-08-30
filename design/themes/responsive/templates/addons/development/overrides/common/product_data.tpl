@@ -79,7 +79,7 @@
     {$follow_combination = 0}
 {/if}
 <div class="cm-reload-{$obj_prefix}{$obj_id}" id="follow_{$obj_prefix}{$obj_id}">
-{if !($product.zero_price_action == "R" && $product.price == 0) && ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "ProductTracking::DO_NOT_TRACK"|enum && $product.product_type != 'C') && $product.is_edp != "Y") && !($product.has_options && !$show_product_options)}
+{if !($product.zero_price_action == "R" && $product.price == 0) && ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "ProductTracking::DO_NOT_TRACK"|enum) && $product.is_edp != "Y") && !($product.has_options && !$show_product_options)}
     {if $details_page && $product.out_of_stock_actions == "S"}
         <div class="ty-product-detail__follow-wrap">
         <div class="ty-control-group ty-product-detail__follow-controller">
@@ -157,7 +157,7 @@
     {/hook}
 {/capture}
 {hook name="products:buttons_block"}
-    {if !($product.zero_price_action == "R" && $product.price == 0) && !($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "ProductTracking::DO_NOT_TRACK"|enum && $product.product_type != 'C') && $product.is_edp != "Y") || ($product.has_options && !$show_product_options)}
+    {if !($product.zero_price_action == "R" && $product.price == 0) && !($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "ProductTracking::DO_NOT_TRACK"|enum) && $product.is_edp != "Y") || ($product.has_options && !$show_product_options)}
 
         {if $smarty.capture.buttons_product|trim != '&nbsp;'}
             {if $product.avail_since <= $smarty.const.TIME || ($product.avail_since > $smarty.const.TIME && $product.out_of_stock_actions == "B")}
@@ -165,7 +165,7 @@
             {/if}
         {/if}
         
-    {elseif ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "ProductTracking::DO_NOT_TRACK"|enum && $product.product_type != 'C') && $product.is_edp != "Y")}
+    {elseif ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "ProductTracking::DO_NOT_TRACK"|enum) && $product.is_edp != "Y")}
         {assign var="show_qty" value=false}
         {if !$details_page}
             {if (!$product.hide_stock_info && !(($product_amount <= 0 || $product_amount < $product.min_qty) && ($product.avail_since > $smarty.const.TIME)))}

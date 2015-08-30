@@ -73,7 +73,7 @@
                     {hook name="orders:items_list_row"}
                         {if !$product.extra.parent}
                             <tr class="ty-valign-top">
-                                <td>
+                                <td class="ty-position-relative">
                                     {if $product.is_accessible}<a href="{"products.view?product_id=`$product.product_id`"|fn_url}">{/if}
                                         {$product.product nofilter}
                                     {if $product.is_accessible}</a>{/if}

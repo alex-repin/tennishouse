@@ -1,4 +1,4 @@
-.sbHolder{
+.sbHolder {
     background-color: #fff;
     border: solid 1px #ccc;
     font-family: Arial, sans-serif;
@@ -10,6 +10,12 @@
     cursor: pointer;
     vertical-align: top;
     width: 250px;
+}
+.ty-sb-popup-large.sbHolder {
+    width: 345px;
+}
+.ty-sb-popup-large.sbHolder .sbSelector {
+    width: 300px;
 }
 .sbToggle {
     background: url("../../../media/images/addons/development/select-icons.png") -64px 0 no-repeat #fff;
@@ -57,12 +63,12 @@
     position: absolute;
     top: 30px;
     z-index: 1;
-    overflow-y: auto;
+    overflow-y: none;
     width: 100%;
     box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.45);
 }
 .sbOptions li{
-    padding: 1px 7px;
+    padding: 0;
     height: 30px;
     line-height: 30px;
     border-bottom: dotted 1px #ddd;
@@ -72,6 +78,9 @@
 }
 .sbOptions li:last-of-type{
     border-bottom: none;
+}
+.sbOptions li div {
+    padding: 1px 7px;
 }
 .sb-selected {
     background: #fbfbfb;

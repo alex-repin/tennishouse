@@ -37,9 +37,9 @@
 {capture name="name_`$obj_id`"}
 {hook name="products:product_name"}
     {if $show_name}
-        {if $hide_links}<strong>{else}<a href="{"products.view?product_id=`$product.product_id`{if $product.ohash}&`$product.ohash`{/if}"|fn_url}" class="product-title" {live_edit name="product:product:{$product.product_id}" phrase=$product.product}>{/if}{$product.product|truncate:55:"...":true nofilter}{if $hide_links}</strong>{else}</a>{/if}
+        {if !$hide_links}<a href="{"products.view?product_id=`$product.product_id`{if $product.ohash}&`$product.ohash`{/if}"|fn_url}" class="product-title" {live_edit name="product:product:{$product.product_id}" phrase=$product.product}>{/if}{$product.product|truncate:55:"...":true nofilter}{if !$hide_links}</a>{/if}
     {elseif $show_trunc_name}
-        {if $hide_links}<strong>{else}<a href="{"products.view?product_id=`$product.product_id`{if $product.ohash}&`$product.ohash`{/if}"|fn_url}" class="product-title" title="{$product.product|strip_tags}" {live_edit name="product:product:{$product.product_id}" phrase=$product.product}>{/if}{$product.product|truncate:55:"...":true nofilter}{if $hide_links}</strong>{else}</a>{/if}
+        {if !$hide_links}<a href="{"products.view?product_id=`$product.product_id`{if $product.ohash}&`$product.ohash`{/if}"|fn_url}" class="product-title" title="{$product.product|strip_tags}" {live_edit name="product:product:{$product.product_id}" phrase=$product.product}>{/if}{$product.product|truncate:55:"...":true nofilter}{if !$hide_links}</a>{/if}
     {/if}
 {/hook}
 {/capture}
@@ -130,6 +130,7 @@
 
 {strip}
 {capture name="buttons_product"}
+    {capture name="button_name"}{__("add_to_cart")}{/capture}
     {hook name="products:add_to_cart"}
         {if $product.has_options && !$show_product_options && !$details_page}
             {if $but_role == "text"}
@@ -140,8 +141,17 @@
             {include file="buttons/button.tpl" but_id="button_cart_`$obj_prefix``$obj_id`" but_text=__("select_options") but_href="products.view?product_id=`$product.product_id`" but_role=$opt_but_role but_name="" but_meta="ty-btn__primary ty-btn__big"}
         {else}
             {if $extra_button}{$extra_button nofilter}&nbsp;{/if}
-                {include file="buttons/add_to_cart.tpl" but_id="button_cart_`$obj_prefix``$obj_id`" but_name="dispatch[checkout.add..`$obj_id`]" but_role=$but_role block_width=$block_width obj_id=$obj_id product=$product but_meta=$add_to_cart_meta}
-
+                {include file="buttons/add_to_cart.tpl" but_id="button_cart_`$obj_prefix``$obj_id`" but_name="dispatch[checkout.add..`$obj_id`]" but_role=$but_role block_width=$block_width obj_id=$obj_id product=$product but_meta=$add_to_cart_meta but_text=$smarty.capture.button_name}
+                
+                {if $auto_process}
+                <script type="text/javascript">
+                (function(_, $) {
+                    $(function() {
+                        $('#button_cart_{$obj_prefix}{$obj_id}').click();
+                    });
+                }(Tygh, Tygh.$));
+                </script>
+                {/if}
             {assign var="cart_button_exists" value=true}
         {/if}
     {/hook}
@@ -342,25 +352,25 @@
         <input type="hidden" name="appearance[show_product_amount]" value="{$show_product_amount}" />
         {if !$product.hide_stock_info}
             {if $settings.Appearance.in_stock_field == "Y"}
-                {if $product.tracking != "ProductTracking::DO_NOT_TRACK"|enum}
+                {if $product.tracking != "ProductTracking::DO_NOT_TRACK"|enum || $product.product_type == 'C'}
                     {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y" || $details_page}
                         {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y"}
-                            <div class="ty-control-group product-list-field">
-                                <label class="ty-control-group__label">{__("availability")}:</label>
+                            <div class="ty-control-group product-list-field ty-available-text">
+                                {*<label class="ty-control-group__label">{__("availability")}:</label>*}
                                 <span id="qty_in_stock_{$obj_prefix}{$obj_id}" class="ty-qty-in-stock ty-control-group__item">
-                                    {$product_amount}&nbsp;{__("items")}
+                                    {__("in_stock")}&nbsp;{if $product_amount < 5}{$product_amount}{else}4+{/if}&nbsp;{__("items")}{if $product_amount <= 2}&nbsp;{include file="addons/development/common/tooltip.tpl" note_text=__("last_item_notification")}{/if}
                                 </span>
                             </div>
                         {elseif $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y"}
                             <div class="ty-control-group product-list-field">
-                                <label class="ty-control-group__label">{__("in_stock")}:</label>
+                                {*<label class="ty-control-group__label">{__("in_stock")}:</label>*}
                                 <span class="ty-qty-out-of-stock ty-control-group__item">{$out_of_stock_text}</span>
                             </div>
                         {/if}
                     {/if}
                 {/if}
             {else}
-                {if ((($product_amount > 0 && $product_amount >= $product.min_qty) || $product.tracking == "ProductTracking::DO_NOT_TRACK"|enum) && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y") || ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount == "Y")}
+                {if ((($product_amount > 0 && $product_amount >= $product.min_qty) || $product.tracking == "ProductTracking::DO_NOT_TRACK"|enum || $product.product_type == 'C') && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y") || ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount == "Y")}
                     <div class="ty-control-group product-list-field ty-available-text">
                         {*<label class="ty-control-group__label">{__("availability")}:</label>*}
                         <span class="ty-qty-in-stock ty-control-group__item" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock")}</span>

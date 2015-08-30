@@ -1,6 +1,7 @@
 <div class="ty-grid-list__item-wrapper">
 {hook name="products:product_multicolumns_list"}
 {/hook}
+<a href="{"products.view?product_id=`$product.product_id`{if $product.ohash}&`$product.ohash`{/if}"|fn_url}">
 <div class="ty-grid-list__item">
     {assign var="obj_id" value=$product.product_id}
     {include file="common/product_data.tpl" product=$product}
@@ -27,9 +28,7 @@
         {/if}
         
         <div class="ty-grid-list__brand-image">
-            <a href="{"products.view?product_id=`$product.product_id`{if $product.ohash}&`$product.ohash`{/if}"|fn_url}">
             {include file="addons/development/common/brand_logo.tpl"  brand=$product.brand brand_variant_id=$product.brand.variant_id}
-            </a>
         </div>
         
         {if $mode == 'R'}
@@ -43,12 +42,8 @@
     </div>
     
     <div class="ty-grid-list__item-info">
+        {hook name="products:product_multicolumns_list_item_info"}
         <div class="ty-grid-list__item-name">
-            {if $item_number == "Y"}
-                <span class="item-number">{$cur_number}.&nbsp;</span>
-                {math equation="num + 1" num=$cur_number assign="cur_number"}
-            {/if}
-            
             {if $mode == 'R'}
                 <div class="ty-product-series">{$product.subtitle}</div>
             {/if}
@@ -84,8 +79,11 @@
                 </div>
             {/if}
         </div>
+        {/hook}
     </div>
+    
     {assign var="form_close" value="form_close_`$obj_id`"}
     {$smarty.capture.$form_close nofilter}
 </div>
+</a>
 </div>
