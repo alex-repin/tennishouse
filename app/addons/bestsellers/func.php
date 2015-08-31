@@ -71,15 +71,15 @@ function fn_bestsellers_get_products_pre(&$params, &$items_per_page, &$lang_code
 function fn_bestsellers_get_products(&$params, &$fields, &$sortings, &$condition, &$join, &$sorting, &$group_by, &$lang_code, &$having)
 {
     if (!empty($params['bestsellers'])) {
-        $fields[] = 'SUM(?:product_sales.amount) as sales_amount';
+        $fields[] = '?:product_sales.amount as sales_amount';
         $sortings['sales_amount'] = 'sales_amount';
         $group_by = '?:product_sales.product_id';
         if (!empty($params['category_id'])) {
             $condition .= db_quote(" AND ?:product_sales.category_id = ?i", $params['category_id']);
-            $join .= ' INNER JOIN ?:product_sales ON ?:product_sales.product_id = products.product_id AND ?:product_sales.category_id = products_categories.category_id ';
         } else {
-            $join .= " INNER JOIN ?:product_sales ON ?:product_sales.product_id = products.product_id AND ?:product_sales.category_id = products_categories.category_id AND products_categories.link_type = 'M'";
+            $condition .= " AND products_categories.link_type = 'M'";
         }
+        $join .= ' INNER JOIN ?:product_sales ON ?:product_sales.product_id = products.product_id AND ?:product_sales.category_id = products_categories.category_id ';
 
     } elseif (!empty($params['on_sale'])) {
         $fields[] = '100 - ((prices.price * 100) / list_price) AS sales_discount';

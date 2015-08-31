@@ -157,7 +157,9 @@ class FeaturesCache
                                     $pr_ids = array_merge($pr_ids, $memcache_features[$feature_id]['variants'][$variant['variant_id']]);
                                 }
                             }
-                            $product_ids[] = $pr_ids;
+                            if (!empty($pr_ids)) {
+                                $product_ids[] = $pr_ids;
+                            }
                         } elseif (!empty($feature_data['variant_id']) && !empty($memcache_features[$feature_id]['variants'][$feature_data['variant_id']])) {
                             $product_ids[] = $memcache_features[$feature_id]['variants'][$feature_data['variant_id']];
                         } elseif (!empty($feature_data['value']) && !empty($memcache_features[$feature_id]['values'][$feature_data['value']])) {
@@ -186,7 +188,9 @@ class FeaturesCache
                                     }
                                 }
                             }
-                            $product_ids[] = $_prod_ids;
+                            if (!empty($_prod_ids)) {
+                                $product_ids[] = $_prod_ids;
+                            }
                         }
                     }
                 }

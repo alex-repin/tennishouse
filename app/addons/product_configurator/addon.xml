@@ -4,7 +4,7 @@
     <name>Конфигуратор товаров</name>
     <description>Комплекты ракеток и сумок</description>
     <version>1.0</version>
-    <priority>300</priority>
+    <priority>2400</priority>
     <position>150</position>
     <status>active</status>
     <default_language>ru</default_language>

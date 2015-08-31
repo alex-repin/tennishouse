@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         'product' => $data_product['product'],
                         'price' => $price,
                         'amount' => $amount,
-                        'total' => $price * $amount,
+                        'total' => ($order_info['status'] == 'P') ? 0 : $price * $amount,
                         'weight' => $amount * $product_weight,
                         'order_id' => $params['order_id'],
                         'shipment_id' => $shipment_id,
@@ -132,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $order_for_sdek['Number'] = $params['order_id'] . '_' . $shipment_id;
                 $order_for_sdek['DateInvoice'] = date("Y-m-d", $shipment['shipment_timestamp']);
                 $order_for_sdek['RecipientEmail'] = $order_info['email'];
-                $order_for_sdek['DeliveryRecipientCost'] = $order_for_sdek['DeliveryRecipientCost'];
+                $order_for_sdek['DeliveryRecipientCost'] = ($order_info['status'] == 'P') ? 0 : $order_for_sdek['DeliveryRecipientCost'];
 
                 $xml .= '            ' . RusSdek::arraySimpleXml('Order', $order_for_sdek, 'open');
 
@@ -154,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $product_for_xml = array (
                         'WareKey' => $product['ware_key'],
                         'Cost' => $product['price'],
-                        'Payment' => $product['price'],
+                        'Payment' => $product['total'],
                         'Weight' => $product['weight'],
                         'Amount' => $product['amount'],
                         'Comment' => $product['product'],

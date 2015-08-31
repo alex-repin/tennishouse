@@ -5435,7 +5435,7 @@ function fn_get_filters_products_count($params = array())
                         }
                     }
                     if (!empty($feature_conditions)) {
-                        FeaturesCache::getProductsConditions($feature_conditions, $fields_join, $fields_where, CART_LANGUAGE, '?:products');
+                        FeaturesCache::getProductsConditions(array($feature_conditions), $fields_join, $fields_where, CART_LANGUAGE, '?:products');
                     }
                 }
                 // [tennishouse]
@@ -5665,7 +5665,7 @@ function fn_get_filters_products_count($params = array())
             }
         }
         if (!empty($sliders_condition)) {
-            FeaturesCache::getProductsConditions($sliders_condition, $sliders_join, $sliders_where, CART_LANGUAGE, '?:products');
+            FeaturesCache::getProductsConditions(array($sliders_condition), $sliders_join, $sliders_where, CART_LANGUAGE, '?:products');
         }
         // [tennishouse]
 

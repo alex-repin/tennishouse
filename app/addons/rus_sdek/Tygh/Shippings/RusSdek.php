@@ -25,7 +25,7 @@ class RusSdek
     {
         $xml = '<'.$name.' ';
         foreach ($data as $key => $value) {
-            if (!empty($value)) {
+            if (isset($value)) {
                 $value = fn_html_escape($value);
                 $xml .= $key .'="' . $value .'" ';
             }
