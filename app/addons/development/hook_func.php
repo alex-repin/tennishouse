@@ -879,7 +879,6 @@ function fn_development_update_category_pre(&$category_data, $category_id, $lang
 
 function fn_development_get_products(&$params, &$fields, &$sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
 {
-    $params['features_condition'] = array();
     if (!empty($params['tabs_categorization']) || !empty($params['subtabs_categorization']) || !empty($params['sections_categorization'])) {
         $params['items_per_page'] = 0;
         if (!empty($params['tabs_categorization'])) {
@@ -1029,113 +1028,82 @@ function fn_development_get_products_pre(&$params, $items_per_page, $lang_code)
         if ($params['rackets_type'] == 'pro') {
             $feature_hash = 'V' . PRO_RACKET_FV_ID;
         }
+        $feature_condition = array();
         if ($params['rackets_type'] == 'heavy_head_light') {
-            $feature_condition[] = array(
-                R_WEIGHT_FEATURE_ID => array(
-                    'min_value' => 300
-                )
+            $feature_condition[R_WEIGHT_FEATURE_ID] = array(
+                'min_value' => 300
             );
-            $feature_condition[] = array(
-                R_BALANCE_FEATURE_ID => array(
-                    'max_value' => 35
-                )
+            $feature_condition[R_BALANCE_FEATURE_ID] = array(
+                'max_value' => 35
             );
         }
         if ($params['rackets_type'] == 'light_head_heavy') {
-            $feature_condition[] = array(
-                R_WEIGHT_FEATURE_ID => array(
-                    'max_value' => 300
-                )
+            $feature_condition[R_WEIGHT_FEATURE_ID] = array(
+                'max_value' => 300
             );
-            $feature_condition[] = array(
-                R_BALANCE_FEATURE_ID => array(
-                    'min_value' => 35
-                )
+            $feature_condition[R_BALANCE_FEATURE_ID] = array(
+                'min_value' => 35
             );
         }
         if ($params['rackets_type'] == 'stiff') {
-            $feature_condition[] = array(
-                R_STIFFNESS_FEATURE_ID => array(
-                    'min_value' => 65
-                )
+            $feature_condition[R_STIFFNESS_FEATURE_ID] = array(
+                'min_value' => 65
             );
         }
         if ($params['rackets_type'] == 'soft') {
-            $feature_condition[] = array(
-                R_STIFFNESS_FEATURE_ID => array(
-                    'max_value' => 64
-                )
+            $feature_condition[R_STIFFNESS_FEATURE_ID] = array(
+                'max_value' => 64
             );
         }
         if ($params['rackets_type'] == 'regular_head') {
-            $feature_condition[] = array(
-                R_HEADSIZE_FEATURE_ID => array(
-                    'min_value' => 612,
-                    'max_value' => 677
-                )
+            $feature_condition[R_HEADSIZE_FEATURE_ID] = array(
+                'min_value' => 612,
+                'max_value' => 677
             );
         }
         if ($params['rackets_type'] == 'regular_length') {
-            $feature_condition[] = array(
-                R_LENGTH_FEATURE_ID => array(
-                    'variant_id' => REGULAR_LENGTH_FV_ID
-                )
+            $feature_condition[R_LENGTH_FEATURE_ID] = array(
+                'variant_id' => REGULAR_LENGTH_FV_ID
             );
         }
         if ($params['rackets_type'] == 'kids_17') {
-            $feature_condition[] = array(
-                R_LENGTH_FEATURE_ID => array(
-                    'variant_id' => KIDS_17_FV_ID
-                )
+            $feature_condition[R_LENGTH_FEATURE_ID] = array(
+                'variant_id' => KIDS_17_FV_ID
             );
         }
         if ($params['rackets_type'] == 'kids_19') {
-            $feature_condition[] = array(
-                R_LENGTH_FEATURE_ID => array(
-                    'variant_id' => KIDS_19_FV_ID
-                )
+            $feature_condition[R_LENGTH_FEATURE_ID] = array(
+                'variant_id' => KIDS_19_FV_ID
             );
         }
         if ($params['rackets_type'] == 'kids_21') {
-            $feature_condition[] = array(
-                R_LENGTH_FEATURE_ID => array(
-                    'variant_id' => KIDS_21_FV_ID
-                )
+            $feature_condition[R_LENGTH_FEATURE_ID] = array(
+                'variant_id' => KIDS_21_FV_ID
             );
         }
         if ($params['rackets_type'] == 'kids_23') {
-            $feature_condition[] = array(
-                R_LENGTH_FEATURE_ID => array(
-                    'variant_id' => KIDS_23_FV_ID
-                )
+            $feature_condition[R_LENGTH_FEATURE_ID] = array(
+                'variant_id' => KIDS_23_FV_ID
             );
         }
         if ($params['rackets_type'] == 'kids_25') {
-            $feature_condition[] = array(
-                R_LENGTH_FEATURE_ID => array(
-                    'variant_id' => KIDS_25_FV_ID
-                )
+            $feature_condition[R_LENGTH_FEATURE_ID] = array(
+                'variant_id' => KIDS_25_FV_ID
             );
         }
         if ($params['rackets_type'] == 'kids_26') {
-            $feature_condition[] = array(
-                R_LENGTH_FEATURE_ID => array(
-                    'variant_id' => KIDS_26_FV_ID
-                )
+            $feature_condition[R_LENGTH_FEATURE_ID] = array(
+                'variant_id' => KIDS_26_FV_ID
             );
         }
         if ($params['rackets_type'] == 'closed_pattern') {
-            $feature_condition[] = array(
-                R_STRING_PATTERN_FEATURE_ID => array(
-                    'variant_id' => CLOSED_PATTERN_FV_ID
-                )
+            $feature_condition[R_STRING_PATTERN_FEATURE_ID] = array(
+                'variant_id' => CLOSED_PATTERN_FV_ID
             );
         }
         if ($params['rackets_type'] == 'open_pattern') {
-            $feature_condition[] = array(
-                R_STRING_PATTERN_FEATURE_ID => array(
-                    'not_variant' => CLOSED_PATTERN_FV_ID
-                )
+            $feature_condition[R_STRING_PATTERN_FEATURE_ID] = array(
+                'not_variant' => CLOSED_PATTERN_FV_ID
             );
         }
         if (!empty($feature_condition)) {
