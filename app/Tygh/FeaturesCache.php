@@ -204,6 +204,8 @@ class FeaturesCache
             }
             if (!empty($_product_conditions)) {
                 $condition .= db_quote(" AND (?p) ", implode(' OR ', $_product_conditions));
+            } else {
+                $condition .= db_quote(" AND FALSE ");
             }
         } else {
             $_conditions = array();
@@ -218,7 +220,9 @@ class FeaturesCache
                                 $where_conditions[] = db_quote("feature_?i.variant_id = ?i", $feature_id, $variant['variant_id']);
                             }
                         }
-                        $conditions[] = db_quote("(?p)", implode(" OR ", $where_conditions));
+                        if (!empty($where_conditions)) {
+                            $conditions[] = db_quote("?p", implode(" OR ", $where_conditions));
+                        }
                     } elseif (!empty($feature_data['variant_id'])) {
                         $conditions[] = db_quote("feature_?i.variant_id = ?i", $feature_id, $feature_data['variant_id']);
                     } elseif (!empty($feature_data['value'])) {
@@ -237,7 +241,7 @@ class FeaturesCache
                     }
                 }
                 if (!empty($conditions)) {
-                    $_conditions[] = db_quote("?p", implode('AND', $conditions));
+                    $_conditions[] = db_quote("?p", implode(' AND ', $conditions));
                 }
             }
             if (!empty($_conditions)) {

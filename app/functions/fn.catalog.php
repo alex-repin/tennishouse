@@ -7080,18 +7080,45 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
         $params['features_hash'] .= implode('.', $params['variants']);
     }
 
-    $advanced_variant_ids = $simple_variant_ids = $ranges_ids = $fields_ids = $fields_ids_revert = $slider_vals = array();
+    $f_condition = $advanced_variant_ids = $simple_variant_ids = $ranges_ids = $fields_ids = $fields_ids_revert = $slider_vals = array();
 
     if (!empty($params['features_hash'])) {
         list($av_ids, $ranges_ids, $fields_ids, $slider_vals, $fields_ids_revert) = fn_parse_features_hash($params['features_hash']);
         $advanced_variant_ids = db_get_hash_multi_array("SELECT feature_id, variant_id FROM ?:product_feature_variants WHERE variant_id IN (?n)", array('feature_id', 'variant_id'), $av_ids);
 
+        if (!empty($advanced_variant_ids)) {
+            foreach ($advanced_variant_ids as $f_id => $f_data) {
+                $f_condition[$f_id] = array(
+                    'variants' => array()
+                );
+                foreach ($f_data as $v_id => $v_data) {
+                    $f_condition[$f_id]['variants'][] = array(
+                        'variant_id' => $v_id
+                    );
+                }
+            }
+        }
         // [tennishouse]
         if (!empty($slider_vals)) {
+            $types = $advanced_period = $tmp_slide = array();
             foreach ($slider_vals as $type => $range) {
                 if (!in_array($type, array('P', 'A'))) {
-                    $advanced_variant_ids += db_get_hash_multi_array("SELECT ?:product_feature_variants.feature_id, ?:product_feature_variants.variant_id FROM ?:product_filters LEFT JOIN ?:product_feature_variants ON ?:product_filters.feature_id = ?:product_feature_variants.feature_id LEFT JOIN ?:product_feature_variant_descriptions ON ?:product_feature_variant_descriptions.variant_id = ?:product_feature_variants.variant_id AND ?:product_feature_variant_descriptions.lang_code = ?s WHERE ?:product_filters.field_type = ?s AND ?:product_feature_variant_descriptions.variant >= ?f AND ?:product_feature_variant_descriptions.variant <= ?f", array('feature_id', 'variant_id'), $lang_code, $type, $range[0], $range[1]);
+                    $types[] = $type;
+                    $tmp_slide[$type] = $slider_vals[$type];
                     unset($slider_vals[$type]);
+                }
+            }
+            if (!empty($types)) {
+                $advanced_period = db_get_hash_single_array("SELECT feature_id, field_type FROM ?:product_filters WHERE field_type IN (?a)", array('field_type', 'feature_id'), $types);
+            }
+            if (!empty($advanced_period)) {
+                foreach ($advanced_period as $type => $f_id) {
+                    if (!empty($tmp_slide[$type])) {
+                        $f_condition[$f_id] = array(
+                            'min_value' => $tmp_slide[$type][0],
+                            'max_value' => $tmp_slide[$type][1],
+                        );
+                    }
                 }
             }
         }
@@ -7102,14 +7129,12 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
         $simple_variant_ids = $params['multiple_variants'];
     }
 
-    if (!empty($advanced_variant_ids)) {
+    if (!empty($f_condition)) {
         // [tennishouse]
-        FeaturesCache::advancedVariantIds($advanced_variant_ids, $join, $condition, $lang_code);
+        FeaturesCache::getProductsConditions(array($f_condition), $join, $condition, $lang_code);
         // [tennishouse]
-    } else {
-        if (!empty($params['features_hash']) || !empty($params['feature_code'])) {
-            $join .= db_quote(" LEFT JOIN ?:product_features_values ON ?:product_features_values.product_id = products.product_id AND ?:product_features_values.lang_code = ?s", $lang_code);
-        }
+    } elseif (!empty($params['features_hash']) || !empty($params['feature_code'])) {
+        $join .= db_quote(" LEFT JOIN ?:product_features_values ON ?:product_features_values.product_id = products.product_id AND ?:product_features_values.lang_code = ?s", $lang_code);
     }
     
     // Feature code
