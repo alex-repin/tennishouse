@@ -12,7 +12,7 @@
         <label class="ty-pc-group__label ty-control-group__label {if $po.required == 'Y'}cm-required cm-requirement-popup{/if}" for="group_{$po.group_id}">
             {$po.configurator_group_name}:
         </label>
-        <div class="ty-pc-group__products">
+        <div class="ty-pc-group__products" id="pc_{$po.group_id}">
             {if $po.configurator_group_type == "S"}
                 <div class="ty-pc-group__products-item-block">
                     <select name="product_data[{$product.product_id}][configuration][{$po.group_id}][product_ids][]" id="group_{$po.group_id}" class="cm-dropdown cm-options-update" onchange="fn_change_options('{$obj_prefix}{$obj_id}', '{$obj_id}', '0');"  data-cesbClass="ty-sb-popup-large" {if $product.configuration_out_of_stock}disabled="disabled"{/if}>
@@ -66,21 +66,6 @@
                         </div>
                     </div>
                 {/if}
-                <script type="text/javascript">
-                (function(_, $) {
-                    $('.cm-dropdown').each(function() {
-                        $(this).selectbox();
-                    });
-                    {foreach from=$po.products item="group_product"}
-                        if ($('#product_info_{$po.group_id}_{$group_product.product_id}').length) {
-                            $('#opt_product_{$po.group_id}_{$group_product.product_id}').addClass('cm-tooltip');
-                            $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('title', $('#product_info_{$po.group_id}_{$group_product.product_id}').html());
-                            $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('data-cetooltipclass', 'ty-pc-product-info');
-                            $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('data-cetooltipposition', 'center');
-                        }
-                    {/foreach}
-                }(Tygh, Tygh.$));
-                </script>
             {elseif $po.configurator_group_type == "R" }
                 {if $po.products}
                 <tbody id="group_{$po.group_id}">
@@ -130,6 +115,21 @@
                 <p class="price">{__("text_no_products_defined")}</p>
                 {/if}
             {/if}
+            <script type="text/javascript">
+            (function(_, $) {
+                $('#pc_{$po.group_id}').find('.cm-dropdown').each(function() {
+                    $(this).selectbox();
+                });
+                {foreach from=$po.products item="group_product"}
+                    if ($('#product_info_{$po.group_id}_{$group_product.product_id}').length) {
+                        $('#opt_product_{$po.group_id}_{$group_product.product_id}').addClass('cm-tooltip');
+                        $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('title', $('#product_info_{$po.group_id}_{$group_product.product_id}').html());
+                        $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('data-cetooltipclass', 'ty-pc-product-info');
+                        $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('data-cetooltipposition', 'center');
+                    }
+                {/foreach}
+            }(Tygh, Tygh.$));
+            </script>
         </div>
     </div>
     {/foreach}

@@ -7493,7 +7493,7 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
     // Cut off out of stock products
     if (Registry::get('settings.General.inventory_tracking') == 'Y' && // FIXME? Registry in model
         Registry::get('settings.General.show_out_of_stock_products') == 'N' &&
-        $params['area'] == 'C'
+        $params['area'] == 'C' && empty($params['show_out_of_stock'])
     ) {
         $condition .= db_quote(
             " AND (CASE products.tracking

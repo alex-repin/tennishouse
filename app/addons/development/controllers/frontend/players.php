@@ -31,7 +31,7 @@ if ($mode == 'view') {
     if (!empty($player_data['gear'])) {
         $params = array(
             'item_ids' => implode(',', $player_data['gear']),
-            'show_hidden' => true
+            'show_out_of_stock' => true
         );
         list($gear,) = fn_get_products($params);
         if (!empty($gear)) {

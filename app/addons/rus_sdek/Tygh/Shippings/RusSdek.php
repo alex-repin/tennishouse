@@ -169,8 +169,12 @@ class RusSdek
                 if (!empty($location['country'])) {
                     $condition .= db_quote(" AND c.country_code = ?s", $location['country']);
                 }
+                if (!empty($location['state'])) {
+                    $condition .= db_quote(" AND c.state_code = ?s", $location['state']);
+                }
 
                 $result = db_get_field("SELECT c.city_code FROM ?:rus_city_sdek_descriptions as d LEFT JOIN ?:rus_cities_sdek as c ON c.city_id = d.city_id WHERE ?p", $condition);
+                
                 if (empty($result)) {
 //                     fn_set_notification('E', __('notice'), __('shippings.sdek.city_error'));
                 }
