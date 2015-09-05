@@ -74,6 +74,7 @@ if ($mode == 'catalog') {
         $main_parent_id = reset($category_parent_ids);
         array_pop($category_parent_ids);
 
+        $subtabs_string = $tab_string = '';
         if (empty($subcategories) || !empty($category_data['parent_id']) || fn_display_subheaders($category_data['category_id'])) {
             $params = $_REQUEST;
 
@@ -121,7 +122,6 @@ if ($mode == 'catalog') {
                 'get_title_features' => true,
                 'allow_duplication' => true
             ));
-            $subtabs_string = $tab_string = '';
             if (!empty($products)) {
                 if (empty($category_data['brand']) || $category_data['brand']['feature_id'] != $category_data['tabs_categorization']) {
                     if (!empty($category_data['tabs_categorization'])) {

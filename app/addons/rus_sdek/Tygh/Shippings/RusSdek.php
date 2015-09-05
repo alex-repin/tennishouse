@@ -144,7 +144,7 @@ class RusSdek
     public static function SdekCityId($location)
     {
         // [tennishouse]
-        $result = '';
+        $_result = '';
         
         if (!empty($location['country']) && !empty($location['city'])) {
         // [tennishouse]
@@ -169,19 +169,28 @@ class RusSdek
                 if (!empty($location['country'])) {
                     $condition .= db_quote(" AND c.country_code = ?s", $location['country']);
                 }
-                if (!empty($location['state'])) {
-                    $condition .= db_quote(" AND c.state_code = ?s", $location['state']);
-                }
+//                 if (!empty($location['state'])) {
+//                     $condition .= db_quote(" AND c.state_code = ?s", $location['state']);
+//                 }
 
-                $result = db_get_field("SELECT c.city_code FROM ?:rus_city_sdek_descriptions as d LEFT JOIN ?:rus_cities_sdek as c ON c.city_id = d.city_id WHERE ?p", $condition);
-                
-                if (empty($result)) {
+                $result = db_get_hash_single_array("SELECT c.city_code, c.state_code FROM ?:rus_city_sdek_descriptions as d LEFT JOIN ?:rus_cities_sdek as c ON c.city_id = d.city_id WHERE ?p", array('state_code', 'city_code'), $condition);
+
+                if (count($result) == 1) {
+                    $_result = reset($result);
+                } elseif (count($result) > 1 && !empty($location['state'])) {
+                    foreach ($result as $s_code => $c_code) {
+                        if ($location['state'] == $s_code) {
+                            $_result = $c_code;
+                        }
+                    }
+                }
+                if (empty($_result)) {
 //                     fn_set_notification('E', __('notice'), __('shippings.sdek.city_error'));
                 }
             }
         }
 
-        return $result;
+        return $_result;
     }
 
     public static function SdekXmlRequest($url, $xml, $params_request)
