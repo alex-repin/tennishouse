@@ -121,7 +121,7 @@
                     $(this).selectbox();
                 });
                 {foreach from=$po.products item="group_product"}
-                    if ($('#product_info_{$po.group_id}_{$group_product.product_id}').length) {
+                    if ($('#product_info_{$po.group_id}_{$group_product.product_id}').length && $('#tygh_main_container').hasClass('no-touch')) {
                         $('#opt_product_{$po.group_id}_{$group_product.product_id}').addClass('cm-tooltip');
                         $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('title', $('#product_info_{$po.group_id}_{$group_product.product_id}').html());
                         $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('data-cetooltipclass', 'ty-pc-product-info');

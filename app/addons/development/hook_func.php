@@ -894,7 +894,6 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
             $fields[] = "GROUP_CONCAT(',', sections_categorization.variant_id) AS sections_categorization";
         }
     }
-    $sortings['random'] = 'RAND()';
     if (!empty($params['similar_pid'])) {
         $similar_products_features = array(
             'R' => array(

@@ -6964,7 +6964,8 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
         'updated_timestamp' => 'products.updated_timestamp',
         'popularity' => 'popularity.total',
         'company' => 'company_name',
-        'null' => 'NULL'
+        'null' => 'NULL',
+        'random' => 'RAND()'
     );
 
     if (!empty($params['get_subscribers'])) {

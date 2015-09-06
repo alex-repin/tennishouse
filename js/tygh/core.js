@@ -3823,7 +3823,9 @@ var Tygh = {
 
                 if (set_mark == true) {
                     if (lbl.hasClass('cm-requirement-popup')) {
-                        popups.push(elm);
+                        if (!$('#' + lbl.attr('for') + ':disabled').length) {
+                            popups.push(elm);
+                        }
                     } else {
                         lbl.parent().addClass('error');
                         elm.addClass('cm-failed-field');
@@ -3854,18 +3856,29 @@ var Tygh = {
             }
             if (popups.length) {
                 for (var i = 0; i < popups.length; i++) {
-                    var block = popups[i].parent();
-                    var new_elm = popups[i].clone();
-                    new_elm.find('option').each(function(){
-                        $(this).removeAttr('selected');
-                    });
-                    var option_id = new_elm.attr('id');
                     var trigger_change = false;
                     if (popups.length == 1) {
                         trigger_change = true;
                     }
-                    new_elm.attr('onchange',"fn_change_notification_option('" + option_id + "', '" + clicked_elm.attr('id') + "', " + trigger_change + ");");
-                    var new_block = $('<div>' + '<span class="cm-ac-notification-label"style="margin-right: 50px;">' + _.tr('define_option') + '</span>').append(block.find('.cm-notification-note').clone()).append('</div>').append(new_elm.clone()).append(new_elm.hasClass('cm-dropdown') ? "<script type='text/javascript'>(function(_, $){$('.cm-dropdown').each(function(){$(this).selectbox();});}(Tygh, Tygh.$));</script>" : '').html().str_replace(option_id, 'ntf_' + option_id);
+                    var block = popups[i].parent();
+                    if (block.find('.ty-product-variant-image').length) {
+                        var new_elm = block.find('.ty-product-variant-image').clone();
+                        new_elm.find('img').each(function(){
+                            var option_id = $(this).attr('id');
+                            var onclick = $(this).attr('onclick').str_replace('fn_set_option_value', 'fn_set_option_value_popup').str_replace('void(0);', '');
+                            $(this).attr('onclick', onclick + "fn_click_notification_img('ntf_" + option_id + "', '" + popups[i].attr('id') + "', '" + clicked_elm.attr('id') + "', " + trigger_change + ");").attr('id', 'ntf_' + option_id);
+                        });
+                        var result = new_elm.clone().wrap('<div>').parent().html();
+                    } else {
+                        var new_elm = popups[i].clone();
+                        new_elm.find('option').each(function(){
+                            $(this).removeAttr('selected');
+                        });
+                        var option_id = new_elm.attr('id');
+                        new_elm.attr('onchange',"fn_change_notification_option('" + option_id + "', '" + clicked_elm.attr('id') + "', " + trigger_change + ");").append(new_elm.hasClass('cm-dropdown') ? "<script type='text/javascript'>(function(_, $){$('.cm-dropdown').each(function(){$(this).selectbox();});}(Tygh, Tygh.$));</script>" : '');
+                        var result = new_elm.clone().wrap('<div>').parent().html().str_replace(option_id, 'ntf_' + option_id);
+                    }
+                    var new_block = $('<div>' + '<span class="cm-ac-notification-label"style="margin-right: 50px;">' + _.tr('define_option') + '</span>').append(block.find('.cm-notification-note').clone()).append('</div>').append(result).html();
                     $.ceNotification('show', {
                         type: 'I', 
                         message: new_block,

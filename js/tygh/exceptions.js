@@ -225,3 +225,46 @@ function fn_change_notification_option(obj_id, clicked_id, trigger_change)
         }
     }, 200);
 }
+
+function fn_click_notification_img(obj_id, elm_id, clicked_id, trigger_change)
+{
+    var elm = $('#' + elm_id);
+    
+    trigger_change = trigger_change || false;
+    var _notification_container = $('.cm-notification-content-extended:visible');
+    if (_notification_container.length) {
+        $.ceNotification('close', _notification_container, false);
+    }
+    setTimeout(function(){
+        if (trigger_change && elm.hasClass('cm-options-update'))  {
+            if ($('#' + clicked_id).hasClass('ty-btn__add-to-cart')) {
+                $('#auto_process_form').val('1');
+            }
+            elm.change();
+        } else {
+            if ($('#' + clicked_id).length > 0) {
+                $('#' + clicked_id).click();
+            }
+        }
+    }, 200);
+}
+
+function fn_set_option_value_popup(id, option_id, value)
+{
+    var $ = Tygh.$;
+
+    var elm = $('#option_' + id + '_' + option_id);
+    if (elm.prop('disabled')) {
+        return false;
+    }
+    if (elm.prop('type') == 'select-one') {
+        elm.val(value);
+    } else {
+        elms = $('#option_' + id + '_' + option_id + '_group');
+        if ($.browser.msie) {
+            $('input[type=radio][value=' + value + ']', elms).prop('checked', true);
+        }
+    }
+
+    return true;
+}

@@ -617,5 +617,6 @@
         <item lang="ru" id="free_shipping_product_text">Этот товар доставляется бесплатно по всей России</item>
         <item lang="ru" id="order_status_tracking_info"><![CDATA[Информация по отслеживанию посылки находится на <a href="[order_page_link]" target="_blank">детальной странице заказа</a>.]]></item>
         <item lang="ru" id="last_item_notification">ВНИМАНИЕ, этот товар почти распродан, поэтому для подтверждения заказа с Вами свяжется наш менеджер.</item>
+        <item lang="ru" id="pc_zero_price_note">для получения цены выберите ракетку и сумку</item>
     </language_variables>
 </addon>
