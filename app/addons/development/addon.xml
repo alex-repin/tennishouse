@@ -353,6 +353,8 @@
         <item lang="ru" id="ST_played_by">Этими струнами играют</item>
         <item lang="ru" id="C_played_by">Этим товаром пользуются</item>
         <item lang="ru" id="PC_played_by">Этим комплектом пользуются</item>
+        <item lang="ru" id="OG_played_by">Этой обмоткой играют</item>
+        <item lang="ru" id="OG_played_by_single">Этой обмоткой играет</item>
         <item lang="ru" id="R_played_by_single">Этой ракеткой играет</item>
         <item lang="ru" id="A_played_by_single">В этой одежде играет</item>
         <item lang="ru" id="S_played_by_single">В этой обуви играет</item>
