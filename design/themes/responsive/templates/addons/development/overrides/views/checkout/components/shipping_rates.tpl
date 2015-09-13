@@ -127,16 +127,17 @@ function fn_calculate_total_shipping_cost() {
                                     {/if}
                                 </div>
                                 <div class="ty-shipping-options__method-payments">
-                                    {if 'pod'|in_array:$shipping.available_payments}
+                                    {foreach from=$shipping.available_payments key="payment_type" item="payment_status"}
                                         <div>
-                                            <div class="ty-shipping-options__method-payments-mark"><i class="ty-shipping-options__method-payments-icon"></i></div><div class="ty-shipping-options__method-payments-type">{__("payment_pod")}</div>
+                                            <div class="ty-shipping-options__method-payments-mark">
+                                                {if $payment_status == 'Y'}
+                                                    <i class="ty-shipping-options__method-payments-check-icon"></i>
+                                                {else}
+                                                    <i class="ty-shipping-options__method-payments-cross-icon"></i>
+                                                {/if}
+                                            </div><div class="ty-shipping-options__method-payments-type">{if $payment_status == 'Y'}{__($payment_type)}{else}{__("`$payment_type`_disabled")}{/if}</div>
                                         </div>
-                                    {/if}
-                                    {if 'po'|in_array:$shipping.available_payments}
-                                        <div>
-                                            <div class="ty-shipping-options__method-payments-mark"><i class="ty-shipping-options__method-payments-icon"></i></div><div class="ty-shipping-options__method-payments-type">{__("payment_po")}</div>
-                                        </div>
-                                    {/if}
+                                    {/foreach}
                                 </div>
 
                         {elseif $display == "select"}

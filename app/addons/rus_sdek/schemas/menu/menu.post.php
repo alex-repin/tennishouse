@@ -23,6 +23,10 @@ $schema['central']['orders']['items']['shippings.sdek.sdek_menu'] = array(
             'href' => 'sdek_status.manage',
             'position' => 203
         ),
+        'shippings.sdek.regenerate_cities' => array(
+            'href' => 'rus_sdek.regenerate_cities',
+            'position' => 204
+        ),
     )
 );
 

@@ -146,7 +146,7 @@ function fn_get_cart_product_data($hash, &$product, $skip_promotion, &$cart, &$a
             return false;
         }
 
-        if (!fn_allowed_for('ULTIMATE:FREE')) {
+        if (!fn_allowed_for('ULTIMATE:FREE') && !defined('ORDER_MANAGEMENT')) {
             $exceptions = fn_get_product_exceptions($product['product_id'], true);
             if (!isset($product['options_type']) || !isset($product['exceptions_type'])) {
                 $product = array_merge($product, db_get_row('SELECT options_type, exceptions_type FROM ?:products WHERE product_id = ?i', $product['product_id']));
@@ -2149,7 +2149,6 @@ function fn_get_shipping_info($shipping_id, $lang_code = CART_LANGUAGE)
         }
 
         // [tennishouse]
-        $shipping['available_payments'] = unserialize($shipping['available_payments']);
         $shipping['payment_ids'] = unserialize($shipping['payment_ids']);
         // [tennishouse]
 
@@ -2804,17 +2803,21 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
 
                 // [tennishouse]
                 $free_shippings = array();
-                foreach ($rates as $rate) {
+                foreach ($rates as $k => $rate) {
                     $g_key = $rate['keys']['group_key'];
                     $sh_id = $rate['keys']['shipping_id'];
 
+                    $product_groups[$g_key]['shippings'][$sh_id]['available_payments'] = array_merge($product_groups[$g_key]['shippings'][$sh_id]['available_payments'], $rate['available_payments']);
+                    $rates[$k]['module'] = $product_groups[$g_key]['shippings'][$sh_id]['module'];
                     if (!empty($product_groups[$g_key]['shippings'][$sh_id]['free_shipping']) && $rate['price'] !== false) {
                         $rate['price'] += !empty($product_groups[$g_key]['package_info']['shipping_freight']) ? $product_groups[$g_key]['package_info']['shipping_freight'] : 0;
-                        $free_shippings[] = $rate['price'];
+                        $free_shippings[$product_groups[$g_key]['shippings'][$sh_id]['shipping_id']] = $rate['price'];
                     }
                 }
                 if (!empty($free_shippings)) {
-                    $min_free_shipping = min($free_shippings);
+                    asort($free_shippings);
+                    $min_free_shipping = reset($free_shippings);
+                    $free_shipping_module = $product_groups[$g_key]['shippings'][key($free_shippings)]['module'];
                 }
 
                 foreach ($rates as $rate) {
@@ -2823,7 +2826,15 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
 
                     if ($rate['price'] !== false) {
                         $rate['price'] += !empty($product_groups[$g_key]['package_info']['shipping_freight']) ? $product_groups[$g_key]['package_info']['shipping_freight'] : 0;
-                        $product_groups[$g_key]['shippings'][$sh_id]['rate'] = empty($product_groups[$g_key]['shippings'][$sh_id]['free_shipping']) ? $rate['price'] : (!empty($min_free_shipping) ? $rate['price'] - $min_free_shipping : 0);
+                        if (empty($product_groups[$g_key]['shippings'][$sh_id]['free_shipping'])) {
+                            $product_groups[$g_key]['shippings'][$sh_id]['rate'] = $rate['price'];
+                        } else {
+                            if (!empty($min_free_shipping) && !empty($free_shipping_module) && $free_shipping_module == $rate['module']) {
+                                $product_groups[$g_key]['shippings'][$sh_id]['rate'] = $rate['price'] - $min_free_shipping;
+                            } else {
+                                $product_groups[$g_key]['shippings'][$sh_id]['rate'] = $rate['price'];
+                            }
+                        }
                         $product_groups[$g_key]['shippings'][$sh_id]['delivery_time'] = !empty($rate['delivery_time']) ? $rate['delivery_time'] : $product_groups[$g_key]['shippings'][$sh_id]['delivery_time'];
                         $product_groups[$g_key]['shippings'][$sh_id]['original_rate'] = $rate['price'];
                     } else {
@@ -6549,11 +6560,7 @@ function fn_prepare_checkout_payment_methods(&$cart, &$auth, $lang_code = CART_L
 
         $payment_methods[$k]['image'] = fn_get_image_pairs($v['payment_id'], 'payment', 'M', true, true, $lang_code);
 
-        $payment_groups[$v['payment_category']][$k] = $payment_methods[$k];
-    }
-
-    if (!empty($payment_groups)) {
-        ksort($payment_groups);
+        $payment_groups[$k] = $payment_methods[$k];
     }
 
     fn_set_hook('prepare_checkout_payment_methods', $cart, $auth, $payment_groups);

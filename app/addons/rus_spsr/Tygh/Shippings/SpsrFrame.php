@@ -52,7 +52,7 @@ class SpsrFrame
         $xml_request = '<root xmlns="http://spsr.ru/webapi/' . $params['suffix'] . '">' . $xml . '</root>';
         $extra = array(
             'headers' => array('Content-Type: application/xml'),
-            'request_timeout' => 2,
+            'request_timeout' => isset($params['request_timeout']) ? $params['request_timeout'] : 2,
             'timeout' => 1
         );
 
@@ -89,6 +89,9 @@ class SpsrFrame
             'inc' => 2,
             'url' => 'https://api.spsr.ru'
         );
+        if ($name == '') {
+            $params['request_timeout'] = 5;
+        }
         $response = SpsrFrame::SpsrXmlRequest($xml, $params);
         
         if ($response['error'] == '0' && !empty($response['data'])) {

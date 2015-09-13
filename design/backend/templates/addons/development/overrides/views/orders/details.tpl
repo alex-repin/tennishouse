@@ -19,14 +19,15 @@
         {/if}
     {/foreach}
 {/if}
+
+{capture name="mainbox"}
+{capture name="tabsbox"}
+
 <form action="{""|fn_url}" method="post" name="order_info_form" class="form-horizontal form-edit form-table">
 <input type="hidden" name="order_id" value="{$smarty.request.order_id}" />
 <input type="hidden" name="order_status" value="{$order_info.status}" />
 <input type="hidden" name="result_ids" value="content_general" />
 <input type="hidden" name="selected_section" value="{$smarty.request.selected_section}" />
-
-{capture name="mainbox"}
-{capture name="tabsbox"}
 <div id="content_general">
     <div class="row-fluid">
         <div class="span8">
@@ -439,8 +440,9 @@
 {hook name="orders:tabs_content"}
 {/hook}
 
-{hook name="orders:tabs_extra"}
-{/hook}
+</form>
+
+{hook name="orders:tabs_extra"}{/hook}
 
 {/capture}
 {include file="common/tabsbox.tpl" content=$smarty.capture.tabsbox active_tab=$smarty.request.selected_section track=true}
@@ -512,5 +514,3 @@
 {/capture}
 
 {include file="common/mainbox.tpl" title=$smarty.capture.mainbox_title content=$smarty.capture.mainbox buttons=$smarty.capture.buttons adv_buttons=$smarty.capture.adv_buttons sidebar=$smarty.capture.sidebar sidebar_position="left"}
-
-</form>

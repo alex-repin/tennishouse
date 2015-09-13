@@ -19,45 +19,45 @@ if ( !defined('AREA') ) { die('Access denied'); }
 
 function fn_rus_sdek_install()
 {
-    $sdek_id = db_query("INSERT INTO ?:settings_objects (`edition_type`, `name`, `section_id`, `section_tab_id`, `type`, `value`, `position`, `is_global`) VALUES ('ROOT', 'sdek_enabled', '7', '0', 'C', 'Y', '130', 'Y')");
-
-    foreach (fn_get_translation_languages() as $lang_code => $v) {
-        db_query("INSERT INTO ?:settings_descriptions (`object_id`, `object_type`, `lang_code`, `value`, `tooltip`) VALUES (?i, 'O', ?s, 'Включить СДЭК', '')", $sdek_id, $lang_code);
-    }
-
-    $service = array(
-        'status' => 'A',
-        'module' => 'sdek',
-        'code' => '1',
-        'sp_file' => '',
-        'description' => 'СДЭК',
-    );
-    
-    $service_id = db_query('INSERT INTO ?:shipping_services ?e', $service);
-    $service['service_id'] = $service_id;
-
-    foreach (fn_get_translation_languages() as $lang_code => $v) {
-        $service['lang_code'] = $lang_code;
-        db_query('INSERT INTO ?:shipping_service_descriptions ?e', $service);
-    }
+//     $sdek_id = db_query("INSERT INTO ?:settings_objects (`edition_type`, `name`, `section_id`, `section_tab_id`, `type`, `value`, `position`, `is_global`) VALUES ('ROOT', 'sdek_enabled', '7', '0', 'C', 'Y', '130', 'Y')");
+// 
+//     foreach (fn_get_translation_languages() as $lang_code => $v) {
+//         db_query("INSERT INTO ?:settings_descriptions (`object_id`, `object_type`, `lang_code`, `value`, `tooltip`) VALUES (?i, 'O', ?s, 'Включить СДЭК', '')", $sdek_id, $lang_code);
+//     }
+// 
+//     $service = array(
+//         'status' => 'A',
+//         'module' => 'sdek',
+//         'code' => '1',
+//         'sp_file' => '',
+//         'description' => 'СДЭК',
+//     );
+//     
+//     $service_id = db_query('INSERT INTO ?:shipping_services ?e', $service);
+//     $service['service_id'] = $service_id;
+// 
+//     foreach (fn_get_translation_languages() as $lang_code => $v) {
+//         $service['lang_code'] = $lang_code;
+//         db_query('INSERT INTO ?:shipping_service_descriptions ?e', $service);
+//     }
 }
 
 function fn_rus_sdek_uninstall()
 {
-    $sdek_id = db_get_field('SELECT object_id FROM ?:settings_objects WHERE name = ?s', 'sdek_enabled');
-
-    db_query('DELETE FROM ?:settings_objects WHERE object_id = ?i', $sdek_id);
-    db_query('DELETE FROM ?:settings_descriptions WHERE object_id = ?i', $sdek_id);
-
-    $service_ids = db_get_fields('SELECT service_id FROM ?:shipping_services WHERE module = ?s', 'sdek');
-    db_query('DELETE FROM ?:shipping_services WHERE service_id IN (?a)', $service_ids);
-    db_query('DELETE FROM ?:shipping_service_descriptions WHERE service_id IN (?a)', $service_ids);
-    
-    db_query('DROP TABLE IF EXISTS ?:rus_cities_sdek');
-    db_query('DROP TABLE IF EXISTS ?:rus_city_sdek_descriptions');
-    db_query('DROP TABLE IF EXISTS ?:rus_sdek_products');
-    db_query('DROP TABLE IF EXISTS ?:rus_sdek_register');
-    db_query('DROP TABLE IF EXISTS ?:rus_sdek_status');
+//     $sdek_id = db_get_field('SELECT object_id FROM ?:settings_objects WHERE name = ?s', 'sdek_enabled');
+// 
+//     db_query('DELETE FROM ?:settings_objects WHERE object_id = ?i', $sdek_id);
+//     db_query('DELETE FROM ?:settings_descriptions WHERE object_id = ?i', $sdek_id);
+// 
+//     $service_ids = db_get_fields('SELECT service_id FROM ?:shipping_services WHERE module = ?s', 'sdek');
+//     db_query('DELETE FROM ?:shipping_services WHERE service_id IN (?a)', $service_ids);
+//     db_query('DELETE FROM ?:shipping_service_descriptions WHERE service_id IN (?a)', $service_ids);
+//     
+//     db_query('DROP TABLE IF EXISTS ?:rus_cities_sdek');
+//     db_query('DROP TABLE IF EXISTS ?:rus_city_sdek_descriptions');
+//     db_query('DROP TABLE IF EXISTS ?:rus_sdek_products');
+//     db_query('DROP TABLE IF EXISTS ?:rus_sdek_register');
+//     db_query('DROP TABLE IF EXISTS ?:rus_sdek_status');
 }
 
 function fn_rus_sdek_update_cart_by_data_post(&$cart, $new_cart_data, $auth)

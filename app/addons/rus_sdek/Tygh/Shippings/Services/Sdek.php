@@ -242,6 +242,7 @@ class Sdek implements IService
         $return = array(
             'cost' => false,
             'error' => false,
+            'available_payments' => array(),
         );
 
         $result = json_decode($response);
@@ -255,6 +256,7 @@ class Sdek implements IService
 
             if (empty($this->_error_stack) && !empty($rates['price'])) {
                 $return['cost'] = $rates['price'];
+                $return['available_payments'] = $rates['available_payments'];
             } else {
                 $this->_internalError(__('xml_error'));
                 $return['error'] = $this->processErrors($result_array);
@@ -282,6 +284,9 @@ class Sdek implements IService
                     $rates['date'] = $date;
                 }
             }
+            $rates['available_payments'] = array(
+                'payment_on_delivery' => isset($response['result']['cashOnDelivery']) ? (empty($response['result']['cashOnDelivery']) ? 'N' : 'Y') : 'Y'
+            );
 
             $rec_city_code = $this->city_id;
             $tarif_id = $this->_shipping_info['service_params']['tariffid'];

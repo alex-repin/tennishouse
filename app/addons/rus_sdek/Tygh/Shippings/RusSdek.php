@@ -169,9 +169,6 @@ class RusSdek
                 if (!empty($location['country'])) {
                     $condition .= db_quote(" AND c.country_code = ?s", $location['country']);
                 }
-//                 if (!empty($location['state'])) {
-//                     $condition .= db_quote(" AND c.state_code = ?s", $location['state']);
-//                 }
 
                 $result = db_get_hash_single_array("SELECT c.city_code, c.state_code FROM ?:rus_city_sdek_descriptions as d LEFT JOIN ?:rus_cities_sdek as c ON c.city_id = d.city_id WHERE ?p", array('state_code', 'city_code'), $condition);
 
@@ -182,6 +179,9 @@ class RusSdek
                         if ($location['state'] == $s_code) {
                             $_result = $c_code;
                         }
+                    }
+                    if (empty($_result)) {
+                        $_result = reset($result);
                     }
                 }
                 if (empty($_result)) {

@@ -25,8 +25,8 @@ if ($mode == 'regenerate_cities_cache') {
     if (!empty($cities)) {
         $state_codes = array();
         $errors = array();
-        db_query("DELETE FROM ?:rus_spsr_cities");
-        db_query("DELETE FROM ?:rus_spsr_city_descriptions");
+        db_query("TRUNCATE ?:rus_spsr_cities");
+        db_query("TRUNCATE ?:rus_spsr_city_descriptions");
         foreach ($cities as $i => $city) {
             if (!in_array($city['Region_ID'], array_keys($state_codes))) {
                 $city['RegionName'] = str_replace(array('Чувашия', 'Чечня', 'Ингушская респ.', 'Ханты-Мансийский авт. округ-Югра', 'Алтай респ.'), array('Чувашская Республика', 'Чеченская Республика', 'Республика Ингушетия', 'Ханты-Мансийский автономный округ — Югра', 'Республика Алтай'), $city['RegionName']);

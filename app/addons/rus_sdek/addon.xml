@@ -6,15 +6,11 @@
     <priority>4700</priority>
     <status>active</status>
     <default_language>en</default_language>
-
-    <queries>
-        <item for="install" type="file">database/sdek_cities.sql</item>
-        <item for="install" type="file">database/sdek_register.sql</item>
-        <item for="install" type="file">database/sdek_products.sql</item>
-        <item for="install" type="file">database/sdek_status.sql</item>
-    </queries>
     <functions>
         <item for="install">fn_rus_sdek_install</item>
         <item for="uninstall">fn_rus_sdek_uninstall</item>
     </functions>
+    <language_variables>
+        <item lang="ru" id="shippings.sdek.regenerate_cities">Обновить города</item>
+    </language_variables>
 </addon>

@@ -662,6 +662,7 @@ class Shippings
                 'price' => $rate['price'],
                 'keys' => $shippings[$rate['shipping_key']]['keys'],
                 'error' => $rate['error'],
+                'available_payments' => isset($rate['available_payments']) ? $rate['available_payments'] : array(),
                 'delivery_time' => isset($rate['delivery_time']) ? $rate['delivery_time'] : false,
             );
         }

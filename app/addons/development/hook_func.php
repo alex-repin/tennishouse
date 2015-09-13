@@ -39,6 +39,8 @@ function fn_development_get_product_feature_data_before_select(&$fields, $join, 
 function fn_development_pre_get_orders($params, &$fields, $sortings, $get_totals, $lang_code)
 {
     $fields[] = "?:orders.net_total";
+    $fields[] = "?:orders.s_country";
+    $fields[] = "?:orders.s_city";
 }
 
 function fn_development_get_order_info(&$order, $additional_data)
@@ -170,7 +172,7 @@ function fn_development_delete_product_option_post($option_id, $pid, $option_del
 
 function fn_development_shippings_get_shippings_list_conditions($group, $shippings, &$fields, $join, &$condition, $order_by)
 {
-    $fields[] = "?:shippings.website, ?:shippings.available_payments";
+    $fields[] = "?:shippings.website, ?:shippings.payment_ids";
     $condition .= db_quote(' AND ((?:shippings.min_total <= ?d OR ?:shippings.min_total = 0.00)', $group['package_info']['C']);
     $condition .= db_quote(' AND (?:shippings.max_total >= ?d OR ?:shippings.max_total = 0.00))', $group['package_info']['C']);
 }
@@ -189,9 +191,25 @@ function fn_development_shippings_get_shippings_list_post($group, $lang, $area, 
             continue;
         }
         $shippings_info[$key]['icon'] = fn_get_image_pairs($shipping_info['shipping_id'], 'shipping', 'M', true, true, $lang);
-        $shippings_info[$key]['available_payments'] = unserialize($shippings_info[$key]['available_payments']);
+        $_payment_ids = unserialize($shippings_info[$key]['payment_ids']);
+        $payment_ids = array();
+        if (!empty($_payment_ids)) {
+            foreach ($_payment_ids as $p_ids => $p_data) {
+                if ($p_data['enabled'] === 'Y') {
+                    $payment_ids[] = $p_ids;
+                }
+            }
+        }
+        if (!empty($payment_ids)) {
+            $payment_categories = db_get_fields("SELECT payment_category FROM ?:payments WHERE payment_id IN (?n)", array_unique($payment_ids));
+            if (!empty($payment_categories)) {
+                foreach ($payment_categories as $i => $p_type) {
+                    $shippings_info[$key]['available_payments'][$p_type] = 'Y';
+                }
+            }
+        }
     }
-    
+
     foreach ($shippings_info as $i => $shipping) {
         if ($shipping['min_weight'] > 0) {
             $keep = false;
@@ -239,9 +257,10 @@ function fn_development_update_payment_surcharge(&$cart, $auth, $lang_code)
 function fn_development_prepare_checkout_payment_methods($cart, $auth, &$payment_groups)
 {
     if (!empty($cart['chosen_shipping'])) {
-        $allowed_payments = array();
+        $allowed_payments = $available_payments = array();
         $ids = db_get_hash_single_array("SELECT payment_ids, shipping_id FROM ?:shippings WHERE shipping_id IN (?a)", array('shipping_id', 'payment_ids'), $cart['chosen_shipping']);
         foreach ($cart['chosen_shipping'] as $i => $sh_id) {
+            $available_payments = array_merge($available_payments, $cart['shipping'][$sh_id]['available_payments']);
             if (!empty($ids[$sh_id])) {
                 $payments = unserialize($ids[$sh_id]);
                 foreach ($payments as $p_id => $p_data) {
@@ -252,23 +271,18 @@ function fn_development_prepare_checkout_payment_methods($cart, $auth, &$payment
             }
         }
         if (!empty($allowed_payments) && !empty($payment_groups)) {
-            foreach ($payment_groups as $i => $tab) {
-                foreach ($tab as $j => $sh) {
-                    if (!in_array($sh['payment_id'], array_keys($allowed_payments))) {
-                        unset($payment_groups[$i][$j]);
-                    } else {
-                        foreach ($allowed_payments[$sh['payment_id']] as $k => $sg) {
-                            if (floatval($sg['a_surcharge'])) {
-                                $payment_groups[$i][$j]['surcharge_value'] += $sg['a_surcharge'];
-                            }
-                            if (floatval($sg['p_surcharge']) && !empty($cart['total'])) {
-                                $payment_groups[$i][$j]['surcharge_value'] += fn_format_price($cart['total'] * $sg['p_surcharge'] / 100);
-                            }
+            foreach ($payment_groups as $j => $sh) {
+                if (!in_array($sh['payment_id'], array_keys($allowed_payments)) || empty($available_payments[$sh['payment_category']]) || $available_payments[$sh['payment_category']] == 'N') {
+                    unset($payment_groups[$j]);
+                } else {
+                    foreach ($allowed_payments[$sh['payment_id']] as $k => $sg) {
+                        if (floatval($sg['a_surcharge'])) {
+                            $payment_groups[$j]['surcharge_value'] += $sg['a_surcharge'];
+                        }
+                        if (floatval($sg['p_surcharge']) && !empty($cart['total'])) {
+                            $payment_groups[$j]['surcharge_value'] += fn_format_price($cart['total'] * $sg['p_surcharge'] / 100);
                         }
                     }
-                }
-                if (empty($payment_groups[$i])) {
-                    unset($payment_groups[$i]);
                 }
             }
         }
@@ -279,9 +293,6 @@ function fn_development_update_shipping(&$shipping_data, $shipping_id, $lang_cod
 {
     if (isset($shipping_data['payment_ids'])) {
         $shipping_data['payment_ids'] = !empty($shipping_data['payment_ids']) ? serialize($shipping_data['payment_ids']) : serialize(array());
-    }
-    if (isset($shipping_data['available_payments'])) {
-        $shipping_data['available_payments'] = !empty($shipping_data['available_payments']) ? serialize($shipping_data['available_payments']) : serialize(array());
     }
 }
 

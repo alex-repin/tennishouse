@@ -620,5 +620,9 @@
         <item lang="ru" id="order_status_tracking_info"><![CDATA[Информация по отслеживанию посылки находится на <a href="[order_page_link]" target="_blank">детальной странице заказа</a>.]]></item>
         <item lang="ru" id="last_item_notification">ВНИМАНИЕ, этот товар почти распродан, поэтому для подтверждения заказа с Вами свяжется наш менеджер.</item>
         <item lang="ru" id="pc_zero_price_note">для получения цены выберите ракетку и сумку</item>
+        <item lang="ru" id="payment_pod_not_available">В данном городе невозможен прием наложенного платежа</item>
+        <item lang="ru" id="payment_on_delivery">Оплата при получении</item>
+        <item lang="ru" id="online_payment">Оплата на сайте</item>
+        <item lang="ru" id="other_payments">Другие варианты оплаты</item>
     </language_variables>
 </addon>

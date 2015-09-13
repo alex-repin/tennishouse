@@ -1505,6 +1505,9 @@ label.cm-required::after {
 .ty-avail-container {
     display: inline;
 }
+.ty-qty-in-stock .icon-question-sign {
+    background: url("../../../media/images/addons/development/exclamation.png") no-repeat scroll;
+}
 .ty-qty-in-stock div {
     color: @in_stock;
     font-weight: bold;
@@ -1641,15 +1644,23 @@ label.cm-required::after {
 }
 .ty-shipping-options__method-payments-mark {
     display: inline-block;
+    vertical-align: top;
 }
 .ty-shipping-options__method-payments-type {
     display: inline-block;
     margin-left: 5px;
     color: darken(@base, 30%);
     font-size: 12px;
+    width: 206px;
 }
-.ty-shipping-options__method-payments-icon {
+.ty-shipping-options__method-payments-check-icon {
     background: rgba(0, 0, 0, 0) url("../../../media/images/addons/development/checkmark.png") no-repeat scroll;
+    display: block;
+    height: 16px;
+    width: 14px;
+}
+.ty-shipping-options__method-payments-cross-icon {
+    background: rgba(0, 0, 0, 0) url("../../../media/images/addons/development/crossmark.png") no-repeat scroll;
     display: block;
     height: 16px;
     width: 14px;

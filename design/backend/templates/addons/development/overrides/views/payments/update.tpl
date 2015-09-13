@@ -80,9 +80,9 @@
             <label class="control-label" for="elm_payment_category_{$id}">{__("payment_category")}:</label>
             <div class="controls">
                 <select id="elm_payment_category_{$id}" name="payment_data[payment_category]">
-                    <option value="tab1" {if $payment.payment_category == "tab1"}selected="selected"{/if}>{__("payments_tab1")}</option>
-                    <option value="tab2" {if $payment.payment_category == "tab2"}selected="selected"{/if}>{__("payments_tab2")}</option>
-                    <option value="tab3" {if $payment.payment_category == "tab3"}selected="selected"{/if}>{__("payments_tab3")}</option>
+                    <option value="payment_on_delivery" {if $payment.payment_category == "payment_on_delivery"}selected="selected"{/if}>{__("payment_on_delivery")}</option>
+                    <option value="online_payment" {if $payment.payment_category == "online_payment"}selected="selected"{/if}>{__("online_payment")}</option>
+                    <option value="other_payments" {if $payment.payment_category == "other_payments"}selected="selected"{/if}>{__("other_payments")}</option>
                 </select>
                 <p class="description">
                     <small>{__("payment_category_note")}</small>

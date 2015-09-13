@@ -155,6 +155,7 @@ class RealtimeServices
         self::$_rates[] = array(
             'price' => $rate['cost'],
             'error' => $rate['error'],
+            'available_payments' => isset($rate['available_payments']) ? $rate['available_payments'] : array(),
             'shipping_key' => $shipping_key,
             'delivery_time' => isset($rate['delivery_time']) ? $rate['delivery_time'] : false,
         );
