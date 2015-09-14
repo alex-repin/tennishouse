@@ -2817,7 +2817,8 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
                 if (!empty($free_shippings)) {
                     asort($free_shippings);
                     $min_free_shipping = reset($free_shippings);
-                    $free_shipping_module = $product_groups[$g_key]['shippings'][key($free_shippings)]['module'];
+                    $free_shipping_id = key($free_shippings);
+                    $free_shipping_module = $product_groups[$g_key]['shippings'][$free_shipping_id]['module'];
                 }
 
                 foreach ($rates as $rate) {
@@ -2829,7 +2830,7 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
                         if (empty($product_groups[$g_key]['shippings'][$sh_id]['free_shipping'])) {
                             $product_groups[$g_key]['shippings'][$sh_id]['rate'] = $rate['price'];
                         } else {
-                            if (!empty($min_free_shipping) && !empty($free_shipping_module) && $free_shipping_module == $rate['module']) {
+                            if (!empty($min_free_shipping) && ($free_shipping_id == $sh_id || (!empty($free_shipping_module) && $free_shipping_module == $rate['module']))) {
                                 $product_groups[$g_key]['shippings'][$sh_id]['rate'] = $rate['price'] - $min_free_shipping;
                             } else {
                                 $product_groups[$g_key]['shippings'][$sh_id]['rate'] = $rate['price'];
