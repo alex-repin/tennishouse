@@ -563,6 +563,7 @@ class Shippings
                 $rates[] = array(
                     'price' => $rate,
                     'keys' => !empty($shipping['keys']) ? $shipping['keys'] : array(),
+                    'available_payments' => array()
                 );
             }
         }
