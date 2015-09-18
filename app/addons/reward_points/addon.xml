@@ -75,11 +75,8 @@
         </sections>
     </settings>
     <queries>
-        <item>DROP TABLE IF EXISTS ?:reward_point_changes;</item>
-        <item>DROP TABLE IF EXISTS ?:reward_points;</item>
-        <item>DROP TABLE IF EXISTS ?:product_point_prices;</item>
         <item>
-            CREATE TABLE `?:reward_point_changes` (
+            CREATE TABLE IF NOT EXISTS `?:reward_point_changes` (
                 `change_id` mediumint(8) unsigned NOT NULL auto_increment,
                 `user_id` mediumint(8) unsigned NOT NULL default '0',
                 `amount` int(11) NOT NULL default '0',
@@ -90,7 +87,7 @@
             ) Engine=MyISAM DEFAULT CHARSET UTF8;
         </item>
         <item>
-            CREATE TABLE `?:reward_points` (
+            CREATE TABLE IF NOT EXISTS `?:reward_points` (
                 `reward_point_id` mediumint(8) unsigned NOT NULL auto_increment,
                 `object_id` mediumint(8) unsigned NOT NULL default '0',
                 `usergroup_id` mediumint(8) unsigned NOT NULL default '0',
@@ -103,7 +100,7 @@
             ) Engine=MyISAM DEFAULT CHARSET UTF8;
         </item>
         <item>
-            CREATE TABLE `?:product_point_prices` (
+            CREATE TABLE IF NOT EXISTS `?:product_point_prices` (
                 `point_price_id` mediumint(8) unsigned NOT NULL auto_increment,
                 `product_id` mediumint(8) unsigned NOT NULL default '0',
                 `point_price` int(11) unsigned NOT NULL default '0',
@@ -114,10 +111,13 @@
                 KEY `src_k` (`product_id`,`lower_limit`,`usergroup_id`)
             ) Engine=MyISAM DEFAULT CHARSET UTF8;
         </item>
+        <item>
+            ALTER TABLE `cscart_products` CHANGE `is_pbp` `is_pbp` CHAR( 1 ) NOT NULL DEFAULT 'Y';
+        </item>
+        <item>
+            UPDATE `cscart_products` SET `is_pbp` = 'Y';
+        </item>
         <item editions="MULTIVENDOR,ULTIMATE">REPLACE INTO ?:privileges (privilege, is_default, section_id) VALUES ('manage_reward_points', 'Y', 'addons');</item>
         <item for="uninstall" editions="MULTIVENDOR,ULTIMATE">DELETE FROM ?:privileges WHERE privilege LIKE 'manage_reward_points'</item>
-        <item for="uninstall">DROP TABLE IF EXISTS ?:reward_point_changes;</item>
-        <item for="uninstall">DROP TABLE IF EXISTS ?:reward_points;</item>
-        <item for="uninstall">DROP TABLE IF EXISTS ?:product_point_prices;</item>
     </queries>
 </addon>
