@@ -170,20 +170,35 @@ class RusSdek
                     $condition .= db_quote(" AND c.country_code = ?s", $location['country']);
                 }
 
-                $result = db_get_hash_single_array("SELECT c.city_code, c.state_code FROM ?:rus_city_sdek_descriptions as d LEFT JOIN ?:rus_cities_sdek as c ON c.city_id = d.city_id WHERE ?p", array('state_code', 'city_code'), $condition);
+                $result = db_get_hash_array("SELECT c.city_code, c.state_code, d.city FROM ?:rus_city_sdek_descriptions as d LEFT JOIN ?:rus_cities_sdek as c ON c.city_id = d.city_id WHERE ?p", 'city_code', $condition);
 
                 if (count($result) == 1) {
-                    $_result = reset($result);
-                } elseif (count($result) > 1 && !empty($location['state'])) {
-                    foreach ($result as $s_code => $c_code) {
-                        if ($location['state'] == $s_code) {
-                            $_result = $c_code;
+                    reset($result);
+                    $_result = key($result);
+                } elseif (count($result) > 1) {
+                    if (!empty($location['state'])) {
+                        foreach ($result as $c_code => $c_data) {
+                            if ($location['state'] != $c_data['state_code']) {
+                                unset($result[$c_code]);
+                            }
                         }
                     }
-                    if (empty($_result)) {
-                        $_result = reset($result);
+                    if (count($result) == 1) {
+                        reset($result);
+                        $_result = key($result);
+                    } elseif (count($result) > 1) {
+                        $max_match = $city_id = 0;
+                        foreach ($result as $c_code => $c_data) {
+                            $prc = round(strlen($location['city'])/strlen($c_data['city']), 2) * 100;
+                            if ($prc > $max_match) {
+                                $max_match = $prc;
+                                $city_id = $c_code;
+                            }
+                        }
+                        $_result = $city_id;
                     }
                 }
+                
                 if (empty($_result)) {
 //                     fn_set_notification('E', __('notice'), __('shippings.sdek.city_error'));
                 }
