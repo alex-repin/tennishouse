@@ -32,6 +32,7 @@ define('POINTS_IN_USE', 'I');
 //These constants define the reason for the change of points
 //
 define('CHANGE_DUE_ORDER', 'O');
+define('CHANGE_DUE_EXPIRE', 'E');
 define('CHANGE_DUE_USE', 'I');
 define('CHANGE_DUE_RMA', 'R');
 define('CHANGE_DUE_ADDITION', 'A');

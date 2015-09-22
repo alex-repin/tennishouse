@@ -29,7 +29,7 @@ if ($mode == 'view') {
 
     if (!empty($page['image'])) {
         Registry::get('view')->assign('image_title', $page['image']);
-        //Registry::get('view')->assign('image_title_text', $page['page']);
+        Registry::get('view')->assign('image_title_text', $page['page']);
     }
     if (empty($page['description'])) {
         $page['children'] = db_get_fields("SELECT page_id FROM ?:pages WHERE parent_id = ?i ORDER BY position ASC", $page['page_id']);

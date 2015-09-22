@@ -252,49 +252,6 @@ function fn_get_usergroup_requests($params, $items_per_page = 0, $status = 'P', 
 
     return array($requests, $params);
 }
-
-function fn_delete_usergroups($usergroup_ids)
-{
-    db_query("DELETE FROM ?:usergroups WHERE usergroup_id IN (?n)", $usergroup_ids);
-    db_query("DELETE FROM ?:usergroup_descriptions WHERE usergroup_id IN (?n)", $usergroup_ids);
-    db_query("DELETE FROM ?:usergroup_privileges WHERE usergroup_id IN (?n)", $usergroup_ids);
-    db_query("DELETE FROM ?:usergroup_links WHERE usergroup_id IN (?n)", $usergroup_ids);
-}
-
-function fn_change_usergroup_status($status, $user_id, $usergroup_id, $force_notification = array())
-{
-    $data = array(
-        'user_id' => $user_id,
-        'usergroup_id' => $usergroup_id,
-        'status' => $status
-    );
-    $result = db_query("REPLACE INTO ?:usergroup_links SET ?u", $data);
-
-    if (!empty($force_notification['C'])) {
-        fn_send_usergroup_status_notification($user_id, (array) $usergroup_id, $status);
-    }
-
-    return $result;
-}
-
-function fn_send_usergroup_status_notification($user_id, $usergroup_ids, $status)
-{
-    $user_data = fn_get_user_info($user_id);
-    $prefix = ($status == 'A') ? 'activation' : 'disactivation';
-
-    Mailer::sendMail(array(
-        'to' => $user_data['email'],
-        'from' => 'company_users_department',
-        'data' => array(
-            'user_data' => $user_data,
-            'usergroups' => fn_get_usergroups('F', $user_data['lang_code']),
-            'usergroup_ids' => $usergroup_ids
-        ),
-        'tpl' => 'profiles/usergroup_' . $prefix . '.tpl',
-        'company_id' => $user_data['company_id'],
-    ), fn_check_user_type_admin_area($user_data['user_type']) ? 'A' : 'C', $user_data['lang_code']);
-}
-
 function fn_update_usergroup($usergroup_data, $usergroup_id = 0, $lang_code = DESCR_SL)
 {
     $old_status = '';
@@ -344,4 +301,12 @@ function fn_update_usergroup($usergroup_data, $usergroup_id = 0, $lang_code = DE
     }
 
     return $usergroup_id;
+}
+
+function fn_delete_usergroups($usergroup_ids)
+{
+    db_query("DELETE FROM ?:usergroups WHERE usergroup_id IN (?n)", $usergroup_ids);
+    db_query("DELETE FROM ?:usergroup_descriptions WHERE usergroup_id IN (?n)", $usergroup_ids);
+    db_query("DELETE FROM ?:usergroup_privileges WHERE usergroup_id IN (?n)", $usergroup_ids);
+    db_query("DELETE FROM ?:usergroup_links WHERE usergroup_id IN (?n)", $usergroup_ids);
 }

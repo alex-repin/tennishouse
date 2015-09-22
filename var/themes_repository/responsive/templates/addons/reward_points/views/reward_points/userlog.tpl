@@ -1,17 +1,12 @@
 {assign var="c_url" value=$config.current_url|fn_query_remove:"sort_by":"sort_order"}
 
-{if $search.sort_order == "asc"}
-{assign var="sort_sign" value="<i class=\"ty-icon-down-dir\"></i>"}
-{else}
-{assign var="sort_sign" value="<i class=\"ty-icon-up-dir\"></i>"}
-{/if}
-{include file="common/pagination.tpl"}
 <table class="ty-reward-points-userlog ty-table">
 <thead>
     <tr>
         <th class="ty-reward-points-userlog__date"><a class="cm-ajax" href="{"`$c_url`&sort_by=timestamp&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id="pagination_contents">{__("date")}</a>{if $search.sort_by == "timestamp"}{$sort_sign nofilter}{/if}</th>
         <th class="ty-reward-points-userlog__points"><a class="cm-ajax" href="{"`$c_url`&sort_by=amount&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id="pagination_contents">{__("points")}</a>{if $search.sort_by == "amount"}{$sort_sign nofilter}{/if}</th>
         <th class="ty-reward-points-userlog__reason">{__("reason")}</th>
+        <th class="ty-reward-points-userlog__expiration-date">{__("expiration_date")}</th>
     </tr>
 </thead>
 {foreach from=$userlog item="ul"}
@@ -40,6 +35,7 @@
             {/hook}
         {/if}
     </td>
+    <td>{if $ul.expire}{$ul.expire|date_format:"`$settings.Appearance.date_format`"}{else} - {/if}</td>
 </tr>
 {foreachelse}
 <tr class="ty-table__no-items">
@@ -47,7 +43,12 @@
 </tr>
 {/foreach}
 </table>
-{include file="common/pagination.tpl"}
-{** / userlog description section **}
 
-{capture name="mainbox_title"}{__("reward_points_log")}{/capture}
+{capture name="mainbox_title"}
+    {__("reward_points_log")}
+    <div class="ty-profile-subtitle">
+        <div class="ty-profile-reward-points">
+            {__("balance")}:&nbsp;<a href="{"pages.view?page_id=`$smarty.const.SAVING_PROGRAM_PAGE_ID`"|fn_url}">{$auth.points|default:"0"|fn_show_points}</a>
+        </div>
+    </div>
+{/capture}

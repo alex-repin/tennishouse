@@ -17,7 +17,7 @@
     {if $post.city}<div class="ty-discussion-post__city">{$post.city}</div>{/if}
     {if $discussion.type == "C" || $discussion.type == "B"}
         <div class="ty-block-discussion-hp-post__message">
-            "{$post.message|nl2br nofilter}"
+            "{$post.message|escape|nl2br|truncate:300:"...":true nofilter}"
         </div>
     {/if}
     </a>

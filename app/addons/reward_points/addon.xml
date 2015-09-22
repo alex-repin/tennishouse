@@ -13,7 +13,12 @@
                 <items>
                     <item id="point_rate">
                         <type>input</type>
-                        <default_value>50</default_value>
+                        <default_value>1</default_value>
+                        <variants/>
+                    </item>
+                    <item id="min_margin">
+                        <type>input</type>
+                        <default_value>10</default_value>
                         <variants/>
                     </item>
                     <item id="auto_price_in_points">
@@ -48,7 +53,7 @@
                     </item>
                     <item id="several_points_action">
                         <type>selectbox</type>
-                        <default_value>minimal_absolute</default_value>
+                        <default_value>maximal_percentage</default_value>
                         <variants>
                             <item id="minimal_absolute">
                             </item>
@@ -67,7 +72,7 @@
                     </item>
                     <item id="log_per_page">
                         <type>input</type>
-                        <default_value>10</default_value>
+                        <default_value>0</default_value>
                         <variants/>
                     </item>
                 </items>
@@ -116,6 +121,12 @@
         </item>
         <item>
             UPDATE `cscart_products` SET `is_pbp` = 'Y';
+        </item>
+        <item>
+            ALTER TABLE `cscart_reward_points` ADD `round_to` SMALLINT( 5 ) UNSIGNED NOT NULL DEFAULT '1';
+        </item>
+        <item>
+            ALTER TABLE `cscart_reward_point_changes` ADD `expire` INT( 11 ) UNSIGNED NOT NULL ;
         </item>
         <item editions="MULTIVENDOR,ULTIMATE">REPLACE INTO ?:privileges (privilege, is_default, section_id) VALUES ('manage_reward_points', 'Y', 'addons');</item>
         <item for="uninstall" editions="MULTIVENDOR,ULTIMATE">DELETE FROM ?:privileges WHERE privilege LIKE 'manage_reward_points'</item>

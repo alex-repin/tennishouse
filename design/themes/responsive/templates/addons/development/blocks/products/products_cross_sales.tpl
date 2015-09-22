@@ -18,7 +18,8 @@
                     hide_call_request=true
                     but_role="action"
                     show_discount_label=true
-                    mode=$block.properties.mode}
+                    mode=$block.properties.mode
+                    hide_links=true}
                 {/foreach}
             </div>
         </div>
@@ -45,7 +46,8 @@
                     hide_call_request=true
                     but_role="action"
                     show_discount_label=true
-                    mode=$block.properties.mode}
+                    mode=$block.properties.mode
+                    hide_links=true}
                 {/foreach}
             </div>
         </div>
@@ -70,7 +72,8 @@
                     hide_call_request=true
                     but_role="action"
                     show_discount_label=true
-                    mode=$block.properties.mode}
+                    mode=$block.properties.mode
+                    hide_links=true}
                 {/foreach}
             </div>
         </div>

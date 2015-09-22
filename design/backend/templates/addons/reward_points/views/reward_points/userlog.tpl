@@ -20,7 +20,8 @@
                 {include file="common/check_items.tpl"}</th>
             <th width="15%"><a class="cm-ajax{if $search.sort_by == "timestamp"} sort-link-{$search.sort_order_rev}{/if}" href="{"`$c_url`&sort_by=timestamp&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id="pagination_contents">{__("date")} {if $search.sort_by == "timestamp"}{$c_icon nofilter}{else}{$c_dummy nofilter}{/if}</a></th>
             <th width="10%"><a class="cm-ajax{if $search.sort_by == "amount"} sort-link-{$search.sort_order_rev}{/if}" href="{"`$c_url`&sort_by=amount&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id="pagination_contents">{__("points")} {if $search.sort_by == "amount"}{$c_icon nofilter}{else}{$c_dummy nofilter}{/if}</a></th>
-            <th width="60%">{__("reason")}</th>
+            <th width="45%">{__("reason")}</th>
+            <th width="15%">{__("expiration_date")}</th>
             <th width="10%">&nbsp;</th>
         </tr>
     </thead>
@@ -55,6 +56,7 @@
                     {/hook}
                 {/if}
             </td>
+            <td>{if $ul.expire}{$ul.expire|date_format:"`$settings.Appearance.date_format`"}{else} - {/if}</td>
             <td class="nowrap right">
                 <div class="hidden-tools">
                     {capture name="tools_list"}

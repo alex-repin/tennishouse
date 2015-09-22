@@ -18,8 +18,9 @@
             <thead class="cm-first-sibling">
                 <tr>
                     <th width="20%">{__("usergroup")}</th>
-                    <th width="40%">{__("amount")}</th>
-                    <th width="40%">{__("amount")}&nbsp;{__("type")}</th>
+                    <th width="20%">{__("amount")}</th>
+                    <th width="20%">{__("amount")}&nbsp;{__("type")}</th>
+                    <th width="20%">{__("round_to")}</th>
                     {if $show_update_for_all}
                     <th></th>
                     {/if}
@@ -36,11 +37,13 @@
                     <td>
                         <input type="text" id="earned_points_{$object_type}_{$m_id}" name="reward_points[{$m_id}][amount]" value="{$point.amount|default:"0"}" {if $show_update_for_all}disabled="disabled"{/if}></td>
                     <td>
-                        <select name="reward_points[{$m_id}][amount_type]"  id="type_earned_points_{$object_type}_{$m_id}" class="expanded input-xlarge" {if $show_update_for_all}disabled="disabled"{/if}>
+                        <select name="reward_points[{$m_id}][amount_type]"  onchange="Tygh.$.disable_elms(['round_to_{$object_type}_{$m_id}'], $('#type_earned_points_{$object_type}_{$m_id}').val() == 'A');" id="type_earned_points_{$object_type}_{$m_id}" class="expanded input-xlarge" {if $show_update_for_all}disabled="disabled"{/if}>
                             <option value="A" {if $point.amount_type == "A"}selected="selected"{/if}>{__("absolute")} ({__("points_lower")})</option>
                             <option value="P" {if $point.amount_type == "P"}selected="selected"{/if}>{__("percent")} (%)</option>
                         </select>
                     </td>
+                    <td>
+                        <input type="text" id="round_to_{$object_type}_{$m_id}" name="reward_points[{$m_id}][round_to]" value="{$point.round_to|default:"1"}" {if $show_update_for_all || $point.amount_type != "P"}disabled="disabled"{/if}></td>
                     {if $show_update_for_all}
                     <td>
                         {include file="buttons/update_for_all.tpl" display=true name="reward_points[`$m_id`][update_all_vendors]" hide_element="earned_points_`$object_type`_`$m_id`" object_id=$m_id}

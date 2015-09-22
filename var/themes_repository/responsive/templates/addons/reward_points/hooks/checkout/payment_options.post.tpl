@@ -17,12 +17,13 @@
         </form>
         <div class="ty-discount-info">
             <span class="ty-caret-info"><span class="ty-caret-outer"></span><span class="ty-caret-inner"></span></span>
-            <span class="ty-reward-points__txt-point">{__("text_point_in_account")} {$user_info.points} {__("points_lower")}.</span>
+            <div class="ty-reward-points__txt-point">{__("points_max_allowed")}: {$cart.points_info.max_allowed|fn_show_points}.</div>
+            <div class="ty-reward-points__txt-point">{__("text_point_in_account")}: {$user_info.points|fn_show_points}.</div>
             
             {if $cart.points_info.in_use.points}
                 {assign var="_redirect_url" value=$config.current_url|escape:url}
                 {if $use_ajax}{assign var="_class" value="cm-ajax"}{/if}
-                <span class="ty-reward-points__points-in-use">{$cart.points_info.in_use.points}&nbsp;{__("points_in_use_lower")}.&nbsp;({include file="common/price.tpl" value=$cart.points_info.in_use.cost}){if $settings.General.checkout_style != "multi_page"}&nbsp;{include file="buttons/button.tpl" but_href="checkout.delete_points_in_use?redirect_url=`$_redirect_url`" but_meta="ty-reward-points__delete-icon" but_role="delete" but_target_id="checkout*,cart_status*,subtotal_price_in_points"}{/if}</span>
+                <span class="ty-reward-points__points-in-use">{__("in_use")}&nbsp;{$cart.points_info.in_use.points|fn_show_points}.&nbsp;({include file="common/price.tpl" value=$cart.points_info.in_use.cost}){if $settings.General.checkout_style != "multi_page"}&nbsp;{include file="buttons/button.tpl" but_href="checkout.delete_points_in_use?redirect_url=`$_redirect_url`" but_meta="ty-reward-points__delete-icon" but_role="delete" but_target_id="checkout*,cart_status*,subtotal_price_in_points"}{/if}</span>
             {/if}
         </div>
 </div>

@@ -5778,22 +5778,27 @@ function fn_live_editor_prepare_callback_args($schema, $vars)
 
 // TENNISHOUSE
 
-function fn_show_age($age)
+function fn_show_numeric($number, $lang_var)
 {
-    if ($age > 4 && $age < 21) {
-        $word = __("years_old_5");
+    if ($number > 4 && $number < 21) {
+        $word = __($lang_var . '_5');
     } else {
-        $low_age = $age % 10;
+        $low_age = $number % 10;
         if ($low_age == 1) {
-            $word = __("years_old_1");
+            $word = __($lang_var . '_1');
         } elseif ($low_age > 1 && $low_age < 5) {
-            $word = __("years_old_2_4");
+            $word = __($lang_var . '_2_4');
         } else {
-            $word = __("years_old_5");
+            $word = __($lang_var . '_5');
         }
     }
     
-    return $age . ' ' . $word;
+    return $number . ' ' . $word;
+}
+
+function fn_show_age($age)
+{
+    return fn_show_numeric($age, 'years_old');
 }
 
 function fn_get_age($birth_date)

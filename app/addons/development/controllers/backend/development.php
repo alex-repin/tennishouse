@@ -415,6 +415,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         exit;
     }
+    
+    if ($mode == 'update_savings_groups') {
+        if (!empty($_REQUEST['savings_groups_data'])) {
+            $groups = array();
+            db_query("DELETE FROM ?:savings_groups");
+            foreach ($_REQUEST['savings_groups_data']['groups'] as $k => $group_data) {
+                if ($group_data['amount'] != '') {
+                    $groups[] = array(
+                        'group_id' => $k,
+                        'amount' => $group_data['amount'],
+                        'usergroup_id' => $group_data['usergroup_id']
+                    );
+                }
+            }
+            foreach ($_REQUEST['savings_groups_data']['add_groups'] as $k => $group_data) {
+                if ($group_data['amount'] != '') {
+                    $groups[] = array(
+                        'group_id' => $k,
+                        'amount' => $group_data['amount'],
+                        'usergroup_id' => $group_data['usergroup_id']
+                    );
+                }
+            }
+            if (!empty($groups)) {
+                db_query("REPLACE INTO ?:savings_groups ?m", $groups);
+            }
+        }
+        
+        $suffix = ".saving_system";
+    }
+    
+    return array(CONTROLLER_STATUS_OK, "development$suffix");
 }
 
 if ($mode == 'calculate_balance') {
@@ -430,6 +462,10 @@ if ($mode == 'calculate_balance') {
     }
     Registry::get('view')->assign('params', $params);
 
+} elseif ($mode == 'saving_system') {
+
+    Registry::get('view')->assign('saving_data', db_get_hash_array("SELECT * FROM ?:savings_groups ORDER BY amount ASC", 'group_id'));
+    Registry::get('view')->assign('usergroups', fn_get_usergroups('C'));
 } elseif ($mode == 'supplier_stocks') {
 
     Registry::get('view')->assign('brands', fn_development_get_brands());
@@ -627,6 +663,67 @@ if ($mode == 'calculate_balance') {
     // 'http://www.championat.com/xml/rss_tennis-article.xml'
     $response = Http::get('https://news.yandex.ru/hardware.rss', array(), $extra);
     fn_print_die($response);
+} elseif ($mode == 'add_reward_points') {
+
+//     $reward_points = fn_get_reward_points(0, GLOBAL_REWARD_POINTS, array('0', '1'), 1);
+//     $data = db_get_hash_array("SELECT order_id, user_id, subtotal, timestamp FROM ?:orders WHERE user_id != '0' AND status = 'C'", 'order_id');
+//     $reason = array(
+//         'to' => 'C',
+//         'from' => 'O'
+//     );
+//     if (!empty($data)) {
+//         foreach ($data as $order_id => $_dt) {
+//             $reward = floor($_dt['subtotal'] / $reward_points['round_to']) * $reward_points['round_to'] * $reward_points['amount'] / 100;
+//             if ($reward > 0) {
+//                 $reason['order_id'] = $order_id;
+//                 fn_save_user_additional_data(POINTS, fn_get_user_additional_data(POINTS, $_dt['user_id']) + $reward, $_dt['user_id']);
+// 
+//                 $change_points = array(
+//                     'user_id' => $_dt['user_id'],
+//                     'amount' => $reward,
+//                     'timestamp' => $_dt['timestamp'],
+//                     'action' => CHANGE_DUE_ORDER,
+//                     'reason' => serialize($reason)
+//                 );
+// 
+//                 if ($reward > 0) {
+//                     $now = getdate($_dt['timestamp']);
+//                     $change_points['expire'] = mktime(0, 0, 0, $now['mon'], $now['mday'] + 1, $now['year'] + 1);
+//                 }
+//                 db_query("REPLACE INTO ?:reward_point_changes ?e", $change_points);
+//             }
+//         }
+//     }
+    exit;
+} elseif ($mode == 'add_usergroups') {
+
+//     $saving_data = db_get_hash_array("SELECT * FROM ?:savings_groups ORDER BY amount ASC", 'group_id');
+//     if (!empty($saving_data)) {
+//         $data = db_get_fields("SELECT DISTINCT user_id FROM ?:orders WHERE user_id != '0' AND status = 'C'");
+//         if (!empty($data)) {
+//             foreach ($data as $i => $user_id) {
+//                 if (!empty($user_id)) {
+//                     $orders_total = db_get_field("SELECT SUM(total) FROM ?:orders WHERE user_id = ?i AND status = 'C'", $user_id);
+//                     $usergroup_ids = array();
+//                     foreach ($saving_data as $i => $group_data) {
+//                         $usergroup_ids[] = $group_data['usergroup_id'];
+//                         if ($orders_total > $group_data['amount']) {
+//                             $usergroup_id = $group_data['usergroup_id'];
+//                         }
+//                     }
+//                     if (!empty($usergroup_ids)) {
+//                         foreach ($usergroup_ids as $i => $ug_id) {
+//                             fn_change_usergroup_status('F', $user_id, $ug_id);
+//                         }
+//                     }
+//                     if (!empty($usergroup_id)) {
+//                         fn_change_usergroup_status('A', $user_id, $usergroup_id);
+//                     }
+//                 }
+//             }
+//         }
+//     }
+    exit;
 }
 
 function fn_normalize_string($string)

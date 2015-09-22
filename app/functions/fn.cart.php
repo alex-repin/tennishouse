@@ -1954,6 +1954,8 @@ function fn_change_order_status($order_id, $status_to, $status_from = '', $force
 
     db_query("UPDATE ?:orders SET status = ?s WHERE order_id = ?i", $status_to, $order_id);
 
+    fn_set_hook('change_order_status_post', $status_to, $status_from, $order_info, $force_notification, $order_statuses, $place_order);
+
     return true;
 }
 

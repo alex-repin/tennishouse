@@ -1401,6 +1401,12 @@ label.cm-required::after {
 /*Player details*/
 
 /*Product page*/
+.ty-product-block__option, .ty-product-block__advanced-option, .ty-product-block__field-group {
+    margin: 0;
+}
+.ty-control-group {
+    margin: 0;
+}
 .ty-pc-zero-price-note {
     color: lighten(@font, 35%);
     display: inline-block;
@@ -1582,6 +1588,9 @@ label.cm-required::after {
 /*Product page*/
 
 /* Checkout */
+.ty-checkout__register-methods-hint a {
+    font-size: 95%;
+}
 .ty-product-extra-info-link {
     border-bottom: 1px dotted transparent;
     cursor: pointer;
@@ -1824,6 +1833,23 @@ label.cm-required::after {
 /*Category page*/
 
 /*Profile page*/
+.ty-profile-reward-points {
+    font-size: 21px;
+    position: absolute;
+    right: 25px;
+    top: -35px;
+}
+.ty-profile-reward-points a {
+    font-size: 25px;
+}
+.ty-profile-subtitle {
+    display: block;
+    margin-top: 10px;
+    position: relative;
+}
+.ty-profile-usergroups {
+    color: lighten(@font, 25%);
+}
 .ty-login-info__txt li {
     list-style-type: disc;
     margin-bottom: 11px;
@@ -2759,3 +2785,83 @@ and (max-device-width : 480px) {
     font-size: 20px;
 }
 /* NEWS FEED*/
+.product-list-field-rp span {
+    font-weight: bold;
+    padding: 6px 0;
+}
+.ty-coupons__container {
+    width: 300px;
+}
+
+/* REWARD SYSTEM */
+.ty-saving-program {
+    margin-top: 20px;
+}
+.ty-saving-subtitle {
+    padding: 10px 20px 20px;
+}
+.ty-saving-program p, .ty-saving-program a, .ty-saving-program li {
+    font-size: 15px;
+    color: lighten(@font, 5%);
+}
+.ty-saving-program a {
+    text-decoration: underline;
+}
+.ty-saving-levels {
+    text-align: center;
+    display: inline-block;
+    margin: 20px 0;
+    padding: 0 20px;
+}
+.ty-saving-levels-content {
+    margin: 30px 0 0;
+    width: 100%;
+}
+.ty-saving-levels-notes {
+    text-align: left;
+    margin: 50px 0 0;
+}
+.ty-saving-levels-notes p {
+    font-size: 14px;
+}
+.ty-saving-level {
+    width: 33%; 
+    display: inline-block; 
+    vertical-align: top;
+}
+.ty-saving-level-title {
+    font-size: 30px; 
+    margin-bottom: 10px;
+}
+.ty-saving-level-conditions {
+    text-align: left;
+}
+.ty-saving-program h2 {
+    text-align: center;
+    font-size: 35px;
+    font-weight: normal;
+}
+.ty-how-it-works {
+    background-color: lighten(@base, 3%);
+    margin: 20px -11px;
+    padding: 50px 20px;
+}
+.ty-how-it-works__columns {
+    display: inline-block;
+    width: 100%;
+}
+.ty-how-it-works__col {
+    width: 33%;
+    display: inline-block; 
+    vertical-align: top;
+}
+.ty-how-it-works__title {
+    font-size: 26px;
+    height: 62px;
+    line-height: 31px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+.ty-how-it-works__exp {
+    font-size: 15px;
+}

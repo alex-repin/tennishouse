@@ -349,8 +349,29 @@
             </tr>
             </table>
             {/if}
-        {/if}
         
+            <div style="padding: 20px 0px 10px;">
+                <div style="width: 100%; display: inline-block;">
+                    <div style="display: inline-block; width: 49%; float: left;">
+                        <div style="display: inline-block; float: left; width: 22%;">{__("sold_by")}</div>
+                        <div style="border-bottom: 1px solid rgb(0, 0, 0); display: inline-block; float: right; width: 77%; text-align: right;">/ ИП Репин А.В.</div>
+                    </div>
+                    <div style="display: inline-block; width: 49%; float: right;">
+                        <div style="display: inline-block; float: left; width: 26%;">{__("bought_by")}</div>
+                        <div style="border-bottom: 1px solid rgb(0, 0, 0); display: inline-block; float: right; text-align: right; padding-right: 70px; width: 45%;">/</div>
+                    </div>
+                </div>
+                <div style="width: 100%; display: inline-block;">
+                    <div style="display: inline-block; float: left; width: 50%;">
+                        <div style="display: inline-block; text-align: center; font-size: 9px; padding: 0px 35px 0px 93px;">{__("signature")}</div>
+                        <div style="display: inline-block; text-align: center; font-size: 9px; padding: 0px 15px;">{__("signature_transcription")}</div>
+                    </div>
+                    <div style="display: inline-block; float: left; width: 50%;">
+                        <div style="display: inline-block; text-align: center; font-size: 9px; padding: 0px 36px 0px 110px;">{__("signature")}</div>
+                        <div style="display: inline-block; text-align: center; font-size: 9px; padding: 0px 5px;">{__("signature_transcription")}</div>
+                    </div>
+                </div>
+            </div>
         {hook name="orders:invoice"}
         {/hook}
         </td>
@@ -359,3 +380,4 @@
     </td>
 </tr>
 </table>
+{/if}

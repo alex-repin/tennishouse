@@ -17,6 +17,29 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_change_order_status_post($status_to, $status_from, $order_info, $force_notification, $order_statuses, $place_order)
+{
+    $saving_data = db_get_hash_array("SELECT * FROM ?:savings_groups ORDER BY amount ASC", 'group_id');
+    if (!empty($saving_data) && !empty($order_info['user_id'])) {
+        $orders_total = db_get_field("SELECT SUM(total) FROM ?:orders WHERE user_id = ?i AND status = 'C'", $order_info['user_id']);
+        $usergroup_ids = array();
+        foreach ($saving_data as $i => $group_data) {
+            $usergroup_ids[] = $group_data['usergroup_id'];
+            if ($orders_total > $group_data['amount']) {
+                $usergroup_id = $group_data['usergroup_id'];
+            }
+        }
+        if (!empty($usergroup_ids)) {
+            foreach ($usergroup_ids as $i => $ug_id) {
+                fn_change_usergroup_status('F', $order_info['user_id'], $ug_id);
+            }
+        }
+        if (!empty($usergroup_id)) {
+            fn_change_usergroup_status('A', $order_info['user_id'], $usergroup_id);
+        }
+    }
+}
+
 function fn_development_pre_place_order($cart, &$allow, $product_groups)
 {
     if (!$allow && !empty($cart['is_call_request'])) {
@@ -48,7 +71,7 @@ function fn_development_get_order_info(&$order, $additional_data)
     $order['income'] = $order['total'] - $order['net_total'];
 }
 
-function fn_development_get_cart_product_data_post($hash, $product, $skip_promotion, &$cart, $auth, $promotion_amount, $_pdata)
+function fn_development_get_cart_product_data_post($hash, $product, $skip_promotion, &$cart, $auth, $promotion_amount, &$_pdata)
 {
     $net_cost_rub = 0;
     if (!empty($_pdata['configuration'])) {
@@ -58,7 +81,8 @@ function fn_development_get_cart_product_data_post($hash, $product, $skip_promot
         }
     }
     $net_cost = (!empty($_pdata['net_cost']) && !empty($_pdata['net_currency_code'])) ? $_pdata['net_cost'] * Registry::get('currencies.' . $_pdata['net_currency_code'] . '.coefficient') : $_pdata['price'];
-    $cart['net_subtotal'] += ($net_cost + $net_cost_rub) * $product['amount'];
+    $_pdata['net_cost_rub'] = ($net_cost + $net_cost_rub) * $product['amount'];
+    $cart['net_subtotal'] += $_pdata['net_cost_rub'];
 }
 
 function fn_development_calculate_cart_post(&$cart, $auth, $calculate_shipping, $calculate_taxes, $options_style, $apply_cart_promotions, $cart_products, $product_groups)

@@ -95,7 +95,7 @@
         {capture name="additional_tabs"}
             {if $runtime.mode == "update"}
                 {if !"ULTIMATE:FREE"|fn_allowed_for}
-                    {if $usergroups && !$user_data|fn_check_user_type_admin_area}
+                    {*if $usergroups && !$user_data|fn_check_user_type_admin_area}
                     <div id="content_usergroups">
                         <table class="ty-table">
                         <tr>
@@ -143,7 +143,7 @@
                         {/foreach}
                         </table>
                     <!--content_usergroups--></div>
-                    {/if}
+                    {/if*}
                 {/if}
 
                 {hook name="profiles:tabs"}
@@ -161,5 +161,23 @@
         {$smarty.capture.tabsbox nofilter}
     {/if}
 
-    {capture name="mainbox_title"}{__("profile_details")}{/capture}
+    {capture name="mainbox_title"}
+        {__("profile_details")}
+        <div class="ty-profile-subtitle">
+            <div class="ty-profile-usergroups">
+            {capture name="usergroups"}
+            {foreach from=$usergroups item=usergroup}
+                {if $user_data.usergroups[$usergroup.usergroup_id].status == 'A'}
+                    {if $smarty.capture.usergroups|trim != ""}, {/if}{$usergroup.usergroup}
+                {/if}
+            {/foreach}
+            {/capture}
+            {if $smarty.capture.usergroups|trim != ""}
+                <a href="{"pages.view?page_id=`$smarty.const.SAVING_PROGRAM_PAGE_ID`"|fn_url}">{__("discount_level")}: {$smarty.capture.usergroups nofilter}</a>
+            {/if}
+            </div>
+            {hook name="profiles:subtitle"}
+            {/hook}
+        </div>
+    {/capture}
 {/if}

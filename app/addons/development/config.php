@@ -136,3 +136,5 @@ define('RACKETS_QTY_DSC_PRC', 5);
 define('LEARNING_CENTER_PAGE_ID', 53);
 
 define('SIZE_CHART_TAB_ID', 10);
+
+define('SAVING_PROGRAM_PAGE_ID', 77);

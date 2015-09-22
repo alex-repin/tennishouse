@@ -61,4 +61,13 @@ $schema['top']['administration']['items']['import_data']['subitems']['supplier_s
     'href' => 'development.supplier_stocks',
     'position' => 1000,
 );
+
+$schema['central']['marketing']['items']['saving_system'] = array(
+    'attrs' => array(
+        'class'=>'is-addon'
+    ),
+    'href' => 'development.saving_system',
+    'position' => 910
+);
+
 return $schema;

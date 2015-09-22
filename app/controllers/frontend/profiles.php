@@ -176,22 +176,22 @@ if ($mode == 'add') {
         'js' => true
     ));
 
-    $show_usergroups = true;
-    if (Registry::get('settings.General.allow_usergroup_signup') != 'Y') {
-        $show_usergroups = fn_user_has_active_usergroups($user_data);
-    }
+//     $show_usergroups = true;
+//     if (Registry::get('settings.General.allow_usergroup_signup') != 'Y') {
+//         $show_usergroups = fn_user_has_active_usergroups($user_data);
+//     }
 
-    if ($show_usergroups) {
+//     if ($show_usergroups) {
         $usergroups = fn_get_usergroups('C');
         if (!empty($usergroups)) {
-            Registry::set('navigation.tabs.usergroups', array (
-                'title' => __('usergroups'),
-                'js' => true
-            ));
+//             Registry::set('navigation.tabs.usergroups', array (
+//                 'title' => __('usergroups'),
+//                 'js' => true
+//             ));
 
             Registry::get('view')->assign('usergroups', $usergroups);
         }
-    }
+//     }
 
     $profile_fields = fn_get_profile_fields();
 

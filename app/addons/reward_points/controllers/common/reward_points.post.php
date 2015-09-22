@@ -84,7 +84,7 @@ function fn_gift_registry_get_userlog($params, $items_per_page = 0)
         $limit = db_paginate($params['page'], $params['items_per_page']);
     }
 
-    $userlog = db_get_array("SELECT change_id, action, timestamp, amount, reason FROM ?:reward_point_changes WHERE user_id = ?i $sorting $limit", $params['user_id']);
+    $userlog = db_get_array("SELECT change_id, action, timestamp, amount, reason, expire FROM ?:reward_point_changes WHERE user_id = ?i $sorting $limit", $params['user_id']);
 
     return array($userlog, $params);
 }

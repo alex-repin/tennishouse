@@ -47,11 +47,11 @@ msgstr "использовано баллов"
 
 msgctxt "Languages::points_lower"
 msgid "points"
-msgstr "баллы"
+msgstr "балл(ов)"
 
 msgctxt "Languages::points_to_use"
 msgid "Points to use"
-msgstr "Баллы для использования"
+msgstr "Использовать бонусные баллы"
 
 msgctxt "Languages::point_payment"
 msgid "Point payment"
@@ -71,7 +71,7 @@ msgstr "Баллы были использованы в заказе"
 
 msgctxt "Languages::text_point_in_account"
 msgid "You have"
-msgstr "Баллы на вашем счете:"
+msgstr "Ваш баланс"
 
 msgctxt "Languages::pay_by_points"
 msgid "Allow payment by points"
@@ -188,6 +188,10 @@ msgstr "Общие"
 msgctxt "SettingsOptions::reward_points::point_rate"
 msgid "Points Exchange Rate (PER - the number of points equal to 1 conventional unit)"
 msgstr "Курс конвертации баллов (количество баллов, равное 1-й условной единице)"
+
+msgctxt "SettingsOptions::reward_points::min_margin"
+msgid "Minimal margin (%)"
+msgstr "Минимальная надбавка (%)"
 
 msgctxt "SettingsOptions::reward_points::auto_price_in_points"
 msgid "\"Price in points\" is calculated automatically on PER basis"

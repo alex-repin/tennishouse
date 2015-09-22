@@ -323,8 +323,8 @@ function fn_check_player_data($player_data)
 function fn_update_rub_rate()
 {
     $update_limits = array(
-        'USD' => 2.5,
-        'EUR' => 2.5,
+        'USD' => 0,
+        'EUR' => 0,
     );
     $rates = fn_get_currency_exchange_rates();
     $update_prices = false;
@@ -338,12 +338,12 @@ function fn_update_rub_rate()
             }
         }
     }
-    if ($update_prices) {
-        $params = array();
-        fn_init_currency($params);
-        fn_update_prices();
-        fn_set_notification('N', __('notice'), __('currencies_updated_successfully'));
-    }
+//     if ($update_prices) {
+//         $params = array();
+//         fn_init_currency($params);
+//         fn_update_prices();
+//         fn_set_notification('N', __('notice'), __('currencies_updated_successfully'));
+//     }
     
     return array(true, $errors);
 }

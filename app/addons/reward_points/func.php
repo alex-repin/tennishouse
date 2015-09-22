@@ -16,6 +16,47 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_check_expired_points()
+{
+    $data = db_get_hash_multi_array("SELECT * FROM ?:reward_point_changes ORDER BY timestamp ASC", array('user_id', 'change_id'));
+    $errors = array();
+    if (!empty($data)) {
+        foreach ($data as $user_id => $points_log) {
+            $total_spent = 0;
+            $expires = array();
+            foreach ($points_log as $_id => $log_data) {
+                if ($log_data['amount'] < 0) {
+                    $total_spent += abs($log_data['amount']);
+                } else {
+                    $expires[] = $log_data;
+                }
+            }
+            if (!empty($expires))  {
+                foreach ($expires as $_id => $log_data) {
+                    if ($total_spent > 0) {
+                        if ($total_spent > $log_data['amount']) {
+                            $total_spent -= $log_data['amount'];
+                            unset($expires[$_id]);
+                        } else {
+                            $expires[$_id]['amount'] -= $total_spent;
+                            $total_spent = 0;
+                        }
+                    }
+                }
+            }
+            if (!empty($expires)) {
+                foreach ($expires as $_id => $log_data) {
+                    if ($log_data['expire'] < TIME) {
+                        fn_change_user_points( - $log_data['amount'], $user_id, __("reward_points_expire_reason", array('[date]' => fn_date_format($log_data['timestamp'], Registry::get('settings.Appearance.date_format')))), CHANGE_DUE_EXPIRE);
+                    }
+                }
+            }
+        }
+    }
+    
+    return array(true, $errors);
+}
+
 /**
  * Get product/category/global earned points list
  *
@@ -33,7 +74,7 @@ function fn_get_reward_points($object_id, $object_type = PRODUCT_REWARD_POINTS, 
         if ($object_type == GLOBAL_REWARD_POINTS) {
             if (empty($company_id) && Registry::get('runtime.company_id')) {
                 $company_id = Registry::get('runtime.company_id');
-            } elseif (!Registry::get('runtime.company_id')) {
+            } elseif (empty($company_id) && !Registry::get('runtime.company_id')) {
                 return array();
             }
         }
@@ -132,6 +173,7 @@ function fn_reward_points_calculate_cart_taxes_pre(&$cart, &$cart_products, &$sh
         $price_coef = 1;
     }
 
+    $cart['points_info']['max_allowed'] = 0;
     foreach ((array) $cart_products as $k => $v) {
 
         fn_set_hook('reward_points_calculate_item', $cart_products, $cart, $k, $v);
@@ -147,6 +189,7 @@ function fn_reward_points_calculate_cart_taxes_pre(&$cart, &$cart_products, &$sh
                 $cart['products'][$k]['extra']['points_info']['raw_price'] = $product_price;
                 $cart['products'][$k]['extra']['points_info']['display_price'] = $cart['products'][$k]['extra']['points_info']['price'] = round($product_price);
                 $cart['points_info']['total_price'] = (isset($cart['points_info']['total_price']) ?  $cart['points_info']['total_price'] : 0) + $product_price;
+                $cart['points_info']['max_allowed'] = (isset($cart['points_info']['max_allowed']) ?  $cart['points_info']['max_allowed'] : 0) + $cart_products[$k]['points_info']['max_allowed'];
             }
         }
     }
@@ -167,35 +210,41 @@ function fn_reward_points_calculate_cart_taxes_pre(&$cart, &$cart_products, &$sh
         unset($cart['points_info']['reward']);
     }
 
-    if (isset($cart['points_info']['additional'])) {
-        $cart['points_info']['reward'] = $cart['points_info']['additional'];
-        unset($cart['points_info']['additional']);
-    }
+    if (!empty($auth['user_id'])) {
+        if (isset($cart['points_info']['additional'])) {
+            $cart['points_info']['reward'] = $cart['points_info']['additional'];
+            unset($cart['points_info']['additional']);
+        }
 
-    $discount = 0;
-    if (Registry::get('addons.reward_points.reward_points_order_discount') == 'Y' && !empty($cart['subtotal_discount']) && !empty($cart['subtotal'])) {
-        $discount += $cart['subtotal_discount'];
-    } elseif (!empty($cart['points_info']) && !empty($cart['points_info']['in_use']) && !empty($cart['points_info']['in_use']['cost'])) {
-        $discount += $cart['points_info']['in_use']['cost'];
-    }
+        $discount = 0;
+        if (Registry::get('addons.reward_points.reward_points_order_discount') == 'Y' && !empty($cart['subtotal_discount']) && !empty($cart['subtotal'])) {
+            $discount += $cart['subtotal_discount'];
+        } elseif (!empty($cart['points_info']) && !empty($cart['points_info']['in_use']) && !empty($cart['points_info']['in_use']['cost'])) {
+            $discount += $cart['points_info']['in_use']['cost'];
+        }
 
-    if ($discount && !empty($cart['subtotal'])) {
-        $reward_coef = 1 - $discount / $cart['subtotal'];
-    } else {
-        $reward_coef = 1;
-    }
+        if ($discount && !empty($cart['subtotal'])) {
+            $reward_coef = 1 - $discount / $cart['subtotal'];
+        } else {
+            $reward_coef = 1;
+        }
 
-    foreach ((array) $cart_products as $k => $v) {
+        foreach ((array) $cart_products as $k => $v) {
 
-        fn_set_hook('reward_points_calculate_item', $cart_products, $cart, $k, $v);
+            fn_set_hook('reward_points_calculate_item', $cart_products, $cart, $k, $v);
 
-        if (!isset($v['exclude_from_calculate'])) {
-            if (isset($cart_products[$k]['points_info']['reward'])) {
-                $product_reward = $v['amount'] * (!empty($v['product_options']) ? fn_apply_options_modifiers($cart['products'][$k]['product_options'], $cart_products[$k]['points_info']['reward']['raw_amount'], POINTS_MODIFIER_TYPE) : $cart_products[$k]['points_info']['reward']['raw_amount']);
-                $cart['products'][$k]['extra']['points_info']['reward'] = round($product_reward);
-                $cart_reward = round($reward_coef * $product_reward);
-                $cart['points_info']['reward'] = (isset($cart['points_info']['reward']) ? $cart['points_info']['reward'] : 0) + $cart_reward;
+            if (!isset($v['exclude_from_calculate'])) {
+                if (isset($cart_products[$k]['points_info']['reward'])) {
+                    $product_reward = $v['amount'] * (!empty($v['product_options']) ? fn_apply_options_modifiers($cart['products'][$k]['product_options'], $cart_products[$k]['points_info']['reward']['raw_amount'], POINTS_MODIFIER_TYPE) : $cart_products[$k]['points_info']['reward']['raw_amount']);
+                    $cart['products'][$k]['extra']['points_info']['reward'] = round($product_reward);
+                    $cart_reward = round($reward_coef * $product_reward);
+                    $cart['points_info']['reward'] = (isset($cart['points_info']['reward']) ? $cart['points_info']['reward'] : 0) + $cart_reward;
+                }
             }
+        }
+        $reward_points = fn_get_reward_points(0, GLOBAL_REWARD_POINTS, $auth['usergroup_ids']);
+        if ($reward_points['amount_type'] == 'P') {
+            $cart['points_info']['reward'] = floor($cart['points_info']['raw_total_price'] / $reward_points['round_to']) * $reward_points['round_to'] * $reward_points['amount'] / 100;
         }
     }
 }
@@ -226,8 +275,13 @@ function fn_set_point_payment(&$cart, &$cart_products, &$auth)
         if (empty($cart['points_info']['total_price'])) {
             $cart['points_info']['total_price'] = 0;
         }
-        if ($points_in_use > $cart['points_info']['total_price']) {
-            $points_in_use = $cart['points_info']['total_price'];
+        if ($points_in_use > $cart['points_info']['total_price'] || $points_in_use > $cart['points_info']['max_allowed']) {
+            if ($points_in_use > $cart['points_info']['total_price']) {
+                $points_in_use = $cart['points_info']['total_price'];
+            }
+            if ($points_in_use > $cart['points_info']['max_allowed']) {
+                $points_in_use = $cart['points_info']['max_allowed'];
+            }
             fn_set_notification('W', __('warning'), __('text_points_exceed_points_that_can_be_applied'));
         }
         if (!empty($points_in_use)) {
@@ -311,6 +365,10 @@ function fn_change_user_points($value, $user_id, $reason = '', $action = CHANGE_
             'reason' => $reason
         );
 
+        if ($value > 0) {
+            $now = getdate(TIME);
+            $change_points['expire'] = mktime(0, 0, 0, $now['mon'], $now['mday'] + 1, $now['year'] + 1);
+        }
         return db_query("REPLACE INTO ?:reward_point_changes ?e", $change_points);
     }
 
@@ -588,7 +646,7 @@ function fn_gather_reward_points_data(&$product, &$auth, $get_point_info = true)
                 if (!empty($product['discount'])) {
                     $price -= $product['discount'];
                 }
-                $reward_points['amount'] = $price * $reward_points['amount'] / 100;
+                $reward_points['amount'] = floor($price / $reward_points['round_to']) * $reward_points['round_to'] * $reward_points['amount'] / 100;
             } else {
                 $points_info = Registry::get("runtime.product_configurator.points_info");
                 if (!empty($points_info[$product['product_id']])) {
@@ -598,7 +656,7 @@ function fn_gather_reward_points_data(&$product, &$auth, $get_point_info = true)
             }
         } else {
             if ($reward_points['amount_type'] == 'P') {
-                $reward_points['amount'] = $product['price'] * $reward_points['amount'] / 100;
+                $reward_points['amount'] = floor($product['price'] / $reward_points['round_to'] ) * $reward_points['round_to'] * $reward_points['amount'] / 100;
             }
         }
 
@@ -652,6 +710,7 @@ function fn_calculate_product_price_in_points(&$product, &$auth, $get_point_info
     }
 
     $product['points_info']['raw_price'] = $per * $subtotal;
+    $product['points_info']['max_allowed'] = floor($product['points_info']['raw_price'] - $per * ($product['net_cost_rub'] + $product['original_price'] * $product['amount'] * Registry::get('addons.reward_points.min_margin') / 100));
     $product['points_info']['price'] = round($product['points_info']['raw_price']);
 }
 
@@ -925,4 +984,9 @@ function fn_reward_points_promotion_apply_pre(&$promotions, &$zone, &$data, &$au
     }
 
     return true;
+}
+
+function fn_show_points($points)
+{
+    return fn_show_numeric($points, 'points_lower');
 }
