@@ -710,7 +710,9 @@ function fn_calculate_product_price_in_points(&$product, &$auth, $get_point_info
     }
 
     $product['points_info']['raw_price'] = $per * $subtotal;
-    $product['points_info']['max_allowed'] = floor($product['points_info']['raw_price'] - $per * ($product['net_cost_rub'] + $product['original_price'] * $product['amount'] * Registry::get('addons.reward_points.min_margin') / 100));
+    if (!empty($product['net_cost_rub']) && !empty($product['original_price'])) {
+        $product['points_info']['max_allowed'] = floor($product['points_info']['raw_price'] - $per * ($product['net_cost_rub'] + $product['original_price'] * $product['amount'] * Registry::get('addons.reward_points.min_margin') / 100));
+    }
     $product['points_info']['price'] = round($product['points_info']['raw_price']);
 }
 
