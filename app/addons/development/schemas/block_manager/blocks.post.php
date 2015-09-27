@@ -245,7 +245,7 @@ $schema['products']['content']['items']['fillings']['same_brand_products'] = arr
 );
 $schema['products']['content']['items']['fillings']['cross_sales'] = array(
     'params' => array (
-        'items_function' => 'fn_get_cross_sales',
+        'items_function' => 'fn_get_checkout_cross_sales',
         'limit' => 10,
     ),
     'disable_cache' => true,

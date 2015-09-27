@@ -14,12 +14,13 @@
                     show_clean_price=true
                     show_list_discount=true
                     show_add_to_cart=true
-                    show_product_options=true
+                    show_product_options=false
                     hide_call_request=true
                     but_role="action"
                     show_discount_label=true
                     mode=$block.properties.mode
-                    hide_links=true}
+                    hide_links=true
+                    skip_to_add_cart=true}
                 {/foreach}
             </div>
         </div>
@@ -42,12 +43,13 @@
                     show_clean_price=true
                     show_list_discount=true
                     show_add_to_cart=true
-                    show_product_options=true
+                    show_product_options=false
                     hide_call_request=true
                     but_role="action"
                     show_discount_label=true
                     mode=$block.properties.mode
-                    hide_links=true}
+                    hide_links=true
+                    skip_to_add_cart=true}
                 {/foreach}
             </div>
         </div>
@@ -68,12 +70,13 @@
                     show_clean_price=true
                     show_list_discount=true
                     show_add_to_cart=true
-                    show_product_options=true
+                    show_product_options=false
                     hide_call_request=true
                     but_role="action"
                     show_discount_label=true
                     mode=$block.properties.mode
-                    hide_links=true}
+                    hide_links=true
+                    skip_to_add_cart=true}
                 {/foreach}
             </div>
         </div>

@@ -321,6 +321,9 @@
             UNIQUE KEY `amount` (`amount`)
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;            
         </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `cross_categories` TEXT NOT NULL ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -652,5 +655,9 @@
         <item lang="ru" id="reward_points_expire_reason">Обнуление неиспользованных баллов от [date]</item>
         <item lang="ru" id="discount_level">Уровень Вашей бонусной программы</item>
         <item lang="ru" id="reward_points_note">Накопительная бонусная программа</item>
+        <item lang="ru" id="cross_categories">Кросс-категории</item>
+        <item lang="ru" id="cross_recomendation_text">Рекомендуем приобрести</item>
+        <item lang="ru" id="what_for">Для чего они нужны ?</item>
+        <item lang="ru" id="expert_consultation">Консультация специалиста</item>
     </language_variables>
 </addon>

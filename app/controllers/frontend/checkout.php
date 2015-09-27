@@ -45,9 +45,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         // Add to cart button was pressed for single product on advanced list
+        $added_product_keys = array();
         if (!empty($dispatch_extra)) {
             if (empty($_REQUEST['product_data'][$dispatch_extra]['amount'])) {
                 $_REQUEST['product_data'][$dispatch_extra]['amount'] = 1;
+            }
+            if (!empty($_REQUEST['product_data'][$dispatch_extra]['added_product_keys'])) {
+                $added_product_keys = explode(',', $_REQUEST['product_data'][$dispatch_extra]['added_product_keys']);
             }
             foreach ($_REQUEST['product_data'] as $key => $data) {
                 if ($key != $dispatch_extra && $key != 'custom_files') {
@@ -57,13 +61,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         $prev_cart_products = empty($cart['products']) ? array() : $cart['products'];
-
+        if (!empty($added_product_keys) && !empty($prev_cart_products)) {
+            foreach ($prev_cart_products as $item_id => $prev_prod) {
+                if (in_array($item_id, $added_product_keys)) {
+                    unset($prev_cart_products[$item_id]);
+                }
+            }
+        }
         fn_add_product_to_cart($_REQUEST['product_data'], $cart, $auth);
         fn_save_cart_content($cart, $auth['user_id']);
 
         $previous_state = md5(serialize($cart['products']));
         $cart['change_cart_products'] = true;
-        fn_calculate_cart_content($cart, $auth, 'S', true, 'F', true);
+        list ($cart_products, $product_groups) = fn_calculate_cart_content($cart, $auth, 'S', true, 'F', true);
 
         if (md5(serialize($cart['products'])) != $previous_state && empty($cart['skip_notification'])) {
             $product_cnt = 0;
@@ -84,7 +94,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if (Registry::get('config.tweaks.disable_dhtml') && Registry::get('config.tweaks.redirect_to_cart')) {
                     Registry::get('view')->assign('continue_url', (!empty($_REQUEST['redirect_url']) && empty($_REQUEST['appearance']['details_page'])) ? $_REQUEST['redirect_url'] : $_SESSION['continue_url']);
                 }
-
+                $cross_sales = array();
+                foreach ($added_products as $item_id => $item_data) {
+                    if (!empty($cart_products[$item_id])) {
+                        $global_data = fn_get_product_global_data($cart_products[$item_id], array('cross_categories'));
+                        if (!empty($global_data['cross_categories'])) {
+                            $cross_categories = explode(',', unserialize($global_data['cross_categories']));
+                            $cross_sales = array_merge($cross_sales, fn_get_cross_sales(array('category_ids' => $cross_categories, 'price_to' => $cart_products[$item_id]['price'])));
+                        }
+                    }
+                }
+                if (!empty($cross_sales)) {
+                    $added_product_keys = implode(',', array_keys($added_products));
+                    foreach ($cross_sales as $i => $cross_group) {
+                        foreach ($cross_group['products'] as $k => $cross_prods) {
+                            $cross_sales[$i]['products'][$k]['added_product_keys'] = $added_product_keys;
+                        }
+                    }
+                }
+                Registry::get('view')->assign('cross_sales', $cross_sales);
                 $msg = Registry::get('view')->fetch('views/checkout/components/product_notification.tpl');
                 fn_set_notification('I', __($product_cnt > 1 ? 'products_added_to_cart' : 'product_added_to_cart'), $msg);
                 $cart['recalculate'] = true;

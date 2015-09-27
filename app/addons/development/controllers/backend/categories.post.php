@@ -50,4 +50,12 @@ if ($mode == 'update' || $mode == 'add') {
     
     Registry::get('view')->assign('category_data', $category_data);
     Registry::get('view')->assign('section_features', $section_features);
+    
+    $tabs = Registry::get('navigation.tabs');
+    $cross_tab = array (
+        'title' => __('cross_categories'),
+        'js' => true
+    );
+    $tabs = fn_insert_before_key($tabs, 'addons', 'cross_categories', $cross_tab);
+    Registry::set('navigation.tabs', $tabs);
 }

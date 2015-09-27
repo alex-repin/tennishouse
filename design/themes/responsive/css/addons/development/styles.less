@@ -349,8 +349,9 @@ label.cm-required::after {
     display: none;
 }
 .ty-tooltip-block {
-    vertical-align: middle;
+    vertical-align: top;
     position: relative;
+    text-transform: none;
 }
 /* /Tooltip */
 
@@ -1401,6 +1402,27 @@ label.cm-required::after {
 /*Player details*/
 
 /*Product page*/
+.ty-consultation {
+    display: inline-block;
+    position: absolute;
+    right: 10px;
+    text-align: center;
+    top: 2px;
+}
+.ty-consultation-text {
+    display: inline-block;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: lighten(@font, 25%);
+}
+.ty-consultation-phone {
+    color: #f5b700;
+    display: block;
+    font-size: 15px;
+    height: 20px;
+    padding-left: 25px;
+    background: url("../../../media/images/addons/development/phone.png") no-repeat scroll left center;
+}
 .ty-product-block__option, .ty-product-block__advanced-option, .ty-product-block__field-group {
     margin: 0;
 }
@@ -1463,6 +1485,7 @@ label.cm-required::after {
     background: lighten(@base, 3%);
     padding: 0 10px 5px;
     margin-bottom: 30px;
+    position: relative;
 }
 .ty-product-block-title {
     font-size: 25px;
@@ -2012,21 +2035,21 @@ label.cm-required::after {
     vertical-align: top;
     position: relative;
 }
-.ty-products-scroller .ty-tennishouse-body .owl-prev {
+.ty-products-scroller .owl-prev {
     background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat 0 10px #ffffff !important;
     top: 120px;
-    height: 90px;
+    height: 90px !important;
 }
-/*.ty-products-scroller .ty-tennishouse-body .owl-prev:hover {
+/*.ty-products-scroller .owl-prev:hover {
     background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat -50px 10px #ffffff !important;
 }*/
 
-.ty-products-scroller .ty-tennishouse-body .owl-next {
+.ty-products-scroller .owl-next {
     background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat -25px 10px #ffffff !important;
     top: 120px;
-    height: 90px;
+    height: 90px !important;
 }
-/*.ty-products-scroller .ty-tennishouse-body .owl-next:hover {
+/*.ty-products-scroller .owl-next:hover {
     background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat -75px 10px #ffffff !important;
 }*/
 
@@ -2048,7 +2071,7 @@ label.cm-required::after {
     background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat -75px 2px #ffffff !important;
 }*/
 
-.ty-tennishouse-body .owl-prev {
+.owl-prev {
     border: 1px solid #ebebeb;
     border-radius: none !important;
     margin: 0 !important;
@@ -2058,7 +2081,7 @@ label.cm-required::after {
     width: 23px;
     left: -20px;
 }
-.ty-tennishouse-body .owl-next {
+.owl-next {
     border: 1px solid #ebebeb;
     border-radius: none !important;
     height: 50px;
@@ -2281,7 +2304,7 @@ label.cm-required::after {
     width: 40%;
     vertical-align: top;
 }
-.ty-products-scroller .ty-tennishouse-body .ty-micro-mode .owl-prev, .ty-products-scroller .ty-tennishouse-body .ty-micro-mode .owl-next {
+.ty-products-scroller .ty-micro-mode .owl-prev, .ty-products-scroller .ty-micro-mode .owl-next {
     top: 13px;
 }
 .ty-micro-mode .ty-grid-list__item .ty-grid-list__image-product .ty-pict, .ty-micro-mode .ty-grid-list__item .ty-grid-list__image-product .ty-no-image {
@@ -2321,7 +2344,7 @@ label.cm-required::after {
     bottom: 5px;
     display: inline-block;
     position: absolute;
-    left: 79px;
+    right: 15px;
     max-width: 110px;
 }
 .ty-micro-mode .ty-grid-list__item:hover {
@@ -2386,6 +2409,17 @@ label.cm-required::after {
     position: absolute;
     text-transform: uppercase;
     top: -20px;
+}
+.ty-product-notification__cross .ty-product-cross-sales-title {
+    left: 0;
+}
+.ty-product-cross-sales-title-tooltip {
+    position: absolute;
+    right: -20px;
+    top: -21px;
+}
+.ty-product-cross-sales-title-tooltip .ty-category-tooltip {
+    font-size: 12px;
 }
 .ty-product-cross-sales-all {
     color: @font;
@@ -2864,4 +2898,28 @@ and (max-device-width : 480px) {
 }
 .ty-how-it-works__exp {
     font-size: 15px;
+}
+/* Cart cross sales*/
+.ty-cross-recomendation {
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 35px;
+    padding: 10px 0;
+}
+.ty-product-notification__cross {
+    border-bottom: 1px solid @base;
+    border-top: 1px solid @base;
+    padding: 10px 20px;
+}
+.ty-cross-section {
+    display: inline-block;
+    width: 100%;
+}
+.ty-cross-section__item {
+    display: inline-block;
+    position: relative;
+    margin: 0 28px;
+}
+.ty-category-tooltip {
+    max-width: 500px;
 }

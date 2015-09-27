@@ -125,13 +125,12 @@
                             </div>
                         {/if}
                     </div>
-                <div class="ty-product-block__advanced-option">
-                    {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
-                    {assign var="advanced_options" value="advanced_options_`$obj_id`"}
-                    {$smarty.capture.$advanced_options nofilter}
-                    {if $capture_options_vs_qty}{/capture}{/if}
-                </div>
-                    
+                    <div class="ty-product-block__advanced-option">
+                        {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
+                        {assign var="advanced_options" value="advanced_options_`$obj_id`"}
+                        {$smarty.capture.$advanced_options nofilter}
+                        {if $capture_options_vs_qty}{/capture}{/if}
+                    </div>
                 </div>
 
                 {*
@@ -197,6 +196,12 @@
                 </div>
                 {if $capture_buttons}{/capture}{/if}
 
+                {if $product.offer_help}
+                    <div class="ty-consultation">
+                        <div class="ty-consultation-text">{__("expert_consultation")}</div>
+                        <div class="ty-consultation-phone">{$settings.Company.company_phone}</div>
+                    </div>
+                {/if}
                 </div>
                 {assign var="form_close" value="form_close_`$obj_id`"}
                 {$smarty.capture.$form_close nofilter}

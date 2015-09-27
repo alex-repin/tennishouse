@@ -441,6 +441,9 @@ function fn_development_get_category_data_post($category_id, $field_list, $get_m
     if (!empty($category_data['sections_categorization'])) {
         $category_data['sections_categorization'] = unserialize($category_data['sections_categorization']);
     }
+    if (!empty($category_data['cross_categories'])) {
+        $category_data['cross_categories'] = unserialize($category_data['cross_categories']);
+    }
 }
 
 function fn_development_get_product_feature_variants(&$fields, $join, &$condition, $group_by, $sorting, $lang_code, $limit)
@@ -491,10 +494,12 @@ function fn_development_get_categories(&$params, $join, $condition, &$fields, $g
     $fields[] = '?:categories.product_count';
     $fields[] = '?:categories.code';
     $fields[] = '?:categories.is_virtual';
-    if (!empty($params['roundabout'])) {
-        $params['get_images'] = true;
+    if (!empty($params['roundabout']) || !empty($params['get_description'])) {
         $fields[] = '?:category_descriptions.description';
-        $fields[] = '?:categories.brand_id';
+        if (!empty($params['roundabout'])) {
+            $params['get_images'] = true;
+            $fields[] = '?:categories.brand_id';
+        }
     }
 }
 
@@ -558,7 +563,7 @@ function fn_development_get_product_options_post($product_ids, $lang_code, $only
     }
 }
 
-function fn_development_calculate_cart_items(&$cart, $cart_products, $auth)
+function fn_development_calculate_cart_items(&$cart, &$cart_products, $auth)
 {
     if (!empty($cart_products)) {
         $main_ids = array();
@@ -580,6 +585,9 @@ function fn_development_calculate_cart_items(&$cart, $cart_products, $auth)
         if (!empty($id_paths)) {
             foreach ($id_paths as $i => $path) {
                 $cart['product_categories'] = array_merge($cart['product_categories'], explode('/', $path));
+            }
+            foreach ($cart_products as $i => $product) {
+                $cart_products[$i]['id_path'] = $id_paths[$product['main_category']];
             }
         }
         $cart['product_categories'] = array_unique($cart['product_categories']);
@@ -909,6 +917,9 @@ function fn_development_update_category_pre(&$category_data, $category_id, $lang
 {
     if (!empty($category_data['sections_categorization'])) {
         $category_data['sections_categorization'] = serialize($category_data['sections_categorization']);
+    }
+    if (!empty($category_data['cross_categories'])) {
+        $category_data['cross_categories'] = serialize($category_data['cross_categories']);
     }
 }
 
@@ -1352,6 +1363,9 @@ function fn_development_get_product_data_post(&$product_data, $auth, $preview, $
     $product_data['id_path'] = db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $product_data['main_category']);
     $product_data['type'] = fn_identify_category_type($product_data['id_path']);
     $product_data['category_type'] = ($product_data['product_type'] == 'C') ? 'PC' : fn_get_category_type($types_ids[$product_data['main_category']]);
+    if (!in_array($product_data['category_type'], array('A', 'S'))) {
+        $product_data['offer_help'] = true;
+    }
     $product_data['category_main_id'] = $types_ids[$product_data['main_category']];
 }
 

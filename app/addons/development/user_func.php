@@ -604,7 +604,7 @@ function fn_get_product_cross_sales($params)
                 $params_array = array(POLYESTER_MATERIAL_CATEGORY_ID, HYBRID_MATERIAL_CATEGORY_ID, NATURAL_GUT_MATERIAL_CATEGORY_ID, NYLON_MATERIAL_CATEGORY_ID);
                 $_params = array (
                     'sort_by' => 'random',
-                    'limit' => 1,
+                    'limit' => 3,
                     'subcats' => 'Y',
                     'features_hash' => 'V' . TW_M_STRINGS_FV_ID,
                     'amount_from' => 1
@@ -614,22 +614,73 @@ function fn_get_product_cross_sales($params)
                     'items' => fn_get_result_products($_params, 'cid', $params_array)
                 );
             }
-            $_params = array (
-                'sort_by' => 'random',
-                'limit' => (!empty($_SESSION['product_features'][R_STRINGS_FEATURE_ID]['value']) && $_SESSION['product_features'][R_STRINGS_FEATURE_ID]['value'] == 'N') ? 1 : 4,
-                'cid' => OVERGRIPS_CATEGORY_ID,
-                'subcats' => 'Y',
-                'amount_from' => 1
-            );
-            list($prods,) = fn_get_products($_params);
-            $result[] = array(
-                'title' => __('overgrips'),
-                'items' => $prods
-            );
+//             $_params = array (
+//                 'sort_by' => 'random',
+//                 'limit' => (!empty($_SESSION['product_features'][R_STRINGS_FEATURE_ID]['value']) && $_SESSION['product_features'][R_STRINGS_FEATURE_ID]['value'] == 'N') ? 1 : 4,
+//                 'cid' => OVERGRIPS_CATEGORY_ID,
+//                 'subcats' => 'Y',
+//                 'amount_from' => 1
+//             );
+//             list($prods,) = fn_get_products($_params);
+//             $result[] = array(
+//                 'title' => __('overgrips'),
+//                 'items' => $prods
+//             );
         }
     }
     
     return array($result, $params);
+}
+
+function fn_get_cross_sales($params)
+{
+    $result = array();
+    if (!empty($params['category_ids'])) {
+        if (!empty($_SESSION['cart']['product_categories'])) {
+            $params['category_ids'] = array_diff($params['category_ids'], $_SESSION['cart']['product_categories']);
+        }
+        if (!empty($params['category_ids'])) {
+            $cat_params = array(
+                'item_ids' => implode(',', $params['category_ids']),
+                'simple' => false,
+                'group_by_level' => false,
+                'skip_filter' => true,
+                'get_description' => true
+            );
+            list($categories, ) = fn_get_categories($cat_params);
+            $products = array();
+            $_params = array (
+                'sort_by' => 'random',
+                'limit' => 10,
+                'subcats' => 'Y',
+                'amount_from' => 1,
+            );
+            if (!empty($params['price_to'])) {
+                $_params['price_to'] = $params['price_to'];
+            }
+            foreach ($params['category_ids'] as $i => $cat_id) {
+                $_params['cid'] = $cat_id;
+                list($products[$cat_id],) = fn_get_products($_params);
+                fn_gather_additional_products_data($products[$cat_id], array(
+                    'get_icon' => false,
+                    'get_detailed' => true,
+                    'get_additional' => false,
+                    'get_options' => true,
+                    'get_discounts' => true,
+                    'get_features' => false,
+                    'get_title_features' => false,
+                    'allow_duplication' => false
+                ));
+            }
+
+            foreach ($categories as $k => $c_data) {
+                $categories[$k]['products'] = $products[$c_data['category_id']];
+            }
+            $result = $categories;
+        }
+    }
+    
+    return $result;
 }
 
 function fn_get_result_products($params, $key, $param_array)
@@ -683,7 +734,7 @@ function fn_get_same_brand_products($params)
     return array($result, $params);
 }
 
-function fn_get_cross_sales($params)
+function fn_get_checkout_cross_sales($params)
 {
     $result = array();
     if (!empty($_SESSION['cart']['products'])) {

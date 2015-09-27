@@ -28,6 +28,9 @@
 {/if}
 <input type="hidden" name="product_data[{$obj_id}][product_id]" value="{$product.product_id}" />
 {/if}
+{if $product.added_product_keys}
+<input type="hidden" name="product_data[{$obj_id}][added_product_keys]" value="{$product.added_product_keys}" />
+{/if}
 {/capture}
 {if $no_capture}
     {assign var="capture_name" value="form_open_`$obj_id`"}
@@ -132,7 +135,7 @@
 {capture name="buttons_product"}
     {capture name="button_name"}{__("add_to_cart")}{/capture}
     {hook name="products:add_to_cart"}
-        {if $product.has_options && !$show_product_options && !$details_page}
+        {if $product.has_options && !$show_product_options && !$details_page && !$skip_to_add_cart}
             {if $but_role == "text"}
                 {$opt_but_role="text"}
             {else}
