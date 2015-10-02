@@ -934,8 +934,8 @@ function fn_get_product_margin(&$product)
             $min_md = explode(':', $_md[0]);
             $max_md = explode(':', $_md[1]);
             if (count($min_md) == 2 && count($max_md) == 2) {
-                $min_md[0] = $min_md[0] * Registry::get('currencies.' . $product['net_currency_code'] . '.coefficient');
-                $max_md[0] = $max_md[0] * Registry::get('currencies.' . $product['net_currency_code'] . '.coefficient');
+                $min_md[0] = $min_md[0] * Registry::get('currencies.' . $product['global_net_currency_code'] . '.coefficient');
+                $max_md[0] = $max_md[0] * Registry::get('currencies.' . $product['global_net_currency_code'] . '.coefficient');
                 $net_cost = $product['net_cost'] * Registry::get('currencies.' . $product['net_currency_code'] . '.coefficient');
                 if ($net_cost <= $min_md[0]) {
                     $product['margin'] = $min_md[1];
@@ -969,6 +969,7 @@ function fn_process_update_prices($products)
                     if (empty($products[$product_id]['margin']) || $products[$product_id]['margin'] == 0) {
                         $global_data = fn_get_product_global_data($products[$product_id], array('margin', 'net_currency_code'));
                         $products[$product_id]['global_margin'] = $global_data['margin'];
+                        $products[$product_id]['global_net_currency_code'] = $global_data['net_currency_code'];
                         if (empty($products[$product_id]['net_currency_code'])) {
                             $products[$product_id]['net_currency_code'] = $global_data['net_currency_code'];
                         }
