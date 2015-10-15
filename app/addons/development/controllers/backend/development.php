@@ -209,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             }
                                         } elseif (count($data['data']) == 1 && $product_data['tracking'] == 'B' && !empty($variant['amount']) && empty($product_options)) {
                                             $amount = floor($variant['amount'] / $product_data['import_divider']);
-                                            db_query("UPDATE ?:products SET amount = ?i, status = ?s WHERE product_id = ?i", $amount, ($amount > 0 ? 'A' : 'H'), $product_id);
+                                            db_query("UPDATE ?:products SET amount = ?i WHERE product_id = ?i", $amount, $product_id);
                                             $updated_products[$product_code] = array(
                                                 'code' => $product_code,
                                                 'data' => $data

@@ -105,10 +105,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     }
                 }
                 if (!empty($cross_sales)) {
+                    $cross_categories = array();
                     $added_product_keys = implode(',', array_keys($added_products));
                     foreach ($cross_sales as $i => $cross_group) {
-                        foreach ($cross_group['products'] as $k => $cross_prods) {
-                            $cross_sales[$i]['products'][$k]['added_product_keys'] = $added_product_keys;
+                        if (!in_array($cross_group['category_id'], $cross_categories)) {
+                            $cross_categories[] = $cross_group['category_id'];
+                            foreach ($cross_group['products'] as $k => $cross_prods) {
+                                $cross_sales[$i]['products'][$k]['added_product_keys'] = $added_product_keys;
+                            }
+                        } else {
+                            unset($cross_sales[$i]);
                         }
                     }
                 }

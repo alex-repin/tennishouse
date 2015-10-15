@@ -17,6 +17,72 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_update_user_pre($user_id, &$user_data, $auth, $ship_to_another, $notify_user, $send_password)
+{
+    $names = array(
+        'р-н',
+        'район',
+        'г.',
+        'гор.',
+        'город',
+        'п.г.т.',
+        'посёлок городского типа',
+        'р.п.',
+        'рабочий посёлок',
+        'к.п.',
+        'курортный посёлок',
+        'к.',
+        'кишлак',
+        'пс',
+        'поселковый совет',
+        'сс',
+        'сельсовет',
+        'смн',
+        'сомон',
+        'вл.',
+        'волость',
+        'д.п.',
+        'дачный поселковый совет',
+        'п.',
+        'посёлок сельского типа',
+        'н.п.',
+        'населённый пункт',
+        'п. ст.',
+        'посёлок при станции',
+        'ж/д ст.',
+        'железнодорожная станция',
+        'с.',
+        'село',
+        'м.',
+        'местечко',
+        'д.',
+        'дер.',
+        'деревня',
+        'сл.',
+        'слобода',
+        'ст.',
+        'станция',
+        'ст-ца',
+        'станица',
+        'х.',
+        'хутор',
+        'у.',
+        'улус',
+        'рзд.',
+        'разъезд',
+        'клх',
+        'колхоз',
+        'свх',
+        'совхоз',
+        'зим.',
+        'зимовье',
+    );
+    $user_data['s_city'] = str_replace($names, '', $user_data['s_city']);
+    if (!empty($user_data['b_city'])) {
+        $user_data['b_city'] = str_replace($names, '', $user_data['b_city']);
+    }
+}
+
 function fn_development_change_order_status_post($status_to, $status_from, $order_info, $force_notification, $order_statuses, $place_order)
 {
     $saving_data = db_get_hash_array("SELECT * FROM ?:savings_groups ORDER BY amount ASC", 'group_id');

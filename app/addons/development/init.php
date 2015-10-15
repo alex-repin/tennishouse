@@ -75,5 +75,6 @@ fn_register_hooks(
     'delete_feature_post',
     'pre_place_order',
     'update_payment_surcharge',
-    'change_order_status_post'
+    'change_order_status_post',
+    'update_user_pre'
 );
