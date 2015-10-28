@@ -270,6 +270,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
                                     fn_print_r($combinations_data);
                                 }
+                                db_query("DELETE FROM ?:product_options_exceptions WHERE product_id = ?i", $product_id);
                                 if (!empty($combinations_data)) {
                                     $ttl_updated = 0;
                                     foreach ($combinations_data as $product_id => $comb_data) {
@@ -286,7 +287,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             }
                                             db_query("UPDATE ?:product_options_inventory SET ?u WHERE combination_hash = ?s", $inventory[$k], $k);
                                         }
-                                        db_query("DELETE FROM ?:product_options_exceptions WHERE product_id = ?i", $product_id);
                                         fn_update_product_exceptions($product_id, $inventory);
                                         if (!empty($comb_data)) {
                                             $broken_options_products[$product_code] = $data;
@@ -315,6 +315,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             db_query("UPDATE ?:products SET amount = '0' WHERE product_id IN (?n)", $out_of_stock);
                             foreach ($out_of_stock as $os_i => $pr_id) {
                                 fn_rebuild_product_options_inventory($pr_id);
+                                db_query("DELETE FROM ?:product_options_exceptions WHERE product_id = ?i", $pr_id);
                                 $all_combs = db_get_hash_single_array("SELECT combination_hash, combination FROM ?:product_options_inventory WHERE product_id = ?i", array('combination_hash', 'combination'), $pr_id);
                                 db_query("UPDATE ?:product_options_inventory SET amount = '0' WHERE combination_hash IN (?n)", array_keys($all_combs));
                                 foreach ($all_combs as $t => $comb_hash) {

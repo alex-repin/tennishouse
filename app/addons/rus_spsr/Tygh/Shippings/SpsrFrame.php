@@ -210,7 +210,7 @@ class SpsrFrame
         if (!empty($location['country']) && !empty($location['city'])) {
         // [tennishouse]
             if ($location['country'] != 'RU') {
-                fn_set_notification('E', __('notice'), __('shippings.spsr.country_error'));
+                //fn_set_notification('E', __('notice'), __('shippings.spsr.country_error'));
             } else {
                 if (preg_match('/^[a-zA-Z]+$/',$location['city'])) {
                     $lang_code = 'en';

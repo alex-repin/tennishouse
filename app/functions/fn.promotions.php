@@ -500,6 +500,15 @@ function fn_promotion_apply_cart_rule($bonus, &$cart, &$auth, &$cart_products)
                 $product_data[$p_data['product_id']]['product_options'] = $p_data['product_options'];
             }
 
+            if (!empty($cart['products'])) {
+                foreach ($cart['products'] as $j => $prod) {
+                    if ($prod['product_id'] == $p_data['product_id'] && !empty($prod['product_options'])) {
+                        $product_data[$p_data['product_id']]['product_options'] = $prod['product_options'];
+                        break;
+                    }
+                }
+            }
+            
             // Restore object_id if needed
             if (!empty($cart['saved_object_ids'][$bonus['promotion_id'] . '_' . $p_data['product_id']])) {
                 $product_data[$p_data['product_id']]['saved_object_id'] = $cart['saved_object_ids'][$bonus['promotion_id'] . '_' . $p_data['product_id']];
