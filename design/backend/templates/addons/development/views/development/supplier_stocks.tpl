@@ -6,14 +6,22 @@
 <input type="hidden" name="result_ids" value="update_stocks_section" />
 
 <div class="control-group">
-    <label class="control-label">{__("brand")}:</label>
+    <label class="control-label">{__("brands")}:</label>
+    {$columns = "4"}
+    {$defult = [975, 974, 143]}
+    {split data=$brands size=$columns assign="splitted_brands" skip_complete=true}
+    {math equation="98 / x" x=$columns assign="cell_width"}
     <div class="controls">
-        <select name="brand_id">
-            <option value="{$brand.variant_id}" > - {__("select")} - </option>
-            {foreach from=$brands item=brand}
-                <option value="{$brand.variant_id}" >{$brand.variant}</option>
-            {/foreach}
-        </select>
+        {foreach from=$splitted_brands item=brands}
+            <div style="display: inline-block;width: 100%;">
+                {foreach from=$brands item=brand}
+                    <div style="display: inline-block;width: {$cell_width}%;">
+                        <div style="width: 100px;display: inline-block;">{$brand.variant}</div>
+                        <input type="checkbox" name="brand_ids[]" value="{$brand.variant_id}" class="checkbox cm-item" {if $brand.variant_id|in_array:$defult}checked="checked"{/if}/>
+                    </div>
+                {/foreach}
+            </div>
+        {/foreach}
     </div>
 </div>
 <div class="control-group">
@@ -40,7 +48,7 @@
         <div id="res_ignore_list" class="collapse">
             {if $ignore_list}
                 <form action="{""|fn_url}" method="post" name="watch_products" class="cm-ajax form-horizontal form-edit">
-                <input type="hidden" name="brand_id" value="{$brand_id}">
+                <input type="hidden" name="brand_ids" value="{$brand_ids}">
                 {foreach from=$ignore_list item=product key="pcode"}
                     <div class="control-group">
                         <label class="control-label">{$product.product} - {$pcode}:</label>
@@ -65,7 +73,7 @@
         <div id="res_missed" class="collapse">
             {if $missing_products}
                 <form action="{""|fn_url}" method="post" name="ignore_products" class="cm-ajax form-horizontal form-edit">
-                <input type="hidden" name="brand_id" value="{$brand_id}">
+                <input type="hidden" name="brand_ids" value="{$brand_ids}">
                 {foreach from=$missing_products item=product key="pcode"}
                     <div class="control-group">
                         <label class="control-label">{$product.product} - {$pcode}:</label>

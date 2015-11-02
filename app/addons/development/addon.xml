@@ -659,5 +659,6 @@
         <item lang="ru" id="cross_recomendation_text">Рекомендуем приобрести</item>
         <item lang="ru" id="what_for">Для чего они нужны ?</item>
         <item lang="ru" id="expert_consultation">Консультация специалиста</item>
+        <item lang="ru" id="brands">Бренды</item>
     </language_variables>
 </addon>

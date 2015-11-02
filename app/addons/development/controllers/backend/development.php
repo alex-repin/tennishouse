@@ -72,8 +72,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!empty($_REQUEST['calculate'])) {
             $file = fn_filter_uploaded_data('csv_file');
             $missing_products = $updated_products = $broken_options_products = $broken_net_cost = $trash = array();
-            if (!empty($file) && !empty($_REQUEST['brand_id'])) {
-                if ($_REQUEST['brand_id'] == BABOLAT_FV_ID) {
+            if (!empty($file) && !empty($_REQUEST['brand_ids'])) {
+                if (in_array(BABOLAT_FV_ID, $_REQUEST['brand_ids'])) {
                     $options = array(
                         'delimiter' => 'C',
                         'lang_code' => 'ru'
@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     if (list($total_data, $trash) = fn_get_babolat_csv($file[0]['path'], $options)) {
 
                         $params = array(
-                            'features_hash' => 'V' . $_REQUEST['brand_id'],
+                            'features_hash' => 'V' . implode('.V', $_REQUEST['brand_ids']),
                             //'force_get_by_ids' => 'Y',
                         );
                         list($products,) = fn_get_products($params);
@@ -95,8 +95,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 }
                             }
                         }
-                        $ignore_list = db_get_field("SELECT ignore_list FROM ?:brand_ignore_list WHERE brand_id = ?i", $_REQUEST['brand_id']);
-                        $ignore_list = !empty($ignore_list) ? unserialize($ignore_list) : array();
+                        $_ignore_list = db_get_fields("SELECT ignore_list FROM ?:brand_ignore_list WHERE brand_id IN (?n)", $_REQUEST['brand_ids']);
+                        $ignore_list = array();
+                        if (!empty($_ignore_list)) {
+                            foreach ($_ignore_list as $i => $i_list) {
+                                $ignore_list = array_merge($ignore_list, unserialize($i_list));
+                            }
+                        }
                         foreach ($total_data as $product_code => $data) {
                             if (!empty($ignore_list) && in_array($product_code, $ignore_list)) {
                                 continue;
@@ -348,7 +353,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         }
                     }
                 }
-            } elseif (empty($_REQUEST['brand_id'])) {
+            } elseif (empty($_REQUEST['brand_ids'])) {
                 fn_set_notification('E', __('error'), __('error_brand_undefined'));
             } elseif (empty($file)) {
                 fn_set_notification('E', __('error'), __('error_exim_no_file_uploaded'));
@@ -364,7 +369,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             Registry::get('view')->assign('out_of_stock', count($out_of_stock) + count($no_code));
             Registry::get('view')->assign('in_stock', count($in_stock));
-            Registry::get('view')->assign('brand_id', $_REQUEST['brand_id']);
+            Registry::get('view')->assign('brand_ids', implode(',', $_REQUEST['brand_ids']));
             Registry::get('view')->assign('calculate', true);
             Registry::get('view')->assign('total', count($total_data));
             Registry::get('view')->assign('ignore_list', $ignored_products);
@@ -382,36 +387,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     
     if ($mode == 'ignore_products') {
-        if (!empty($_REQUEST['brand_id'])) {
-            $ignore_list = db_get_field("SELECT ignore_list FROM ?:brand_ignore_list WHERE brand_id = ?i", $_REQUEST['brand_id']);
-            $ignore_list = !empty($ignore_list) ? unserialize($ignore_list) : array();
-            $ignore_list = array_merge($ignore_list, $_REQUEST['product_codes']);
-            $_data = array(
-                'brand_id' => $_REQUEST['brand_id'],
-                'ignore_list' => serialize($ignore_list)
-            );
-            db_query("REPLACE INTO ?:brand_ignore_list ?e", $_data);
+        if (!empty($_REQUEST['brand_ids'])) {
+            $_REQUEST['brand_ids'] = explode(',', $_REQUEST['brand_ids']);
+            foreach ($_REQUEST['brand_ids'] as $i => $brand_id) {
+                $ignore_list = db_get_field("SELECT ignore_list FROM ?:brand_ignore_list WHERE brand_id = ?i", $brand_id);
+                $ignore_list = !empty($ignore_list) ? unserialize($ignore_list) : array();
+                $ignore_list = array_merge($ignore_list, $_REQUEST['product_codes']);
+                $_data = array(
+                    'brand_id' => $brand_id,
+                    'ignore_list' => serialize($ignore_list)
+                );
+                db_query("REPLACE INTO ?:brand_ignore_list ?e", $_data);
+            }
             fn_set_notification('N', __('notice'), __('added_to_ignore_list'));
         }
         exit;
     }
     
     if ($mode == 'watch_products') {
-        if (!empty($_REQUEST['brand_id'])) {
-            $ignore_list = db_get_field("SELECT ignore_list FROM ?:brand_ignore_list WHERE brand_id = ?i", $_REQUEST['brand_id']);
-            $ignore_list = !empty($ignore_list) ? unserialize($ignore_list) : array();
-            if (!empty($ignore_list)) {
-                foreach ($ignore_list as $i => $pcode) {
-                    if (in_array($pcode, $_REQUEST['product_codes'])) {
-                        unset($ignore_list[$i]);
+        if (!empty($_REQUEST['brand_ids'])) {
+            $_REQUEST['brand_ids'] = explode(',', $_REQUEST['brand_ids']);
+            foreach ($_REQUEST['brand_ids'] as $i => $brand_id) {
+                $ignore_list = db_get_field("SELECT ignore_list FROM ?:brand_ignore_list WHERE brand_id = ?i", $brand_id);
+                $ignore_list = !empty($ignore_list) ? unserialize($ignore_list) : array();
+                if (!empty($ignore_list)) {
+                    foreach ($ignore_list as $i => $pcode) {
+                        if (in_array($pcode, $_REQUEST['product_codes'])) {
+                            unset($ignore_list[$i]);
+                        }
                     }
+                    $_data = array(
+                        'brand_id' => $brand_id,
+                        'ignore_list' => serialize($ignore_list)
+                    );
+                    db_query("REPLACE INTO ?:brand_ignore_list ?e", $_data);
+                    fn_set_notification('N', __('notice'), __('updated_ignore_list'));
                 }
-                $_data = array(
-                    'brand_id' => $_REQUEST['brand_id'],
-                    'ignore_list' => serialize($ignore_list)
-                );
-                db_query("REPLACE INTO ?:brand_ignore_list ?e", $_data);
-                fn_set_notification('N', __('notice'), __('updated_ignore_list'));
             }
         }
         exit;
