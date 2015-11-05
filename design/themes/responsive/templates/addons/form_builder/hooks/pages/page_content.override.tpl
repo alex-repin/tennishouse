@@ -130,10 +130,9 @@
     </div>
 
     </form>
-
+</div>
     {/if}
 
     {hook name="pages:page_content"}{/hook}
 
-</div>
 {/if}
