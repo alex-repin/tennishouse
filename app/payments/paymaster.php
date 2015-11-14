@@ -48,7 +48,7 @@ if (defined('PAYMENT_NOTIFICATION')) {
     } elseif ($mode == 'return') {
 
         if (fn_check_payment_script('paymaster.php', $order_id)) {
-            fn_order_placement_routines('route', $order_id);
+            fn_order_placement_routines('route', $order_id, false);
         }
 
     } elseif ($mode == 'invoice') {
