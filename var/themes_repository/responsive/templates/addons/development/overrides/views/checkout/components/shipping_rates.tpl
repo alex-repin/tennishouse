@@ -114,7 +114,7 @@ function fn_calculate_total_shipping_cost() {
                     <div class="ty-shipping-options__method">
                     {hook name="checkout:shipping_method"}
                         {if $display == "radio"}
-                                <div id="shipping_group_{$group_key}_{$shipping.shipping_id}">
+                                <div class="ty-shipping-options__method-group" id="shipping_group_{$group_key}_{$shipping.shipping_id}">
                                     <div class="ty-shipping-options__method-info">
                                         <input type="radio" class="ty-valign" id="sh_{$group_key}_{$shipping.shipping_id}" name="shipping_ids[{$group_key}]" value="{$shipping.shipping_id}" onclick="fn_calculate_total_shipping_cost();" {$checked} />
                                         {if $shipping.icon}
