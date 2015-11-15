@@ -40,7 +40,7 @@ select {
     position: relative;
 }
 .pluso {
-    z-index: 100 !important;
+    z-index: 1000 !important;
 }
 .ty-form-builder .ty-coach-phone {
     font-size: 20px;
@@ -165,6 +165,15 @@ select {
 .ty-step__container-active {
     margin: 0 0 15px;
 }
+.ty-payments-list__item {
+    border-bottom: 1px solid #ccc;
+    height: 39px;
+    padding: 10px 0 6px 10px;
+    position: relative;
+}
+.ty-payments-list__item:hover {
+    background: lighten(@base, 2%);
+}
 .ty-payments-list__item-group {
     padding-left: 0;
 }
@@ -176,13 +185,13 @@ select {
     display: inline-block;
     position: relative;
     width: 500px;
+    vertical-align: middle;
 }
 .ty-payments-list__item-description {
     font-size: 11px;
-    left: 0;
-    top: 15px;
-    position: absolute;
     color: darken(@base, 30%);
+    margin-left: 5px;
+    display: inline;
 }
 .bottom-shipping-payment-text {
     display: inline-block;
@@ -1402,6 +1411,10 @@ label.cm-required::after {
 /*Player details*/
 
 /*Product page*/
+.ty-prices-container-left {
+    display: inline-block;
+    width: 325px;
+}
 .ty-consultation {
     display: inline-block;
     position: absolute;
@@ -1432,7 +1445,6 @@ label.cm-required::after {
 .ty-pc-zero-price-note {
     color: lighten(@font, 35%);
     display: inline-block;
-    margin: 6px 0 6px 10px;
     vertical-align: top;
 }
 .ty-product-free-shipping {
@@ -1652,7 +1664,7 @@ label.cm-required::after {
     padding: 10px 0 0 30px;
 }
 .ty-one-office {
-    padding: 5px 0;
+    padding: 15px 0 0;
 }
 .ty-other-pay {
     margin: 0;
@@ -1664,10 +1676,17 @@ label.cm-required::after {
 .checkout-steps .ty-btn {
     padding: 3px 14px;
 }
-.shipping_carrier_link {
-    margin: -12px 0 0 100px;
+.payment_carrier_link {
+    left: 136px;
+    position: absolute;
+    top: 32px;
 }
-.shipping_carrier_link a {
+.shipping_carrier_link {
+    left: 106px;
+    position: absolute;
+    top: 32px;
+}
+.shipping_carrier_link a, .payment_carrier_link a {
     font-size: 12px;
 }
 .ty-shipping-options__method-info {
@@ -1703,7 +1722,9 @@ label.cm-required::after {
 }
 .ty-shipping-options__method {
     border-bottom: 1px solid #ccc;
-    padding: 6px 0 6px 10px;
+    padding: 10px 0 6px 10px;
+    min-height: 39px;
+    position: relative;
 }
 .ty-shipping-options__method:hover {
     background: lighten(@base, 2%);

@@ -9,11 +9,6 @@
 
 <div class="quick-menu-container" id="quick_menu">
     <div class="quick-menu {if $settings.show_menu_mouseover == "Y"} quick-menu-show-on-hover{/if}">
-        <div style="display: inline-block;">
-            {$stats = ""|fn_get_memcached_stats}
-            {__("memcached")}: {if $stats.status}<span style="color: green;">{__("active")} ({$stats.used}Kb - {$stats.used_prc}% {__("used")})</span>{else}<span style="color: red;">{__("disabled")}</span>{/if}
-            
-        </div>
         <a id="sw_quick_menu_content"class="quick-menu-link {if $edit_quick_menu || $expand_quick_menu}open{/if} cm-combination">{__("quick_menu")}</a>
 
         <div id="quick_menu_content" class="quick-menu-content cm-popup-box{if !$edit_quick_menu && !$expand_quick_menu} hidden{/if}">
@@ -89,7 +84,7 @@
                    data-ca-event="ce.quick_menu_content_switch_callback" title="{__("edit")}"><i class="icon-edit hand"></i></a>
             </div>
         {/if}
-    </div>
+        </div>
     </div>
 
     {if $show_quick_popup}
@@ -145,5 +140,9 @@
             </form>
         </div>
     {/if}
-    <!--quick_menu--></div>
+<!--quick_menu--></div>
+<div style="float: right; padding: 9px 12px;">
+    {$stats = ""|fn_get_memcached_stats}
+    {__("memcached")}: {if $stats.status}<span style="color: green;">{__("active")} ({$stats.used}Kb - {$stats.used_prc}% {__("used")})</span>{else}<span style="color: red;">{__("disabled")}</span>{/if} <a class="cm-ajax" href="{"development.reset_memcached"|fn_url}">{__("reset")}</a>
+</div>
 {/if}

@@ -114,31 +114,42 @@ function fn_calculate_total_shipping_cost() {
                     <div class="ty-shipping-options__method">
                     {hook name="checkout:shipping_method"}
                         {if $display == "radio"}
-                                <div class="ty-shipping-options__method-info">
-                                    <input type="radio" class="ty-valign" id="sh_{$group_key}_{$shipping.shipping_id}" name="shipping_ids[{$group_key}]" value="{$shipping.shipping_id}" onclick="fn_calculate_total_shipping_cost();" {$checked} />
-                                    {if $shipping.icon}
-                                        {include file="common/image.tpl" obj_id=$shipping.shipping_id images=$shipping.icon image_width="70" image_height="35" keep_transparent=true}
-                                    {/if}
-                                    <label for="sh_{$group_key}_{$shipping.shipping_id}" class="ty-valign">{$shipping.shipping} {$delivery_time} - <b>{$rate nofilter}</b></label>
-                                    {if $shipping.website}
-                                    <div class="shipping_carrier_link">
-                                        <a target="_blank" href="{$shipping.website}">{$shipping.website}</a>
+                                <div id="shipping_group_{$group_key}_{$shipping.shipping_id}">
+                                    <div class="ty-shipping-options__method-info">
+                                        <input type="radio" class="ty-valign" id="sh_{$group_key}_{$shipping.shipping_id}" name="shipping_ids[{$group_key}]" value="{$shipping.shipping_id}" onclick="fn_calculate_total_shipping_cost();" {$checked} />
+                                        {if $shipping.icon}
+                                            {include file="common/image.tpl" obj_id=$shipping.shipping_id images=$shipping.icon image_width="70" image_height="35" keep_transparent=true}
+                                        {/if}
+                                        <label for="sh_{$group_key}_{$shipping.shipping_id}" class="ty-valign">{$shipping.shipping} {$delivery_time} - <b>{$rate nofilter}</b></label>
                                     </div>
-                                    {/if}
+                                    <div class="ty-shipping-options__method-payments">
+                                        {foreach from=$shipping.available_payments key="payment_type" item="payment_status"}
+                                            <div>
+                                                <div class="ty-shipping-options__method-payments-mark">
+                                                    {if $payment_status == 'Y'}
+                                                        <i class="ty-shipping-options__method-payments-check-icon"></i>
+                                                    {else}
+                                                        <i class="ty-shipping-options__method-payments-cross-icon"></i>
+                                                    {/if}
+                                                </div><div class="ty-shipping-options__method-payments-type">{if $payment_status == 'Y'}{__($payment_type)}{else}{__("`$payment_type`_disabled")}{/if}</div>
+                                            </div>
+                                        {/foreach}
+                                    </div>
                                 </div>
-                                <div class="ty-shipping-options__method-payments">
-                                    {foreach from=$shipping.available_payments key="payment_type" item="payment_status"}
-                                        <div>
-                                            <div class="ty-shipping-options__method-payments-mark">
-                                                {if $payment_status == 'Y'}
-                                                    <i class="ty-shipping-options__method-payments-check-icon"></i>
-                                                {else}
-                                                    <i class="ty-shipping-options__method-payments-cross-icon"></i>
-                                                {/if}
-                                            </div><div class="ty-shipping-options__method-payments-type">{if $payment_status == 'Y'}{__($payment_type)}{else}{__("`$payment_type`_disabled")}{/if}</div>
-                                        </div>
-                                    {/foreach}
+                                {if $shipping.website}
+                                <div class="shipping_carrier_link">
+                                    <a target="_blank" href="{$shipping.website}">{$shipping.website}</a>
                                 </div>
+                                {/if}
+                                <script type="text/javascript" class="cm-ajax-force">
+                                (function(_, $) {
+                                    $('#shipping_group_{$group_key}_{$shipping.shipping_id}').click(function(){$ldelim}
+                                        if (!$('#sh_{$group_key}_{$shipping.shipping_id}').is(':checked')) {
+                                            $('#sh_{$group_key}_{$shipping.shipping_id}').click();
+                                        }
+                                    {$rdelim});
+                                }(Tygh, Tygh.$));
+                                </script>
 
                         {elseif $display == "select"}
                             <option value="{$shipping.shipping_id}" {$selected}>{$shipping.shipping} {$delivery_time} - {$rate nofilter}</option>

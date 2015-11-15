@@ -338,7 +338,7 @@ function fn_get_payment_methods(&$auth, $lang_code = CART_LANGUAGE)
     }
 
     // [tennishouse]
-    $payment_methods = db_get_hash_array("SELECT ?:payments.payment_id, ?:payments.template, ?:payments.a_surcharge, ?:payments.p_surcharge, ?:payments.payment_category, ?:payments.min_limit, ?:payments.max_limit, ?:payment_descriptions.*, ?:payment_processors.processor, ?:payment_processors.type AS processor_type FROM ?:payments LEFT JOIN ?:payment_descriptions ON ?:payments.payment_id = ?:payment_descriptions.payment_id AND ?:payment_descriptions.lang_code = ?s LEFT JOIN ?:payment_processors ON ?:payment_processors.processor_id = ?:payments.processor_id WHERE 1 $condition ORDER BY ?:payments.position", 'payment_id', $lang_code);
+    $payment_methods = db_get_hash_array("SELECT ?:payments.payment_id, ?:payments.template, ?:payments.a_surcharge, ?:payments.p_surcharge, ?:payments.payment_category, ?:payments.min_limit, ?:payments.max_limit, ?:payments.website, ?:payment_descriptions.*, ?:payment_processors.processor, ?:payment_processors.type AS processor_type FROM ?:payments LEFT JOIN ?:payment_descriptions ON ?:payments.payment_id = ?:payment_descriptions.payment_id AND ?:payment_descriptions.lang_code = ?s LEFT JOIN ?:payment_processors ON ?:payment_processors.processor_id = ?:payments.processor_id WHERE 1 $condition ORDER BY ?:payments.position", 'payment_id', $lang_code);
     // [tennishouse]
 
     fn_set_hook('get_payment_methods', $payment_methods, $auth);

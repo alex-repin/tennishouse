@@ -736,6 +736,9 @@ if ($mode == 'calculate_balance') {
 //         }
 //     }
     exit;
+} elseif ($mode == 'reset_memcached') {
+    Memcache::instance()->call('flush');
+    exit;
 }
 
 function fn_normalize_string($string)
