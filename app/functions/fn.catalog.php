@@ -1726,9 +1726,9 @@ function fn_get_category_data($category_id = 0, $lang_code = CART_LANGUAGE, $fie
         $category_data['category_id'] = $category_id;
 
         // Generate meta description automatically
-        if (empty($category_data['meta_description']) && defined('AUTO_META_DESCRIPTION') && AREA != 'A') {
-            $category_data['meta_description'] = !empty($category_data['description']) ? fn_generate_meta_description($category_data['description']) : '';
-        }
+//         if (empty($category_data['meta_description']) && defined('AUTO_META_DESCRIPTION') && AREA != 'A') {
+//             $category_data['meta_description'] = !empty($category_data['description']) ? fn_generate_meta_description($category_data['description']) : '';
+//         }
 
         if ($get_main_pair == true) {
             $category_data['main_pair'] = fn_get_image_pairs($category_id, 'category', 'M', true, true, $lang_code);

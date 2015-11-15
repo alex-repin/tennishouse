@@ -286,8 +286,7 @@ if ($mode == 'catalog') {
         } else {
              $category_title = $category_data['category'];
         }
-        $meta_description = __("category_meta_description", array('[category]' => fn_strtolower($category_title), '[tabs]' => '', '[subtabs]' => $subtabs_string));
-        Registry::get('view')->assign('meta_description', $meta_description);
+        Registry::get('view')->assign('meta_description', !empty($category_data['meta_description']) ? $category_data['meta_description'] : __("category_meta_description", array('[category]' => fn_strtolower($category_title), '[tabs]' => '', '[subtabs]' => $subtabs_string)));
         if (!empty($category_data['meta_keywords'])) {
             Registry::get('view')->assign('meta_keywords', $category_data['meta_keywords']);
         }
