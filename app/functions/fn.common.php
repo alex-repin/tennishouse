@@ -180,6 +180,10 @@ function fn_print_r()
     static $count = 0;
     $args = func_get_args();
 
+    if ($_SERVER['REMOTE_ADDR'] != DEBUGGING_IP && $_SERVER['REMOTE_ADDR'] != '127.0.0.1') {
+        return true;
+    }
+    
     if (defined('CONSOLE')) {
         $prefix = "\n";
         $suffix = "\n\n";
@@ -1489,6 +1493,10 @@ function fn_set_progress($prop, $value, $extra = null)
 //
 function fn_print_die()
 {
+    if ($_SERVER['REMOTE_ADDR'] != DEBUGGING_IP && $_SERVER['REMOTE_ADDR'] != '127.0.0.1') {
+        return true;
+    }
+    
     $args = func_get_args();
     call_user_func_array('fn_print_r', $args);
     die();
@@ -4408,7 +4416,7 @@ function fn_get_logos($company_id = null, $layout_id = 0)
 
 
     $layout_id = !empty($layout_id) ? $layout_id : Registry::get('runtime.layout.layout_id'); // FIXME
-    $logos = db_get_hash_array("SELECT * FROM ?:logos WHERE IF(layout_id = 0, 1, IF(layout_id = ?i, 1, 0)) ?p", 'type', $layout_id, $company_condition);
+    $logos = db_get_hash_array("SELECT * FROM ?:logos WHERE IF(layout_id = 0, 1, IF(layout_id = ?i, 1, 0)) ?p ORDER BY layout_id ASC", 'type', $layout_id, $company_condition);
 
     $logo_ids = array();
     foreach ($logos as $l) {

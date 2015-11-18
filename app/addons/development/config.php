@@ -134,6 +134,8 @@ define('KIRSCHBAUM_BRAND_ID', 340);
 define('RACKETS_QTY_DSC_PRC', 5);
 
 define('LEARNING_CENTER_PAGE_ID', 53);
+define('LETS_PLAY_PAGE_ID', 75);
+define('LOYALITY_PROGRAM_PAGE_ID', 77);
 
 define('SIZE_CHART_TAB_ID', 10);
 

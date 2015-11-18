@@ -660,5 +660,9 @@
         <item lang="ru" id="what_for">Для чего они нужны ?</item>
         <item lang="ru" id="expert_consultation">Консультация специалиста</item>
         <item lang="ru" id="brands">Бренды</item>
+        <item lang="ru" id="my_orders">Мои заказы</item>
+        <item lang="ru" id="how_to_choose">Как выбрать?</item>
+        <item lang="ru" id="lets_play">Обучение теннису</item>
+        <item lang="ru" id="loyality_program">Программа лояльности</item>
     </language_variables>
 </addon>

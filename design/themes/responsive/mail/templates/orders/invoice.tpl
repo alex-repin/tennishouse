@@ -11,7 +11,7 @@
     {assign var="order_header" value=__("order_details")}
 {/if}
 
-<table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-table" style="height: 100%; background-color: #f4f6f8; font-size: 12px; font-family: Arial;">
+<table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-table" style="height: 100%; font-size: 12px; font-family: Arial;">
 <tr>
     <td align="center" style="width: 100%; height: 100%;">
     <table cellpadding="0" cellspacing="0" border="0" style=" width: 602px; table-layout: fixed; margin: 24px 0 24px 0;">
