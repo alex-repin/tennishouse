@@ -5,8 +5,8 @@
 {assign var="value" value=$user_data|fn_get_profile_field_value:$field}
 {if $value}
 <tr>
-    <td class="form-field-caption" width="30%" nowrap="nowrap">{$field.description}:&nbsp;</td>
-    <td>
+    <td style="font-style: italic;" width="300px" nowrap="nowrap">{if $field.description|strpos:__("city") !== false}{__("city")}{else}{$field.description}{/if}:&nbsp;</td>
+    <td width="300px;">
         {$value|default:"-"}
     </td>
 </tr>

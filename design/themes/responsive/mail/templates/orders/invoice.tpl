@@ -14,7 +14,7 @@
 <table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-table" style="height: 100%; font-size: 12px; font-family: Arial;">
 <tr>
     <td align="center" style="width: 100%; height: 100%;">
-    <table cellpadding="0" cellspacing="0" border="0" style=" width: 602px; table-layout: fixed; margin: 24px 0 24px 0;">
+    <table cellpadding="0" cellspacing="0" border="0" style=" width: 620px; table-layout: fixed; margin: 24px 0 24px 0;">
     <tr>
         <td style="background-color: #ffffff; border: 1px solid #e6e6e6; margin: 0px auto 0px auto; padding: 0px 44px 0px 46px; text-align: left;">
             <table cellpadding="0" cellspacing="0" border="0" width="100%" style="padding: 27px 0px 0px 0px; border-bottom: 1px solid #868686; margin-bottom: 8px;">

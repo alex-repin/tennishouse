@@ -1,4 +1,4 @@
-                        <p>
+                        <p style="margin-top: 50px;">
                             {__("admin_text_letter_footer", ["[company_name]" => $settings.Company.company_name])}
                         </p>
                     </td>
@@ -32,13 +32,16 @@
                             </div>
                             <div style="width: 100%;display: inline-block;">
                                 <span style="float: left;margin-right: 30px;">
-                                    <a target="_blank" style="font: 16px Play, sans-serif;text-decoration: underline;color: #565a5c;" href="{"orders.search"|fn_url:'C':'http'}">{__("my_orders")}</a>
+                                    <a target="_blank" style="font: 15px Play, sans-serif;text-decoration: underline;color: #565a5c;" href="{"categories.view?category_id=`$smarty.const.RACKETS_CATEGORY_ID`"|fn_url:'C':'http'}">{__("catalog")}</a>
                                 </span>
                                 <span style="float: left;margin-right: 30px;">
-                                    <a target="_blank" style="font: 16px Play, sans-serif;text-decoration: underline;color: #565a5c;" href="{"pages.view?page_id=`$smarty.const.LETS_PLAY_PAGE_ID`"|fn_url:'C':'http'}">{__("lets_play")}</a>
+                                    <a target="_blank" style="font: 15px Play, sans-serif;text-decoration: underline;color: #565a5c;" href="{"orders.search"|fn_url:'C':'http'}">{__("my_orders")}</a>
                                 </span>
                                 <span style="float: left;margin-right: 30px;">
-                                    <a target="_blank" style="font: 16px Play, sans-serif;text-decoration: underline;color: #565a5c;" href="{"pages.view?page_id=`$smarty.const.LOYALITY_PROGRAM_PAGE_ID`"|fn_url:'C':'http'}">{__("loyality_program")}</a>
+                                    <a target="_blank" style="font: 15px Play, sans-serif;text-decoration: underline;color: #565a5c;" href="{"pages.view?page_id=`$smarty.const.LETS_PLAY_PAGE_ID`"|fn_url:'C':'http'}">{__("lets_play")}</a>
+                                </span>
+                                <span style="float: left;margin-right: 30px;">
+                                    <a target="_blank" style="font: 15px Play, sans-serif;text-decoration: underline;color: #565a5c;" href="{"pages.view?page_id=`$smarty.const.LOYALITY_PROGRAM_PAGE_ID`"|fn_url:'C':'http'}">{__("loyality_program")}</a>
                                 </span>
                             </div>
                             <div style="width: 100%;display: inline-block;color: #a0a0a0;font: 13px Play, sans-serif;padding-bottom: 20px;line-height: 12px;padding-top: 20px;">

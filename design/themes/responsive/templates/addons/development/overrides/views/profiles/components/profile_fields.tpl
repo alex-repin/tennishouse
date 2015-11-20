@@ -15,8 +15,6 @@
             <input class="radio cm-switch-availability cm-switch-visibility" type="radio" name="ship_to_another" value="1" id="sw_{$body_id}_suffix_no" {if $ship_to_another}checked="checked"{/if} /><label for="sw_{$body_id}_suffix_no">{__("no")}</label>
         </div>
     </div>
-{else}
-    <input type="hidden" name="ship_to_another" value="1" />
 {/if}
 
 {if ($address_flag && !$ship_to_another && ($section == "S" || $section == "B")) || $disabled_by_default}
