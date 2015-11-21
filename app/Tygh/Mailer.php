@@ -151,8 +151,8 @@ class Mailer extends \phpmailer
             $body = $params['body'];
         }
 
-        $mailer->Body = $mailer->attachImages($body);
-//         $mailer->Body = str_replace('src="http:', 'src="https:', $body);
+//         $mailer->Body = $mailer->attachImages($body);
+        $mailer->Body = str_replace('src="http:', 'src="https:', $body);
         $mailer->Subject = trim($subject);
 
         if (!empty($params['attachments'])) {

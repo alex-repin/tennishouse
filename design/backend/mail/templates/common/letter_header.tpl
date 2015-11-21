@@ -38,7 +38,7 @@
                             <tr>
                                 <td>
                                     <a target="_blank" style="text-decoration: none;" href="{""|fn_url:'C':'http'}">
-                                        <img src="{$logos.theme.image.image_path}" width="{$logos.theme.image.image_x}" height="{$logos.theme.image.image_y}" alt="{$logos.theme.image.alt}" />
+                                        <img src="{$images_dir}/addons/development/dark_bg_logo_220.png" width="220px" height="55px" alt="TennisHouse_logo" />
                                     </a>
                                 </td>
 <!--                                <td style="color: #fff;font: 21px Play,sans-serif;text-align: right;">

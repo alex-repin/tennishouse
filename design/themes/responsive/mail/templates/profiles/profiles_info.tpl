@@ -24,7 +24,7 @@
             </tr>
             {/if}
             <tr>
-                <td style="font-style: italic;" nowrap>{__("login")} {__("url")}:&nbsp;</td>
+                <td style="font-style: italic;" nowrap>{__("login_url")}:&nbsp;</td>
                 <td>{if $user_data.company_id}{"auth.login_form?company_id=`$user_data.company_id`"|fn_url:'C':'http'}{else}{""|fn_url:'C':'http'}{/if}</td>
             </tr>
         {/if}

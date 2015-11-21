@@ -5828,3 +5828,13 @@ function fn_read_title($title)
     $brand = !empty($_SESSION['product_features'][BRAND_FEATURE_ID]['variant_name']) ? $_SESSION['product_features'][BRAND_FEATURE_ID]['variant_name'] : __("this_brand");
     return str_replace(array('[brand]'), array($brand), $title);
 }
+
+function fn_convert_case($string)
+{
+    $result = $string;
+    if (function_exists('mb_convert_case')) {
+        $result = mb_convert_case($string, MB_CASE_TITLE, "UTF-8");
+    }
+    
+    return $result;
+}

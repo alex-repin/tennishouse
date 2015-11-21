@@ -1,6 +1,6 @@
 {include file="common/letter_header.tpl"}
 
-{__("dear")} <b>{$order_info.firstname}</b>,<br />
+{__("dear")} <b>{$order_info.firstname|fn_convert_case}</b>,<br />
 
 {$order_status.email_header nofilter}
 {if $order_info.user_id && $order_info.status == 'A'}
