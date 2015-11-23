@@ -667,8 +667,8 @@
         <item lang="ru" id="how_to_choose">Как выбрать?</item>
         <item lang="ru" id="lets_play">Обучение теннису</item>
         <item lang="ru" id="loyality_program">Программа лояльности</item>
-        <item lang="ru" id="text_confirm_email">Пожалуйста, пройдите по следующей ссылке для того, что подтвердить свой профиль TennisHouse</item>
-        <item lang="ru" id="text_decline_email"><![CDATA[Если Вы получили это письмо по ошибке и Вы не регистрировали профиль на <a href="http://www.tennishouse.ru" target="_blank">TennisHouse.ru</a>, то кликайте сюда]]></item>
+        <item lang="ru" id="text_confirm_email">Для подтверждения своего профиля TennisHouse, пожалуйста, пройдите по следующей ссылке</item>
+        <item lang="ru" id="text_decline_email"><![CDATA[Если Вы получили это письмо по ошибке и Вы не регистрировали профиль на <a href="http://www.tennishouse.ru" target="_blank">TennisHouse.ru</a>, то кликайте]]></item>
         <item lang="ru" id="text_resend_email_confirmation_link">Срок хранения активационной ссылки истек. Получить новую ссылку можно на странице Вашего профиля.</item>
         <item lang="ru" id="successfully_confirmed">Подтверждение email</item>
         <item lang="ru" id="success_email_confirmation_text"><![CDATA[Поздравляем ! Ваш email адрес успешно подтвержден.<br/>Теперь вы можете пользоваться всеми возможностями магазина, полный список которых доступен в выпадающем меню «Мой профиль» справа сверху.]]></item>
@@ -676,5 +676,14 @@
         <item lang="ru" id="success_email_decline_text">Ваш email адрес успешно удален.</item>
         <item lang="ru" id="check_email">Проверить почту</item>
         <item lang="ru" id="confirm_email">Подтвердить почту</item>
+        <item lang="ru" id="confirm_email_again">Отправить повторно</item>
+        <item lang="ru" id="not_my_account">не мой профиль</item>
+        <item lang="ru" id="email_footer_text">Пожалуйста, не отвечайте на это письмо, оно было автоматически сгенерировано системой электронной рассылки TennisHouse.</item>
+        <item lang="ru" id="orders_working_hours_text">Рабочее время обработки заказов: [hours]</item>
+        <item lang="ru" id="phone_working_hours_text">Рабочее время приема звонков: [hours]</item>
+        <item lang="ru" id="phone_working_hours">Пн - Вс с 9.00 до 20.00</item>
+        <item lang="ru" id="orders_working_hours">Пн - Пт с 9.00 до 18.00</item>
+        <item lang="ru" id="confirm_email_note">Для подтверждения адреса электронной почты на него было выслано письмо со ссылкой для активации.</item>
+        <item lang="ru" id="confirmation_sent_check_email">Подтверждение отправлено, проверьте почту</item>
     </language_variables>
 </addon>

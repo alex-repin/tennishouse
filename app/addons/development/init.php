@@ -76,5 +76,6 @@ fn_register_hooks(
     'pre_place_order',
     'update_payment_surcharge',
     'change_order_status_post',
-    'update_user_pre'
+    'update_user_pre',
+    'get_user_info'
 );

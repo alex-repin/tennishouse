@@ -1940,6 +1940,9 @@ input:focus::placeholder, textarea:focus::placeholder {
 /*Category page*/
 
 /*Profile page*/
+.ty-email-confirmation_sent {
+    color: lighten(@font, 40%);
+}
 .ty-email-confirmation__yes-block {
     left: 270px;
     position: absolute;
@@ -1949,6 +1952,7 @@ input:focus::placeholder, textarea:focus::placeholder {
     left: 272px;
     position: absolute;
     top: 33px;
+    width: 210px;
 }
 .ty-email-confirmation_yes {
     background: url("../../../design/themes/responsive/media/images/addons/development/cm.png") no-repeat transparent;
@@ -1973,7 +1977,7 @@ input:focus::placeholder, textarea:focus::placeholder {
 .ty-email-confirmation_not-text {
     display: inline-block;
     color: #f78282;
-    padding: 0 0 0 45px;
+    padding: 0 0 0 35px;
     margin-top: -6px;
 }
 .ty-profile-field__switch {
@@ -2006,7 +2010,7 @@ input:focus::placeholder, textarea:focus::placeholder {
         width: auto;
     }
 }
-.ty-account, .ty-mainbox-body > .ty-login {
+.ty-account, .ty-recover-password, .ty-mainbox-body > .ty-login {
     .ty-captcha__label {
         display: none;
     }

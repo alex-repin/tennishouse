@@ -238,6 +238,32 @@ if ($mode == 'add') {
     
 } elseif ($mode == 'send_email_confirmation') {
 
+    if (!empty($_REQUEST['user_id'])) {
+        $email = db_get_field("SELECT email FROM ?:users WHERE user_id = ?i", $_REQUEST['user_id']);
+        $user_data = fn_get_user_short_info($_REQUEST['user_id']);
+        
+        if (!empty($email) && !empty($user_data)) {
+            $ekey = fn_generate_ekey($_REQUEST['user_id'], 'E', SECONDS_IN_DAY);
+            Mailer::sendMail(array(
+                'to' => $email,
+                'from' => 'company_users_department',
+                'data' => array(
+                    'user_data' => $user_data,
+                    'confirm_email' => true,
+                    'ekey' => $ekey
+                ),
+                'tpl' => 'profiles/create_profile.tpl',
+                'company_id' => $user_data['company_id']
+            ), fn_check_user_type_admin_area($user_data['user_type']) ? 'A' : 'C', CART_LANGUAGE);
+            
+            fn_set_notification('N', __('information'), __('confirm_email_note'));
+            $user_data['confirmation_sent'] = 'Y';
+            Registry::get('view')->assign('user_data', $user_data);
+            Registry::get('view')->assign('mail_server', fn_get_mail_server($email));
+            Registry::get('view')->display('views/profiles/components/profiles_account.tpl');
+        }
+    }
+    
     exit;
 } elseif ($mode == 'confirm_email') {
 
@@ -249,7 +275,9 @@ if ($mode == 'add') {
 
             if ($user_status == LOGIN_STATUS_OK) {
                 db_query("UPDATE ?:users SET email_confirmed = 'Y' WHERE user_id = ?i", $u_id);
+                fn_set_notification('N', __('information'), __('success_email_confirmation_text'));
 
+                return array(CONTROLLER_STATUS_REDIRECT, "profiles.update");
             } else {
                 fn_set_notification('E', __('error'), __('error_login_not_exists'));
                 
@@ -267,10 +295,11 @@ if ($mode == 'add') {
 
     if (!empty($_REQUEST['ekey'])) {
         $u_id = fn_get_object_by_ekey($_REQUEST['ekey'], 'E');
+        $user_data = fn_get_user_info($u_id, false);
 
-        if (!empty($u_id)) {
+        if (!empty($u_id) && !empty($user_data) && $user_data['email_confirmed'] != 'Y') {
+        
             fn_delete_user($u_id);
-
         } else {
             fn_set_notification('E', __('error'), __('text_ekey_not_valid'));
 

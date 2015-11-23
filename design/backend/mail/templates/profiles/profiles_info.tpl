@@ -72,19 +72,7 @@
     <table cellpadding="4" cellspacing="0" border="0" width="100%">
     {if ($profile_fields.B || $profile_fields.S) && $user_data.register_at_checkout != "Y" && !($created && $settings.General.quick_registration == "Y")}
     <tr>
-        <td valign="top" colspan="2">
-        {if $profile_fields.B}
-            <p></p>
-            <table style="table-layout: fixed">
-                {include file="profiles/profile_fields_info.tpl" fields=$profile_fields.B title=__("billing_address")}
-            </table>
-        {else}
-            &nbsp;
-        {/if}
-        </td>
-    </tr>
-    <tr>
-        <td valign="top" colspan="2">
+        <td valign="top" colspan="3">
         {if $profile_fields.S}
             <p></p>
             <table>
@@ -95,8 +83,20 @@
         {/if}
         </td>
     </tr>
+    <tr>
+        <td valign="top" colspan="3">
+        {if $profile_fields.B}
+            <p></p>
+            <table>
+                {include file="profiles/profile_fields_info.tpl" fields=$profile_fields.B title=__("billing_address")}
+            </table>
+        {else}
+            &nbsp;
+        {/if}
+        </td>
+    </tr>
     {/if}
-    {if $profile_fields.C}
+    {if $contact_fields.1|trim || $contact_fields.0|trim}
         <tr>
             <td valign="top" width="50%">
                 <p></p>
@@ -104,6 +104,7 @@
                     {include file="profiles/profile_fields_info.tpl" fields=$contact_fields.0 title=__("contact_information")}
                 </table>
             </td>
+            <td width="1%">&nbsp;</td>
             <td valign="top" width="49%">
                 {if $contact_fields.1|trim}
                 <p></p>

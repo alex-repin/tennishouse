@@ -5640,7 +5640,7 @@ function fn_generate_ekey($object_id, $type, $ttl = 0, $ekey = '')
  */
 function fn_get_object_by_ekey($ekey, $type)
 {
-    $key_data = db_get_row("SELECT object_id, object_string FROM ?:ekeys WHERE ekey = ?s AND object_type = ?s AND ttl > ?i", $ekey, $type, time());
+    $key_data = db_get_row("SELECT object_id, object_string FROM ?:ekeys WHERE ekey = ?s AND object_type = ?s AND (ttl > ?i OR ttl = '0')", $ekey, $type, time());
     $return = false;
 
     if (!empty($key_data)) {
@@ -5654,6 +5654,13 @@ function fn_get_object_by_ekey($ekey, $type)
     }
 
     return $return;
+}
+
+function fn_ekey_exists($ekey, $type)
+{
+    $exists = db_get_field("SELECT ekey FROM ?:ekeys WHERE object_id = ?i AND object_type = ?s", $ekey, $type);
+
+    return (empty($exists)) ? false : true;
 }
 
 /**

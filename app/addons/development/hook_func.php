@@ -17,6 +17,14 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_get_user_info($user_id, $get_profile, $profile_id, &$user_data)
+{
+    if (AREA == 'C') {
+        $user_data['confirmation_sent'] = (fn_ekey_exists($user_id, 'E')) ? 'Y' : 'N';
+        $user_data['mail_server'] = fn_get_mail_server($user_data['email']);
+    }
+}
+
 function fn_development_update_user_pre($user_id, &$user_data, $auth, $ship_to_another, $notify_user, $send_password)
 {
     $names = array(

@@ -108,7 +108,7 @@
                 {if $contact_fields.1|trim}
                 <p></p>
                 <table>
-                    {include file="profiles/profile_fields_info.tpl" fields=$contact_fields.1 title=__("contact_information")}
+                    {include file="profiles/profile_fields_info.tpl" fields=$contact_fields.1}
                 </table>
                 {/if}
             </td>

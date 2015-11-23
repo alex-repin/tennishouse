@@ -44,8 +44,10 @@
                                     <a target="_blank" style="font: 15px Play, sans-serif;text-decoration: underline;color: #565a5c;" href="{"pages.view?page_id=`$smarty.const.LOYALITY_PROGRAM_PAGE_ID`"|fn_url:'C':'http'}">{__("loyality_program")}</a>
                                 </span>
                             </div>
-                            <div style="width: 100%;display: inline-block;color: #a0a0a0;font: 13px Play, sans-serif;padding-bottom: 20px;line-height: 12px;padding-top: 20px;">
-                                {__("working_hours")}
+                            <div style="width: 100%;display: inline-block;color: #a0a0a0;font: 11px Play, sans-serif;padding-bottom: 20px;line-height: 12px;padding-top: 20px;">
+                                {__("email_footer_text")}<br />
+                                {__("phone_working_hours_text", ["[hours]" => __("phone_working_hours")])}<br />
+                                {__("orders_working_hours_text", ["[hours]" => __("orders_working_hours")])}<br />
                             </div>
                         </div>
                     </td>

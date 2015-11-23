@@ -6,7 +6,7 @@
 {if $value}
 <tr>
     <td style="font-style: italic;" width="300px" nowrap="nowrap">{if $field.description|strpos:__("city") !== false}{__("city")}{else}{$field.description}{/if}:&nbsp;</td>
-    <td width="300px;">
+    <td>
         {$value|default:"-"}
     </td>
 </tr>
