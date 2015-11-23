@@ -44,20 +44,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $is_valid_user_data = false;
             }
 
-            if (empty($_REQUEST['user_data']['password1']) || empty($_REQUEST['user_data']['password2'])) {
+            if (empty($_REQUEST['user_data']['password1'])) {
 
-                if (empty($_REQUEST['user_data']['password1'])) {
-                    fn_set_notification('W', __('warning'), __('error_validator_required', array('[field]' => __('password'))));
-                }
+                fn_set_notification('W', __('warning'), __('error_validator_required', array('[field]' => __('password'))));
 
-                if (empty($_REQUEST['user_data']['password2'])) {
-                    fn_set_notification('W', __('warning'), __('error_validator_required', array('[field]' => __('confirm_password'))));
-                }
                 $is_valid_user_data = false;
 
-            } elseif ($_REQUEST['user_data']['password1'] !== $_REQUEST['user_data']['password2']) {
-                fn_set_notification('W', __('warning'), __('error_validator_password', array('[field2]' => __('password'), '[field]' => __('confirm_password'))));
-                $is_valid_user_data = false;
             }
 
             if (!$is_valid_user_data) {
@@ -241,7 +233,52 @@ if ($mode == 'add') {
         return array(CONTROLLER_STATUS_REDIRECT, "profiles.add");
     }
 
+    Registry::get('view')->assign('mail_server', fn_get_mail_server(db_get_field("SELECT email FROM ?:users WHERE user_id = ?i", $auth['user_id'])));
     fn_add_breadcrumb(__('registration'));
+    
+} elseif ($mode == 'send_email_confirmation') {
+
+    exit;
+} elseif ($mode == 'confirm_email') {
+
+    if (!empty($_REQUEST['ekey'])) {
+        $u_id = fn_get_object_by_ekey($_REQUEST['ekey'], 'E');
+
+        if (!empty($u_id)) {
+            $user_status = fn_login_user($u_id);
+
+            if ($user_status == LOGIN_STATUS_OK) {
+                db_query("UPDATE ?:users SET email_confirmed = 'Y' WHERE user_id = ?i", $u_id);
+
+            } else {
+                fn_set_notification('E', __('error'), __('error_login_not_exists'));
+                
+                return array(CONTROLLER_STATUS_REDIRECT, "index.index");
+            }
+        } else {
+            fn_set_notification('E', __('error'), __('text_resend_email_confirmation_link'));
+
+            return array(CONTROLLER_STATUS_REDIRECT, "index.index");
+        }
+    } else {
+        return array(CONTROLLER_STATUS_REDIRECT, "index.index");
+    }
+} elseif ($mode == 'decline_email') {
+
+    if (!empty($_REQUEST['ekey'])) {
+        $u_id = fn_get_object_by_ekey($_REQUEST['ekey'], 'E');
+
+        if (!empty($u_id)) {
+            fn_delete_user($u_id);
+
+        } else {
+            fn_set_notification('E', __('error'), __('text_ekey_not_valid'));
+
+            return array(CONTROLLER_STATUS_REDIRECT, "index.index");
+        }
+    } else {
+        return array(CONTROLLER_STATUS_REDIRECT, "index.index");
+    }
 }
 
 /**

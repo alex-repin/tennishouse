@@ -5622,7 +5622,7 @@ function fn_generate_ekey($object_id, $type, $ttl = 0, $ekey = '')
     $_data = array (
         'object_type' => $type,
         'ekey' => $key,
-        'ttl' => time() + $ttl
+        'ttl' => ($ttl > 0) ? time() + $ttl : 0
     );
 
     $_data[$field_name] = $object_id;

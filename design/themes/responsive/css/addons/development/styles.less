@@ -14,7 +14,7 @@
     border-radius: 0;
 }
 input[type="text"], input[type="password"] {
-    border-radius: 2px;
+    border-radius: 0;
 }
 select {
     min-width: 2em;
@@ -270,6 +270,66 @@ select {
 label.cm-required::after {
     content: none;
 }
+
+/* Placeholder */
+.placeholder {
+    color: lighten(@font, 30%) !important;
+    white-space: nowrap;
+    cursor: text;
+    transition: opacity .1s,font-size .1s
+}
+.placeholder:focus {
+    opacity: 0.6;
+    -ms-filter: "alpha(opacity=60)"
+}
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+    color: lighten(@font, 30%);
+    opacity: 1;
+    -ms-filter: "alpha(opacity=100)"
+}
+input:-moz-placeholder, textarea:-moz-placeholder {
+    color: lighten(@font, 30%);
+    opacity: 1;
+    -ms-filter: "alpha(opacity=100)"
+}
+input::-moz-placeholder, textarea::-moz-placeholder {
+    color: lighten(@font, 30%);
+    opacity: 1;
+    -ms-filter: "alpha(opacity=100)"
+}
+input:-ms-input-placeholder, textarea:-ms-input-placeholder {
+    color: lighten(@font, 30%);
+    opacity: 1;
+    -ms-filter: "alpha(opacity=100)"
+}
+input::placeholder, textarea::placeholder {
+    color: lighten(@font, 30%);
+    opacity: 1;
+    -ms-filter: "alpha(opacity=100)"
+}
+input:focus::-webkit-input-placeholder, textarea:focus::-webkit-input-placeholder {
+    opacity: 0.6;
+    -ms-filter: "alpha(opacity=60)"
+}
+input:focus:-moz-placeholder, textarea:focus:-moz-placeholder {
+    opacity: 0.6;
+    -ms-filter: "alpha(opacity=60)"
+}
+input:focus::-moz-placeholder, textarea:focus::-moz-placeholder {
+    opacity: 0.6;
+    -ms-filter: "alpha(opacity=60)"
+}
+input:focus:-ms-input-placeholder, textarea:focus:-ms-input-placeholder {
+    opacity: 0.6;
+    -ms-filter: "alpha(opacity=60)"
+}
+input:focus::placeholder, textarea:focus::placeholder {
+    opacity: 0.6;
+    -ms-filter: "alpha(opacity=60)"
+}
+/* Placeholder */
+
+
 /* Tooltip */
 /*
  * Template: templates/common/tooltip.tpl
@@ -1880,6 +1940,133 @@ label.cm-required::after {
 /*Category page*/
 
 /*Profile page*/
+.ty-email-confirmation__yes-block {
+    left: 270px;
+    position: absolute;
+    top: 32px;
+}
+.ty-email-confirmation__not-block {
+    left: 272px;
+    position: absolute;
+    top: 33px;
+}
+.ty-email-confirmation_yes {
+    background: url("../../../design/themes/responsive/media/images/addons/development/cm.png") no-repeat transparent;
+    display: inline-block;
+    height: 30px;
+    vertical-align: top;
+}
+.ty-email-confirmation_not {
+    background: url("../../../design/themes/responsive/media/images/addons/development/crm.png") no-repeat transparent;
+    display: inline-block;
+    height: 30px;
+    vertical-align: top;
+}
+.ty-profile-email .ty-input-text {
+    padding: 4px 30px 4px 8px;
+}
+.ty-email-confirmation_yes-text {
+    display: inline-block;
+    color: #7bbf6a;
+    padding: 5px 0 0 45px;
+}
+.ty-email-confirmation_not-text {
+    display: inline-block;
+    color: #f78282;
+    padding: 0 0 0 45px;
+    margin-top: -6px;
+}
+.ty-profile-field__switch {
+    border-radius: 0;
+    padding: 15px 5px 15px 20px;
+}
+.ty-profile-field__item {
+/*    input[type="text"], input[type="password"] {
+        height: 40px;
+        font-size: 18px;
+    }
+    .ty-calendar__block {
+        width: 140px;
+    }*/
+}
+.ty-account-benefits, .ty-login-info {
+    margin-top: 0;
+}
+#step_one_login .ty-control-group__title {
+    display: none;
+}
+#step_one_register {
+    .ty-control-group__title, .ty-captcha__label {
+        display: none;
+    }
+    .ty-control-group {
+        margin: 0 0 12px;
+    }
+    .ty-control-group .ty-input-text {
+        width: auto;
+    }
+}
+.ty-account, .ty-mainbox-body > .ty-login {
+    .ty-captcha__label {
+        display: none;
+    }
+    a.ty-password-forgot__a {
+        padding: 2px 0;
+    }
+    .buttons-container {
+        background-color: transparent;
+    }
+    input[type="text"], input[type="password"] {
+        color: #000;
+    }
+    .ty-captcha__img {
+        margin: 4px 0;
+    }
+    input[type="text"], input[type="password"] {
+        height: 40px;
+        font-size: 18px;
+    }
+    input[type="text"]:focus,
+    input[type="password"]:focus,
+    textarea:focus {
+        outline: 0;
+        .transition(none);
+    }
+    .ty-control-group {
+        margin-bottom: 10px;
+        position: relative;
+    }
+    .ty-control-group__title {
+        display: none;
+        font-size: 13px;
+        font-weight: normal;
+        left: 30px;
+        padding: 0;
+        position: absolute;
+        top: 5px;
+        color: darken(@base, 40%);
+    }
+    .cm-hint {
+        color: darken(@base, 20%);
+    }
+    .ty-btn__secondary {
+        width: 100%;
+    }
+    .ty-btn {
+        font-size: 18px;
+        padding: 9px 14px;
+    }
+    .buttons-container {
+        padding: 0;
+    }
+}
+.ty-mainbox-body > .ty-login .ty-btn__secondary {
+    width: 375px;
+}
+.ty-profile-email {
+    display: inline-block;
+    width: 300px;
+}
 .ty-profile-reward-points {
     font-size: 21px;
     position: absolute;

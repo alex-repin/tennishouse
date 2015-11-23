@@ -1340,22 +1340,16 @@ function fn_update_user($user_id, $user_data, &$auth, $ship_to_another, $notify_
         }
 
         // Check the passwords
-        if (!empty($user_data['password1']) || !empty($user_data['password2'])) {
+        if (!empty($user_data['password1'])) {
             $original_password = trim($user_data['password1']);
             $user_data['password1'] = !empty($user_data['password1']) ? trim($user_data['password1']) : '';
-            $user_data['password2'] = !empty($user_data['password2']) ? trim($user_data['password2']) : '';
         }
 
         // if the passwords are not set and this is not a forced password check
         // we will not update password, otherwise let's check password
-        if (!empty($_SESSION['auth']['forced_password_change']) || !empty($user_data['password1']) || !empty($user_data['password2'])) {
+        if (!empty($_SESSION['auth']['forced_password_change']) || !empty($user_data['password1'])) {
 
             $valid_passwords = true;
-
-            if ($user_data['password1'] != $user_data['password2']) {
-                $valid_passwords = false;
-                fn_set_notification('E', __('error'), __('error_passwords_dont_match'));
-            }
 
             // PCI DSS Compliance
             if (fn_check_user_type_admin_area($user_data['user_type'])) {
@@ -1363,14 +1357,14 @@ function fn_update_user($user_id, $user_data, &$auth, $ship_to_another, $notify_
                 $msg = array();
                 // Check password length
                 $min_length = Registry::get('settings.Security.min_admin_password_length');
-                if (strlen($user_data['password1']) < $min_length || strlen($user_data['password2']) < $min_length) {
+                if (strlen($user_data['password1']) < $min_length) {
                     $valid_passwords = false;
                     $msg[] = str_replace("[number]", $min_length, __('error_password_min_symbols'));
                 }
 
                 // Check password content
                 if (Registry::get('settings.Security.admin_passwords_must_contain_mix') == 'Y') {
-                    $tmp_result = preg_match('/\d+/', $user_data['password1']) && preg_match('/\D+/', $user_data['password1']) && preg_match('/\d+/', $user_data['password2']) && preg_match('/\D+/', $user_data['password2']);
+                    $tmp_result = preg_match('/\d+/', $user_data['password1']) && preg_match('/\D+/', $user_data['password1']);
                     if (!$tmp_result) {
                         $valid_passwords = false;
                         $msg[] = __('error_password_content');
@@ -1451,6 +1445,7 @@ function fn_update_user($user_id, $user_data, &$auth, $ship_to_another, $notify_
 
     unset($user_data['user_id']);
 
+    $ekey = '';
     if (!empty($user_id)) {
         db_query("UPDATE ?:users SET ?u WHERE user_id = ?i", $user_data, $user_id);
 
@@ -1465,6 +1460,7 @@ function fn_update_user($user_id, $user_data, &$auth, $ship_to_another, $notify_
         }
 
         $user_id = db_query("INSERT INTO ?:users ?e" , $user_data);
+        $ekey = fn_generate_ekey($user_id, 'E');
 
         fn_log_event('users', 'create', array(
             'user_id' => $user_id,
@@ -1557,6 +1553,7 @@ function fn_update_user($user_id, $user_data, &$auth, $ship_to_another, $notify_
                 'password' => $original_password,
                 'send_password' => $send_password,
                 'user_data' => $user_data,
+                'ekey' => $ekey
             ),
             'tpl' => 'profiles/' . $prefix . '_profile.tpl',
             'company_id' => $user_data['company_id']
@@ -2654,4 +2651,40 @@ function fn_send_usergroup_status_notification($user_id, $usergroup_ids, $status
         'tpl' => 'profiles/usergroup_' . $prefix . '.tpl',
         'company_id' => $user_data['company_id'],
     ), fn_check_user_type_admin_area($user_data['user_type']) ? 'A' : 'C', $user_data['lang_code']);
+}
+
+function fn_get_mail_server($email)
+{
+    $mail_server = substr($email, strpos($email, '@') + 1);
+    
+    $servers = array(
+        'mail.ru' => 'https://e.mail.ru/',
+        'bk.ru' => 'https://e.mail.ru/',
+        'list.ru' => 'https://e.mail.ru/',
+        'inbox.ru' => 'https://e.mail.ru/',
+        'yandex.ru' => 'https://mail.yandex.ru/',
+        'ya.ru' => 'https://mail.yandex.ru/',
+        'yandex.ua' => 'https://mail.yandex.ua/',
+        'yandex.by' => 'https://mail.yandex.by/',
+        'yandex.kz' => 'https://mail.yandex.kz/',
+        'yandex.com' => 'https://mail.yandex.com/',
+        'gmail.com' => 'https://mail.google.com/',
+        'googlemail.com' => 'https://mail.google.com/',
+        'outlook.com' => 'https://mail.live.com/',
+        'hotmail.com' => 'https://mail.live.com/',
+        'live.ru' => 'https://mail.live.com/',
+        'live.com' => 'https://mail.live.com/',
+        'me.com' => 'https://www.icloud.com/',
+        'icloud.com' => 'https://www.icloud.com/',
+        'rambler.ru' => 'https://mail.rambler.ru/',
+        'yahoo.com' => 'https://mail.yahoo.com/',
+        'ukr.net' => 'https://mail.ukr.net/',
+        'i.ua' => 'http://mail.i.ua/',
+        'bigmir.net' => 'http://mail.bigmir.net/',
+        'tut.by' => 'https://mail.tut.by/',
+        'inbox.lv' => 'https://www.inbox.lv/',
+        'mail.kz' => 'http://mail.kz/'
+    );
+    
+    return (!empty($servers[$mail_server])) ? $servers[$mail_server] : false;
 }

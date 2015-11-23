@@ -3736,17 +3736,6 @@ var Tygh = {
                     set_mark = true;
                 }
 
-                // Check for passwords
-                if (lbl.hasClass('cm-password')) {
-                    var pair_lbl = $('label.cm-password', form).not(lbl);
-                    var pair_elm = $('#' + pair_lbl.prop('for'));
-
-                    if (elm.val() && elm.val() != pair_elm.val()) {
-                        _formMessage(_.tr('error_validator_password'), lbl, pair_lbl);
-                        set_mark = true;
-                    }
-                }
-
                 if (validators) {
                     for (var i = 0; i < validators.length; i++) {
                         if (lbl.hasClass(validators[i].class_name)) {

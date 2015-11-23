@@ -324,6 +324,9 @@
         <item>
             ALTER TABLE `cscart_categories` ADD `cross_categories` TEXT NOT NULL ;
         </item>
+        <item>
+            ALTER TABLE `cscart_users` ADD `email_confirmed` CHAR( 1 ) NOT NULL DEFAULT 'N';
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -664,5 +667,14 @@
         <item lang="ru" id="how_to_choose">Как выбрать?</item>
         <item lang="ru" id="lets_play">Обучение теннису</item>
         <item lang="ru" id="loyality_program">Программа лояльности</item>
+        <item lang="ru" id="text_confirm_email">Пожалуйста, пройдите по следующей ссылке для того, что подтвердить свой профиль TennisHouse</item>
+        <item lang="ru" id="text_decline_email"><![CDATA[Если Вы получили это письмо по ошибке и Вы не регистрировали профиль на <a href="http://www.tennishouse.ru" target="_blank">TennisHouse.ru</a>, то кликайте сюда]]></item>
+        <item lang="ru" id="text_resend_email_confirmation_link">Срок хранения активационной ссылки истек. Получить новую ссылку можно на странице Вашего профиля.</item>
+        <item lang="ru" id="successfully_confirmed">Подтверждение email</item>
+        <item lang="ru" id="success_email_confirmation_text"><![CDATA[Поздравляем ! Ваш email адрес успешно подтвержден.<br/>Теперь вы можете пользоваться всеми возможностями магазина, полный список которых доступен в выпадающем меню «Мой профиль» справа сверху.]]></item>
+        <item lang="ru" id="successfully_declined">Удаление email</item>
+        <item lang="ru" id="success_email_decline_text">Ваш email адрес успешно удален.</item>
+        <item lang="ru" id="check_email">Проверить почту</item>
+        <item lang="ru" id="confirm_email">Подтвердить почту</item>
     </language_variables>
 </addon>

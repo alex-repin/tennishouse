@@ -9,13 +9,13 @@
             <div class="checkout-login-form">{include file="common/subheader.tpl" title=__("returning_customer")}
         {/if}
         <div class="ty-control-group">
-            <label for="login_{$id}" class="ty-login__filed-label ty-control-group__label cm-required cm-trim{if $settings.General.use_email_as_login == "Y"} cm-email{/if}">{if $settings.General.use_email_as_login == "Y"}{__("email")}{else}{__("username")}{/if}</label>
-            <input type="text" id="login_{$id}" name="user_login" size="30" value="{$config.demo_username}" class="ty-login__input" autofocus/>
+            <label for="login_{$id}" class="ty-login__filed-label ty-control-group__title cm-required cm-trim{if $settings.General.use_email_as_login == "Y"} cm-email{/if}">{if $settings.General.use_email_as_login == "Y"}{__("email")}{else}{__("username")}{/if}</label>
+            <input type="text" id="login_{$id}" name="user_login" size="30" placeholder="{if $settings.General.use_email_as_login == "Y"}{__("email")}{else}{__("username")}{/if}" value="{$config.demo_username}" class="ty-login__input" autofocus/>
         </div>
 
         <div class="ty-control-group password-forgot">
-            <label for="psw_{$id}" class="ty-login__filed-label ty-control-group__label ty-password-forgot__label cm-required">{__("password")}</label><a href="{"auth.recover_password"|fn_url}" class="ty-password-forgot__a"  tabindex="5">{__("forgot_password_question")}</a>
-            <input type="password" id="psw_{$id}" name="password" size="30" value="{$config.demo_password}" class="ty-login__input" maxlength="32" />
+            <label for="psw_{$id}" class="ty-login__filed-label ty-control-group__title ty-password-forgot__label cm-required">{__("password")}</label><a href="{"auth.recover_password"|fn_url}" class="ty-password-forgot__a"  tabindex="5">{__("forgot_password_question")}</a>
+            <input type="password" id="psw_{$id}" name="password" size="30" value="{$config.demo_password}" placeholder="{__("password")}" class="ty-login__input" maxlength="32" />
         </div>
 
         {include file="common/image_verification.tpl" option="use_for_login" align="left"}

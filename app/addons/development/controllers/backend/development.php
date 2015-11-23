@@ -739,6 +739,25 @@ if ($mode == 'calculate_balance') {
 } elseif ($mode == 'reset_memcached') {
     Memcache::instance()->call('flush');
     exit;
+} elseif ($mode == 'fix_phones') {
+    $phones = db_get_array("SELECT user_id, phone FROM ?:users WHERE phone != ''");
+    foreach ($phones as $i => $dt) {
+        $dt['phone'] = preg_replace('/[^0-9]/', '', $dt['phone'])/*str_replace(' ', '', $phone)*/;
+        if ($dt['phone'][0] == '8') {
+            $dt['phone'] = str_replace('8', '7', $dt['phone']);
+        }
+        if ($dt['phone'][0] == '9') {
+            $dt['phone'] = '7' . $dt['phone'];
+        }
+        if ($dt['phone'][0] == '7') {
+            $dt['phone'] = '+' . $dt['phone'];
+        }
+        if (strlen($dt['phone']) == 12) {
+            $dt['phone'] = substr($dt['phone'], 0, 2) . '(' . substr($dt['phone'], 2, 3) . ')' . substr($dt['phone'], 5, 3) . '-' . substr($dt['phone'], 8, 2) . '-' . substr($dt['phone'], 10);
+        }
+        db_query("UPDATE ?:users SET phone = ?s WHERE user_id = ?i", $dt['phone'], $dt['user_id']);
+    }
+    exit;
 }
 
 function fn_normalize_string($string)
