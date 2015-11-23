@@ -258,8 +258,8 @@ if ($mode == 'add') {
             
             fn_set_notification('N', __('information'), __('confirm_email_note'));
             $user_data['confirmation_sent'] = 'Y';
+            $user_data['mail_server'] = fn_get_mail_server($email);
             Registry::get('view')->assign('user_data', $user_data);
-            Registry::get('view')->assign('mail_server', fn_get_mail_server($email));
             Registry::get('view')->display('views/profiles/components/profiles_account.tpl');
         }
     }

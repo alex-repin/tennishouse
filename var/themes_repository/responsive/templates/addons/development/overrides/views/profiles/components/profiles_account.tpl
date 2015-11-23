@@ -26,7 +26,12 @@
                     <div class="ty-email-confirmation__not-block">
                         <div class="ty-email-confirmation_not"><div class="ty-email-confirmation_not-text">
                             {if $user_data.confirmation_sent == 'Y'}
-                                    <span class="ty-email-confirmation_sent">{__("confirmation_sent_check_email")}.</span> <a class="cm-ajax" href="{"profiles.send_email_confirmation?user_id=`$user_data.user_id`"|fn_url}" data-ca-target-id="email_confirmation">{__("confirm_email_again")}?</a>
+                                    {if $user_data.mail_server}
+                                        <a href="{$user_data.mail_server}" target="_blank" class="ty-btn ty-btn__primary">{__("check_email")}</a>
+                                    {else}
+                                        <span class="ty-email-confirmation_sent">{__("confirmation_sent_check_email")}.</span> 
+                                    {/if}
+                                    <a class="cm-ajax" href="{"profiles.send_email_confirmation?user_id=`$user_data.user_id`"|fn_url}" data-ca-target-id="email_confirmation">{__("confirm_email_again")}?</a>
                             {else}
                                 <a class="cm-ajax ty-btn ty-btn__tertiary" href="{"profiles.send_email_confirmation?user_id=`$user_data.user_id`"|fn_url}" data-ca-target-id="email_confirmation">{__("confirm_email")}</a>
                             {/if}
