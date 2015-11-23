@@ -5615,9 +5615,17 @@ function fn_order_notification(&$order_info, $edp_data = array(), $force_notific
             $secondary_currency = $order_info['secondary_currency'];
         }
 
+        // [tennishouse]
+        if (!empty($order_info['delivery_time']) && in_array($order_info['status'], array('O', 'A', 'P'))) {
+            $order_info['destination_delivery_info'] = __("destination_delivery_time", array('[city]' => $order_info['s_city'])) . ': ' . $order_info['delivery_time'] . ' ' . __("workdays");
+        }
+        if ($order_info['status'] == 'A' && !empty($order_info['shipping'][0]['office_data'])) {
+            $order_info['office_info'] = $order_info['shipping'][0]['office_data'];
+        }
+        // [tennishouse]
+        
         // Notify customer
         if ($notify_user == true) {
-
             Mailer::sendMail(array(
                 'to' => $order_info['email'],
                 'from' => 'company_orders_department',

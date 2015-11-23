@@ -327,6 +327,9 @@
         <item>
             ALTER TABLE `cscart_users` ADD `email_confirmed` CHAR( 1 ) NOT NULL DEFAULT 'N';
         </item>
+        <item>
+            ALTER TABLE `cscart_orders` ADD `delivery_time` VARCHAR( 32 ) NOT NULL ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -635,7 +638,7 @@
         <item lang="ru" id="payment_surcharge_included">Доп. сбор включен в итого</item>
         <item lang="ru" id="update_info">Обновить информацию</item>
         <item lang="ru" id="free_shipping_product_text">Этот товар доставляется бесплатно по всей России</item>
-        <item lang="ru" id="order_status_tracking_info"><![CDATA[Информация по отслеживанию посылки находится на <a href="[order_page_link]" target="_blank">детальной странице заказа</a>.]]></item>
+        <item lang="ru" id="order_status_tracking_info"><![CDATA[Дополнительная информация по отслеживанию посылки находится на <a href="[order_page_link]" target="_blank">детальной странице заказа</a>.]]></item>
         <item lang="ru" id="last_item_notification">ВНИМАНИЕ, этот товар почти распродан, поэтому для подтверждения заказа с Вами свяжется наш менеджер.</item>
         <item lang="ru" id="pc_zero_price_note">для получения цены выберите ракетку и сумку</item>
         <item lang="ru" id="payment_on_delivery_disabled">В данном городе невозможен прием наложенного платежа</item>
@@ -681,9 +684,14 @@
         <item lang="ru" id="email_footer_text">Пожалуйста, не отвечайте на это письмо, оно было автоматически сгенерировано системой электронной рассылки TennisHouse.</item>
         <item lang="ru" id="orders_working_hours_text">Рабочее время обработки заказов: [hours]</item>
         <item lang="ru" id="phone_working_hours_text">Рабочее время приема звонков: [hours]</item>
-        <item lang="ru" id="phone_working_hours">Пн - Вс с 9.00 до 20.00</item>
+        <item lang="ru" id="phone_working_hours">Пн - Сб с 9.00 до 20.00</item>
         <item lang="ru" id="orders_working_hours">Пн - Пт с 9.00 до 18.00</item>
         <item lang="ru" id="confirm_email_note">Для подтверждения адреса электронной почты на него было выслано письмо со ссылкой для активации.</item>
         <item lang="ru" id="confirmation_sent_check_email">Подтверждение отправлено, проверьте почту</item>
+        <item lang="ru" id="workdays">раб.дн.</item>
+        <item lang="ru" id="order_process_time">Время сборки заказа</item>
+        <item lang="ru" id="destination_delivery_time">Время доставки до города [city]</item>
+        <item lang="ru" id="worktime">Рабочее время</item>
+        <item lang="ru" id="destination_point">Пункт назначения</item>
     </language_variables>
 </addon>

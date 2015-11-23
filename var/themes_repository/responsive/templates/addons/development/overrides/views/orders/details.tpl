@@ -363,4 +363,10 @@
     {__("order")}&nbsp;#{$order_info.order_id}
     <em class="ty-date">({$order_info.timestamp|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"})</em>
     <em class="ty-status">{__("status")}: {include file="common/status.tpl" status=$order_info.status display="view" name="update_order[status]"}</em>
+    <div class="ty-delivery-time">
+        <div class="ty-process-time">{__("order_process_time")}: 1 {__("workdays")}</div>
+        {if $order_info.delivery_time}
+            <div class="ty-service-delivery-time">{__("destination_delivery_time", ["[city]" => $order_info.s_city])}: {$order_info.delivery_time} {__("workdays")}</div>
+        {/if}
+    </div>
 {/capture}

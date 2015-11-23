@@ -168,6 +168,9 @@ function fn_development_calculate_cart_post(&$cart, $auth, $calculate_shipping, 
     if (!empty($cart['shipping'])) {
         foreach ($cart['shipping'] as $i => $shp) {
             $cart['net_total'] += $shp['original_rate'];
+            if (!empty($shp['delivery_time'])) {
+                $cart['delivery_time'] = preg_replace('/[^\-0-9]/', '', $shp['delivery_time']);
+            }
         }
     }
 }

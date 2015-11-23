@@ -742,7 +742,7 @@ if ($mode == 'calculate_balance') {
 } elseif ($mode == 'fix_phones') {
     $phones = db_get_array("SELECT user_id, phone FROM ?:users WHERE phone != ''");
     foreach ($phones as $i => $dt) {
-        $dt['phone'] = preg_replace('/[^0-9]/', '', $dt['phone'])/*str_replace(' ', '', $phone)*/;
+        $dt['phone'] = preg_replace('/[^0-9]/', '', $dt['phone']);
         if ($dt['phone'][0] == '8') {
             $dt['phone'] = str_replace('8', '7', $dt['phone']);
         }

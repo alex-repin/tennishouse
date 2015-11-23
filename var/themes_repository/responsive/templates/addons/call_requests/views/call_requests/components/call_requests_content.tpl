@@ -14,7 +14,7 @@
 {/if}
 
 <div class="ty-cr-information">
-    {__("call_requests.information", ['[working_hours]' => __("working_hours")])}
+    {__("call_requests.information", ['[working_hours]' => __("phone_working_hours")])}
 </div>
 
 <div class="ty-control-group">
