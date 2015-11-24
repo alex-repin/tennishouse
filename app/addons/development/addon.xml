@@ -693,5 +693,6 @@
         <item lang="ru" id="destination_delivery_time">Время доставки до города [city]</item>
         <item lang="ru" id="worktime">Рабочее время</item>
         <item lang="ru" id="destination_point">Пункт назначения</item>
+        <item lang="ru" id="text_order_placed_successfully_question">Если у Вас имеются вопросы, обращайтесь по телефону +7 (499) 393-39-87</item>
     </language_variables>
 </addon>

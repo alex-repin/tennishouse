@@ -3,7 +3,9 @@
 <span class="ty-success-registration__text">
     {__("success_registration_text")}
     {if $mail_server}
-        <a href="{$mail_server}" target="_blank" class="ty-btn ty-btn__primary">{__("check_email")}</a>
+        <div class="ty-success-add__confirm-email">
+            <a href="{$mail_server}" target="_blank" class="ty-btn ty-btn__primary">{__("check_email")}</a>
+        </div>
     {/if}
 </span>
 <ul class="success-registration__list">

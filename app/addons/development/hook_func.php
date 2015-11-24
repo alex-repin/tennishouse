@@ -142,6 +142,9 @@ function fn_development_pre_get_orders($params, &$fields, $sortings, $get_totals
 
 function fn_development_get_order_info(&$order, $additional_data)
 {
+    if (fn_strtolower($order['s_city']) == fn_strtolower(Registry::get('settings.Company.company_city'))) {
+        unset($order['delivery_time']);
+    }
     $order['income'] = $order['total'] - $order['net_total'];
 }
 

@@ -299,7 +299,26 @@ if ($mode == 'add') {
 
         if (!empty($u_id) && !empty($user_data) && $user_data['email_confirmed'] != 'Y') {
         
-            fn_delete_user($u_id);
+            fn_set_hook('pre_delete_user', $u_id);
+            fn_set_hook('delete_user', $u_id, $user_data);
+
+            db_query("DELETE FROM ?:users WHERE user_id = ?i", $u_id);
+            db_query('DELETE FROM ?:profile_fields_data WHERE object_id = ?i AND object_type = ?s', $u_id, 'U');
+            db_query('DELETE FROM ?:user_session_products WHERE user_id = ?i', $u_id);
+            db_query('DELETE FROM ?:user_data WHERE user_id = ?i', $u_id);
+            db_query('UPDATE ?:orders SET user_id = 0 WHERE user_id = ?i', $u_id);
+
+            $profile_ids = db_get_fields('SELECT profile_id FROM ?:user_profiles WHERE user_id = ?i', $u_id);
+            foreach ($profile_ids as $profile_id) {
+                fn_delete_user_profile($u_id, $profile_id, true);
+            }
+
+            if (!fn_allowed_for('ULTIMATE:FREE')) {
+                db_query('DELETE FROM ?:usergroup_links WHERE user_id = ?i', $u_id);
+            }
+
+            fn_set_hook('post_delete_user', $u_id, $user_data, $result);
+            
         } else {
             fn_set_notification('E', __('error'), __('text_ekey_not_valid'));
 
