@@ -740,22 +740,22 @@ if ($mode == 'calculate_balance') {
     Memcache::instance()->call('flush');
     exit;
 } elseif ($mode == 'fix_phones') {
-    $phones = db_get_array("SELECT user_id, phone FROM ?:users WHERE phone != ''");
+    $phones = db_get_array("SELECT profile_id, s_phone FROM ?:user_profiles WHERE s_phone != ''");
     foreach ($phones as $i => $dt) {
-        $dt['phone'] = preg_replace('/[^0-9]/', '', $dt['phone']);
-        if ($dt['phone'][0] == '8') {
-            $dt['phone'] = str_replace('8', '7', $dt['phone']);
+        $dt['s_phone'] = preg_replace('/[^0-9]/', '', $dt['s_phone']);
+        if ($dt['s_phone'][0] == '8') {
+            $dt['s_phone'] = str_replace('8', '7', $dt['s_phone']);
         }
-        if ($dt['phone'][0] == '9') {
-            $dt['phone'] = '7' . $dt['phone'];
+        if ($dt['s_phone'][0] == '9') {
+            $dt['s_phone'] = '7' . $dt['s_phone'];
         }
-        if ($dt['phone'][0] == '7') {
-            $dt['phone'] = '+' . $dt['phone'];
+        if ($dt['s_phone'][0] == '7') {
+            $dt['s_phone'] = '+' . $dt['s_phone'];
         }
-        if (strlen($dt['phone']) == 12) {
-            $dt['phone'] = substr($dt['phone'], 0, 2) . '(' . substr($dt['phone'], 2, 3) . ')' . substr($dt['phone'], 5, 3) . '-' . substr($dt['phone'], 8, 2) . '-' . substr($dt['phone'], 10);
+        if (strlen($dt['s_phone']) == 12) {
+            $dt['s_phone'] = substr($dt['s_phone'], 0, 2) . '(' . substr($dt['s_phone'], 2, 3) . ')' . substr($dt['s_phone'], 5, 3) . '-' . substr($dt['s_phone'], 8, 2) . '-' . substr($dt['s_phone'], 10);
         }
-        db_query("UPDATE ?:users SET phone = ?s WHERE user_id = ?i", $dt['phone'], $dt['user_id']);
+        db_query("UPDATE ?:user_profiles SET s_phone = ?s WHERE profile_id = ?i", $dt['s_phone'], $dt['profile_id']);
     }
     exit;
 }
