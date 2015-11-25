@@ -11,10 +11,10 @@
     {assign var="order_header" value=__("order_details")}
 {/if}
 
-<table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-table" style="height: 100%; background-color: #f4f6f8; font-size: 12px; font-family: Arial;">
+<table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-table" style="height: 100%; font-size: 12px; font-family: Arial;">
 <tr>
     <td align="center" style="width: 100%; height: 100%;">
-    <table cellpadding="0" cellspacing="0" border="0" style=" width: 602px; table-layout: fixed; margin: 24px 0 24px 0;">
+    <table cellpadding="0" cellspacing="0" border="0" style=" width: 620px; table-layout: fixed; margin: 24px 0 24px 0;">
     <tr>
         <td style="background-color: #ffffff; border: 1px solid #e6e6e6; margin: 0px auto 0px auto; padding: 0px 44px 0px 46px; text-align: left;">
             <table cellpadding="0" cellspacing="0" border="0" width="100%" style="padding: 27px 0px 0px 0px; border-bottom: 1px solid #868686; margin-bottom: 8px;">
@@ -231,7 +231,7 @@
                         {hook name="orders:product_info"}
                         {if $oi.product_code}<p style="margin: 2px 0px 3px 0px;">{__("sku")}: {$oi.product_code}</p>{/if}
                         {/hook}
-                        {if $oi.product_options}<br/>{include file="common/options_info.tpl" product_options=$oi.product_options}{/if}
+                        {if $oi.product_options}{include file="common/options_info.tpl" product_options=$oi.product_options}{/if}
                     </td>
                     <td style="padding: 5px 10px; background-color: #ffffff; text-align: center; font-size: 12px; font-family: Arial;">{$oi.amount}</td>
                     <td style="padding: 5px 10px; background-color: #ffffff; text-align: right; font-size: 12px; font-family: Arial;">{if $oi.extra.exclude_from_calculate}{__("free")}{else}{include file="common/price.tpl" value=$oi.original_price}{/if}</td>

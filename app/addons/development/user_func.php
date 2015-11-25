@@ -21,6 +21,18 @@ use Tygh\Menu;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_send_sms_aero($to, $text)
+{
+    $to = '79259749247';
+    
+    fn_print_die(Registry::get('settings'));
+    $data = array(
+        'user' => Registry::get('settings.addons'),
+    );
+    $result = Http::get("http://gate.smsaero.ru/send/", $get_data);
+    fn_print_die($to, $text);
+}
+
 function fn_process_php_errors($errno, $errstr, $errfile, $errline, $errcontext)
 {
     $dirs = Registry::get('config.dir');

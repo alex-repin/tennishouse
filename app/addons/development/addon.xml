@@ -45,6 +45,27 @@
                     </item>
                 </items>
             </section>
+            <section id="sms_aero">
+                <translations>
+                    <item lang="ru">Настройки SMS Aero API</item>
+                </translations>
+                <items>
+                    <item id="login">
+                        <type>input</type>
+                        <default_value>samurai7@mail.ru</default_value>
+                        <translations>
+                            <item lang="ru">Логин</item>
+                        </translations>
+                    </item>
+                    <item id="password">
+                        <type>input</type>
+                        <default_value>samurai7</default_value>
+                        <translations>
+                            <item lang="ru">Пароль</item>
+                        </translations>
+                    </item>
+                </items>
+            </section>
         </sections>
     </settings>
     <compatibility>
@@ -329,6 +350,9 @@
         </item>
         <item>
             ALTER TABLE `cscart_orders` ADD `delivery_time` VARCHAR( 32 ) NOT NULL ;
+        </item>
+        <item>
+            ALTER TABLE `cscart_status_descriptions` ADD `sms_text` VARCHAR( 255 ) NOT NULL ;
         </item>
     </queries>
     <language_variables>
@@ -692,7 +716,9 @@
         <item lang="ru" id="order_process_time">Время сборки заказа</item>
         <item lang="ru" id="destination_delivery_time">Время доставки до города [city]</item>
         <item lang="ru" id="worktime">Рабочее время</item>
-        <item lang="ru" id="destination_point">Пункт назначения</item>
+        <item lang="ru" id="destination_point">Пункт выдачи заказа</item>
         <item lang="ru" id="text_order_placed_successfully_question">Если у Вас имеются вопросы, обращайтесь по телефону +7 (499) 393-39-87</item>
+        <item lang="ru" id="sms_text">Текст смс</item>
+        <item lang="ru" id="notify_customer_sms">Информировать покупателя по смс</item>
     </language_variables>
 </addon>

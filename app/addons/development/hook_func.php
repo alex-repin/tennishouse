@@ -17,6 +17,70 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_get_notification_rules(&$force_notification, $params, $disable_notification)
+{
+    if ($disable_notification) {
+        $force_notification['S'] = false;
+    } else {
+        if (!empty($params['notify_user_sms']) || $params === true) {
+            $force_notification['S'] = true;
+        } else {
+            if (AREA == 'A') {
+                $force_notification['S'] = false;
+            }
+        }
+    }
+}
+
+function fn_development_order_notification($order_info, $order_statuses, $force_notification)
+{
+    if (!is_array($force_notification)) {
+        $force_notification = fn_get_notification_rules($force_notification, !$force_notification);
+    }
+    $order_statuses = fn_get_statuses(STATUSES_ORDER, array(), true, false, ($order_info['lang_code'] ? $order_info['lang_code'] : CART_LANGUAGE), $order_info['company_id']);
+    $status_params = $order_statuses[$order_info['status']]['params'];
+
+    $notify_user_sms = isset($force_notification['S']) ? $force_notification['S'] : (!empty($status_params['notify_sms']) && $status_params['notify_sms'] == 'Y' ? true : false);
+
+    if ($notify_user_sms == true) {
+
+        $order_status = $order_statuses[$order_info['status']];
+        $status_settings = $order_statuses[$order_info['status']]['params'];
+        $profile_fields = fn_get_profile_fields('I', '', $order_info['lang_code']);
+        $phone = preg_replace('/[^0-9]/', '', $order_info['phone']);
+        if (!empty($order_status['sms_text']) && strlen($phone) == 11 && $phone[0] == '7') {
+            if (strpos($order_status['sms_text'], '[order_id]')) {
+                $order_status['sms_text'] = str_replace('[order_id]', $order_info['order_id'], $order_status['sms_text']);
+            }
+            if (strpos($order_status['sms_text'], '[delivery_time]')) {
+                $delivery_time = '';
+                if (!empty($order_info['s_city']) && !empty($order_info['delivery_time'])) {
+                    $delivery_time = ' ' . __("destination_delivery_time", array('[city]' => $order_info['s_city'])) . ': ' . $order_info['delivery_time'] . __("workdays");
+                }
+                $order_status['sms_text'] = str_replace('[delivery_time]', $delivery_time, $order_status['sms_text']);
+            }
+            if (strpos($order_status['sms_text'], '[office_info]')) {
+                $office_info = '';
+                if (!empty($order_info['shipping'][0]['office_data'])) {
+                    $office_info = ' ' . __("destination_point") . ': ' . $order_info['shipping'][0]['office_data']['City'] . ',' . $order_info['shipping'][0]['office_data']['Address'] . ',' . $order_info['shipping'][0]['office_data']['WorkTime'] . ',' . $order_info['shipping'][0]['office_data']['Phone'];
+                }
+                $order_status['sms_text'] = str_replace('[office_info]', $office_info, $order_status['sms_text']);
+            }
+            fn_send_sms_aero($phone, $order_status['sms_text']);
+        }
+    }
+}
+
+function fn_development_get_status_params_definition(&$status_params, $type)
+{
+    $notify_sms = array (
+        'type' => 'checkbox',
+        'label' => 'notify_customer_sms',
+        'default_value' => 'N'
+    );
+    $status_params = fn_insert_before_key($status_params, 'notify_department', 'notify_sms', $notify_sms);
+}
+
 function fn_development_get_user_info($user_id, $get_profile, $profile_id, &$user_data)
 {
     if (AREA == 'C') {

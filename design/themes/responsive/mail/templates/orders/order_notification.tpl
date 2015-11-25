@@ -15,6 +15,10 @@
             <td colspan="2" class="form-title">{__("destination_point")}<hr size="1" noshade></td>
         </tr>
         <tr>
+            <td style="font-style: italic;" nowrap>{__("city")}:&nbsp;</td>
+            <td >{$order_info.office_info.City}</td>
+        </tr>
+        <tr>
             <td style="font-style: italic;" nowrap>{__("address")}:&nbsp;</td>
             <td >{$order_info.office_info.Address}</td>
         </tr>

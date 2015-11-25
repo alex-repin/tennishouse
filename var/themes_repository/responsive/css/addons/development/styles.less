@@ -273,13 +273,23 @@ label.cm-required::after {
 .ty-delivery-time {
     display: block;
 }
+.ty-delivery-time__checkout {
+    display: block;
+    padding: 10px 0;
+}
 .ty-process-time {
     display: block;
     color: darken(@base, 30%);
 }
+.ty-process-time__checkout {
+    display: block;
+}
 .ty-service-delivery-time {
     display: block;
     color: darken(@base, 30%);
+}
+.ty-service-delivery-time__checkout {
+    display: block;
 }
 
 /* Placeholder */
@@ -1951,6 +1961,11 @@ input:focus::placeholder, textarea:focus::placeholder {
 /*Category page*/
 
 /*Profile page*/
+.ty-success-add__confirm-email {
+    display: block;
+    padding-top: 20px;
+    text-align: center;
+}
 .ty-email-confirmation_sent {
     color: lighten(@font, 40%);
 }
@@ -2021,7 +2036,7 @@ input:focus::placeholder, textarea:focus::placeholder {
         width: auto;
     }
 }
-.ty-account, .ty-recover-password, .ty-mainbox-body > .ty-login {
+.ty-account, .ty-recover-password, .ty-mainbox-body > .ty-login, .ty-checkout-complete__create-account .ty-login {
     .ty-captcha__label {
         display: none;
     }
