@@ -24,6 +24,7 @@
                 <items>
                     <item id="api_key">
                         <type>input</type>
+                        <default_value>5enp7qu98pdmiufh6tmgmxi6r7zu4mskopregiwe</default_value>
                     </item>
                     <item id="list_name">
                         <type>selectbox</type>
