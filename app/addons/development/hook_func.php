@@ -66,7 +66,7 @@ function fn_development_order_notification($order_info, $order_statuses, $force_
                 }
                 $order_status['sms_text'] = str_replace('[office_info]', $office_info, $order_status['sms_text']);
             }
-            fn_send_sms_aero($phone, $order_status['sms_text']);
+            fn_rus_unisender_send_sms($order_status['sms_text'], $phone);
         }
     }
 }

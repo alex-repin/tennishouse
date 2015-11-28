@@ -29,3 +29,7 @@ msgctxt "SettingsOptions::google_analytics::track_ecommerce"
 msgid "Track e-commerce transactions"
 msgstr "Отслеживать продажи"
 
+msgctxt "SettingsOptions::google_analytics::remarketing_code"
+msgid "Remarketing code"
+msgstr "Код ремаркетинга"
+

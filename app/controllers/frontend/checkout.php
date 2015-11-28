@@ -380,6 +380,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $cart['payment_info'] = $_REQUEST['payment_info'];
         }
 
+        if (!empty($_REQUEST['customer_notes'])) {
+            $cart['notes'] = $_REQUEST['customer_notes'];
+        }
+
         if (empty($_REQUEST['payment_info']) && !empty($cart['extra_payment_info'])) {
             $cart['payment_info'] = empty($cart['payment_info']) ? array() : $cart['payment_info'];
             $cart['payment_info'] = array_merge($cart['extra_payment_info'], $cart['payment_info']);
@@ -569,10 +573,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             fn_update_payment_surcharge($cart, $auth);
             fn_save_cart_content($cart, $auth['user_id']);
-        }
-
-        if (!empty($_REQUEST['customer_notes'])) {
-            $cart['notes'] = $_REQUEST['customer_notes'];
         }
 
         // Recalculate the cart

@@ -12,10 +12,15 @@
                 <items>
                     <item id="tracking_code">
                         <type>input</type>
+                        <default_value>UA-62726865-1</default_value>
                     </item>
                     <item id="track_ecommerce">
                         <type>checkbox</type>
                         <default_value>Y</default_value>
+                    </item>
+                    <item id="remarketing_code">
+                        <type>input</type>
+                        <default_value>957380278</default_value>
                     </item>
                 </items>
             </section>

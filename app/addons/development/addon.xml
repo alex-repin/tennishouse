@@ -73,6 +73,19 @@
     </compatibility>
     <queries>
         <item>
+            REPLACE INTO `cscart_payment_processors` (
+                `processor_id` ,
+                `processor` ,
+                `processor_script` ,
+                `processor_template` ,
+                `admin_template` ,
+                `callback` ,
+                `type`
+            ) VALUES (
+                '134' , 'OpenBank', 'openbank.php', 'views/orders/components/payments/cc_outside.tpl', 'openbank.tpl', 'Y', 'P'
+            );
+        </item>
+        <item>
             CREATE TABLE IF NOT EXISTS `cscart_players` (
             `player_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
             `player` varchar(128) NOT NULL,
@@ -720,5 +733,6 @@
         <item lang="ru" id="text_order_placed_successfully_question">Если у Вас имеются вопросы, обращайтесь по телефону +7 (499) 393-39-87</item>
         <item lang="ru" id="sms_text">Текст смс</item>
         <item lang="ru" id="notify_customer_sms">Информировать покупателя по смс</item>
+        <item lang="ru" id="order_notes_text">Например, предпочтительное время, когда Вам удобно было бы получить заказ</item>
     </language_variables>
 </addon>

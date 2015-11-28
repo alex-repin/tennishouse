@@ -4311,9 +4311,9 @@ function fn_order_placement_routines($action = '', $order_id = 0, $force_notific
             } elseif ($status == STATUS_BACKORDERED_ORDER) {
                 fn_set_notification('W', __('important'), __('text_order_backordered'));
             } else {
+                $_payment_info = db_get_field("SELECT data FROM ?:order_data WHERE order_id = ?i AND type = 'P'", $order_id);
                 if ($area == 'A' || $action == 'repay') {
                     if ($status != STATUS_CANCELED_ORDER) {
-                        $_payment_info = db_get_field("SELECT data FROM ?:order_data WHERE order_id = ?i AND type = 'P'", $order_id);
                         if (!empty($_payment_info)) {
                             $_payment_info = unserialize(fn_decrypt_text($_payment_info));
                             $_msg = !empty($_payment_info['reason_text']) ? $_payment_info['reason_text'] : '';
@@ -4332,7 +4332,14 @@ function fn_order_placement_routines($action = '', $order_id = 0, $force_notific
                     $_SESSION['cart'][($status == STATUS_INCOMPLETED_ORDER ? 'processed_order_id' : 'failed_order_id')] = $child_orders;
                 }
                 if ($status == STATUS_INCOMPLETED_ORDER || ($action == 'repay' && $status == STATUS_CANCELED_ORDER)) {
-                    fn_set_notification('W', __('important'), __('text_transaction_cancelled'));
+                    if (!empty($_payment_info)) {
+                        $_payment_info = unserialize(fn_decrypt_text($_payment_info));
+                        $_msg = !empty($_payment_info['reason_text']) ? $_payment_info['reason_text'] : '';
+                        $_msg .= empty($_msg) ? __('text_transaction_cancelled') : '';
+                        fn_set_notification('W', '', $_msg);
+                    } else {
+                        fn_set_notification('W', __('important'), __('text_transaction_cancelled'));
+                    }
                 }
             }
         }
@@ -4355,7 +4362,7 @@ function fn_order_placement_routines($action = '', $order_id = 0, $force_notific
         if ($area == 'A') {
             fn_redirect("orders.details?order_id=$order_id");
         } else {
-            fn_redirect('checkout.' . ($_error == true ? (Registry::get('settings.General.checkout_style') != 'multi_page' ? 'checkout' : 'summary') : "complete?order_id=$order_id"));
+            fn_redirect($action == 'repay' ? "orders.details?order_id=$order_id" : ('checkout.' . ($_error == true ? (Registry::get('settings.General.checkout_style') != 'multi_page' ? 'checkout' : 'summary') : "complete?order_id=$order_id")));
         }
     } elseif ($action == 'index_redirect') {
         fn_redirect(fn_url('', 'C', 'http'));

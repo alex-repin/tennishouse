@@ -114,6 +114,7 @@
 
         {hook name="checkout:extra_payment_info"}
         {/hook}
+        {include file="views/checkout/components/customer_notes.tpl"}
         </div>
 
         {if $iframe_mode}

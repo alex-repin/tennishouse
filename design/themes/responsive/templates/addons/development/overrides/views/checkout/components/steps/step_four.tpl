@@ -28,6 +28,7 @@
                             <div class="checkout__block"><h3 class="ty-subheader">{__("text_no_payments_needed")}</h3></div>
 
                             <form name="paymens_form" action="{""|fn_url}" method="post">
+                                {include file="views/checkout/components/customer_notes.tpl"}
                                 <div class="ty-checkout-buttons">
                                     {include file="buttons/place_order.tpl" but_text=__("submit_my_order") but_name="dispatch[checkout.place_order]" but_id="place_order"}
                                 </div>
