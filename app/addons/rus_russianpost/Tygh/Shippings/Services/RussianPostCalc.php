@@ -167,7 +167,7 @@ class RussianPostCalc implements IService
             'apikey' => $this->_shipping_info['service_params']['user_key'],
             'method' => 'calc',
             'from_index' => $origination['zipcode'],
-            'to_index' => $location['zipcode'],
+            'to_index' => !empty($location['zipcode']) ? $location['zipcode'] : '',
             'weight' => $weight_data['plain'],
             'ob_cennost_rub' => $cost,
         );

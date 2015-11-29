@@ -77,6 +77,7 @@
 {/if}
 {hook name="index:footer"}{/hook}
 <!--tygh_container--></div>
+{hook name="index:body_footer"}{/hook}
 </body>
 
 </html>

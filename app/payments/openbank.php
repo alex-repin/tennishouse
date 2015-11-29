@@ -88,7 +88,7 @@ if (defined('PAYMENT_NOTIFICATION')) {
 //        'expirationDate' => '',
     );
     $result = json_decode(Http::post($post_address, $post_data));
-    if ($result->errorCode != 0) {
+    if (!empty($result->errorCode)) {
         $pp_response['order_status'] = 'F';
         $pp_response['reason_text'] = $result->errorMessage;
         fn_finish_payment($_order_id, $pp_response);

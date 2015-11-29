@@ -260,7 +260,7 @@ function fn_unisender_api($method, $post, &$response, $notify = true)
 
 function fn_rus_unisender_send_sms($text_sms, $phone, $order_id = 0, $status_to = '', $notify=true)
 {
-    if (!empty($phone)) {
+    if (!empty($phone) && $_SERVER['REMOTE_ADDR'] != '127.0.0.1') {
         $post = array(
             'api_key' => Registry::get('addons.rus_unisender.api_key'),
             'sender' => fn_substr(Registry::get('addons.rus_unisender.sender'), 0, 11),

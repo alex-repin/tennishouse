@@ -243,7 +243,7 @@ function fn_reward_points_calculate_cart_taxes_pre(&$cart, &$cart_products, &$sh
             }
         }
         $reward_points = fn_get_reward_points(0, GLOBAL_REWARD_POINTS, $auth['usergroup_ids']);
-        if ($reward_points['amount_type'] == 'P') {
+        if (!empty($reward_points['amount_type']) && $reward_points['amount_type'] == 'P') {
             $cart['points_info']['reward'] = floor($cart['points_info']['raw_total_price'] / $reward_points['round_to']) * $reward_points['round_to'] * $reward_points['amount'] / 100;
         }
     }

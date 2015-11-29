@@ -277,6 +277,8 @@ if ($mode == 'catalog') {
                 }
             }
             // [tennishouse]
+            Registry::get('view')->assign('products', $products);
+            Registry::get('view')->assign('search', $search);
         }
     
         // If page title for this category is exist than assign it to template
@@ -296,8 +298,6 @@ if ($mode == 'catalog') {
 
         $selected_layout = fn_get_products_layout($_REQUEST);
         Registry::get('view')->assign('show_qty', true);
-        Registry::get('view')->assign('products', $products);
-        Registry::get('view')->assign('search', $search);
         Registry::get('view')->assign('selected_layout', $selected_layout);
 
         Registry::get('view')->assign('category_data', $category_data);
