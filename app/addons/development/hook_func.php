@@ -52,6 +52,9 @@ function fn_development_order_notification($order_info, $order_statuses, $force_
             if (strpos($order_status['sms_text'], '[order_id]')) {
                 $order_status['sms_text'] = str_replace('[order_id]', $order_info['order_id'], $order_status['sms_text']);
             }
+            if (strpos($order_status['sms_text'], '[amount]')) {
+                $order_status['sms_text'] = str_replace('[amount]', $order_info['total'], $order_status['sms_text']);
+            }
             if (strpos($order_status['sms_text'], '[delivery_time]')) {
                 $delivery_time = '';
                 if (!empty($order_info['s_city']) && !empty($order_info['delivery_time'])) {
