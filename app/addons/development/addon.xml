@@ -367,6 +367,19 @@
         <item>
             ALTER TABLE `cscart_status_descriptions` ADD `sms_text` VARCHAR( 255 ) NOT NULL ;
         </item>
+        <item>
+            ALTER TABLE `cscart_products` ADD `update_with_currencies` CHAR( 1 ) NOT NULL DEFAULT 'N';
+        </item>
+        <item>
+            CREATE TABLE IF NOT EXISTS `cscart_anouncements` (
+                `anouncement_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+                `start_timestamp` int(11) unsigned NOT NULL,
+                `end_timestamp` int(11) unsigned NOT NULL,
+                `text` text NOT NULL,
+                `priority` SMALLINT( 5 ) UNSIGNED NOT NULL DEFAULT '0',
+                PRIMARY KEY (`anouncement_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -734,5 +747,8 @@
         <item lang="ru" id="sms_text">Текст смс</item>
         <item lang="ru" id="notify_customer_sms">Информировать покупателя по смс</item>
         <item lang="ru" id="order_notes_text">Например, предпочтительное время, когда Вам удобно было бы получить заказ</item>
+        <item lang="ru" id="update_with_currencies">Обновлять вместе с курсом валют</item>
+        <item lang="ru" id="anouncements">Объявления</item>
+        <item lang="ru" id="anouncements_menu_description">Перманентные объявления для посетителей</item>
     </language_variables>
 </addon>

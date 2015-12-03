@@ -29,6 +29,9 @@ if ($mode == 'update_rub_rate') {
 } elseif ($mode == 'cron_routine') {
     fn_set_hook('cron_routine');
     exit;
+} elseif ($mode == 'hide_anouncement') {
+    $_SESSION['hide_anouncement'] = true;
+    exit;
 } elseif ($mode == 'test_curl') {
     $extra = array(
 //        'request_timeout' => 2

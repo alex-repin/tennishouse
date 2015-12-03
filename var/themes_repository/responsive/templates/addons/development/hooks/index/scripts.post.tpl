@@ -5,6 +5,15 @@
 <script type="text/javascript">
 {literal}
 
+    function fn_close_anouncement()
+    {
+        $('#anouncement_block').slideUp();
+        $.ceAjax('request', fn_url('development.hide_anouncement'), {
+            method: 'get',
+            hidden: true
+        });
+    }
+
     function fn_mouseleave_tooltip(trigger)
     {
         trigger.parents('.ty-menu__item-parent .ty-menu__item_full').each(function(){

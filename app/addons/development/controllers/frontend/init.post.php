@@ -12,6 +12,8 @@
 * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
 ****************************************************************************/
 
+use Tygh\Registry;
+
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 if (defined('HTTPS')) {
@@ -19,5 +21,12 @@ if (defined('HTTPS')) {
         $_SESSION['display_ssl_tooltip'] = 'Y';
     } elseif ($_SESSION['display_ssl_tooltip'] == 'Y') {
         $_SESSION['display_ssl_tooltip'] = 'N';
+    }
+}
+
+if (empty($_SESSION['hide_anouncement'])) {
+    $anouncement = db_get_field("SELECT text FROM ?:anouncements WHERE start_timestamp <= ?i AND end_timestamp + 86399 >= ?i ORDER BY priority ASC", TIME, TIME);
+    if (!empty($anouncement)) {
+        Registry::get('view')->assign('anouncement', $anouncement);
     }
 }

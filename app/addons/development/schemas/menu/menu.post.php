@@ -70,4 +70,12 @@ $schema['central']['marketing']['items']['saving_system'] = array(
     'position' => 910
 );
 
+$schema['central']['website']['items']['anouncements'] = array(
+    'attrs' => array(
+        'class'=>'is-addon'
+    ),
+    'href' => 'anouncements.manage',
+    'position' => 110
+);
+
 return $schema;

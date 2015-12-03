@@ -76,6 +76,12 @@
     {include file="common/theme_editor.tpl"}
 {/if}
 {hook name="index:footer"}{/hook}
+{if $anouncement}
+    <div class="ty-anouncement" id="anouncement_block">
+        <div class="ty-anouncement-text">{$anouncement}</div>
+        <div class="ty-anouncement-close" onclick="fn_close_anouncement();"></div>
+    </div>
+{/if}
 <!--tygh_container--></div>
 {hook name="index:body_footer"}{/hook}
 </body>

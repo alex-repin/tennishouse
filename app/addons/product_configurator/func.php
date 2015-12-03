@@ -664,7 +664,7 @@ function fn_product_configurator_update_product_pre(&$product_data, $product_id,
     if ($can_update == false) {
         return false;
     }
-    if ($product_data['product_type'] == 'C') {
+    if (!empty($product_data['product_type']) && $product_data['product_type'] == 'C') {
         $product_data['zero_price_action'] = 'P';
         $product_data['auto_price'] = 'N';
         $product_data['tracking'] = 'D';

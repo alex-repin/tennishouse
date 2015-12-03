@@ -120,6 +120,16 @@
                             </div>
                         </div>
                         {/if}
+                        
+                        <div class="control-group">
+                            <label class="control-label" for="elm_product_update_with_currencies">{__("update_with_currencies")}:</label>
+                            <div class="controls">
+                                <label class="checkbox">
+                                    <input type="hidden" name="product_data[update_with_currencies]" value="N" />
+                                    <input type="checkbox" name="product_data[update_with_currencies]" id="elm_product_auto_price" value="Y" {if $product_data.update_with_currencies == "Y"}checked="checked"{/if}/>
+                                </label>
+                            </div>
+                        </div>
                     {/if}
 
                     <div class="control-group cm-no-hide-input">

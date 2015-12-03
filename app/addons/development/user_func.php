@@ -338,12 +338,12 @@ function fn_update_rub_rate()
             }
         }
     }
-//     if ($update_prices) {
-//         $params = array();
-//         fn_init_currency($params);
-//         fn_update_prices();
-//         fn_set_notification('N', __('notice'), __('currencies_updated_successfully'));
-//     }
+    if ($update_prices) {
+        $params = array();
+        fn_init_currency($params);
+        fn_update_prices();
+        fn_set_notification('N', __('notice'), __('currencies_updated_successfully'));
+    }
     
     return array(true, $errors);
 }
@@ -999,7 +999,7 @@ function fn_process_update_prices($products)
 
 function fn_update_prices()
 {
-    $products = db_get_hash_array("SELECT prods.product_id, prods.margin, prods.net_cost, prods.net_currency_code, prods.auto_price, cats.category_id AS main_category FROM ?:products AS prods LEFT JOIN ?:products_categories AS cats ON prods.product_id = cats.product_id AND cats.link_type = 'M' WHERE prods.auto_price = 'Y' AND prods.net_cost > 0", 'product_id');
+    $products = db_get_hash_array("SELECT prods.product_id, prods.margin, prods.net_cost, prods.net_currency_code, prods.auto_price, cats.category_id AS main_category FROM ?:products AS prods LEFT JOIN ?:products_categories AS cats ON prods.product_id = cats.product_id AND cats.link_type = 'M' WHERE prods.auto_price = 'Y' AND prods.net_cost > 0 AND update_with_currencies = 'Y'", 'product_id');
     $result = fn_process_update_prices($products);
 }
 
