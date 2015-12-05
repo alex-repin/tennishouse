@@ -34,7 +34,7 @@ if (defined('PAYMENT_NOTIFICATION')) {
     } elseif ($mode == 'error') {
     
         $processor_data = fn_get_processor_data($order_info['payment_id']);
-        $post_address = "https://securetest.openbank.ru/testpayment/rest/getOrderStatusExtended.do";
+        $post_address = "https://secure.openbank.ru/payment/rest/getOrderStatusExtended.do";
         $post_data = array(
             'userName' => $processor_data['processor_params']['login'],
             'password' => $processor_data['processor_params']['password'],
@@ -60,7 +60,7 @@ if (defined('PAYMENT_NOTIFICATION')) {
 
     if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-    $post_address = "https://securetest.openbank.ru/testpayment/rest/register.do";
+    $post_address = "https://secure.openbank.ru/payment/rest/register.do";
 
     $payment_desc = '';
     if (is_array($order_info['products'])) {
