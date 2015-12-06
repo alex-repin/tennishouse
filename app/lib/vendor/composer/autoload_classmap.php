@@ -15,6 +15,7 @@ return array(
     'I18n_Pofile' => $baseDir . '/other/poparser/poparser.php',
     'InvalidParameterException' => $baseDir . '/other/sqlparser/php-sql-parser.php',
     'LexerSplitter' => $baseDir . '/other/sqlparser/php-sql-parser.php',
+    'Mobile_Detect' => $vendorDir . '/mobiledetect/mobiledetectlib/Mobile_Detect.php',
     'Node' => $baseDir . '/other/xmldocument/xmldocument.php',
     'PHPSQLCreator' => $baseDir . '/other/sqlparser/php-sql-creator.php',
     'PHPSQLLexer' => $baseDir . '/other/sqlparser/php-sql-parser.php',

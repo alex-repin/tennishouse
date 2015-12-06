@@ -8,7 +8,8 @@
     ],
     "require": {
         "educoder/pest": "1.0.0",
-        "monolog/monolog": "dev-master"
+        "monolog/monolog": "dev-master",
+        "mobiledetect/mobiledetectlib": "^2.8"
     },
     "autoload": {
         "psr-0": {
