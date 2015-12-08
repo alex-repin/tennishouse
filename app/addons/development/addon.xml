@@ -748,6 +748,8 @@
         <item lang="ru" id="notify_customer_sms">Информировать покупателя по смс</item>
         <item lang="ru" id="order_notes_text">Например, предпочтительное время, когда Вам удобно было бы получить заказ</item>
         <item lang="ru" id="update_with_currencies">Обновлять вместе с курсом валют</item>
+        <item lang="ru" id="totally_pending">Ожидает перевода</item>
+        <item lang="ru" id="totally_sent">Итого отправлено</item>
         <item lang="ru" id="anouncements">Объявления</item>
         <item lang="ru" id="anouncements_menu_description">Перманентные объявления для посетителей</item>
     </language_variables>

@@ -137,11 +137,19 @@
                 <td>{__("gross_total")}:</td>
                 <td>{include file="common/price.tpl" value=$totals.gross_total}</td>
             </tr>
+            <tr>
+                <td>{__("totally_sent")}:</td>
+                <td>{include file="common/price.tpl" value=$totals.totally_sent}</td>
+            </tr>
             {hook name="orders:totals_stats"}
                 {if !$incompleted_view}
                     <tr>
                         <td><h4>{__("totally_paid")}:</h4></td>
                         <td class="price">{include file="common/price.tpl" value=$totals.totally_paid}</td>
+                    </tr>
+                    <tr>
+                        <td>{__("totally_pending")}:</td>
+                        <td>{include file="common/price.tpl" value=$totals.totally_pending}</td>
                     </tr>
                     <tr>
                         <td>{__("net_totally")}:</td>

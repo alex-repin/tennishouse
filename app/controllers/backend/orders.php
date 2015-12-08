@@ -392,7 +392,7 @@ function fn_display_order_totals($orders)
     if (is_array($orders)) {
         foreach ($orders as $k => $v) {
             $result['gross_total'] += $v['total'];
-            if ($v['status'] == 'C' || $v['status'] == 'P') {
+            if ($v['status'] == 'C' || $v['status'] == 'P' || $v['status'] == 'E') {
                 $result['totally_paid'] += $v['total'];
             }
         }

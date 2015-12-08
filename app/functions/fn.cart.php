@@ -5472,11 +5472,13 @@ function fn_get_orders($params, $items_per_page = 0, $get_totals = false, $lang_
     fn_set_hook('get_orders_post', $params, $orders);
 
     if ($get_totals == true) {
-        $paid_statuses = array('P', 'C');
+        $paid_statuses = array('P', 'C', 'E');
         fn_set_hook('get_orders_totals', $paid_statuses, $join, $condition, $group);
         $totals = array (
             'gross_total' => db_get_field("SELECT sum(t.total) FROM ( SELECT total FROM ?:orders LEFT JOIN ?:status_data ON ?:status_data.status = ?:orders.status AND ?:status_data.type = 'O' AND ?:status_data.param = 'inventory' $join WHERE ?:status_data.value = 'D' $condition $group) as t"),
             'totally_paid' => db_get_field("SELECT sum(t.total) FROM ( SELECT total FROM ?:orders $join WHERE ?:orders.status IN (?a) $condition $group) as t", $paid_statuses),
+            'totally_pending' => db_get_field("SELECT sum(t.total) FROM ( SELECT total FROM ?:orders $join WHERE ?:orders.status = 'C' $condition $group) as t"),
+            'totally_sent' => db_get_field("SELECT sum(t.total) FROM ( SELECT total FROM ?:orders $join WHERE ?:orders.status = 'A' $condition $group) as t"),
             'net_totally' => db_get_field("SELECT sum(t.net_total) FROM ( SELECT net_total FROM ?:orders $join WHERE ?:orders.status IN (?a) $condition $group) as t", $paid_statuses),
             'total_income' => db_get_field("SELECT sum(t.total - t.net_total) FROM ( SELECT total, net_total FROM ?:orders $join WHERE ?:orders.status IN (?a) $condition $group) as t", $paid_statuses),
         );
