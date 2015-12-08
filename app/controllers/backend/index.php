@@ -293,7 +293,7 @@ function fn_dashboard_get_graphs_data($time_from, $time_to, $is_day)
 
     if (fn_check_view_permissions("sales_reports.view", "GET")) {
         $graphs['dashboard_statistics_sales_chart'] = array();
-        $paid_statuses = array('P', 'C');
+        $paid_statuses = array('P', 'C', 'E');
 
         for ($i = $time_from; $i <= $time_to; $i = $i + ($is_day ? 60*60 : SECONDS_IN_DAY)) {
             $date = !$is_day ? date("Y, (n-1), j", $i) : date("H", $i);
