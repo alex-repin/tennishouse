@@ -173,6 +173,7 @@ class Ems implements IService
         $return = array(
             'cost' => false,
             'error' => false,
+            'delivery_time' => '',
         );
 
         $cost = json_decode($response, true);
@@ -185,8 +186,8 @@ class Ems implements IService
 
             if (!empty($cost['rsp']['term'])) {
                 $this->_fillSessionData($cost['rsp']['term']);
+                $return['delivery_time'] = $cost['rsp']['term']['min'] . (($cost['rsp']['term']['min'] != $cost['rsp']['term']['max']) ? '-' . $cost['rsp']['term']['max'] . ' ' : ' ' ) . __('days');
             }
-
             $return['cost'] = $result;
 
         } else {
@@ -205,8 +206,8 @@ class Ems implements IService
             $shipping_id = $shipping_info['keys']['shipping_id'];
 
             $plus = $this->_shipping_info['service_params']['delivery_time_plus'];
-            $min_time = $term['min'] + $plus;
-            $max_time = $term['max'] + $plus;
+            $min_time = $term['min']/* + $plus*/;
+            $max_time = $term['max']/* + $plus*/;
 
             $date = $min_time . '-' . $max_time . ' ' . __('days');
 

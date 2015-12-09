@@ -283,6 +283,7 @@ class Spsr implements IService
         $return = array(
             'cost' => false,
             'error' => false,
+            'delivery_time' => '',
         );
 
         $amount = !empty($response['amount']) ? $response['amount'] : 1;
@@ -305,6 +306,7 @@ class Spsr implements IService
 
             if (empty($this->_error_stack) && !empty($rates['price'])) {
                 $return['cost'] = $rates['price'];
+                $return['delivery_time'] = $rates['date'];
             } else {
                 $this->_internalError(__('xml_error'));
 //                 $return['error'] = $_result['Error'];

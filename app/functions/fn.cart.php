@@ -6458,19 +6458,15 @@ function fn_apply_stored_shipping_rates(&$cart, $order_id = 0)
         foreach ($cart['product_groups'] as $group_key => $group) {
             foreach ($group['chosen_shippings'] as $shipping_key => $shipping) {
                 if (isset($cart['stored_shipping'][$group_key][$shipping_key])) {
-                    if (!empty($cart['free_shipping']) && in_array($shipping['shipping_id'], $cart['free_shipping'])) {
-                        if (!empty($cart['free_shipping_data']['min_free_shipping']) && ($cart['free_shipping_data']['free_shipping_id'] == $shipping['shipping_id'] || (!empty($cart['free_shipping_data']['free_shipping_module']) && $cart['free_shipping_data']['free_shipping_module'] == $shipping['module']))) {
-                            if (!empty($cart['stored_shipping'][$group_key][$shipping_key])) {
-                                // save original value
-                                $cart['original_stored_shipping'][$group_key][$shipping_key] = $cart['stored_shipping'][$group_key][$shipping_key];
-                                // apply free shipping
-                                $cart['stored_shipping'][$group_key][$shipping_key] = 0;
-                            } else {
-                                // save calulated rates as orignal: shipping is zero due to free shipping
-                                $cart['original_stored_shipping'][$group_key][$shipping_key] = $shipping['rate'];
-                            }
+                    if (!empty($cart['free_shipping']) && in_array($shipping['shipping_id'], $cart['free_shipping']) && !empty($cart['free_shipping_data']['min_free_shipping']) && ($cart['free_shipping_data']['free_shipping_id'] == $shipping['shipping_id'] || (!empty($cart['free_shipping_data']['free_shipping_module']) && $cart['free_shipping_data']['free_shipping_module'] == $shipping['module']))) {
+                        if (!empty($cart['stored_shipping'][$group_key][$shipping_key])) {
+                            // save original value
+                            $cart['original_stored_shipping'][$group_key][$shipping_key] = $cart['stored_shipping'][$group_key][$shipping_key];
+                            // apply free shipping
+                            $cart['stored_shipping'][$group_key][$shipping_key] = 0;
                         } else {
-                            $cart['stored_shipping'][$group_key][$shipping_key] = $shipping['rate'];
+                            // save calulated rates as orignal: shipping is zero due to free shipping
+                            $cart['original_stored_shipping'][$group_key][$shipping_key] = $shipping['rate'];
                         }
                     } elseif (empty($cart['stored_shipping'][$group_key][$shipping_key]) && isset($cart['original_stored_shipping'][$group_key][$shipping_key])) {
                         // free shiping was disabled - restore previous price

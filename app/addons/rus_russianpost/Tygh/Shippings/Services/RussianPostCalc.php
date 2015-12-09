@@ -71,6 +71,7 @@ class RussianPostCalc implements IService
         $return = array(
             'cost' => false,
             'error' => false,
+            'delivery_time' => '',
         );
 
         $shipping_type = $this->_shipping_info['service_params']['shipping_type'];
@@ -87,6 +88,7 @@ class RussianPostCalc implements IService
                     }
 
                     $return['cost'] = $cost;
+                    $return['delivery_time'] = $calc['days'] . ' ' . __('days');
                     $rates = array(
                         'price' => $cost,
                         'date' => $calc['days'] . ' ' . __('days')
