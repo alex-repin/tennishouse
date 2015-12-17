@@ -261,7 +261,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
 
-        $url = fn_url("orders.details&order_id=" . $params['order_id'], 'A', 'current');
+        $url = fn_url("orders.details&order_id=" . $params['order_id'] . '&selected_section=sdek_orders', 'A', 'current');
         if (defined('AJAX_REQUEST') && !empty($url)) {
             Registry::get('ajax')->assign('force_redirection', $url);
             exit;
