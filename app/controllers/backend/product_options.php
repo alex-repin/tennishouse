@@ -83,13 +83,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $inventory = db_get_hash_array("SELECT * FROM ?:product_options_inventory WHERE product_id = ?i", 'combination_hash', $_REQUEST['product_id']);
 
         if (!empty($_REQUEST['inventory'])) {
+            $total_amount = 0;
+            foreach ($inventory as $key => $data) {
+                $total_amount += $data['amount'];
+            }
+            $new_amount = 0;
             foreach ($_REQUEST['inventory'] as $k => $v) {
                 db_query("UPDATE ?:product_options_inventory SET ?u WHERE combination_hash = ?s", $v, $k);
-                if (($inventory[$k]['amount'] <= 0) && ($v['amount'] > 0)) {
-                    // [tennishouse]
-                    fn_send_product_notifications($_REQUEST['product_id'], $k);
-                    // [tennishouse]
-                }
+                $new_amount += $v['amount'];
+            }
+            if ($total_amount <= 0 && $new_amount > 0) {
+                // [tennishouse]
+                fn_send_product_notifications($_REQUEST['product_id']);
+                // [tennishouse]
             }
         }
 //         $in_stock = db_get_field("SELECT combination_hash FROM ?:product_options_inventory WHERE amount > 0 AND product_id = ?i", $_REQUEST['product_id']);

@@ -1,6 +1,6 @@
 {include file="common/letter_header.tpl"}
 
-{__("dear")} {__("customer")},<br /><br />
+{__("dear")},<br /><br />
 
 {__("back_in_stock_notification_header")}<br /><br />
 {assign var="suffix" value=""}

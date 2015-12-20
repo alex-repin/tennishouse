@@ -224,7 +224,7 @@ if ($mode == 'search') {
     fn_update_product_notifications(array(
         'product_id' => $_REQUEST['product_id'],
         // [tennishouse]
-        'combination_hash' => $_REQUEST['combination_hash'],
+        //'combination_hash' => $_REQUEST['combination_hash'],
         // [tennishouse]
         'user_id' => $_SESSION['auth']['user_id'],
         'email' => (!empty($_SESSION['cart']['user_data']['email']) ? $_SESSION['cart']['user_data']['email'] : (!empty($_REQUEST['email']) ? $_REQUEST['email'] : '')),

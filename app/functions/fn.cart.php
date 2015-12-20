@@ -638,11 +638,12 @@ function fn_update_product_amount($product_id, $amount, $product_options, $sign)
 
     if ($tracking == ProductTracking::TRACK_WITHOUT_OPTIONS) {
         $product = db_get_row("SELECT amount, product_code FROM ?:products WHERE product_id = ?i", $product_id);
-        $current_amount = $product['amount'];
+        $total_amount = $current_amount = $product['amount'];
         $product_code = $product['product_code'];
     } else {
         $cart_id = fn_generate_cart_id($product_id, array('product_options' => $product_options), true);
         $product = db_get_row("SELECT amount, product_code FROM ?:product_options_inventory WHERE combination_hash = ?i", $cart_id);
+        $total_amount = db_get_field("SELECT SUM(amount) FROM ?:product_options_inventory WHERE product_id = ?i", $product_id);
         $current_amount = empty($product['amount']) ? 0 : $product['amount'];
 
         if (empty($product['product_code'])) {
@@ -709,9 +710,9 @@ function fn_update_product_amount($product_id, $amount, $product_options, $sign)
 //         }
     }
 
-    if (($current_amount <= 0) && ($new_amount > 0)) {
+    if (($total_amount <= 0) && ($new_amount > 0)) {
         // [tennishouse]
-        fn_send_product_notifications($product_id, $cart_id);
+        fn_send_product_notifications($product_id);
         // [tennishouse]
     }
 

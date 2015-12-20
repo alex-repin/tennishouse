@@ -955,7 +955,7 @@ function fn_development_gather_additional_product_data_post(&$product, $auth, $p
                         $product['inventory_notification'] = 'Y';
                         $product['inventory_notification_email'] = $_SESSION['product_notifications']['email'];
                     }
-                } else {
+                } elseif (!empty($auth['user_id'])) {
                     $email = db_get_field("SELECT email FROM ?:product_subscriptions WHERE product_id = ?i AND combination_hash = ?i AND user_id = ?i", $product['product_id'], $combination, $auth['user_id']);
                     if (!empty($email)) {
                         $product['inventory_notification'] = 'Y';

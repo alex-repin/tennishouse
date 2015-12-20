@@ -214,7 +214,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             }
                                         } elseif (count($data['data']) == 1 && $product_data['tracking'] == 'B' && !empty($variant['amount']) && empty($product_options)) {
                                             $amount = floor($variant['amount'] / $product_data['import_divider']);
+                                            $total_amount = db_get_field("SELECT amount FROM ?:products WHERE product_id = ?i", $product_id);
                                             db_query("UPDATE ?:products SET amount = ?i WHERE product_id = ?i", $amount, $product_id);
+                                            if ($total_amount <= 0 && $amount > 0) {
+                                                fn_send_product_notifications($product_id);
+                                            }
                                             $updated_products[$product_code] = array(
                                                 'code' => $product_code,
                                                 'data' => $data
@@ -283,14 +287,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         fn_rebuild_product_options_inventory($product_id);
                                         $inventory = db_get_hash_array("SELECT amount, combination_hash FROM ?:product_options_inventory WHERE product_id = ?i", 'combination_hash', $product_id);
 
+                                        $total_amount = $new_amount = 0;
                                         foreach ($inventory as $k => $v) {
+                                            $total_amount += $inventory[$k]['amount'];
                                             if (!empty($comb_data[$k])) {
                                                 $inventory[$k]['amount'] = $comb_data[$k]['amount'];
                                                 unset($comb_data[$k]);
                                             } else {
                                                 $inventory[$k]['amount'] = 0;
                                             }
+                                            $new_amount += $inventory[$k]['amount'];
                                             db_query("UPDATE ?:product_options_inventory SET ?u WHERE combination_hash = ?s", $inventory[$k], $k);
+                                        }
+                                        if (($total_amount <= 0) && ($new_amount > 0)) {
+                                            // [tennishouse]
+                                            fn_send_product_notifications($product_id);
+                                            // [tennishouse]
                                         }
                                         fn_update_product_exceptions($product_id, $inventory);
                                         if (!empty($comb_data)) {

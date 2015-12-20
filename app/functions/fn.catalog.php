@@ -2135,11 +2135,9 @@ function fn_global_update_products($update_data)
                 if (($product['tracking'] == ProductTracking::TRACK_WITHOUT_OPTIONS) && ($product['amount'] <= 0)) {
                     fn_send_product_notifications($product_id);
                 } elseif ($product['tracking'] == ProductTracking::TRACK_WITH_OPTIONS) {
-                    $inventory = db_get_array("SELECT * FROM ?:product_options_inventory WHERE product_id = ?i", $product_id);
-                    foreach ($inventory as $inventory_item) {
-                        if ($inventory_item['amount'] <= 0) {
-                            fn_send_product_notifications($product_id, $inventory_item['combination_hash']);
-                        }
+                    $total_amount = db_get_field("SELECT SUM(amount) FROM ?:product_options_inventory WHERE product_id = ?i", $product_id);
+                    if ($total_amount <= 0) {
+                        fn_send_product_notifications($product_id);
                     }
                 }
                 // [tennishouse]
