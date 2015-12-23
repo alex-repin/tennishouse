@@ -25,11 +25,11 @@
         </div>
         {/if}
         {if "CRB"|strpos:$discussion.type !== false && !$discussion.disable_adding}
-            <div class="ty-discussion-post__buttons buttons-container">
-                {include file="buttons/button.tpl" but_id="opener_new_post" but_text=$new_post_title but_role="submit" but_target_id="new_post_dialog_`$obj_id`" but_meta="cm-dialog-opener cm-dialog-auto-size ty-btn__primary" but_rel="nofollow"}
-            </div>
-
             {include file="addons/discussion/views/discussion/components/new_post.tpl" new_post_title=$new_post_title}
+            
+            <div class="ty-discussion-post__buttons buttons-container">
+                {include file="buttons/button.tpl" but_id="opener_new_post_top" but_text=$new_post_title but_role="submit" but_target_id="new_post_dialog_`$obj_id`" but_meta="cm-dialog-opener cm-dialog-auto-size ty-btn__primary" but_rel="nofollow"}
+            </div>
         {/if}
         <div id="posts_list">
             {if $discussion.posts}
@@ -99,8 +99,6 @@
             <div class="ty-discussion-post__buttons buttons-container">
                 {include file="buttons/button.tpl" but_id="opener_new_post" but_text=$new_post_title but_role="submit" but_target_id="new_post_dialog_`$obj_id`" but_meta="cm-dialog-opener cm-dialog-auto-size ty-btn__primary" but_rel="nofollow"}
             </div>
-
-            {include file="addons/discussion/views/discussion/components/new_post.tpl" new_post_title=$new_post_title}
         {/if}
     </div>
 {/if}
