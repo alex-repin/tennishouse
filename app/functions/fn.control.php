@@ -775,7 +775,9 @@ function fn_addon_template_overrides($resource_name, &$view)
     $template_dir = ($view == null) ? '' : rtrim($view->getTemplateDir(0), '/').'/';
 
     if (!isset($init[$o_name])) {
-        Registry::registerCache($o_name, array('addons'), Registry::cacheLevel('static'));
+        // [tennishouse]
+        Registry::registerCache($o_name, array('addons'), Registry::cacheLevel('theme'));
+        // [tennishouse]
 
         if (!Registry::isExist($o_name)) {
             $template_overrides = array();

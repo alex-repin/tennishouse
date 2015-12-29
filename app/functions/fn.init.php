@@ -524,7 +524,35 @@ function fn_init_layout($params)
     }
 
     if (empty($layout)) {
-        $layout = Layout::instance()->getDefault(); // get default
+        // [tennishouse]
+        if (AREA == 'C') {
+            if (!empty($_REQUEST['dmode'])) {
+                if ($_SESSION['dmode'] != $_REQUEST['dmode']) {
+                    $_SESSION['dmode'] = $_REQUEST['dmode'];
+                    Registry::cleanup();
+                }
+            }
+            if (!empty($_SESSION['dmode'])) {
+                if ($_SESSION['dmode'] == 'M') {
+                    $theme_name = MOBILE_THEME_NAME;
+                } else {
+                    $theme_name = MAIN_THEME_NAME;
+                }
+            } else {
+                $device = new \Mobile_Detect;
+                if ($device->isMobile()) {
+                    $theme_name = MOBILE_THEME_NAME;
+                    $_SESSION['dmode'] = 'M';
+                } else {
+                    $theme_name = MAIN_THEME_NAME;
+                    $_SESSION['dmode'] = 'F';
+                }
+            }
+        } else {
+            $theme_name = '';
+        }
+        $layout = Layout::instance()->getDefault($theme_name); // get default
+        // [tennishouse]
     }
 
     $available_styles = Styles::factory($layout['theme_name'])->getList(array(

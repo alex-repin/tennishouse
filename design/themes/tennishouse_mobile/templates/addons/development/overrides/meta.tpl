@@ -3,6 +3,7 @@
 <base href="{$config.current_location}/" />
 {/if}
 <meta http-equiv="Content-Type" content="text/html; charset={$smarty.const.CHARSET}" data-ca-mode="{$store_trigger}" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" />
 {hook name="index:meta_description"}
 {if $runtime.controller == 'products' && $runtime.mode == 'view'}
     {$meta_descr = __('product_meta_description', ['[category]' => $product.category_main_title|fn_strtolower, '[product]' => $product.product, '[price]' => $product.price|fn_format_price, '[date]' => $smarty.const.TIME|date_format:$settings.Appearance.date_format, '[product_code]' => $product.product_code])}

@@ -378,7 +378,7 @@
                 `text` text NOT NULL,
                 `priority` SMALLINT( 5 ) UNSIGNED NOT NULL DEFAULT '0',
                 PRIMARY KEY (`anouncement_id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
         </item>
     </queries>
     <language_variables>

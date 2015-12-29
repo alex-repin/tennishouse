@@ -123,7 +123,13 @@ function fn_get_theme_path($path = '[theme]/', $area = AREA, $company_id = null,
         }
     } else {
         if (empty($theme_names['c_' . $company_id]) || !$use_cache) {
-            $theme_names['c_' . $company_id] = Settings::instance($company_id)->getValue('theme_name', '', $company_id);
+            // [tennishouse]
+            if (AREA == 'C') {
+                $theme_names['c_' . $company_id] = ($_SESSION['dmode'] == 'M') ? MOBILE_THEME_NAME : MAIN_THEME_NAME;
+            } else {
+                $theme_names['c_' . $company_id] = Settings::instance($company_id)->getValue('theme_name', '', $company_id);
+            }
+            // [tennishouse]
         }
 
         $theme_name = $theme_names['c_' . $company_id];

@@ -1,9 +1,16 @@
 <div class="ty-top-block-wrapper">
+<div class="ty-menu-container">
+    <a href="{""|fn_url}" title="{$logos.theme.image.alt}"><div class="ty-menu-container__icon"></div></a>
+</div>
 <div class="ty-logo-container">
     <a href="{""|fn_url}" title="{$logos.theme.image.alt}">
         <img src="{$logos.theme.image.image_path}" width="{$logos.theme.image.image_x}" height="{$logos.theme.image.image_y}" alt="{$logos.theme.image.alt}" class="ty-logo-container__image" />
     </a>
 </div>
+<div class="ty-cart-container">
+    <a href="{""|fn_url}" title="{$logos.theme.image.alt}"><div class="ty-cart-container__icon"></div></a>
+</div>
+{*
 <div class="ty-top-block_top_left-wrapper">
     <div class="ty-top-block_top-wrapper">
         <div class="ty-top-block__search">
@@ -41,14 +48,6 @@
             <div class="ty-benefits-guarantees__text">{__("free_delivery_text")}</div>
         </div>
         </a>
-        {*
-        <a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=4"|fn_url}">
-        <div class="ty-benefits-guarantees__top">
-            <div class="ty-benefits-guarantees__icon-block"><i class="ty-benefits-free-returns"></i></div>
-            <div class="ty-benefits-guarantees__text ty-benefits-guarantees__text-single-line">{__("free_returns_text")}</div>
-        </div>
-        </a>
-        *}
         <a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=73"|fn_url}">
         <div class="ty-benefits-guarantees__top">
             <div class="ty-benefits-guarantees__icon-block"><i class="ty-benefits-paymenton-delivery"></i></div>
@@ -57,4 +56,5 @@
         </a>
     </div>
 </div>
+*}
 </div>

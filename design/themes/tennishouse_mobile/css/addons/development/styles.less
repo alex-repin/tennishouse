@@ -7,9 +7,6 @@
     font-style: normal;
     font-weight: normal;
 }
-.ty-tygh {
-    background: url("../../../media/images/addons/development/bg_clean.jpg") repeat-y scroll center top;
-}
 .owl-theme .owl-controls .owl-buttons div {
     border-radius: 0;
 }
@@ -491,18 +488,40 @@ input:focus::placeholder, textarea:focus::placeholder {
 }
 
 /* Top block */
-.ty-top-block_top_left-wrapper {
-    display: inline-block;
-    width: 66%;
-}
 .ty-top-block-wrapper {
     display: inline-block;
     width: 100%;
 }
-.ty-logo-container {
-    width: 33%;
+.ty-menu-container {
+    width: 24%;
     display: inline-block;
-    padding: 6px 0;
+    padding: 0;
+    vertical-align: top;
+    margin: 0;
+}
+.ty-menu-container__icon {
+    height: 25px;
+    width: 100%;
+    padding: 10px 11px;
+    background: url('../../../media/images/addons/development/mobile-menu.png') no-repeat center center;
+}
+.ty-cart-container {
+    width: 24%;
+    display: inline-block;
+    padding: 0;
+    vertical-align: top;
+    margin: 0;
+}
+.ty-cart-container__icon {
+    height: 25px;
+    width: 100%;
+    padding: 10px 11px;
+    background: url("../../../media/images/addons/development/shopping_cart.png") no-repeat scroll center center;
+}
+.ty-logo-container {
+    width: 50%;
+    display: inline-block;
+    padding: 0;
     vertical-align: top;
     margin: 0;
 }
@@ -514,7 +533,7 @@ input:focus::placeholder, textarea:focus::placeholder {
     margin: 0;
 }
 .top-grid .top-menu-row, .ty-footer-grid .top-menu-row {
-    width: 1200px !important;
+/*    width: 1200px !important;*/
     float: none;
     margin: 0 auto;
 }
@@ -596,7 +615,7 @@ input:focus::placeholder, textarea:focus::placeholder {
 .tygh-top-panel {
     left: 0;
     /*margin: 0 auto;*/
-    position: fixed;
+/*    position: fixed;*/
     text-align: center;
     top: 0;
     width: 100%;
@@ -830,7 +849,7 @@ input:focus::placeholder, textarea:focus::placeholder {
     height: 42px;
 }
 .top-menu .ty-menu__items > ul{
-    width: 1200px;
+/*    width: 1200px;*/
     margin: 0 auto;
     display: inline-block;
 }
@@ -2971,31 +2990,7 @@ input:focus::placeholder, textarea:focus::placeholder {
 }
 /*Roundabout*/
 
-@media screen 
-and (max-device-width : 1200px) {
-    .ty-tygh {
-        width: 1200px;
-    }
-}
-@media only screen 
-and (min-device-width : 320px) 
-and (max-device-width : 480px) {
-    .ty-wysiwyg-content .ty-page-description p, .ty-wysiwyg-content .ty-page-description p a {
-        font-size: 6px;
-    }
-    .ty-wysiwyg-content .ty-page-description h1, .ty-wysiwyg-content .ty-page-description h2 {
-        font-size: 10px;
-    }
-    .ty-wysiwyg-content .ty-page-description h3 {
-        font-size: 12px;
-    }
-    .ty-wysiwyg-content .ty-page-description h2 {
-        font-size: 8px;
-    }
-    .ty-wysiwyg-content .ty-page-description ul li {
-        font-size: 6px;
-    }
-}
+
 /*.ty-tennishouse-container h2 {
     font-size: 15px;
     text-align: right;

@@ -425,6 +425,10 @@ class Registry
         if (!isset(self::$_cache_levels[$id])) {
             if ($id == 'time') {
                 $key = 'time';
+            // [tennishouse]
+            } elseif ($id == 'theme') {
+                $key = 'cache_' . Registry::get('runtime.layout.theme_name');
+            // [tennishouse]
             } elseif ($id == 'static') {
                 $key = 'cache_' . ACCOUNT_TYPE;
             } elseif ($id == 'day') {

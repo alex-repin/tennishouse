@@ -14,6 +14,9 @@
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+define('MAIN_THEME_NAME', 'responsive');
+define('MOBILE_THEME_NAME', 'tennishouse_mobile');
+
 fn_register_hooks(
     'get_categories',
     'top_menu_form',
