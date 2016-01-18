@@ -770,6 +770,12 @@ if ($mode == 'calculate_balance') {
         db_query("UPDATE ?:user_profiles SET s_phone = ?s WHERE profile_id = ?i", $dt['s_phone'], $dt['profile_id']);
     }
     exit;
+} elseif ($mode == 'regenerate_features') {
+    $product_ids = db_get_fields("SELECT DISTINCT(product_id) FROM ?:product_options_inventory");
+    foreach ($product_ids as $i => $pr_id) {
+        fn_update_combinations($pr_id);
+    }
+    exit;
 }
 
 function fn_normalize_string($string)
