@@ -77,7 +77,7 @@ class Redis extends ABackend
 // 
 //             $this->r->del($mapped_tags);\
 // the bitch takes too long because of that double loop
-            $this->r->del($this->_mapTags($tags, 0));
+            $this->r->del($this->r->keys($this->_mapTags('', 0) . '*'));
         }
 
         return true;
