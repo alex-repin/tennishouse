@@ -7,6 +7,9 @@
     font-style: normal;
     font-weight: normal;
 }
+.radio, .checkbox, input[type="radio"], input[type="checkbox"] {
+    margin: -10px 0 0 4px;
+}
 .owl-theme .owl-controls .owl-buttons div {
     border-radius: 0;
 }
@@ -472,7 +475,7 @@ input:focus::placeholder, textarea:focus::placeholder {
 /* /Tooltip */
 
 .tygh-content {
-    padding-top: 109px;
+/*    padding-top: 109px;*/
 }
 .homepage-banners {
     margin-top: 5px;
@@ -491,39 +494,68 @@ input:focus::placeholder, textarea:focus::placeholder {
 .ty-top-block-wrapper {
     display: inline-block;
     width: 100%;
+    font-size:0;
+    vertical-align: top;
 }
 .ty-menu-container {
-    width: 24%;
+    height: 50px;
+    width: 20%;
     display: inline-block;
     padding: 0;
     vertical-align: top;
-    margin: 0;
+    margin: 0 -1px 0 0;
+    border-left: 1px solid #bdb500;
+}
+.ty-menu-container a, .ty-logo-container a, .ty-cart-container a {
+    display: block;
+    height: 100%;
+    vertical-align: middle;
+}
+.ty-menu-container:hover {
+    background: lighten(@top_menu_background, 17%);
 }
 .ty-menu-container__icon {
-    height: 25px;
-    width: 100%;
-    padding: 10px 11px;
+    height: 100%;
     background: url('../../../media/images/addons/development/mobile-menu.png') no-repeat center center;
 }
+.ty-cart-items {
+    width: auto;
+    background-color: #fff;
+    border-left: 1px solid #ecf0f1;
+    padding: 10px 15px;
+}
 .ty-cart-container {
-    width: 24%;
+    height: 50px;
+    width: 20%;
     display: inline-block;
     padding: 0;
     vertical-align: top;
-    margin: 0;
+    margin: 0 -1px 0 0;
+    border-left: 1px solid #bdb500;
+/*    border-right: 1px solid #bdb500;*/
+}
+.ty-cart-container:hover {
+    background: lighten(@top_menu_background, 17%);
 }
 .ty-cart-container__icon {
-    height: 25px;
-    width: 100%;
-    padding: 10px 11px;
+    height: 100%;
     background: url("../../../media/images/addons/development/shopping_cart.png") no-repeat scroll center center;
 }
+.ty-logo-container__image {
+    padding: 9px 0 8px;
+}
 .ty-logo-container {
-    width: 50%;
+    height: 50px;
+    width: 60%;
     display: inline-block;
     padding: 0;
     vertical-align: top;
     margin: 0;
+    margin: 0 0 0 -1px;
+    border-left: 1px solid #bdb500;
+}
+.ty-logo-container:hover {
+    background: lighten(@top_menu_background, 17%);
 }
 .top-grid .row, .ty-footer-grid .row {
     margin: 0;
@@ -537,8 +569,14 @@ input:focus::placeholder, textarea:focus::placeholder {
     float: none;
     margin: 0 auto;
 }
+.tygh-header {
+    background: #272528;
+}
 .tygh-header > div, .tygh-top-panel > div {
     padding: 0;
+}
+.tygh-header > div {
+    background: transparent;
 }
 .top-grid {
     width: 100%;
@@ -622,6 +660,16 @@ input:focus::placeholder, textarea:focus::placeholder {
     z-index: 400;
 /*    max-width: 2500px;*/
 }
+.ty-search-block {
+    margin: 2px;
+}
+.ty-search-magnifier {
+    margin: 0;
+    top: 0;
+    right: 0;
+    height: 33px;
+    width: 60px;
+}
 .tygh_footer {
     width: 100%;
 }
@@ -630,11 +678,14 @@ input:focus::placeholder, textarea:focus::placeholder {
 }
 .content-grid, .header-grid {
     background-color: #fff;
-    box-shadow: 0 -3px 10px 1px #aaa;
+/*    box-shadow: 0 -3px 10px 1px #aaa;*/
 }
 .container-fluid {
     padding-right: 11px;
     padding-left: 11px;
+}
+.header-grid {
+    padding: 0;
 }
 .tygh-top-panel {
     background: lighten(@top_menu_background, 5%);
@@ -642,14 +693,15 @@ input:focus::placeholder, textarea:focus::placeholder {
     background: linear-gradient(lighten(@top_menu_background, 12%), @top_menu_background) repeat scroll 0 0 rgba(0, 0, 0, 0);
 }
 .top-menu .ty-menu__item {
-    text-align: center;
+    text-align: left;
 }
 .top-menu .ty-menu__item .ty-menu__item-link {
-    font-size: 17px;
     color: #000000;
-    min-height: 42px;
-    height: 42px;
-    padding: 11px 0;
+    display: table-cell;
+    font-size: 16px;
+    line-height: 23px;
+    padding: 0 30px 0 40px;
+    vertical-align: middle;
 }
 .ty-top-block_top-wrapper {
     border-bottom: 1px solid #eeeeee;
@@ -657,11 +709,27 @@ input:focus::placeholder, textarea:focus::placeholder {
     width: 100%;
 }
 .ty-top-block__search {
+    background: #fff none repeat scroll 0 0;
     display: inline-block;
-    margin: 0 11px;
     vertical-align: middle;
-    width: 250px;
-    float: left;
+    width: 100%;
+}
+.ty-cart-items__list-item-tools {
+    display: block;
+}
+.ty-cart-basket-button {
+    width: 100%;
+    margin-bottom: 10px;
+}
+.ty-cart-checkout-button {
+    width: 100%;
+}
+.ty-cart-content__buttons {
+    background: transparent;
+    padding: 10px 15px;
+}
+.ty-dropdown-box {
+    width: 100%;
 }
 .ty-dropdown-box__content {
     margin-top: 0;
@@ -698,15 +766,17 @@ input:focus::placeholder, textarea:focus::placeholder {
 .ty-benefits-guarantees__text {
     color: #fff;
     display: inline-block;
-    text-align: left;
+    text-align: center;
     vertical-align: top;
     margin-left: 5px;
-    width: 170px;
+    width: 180px;
     font-size: 12px;
 }
 .ty-benefits-guarantees__top {
     display: inline-block;
-    width: 32.9%;
+    padding: 5px 0;
+    width: 100%;
+    border-bottom: 0.3em solid #fff400;
 }
 .ty-top-block_bottom-wrapper {
     margin-top: -2px; /* why da fuck ?*/
@@ -748,10 +818,6 @@ input:focus::placeholder, textarea:focus::placeholder {
 .ty-menu__submenu-items .ty-top-mine__submenu-col:last-child {
     margin-right: 0;
 }
-.no-touch .top-menu .ty-menu__item:hover .ty-menu__submenu-items,
-.top-menu .is-hover-menu .ty-menu__submenu-items {
-    display: none;
-}
 .ty-dropdown-box__title {
     padding: 7px 30px 6px 40px;
     cursor: pointer;
@@ -777,17 +843,19 @@ input:focus::placeholder, textarea:focus::placeholder {
 .ty-dropdown-box__title.open {
     background: lighten(@top_menu_background, 18%);
 }
-.no-touch .ty-menu__item:hover .ty-menu__item-link, .is-hover-menu .ty-menu__item-link, .is-hover-menu.ty-menu__item-active .ty-menu__item-link {
-    background-color: lighten(@menu, 35%);
-    color: #000000;
-    text-shadow: none;
-    transition: all 400ms linear 0s;
+.ty-menu__header {
+    color: #fff;
+    font-size: 18px;
+    line-height: 30px;
+    padding: 0 40px;
 }
 .ty-menu__submenu-items {
-    background: none repeat scroll 0 0 #ffffff;
+    background: inherit;
     color: #000000;
     text-align: left;
-    padding: 15px;
+    padding: 0;
+    position: relative;
+    border-style: none none solid;
 }
 .ty-menu__catalog-items {
     height: 400px;
@@ -816,10 +884,13 @@ input:focus::placeholder, textarea:focus::placeholder {
     /*box-shadow: 0 5px 5px 1px #888888;*/
 }
 .top-menu .ty-menu__submenu-item-header {
-    border-bottom : none;
-    margin: 2px 0;
-    background-color: #000000;
+    border-bottom: 1px solid darken(@menu, 6%);
+    display: table;
+    height: 46px;
+    margin: 0;
     min-height: 20px;
+    vertical-align: middle;
+    width: 100%;
 }
 .ty-menu__sports-nutrition {
     background-color: darken(red, 25%);
@@ -846,7 +917,8 @@ input:focus::placeholder, textarea:focus::placeholder {
     padding: 0;
 }
 .top-menu .ty-menu__items {
-    height: 42px;
+/*    border-right: 1px solid lighten(@font, 63%);*/
+    margin: 0 1px;
 }
 .top-menu .ty-menu__items > ul{
 /*    width: 1200px;*/
@@ -854,7 +926,13 @@ input:focus::placeholder, textarea:focus::placeholder {
     display: inline-block;
 }
 .ty-menu__item.ty-menu__item-active .ty-menu__item-link {
-    background-color: lighten(@menu, 20%);
+    background: transparent;
+}
+.ty-menu__item.ty-menu__item-active > .ty-menu__submenu-item-header {
+    background-color: transparent;
+}
+.top-menu .ty-menu__item-expanded {
+    background: lighten(@menu, 20%);
 }
 .top-grid {
     max-width: none;
@@ -876,7 +954,7 @@ input:focus::placeholder, textarea:focus::placeholder {
     padding: 5px 0;
 }
 .top-menu {
-    box-shadow: 0 0 5px 1px #888888;
+/*    box-shadow: 0 0 5px 1px #888888;*/
 }
 .ty-menu__submenu-item {
     position: relative;
@@ -1041,7 +1119,8 @@ input:focus::placeholder, textarea:focus::placeholder {
     max-height: 390px;
 }
 .ty-product-block__left {
-    width: 518px;
+    width: 515px;
+    display: inline-block;
 }
 .ty-product-block__left .ty-tabs__content > div {
 /*    height: 350px;*/
@@ -1443,6 +1522,9 @@ input:focus::placeholder, textarea:focus::placeholder {
 .ty-btn + .ty-btn {
     margin-left: 0;
 }
+.ty-btn {
+    display: block;
+}
 .ty-grid-list__item-name {
     width: 100%;
     max-width: none;
@@ -1540,6 +1622,9 @@ input:focus::placeholder, textarea:focus::placeholder {
 /*Player details*/
 
 /*Product page*/
+.ty-tabs__a, .ty-tabs .subtab a {
+    padding: 8px 14px 2px 15px;
+}
 .ty-prices-container-left {
     display: inline-block;
     width: 325px;
@@ -2139,7 +2224,7 @@ input:focus::placeholder, textarea:focus::placeholder {
     }
 }
 .ty-mainbox-body > .ty-login .ty-btn__secondary {
-    width: 375px;
+/*    width: 375px;*/
 }
 .ty-profile-email {
     display: inline-block;
@@ -2406,8 +2491,22 @@ input:focus::placeholder, textarea:focus::placeholder {
 }
 /*Category menu*/
 
-.ty-menu .ty-menu__items {
+/*.ty-menu .ty-menu__items {
     background: @category_menu;
+}*/
+.ty-menu__item-toggle {
+    display: block;
+    cursor: pointer;
+}
+.ty-menu-vertical .ty-menu__item .ty-icon-right-open {
+    display: none;
+}
+.ty-menu-vertical .ty-menu__item .ty-icon-down-open {
+    font-size: 19px;
+}
+.ty-menu__items .ty-menu__items-show {
+    display: block !important;
+    border-bottom: 0px;
 }
 .ty-menu .ty-menu__item.ty-menu__item-active .ty-menu__item-link {
     background-color: darken(@category_menu, 5%);
@@ -2422,12 +2521,9 @@ input:focus::placeholder, textarea:focus::placeholder {
 .ty-menu-vertical .ty-menu__item .ty-menu__submenu .ty-menu__item-link {
     padding: 10px;
 }
-.ty-menu-vertical .ty-menu__items {
-    border-bottom: none;
-}
 .ty-menu-vertical .ty-menu__item .ty-menu__submenu {
-    top: -1px;
-    right: 0;
+    position: static;
+/*    display: block;*/
 }
 .ty-menu-vertical .ty-menu__submenu .ty-menu__submenu-item-header {
     width: 300px;
@@ -2445,21 +2541,23 @@ input:focus::placeholder, textarea:focus::placeholder {
     border-left: 1px solid lighten(@font, 63%);
     padding: 0px;
 }
-.no-touch .ty-menu-vertical .ty-menu__submenu .ty-menu__item:hover > .ty-menu__submenu-item-header .ty-menu__item-link {
-    background-color: darken(@category_menu, 10%);
-    color: @category_menu_links;
+.no-touch .top-menu .ty-menu__item:hover .ty-menu__submenu-items,
+.top-menu .is-hover-menu .ty-menu__submenu-items {
+    display: none;
 }
-.no-touch .ty-menu-vertical .ty-menu__item .ty-menu__submenu .ty-menu__item:hover > .ty-menu__item-link {
-    background: @menu;
-    color: @category_menu_links;
+.no-touch .ty-menu__item:hover .ty-menu__item-link, .is-hover-menu .ty-menu__item-link, .is-hover-menu.ty-menu__item-active .ty-menu__item-link {
+    background-color: inherit;
+    color: #000000;
+/*    text-shadow: none;
+    transition: all 400ms linear 0s;*/
 }
 .ty-menu-vertical .ty-menu__item i {
-    top: 10px;
-    color: @category_menu_links;
+    top: 15px;
+    color: #000;
 }
-.no-touch .ty-menu-vertical .ty-menu__item:hover .ty-menu__item-link, .is-hover-menu .ty-menu-vertical .ty-menu__item-active .ty-menu__item-link, .is-hover-menu .ty-menu-vertical .ty-menu__item-link {
-    background-color: darken(@category_menu, 10%);
-    color: @category_menu_links;
+.no-touch .ty-menu-vertical .ty-menu__submenu-item-header:hover .ty-menu__item-link, .is-hover-menu .ty-menu-vertical .ty-menu__item-active .ty-menu__item-link, .is-hover-menu .ty-menu-vertical .ty-menu__item-link {
+    background-color: lighten(@menu, 35%);
+    color: #000000;
     text-shadow: none;
     transition: none;
 }
@@ -2502,17 +2600,12 @@ input:focus::placeholder, textarea:focus::placeholder {
     display: inline-block;
     width: 100%;
 }
-.ty-menu-vertical .ty-menu__items{
-    border-top: 1px solid lighten(@font, 63%);
-    border-left: 1px solid lighten(@font, 63%);
-    border-bottom: 1px solid lighten(@font, 63%);
-}
 .ty-menu-vertical .ty-menu__item {
-    border-right: 1px solid lighten(@font, 63%);
+/*    border-bottom: 1px solid darken(@menu, 6%);*/
 }
-.ty-menu-vertical .dropdown-vertical__dir:hover {
+/*.ty-menu-vertical .dropdown-vertical__dir:hover {
     border-right: 1px solid darken(@category_menu, 10%);
-}
+}*/
 .ty-ti-price-wrap .ty-product-block__price-actual .ty-price-num {
     font-size: 16px;
 }
@@ -3187,4 +3280,7 @@ input:focus::placeholder, textarea:focus::placeholder {
 }
 .ty-category-tooltip {
     max-width: 500px;
+}
+.ty-icon-up-dir, .ty-icon-right-dir, .ty-icon-down-dir, .ty-icon-left-dir, .ty-icon-star-empty, .ty-icon-th-list, .ty-icon-heart, .ty-icon-flight, .ty-icon-ok, .ty-icon-cancel, .ty-icon-cancel-circle, .ty-icon-minus-circle, .ty-icon-right-thin, .ty-icon-cw, .ty-icon-left-circle, .ty-icon-right-circle, .ty-icon-help-circle, .ty-icon-back, .ty-icon-products-multicolumns, .ty-icon-print, .ty-icon-chat, .ty-icon-article-alt, .ty-icon-docs, .ty-icon-zoom-in, .ty-icon-zoom-out, .ty-icon-down-open, .ty-icon-left-open, .ty-icon-right-open, .ty-icon-up-open, .ty-icon-down-micro, .ty-icon-up-micro, .ty-icon-right-open-thin, .ty-icon-left-open-thin, .ty-icon-products-without-options, .ty-icon-short-list, .ty-icon-plus-circle, .ty-icon-user, .ty-icon-doc-text, .ty-icon-calendar, .ty-icon-chart-bar, .ty-icon-download, .ty-icon-search, .ty-icon-lock, .ty-icon-popup, .ty-icon-plus, .ty-icon-folder, .ty-icon-folder-open, .ty-icon-mail, .ty-icon-twitter, .ty-icon-facebook, .ty-icon-file, .ty-icon-trashcan, .ty-icon-d-arrow, .ty-icon-bubble, .ty-icon-upload, .ty-icon-cog, .ty-icon-square, .ty-icon-arrow-up-right, .ty-icon-arrow-up-left, .ty-icon-arrow-down-left, .ty-icon-arrow-down-right, .ty-icon-arrow-down, .ty-icon-arrow-up, .ty-icon-arrow-left, .ty-icon-arrow-right, .ty-icon-star, .ty-icon-star-half, .ty-icon-refresh, .ty-icon-basket, .ty-icon-image, .icon-image, .ty-icon-edit, .ty-icon-live-edit, .ty-icon-gift, .ty-icon-ban-circle, .ty-icon-wrench {
+    vertical-align: middle;
 }

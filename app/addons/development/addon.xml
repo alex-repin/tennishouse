@@ -752,5 +752,7 @@
         <item lang="ru" id="totally_sent">Итого отправлено</item>
         <item lang="ru" id="anouncements">Объявления</item>
         <item lang="ru" id="anouncements_menu_description">Перманентные объявления для посетителей</item>
+        <item lang="ru" id="free_delivery_and_paymet_on_delivery_text">Бесплатная доставка* и оплата при получении по всей России</item>
+        <item lang="ru" id="products_catalog">Каталог товаров</item>
     </language_variables>
 </addon>

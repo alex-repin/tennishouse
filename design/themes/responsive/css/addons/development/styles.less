@@ -243,12 +243,6 @@ select {
     top: 0;
     right:0;
 }
-.ty-rate-us-ym-reviews {
-    position: absolute;
-    top: -15px;
-    right:0;
-    z-index: 10;
-}
 .notification-content-extended {
     border: 1px solid #d6d6d6;
     box-shadow: 0 1px 16px rgba(0, 0, 0, 1);
@@ -310,16 +304,14 @@ label.cm-required::after {
 .ty-anouncement-text {
     color: #496e16;
     display: inline-block;
-    font-size: 15px;
+    font-size: 17px;
     padding: 10px 30px;
     width: 88%;
 }
 .ty-anouncement-close {
     background: url("../../../media/images/addons/development/anouncement_close.png") no-repeat scroll center center;
     cursor: pointer;
-    position: absolute;
-    top: 0;
-    right: 0;
+    float: right;
     height: 20px;
     margin: 0 10px;
     padding: 10px;
@@ -327,21 +319,6 @@ label.cm-required::after {
 }
 .ty-anouncement-close:hover {
     background: url("../../../media/images/addons/development/anouncement_close_hover.png") no-repeat scroll center center;
-}
-.ty-orders-promotion__block {
-    margin-bottom: 10px;
-    margin-left: 10px;
-    .ty-orders-promotion__title {
-        margin: 0;
-        font-size: 15px;
-    }
-    .ty-orders-promotion__description {
-        padding: 0 10px;
-        margin: 0;
-    }
-}
-.ty-orders-promotion .ty-subheader {
-    margin-bottom: 10px;
 }
 
 /* Placeholder */
@@ -1643,9 +1620,6 @@ input:focus::placeholder, textarea:focus::placeholder {
 }
 .ty-product-switcher {
     top: 10px;
-}
-.discussion-block {
-    position: relative;
 }
 .ty-discussion__rating-wrapper {
     display: inline-block;

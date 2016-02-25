@@ -514,24 +514,25 @@ function fn_init_layout($params)
         fn_set_session_data($key_name, $params['s_layout']);
     }
 
+    // [tennishouse]
+    if (!empty($_REQUEST['dmode'])) {
+        if ($_SESSION['dmode'] != $_REQUEST['dmode']) {
+            $_SESSION['dmode'] = $_REQUEST['dmode'];
+            Registry::cleanup();
+        }
+        fn_set_session_data($key_name, false);
+    }
     // Replace default theme with selected for current area
     if (!empty($stored_layout)) {
         $layout = Layout::instance()->get($stored_layout);
 
-        if (!isset($layout['theme_name']) || $layout['theme_name'] != fn_get_theme_path('[theme]', 'C')) {
+        if (!isset($layout['theme_name']) || (AREA == 'C' && $layout['theme_name'] != fn_get_theme_path('[theme]', 'C'))) {
             unset($layout);
         }
     }
 
     if (empty($layout)) {
-        // [tennishouse]
         if (AREA == 'C') {
-            if (!empty($_REQUEST['dmode'])) {
-                if ($_SESSION['dmode'] != $_REQUEST['dmode']) {
-                    $_SESSION['dmode'] = $_REQUEST['dmode'];
-                    Registry::cleanup();
-                }
-            }
             if (!empty($_SESSION['dmode'])) {
                 if ($_SESSION['dmode'] == 'M') {
                     $theme_name = MOBILE_THEME_NAME;

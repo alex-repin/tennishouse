@@ -6,10 +6,11 @@
 {script src="js/tygh/ajax.js"}
 {script src="js/tygh/history.js"}
 {script src="js/lib/autonumeric/autoNumeric.js"}
-{script src="js/lib/tools/tooltip.min.js"}
 {script src="js/lib/jqueryui/jquery-ui.custom.min.js"}
 {script src="js/lib/appear/jquery.appear-1.1.1.js"}
-
+{if !$runtime.customization_mode.live_editor}
+    {script src="js/lib/tools/tooltip.min.js"}
+{/if}
 {script src="js/tygh/editors/`$settings.Appearance.default_wysiwyg_editor`.editor.js"}
 
 {script src="js/tygh/responsive.js"}
@@ -52,6 +53,7 @@
         text_data_changed: '{__("text_data_changed")|escape:"javascript"}',
         file_browser: '{__("file_browser")|escape:"javascript"}',
         browse: '{__("browse")|escape:javascript}',
+        define_option: '{__("define_option")|escape:javascript}',
         more: '{__("more")|escape:"javascript"}'
     });
     

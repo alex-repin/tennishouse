@@ -21,6 +21,36 @@ use Tygh\Menu;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_format_submenu(&$menu_items)
+{
+    if (count($menu_items) == 1) {
+        $elm_tmp = reset($menu_items);
+        if ($elm_tmp['is_virtual'] == 'Y' && !empty($elm_tmp['subitems'])) {
+            $menu_items = $elm_tmp['subitems'];
+        }
+    }
+    foreach ($menu_items as $j => $item) {
+        if (!empty($item['subitems'])) {
+            $menu_items[$j]['expand'] = false;
+            if ($item['is_virtual'] == 'Y' && !empty($item['parent_id'])) {
+                $menu_items[$j]['href'] = 'categories.view?category_id=' . $item['parent_id'];
+            }
+            fn_format_submenu($menu_items[$j]['subitems']);
+        }
+    }
+}
+
+function fn_get_catalog_panel_categoies()
+{
+    $params = array(
+        'param_3' => 'C:0:N'
+    );
+    $menu = fn_top_menu_form(array($params));
+    $menu_items = $menu[0]['subitems'];
+    fn_format_submenu($menu_items);
+    return $menu_items;
+}
+
 function fn_process_php_errors($errno, $errstr, $errfile, $errline, $errcontext)
 {
     $dirs = Registry::get('config.dir');

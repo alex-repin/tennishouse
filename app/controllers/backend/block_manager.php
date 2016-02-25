@@ -355,7 +355,7 @@ if ($mode == 'manage' || $mode == 'manage_in_tab') {
     $params = array(
         'theme_name' => $theme->getThemeName()
     );
-    Registry::get('view')->assign('layouts', Layout::instance()->getList($params));
+    Registry::get('view')->assign('layouts', Layout::instance()->getList(/*$params*/));
     Registry::get('view')->assign('all_layouts', Layout::instance()->getList());
     Registry::get('view')->assign('default_layouts_sources', fn_get_default_layouts_sources('responsive'));
 

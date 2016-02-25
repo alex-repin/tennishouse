@@ -43,7 +43,7 @@
 
 {assign var="pagination" value=$search|fn_generate_pagination}
 
-{if $pagination.total_items}
+{*if $pagination.total_items}
 {assign var="range_url" value=$curl|fn_query_remove:"items_per_page":"page"}
 {assign var="product_steps" value=$settings.Appearance.columns_in_products_list|fn_get_product_pagination_steps:$settings.Appearance.products_per_page}
 <div class="ty-sort-dropdown">
@@ -58,5 +58,5 @@
         {/foreach}
     </ul>
 </div>
-{/if}
+{/if*}
 </div>
