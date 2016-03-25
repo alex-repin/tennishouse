@@ -88,28 +88,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Update total and surcharge amount
         $payment = fn_get_payment_method_data($_REQUEST['payment_id']);
-        if (!empty($payment['p_surcharge']) || !empty($payment['a_surcharge'])) {
-            $surcharge_value = 0;
-            if (floatval($payment['a_surcharge'])) {
-                $surcharge_value += $payment['a_surcharge'];
-            }
-            if (floatval($payment['p_surcharge'])) {
-                $surcharge_value += fn_format_price(($order_info['total'] - $order_info['payment_surcharge']) * $payment['p_surcharge'] / 100);
-            }
-            $update_order['payment_surcharge'] = $surcharge_value;
-            if (fn_allowed_for('MULTIVENDOR') && fn_take_payment_surcharge_from_vendor($order_info['products'])) {
-                $update_order['total'] = fn_format_price($order_info['total']);
-            } else {
-                $update_order['total'] = fn_format_price($order_info['total'] - $order_info['payment_surcharge'] + $surcharge_value);
-            }
-        } else {
-            if (fn_allowed_for('MULTIVENDOR') && fn_take_payment_surcharge_from_vendor($order_info['products'])) {
-                $update_order['total'] = fn_format_price($order_info['total']);
-            } else {
-                $update_order['total'] = fn_format_price($order_info['total'] - $order_info['payment_surcharge']);
-            }
-            $update_order['payment_surcharge'] = 0;
-        }
+//         if (!empty($payment['p_surcharge']) || !empty($payment['a_surcharge'])) {
+//             $surcharge_value = 0;
+//             if (floatval($payment['a_surcharge'])) {
+//                 $surcharge_value += $payment['a_surcharge'];
+//             }
+//             if (floatval($payment['p_surcharge'])) {
+//                 $surcharge_value += fn_format_price(($order_info['total'] - $order_info['payment_surcharge']) * $payment['p_surcharge'] / 100);
+//             }
+//             $update_order['payment_surcharge'] = $surcharge_value;
+//             if (fn_allowed_for('MULTIVENDOR') && fn_take_payment_surcharge_from_vendor($order_info['products'])) {
+//                 $update_order['total'] = fn_format_price($order_info['total']);
+//             } else {
+//                 $update_order['total'] = fn_format_price($order_info['total'] - $order_info['payment_surcharge'] + $surcharge_value);
+//             }
+//         } else {
+//             if (fn_allowed_for('MULTIVENDOR') && fn_take_payment_surcharge_from_vendor($order_info['products'])) {
+//                 $update_order['total'] = fn_format_price($order_info['total']);
+//             } else {
+//                 $update_order['total'] = fn_format_price($order_info['total'] - $order_info['payment_surcharge']);
+//             }
+//             $update_order['payment_surcharge'] = 0;
+//         }
 
         fn_set_hook('repay_order', $order_info, $update_order, $payment, $payment_info);
 

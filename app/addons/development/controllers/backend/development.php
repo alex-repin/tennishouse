@@ -780,7 +780,7 @@ if ($mode == 'calculate_balance') {
 
 function fn_normalize_string($string)
 {
-    if (preg_match("/\d,\d/", $string, $matches)) {
+    if (preg_match_all("/\d,\d/", $string, $matches)) {
         $rplc = str_replace(',', '.', $matches[0]);
         $string = str_replace($matches[0], $rplc, $string);
     }

@@ -478,7 +478,7 @@ function fn_reward_points_change_order_status(&$status_to, &$status_from, &$orde
             }
         }
 
-        if ($status_to == 'C' && $points_info['is_gain'] == 'N' && !empty($points_info['reward'])) {
+        if (($status_to == 'C' || $status_to == 'E') && $points_info['is_gain'] == 'N' && !empty($points_info['reward'])) {
             // increase  rewarded points
             $log_id = fn_change_user_points($points_info['reward'], $order_info['user_id'], serialize($reason), $action);
             $order_data = array(
