@@ -29,7 +29,7 @@ define('PAGE_THRESHOLD', 40); // if number of pages less than this value, all pa
 define('PAGE_SHOW_ALL', 100); // if number of pages less than this value, pages tree will be expanded
 
 // These constants define when select box with product feature variants list should be replaced with picker
-define('PRODUCT_FEATURE_VARIANTS_THRESHOLD', 40); // if number of product feature variants less than this value, all product feature variants will be retrieved, otherwise product features variants will be retrieved by ajax
+define('PRODUCT_FEATURE_VARIANTS_THRESHOLD', 100); // if number of product feature variants less than this value, all product feature variants will be retrieved, otherwise product features variants will be retrieved by ajax
 
 // Maximum number of recently viewed products, stored in session
 define('MAX_RECENTLY_VIEWED', 10);
@@ -152,7 +152,7 @@ define('SESS_VALIDATE_UA', true); // link session ID with user-agent
 
 define('BILLING_ADDRESS_PREFIX', 'b');
 define('SHIPPING_ADDRESS_PREFIX', 's');
-define('DEBUGGING_IP', '89.169.19.85');//89.169.62.168
+define('DEBUGGING_IP', '89.169.6.168');//89.169.62.168
 
 /*
  * Dynamic options

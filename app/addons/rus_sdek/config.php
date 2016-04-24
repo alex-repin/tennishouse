@@ -17,4 +17,5 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 use Tygh\Registry;
 
 define('SDEK_STOCKROOM', 136);
+define('SDEK_EXPR_STOCKROOM', 10);
 define('SDEK_DOOR', 137);

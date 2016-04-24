@@ -192,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         db_query('UPDATE ?:shipments SET tracking_number = ?s WHERE shipment_id = ?i', $result['number'], $shipment_id);
                     }
 
-                    if ($sdek_info['Order']['TariffTypeCode'] != SDEK_STOCKROOM) {
+                    if ($sdek_info['Order']['TariffTypeCode'] != SDEK_STOCKROOM && $sdek_info['Order']['TariffTypeCode'] != SDEK_EXPR_STOCKROOM) {
                         $register_data['address'] = $sdek_info['Address']['Street'];
                     } else {
                         $register_data['address_pvz'] = "{$sdek_info['Address']['PvzCode']}";
@@ -316,7 +316,7 @@ if ($mode == 'details') {
                         $data_shipments[$shipment['shipment_id']] = $data_sdek;
                         $data_shipments[$shipment['shipment_id']]['dimensions'] = !empty($data_sdek['dimensions']) ? unserialize($data_sdek['dimensions']) : array();
                         $data_shipments[$shipment['shipment_id']]['shipping'] = $shipment['shipping'];
-                        if ($data_shipments[$shipment['shipment_id']]['tariff'] == SDEK_STOCKROOM) {
+                        if ($data_shipments[$shipment['shipment_id']]['tariff'] == SDEK_STOCKROOM || $data_shipments[$shipment['shipment_id']]['tariff'] == SDEK_EXPR_STOCKROOM) {
                             $data_shipments[$shipment['shipment_id']]['address'] = $offices[$data_sdek['address_pvz']]['Address'];
                         }
 
@@ -360,7 +360,7 @@ if ($mode == 'details') {
                             'send_city_code' => $data_shipping['service_params']['from_city_id'],
                         );
 
-                        if ($data_shipping['service_params']['tariffid'] == SDEK_STOCKROOM) {
+                        if ($data_shipping['service_params']['tariffid'] == SDEK_STOCKROOM || $data_shipping['service_params']['tariffid'] == SDEK_EXPR_STOCKROOM) {
                             $data_shipments[$shipment['shipment_id']]['offices'] = $offices;
                         } else {
                             $data_shipments[$shipment['shipment_id']]['rec_address'] = (!empty($order_info['s_address'])) ? $order_info['s_address'] : $order_info['b_address'];
