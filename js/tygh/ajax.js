@@ -484,8 +484,8 @@
                             resizable: false
                         });
                     }
-
-                    elms.push(elm);
+                    // Tennishouse
+                    elms.push(elm.trigger("create"));
                 }
 
                 if (response.title) {

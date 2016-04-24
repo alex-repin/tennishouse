@@ -42,9 +42,6 @@
                                     <a target="_blank" style="font: 15px Play, sans-serif;text-decoration: underline;color: #565a5c;" href="{"orders.search"|fn_url:'C':'http'}">{__("my_orders")}</a>
                                 </span>
                                 <span style="float: left;margin-right: 30px;">
-                                    <a target="_blank" style="font: 15px Play, sans-serif;text-decoration: underline;color: #565a5c;" href="{"pages.view?page_id=`$smarty.const.LETS_PLAY_PAGE_ID`"|fn_url:'C':'http'}">{__("lets_play")}</a>
-                                </span>
-                                <span style="float: left;margin-right: 30px;">
                                     <a target="_blank" style="font: 15px Play, sans-serif;text-decoration: underline;color: #565a5c;" href="{"pages.view?page_id=`$smarty.const.LOYALITY_PROGRAM_PAGE_ID`"|fn_url:'C':'http'}">{__("loyality_program")}</a>
                                 </span>
                             </div>

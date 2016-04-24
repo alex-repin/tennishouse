@@ -8,9 +8,13 @@
                 {else}
                     {$title|fn_read_title nofilter}
                 {/if}
+                <div class="ty-sidebox__title-toggle cm-combination visible-phone" id="sw_sidebox_{$block.block_id}">
+                    <i class="ty-sidebox__icon-hide ty-icon-up-open"></i>
+                    <i class="ty-sidebox__icon-open ty-icon-down-open"></i>
+                </div>
                 {/hook}
             </h2>
         {/if}
-        <div class="ty-tennishouse-body">{$content nofilter}</div>
+        <div class="ty-tennishouse-body hide-phone" id="sidebox_{$block.block_id}">{$content nofilter}</div>
     </div>
 {/if}

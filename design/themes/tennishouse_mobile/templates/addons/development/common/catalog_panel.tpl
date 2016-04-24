@@ -7,13 +7,19 @@
 
     <div class="ty-menu__header">{__("products_catalog")}</div>
     <ul class="ty-menu__items">
-        {assign var="categories_tree" value=""|fn_get_catalog_panel_categoies}
-        {include file="addons/development/common/catalog_panel_menu.tpl" categories_tree=$categories_tree separated=true submenu=true iid=$category.$category_id level=$level+1}
+        {assign var="items_tree" value=""|fn_get_catalog_panel_categoies}
+        {include file="addons/development/common/catalog_panel_menu.tpl" items_tree=$items_tree level=1 type="C"}
     </ul>
     
     <div class="ty-menu__header">{__("my_account")}</div>
-    <ul class="ty-menu__items">
-        {include file="addons/development/common//my_account.tpl"}
+    <ul class="ty-menu__items ty-menu__items-profile">
+        {include file="addons/development/common/my_account.tpl"}
+    </ul>
+    
+    <div class="ty-menu__header">{__("useful_info")}</div>
+    <ul class="ty-menu__items ty-menu__items-profile">
+        {assign var="items_tree" value=""|fn_get_catalog_panel_pages}
+        {include file="addons/development/common/catalog_panel_menu.tpl" items_tree=$items_tree level=1 type="A"}
     </ul>
 </div>
 

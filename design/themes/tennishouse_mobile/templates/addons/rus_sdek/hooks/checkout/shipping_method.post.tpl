@@ -11,7 +11,7 @@
                     <div class="ty-one-office">
                         <input type="radio" name="select_office[{$group_key}][{$shipping.shipping_id}]" value="{$office.Code}" {if $old_office_id == $office.Code || $office_count == 1}checked="checked"{/if} id="office_{$group_key}_{$shipping.shipping_id}_{$office.Code}" class="ty-office-radio" >
                         <div class="ty-office__label">
-                            <label for="office_{$office.office_id}" >
+                            <label for="office_{$group_key}_{$shipping.shipping_id}_{$office.Code}" >
                                 <p class="ty-one-office__name">{$office.Name}</p>
                                 <div class="ty-one-office__description">
                                     {$office.City}, {$office.Address}<br />

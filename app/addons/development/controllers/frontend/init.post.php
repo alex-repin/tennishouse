@@ -31,3 +31,4 @@ if (empty($_SESSION['hide_anouncement'])) {
     }
 }
 Registry::get('view')->assign('mobile_page_id', fn_crc32(implode('_', $_REQUEST)));
+Registry::get('view')->assign('company_phone', preg_replace('/[^0-9+]/', '', Registry::get('settings.Company.company_phone')));

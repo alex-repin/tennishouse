@@ -125,7 +125,7 @@
 
 {capture name="add_to_cart_`$obj_id`"}
 {if $show_add_to_cart}
-<div class="cm-reload-{$obj_prefix}{$obj_id} {$add_to_cart_class} ty-inline-block" id="add_to_cart_update_{$obj_prefix}{$obj_id}">
+<div class="cm-reload-{$obj_prefix}{$obj_id} {$add_to_cart_class}" id="add_to_cart_update_{$obj_prefix}{$obj_id}">
 <input type="hidden" name="appearance[show_add_to_cart]" value="{$show_add_to_cart}" />
 <input type="hidden" name="appearance[show_list_buttons]" value="{$show_list_buttons}" />
 <input type="hidden" name="appearance[but_role]" value="{$but_role}" />
@@ -250,7 +250,7 @@
         <span class="cm-reload-{$obj_prefix}{$obj_id}" id="old_price_update_{$obj_prefix}{$obj_id}">
             {hook name="products:old_price"}
             {if $product.discount}
-                <span class="ty-list-price ty-nowrap" id="line_old_price_{$obj_prefix}{$obj_id}">{if $details_page}{__("old_price")}: {/if}<span class="ty-strike">{include file="common/price.tpl" value=$product.original_price|default:$product.base_price span_id="old_price_`$obj_prefix``$obj_id`" class="ty-nowrap"}</span></span>
+                <span class="ty-list-price ty-nowrap" id="line_old_price_{$obj_prefix}{$obj_id}">{*if $details_page}{__("old_price")}: {/if*}<span class="ty-strike">{include file="common/price.tpl" value=$product.original_price|default:$product.base_price span_id="old_price_`$obj_prefix``$obj_id`" class="ty-nowrap"}</span></span>
             {elseif $product.list_discount}
                 <span class="ty-list-price ty-nowrap" id="line_list_price_{$obj_prefix}{$obj_id}">{*if $details_page}<span class="list-price-label">{__("list_price")}:</span> {/if*}<span class="ty-strike">{include file="common/price.tpl" value=$product.list_price span_id="list_price_`$obj_prefix``$obj_id`" class="ty-nowrap"}</span></span>
             {/if}
@@ -458,11 +458,11 @@
                 {else}
                 <div class="ty-center ty-value-changer cm-value-changer">
                     {if $settings.Appearance.quantity_changer == "Y"}
-                        <a class="cm-increase ty-value-changer__increase">&#43;</a>
+                        <div class="ty-value-changer-decrease"><a class="cm-decrease ty-value-changer__decrease">&minus;</a></div>
                     {/if}
-                    <input type="text" size="5" class="ty-value-changer__input cm-amount" id="qty_count_{$obj_prefix}{$obj_id}" name="product_data[{$obj_id}][amount]" value="{$default_amount}"{if $product.qty_step > 1} data-ca-step="{$product.qty_step}"{/if} data-ca-min-qty="1" />
+                    <div class="ty-value-changer-input"><input type="text" size="5" class="ty-value-changer__input cm-amount" id="qty_count_{$obj_prefix}{$obj_id}" name="product_data[{$obj_id}][amount]" value="{$default_amount}"{if $product.qty_step > 1} data-ca-step="{$product.qty_step}"{/if} data-ca-min-qty="1" /></div>
                     {if $settings.Appearance.quantity_changer == "Y"}
-                        <a class="cm-decrease ty-value-changer__decrease">&minus;</a>
+                        <div class="ty-value-changer-increase"><a class="cm-increase ty-value-changer__increase">&#43;</a></div>
                     {/if}
                 </div>
                 {/if}

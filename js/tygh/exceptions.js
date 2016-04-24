@@ -92,6 +92,9 @@ function fn_change_options(obj_id, id, option_id)
                         $.each(elms, function(id, elm) {
                             var elm_id = $(elm).prop('id');
 
+                            if ($.mobile && $(elm).is('select')) {
+                                $(elm).selectmenu();
+                            }
                             if (defaultValues[reload_id][elm_id] != null) {
                                 if ($(elm).is('select')) {
                                     var selected = {};

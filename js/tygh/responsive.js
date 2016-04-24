@@ -178,6 +178,7 @@
                 if(this.winWidth() <= 767) {
                     tables.each(function() {
                         var thTexts = [];
+                        var tbData = {};
 
                         // if we have sub table detach it.
                         var subTable = $(this).find('.ty-table');
@@ -186,21 +187,62 @@
                             subTable.parent().data('caSubTableData', subTable.detach());
                         }
 
-                        $(this).find('th').each(function() {
-                            thTexts.push($(this).text());
-                        });
-
-                        $(this).find('tr:not(.ty-table__no-items)').each(function() {
-                            $(this).find('td:not(.ty-table-disable-convertation)').each(function(index) {
-                                var $elm = $(this);
-                                
-                                if($elm.find('.ty-table__responsive-content').length == 0) {
-                                    $elm.wrapInner('<div class="ty-table__responsive-content"></div>');
-                                    $elm.prepend('<div class="ty-table__responsive-header">' + thTexts[index] + '</div>');
-                                }
+                        var irow = 0
+                        $(this).find('tr').each(function() {
+                            var thRow = [];
+                            $(this).find('th').each(function() {
+                                thRow.push($(this).text());
                             });
-
+                            if (thRow.length == 1) {
+                                thTexts = thTexts.concat(thRow);
+                                var icol = 0;
+                                $(this).find('td').each(function() {
+                                    tbData[icol] = tbData[icol] || {};
+                                    tbData[icol][irow] = $(this).html();
+                                    icol++;
+                                });
+                            } else if (thRow.length > 1) {
+                                thTexts = thRow;
+                            } else {
+                                tbData[irow] = {};
+                                var icol = 0;
+                                $(this).find('td').each(function() {
+                                    tbData[irow][icol] = $(this).html();
+                                    icol++;
+                                });
+                            }
+                            irow++;
                         });
+                        if (thTexts.length > 0) {
+                            var newHTML = '';
+                            for (ikey in tbData) {
+                                newHTML += '<tr>';
+                                for (jkey in tbData[ikey]) {
+                                    newHTML += '<td><div class="ty-table__responsive-header">' + thTexts[jkey] + '</div><div class="ty-table__responsive-content">' + tbData[ikey][jkey] + '</div></td>';
+                                }
+                                newHTML += '</tr>';
+                            }
+                            $(this).html(newHTML);
+                        }
+//                         $(this).find('th').each(function() {
+//                             thTexts.push($(this).text());
+//                             $(this).remove();
+//                         });
+// 
+//                         $(this).find('tr:not(.ty-table__no-items)').each(function() {
+//                             if (!$.trim($(this).html())) {
+//                                 $(this).remove();
+//                             }
+//                             $(this).find('td:not(.ty-table-disable-convertation)').each(function(index) {
+//                                 var $elm = $(this);
+//                                 
+//                                 if($elm.find('.ty-table__responsive-content').length == 0) {
+//                                     $elm.wrapInner('<div class="ty-table__responsive-content"></div>');
+//                                     $elm.prepend('<div class="ty-table__responsive-header">' + thTexts[index] + '</div>');
+//                                 }
+//                             });
+// 
+//                         });
 
                         if(subTable.length) {
                             var $subTableElm = $(this).find('[data-ca-has-sub-table]');

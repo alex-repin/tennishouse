@@ -2095,6 +2095,15 @@ var Tygh = {
 
             if (flag == false || flag == true) {
                 $(':input:not(.cm-skip-avail-switch)', this).prop('disabled', flag).toggleClass('disabled', flag);
+                // TennisHouse
+                $('div[class^=ui-]', this).toggleClass('ui-state-disabled', flag);
+                $('.cm-dropdown', this).each(function() {
+                    if (flag) {
+                        $(this).selectbox('disable');
+                    } else {
+                        $(this).selectbox('enable');
+                    }
+                });
                 if (hide) {
                     this.toggle(!flag);
                 }
@@ -3816,12 +3825,24 @@ var Tygh = {
                             popups.push(elm);
                         }
                     } else {
-                        lbl.parent().addClass('error');
-                        elm.addClass('cm-failed-field');
-                        lbl.addClass('cm-failed-label');
+                        // TennisHouse
+                        if ($.mobile) {
+                            if (lbl.data('ca-default-text')) {
+                                alert(lbl.data('ca-default-text'));
+                            } else {
+                                if (!lbl.next().hasClass('ty-field-error')) {
+                                    lbl.next().after('<span id="' + elm_id + '_error_message" class="help-inline">' + _getMessage(elm_id) + '</span>');
+                                }
+                            }
+                            lbl.next().addClass('ty-field-error');
+                        } else {
+                            lbl.parent().addClass('error');
+                            elm.addClass('cm-failed-field');
+                            lbl.addClass('cm-failed-label');
 
-                        if (!elm.hasClass('cm-no-failed-msg')) {
-                            elm.after('<span id="' + elm_id + '_error_message" class="help-inline">' + _getMessage(elm_id) + '</span>');
+                            if (!elm.hasClass('cm-no-failed-msg')) {
+                                elm.after('<span id="' + elm_id + '_error_message" class="help-inline">' + _getMessage(elm_id) + '</span>');
+                            }
                         }
                         if (!message_set) {
                             $.scrollToElm(elm);

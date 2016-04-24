@@ -748,8 +748,8 @@ legend,
 /* Form labels (overrides font-weight bold in bars, and mini font-size) */
 .ui-mobile label,
 div.ui-controlgroup-label {
-	font-weight: normal;
-	font-size: 16px;
+/*	font-weight: normal;
+	font-size: 16px;*/
 }
 /* Separators
 -----------------------------------------------------------------------------------------------------------*/
@@ -1175,6 +1175,9 @@ button[disabled],
 	cursor: default !important;
 	pointer-events: none;
 }
+.ui-state-hidden {
+    display: none !important;
+}
 /* Focus state outline
 -----------------------------------------------------------------------------------------------------------*/
 .ui-btn:focus,
@@ -1397,7 +1400,7 @@ div.ui-mobile-viewport {
 	border-width: 0;
 	overflow: visible;
 	overflow-x: hidden;
-	padding: 1em;
+/*	padding: 1em;*/
 }
 /* Corner styling for dialogs and popups */
 .ui-corner-all > .ui-header:first-child,
@@ -1418,9 +1421,9 @@ div.ui-mobile-viewport {
 }
 /* Buttons and icons */
 .ui-btn {
-	font-size: 16px;
-	margin: .5em 0;
-	padding: .7em 1em;
+	font-size: 15px;
+/*	margin: .5em 0;*/
+	padding: .63em 1em;
 	display: block;
 	position: relative;
 	text-align: center;
@@ -1599,7 +1602,7 @@ button.ui-btn-icon-notext,
 .ui-mobile label,
 .ui-controlgroup-label {
 	display: block;
-	margin: 0 0 .4em;
+/*	margin: 0 0 .4em;*/
 }
 /* Accessible content hiding */
 /* ui-hide-label deprecated in 1.4. TODO: Remove in 1.5 */
@@ -3327,9 +3330,11 @@ fieldset.ui-controlgroup {
 	clip: rect(1px,1px,1px,1px);
 }
 .ui-select {
-	margin-top: .5em;
-	margin-bottom: .5em; /* no shorthand for margin because it would override margin-right for inline selects */
+/*	margin-top: .5em;
+	margin-bottom: .5em;*/
 	position: relative;
+        background: #fff;
+        border: 1px solid #c2c9d0;
 }
 .ui-select > select {
 	position: absolute !important;
@@ -4424,8 +4429,18 @@ html .ui-popup .ui-field-contain > label + .ui-flipswitch {
 .ui-panel-display-overlay {
 	z-index: 1001; /* Fixed toolbars have z-index 1000 */
 }
+.ui-panel {
+    min-height: inherit;
+}
 .ui-panel-inner {
-/*    min-height: inherit;*/
+    bottom: 0;
+    left: 0;
+    min-height: inherit;
+    overflow-y: scroll;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    top: 1px;
 }
 /* Container, page and wrapper */
 .ui-panel-page-container {

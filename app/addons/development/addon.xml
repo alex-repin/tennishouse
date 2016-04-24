@@ -754,5 +754,10 @@
         <item lang="ru" id="anouncements_menu_description">Перманентные объявления для посетителей</item>
         <item lang="ru" id="free_delivery_and_paymet_on_delivery_text">Бесплатная доставка* и оплата при получении по всей России</item>
         <item lang="ru" id="products_catalog">Каталог товаров</item>
+        <item lang="ru" id="about_us">О нас</item>
+        <item lang="ru" id="useful_info">Полезная информация</item>
+        <item lang="ru" id="full_version">Полная версия</item>
+        <item lang="ru" id="mobile_version">Мобильная версия</item>
+        <item lang="ru" id="select_option">Выберите опцию</item>
     </language_variables>
 </addon>

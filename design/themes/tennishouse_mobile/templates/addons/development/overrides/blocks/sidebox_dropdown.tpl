@@ -4,14 +4,11 @@
 {foreach from=$items item="item" name=$foreach_name}
 {hook name="blocks:sidebox_dropdown_element"}
 
-    <li class="ty-menu__item cm-menu-item-responsive {if $item.$childs}dropdown-vertical__dir{/if}{if $item.active || $item|fn_check_is_active_menu_item:$block.type} ty-menu__item-active{/if} menu-level-{$level}">
+    <li class="ty-menu__item {if $item.$childs}dropdown-vertical__dir{/if}{if $item.active || $item|fn_check_is_active_menu_item:$block.type} ty-menu__item-active{/if} menu-level-{$level}">
         {if $item.$childs}
-            <div class="ty-menu__item-toggle visible-tablet visible-phone cm-responsive-menu-toggle">
-                <i class="ty-icon-down-open"></i>
-            </div>
-            <div class="hidden-tablet hidden-phone">
+            <div class="ty-menu__item-toggle">
                 <i class="ty-icon-right-open"></i>
-                <i class="ty-icon-left-open"></i>
+                <i class="ty-icon-down-open"></i>
             </div>
         {/if}
 
@@ -21,16 +18,29 @@
         </div>
 
         {if $item.$childs}
-            {hook name="blocks:sidebox_dropdown_childs"}
-            <div class="ty-menu__submenu">
-                <ul class="ty-menu__submenu-items cm-responsive-menu-submenu">
-                    {include file="blocks/sidebox_dropdown.tpl" items=$item.$childs separated=true submenu=true iid=$item.$item_id level=$level+1}
-                </ul>
-            </div>
-            {/hook}
+            <ul class="ty-menu__submenu-items">
+                {include file="blocks/sidebox_dropdown.tpl" items=$item.$childs separated=true submenu=true iid=$item.$item_id level=$level+1}
+            </ul>
         {/if}
     </li>
 {/hook}
 
 {/foreach}
+<script type="text/javascript">
+    Tygh.$(document).ready(function() {$ldelim}
+        Tygh.$('.ty-menu__submenu-item-header').click(function(e){$ldelim}
+            if(Tygh.$(this).siblings('.ty-menu__submenu-items').length && Tygh.$(this).siblings('.ty-menu__submenu-items').is(':visible') == false) {$ldelim}
+                Tygh.$(this).parent().siblings('.ty-menu__item').removeClass('ty-menu__item-expanded').find('.ty-menu__submenu-items').slideUp();
+                Tygh.$(this).parent().siblings('.ty-menu__item').find('.ty-menu__item-toggle').find('.ty-icon-down-open').show();
+                Tygh.$(this).parent().siblings('.ty-menu__item').find('.ty-menu__item-toggle').find('.ty-icon-right-open').hide();
+                
+                Tygh.$(this).siblings('.ty-menu__submenu-items').slideToggle();
+                Tygh.$(this).parent().addClass('ty-menu__item-expanded');
+                Tygh.$(this).siblings('.ty-menu__item-toggle').find('.ty-icon-down-open').hide();
+                Tygh.$(this).siblings('.ty-menu__item-toggle').find('.ty-icon-right-open').show();
+                return false;
+            {$rdelim}
+        {$rdelim});
+    {$rdelim});
+</script>
 {/strip}{/hook}

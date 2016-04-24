@@ -5,89 +5,42 @@
         {if $product}
             {assign var="obj_id" value=$product.product_id}
             {include file="common/product_data.tpl" product=$product but_role="big" but_text=__("add_to_cart") hide_qty_label=true}
+            {if $product.discussion.posts || $product.header_features}
+                <div class="ty-product-detail__before-title">
+                {hook name="products:brand"}
+                    <div class="ty-product-detail__brand-image">
+                        {$brand_id = $smarty.const.BRAND_FEATURE_ID}
+                        {$brand_variant_id = $product.header_features.$brand_id.variant_id}
+                        {include file="addons/development/common/brand_logo.tpl" brand=$product.header_features.$brand_id.variants.$brand_variant_id brand_variant_id=$brand_variant_id}
+                    </div>
+                {/hook}
+                {hook name="products:main_info_title"}{/hook}
+                </div>
+            {/if}
+            {if !$hide_title}
+                <h1 class="ty-product-block-title" {live_edit name="product:product:{$product.product_id}"}>
+                    {$product.product nofilter}
+                </h1>
+            {/if}
             <div class="ty-product-block__img-wrapper">
                 {hook name="products:image_wrap"}
                     {if !$no_images}
                         <div class="ty-product-block__img cm-reload-{$product.product_id}" id="product_images_{$product.product_id}_update">
 
-                            {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
-                            {$smarty.capture.$discount_label nofilter}
-
                             {include file="views/products/components/product_images.tpl" product=$product show_detailed_link="Y" image_width=$settings.Thumbnails.product_details_thumbnail_width image_height=$settings.Thumbnails.product_details_thumbnail_height}
                         <!--product_images_{$product.product_id}_update--></div>
                     {/if}
                 {/hook}
-                {if $smarty.capture.block_product_cross_sales}
-                <div class="ty-product-cross-block">
-                    <div class="ty-product-plus">+</div>
-                    <div class="ty-product-cross-discounts">{__("strings_overgrips_discount_text")}</div>
-                    {$smarty.capture.block_product_cross_sales nofilter}
-                </div>
-                {/if}
-                {if $product.players}
-                    {if "RASBST"|strpos:$product.category_type !== false}
-                        {$type = $product.category_type}
-                    {else}
-                        {$type = 'C'}
-                    {/if}
-                    {if $product.players|count == '1'}
-                        {$title = __("`$product.category_type`_played_by_single")}
-                    {else}
-                        {$title = __("`$product.category_type`_played_by")}
-                    {/if}
-                    <div class="ty-product-block__players">
-                        <h3 class="ty-mainbox-simple-title">
-                            {$title}
-                        </h3>
-                        <div>
-                            {foreach from=$product.players item="player" name="plrs"}
-                                {if $smarty.foreach.plrs.iteration < 5}
-                                    <div class="ty-product-list__player_image">
-                                        <a href="{"players.view?player_id=`$player.player_id`"|fn_url}">
-                                            {include file="common/image.tpl" obj_id=$obj_id_prefix images=$player.main_pair image_width=$settings.Thumbnails.product_lists_thumbnail_width image_height=$settings.Thumbnails.product_lists_thumbnail_height}
-                                        </a>
-                                        <div>{$player.player}</div>
-                                    </div>
-                                {/if}
-                            {/foreach}
-                        </div>
-                    </div>
-                {/if}
             </div>
             <div class="ty-product-block__left">
                 {assign var="form_open" value="form_open_`$obj_id`"}
                 {$smarty.capture.$form_open nofilter}
-
-                {if $product.discussion.posts || $product.header_features}
-                    <div class="ty-product-detail__before-title">
-                    {hook name="products:brand"}
-                        <div class="ty-product-detail__brand-image">
-                            {$brand_id = $smarty.const.BRAND_FEATURE_ID}
-                            {$brand_variant_id = $product.header_features.$brand_id.variant_id}
-                            {include file="addons/development/common/brand_logo.tpl" brand=$product.header_features.$brand_id.variants.$brand_variant_id brand_variant_id=$brand_variant_id}
-                        </div>
-                    {/hook}
-                    {hook name="products:main_info_title"}{/hook}
-                    </div>
-                {/if}
-                {if !$hide_title}
-                    <h1 class="ty-product-block-title" {live_edit name="product:product:{$product.product_id}"}>
-                        {$product.product nofilter}
-                        <div class="ty-product__share-buttons">
-                            {include file="addons/development/common/share_buttons.tpl" title=$product.product description=$product.full_description|strip_tags|truncate:160 image=$product.main_pair}
-                        </div>
-                        {if $product.price > $addons.development.free_shipping_cost}
-                        <div class="ty-product-free-shipping">{__("free_shipping_product_text")}</div>
-                        {/if}
-                    </h1>
-                {/if}
 
                 <div class="ty-product-detail__buy-section">
                 {assign var="old_price" value="old_price_`$obj_id`"}
                 {assign var="price" value="price_`$obj_id`"}
                 {assign var="clean_price" value="clean_price_`$obj_id`"}
                 {assign var="list_discount" value="list_discount_`$obj_id`"}
-                {assign var="discount_label" value="discount_label_`$obj_id`"}
 
                 {hook name="products:promo_text"}
                 {if $product.promo_text}
@@ -102,7 +55,7 @@
                         <div class="{if $smarty.capture.$old_price|trim || $smarty.capture.$clean_price|trim || $smarty.capture.$list_discount|trim}prices-container {/if}">
                             {if $smarty.capture.$old_price|trim || $smarty.capture.$clean_price|trim || $smarty.capture.$list_discount|trim}
                                 <div class="ty-product-prices">
-                                    {if $smarty.capture.$old_price|trim}{$smarty.capture.$old_price nofilter}{/if}
+                                    {*if $smarty.capture.$old_price|trim}{$smarty.capture.$old_price nofilter}{/if*}
                             {/if}
 
                             {if $smarty.capture.$price|trim}
@@ -120,11 +73,11 @@
                                 </div>
                             {/if}
 
-                            {if $smarty.capture.$old_price|trim || $smarty.capture.$clean_price|trim || $smarty.capture.$list_discount|trim}
+                            {*if $smarty.capture.$old_price|trim || $smarty.capture.$clean_price|trim || $smarty.capture.$list_discount|trim}
                                     {$smarty.capture.$clean_price nofilter}
                                     {$smarty.capture.$list_discount nofilter}
                                 </div>
-                            {/if}
+                            {/if*}
                         </div>
                         <div class="ty-product-block__advanced-option">
                             {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
@@ -133,12 +86,6 @@
                             {if $capture_options_vs_qty}{/capture}{/if}
                         </div>
                     </div>
-                    {if $product.offer_help}
-                        <div class="ty-consultation">
-                            <div class="ty-consultation-text">{__("expert_consultation")}</div>
-                            <div class="ty-consultation-phone">{$settings.Company.company_phone}</div>
-                        </div>
-                    {/if}
                 </div>
 
                 {*
@@ -181,9 +128,6 @@
 
                 {if $capture_buttons}{capture name="buttons"}{/if}
                 <div class="ty-product-block__button">
-                    {assign var="follow" value="follow_`$obj_id`"}
-                    {$smarty.capture.$follow nofilter}
-                    
                     {if $show_details_button}
                         {include file="buttons/button.tpl" but_href="products.view?product_id=`$product.product_id`" but_text=__("view_details") but_role="submit"}
                     {/if}

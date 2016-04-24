@@ -51,6 +51,36 @@ function fn_get_catalog_panel_categoies()
     return $menu_items;
 }
 
+function fn_get_catalog_panel_pages()
+{
+//     $params = array(
+//         'param_3' => 'A:53:Y'
+//     );
+//     $menu_items = array();
+//     $players = array(
+//         'item' => __("players"),
+//         'href' => 'players.list',
+//     );
+//     $menu_items[] = $players;
+//     $kb_items = fn_top_menu_form(array($params));
+//     $menu_items[] = reset($kb_items);
+//     $reviews = array(
+//         'item' => __("players"),
+//         'href' => 'players.list',
+//     );
+    $block['content']['menu'] = 2;
+    $menu_items = fn_get_menu_items_th(true, $block, true);
+    foreach ($menu_items as $i => $m_item) {
+        if (in_array($m_item['id_path'], array(152, 153))) {
+            unset($menu_items[$i]);
+        }
+        if ($m_item['id_path'] == 158) {
+            unset($menu_items[$i]['subitems']);
+        }
+    }
+    return $menu_items;
+}
+
 function fn_process_php_errors($errno, $errstr, $errfile, $errline, $errcontext)
 {
     $dirs = Registry::get('config.dir');

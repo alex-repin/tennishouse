@@ -62,11 +62,11 @@
         show_discount_label=true
         hide_links=true}
     {/if}
-    {if $all_items_url}
+    {*if $all_items_url}
         <div class="ty-check-all__block-link">
             <a href="{"`$all_items_url`"|fn_url}">{__("check_all_items")|upper}</a>
         </div>
-    {/if}
+    {/if*}
 </div>
 
 {include file="common/scroller_init.tpl"}

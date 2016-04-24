@@ -45,7 +45,7 @@
                                     {$product.product nofilter}
                                 </a>
                                 {if !$product.exclude_from_calculate}
-                                    <a class="{$ajax_class} ty-cart-content__product-delete ty-delete-big" href="{"checkout.delete?cart_id=`$key`&redirect_mode=`$runtime.mode`"|fn_url}" data-ca-target-id="cart_items,checkout_totals,cart_status*,checkout_steps,checkout_cart" title="{__("remove")}">&nbsp;<i class="ty-delete-big__icon ty-icon-cancel-circle"></i>
+                                    <a class="{$ajax_class} ty-cart-content__product-delete ty-delete-big" href="{"checkout.delete?cart_id=`$key`&redirect_mode=`$runtime.mode`"|fn_url}" data-ca-target-id="cart_items,checkout_totals,cart_status*,checkout_steps,checkout_cart" title="{__("remove")}">&nbsp;<i class="ty-delete-big__icon ty-icon-cancel"></i>
                                     </a>
                                 {/if}
                             {/strip}
@@ -131,11 +131,11 @@
                                 {else}
                                     {if $settings.Appearance.quantity_changer == "Y"}
                                         <div class="ty-center ty-value-changer cm-value-changer">
-                                        <a class="cm-increase ty-value-changer__increase">&#43;</a>
+                                        <div class="ty-value-changer-decrease"><a class="cm-decrease ty-value-changer__decrease">&minus;</a></div>
                                     {/if}
-                                    <input type="text" size="3" id="amount_{$key}" name="cart_products[{$key}][amount]" value="{$product.amount}" class="ty-value-changer__input cm-amount"{if $product.qty_step > 1} data-ca-step="{$product.qty_step}"{/if} />
+                                    <div class="ty-value-changer-input"><input type="text" size="3" id="amount_{$key}" name="cart_products[{$key}][amount]" value="{$product.amount}" class="ty-value-changer__input cm-amount"{if $product.qty_step > 1} data-ca-step="{$product.qty_step}"{/if} /></div>
                                     {if $settings.Appearance.quantity_changer == "Y"}
-                                        <a class="cm-decrease ty-value-changer__decrease">&minus;</a>
+                                        <div class="ty-value-changer-increase"><a class="cm-increase ty-value-changer__increase">&#43;</a></div>
                                         </div>
                                     {/if}
                                 {/if}
