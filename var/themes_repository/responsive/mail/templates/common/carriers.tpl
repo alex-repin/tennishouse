@@ -24,6 +24,8 @@
 {elseif $carrier == "temando"}
     {$url = "https://temando.com/education-centre/support/track-your-item?token=`$tracking_number`"}
     {$carrier_name = __("temando")}
+{elseif $carrier == "sdek"}
+    {$url = "http://www.edostavka.ru/track.html?order_id=`$tracking_number`"}
 {else}
     {$url = ""}
     {$carrier_name = $carrier}

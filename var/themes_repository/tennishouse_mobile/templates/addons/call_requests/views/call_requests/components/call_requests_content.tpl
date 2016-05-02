@@ -1,4 +1,4 @@
-<form name="call_requests_form{if !$product}_main{/if}" id="form_{$id}" action="{""|fn_url}" method="post">
+<form name="call_requests_form{if !$product}_main{/if}" id="form_{$id}" action="{""|fn_url}" method="post" class="ty-call-request">
 <input type="hidden" name="redirect_url" value="{$config.current_url}" />
 
 {if $product}
@@ -19,19 +19,19 @@
 
 <div class="ty-control-group">
     <label class="ty-control-group__title" for="call_data_{$id}_name">{__("your_name")}</label>
-    <input id="call_data_{$id}_name" size="50" class="ty-input-text-full" type="text" name="call_data[name]" value="" />
+    <input id="call_data_{$id}_name" size="50" class="ty-input-text-full" placeholder="{__("your_name")}" type="text" name="call_data[name]" value="" />
 </div>
 
 <div class="ty-control-group">
     <label for="call_data_{$id}_phone" class="ty-control-group__title{if !$product} cm-required{/if}">{__("phone")}</label>
-    <input id="call_data_{$id}_phone" class="ty-input-text-full cm-cr-mask-phone" size="50" type="text" name="call_data[phone]" value="" />
+    <input id="call_data_{$id}_phone" class="ty-input-text-full cm-cr-mask-phone" placeholder="{__("phone")}" size="50" type="text" name="call_data[phone]" value="" />
 </div>
 
 {if $product}
 
     <div class="ty-control-group">
         <label for="call_data_{$id}_email" class="ty-control-group__title cm-email">{__("email")}</label>
-        <input id="call_data_{$id}_email" class="ty-input-text-full" size="50" type="text" name="call_data[email]" value="" />
+        <input id="call_data_{$id}_email" class="ty-input-text-full" size="50" placeholder="{__("email")}" type="text" name="call_data[email]" value="" />
     </div>
 
     <div class="cr-popup-error-box">
@@ -53,7 +53,7 @@
 {include file="common/image_verification.tpl" option="use_for_call_request" align="left"}
 
 <div class="buttons-container">
-    {include file="buttons/button.tpl" but_name="dispatch[call_requests.request]" but_text=__("submit") but_role="submit" but_meta="ty-btn__primary ty-btn__big ty-btn"}
+    {include file="buttons/button.tpl" but_name="dispatch[call_requests.request]" but_text=__("buy_now") but_role="submit" but_meta="ty-btn__primary ty-btn__big ty-btn"}
 </div>
 
 </form>

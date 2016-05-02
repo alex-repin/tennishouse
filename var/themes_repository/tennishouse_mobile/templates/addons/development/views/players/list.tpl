@@ -6,7 +6,6 @@
         <h1 class="ty-mainbox-title">{__("atp")}</h1>
         <div class="ty-atp-players-block">
         {foreach from=$splitted_atp_players item="saplayers"}
-            <div class="ty-players-row">
             {foreach from=$saplayers item="atp_player"}
                 {if $atp_player}
                     <a href="{"players.view?player_id=`$atp_player.player_id`"|fn_url}" class="ty-subcategories-block__a">
@@ -17,7 +16,6 @@
                     </a>
                 {/if}
             {/foreach}
-            </div>
         {/foreach}
         </div>
         {/strip}
@@ -28,7 +26,6 @@
         <h1 class="ty-mainbox-title">{__("wta")}</h1>
         <div class="ty-wta-players-block">
         {foreach from=$splitted_wta_players item="swplayer"}
-            <div class="ty-players-row">
             {foreach from=$swplayer item="wta_player"}
                 {if $wta_player}
                     <a href="{"players.view?player_id=`$wta_player.player_id`"|fn_url}" class="ty-subcategories-block__a">
@@ -39,7 +36,6 @@
                     </a>
                 {/if}
             {/foreach}
-            </div>
         {/foreach}
         </div>
         {/strip}

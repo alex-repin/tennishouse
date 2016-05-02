@@ -1,8 +1,8 @@
 {assign var="dropdown_id" value=$block.snapping_id}
 {assign var="r_url" value=$config.current_url|escape:url}
 {hook name="checkout:cart_content"}
-    <div class="ty-dropdown-box" id="cart_status_{$dropdown_id}">
-         <div id="sw_dropdown_{$dropdown_id}" class="ty-dropdown-box__title cm-combination">
+    <div class="ty-dropdown-box" id="cart_status_{$block.snapping_id}">
+         <div id="sw_dropdown_{$block.snapping_id}" class="ty-dropdown-box__title cm-combination">
         <a href="{"checkout.cart"|fn_url}">
             {hook name="checkout:dropdown_title"}
                 {if $smarty.session.cart.amount}
@@ -17,7 +17,7 @@
             {/hook}
         </a>
         </div>
-        <div id="dropdown_{$dropdown_id}" class="cm-popup-box ty-dropdown-box__content hidden">
+        <div id="dropdown_{$block.snapping_id}" class="cm-popup-box ty-dropdown-box__content hidden">
             {hook name="checkout:minicart"}
                 <div class="cm-cart-content {if $block.properties.products_links_type == "thumb"}cm-cart-content-thumb{/if} {if $block.properties.display_delete_icons == "Y"}cm-cart-content-delete{/if}">
                         <div class="ty-cart-items">
@@ -36,7 +36,7 @@
                                                     <div class="ty-cart-items__list-item-desc">
                                                         <a href="{"products.view?product_id=`$p.product_id`"|fn_url}">{$p.product_id|fn_get_product_name nofilter}</a>
                                                     <p>
-                                                        <span>{$p.amount}</span><span>&nbsp;x&nbsp;</span>{include file="common/price.tpl" value=$p.display_price span_id="price_`$key`_`$dropdown_id`" class="none"}
+                                                        <span>{$p.amount}</span><span>&nbsp;x&nbsp;</span>{include file="common/price.tpl" value=$p.display_price span_id="price_`$key`_`$block.snapping_id`" class="none"}
                                                     </p>
                                                     </div>
                                                     {if $block.properties.display_delete_icons == "Y"}
@@ -72,5 +72,5 @@
                 </div>
             {/hook}
         </div>
-    <!--cart_status_{$dropdown_id}--></div>
+    <!--cart_status_{$block.snapping_id}--></div>
 {/hook}

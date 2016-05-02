@@ -1,6 +1,6 @@
 {assign var="obj_id" value=$player_data.player_id}
 {assign var="obj_id_prefix" value="`$obj_prefix``$obj_id`"}
-<div class="ty-player-details {if $image_title}ty-player-details-it{/if}">
+<div class="ty-player-details">
     <div class="ty-player-detail_wrapper">
     <div class="ty-player-detail">
         <div class="ty-player-block__img-wrapper">
@@ -20,9 +20,8 @@
                     <span class="ty-player-ranking-hashtag">#</span>
                     <span class="ty-player-ranking-num" style="font-size: {$font_size}px;">{$player_data.ranking}</span>
                 </span>
-                <span class="ty-player-ranking-title">{if $player_data.gender == 'M'}{__("atp_ranking")}{else}{__("wta_ranking")}{/if}</span>
             {/if}
-            {$player_data.player}
+            <span class="ty-player-name">{$player_data.player}</span>
             {if $player_data.titles}<span class="ty-player-titles">{$player_data.titles}</span>{/if}
         </h1>
         <div class="ty-player-block__left">
@@ -82,54 +81,6 @@
             </div>
             {/if}
         </div>
-    </div>
-    {if $player_data.news_feed}
-    <div class="ty-tennishouse-container ty-news-feed">
-        <div class="ty-tennishouse-body">
-            <div id="scroll_list_news_{$player_data.player_id}" class="owl-carousel ty-scroller-list">
-                {foreach from=$player_data.news_feed item="news" name="for_news"}
-                    <div class="ty-scroller-news-list__item">
-                        <span class="ty-news-date">{$news.timestamp|date_format:"%e %B %Y %A, %H:%M"}</span>
-                                                
-                        <div class="ty-news-item-title">
-                            <a target="_blank" href="{$news.link}">
-                                <div class="ty-news-item-column-descritpion">
-                                    <div class="ty-news-item-row-title">{$news.title}</div>
-                                    <div class="ty-news-item-row-description">{$news.description}</div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                {/foreach}
-            </div>
-
-            {script src="js/lib/owlcarousel/owl.carousel.min.js"}
-            <script type="text/javascript">
-            (function(_, $) {
-                $.ceEvent('on', 'ce.commoninit', function(context) {
-                    var elm = context.find('#scroll_list_news_{$player_data.player_id}');
-
-                    if (elm.length) {
-                        elm.owlCarousel({
-                            items: 1,
-                            scrollPerPage: false,
-                            autoPlay: '15000',
-                            slideSpeed: '400',
-                            stopOnHover: true,
-                            navigation: true,
-                            navigationText: ['', ''],
-                            pagination: false,
-                            responsive: false
-                        });
-                    }
-                });
-            }(Tygh, Tygh.$));
-            </script>
-        </div>
-    </div>
-    {/if}
-    <div class="ty-player__share-buttons">
-        {include file="addons/development/common/share_buttons.tpl" title=$player_data.player description=__("player_share_buttons_description") image=$player_data.main_pair}
     </div>
     </div>
     {if $player_data.gear.R}

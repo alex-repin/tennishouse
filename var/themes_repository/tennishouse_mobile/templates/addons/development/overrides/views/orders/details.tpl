@@ -6,20 +6,6 @@
             {if $view_only != "Y"}
                 <div class="ty-orders__actions">
                     {hook name="orders:details_tools"}
-                        {assign var="print_order" value=__("print_invoice")}
-                        {assign var="print_pdf_order" value=__("print_pdf_invoice")}
-                        
-                        {if $status_settings.appearance_type == "C" && $order_info.doc_ids[$status_settings.appearance_type]}
-                            {assign var="print_order" value=__("print_credit_memo")}
-                            {assign var="print_pdf_order" value=__("print_pdf_credit_memo")}
-                        {elseif $status_settings.appearance_type == "O"}
-                            {assign var="print_order" value=__("print_order_details")}
-                            {assign var="print_pdf_order" value=__("print_pdf_order_details")}
-                        {/if}
-
-                        {include file="buttons/button.tpl" but_role="text" but_text=$print_order but_href="orders.print_invoice?order_id=`$order_info.order_id`" but_meta="cm-new-window ty-btn__text" but_icon="ty-icon-print orders-print__icon"}
-
-                        {include file="buttons/button.tpl" but_role="text" but_meta="orders-print__pdf ty-btn__text cm-no-ajax" but_text=$print_pdf_order but_href="orders.print_invoice?order_id=`$order_info.order_id`&format=pdf" but_icon="ty-icon-doc-text orders-print__icon"}
                     {/hook}
                     
                     <div class="ty-orders__actions-right">

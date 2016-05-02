@@ -83,7 +83,7 @@ Responsive: Tablet and phone
     }
 
     .tygh-content .container, .ty-footer-menu, .footer-copyright {
-        padding: 0px 10px;
+/*        padding: 0px 10px;*/
     }
 
 /* Header
@@ -294,7 +294,7 @@ Responsive: Landscape phone to desktop/tablet
     display: none;
     float: none;
     margin-right: 0px;
-    border-bottom: 1px solid darken(@menu, 6%);
+    border-bottom: 0;
     padding: 0px;
     position: relative;
 }
@@ -385,7 +385,7 @@ Responsive: Landscape phone to desktop/tablet
     height: 44px;
     position: absolute;
     text-align: center;
-    font-size: 35px;
+/*    font-size: 25px;*/
     right: 0px;
     z-index: 100;
     color: #fff;
@@ -477,8 +477,7 @@ Responsive: Landscape phone to desktop/tablet
     border: 0px;
 }
 .ty-menu-vertical .ty-menu__submenu-items .ty-menu__item {
-    border-top: 1px solid #D8D8D8;
-    border-bottom: 0px;
+    border: 0px;
 }
 .ty-menu-vertical .ty-menu__submenu .ty-menu__item:hover > .ty-menu__submenu-item-header .ty-menu__item-link {
     background: none;
@@ -563,10 +562,12 @@ Responsive: Landscape phone to desktop/tablet
     }
     .ty-product-notification__body .ty-product-options-name {
         width: 50%;
+        padding: 0;
     }
     .ty-product-notification__body .ty-product-options-content {
         width: 50%;
         text-align: right;
+        padding: 0;
     }
     .notification-container {
         top: 0;
@@ -579,13 +580,23 @@ Responsive: Landscape phone to desktop/tablet
         border: none;
     }
     .notification-content .close {
-        top: 8px;
+        top: 10px;
         right: 20px;
     }
     .ty-product-notification__image {
         float: none;
         display: block;
         margin: 0 auto;
+        padding: 0;
+    }
+    .ty-pc-product-notification {
+        margin: 0 0 0 20px;
+        .ty-product-notification__item {
+            margin: 0 0 0 20px;
+        }
+    }
+    .ty-product-notification__content {
+        width: 100% !important;
     }
     .ty-product-notification__product-name {
         max-width: 200px;
@@ -1122,14 +1133,14 @@ Responsive: Landscape phone to desktop/tablet
 
 /* Cart menu
    ========================================================================== */
-    .ty-cart-items {
+/*    .ty-cart-items {
         width: 256px;
     }
     .ty-cart-items__list-item-desc {
         width: 187px;
-    }
+    }*/
     .ty-cart-items__list-item-tools {
-        right: -10px;
+/*        right: -10px;*/
         display: block;
     }
 }

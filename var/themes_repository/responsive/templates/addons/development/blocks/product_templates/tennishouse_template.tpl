@@ -107,7 +107,7 @@
 
                             {if $smarty.capture.$price|trim}
                                 <div class="ty-product-block__price-actual">
-                                    {$smarty.capture.$price nofilter}
+                                    {$smarty.capture.$price nofilter}{*if $product.net_currency_code != 'RUB' && $product.auto_price != 'Y'}цена 2015 года! Успейте купить{/if*}
                                     {assign var="qty_discounts" value="qty_discounts_`$obj_id`"}
                                     {if $smarty.capture.$qty_discounts|trim}
                                         <div class="ty-ti-price-wrap">

@@ -128,8 +128,9 @@ function fn_get_theme_path($path = '[theme]/', $area = AREA, $company_id = null,
                 $key_name = 'stored_layout' . (Embedded::isEnabled() ? '_embedded' : '');
                 $stored_layout = fn_get_session_data($key_name);
                 $layout = Layout::instance()->get($stored_layout);
-                if (isset($_SESSION['dmode'])) {
-                    $theme_names['c_' . $company_id] = ($_SESSION['dmode'] == 'M') ? MOBILE_THEME_NAME : MAIN_THEME_NAME;
+                $dmode = fn_get_session_data('dmode');
+                if (isset($dmode)) {
+                    $theme_names['c_' . $company_id] = ($dmode == 'M') ? MOBILE_THEME_NAME : MAIN_THEME_NAME;
                 } elseif (isset($layout['theme_name'])) {
                     $theme_names['c_' . $company_id] = $layout['theme_name'];
                 } else {

@@ -81,7 +81,7 @@
                                     {$payment.description}
                                 </div>
                             {/if}
-
+                            
                             {include file=$payment.template card_id=$payment.payment_id}
                         {/capture}
                     {/if}

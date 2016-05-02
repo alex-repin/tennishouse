@@ -15,7 +15,7 @@
         <div class="ty-pc-group__products" id="pc_{$po.group_id}">
             {if $po.configurator_group_type == "S"}
                 <div class="ty-pc-group__products-item-block">
-                    <select name="product_data[{$product.product_id}][configuration][{$po.group_id}][product_ids][]" id="group_{$po.group_id}" class="cm-dropdown cm-options-update" onchange="fn_change_options('{$obj_prefix}{$obj_id}', '{$obj_id}', '0');"  data-cesbClass="ty-sb-popup-large" {if $product.configuration_out_of_stock}disabled="disabled"{/if}>
+                    <select name="product_data[{$product.product_id}][configuration][{$po.group_id}][product_ids][]" id="group_{$po.group_id}" class=" cm-options-update" onchange="fn_change_options('{$obj_prefix}{$obj_id}', '{$obj_id}', '0');"  data-cesbClass="ty-sb-popup-large" {if $product.configuration_out_of_stock}disabled="disabled"{/if}>
                         <option id="product_{$po.group_id}_0" value=""> - {$po.full_description nofilter} - </option>
                         {if !$product.configuration_out_of_stock}
                         {foreach from=$po.products item="group_product"}
@@ -47,9 +47,9 @@
                             <label class="ty-control-group__label" for="pc_qty_{$po.group_id}">{$po.amount_field|default:__("quantity")}:</label>
                             <div class="ty-center ty-value-changer cm-value-changer">
                                 {if $settings.Appearance.quantity_changer == "Y"}
-                                    <a class="cm-increase ty-value-changer__increase">&#43;</a>
+                                    <div class="ty-value-changer-decrease"><a class="cm-decrease ty-value-changer__decrease">&minus;</a></div>
                                 {/if}
-                                <input type="text" size="5" class="ty-value-changer__input cm-amount" id="pc_qty_{$po.group_id}" name="product_data[{$product.product_id}][configuration][{$po.group_id}][amount]" value="{$po.amount}" {if $product.qty_step > 1} data-ca-step="{$product.qty_step}"{/if} data-ca-min-qty="1" data-ca-max-qty="{$po.max_amount}" />
+                                <div class="ty-value-changer-input"><input type="text" size="5" class="ty-value-changer__input cm-amount" id="pc_qty_{$po.group_id}" name="product_data[{$product.product_id}][configuration][{$po.group_id}][amount]" value="{$po.amount}" {if $product.qty_step > 1} data-ca-step="{$product.qty_step}"{/if} data-ca-min-qty="1" data-ca-max-qty="{$po.max_amount}" /></div>
                                 <script type="text/javascript">
                                 (function(_, $) {
                                     $(function() {
@@ -60,7 +60,7 @@
                                 }(Tygh, Tygh.$));
                                 </script>
                                 {if $settings.Appearance.quantity_changer == "Y"}
-                                    <a class="cm-decrease ty-value-changer__decrease">&minus;</a>
+                                    <div class="ty-value-changer-increase"><a class="cm-increase ty-value-changer__increase">&#43;</a></div>
                                 {/if}
                             </div>
                         </div>
@@ -117,9 +117,6 @@
             {/if}
             <script type="text/javascript">
             (function(_, $) {
-                $('#pc_{$po.group_id}').find('.cm-dropdown').each(function() {
-                    $(this).selectbox();
-                });
                 {foreach from=$po.products item="group_product"}
                     if ($('#product_info_{$po.group_id}_{$group_product.product_id}').length && $('#tygh_main_container').hasClass('no-touch')) {
                         $('#opt_product_{$po.group_id}_{$group_product.product_id}').addClass('cm-tooltip');

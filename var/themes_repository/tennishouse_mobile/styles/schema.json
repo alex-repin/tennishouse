@@ -17,8 +17,17 @@
             "menu": {
                 "description": "theme_editor.menu_color"
             },
+            "category_menu": {
+                "description": "theme_editor.category_menu_color"
+            },
             "menu_links": {
                 "description": "theme_editor.menu_links_color"
+            },
+            "category_menu_links": {
+                "description": "theme_editor.category_menu_links_color"
+            },
+            "top_menu_background": {
+                "description": "theme_editor.top_menu_background"
             },
             "base": {
                 "description": "theme_editor.base_color"

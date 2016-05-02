@@ -62,9 +62,9 @@
             {/if}
         {/foreach}
     {/strip}
-    {if $all_items_url}
+    {*if $all_items_url}
         <div class="ty-check-all__block-link">
             <a href="{"`$all_items_url`"|fn_url}">{__("check_all_items")|upper}</a>
         </div>
-    {/if}
+    {/if*}
 </div>

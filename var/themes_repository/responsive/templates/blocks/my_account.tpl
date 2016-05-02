@@ -1,4 +1,5 @@
 {** block-description:my_account **}
+{$snapping_id = $snapping_id|default:$block.snapping_id}
 
 {capture name="title"}
     <a class="ty-account-info__title" href="{"profiles.update"|fn_url}">
@@ -8,7 +9,7 @@
     </a>
 {/capture}
 
-<div id="account_info_{$block.snapping_id}">
+<div id="account_info_{$snapping_id}">
     {assign var="return_current_url" value=$config.current_url|escape:url}
     <ul class="ty-account-info">
         {hook name="profiles:my_account_menu"}
@@ -42,7 +43,7 @@
     </ul>
 
     {if $settings.Appearance.display_track_orders == 'Y'}
-        <div class="ty-account-info__orders updates-wrapper track-orders" id="track_orders_block_{$block.snapping_id}">
+        <div class="ty-account-info__orders updates-wrapper track-orders" id="track_orders_block_{$snapping_id}">
             <form action="{""|fn_url}" method="get" class="cm-ajax cm-ajax-full-render" name="track_order_quick">
                 <input type="hidden" name="result_ids" value="track_orders_block_*" />
                 <input type="hidden" name="return_url" value="{$smarty.request.return_url|default:$config.current_url}" />
@@ -50,27 +51,27 @@
                 <div class="ty-account-info__orders-txt">{__("track_my_order")}</div>
 
                 <div class="ty-account-info__orders-input ty-control-group ty-input-append">
-                    <label for="track_order_item{$block.snapping_id}" class="cm-required hidden">{__("track_my_order")}</label>
-                    <input type="text" size="20" class="ty-input-text cm-hint" id="track_order_item{$block.snapping_id}" name="track_data" value="{__("order_id")}{if !$auth.user_id}/{__("email")}{/if}" />
+                    <label for="track_order_item{$snapping_id}" class="cm-required hidden">{__("track_my_order")}</label>
+                    <input type="text" size="20" class="ty-input-text cm-hint" id="track_order_item{$snapping_id}" name="track_data" value="{__("order_id")}{if !$auth.user_id}/{__("email")}{/if}" />
                     {include file="buttons/go.tpl" but_name="orders.track_request" alt=__("go")}
                     {include file="common/image_verification.tpl" option="use_for_track_orders" align="left" sidebox=true}
                 </div>
             </form>
-        <!--track_orders_block_{$block.snapping_id}--></div>
+        <!--track_orders_block_{$snapping_id}--></div>
     {/if}
 
     <div class="ty-account-info__buttons buttons-container">
         {if $auth.user_id}
             <a href="{"auth.logout?redirect_url=`$return_current_url`"|fn_url}" rel="nofollow" class="ty-btn ty-btn__primary">{__("sign_out")}</a>
         {else}
-            <a href="{if $runtime.controller == "auth" && $runtime.mode == "login_form"}{$config.current_url|fn_url}{else}{"auth.login_form?return_url=`$return_current_url`"|fn_url}{/if}" {if $settings.Security.secure_auth != "Y"} data-ca-target-id="login_block{$block.snapping_id}" class="cm-dialog-opener cm-dialog-auto-size ty-btn ty-btn__secondary"{else} class="ty-btn ty-btn__primary"{/if} rel="nofollow">{__("sign_in")}</a><a href="{"profiles.add"|fn_url}" rel="nofollow" class="ty-btn ty-btn__primary">{__("register")}</a>
+            <a href="{if $runtime.controller == "auth" && $runtime.mode == "login_form"}{$config.current_url|fn_url}{else}{"auth.login_form?return_url=`$return_current_url`"|fn_url}{/if}" {if $settings.Security.secure_auth != "Y"} data-ca-target-id="login_block{$snapping_id}" class="cm-dialog-opener cm-dialog-auto-size ty-btn ty-btn__secondary"{else} class="ty-btn ty-btn__primary"{/if} rel="nofollow">{__("sign_in")}</a><a href="{"profiles.add"|fn_url}" rel="nofollow" class="ty-btn ty-btn__primary">{__("register")}</a>
             {if $settings.Security.secure_auth != "Y"}
-                <div  id="login_block{$block.snapping_id}" class="hidden" title="{__("sign_in")}">
+                <div  id="login_block{$snapping_id}" class="hidden" title="{__("sign_in")}">
                     <div class="ty-login-popup">
-                        {include file="views/auth/login_form.tpl" style="popup" id="popup`$block.snapping_id`"}
+                        {include file="views/auth/login_form.tpl" style="popup" id="popup`$snapping_id`"}
                     </div>
                 </div>
             {/if}
         {/if}
     </div>
-<!--account_info_{$block.snapping_id}--></div>
+<!--account_info_{$snapping_id}--></div>

@@ -8,7 +8,7 @@
     font-weight: normal;
 }
 .radio, .checkbox, input[type="radio"], input[type="checkbox"] {
-    margin: -10px 0 0 4px;
+    margin: -10px 0 0 3px;
 }
 .owl-theme .owl-controls .owl-buttons div {
     border-radius: 0;
@@ -529,6 +529,7 @@ input:focus::placeholder, textarea:focus::placeholder {
     background-color: #fff;
     border-left: 1px solid #ecf0f1;
     padding: 10px 5px;
+    margin: 0 1px;
 }
 .ty-cart-container {
     height: 50px;
@@ -574,13 +575,6 @@ input:focus::placeholder, textarea:focus::placeholder {
 /*    width: 1200px !important;*/
     float: none;
     margin: 0 auto;
-}
-.ty-right-panel, .ty-left-panel {
-    background: #272528;
-    .ty-control-group input {
-        height: 32px;
-        font-size: 13px;
-    }
 }
 .tygh-header > div, .tygh-top-panel > div {
     padding: 0;
@@ -998,6 +992,7 @@ input:focus::placeholder, textarea:focus::placeholder {
     color: @links;
 }
 .ty-menu__submenu-items {
+    min-width: 0;
     background: inherit;
     color: #000000;
     text-align: left;
@@ -1853,9 +1848,12 @@ input:focus::placeholder, textarea:focus::placeholder {
 .ty-btn + .ty-btn {
     margin-left: 0;
 }
-.ty-cart-content__buttons .ty-btn, .ty-product-block__button .ty-btn, .ty-step__body-active .ty-btn {
+.ty-product-block__button .ty-btn, .ty-step__body-active .ty-btn {
     display: block;
     width: 100%;
+}
+.ty-cart-content__buttons .ty-btn {
+    display: block;
 }
 .ty-grid-list__item-name {
     width: 100%;
@@ -2019,6 +2017,7 @@ input:focus::placeholder, textarea:focus::placeholder {
     color: lighten(@font, 35%);
     display: inline-block;
     vertical-align: top;
+    margin: 3px 0 3px 3px;
 }
 .ty-product-free-shipping {
     color: lighten(@font, 35%);
@@ -2547,42 +2546,59 @@ input:focus::placeholder, textarea:focus::placeholder {
 a.ty-password-forgot__a {
     padding: 2px 0;
 }
+.ty-profile-field, .checkout-steps, .ty-login, .ty-account, .ty-call-request {
+    .ty-control-group {
+        margin-bottom: 10px;
+        position: relative;
+        .ty-control-group__title, .ty-captcha__label {
+            display: none;
+        }
+        .ty-control-group__title {
+            font-size: 13px;
+            font-weight: normal;
+            left: 30px;
+            padding: 0;
+            position: absolute;
+            top: 5px;
+            color: darken(@base, 40%);
+        }
+        .ty-captcha__input {
+            margin-bottom: 5px;
+        }
+    }
+}
 .ty-control-group {
     margin-bottom: 10px;
     position: relative;
-    input {
+    input[type="text"], input[type="password"] {
         border-radius: 0;
         height: 40px;
         font-size: 16px;
     }
-    .ty-control-group__title, .ty-captcha__label {
+    .ty-value-changer-input .ty-value-changer__input {
+        height: 34px;
+        font-size: 15px;
+    }
+    .ty-pc-group__label {
+        width: auto;
+    }
+    .ty-pc-group__products-item-options .ty-control-group__label {
         display: none;
     }
-    .ty-control-group__title {
+}
+.ty-right-panel, .ty-left-panel {
+    background: #272528;
+    .ty-control-group input {
+        height: 32px;
         font-size: 13px;
-        font-weight: normal;
-        left: 30px;
-        padding: 0;
-        position: absolute;
-        top: 5px;
-        color: darken(@base, 40%);
-    }
-    .ty-captcha__input {
-        margin-bottom: 5px;
     }
 }
-.ty-control-group input
-.ty-profile-field, .checkout-steps, .ty-login {
-}
-/*.ty-profile-field__item input {
-    border-radius: 0;
-    height: 3em;
-    font-size: 15px;
-}*/
-.ty-account, .ty-recover-password, .ty-mainbox-body > .ty-login, .ty-checkout-complete__create-account .ty-login, .ty-call-request, .ty-step__body-active, .ty-profile-field {
+.ty-account, .ty-recover-password, .ty-mainbox-body > .ty-login, .ty-checkout-complete__create-account .ty-login, .ty-call-request {
     input[type="text"], input[type="password"] {
         font-size: 18px;
     }
+}
+.ty-account, .ty-recover-password, .ty-mainbox-body > .ty-login, .ty-checkout-complete__create-account .ty-login, .ty-call-request, .ty-step__body-active, .ty-profile-field {
     .cm-hint {
         color: darken(@base, 20%);
     }
@@ -2971,6 +2987,7 @@ a.ty-password-forgot__a {
     top: 5px;
 }
 .ty-menu-vertical .ty-menu__item i {
+    right: 10px;
     top: 13px;
 }
 .ty-left-panel .ty-menu-vertical .ty-menu__item i {
@@ -3694,6 +3711,24 @@ a.ty-password-forgot__a {
 .ty-how-it-works__exp {
     font-size: 15px;
 }
+.ty-orders-search {
+    margin: 0;
+}
+.ty-input-pair {
+    input {
+        display: inline;
+        width: 49%;
+    }
+    .ty-input-text-short {
+        width: 100px;
+    }
+    .ui-input-text {
+        display: inline;
+    }
+}
+.ui-input-text .ty-search-form__input {
+    width: 170px;
+}
 /* Cart cross sales*/
 .ty-cross-recomendation {
     font-size: 15px;
@@ -3739,6 +3774,7 @@ a.ty-password-forgot__a {
 }
 .touch .ty-value-changer, .ty-value-changer {
     width: 100%;
+    min-width: 80px;
 }
 input.ty-value-changer__input {
     height: 34px;

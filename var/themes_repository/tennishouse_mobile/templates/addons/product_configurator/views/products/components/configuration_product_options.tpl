@@ -11,6 +11,7 @@
                     {include file="addons/development/common/tooltip.tpl" note_text=$po.note_text note_url=$po.note_url}
                 {/if}:
             </label>
+            <div class="ty-product-options__item-block">
             {if $po.option_type == "S"} {*Selectbox*}
                 {if $po.variants}
                     {if ($po.disabled || $disabled) && !$po.not_required}<input type="hidden" value="{$po.value}" name="{$name}[{$id}][product_options][{$po.option_id}]" id="option_{$obj_prefix}{$id}_{$po.option_id}" />{/if}
@@ -76,6 +77,7 @@
                     {include file="common/fileuploader.tpl" images=$product.extra.custom_files[$po.option_id] var_name="`$name`[`$po.option_id``$id`]" multiupload=$po.multiupload hidden_name="`$name`[custom_files][`$po.option_id``$id`]" hidden_value="`$id`_`$po.option_id`" label_id="option_`$obj_prefix``$id`_`$po.option_id`" prefix=$obj_prefix}
                 </div>
             {/if}
+            </div>
         {/if}
 
         {if $po.comment}

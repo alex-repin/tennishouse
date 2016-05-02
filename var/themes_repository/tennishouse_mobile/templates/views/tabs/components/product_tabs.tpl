@@ -17,7 +17,7 @@
                 {/if}
             {/if}
 
-            <div id="content_{$tab.html_id}" class="ty-wysiwyg-content content-{$tab.html_id}">
+            <div id="content_{$tab.html_id}" class="ty-wysiwyg-content content-{$tab.html_id} mCustomScrollbar" data-mcs-theme="dark">
                 {$smarty.capture.$tab_content_capture nofilter}
             </div>
         {/if}

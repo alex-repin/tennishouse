@@ -26,7 +26,7 @@
 
         {hook name="index:login_buttons"}
             <div class="buttons-container clearfix">
-                <div class="ty-float-right">
+                <div class="">
                     {include file="buttons/login.tpl" but_name="dispatch[auth.login]" but_role="submit"}
                 </div>
                 <div class="ty-login__remember-me">

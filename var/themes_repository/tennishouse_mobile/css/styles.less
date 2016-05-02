@@ -27,7 +27,7 @@ body {
 }
 body, p, div, li {
     color: @font;
-    font-family: @body_font;
+    font-family: @body_font, sans-serif;
     font-size: @body_font_size;
     font-style: @body_font_style;
     font-weight: @body_font_weight;
@@ -111,7 +111,7 @@ Buttons
     text-align: center;
     line-height: 1.428571429;
     cursor: pointer;
-    font-family: @buttons_font;
+    font-family: @buttons_font, sans-serif;
     font-size: @buttons_font_size;
     font-weight: @buttons_font_weight;
     font-style: @buttons_font_style;
@@ -1094,26 +1094,37 @@ WYSIWYG
     .ty-columns(@index - 1);
     .ty-column@{index} {
         display: inline-block;
-        width: percentage((100 / @index) * 0.01);
+        width: percentage((100 / 5) * 0.01);
         vertical-align: top;
         margin-right: -0.25em;
     }
 }
 .ty-columns(0) { }
 .ty-columns(@columns);
-/*
-@media (max-width: 979px) {
+
+@media (max-width: 1028px) {
 .ty-columns(@columns);
 .ty-columns (@index) when (@index > 1) {
     .ty-columns(@index - 1);
     .ty-column@{index} {
-        width: percentage((100 / (@index - 1)) * 0.01);
+        width: percentage((100 / 4) * 0.01);
     }
 }
 .ty-columns(0) { }
 } // media 979
 
-@media (max-width: 767px) {
+@media (max-width: 817px) {
+.ty-columns(@columns);
+.ty-columns (@index) when (@index > 1) {
+    .ty-columns(@index - 1);
+    .ty-column@{index} {
+        width: percentage((100 / 3) * 0.01);
+    }
+}
+.ty-columns(0) { }
+} // media 979
+
+@media (max-width: 618px) {
 .ty-columns(@columns);
 
 .ty-columns (@index) when (@index > 1) {
@@ -1125,7 +1136,7 @@ WYSIWYG
 .ty-columns(0) { }
 } // media 767
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 419px) {
 .ty-columns(@columns);
     .ty-columns (@index) when (@index > 0) {
     .ty-columns(@index - 1);
@@ -1135,7 +1146,7 @@ WYSIWYG
 }
 .ty-columns(0) { }
 } // media 480
-*/
+
 
 /* Custom
    ========================================================================== */
@@ -4182,7 +4193,7 @@ Cart contents
     width: 320px;
 }
 .ty-cart-items__list-item {
-    padding: 10px 0px;
+    padding: 10px 15px 10px 0;
     position: relative;
     border-bottom: 1px solid #ecf0f1;
 }
@@ -4573,9 +4584,9 @@ Checkout
  */
 .ty-checkout__login {
     float: left;
-    padding-right: 3%;
+    width: 44%;
     padding-left: 3%;
-    width: 46%;
+    padding-right: 3%;    
 }
  .ty-checkout__login .ty-login {
     margin-top: 0;
@@ -4583,8 +4594,9 @@ Checkout
 .ty-checkout__register {
     position: relative;
     float: left;
-    margin: 0 0 0 3%;
-    width: 45%;
+    width: 44%;
+    padding-left: 3%;
+    padding-right: 3%;
 }
 .ty-anonymous_checkout {
     padding: 0 25px;

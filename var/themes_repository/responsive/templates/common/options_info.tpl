@@ -43,7 +43,7 @@
                     {/if}
                 {/capture}
 
-                {if $smarty.capture.options_content|trim and $smarty.capture.options_content|trim != '&nbsp;'}
+                {if $smarty.capture.options_content|trim !== false and $smarty.capture.options_content|trim != '&nbsp;'}
                     <span class="ty-product-options clearfix">
                         <span class="ty-product-options-name">{$po.option_name}:&nbsp;</span>
                         <span class="ty-product-options-content">

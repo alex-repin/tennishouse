@@ -1,8 +1,5 @@
 <div id="category_products_{$block.block_id}">
 
-{if $category_data.note_text}
-    <div class="ty-category-title__note-block">{if $category_data.note_url}<a href="{"`$category_data.note_url`"|fn_url}" target="_blank">{/if}<div class="ty-category-title__note">{$category_data.note_text}</div>{if $category_data.note_url}</a>{/if}</div>
-{/if}
 {*if ($category_data.description || $runtime.customization_mode.live_editor) && !$category_data.category_id|fn_display_subheaders && !$category_data.parent_id}
     <div class="ty-wysiwyg-content ty-mb-s" {live_edit name="category:description:{$category_data.category_id}"}>{$category_data.description nofilter}</div>
 {/if*}
@@ -48,7 +45,6 @@
         {assign var="filter_qstring" value="products.search"}
     {/if}
     <div class="clearfix">
-        <div class="ty-categorization-subtabs__title">{$stb_feature.description}:</div>
         <div class="ty-categorization-subtabs" id="subtabs_categorization">
             {$cst_width = 100 / $stb_feature.variants|count}
             {foreach from=$stb_feature.variants item=tab key=key}

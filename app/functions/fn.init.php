@@ -516,8 +516,8 @@ function fn_init_layout($params)
 
     // [tennishouse]
     if (!empty($_REQUEST['dmode'])) {
-        if ($_SESSION['dmode'] != $_REQUEST['dmode']) {
-            $_SESSION['dmode'] = $_REQUEST['dmode'];
+        if (fn_get_session_data('dmode') != $_REQUEST['dmode']) {
+            fn_set_session_data('dmode', $_REQUEST['dmode']);
             Registry::cleanup();
         }
         fn_set_session_data($key_name, false);
@@ -531,23 +531,25 @@ function fn_init_layout($params)
         }
     }
 
+    $dmode = fn_get_session_data('dmode');
     if (empty($layout)) {
         if (AREA == 'C') {
-            if (!empty($_SESSION['dmode'])) {
-                if ($_SESSION['dmode'] == 'M') {
+            if (!empty($dmode)) {
+                if ($dmode == 'M') {
                     $theme_name = MOBILE_THEME_NAME;
                 } else {
                     $theme_name = MAIN_THEME_NAME;
                 }
             } else {
-                $device = new \Mobile_Detect;
-                if ($device->isMobile()) {
-                    $theme_name = MOBILE_THEME_NAME;
-                    $_SESSION['dmode'] = 'M';
-                } else {
+//                 $device = new \Mobile_Detect;
+//                 if ($device->isMobile()) {
+//                     $theme_name = MOBILE_THEME_NAME;
+//                     fn_set_session_data('dmode', 'M');
+//                 } else {
+//                     $theme_name = MAIN_THEME_NAME;
+//                     fn_set_session_data('dmode', 'F');
+//                 }
                     $theme_name = MAIN_THEME_NAME;
-                    $_SESSION['dmode'] = 'F';
-                }
             }
         } else {
             $theme_name = '';
