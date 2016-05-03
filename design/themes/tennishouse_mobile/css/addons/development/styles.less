@@ -1979,6 +1979,9 @@ input:focus::placeholder, textarea:focus::placeholder {
 /*Player details*/
 
 /*Product page*/
+.ty-cr-product-info-container {
+    width: auto;
+}
 .ty-tabs__a, .ty-tabs .subtab a {
     padding: 8px 14px 2px 15px;
 }
@@ -2282,7 +2285,7 @@ input:focus::placeholder, textarea:focus::placeholder {
     font-size: 12px;
 }
 .ty-shipping-options__method-info {
-    width: 550px;
+    width: 100%;
     display: inline-block;
 }
 .ty-shipping-options__method-payments-mark {
@@ -2482,12 +2485,12 @@ input:focus::placeholder, textarea:focus::placeholder {
     color: lighten(@font, 40%);
 }
 .ty-email-confirmation__yes-block {
-    left: 270px;
+    right: 5px;
     position: absolute;
     top: 10px;
 }
 .ty-email-confirmation__not-block {
-    left: 272px;
+    right: 5px;
     position: absolute;
     top: 10px;
     width: 210px;
@@ -2496,6 +2499,7 @@ input:focus::placeholder, textarea:focus::placeholder {
     background: url("../../../design/themes/responsive/media/images/addons/development/cm.png") no-repeat transparent;
     display: inline-block;
     height: 30px;
+    width: 30px;
     vertical-align: top;
 }
 .ty-email-confirmation_not {
@@ -2598,6 +2602,12 @@ a.ty-password-forgot__a {
         font-size: 18px;
     }
 }
+.ty-product-notification__buttons, .ty-wish-list__buttons, .ty-discussion-post__buttons {
+    .ty-btn {
+        display: block;
+        margin-bottom: 5px;
+    }
+}
 .ty-account, .ty-recover-password, .ty-mainbox-body > .ty-login, .ty-checkout-complete__create-account .ty-login, .ty-call-request, .ty-step__body-active, .ty-profile-field {
     .cm-hint {
         color: darken(@base, 20%);
@@ -2621,6 +2631,7 @@ a.ty-password-forgot__a {
         margin: 10px auto;
         padding: 7px 50px;
         width: 50%;
+        min-width: 200px;
     }
 }
 .ty-checkout-buttons a.ty-btn {
@@ -2651,13 +2662,12 @@ a.ty-password-forgot__a {
 }
 .ty-profile-email {
     display: inline-block;
-    width: 300px;
 }
 .ty-profile-reward-points {
-    font-size: 21px;
+    font-size: 18px;
 }
 .ty-profile-reward-points a {
-    font-size: 25px;
+    font-size: 19px;
 }
 .ty-profile-subtitle {
     display: inline-block;

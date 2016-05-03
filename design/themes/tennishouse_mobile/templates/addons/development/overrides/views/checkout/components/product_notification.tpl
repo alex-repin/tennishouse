@@ -1,12 +1,12 @@
 {capture name="buttons"}
-    <div class="ty-float-left">
-        {include file="buttons/button.tpl" but_text=__("continue_shopping") but_meta="cm-notification-close"}
-    </div>
     {if $settings.General.checkout_redirect != "Y"}
-        <div class="ty-float-right">
+        <div class="">
             {include file="buttons/checkout.tpl" but_href="checkout.checkout"}
         </div>
     {/if}
+    {*<div class="">
+        {include file="buttons/button.tpl" but_text=__("continue_shopping") but_meta="cm-notification-close"}
+    </div>*}
 {/capture}
 {capture name="info"}
     <div class="clearfix"></div>
