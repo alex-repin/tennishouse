@@ -1418,12 +1418,13 @@ input:focus::placeholder, textarea:focus::placeholder {
     width: 81%;
 }
 .ty-player-titles {
+    background-image: url("../../../media/images/addons/development/wcup.png");
+    background-size: contain;
+    background-repeat: no-repeat;
     color: darken(@base, 25%);
-    width: 40px;
-    background: url("../../../design/themes/responsive/media/images/addons/development/cup.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
-    float: right;
-    height: 50px;
-    padding: 0 0 5px 40px;
+    width: 60px;
+    height: 60px;
+    padding: 10px 0 10px 50px;
 }
 .ty-player-gear {
     display: block;
@@ -2240,6 +2241,14 @@ input:focus::placeholder, textarea:focus::placeholder {
 }
 .ty-product-block .discussion-block {
     max-height: 290px;
+}
+.discussion-block {
+    position: relative;
+}
+.ty-rate-us-ym-reviews {
+    position: absolute;
+    right: 0;
+    top: -17px;
 }
 .ty-block-discussion-post__author {
     font-weight: bold;

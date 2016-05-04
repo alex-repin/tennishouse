@@ -22,6 +22,18 @@
         {include file="addons/development/common/catalog_panel_menu.tpl" items_tree=$items_tree level=1 type="A"}
     </ul>
 </div>
+<script type="text/javascript">
+    Tygh.$(document).ready(function() {$ldelim}
+        Tygh.$('.ty-menu__item-toggle').click(function(e){$ldelim}
+            if(Tygh.$(this).parent().siblings('.ty-menu__submenu-items').length) {$ldelim}
+                Tygh.$(this).parent().siblings('.ty-menu__submenu-items').slideToggle();
+                Tygh.$(this).parent().parent().toggleClass('ty-menu__item-expanded');
+                Tygh.$(this).find('.ty-icon-down-open').toggle();
+                Tygh.$(this).find('.ty-icon-right-open').toggle();
+            {$rdelim}
+        {$rdelim});
+    {$rdelim});
+</script>
 
 </div>
 {/strip}
