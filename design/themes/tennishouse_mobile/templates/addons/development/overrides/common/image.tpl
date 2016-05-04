@@ -8,9 +8,19 @@
     {math equation="rand()" assign="obj_id"}
 {/if}
 
-{$image_data=$images|fn_image_to_display:$image_width:$image_height:$keep_transparent}
+{$image_retina_width = $image_width * 3}
+{$image_retina_height = $image_height * 3}
+{$image_data=$images|fn_image_to_display:$image_retina_width:$image_retina_height:$keep_transparent}
 {$generate_image=$image_data.generate_image && !$external}
-
+{if !$image_width}
+    {$image_width = $image_data.width * $image_height / $image_data.height}
+{/if}
+{if !$image_height}
+    {$image_height = $image_data.height * $image_width / $image_data.width}
+{/if}
+{if $image_width && $image_width != $image_data.width && $image_height && $image_height != $image_data.height}
+    <div style="display: inline-block; width: {$image_width}px; height: {$image_height}px;">
+{/if}
 
 {if $show_detailed_link}
     <a id="det_img_link_{$obj_id}" {if $image_data.detailed_image_path && $image_id}data-ca-image-id="{$image_id}"{/if} class="{$link_class} {if $image_data.detailed_image_path}cm-previewer ty-previewer{/if}" {if $image_data.detailed_image_path}href="{$image_data.detailed_image_path}" title="{$images.detailed.alt}"{/if}>
@@ -35,6 +45,9 @@
     {capture name="detailed_image_path"}
         {$image_data.detailed_image_path}
     {/capture}
+{/if}
+{if $image_width && $image_width != $image_data.width && $image_height && $image_height != $image_data.height}
+    </div>
 {/if}
 
 {/strip}
