@@ -6,10 +6,6 @@
         {$img_height = "19"}
     {/if}
 {/if}
-{include file="common/image.tpl"
-show_detailed_link=false
-images=$brand.image_pair
-no_ids=true
-image_height=$img_height
-keep_transparent=true}
+<div class="ty-brand-image" style="height: {$img_height}px;background-image: url('{$brand.image_pair.icon.image_path}');">
+</div>
 {/if}

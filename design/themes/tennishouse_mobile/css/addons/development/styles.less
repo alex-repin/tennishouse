@@ -2157,8 +2157,17 @@ input:focus::placeholder, textarea:focus::placeholder {
 .ty-product-description-info {
     margin-top: 20px;
 }
+.ty-brand-image {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.ty-grid-list__brand-image .ty-brand-image {
+    background-position: left;
+}
 .ty-product-detail__brand-image {
-    display: inline-block;
+    display: block;
+    width: 100%;
 }
 .ty-product-detail__buy-section {
     border: 1px solid darken(@base, 5%);
@@ -2494,6 +2503,8 @@ input:focus::placeholder, textarea:focus::placeholder {
     position: absolute;
     bottom: 0;
     z-index: 100;
+    width: 100%;
+    display: block;
 }
 .grid-list__rating {
     right: 5px;
