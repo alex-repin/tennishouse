@@ -776,6 +776,43 @@ if ($mode == 'calculate_balance') {
         fn_update_combinations($pr_id);
     }
     exit;
+} elseif ($mode == 'rename_products') {
+    $names = array(
+        '344' => 'Ракетка',
+        '345' => 'Ракетка',
+        '346' => 'Ракетка',
+        '409' => 'Детская ракетка',
+        '303' => 'Кроссовки мужские',
+        '304' => 'Кроссовки женские',
+        '439' => 'Детские кроссовки',
+        '265' => 'Струна',
+        '398' => 'Сумка',
+        '399' => 'Сумка',
+        '400' => 'Сумка',
+        '401' => 'Сумка',
+        '402' => 'Сумка',
+        '403' => 'Рюкзак',
+        '404' => 'Спортивная сумка',
+        '431' => 'Сумка',
+        '462' => 'Дорожная сумка',
+        '464' => 'Портфель',
+        '266' => 'Мячи',
+        '312' => 'Обмотки',
+        '313' => 'Грип',
+        '315' => 'Виброгаситель',
+    );
+    $params['subcats'] = 'Y';
+    foreach ($names as $cid => $name) {
+        $params['cid'] = $cid;
+        list($products, $search) = fn_get_products($params);
+        foreach ($products as $i => $product) {
+            $product['product'] = str_replace(array(' женск.', ' жен.', ' муж.', ' мужск.', ' детск.'), array('', '', '', '', ''), $product['product']);
+            if (strpos($product['product'], $name) === false) {
+                db_query("UPDATE ?:product_descriptions SET product = ?s WHERE product_id = ?i AND lang_code = ?s", $name . ' ' . $product['product'], $product['product_id'], CART_LANGUAGE);
+            }
+        }
+    }
+    exit;
 }
 
 function fn_normalize_string($string)

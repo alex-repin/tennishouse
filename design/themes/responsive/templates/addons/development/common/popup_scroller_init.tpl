@@ -1,4 +1,4 @@
-{script src="js/lib/owlcarousel/owl.carousel.js"}
+{script src="js/lib/owlcarousel/owl.carousel.min.js"}
 <script type="text/javascript">
 (function(_, $) {
     var elm = $('#scroll_list_{$id}');
@@ -11,7 +11,8 @@
             stopOnHover: true,
             navigation: true,
             navigationText: ['', ''],
-            pagination: false
+            pagination: false,
+            margin: 10
         });
     }
 }(Tygh, Tygh.$));

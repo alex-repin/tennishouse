@@ -1,7 +1,7 @@
 {** block-description:carousel **}
 
 {if $items}
-    <div id="banner_slider_{$block.snapping_id}" class="banners owl-carousel">
+    <div id="banner_slider_{$block.snapping_id}" class="banners owl-carousel ty-no-swipe">
         {foreach from=$items item="banner" key="key"}
             <div class="ty-banner__image-item">
                 {if $banner.type == "G" && $banner.main_pair.image_id}

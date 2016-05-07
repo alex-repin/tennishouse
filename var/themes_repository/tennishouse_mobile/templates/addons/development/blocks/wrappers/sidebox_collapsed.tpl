@@ -7,6 +7,7 @@
             {else}
                 <span class="ty-sidebox__title-wrapper">{$title nofilter}</span>
             {/if}
+            <div class="ty-header-icon"></div>
             <div class="ty-sidebox__title-toggle cm-combination" id="sw_sidebox_{$block.block_id}">
                 <i class="ty-sidebox__icon-open ty-icon-down-open"></i>
                 <i class="ty-sidebox__icon-hide ty-icon-up-open"></i>

@@ -760,5 +760,6 @@
         <item lang="ru" id="mobile_version">Мобильная версия</item>
         <item lang="ru" id="select_option">Выберите опцию</item>
         <item lang="ru" id="sidebox_collapsed">Свернутая секция</item>
+        <item lang="ru" id="mobile_general">Основная мобильная</item>
     </language_variables>
 </addon>

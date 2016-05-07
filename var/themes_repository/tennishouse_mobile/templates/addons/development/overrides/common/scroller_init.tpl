@@ -1,4 +1,4 @@
-{script src="js/lib/owlcarousel/owl.carousel.mobile.js"}
+{script src="js/lib/owlcarousel/owl.carousel.mobile.min.js"}
 {$items_count = $items_count|default:$block.properties.item_quantity}
 <script type="text/javascript">
 (function(_, $) {
@@ -20,7 +20,8 @@
                 stopOnHover: true,
                 navigation: true,
                 navigationText: ['', ''],
-                pagination: false
+                pagination: false,
+                margin: 12
             });
         }
     });

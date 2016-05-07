@@ -342,8 +342,9 @@ if (typeof Object.create !== "function") {
 
         calculateWidth : function () {
             var base = this;
+            margin = base.options.margin ? base.options.margin : 0;
             // [tennishouse]
-            base.itemWidth = Math.round((base.$elem.width() - 12) / base.options.items);
+            base.itemWidth = Math.round((base.$elem.width() - margin) / base.options.items);
             // [tennishouse]
         },
 
