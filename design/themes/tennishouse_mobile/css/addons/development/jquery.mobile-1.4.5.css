@@ -3755,12 +3755,12 @@ html .ui-filterable.ui-listview {
 .ui-collapsible-content > .ui-filterable.ui-listview:not(.ui-listview-inset) > li.ui-first-child > a.ui-btn {
 	border-top-width: 1px;
 }
-div.ui-slider {
+/*div.ui-slider {
 	height: 30px;
 	margin: .5em 0;
 	padding: 0;
 	-ms-touch-action: pan-y pinch-zoom double-tap-zoom;
-}
+}*/
 div.ui-slider:before,
 div.ui-slider:after {
 	content: "";

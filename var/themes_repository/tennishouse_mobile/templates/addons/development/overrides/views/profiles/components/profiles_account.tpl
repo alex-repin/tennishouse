@@ -20,7 +20,7 @@
             <div id="email_confirmation">
                 {if $user_data.email_confirmed == 'Y'}
                     <div class="ty-email-confirmation__yes-block">
-                        <div class="ty-email-confirmation_yes"><div class="ty-email-confirmation_yes-text">{__("confirmed")}</div></div>
+                        <div class="ty-email-confirmation_yes"></div>
                     </div>
                 {else}
                     <div class="ty-email-confirmation__not-block">

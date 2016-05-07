@@ -121,7 +121,7 @@ function fn_calculate_total_shipping_cost() {
                                             {if $shipping.icon}
                                                 {include file="common/image.tpl" obj_id=$shipping.shipping_id images=$shipping.icon image_width="70" image_height="35" keep_transparent=true}
                                             {/if}
-                                            {$shipping.shipping} {$delivery_time} - <b>{$rate nofilter}</b>
+                                            <div>{$shipping.shipping} {$delivery_time} - <b>{$rate nofilter}</b></div>
                                         </label>
                                     </div>
                                     <div class="ty-shipping-options__method-payments">
@@ -138,11 +138,11 @@ function fn_calculate_total_shipping_cost() {
                                         {/foreach}
                                     </div>
                                 </div>
-                                {if $shipping.website}
+                                {*if $shipping.website}
                                 <div class="shipping_carrier_link">
                                     <a target="_blank" href="{$shipping.website}">{$shipping.website}</a>
                                 </div>
-                                {/if}
+                                {/if*}
                                 <script type="text/javascript" class="cm-ajax-force">
                                 (function(_, $) {
                                     $('#shipping_group_{$group_key}_{$shipping.shipping_id}').click(function(){$ldelim}

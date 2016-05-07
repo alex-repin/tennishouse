@@ -1,6 +1,6 @@
 {** block-description:original **}
 
-<div id="product_filters_{$block.block_id}">
+<div class="ty-no-swipe" id="product_filters_{$block.block_id}">
 <div  class="ty-product-filters__wrapper">
 {if $items && !$smarty.request.advanced_filter}
 
@@ -46,7 +46,6 @@
                 </span>
                 {if $filter.open || $filter.selected_ranges}<i class="ty-icon-ok"></i>{/if}
                 {*<i class="ty-product-filters__switch-right ty-icon-left-open"></i>*}
-                {include file="addons/development/common/tooltip.tpl" note_url=$filter.note_url note_text=$filter.note_text}
             </div>
             
             {if $filter.slider}
@@ -71,33 +70,8 @@
             } else {
                 $.cookie.set(block_id, 0);
             }
-            block.find('.ty-product-filters').toggle('slide');
-            block.find('.ty-price-slider').toggle('slide');
-        {$rdelim});
-        $('.ty-product-filters__block').hover(function(e){$ldelim}
-            $(this).addClass('is-hover');
-            var block_id = $(this).find('.ty-product-filters__switch').prop('id').replace(/^(on_|off_|sw_)/, '');
-            var submenu = $(this);
-            setTimeout(function() {$ldelim}
-                if (submenu.hasClass('is-hover')) {
-                    $.cookie.set(block_id, 1);
-                    submenu.find('.ty-product-filters').show('slide');
-                    submenu.find('.ty-price-slider').show('slide');
-                }
-            {$rdelim}, 150);
-        {$rdelim}, function(e){$ldelim}
-            if ($(this).find(":focus").length == 0) {$ldelim}
-                $(this).removeClass('is-hover');
-                var block_id = $(this).find('.ty-product-filters__switch').prop('id').replace(/^(on_|off_|sw_)/, '');
-                var submenu = $(this);
-                setTimeout(function() {$ldelim}
-                    if (!submenu.hasClass('is-hover')) {
-                        $.cookie.remove(block_id);
-                        submenu.find('.ty-product-filters').hide('slide');
-                        submenu.find('.ty-price-slider').hide('slide');
-                    }
-                {$rdelim}, 150);
-            {$rdelim}
+            block.find('.ty-product-filters').slideToggle();
+            block.find('.ty-price-slider').slideToggle();
         {$rdelim});
     {$rdelim});
     

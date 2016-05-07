@@ -9530,6 +9530,7 @@ $.widget( "mobile.flipswitch", $.extend({
 			//this makes clicks on the track go the the last handle used
 			this.element.find( "input" ).trigger( "vmouseup" );
 			this._sliderFirst.css( "z-index", first ? 1 : "" );
+                        this.update();
 		},
 
 		_slidebeforestart: function( event ) {
@@ -9586,6 +9587,9 @@ $.widget( "mobile.flipswitch", $.extend({
 		},
 
 		_change: function( event ) {
+                        if ((event.type === "keyup" && event.keyCode == 13) || (event.type === "blur")) {
+                                this.update();
+                        }
 			if ( event.type === "keyup" ) {
 				this._updateHighlight();
 				return false;
@@ -9594,6 +9598,7 @@ $.widget( "mobile.flipswitch", $.extend({
 			var self = this,
 				min = parseFloat( this._inputFirst.val(), 10 ),
 				max = parseFloat( this._inputLast.val(), 10 ),
+                                step = parseFloat( this._inputLast.attr('step'), 10 ),
 				first = $( event.target ).hasClass( "ui-rangeslider-first" ),
 				thisSlider = first ? this._inputFirst : this._inputLast,
 				otherSlider = first ? this._inputLast : this._inputFirst;
@@ -9603,11 +9608,11 @@ $.widget( "mobile.flipswitch", $.extend({
 			} else if ( event.type === "mousedown" ) {
 				return;
 			}
-			if ( min > max && !this._sliderTarget ) {
+			if ( min > max - step && !this._sliderTarget ) {
 				//this prevents min from being greater then max
-				thisSlider.val( first ? max: min ).slider( "refresh" );
+				thisSlider.val( first ? max - step: min + step ).slider( "refresh" );
 				this._trigger( "normalize" );
-			} else if ( min > max ) {
+			} else if ( min > max - step ) {
 				//this makes it so clicks on the target on either extreme go to the closest handle
 				thisSlider.val( this._targetVal ).slider( "refresh" );
 
@@ -9631,7 +9636,7 @@ $.widget( "mobile.flipswitch", $.extend({
 
 			this._updateHighlight();
 
-			if ( min >= max ) {
+			if ( min >= max - step ) {
 				return false;
 			}
 		},
@@ -9680,7 +9685,15 @@ $.widget( "mobile.flipswitch", $.extend({
 			this._inputLast.after( this._sliderLast );
 			this._sliders.remove();
 			this.element.find( "input" ).removeClass( "ui-rangeslider-first ui-rangeslider-last" ).slider( "destroy" );
-		}
+		},
+		
+		update: function() {
+                    var uiHash = {
+                            min: this._inputFirst.val(),
+                            max: this._inputLast.val()
+                    };
+                    this._trigger( "change" , null, uiHash);
+                }
 
 	}, $.mobile.behaviors.formReset ) );
 

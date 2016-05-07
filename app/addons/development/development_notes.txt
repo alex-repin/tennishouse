@@ -27,6 +27,7 @@ convert xls to csv - ssconvert -O 'quoting-mode=always' Остатки\ по\ с
 - ожидает звонка не учитывает количество и опции
 - перетяжка ракеток
 - ограничение акции количеством товара
+- wishlist = like
 
 - https://livetex.ru/x-widget/
 - сделать тест для завлечения покупателей

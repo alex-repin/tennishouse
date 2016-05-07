@@ -19,7 +19,7 @@
     {$image_height = $image_data.height * $image_width / $image_data.width}
 {/if}
 {if $image_width && $image_width != $image_data.width && $image_height && $image_height != $image_data.height}
-    <div style="display: inline-block; width: {$image_width}px; height: {$image_height}px;">
+    <div class="ty-image-wrapper" style="width: {$image_width}px; height: {$image_height}px;">
 {/if}
 
 {if $show_detailed_link}

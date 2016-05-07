@@ -266,9 +266,9 @@
         <div class="ty-orders-detail__products orders-product">
             {include file="common/group.tpl"  content=$smarty.capture.group}
         </div>
-        <div class="ty-rate-us-ym">
+        {*<div class="ty-rate-us-ym">
             <a href="http://clck.yandex.ru/redir/dtype=stred/pid=47/cid=2508/*http://market.yandex.ru/shop/292708/reviews"><img src="https://clck.yandex.ru/redir/dtype=stred/pid=47/cid=2507/*https://grade.market.yandex.ru/?id=292708&action=image&size=2" border="0" width="150" height="101" alt="Читайте отзывы покупателей и оценивайте качество магазина на Яндекс.Маркете" /></a>
-        </div>
+        </div>*}
         </div><!-- main order info -->
 
         {if !"ULTIMATE:FREE"|fn_allowed_for}

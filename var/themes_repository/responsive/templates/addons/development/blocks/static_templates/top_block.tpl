@@ -1,7 +1,7 @@
 <div class="ty-top-block-wrapper">
 <div class="ty-logo-container">
     <a href="{""|fn_url}" title="{$logos.theme.image.alt}">
-        <img src="{$logos.theme.image.image_path}" width="{$logos.theme.image.image_x}" height="{$logos.theme.image.image_y}" alt="{$logos.theme.image.alt}" class="ty-logo-container__image" />
+        <div class="ty-logo-wrapper"><img src="{$logos.theme.image.image_path}" width="{$logos.theme.image.image_x}" height="{$logos.theme.image.image_y}" alt="{$logos.theme.image.alt}" class="ty-logo-container__image" /></div>
     </a>
 </div>
 <div class="ty-top-block_top_left-wrapper">
@@ -31,27 +31,27 @@
     <div class="ty-top-block_bottom-wrapper">
         <a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=2"|fn_url}">
             <div class="ty-benefits-guarantees__top">
-                <div class="ty-benefits-guarantees__icon-block"><i class="ty-benefits-low-price"></i></div>
+                <div class="ty-benefits-guarantees__icon-block"><div class="ty-benefits-low-price"></div></div>
                 <div class="ty-benefits-guarantees__text ty-benefits-guarantees__text-single-line">{__("our_advantages_text")}</div>
             </div>
         </a>
         <a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=5"|fn_url}">
         <div class="ty-benefits-guarantees__top">
-            <div class="ty-benefits-guarantees__icon-block"><i class="ty-benefits-free-shipping"></i></div>
+            <div class="ty-benefits-guarantees__icon-block"><div class="ty-benefits-free-shipping"></div></div>
             <div class="ty-benefits-guarantees__text">{__("free_delivery_text")}</div>
         </div>
         </a>
         {*
         <a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=4"|fn_url}">
         <div class="ty-benefits-guarantees__top">
-            <div class="ty-benefits-guarantees__icon-block"><i class="ty-benefits-free-returns"></i></div>
+            <div class="ty-benefits-guarantees__icon-block"><div class="ty-benefits-free-returns"></div></div>
             <div class="ty-benefits-guarantees__text ty-benefits-guarantees__text-single-line">{__("free_returns_text")}</div>
         </div>
         </a>
         *}
         <a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=73"|fn_url}">
         <div class="ty-benefits-guarantees__top">
-            <div class="ty-benefits-guarantees__icon-block"><i class="ty-benefits-paymenton-delivery"></i></div>
+            <div class="ty-benefits-guarantees__icon-block"><div class="ty-benefits-paymenton-delivery"></div></div>
             <div class="ty-benefits-guarantees__text">{__("payment_on_delivery_text")}</div>
         </div>
         </a>

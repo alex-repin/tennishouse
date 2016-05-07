@@ -5,7 +5,7 @@
 {script src="js/tygh/history.js"}
 
 {script src="js/lib/twitterbootstrap/bootstrap.min.js"}
-{script src="js/lib/jqueryui/jquery-ui.custom.min.js"}
+{script src="js/lib/jqueryui/jquery-ui.min.js"}
 {script src="js/lib/autonumeric/autoNumeric.js"}
 {script src="js/lib/appear/jquery.appear-1.1.1.js"}
 {script src="js/lib/tools/tooltip.min.js"}

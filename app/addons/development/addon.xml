@@ -759,5 +759,6 @@
         <item lang="ru" id="full_version">Полная версия</item>
         <item lang="ru" id="mobile_version">Мобильная версия</item>
         <item lang="ru" id="select_option">Выберите опцию</item>
+        <item lang="ru" id="sidebox_collapsed">Свернутая секция</item>
     </language_variables>
 </addon>

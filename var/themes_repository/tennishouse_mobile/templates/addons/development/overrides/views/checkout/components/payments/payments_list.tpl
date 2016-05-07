@@ -15,14 +15,14 @@
                                 {if $payment.image}
                                     {include file="common/image.tpl" obj_id=$payment.payment_id images=$payment.image image_width="100" image_height="35" keep_transparent=true}
                                 {/if}
-                                {$payment.payment}
+                                <div>{$payment.payment}</div>
                             </label>
                         </div>
                     </div>
                     <div class="payment_carrier_link">
-                        {if $payment.website}
+                        {*if $payment.website}
                             <a target="_blank" href="{$payment.website}">{$payment.website}</a>
-                        {/if}
+                        {/if*}
                         {if $payment.description}<div class="ty-payments-list__item-description">{$payment.description}</div>{/if}
                     </div>
                     <script type="text/javascript" class="cm-ajax-force">

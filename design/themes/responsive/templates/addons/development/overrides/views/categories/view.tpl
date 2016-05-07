@@ -1,7 +1,7 @@
 <div id="category_products_{$block.block_id}">
 
 {if $category_data.note_text}
-    <div class="ty-category-title__note-block">{if $category_data.note_url}<a href="{"`$category_data.note_url`"|fn_url}" target="_blank">{/if}<div class="ty-category-title__note">{$category_data.note_text}</div>{if $category_data.note_url}</a>{/if}</div>
+    <div class="ty-category-title__note-block">{if $category_data.note_url}<a href="{"`$category_data.note_url`"|fn_url}" target="_blank">{/if}<div class="ty-category-title__note"><div class="ty-category-title__note-text">{$category_data.note_text}</div><div class="ty-category-title__note-question"></div></div>{if $category_data.note_url}</a>{/if}</div>
 {/if}
 {*if ($category_data.description || $runtime.customization_mode.live_editor) && !$category_data.category_id|fn_display_subheaders && !$category_data.parent_id}
     <div class="ty-wysiwyg-content ty-mb-s" {live_edit name="category:description:{$category_data.category_id}"}>{$category_data.description nofilter}</div>

@@ -942,7 +942,7 @@ input:focus::placeholder, textarea:focus::placeholder {
     margin: 0 auto;
 }
 .top-grid .ty-benefits-free-shipping {
-    background-image: url('../media/images/icons/shipping_icon.png');
+    background-image: url('../../../media/images/addons/development/shipping_icon.png');
     width: 29px;
     height: 29px;
     background-size: contain;
@@ -1219,9 +1219,72 @@ input:focus::placeholder, textarea:focus::placeholder {
 
 /*Filters*/
 .ty-product-filters__group {
-    margin: 0;
-    padding: 2px 0 2px 10px;
+    padding: 3px 0 5px 10px;
 }
+@columns: 10;
+.ty-fr-columns (@index) when (@index > 0) {
+    .ty-fr-columns(@index - 1);
+    .ty-product-filters .ty-column@{index} {
+        display: inline-block;
+        width: percentage((100 / @index) * 0.01);
+        vertical-align: top;
+        margin-right: -0.25em;
+    }
+}
+.ty-fr-columns(0) { }
+.ty-fr-columns(@columns);
+
+@media (max-width: 1224px) {
+    .ty-fr-columns(@columns);
+    .ty-fr-columns (@index) when (@index > 1) {
+        .ty-fr-columns(@index - 1);
+        .ty-product-filters .ty-column@{index} {
+            width: percentage((100 / 5) * 0.01);
+        }
+    }
+    .ty-fr-columns(0) { }
+}
+@media (max-width: 1024px) {
+    .ty-fr-columns(@columns);
+    .ty-fr-columns (@index) when (@index > 1) {
+        .ty-fr-columns(@index - 1);
+        .ty-product-filters .ty-column@{index} {
+            width: percentage((100 / 4) * 0.01);
+        }
+    }
+    .ty-fr-columns(0) { }
+}
+@media (max-width: 824px) {
+    .ty-fr-columns(@columns);
+    .ty-fr-columns (@index) when (@index > 1) {
+        .ty-fr-columns(@index - 1);
+        .ty-product-filters .ty-column@{index} {
+            width: percentage((100 / 3) * 0.01);
+        }
+    }
+    .ty-fr-columns(0) { }
+}
+@media (max-width: 624px) {
+    .ty-fr-columns(@columns);
+    .ty-fr-columns (@index) when (@index > 1) {
+        .ty-fr-columns(@index - 1);
+        .ty-product-filters .ty-column@{index} {
+            width: percentage((100 / 2) * 0.01);
+        }
+    }
+    .ty-fr-columns(0) { }
+}
+@media (max-width: 424px) {
+    .ty-fr-columns(@columns);
+    .ty-fr-columns (@index) when (@index > 1) {
+        .ty-fr-columns(@index - 1);
+        .ty-product-filters .ty-column@{index} {
+            width: percentage((100 / 1) * 0.01);
+        }
+    }
+    .ty-fr-columns(0) { }
+}
+
 .ty-product-filters__group:hover {
     background-color: lighten(@base, 5%);
 }
@@ -1233,13 +1296,10 @@ input:focus::placeholder, textarea:focus::placeholder {
     background: lighten(@base, 3%);
 }
 .ty-product-filters__wrapper {
-    border-top: 1px solid lighten(@font, 63%);
-    border-left: 1px solid lighten(@font, 63%);
-    border-bottom: 1px solid lighten(@font, 63%);
+    border: 1px solid lighten(@font, 63%);
 }
 .ty-product-filters__switch {
-    border-bottom: 1px solid lighten(@font, 63%);
-    border-right: 1px solid lighten(@font, 63%);
+    border: none;
 }
 .ty-product-filters__tools {
     border-right: 1px solid lighten(@font, 63%);
@@ -1266,47 +1326,52 @@ input:focus::placeholder, textarea:focus::placeholder {
 }
 .ty-filter-icon__check, .ty-filter-icon__delete {
     font-size: 15px;
-    left: 20%;
-    top: 0;
+    left: 25%;
+    top: 25%;
+}
+.ty-filter-icon {
+    width: 15px;
+    height: 15px;
 }
 .ty-product-filters__block {
     position: relative;
+    border-bottom: 1px solid lighten(@font, 63%);
 }
 .ty-product-filters {
     background: lighten(@base, 3%);
     border-top: 1px solid lighten(@font, 63%);
-    border-right: 1px solid lighten(@font, 63%);
-    border-bottom: 1px solid lighten(@font, 63%);
-    left: 167px;
-    top: -1px;
-    position: absolute;
-    z-index: 100;
-    width: 157px;
     margin: 0;
     padding: 0;
-    min-height: 36px;
+}
+.ty-product-filters__item {
+    padding: 2px 0 0 25px;
 }
 .ty-product-filters .ty-product-filters__item-more {
     padding: 0;
     margin: 0;
 }
+.ty-product-filters__items-column {
+    display: inline-block;
+    vertical-align: top;
+    width: 100%;
+}
 .ty-price-slider {
     background: lighten(@base, 3%);
     border-top: 1px solid lighten(@font, 63%);
-    border-right: 1px solid lighten(@font, 63%);
-    border-bottom: 1px solid lighten(@font, 63%);
-    left: 167px;
     margin: 0;
     padding: 10px 10px 25px;
-    position: absolute;
-    top: -1px;
-    width: 157px;
-    z-index: 100;
 }
 .ty-product-filters__block input {
     color: @font;
     padding: 4px 5px;
 }
+.ty-slider-text {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 10px;
+    color: #909598;
+}
+
 /*Filters*/
 
 /*Player details*/
@@ -1480,6 +1545,12 @@ input:focus::placeholder, textarea:focus::placeholder {
     display: inline-block;
     min-height: 300px;
     position: relative;
+}
+.ty-image-wrapper {
+    display: inline-block;
+}
+.ty-grid-list__image-product > .ty-image-wrapper, .ty-roundabout-item > .ty-image-wrapper {
+    display: inline;
 }
 .ty-grid-list__item {
     background: none repeat scroll 0 0 #f6f7f8;
@@ -3034,6 +3105,14 @@ a.ty-password-forgot__a {
     display: block;
     cursor: pointer;
     border-left: 1px solid darken(@menu, 6%);
+    width: 40px;
+    height: 100%;
+    position: absolute;
+    text-align: center;
+    right: 0px;
+    z-index: 100;
+    color: #fff;
+    top: 0px;
 }
 .ty-menu-vertical .ty-menu__item .ty-icon-right-open {
     top: 17px;
@@ -3657,9 +3736,36 @@ a.ty-password-forgot__a {
 /*.ty-range-slider .ui-slider-handle {
     background-color: lighten(@font, 22%);
 }*/
+
+/*Slider*/
 .ty-range-slider {
     box-shadow: none !important;
+    height: 0;
+    margin: 1em 1em 0;
+    position: relative;
+    z-index: 1;
+    border: none;
+    background: none;
 }
+.ty-range-slider .ui-slider-range {
+    height: 10px;
+    margin: 0;
+}
+.ty-range-slider__item {
+    height: 27px;
+    top: -1px;
+}
+.ty-range-slider .ui-slider-handle {
+    height: 27px;
+    width: 25px;
+}
+.ui-rangeslider .ui-rangeslider-sliders {
+    margin: 1em 1em 0;
+}
+.ty-range-slider__num {
+    top: 30px;
+}
+/*Slider*/
 // ANIMATIONS
 @keyframes notification-content-open {
     from   {transform: scale(0.8);opacity: 0.5}
@@ -3825,17 +3931,20 @@ a.ty-password-forgot__a {
 .ty-input-pair {
     input {
         display: inline;
-        width: 49%;
     }
     .ty-input-text-short {
         width: 100px;
     }
     .ui-input-text {
-        display: inline;
+        display: inline-block;
+        width: 45%;
     }
 }
 .ui-input-text .ty-search-form__input {
     width: 170px;
+}
+.ui-slider-track .ui-btn.ui-slider-handle {
+    background-color: @menu;
 }
 /* Cart cross sales*/
 .ty-cross-recomendation {

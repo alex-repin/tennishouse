@@ -1431,7 +1431,7 @@ var Tygh = {
             if (_.area == 'A') {
                 offset = 120; // offset fixed panel
             // [tennishouse]
-            } else {
+            } else if (!$.mobile)  {
                 offset = 130; // offset fixed panel
             // [tennishouse]
             }
@@ -1445,7 +1445,7 @@ var Tygh = {
             _.scrolling = true;
             if (!$.ceDialog('inside_dialog', {jelm: elm})) {
                 obj = $($.browser.opera ? 'html' : 'html,body');
-                elm_offset -= $(window).height() / 2;
+                elm_offset -= offset;
             } else {
 
                 obj = $.ceDialog('get_last').find('.object-container');
@@ -1462,9 +1462,16 @@ var Tygh = {
                 }
             }
 
-            $(obj).animate({scrollTop: elm_offset}, delay, function() {
+            if ("-ms-user-select" in document.documentElement.style && navigator.userAgent.match(/IEMobile\/10\.0/)) {
+                setTimeout(function() {
+                    $('html, body').scrollTop(elm_offset);
+                }, 300);
                 _.scrolling = false;
-            });
+            } else {
+                $(obj).animate({scrollTop: elm_offset}, delay, function() {
+                    _.scrolling = false;
+                });
+            }
 
             $.ceEvent('trigger', 'ce.scrolltoelm', [elm]);
         },
@@ -3325,9 +3332,9 @@ var Tygh = {
                             } else {
                                 $.ceAjax('request', url, {
                                     full_render: true,
-                                    // [TennisPaza]
+                                    // [TennisHouse]
                                     force_exec: true,
-                                    // [TennisPaza]
+                                    // [TennisHouse]
                                     save_history: true,
                                     result_ids: data.result_ids,
                                     scroll: data.scroll || '',
