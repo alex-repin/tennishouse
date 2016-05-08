@@ -33,7 +33,7 @@
             <div style="width: {$cell_width}%" class="ty-cross-section__item">
                 <div class="ty-product-cross-sales">
                     {assign var="obj_prefix" value="`$cross_category.category_id`_`$smarty.const.TIME`"}
-                    <div id="content_block_tab_{$cross_category.category_id}_{$smarty.const.TIME}" class="ty-wysiwyg-content">
+                    <div id="content_block_tab_{$cross_category.category_id}_{$smarty.const.TIME}" class="ty-wysiwyg-content ty-no-swipe">
                         <div id="scroll_list_{$cross_category.category_id}_{$smarty.const.TIME}" class="owl-carousel ty-scroller-list ty-micro-mode">
                             {$type_id = $smarty.const.TYPE_FEATURE_ID}
                             {foreach from=$cross_category.products item="product" name="for_products"}

@@ -23,7 +23,7 @@
 {/if}
 
 {assign var="obj_prefix" value="`$block.block_id`000"}
-<div id="content_block_tab_{$block.block_id}" class="ty-wysiwyg-content">
+<div id="content_block_tab_{$block.block_id}" class="ty-wysiwyg-content ty-no-swipe">
     {if $block.properties.format == 'S'}
         <div id="scroll_list_{$block.block_id}" class="owl-carousel ty-scroller-list {if $block.properties.mode == 'S'}ty-small-mode{elseif $block.properties.mode == 'N'}ty-mini-mode{elseif $block.properties.mode == 'M'}ty-micro-mode{/if}">
             {$type_id = $smarty.const.TYPE_FEATURE_ID}

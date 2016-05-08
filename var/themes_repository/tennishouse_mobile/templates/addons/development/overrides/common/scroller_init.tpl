@@ -1,4 +1,4 @@
-{script src="js/lib/owlcarousel/owl.carousel.min.js"}
+{script src="js/lib/owlcarousel/owl.carousel.mobile.min.js"}
 {$items_count = $items_count|default:$block.properties.item_quantity}
 <script type="text/javascript">
 (function(_, $) {

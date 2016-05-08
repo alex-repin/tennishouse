@@ -1,3 +1,10 @@
 {if $auth.user_id}
-<li class="ty-account-info__item ty-dropdown-box__item"><a class="ty-account-info__a" href="{"reward_points.userlog"|fn_url}" rel="nofollow">{__("reward_points_log")}</a></li>
+<li class="ty-account-info__item ty-dropdown-box__item">
+    <div class="ty-menu__submenu-item-header">
+        <a href="{"reward_points.userlog"|fn_url}" rel="nofollow" class="ty-menu__item-link">
+            <div class="ty-menu-icon ty-reward-icon"></div>
+            <div class="ty-menu__submenu-item-header-text">{__("reward_points_log")}</div>
+        </a>
+    </div>
+</li>
 {/if}

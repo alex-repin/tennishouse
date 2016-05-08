@@ -3,7 +3,7 @@
 {if ($items|count == 1 || !$items[1]['items']) && $items[0]['items']}
     <div class="ty-product-cross-sales">
         {assign var="obj_prefix" value="`$block.block_id`000"}
-        <div id="content_block_tab_{$block.block_id}" class="ty-wysiwyg-content">
+        <div id="content_block_tab_{$block.block_id}" class="ty-wysiwyg-content ty-no-swipe">
             <div id="scroll_list_{$block.block_id}" class="owl-carousel ty-scroller-list ty-micro-mode">
                 {$type_id = $smarty.const.TYPE_FEATURE_ID}
                 {foreach from=$items[0]['items'] item="product" name="for_products"}
@@ -32,7 +32,7 @@
 {elseif $items|count == 2 && $items[0]['items'] && $items[1]['items']}
     <div class="ty-product-cross-sales-left">
         {assign var="obj_prefix" value="`$block.block_id`000"}
-        <div id="content_block_tab_{$block.block_id}" class="ty-wysiwyg-content">
+        <div id="content_block_tab_{$block.block_id}" class="ty-wysiwyg-content ty-no-swipe">
             <div id="scroll_list_{$block.block_id}_1" class="owl-carousel ty-scroller-list ty-micro-mode">
                 {$type_id = $smarty.const.TYPE_FEATURE_ID}
                 {foreach from=$items[0]['items'] item="product" name="for_products"}

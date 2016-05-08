@@ -1,4 +1,4 @@
-{script src="js/lib/owlcarousel/owl.carousel.min.js"}
+{script src="js/lib/owlcarousel/owl.carousel.mobile.min.js"}
 <script type="text/javascript">
 (function(_, $) {
     var elm = $('#scroll_list_{$id}');
