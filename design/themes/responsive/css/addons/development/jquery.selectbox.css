@@ -68,14 +68,14 @@
     top: 30px;
     z-index: 100;
     overflow-y: auto;
-    width: 100%;
+    width: 400px;
     box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.45);
     
 /*    max-height: none !important;*/
 }
 .sbOptions li{
     padding: 0;
-    height: 30px;
+/*    height: 30px;*/
     line-height: 30px;
     border-bottom: dotted 1px #ddd;
 }

@@ -22,7 +22,7 @@
         </div>
         {if $product.full_description || $product.short_description}
         <div class="ty-product-info__block-description">
-            {$product.full_description|default:$product.short_description|truncate:300 nofilter}
+            {$product.full_description|default:$product.short_description|strip_tags:false|truncate:300 nofilter}
         </div>
         {/if}
     </div>
