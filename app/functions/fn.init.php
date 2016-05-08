@@ -541,15 +541,15 @@ function fn_init_layout($params)
                     $theme_name = MAIN_THEME_NAME;
                 }
             } else {
-//                 $device = new \Mobile_Detect;
-//                 if ($device->isMobile()) {
-//                     $theme_name = MOBILE_THEME_NAME;
-//                     fn_set_session_data('dmode', 'M');
-//                 } else {
-//                     $theme_name = MAIN_THEME_NAME;
-//                     fn_set_session_data('dmode', 'F');
-//                 }
+                $device = new \Mobile_Detect;
+                if ($device->isMobile()) {
+                    $theme_name = MOBILE_THEME_NAME;
+                    fn_set_session_data('dmode', 'M');
+                } else {
                     $theme_name = MAIN_THEME_NAME;
+                    fn_set_session_data('dmode', 'F');
+                }
+//                     $theme_name = MAIN_THEME_NAME;
             }
         } else {
             $theme_name = '';
