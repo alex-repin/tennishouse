@@ -1,1 +1,1 @@
-{script src="js/lib/owlcarousel/owl.carousel.mobile.min.js"}
+{script src="js/lib/owlcarousel/owl.carousel.min.js"}

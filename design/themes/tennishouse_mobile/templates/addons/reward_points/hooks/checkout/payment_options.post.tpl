@@ -1,4 +1,4 @@
-{if $settings.General.checkout_style == "multi_page"}
+{*{if $settings.General.checkout_style == "multi_page"}
     {assign var="additional_ids" value=",step_three"}
 {/if}
 
@@ -29,3 +29,4 @@
 </div>
     <!--point_payment--></div>
 {/if}
+*}

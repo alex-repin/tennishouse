@@ -7,6 +7,7 @@
 <h1 class="ty-mainbox-title">{__("cart_contents")}</h1>
 
 {include file="views/checkout/components/cart_items.tpl" disable_ids="button_cart"}
+        {include file="buttons/update_cart.tpl" but_id="button_cart" but_name="dispatch[checkout.update]" but_meta="hidden"}
 
 </form>
 

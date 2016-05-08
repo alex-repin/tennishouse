@@ -5,7 +5,7 @@
     </div>
 {/if}
 
-{if $runtime.mode == "checkout" && $cart_products && $cart.points_info.total_price && $user_info.points > 0}
+{*if $runtime.mode == "checkout" && $cart_products && $cart.points_info.total_price && $user_info.points > 0}
     <form class="cm-ajax cm-ajax-full-render" name="point_payment_form" action="{""|fn_url}" method="post">
         <input type="hidden" name="redirect_mode" value="{$location}" />
         <input type="hidden" name="result_ids" value="checkout*,cart_status*" />
@@ -34,4 +34,4 @@
             {/if}
         </div>
     {/if}
-{/if}
+{/if*}
