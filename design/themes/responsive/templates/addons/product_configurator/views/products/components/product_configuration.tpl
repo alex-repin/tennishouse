@@ -8,31 +8,35 @@
         <input type="hidden" name="additional_info[{$param}]" value="{$value}" />
     {/foreach}
     {foreach from=$product.product_configurator_groups item="po" name="groups_name"}
+    {if !$smarty.foreach.groups_name.first && $po.configurator_group_type != 'T'}<div class="ty-pc-container-separator"></div>{/if}
     <div class="ty-control-group ty-product-options__item product-list-field clearfix">
         <label class="ty-pc-group__label ty-control-group__label {if $po.required == 'Y'}cm-required cm-requirement-popup{/if}" for="group_{$po.group_id}">
-            {$po.configurator_group_name}:
+            {$po.configurator_group_name}{if $po.description}{include file="addons/development/common/tooltip.tpl" note_text=$po.description tooltipclass="ty-category-tooltip"}{/if}
         </label>
         <div class="ty-pc-group__products" id="pc_{$po.group_id}">
+            <input type="hidden" name="product_data[{$product.product_id}][configuration][{$po.group_id}][is_separate]" value="{$po.is_separate}" />
             {if $po.configurator_group_type == "S"}
                 <div class="ty-pc-group__products-item-block">
                     <select name="product_data[{$product.product_id}][configuration][{$po.group_id}][product_ids][]" id="group_{$po.group_id}" class="cm-dropdown cm-options-update" onchange="fn_change_options('{$obj_prefix}{$obj_id}', '{$obj_id}', '0');"  data-cesbClass="ty-sb-popup-large" {if $product.configuration_out_of_stock}disabled="disabled"{/if}>
                         <option id="product_{$po.group_id}_0" value=""> - {$po.full_description nofilter} - </option>
                         {if !$product.configuration_out_of_stock}
                         {foreach from=$po.products item="group_product"}
-                            <option id="product_{$po.group_id}_{$group_product.product_id}" value="{$group_product.product_id}" {if $group_product.selected == "Y"}selected="selected"{/if} {if $group_product.disabled}disabled="disabled"{/if}>{$group_product.product}{if $show_price_values == true} - {include file="common/price.tpl" value=$group_product.price}{/if}{if $group_product.recommended == "Y"} ({__("recommended")}){/if}</option>
+                            <option id="product_{$po.group_id}_{$group_product.product_id}" value="{$group_product.product_id}" {if $group_product.selected == "Y"}selected="selected"{/if} {if $group_product.disabled}disabled="disabled"{/if}>{$group_product.product}{if $show_price_values == true && !$group_product.no_price} - {include file="common/price.tpl" value=$group_product.price}{/if}{if $group_product.recommended == "Y"} ({__("recommended")}){/if}</option>
                         {/foreach}
                         {/if}
                     </select>
                     {foreach from=$po.products item="group_product"}
+                        {if !$group_product.no_product}
                         <div id="product_info_{$po.group_id}_{$group_product.product_id}" class="hidden">
                             {include file="addons/product_configurator/views/products/components/configuration_product.tpl" product=$group_product group_id=$po.group_id}
                         </div>
+                        {/if}
                     {/foreach}
                 </div>
-                {if $po.selected_product}
-                <div class="ty-pc-group__products-item-link-block">
-                    <a class="ty-pc-group__products-item-link" href="{"products.view?product_id=`$po.selected_product`"|fn_url}" target="_blank">{__("go_product_details")}</a>
-                </div>
+                {if $po.selected_product && !$po.no_product}
+                    <div class="ty-pc-group__products-item-link-block">
+                        <a class="ty-pc-group__products-item-link" href="{"products.view?product_id=`$po.selected_product`"|fn_url}" target="_blank">{__("go_product_details")}</a>
+                    </div>
                 {/if}
                 <div class="ty-pc-group__products-item-options">
                     {foreach from=$po.products item="group_product" name="descr_links"}
@@ -77,14 +81,14 @@
                     {/if}
                     {if $smarty.foreach.vars.first && $po.required != "Y"}
                     <tr>
-                        <td><input  id="group_{$po.group_id}_product_0" type="radio" class="radio {if $disable_product}cm-configurator-disabled{/if}" name="product_data[{$product.product_id}][configuration][{$po.group_id}]" value="0" onclick="fn_change_options('{$obj_id|default:$product.product_id}', '{$obj_id|default:$product.product_id}', '0');" checked="checked" {if $group_product.disabled || $disable_product}disabled="disabled"{/if} /></td>
+                        <td><input  id="group_{$po.group_id}_product_0" type="radio" class="radio {if $disable_product}cm-configurator-disabled{/if}" name="product_data[{$product.product_id}][configuration][{$po.group_id}][product_ids]" value="0" onclick="fn_change_options('{$obj_id|default:$product.product_id}', '{$obj_id|default:$product.product_id}', '0');" checked="checked" {if $group_product.disabled || $disable_product}disabled="disabled"{/if} /></td>
                         <td>&nbsp;{__("none")}</td>
                         <td>&nbsp;</td>
                     </tr>
                     {/if}
                     
                     <tr>
-                        <td><input type="radio" class="radio cm-no-change {if $disable_product}cm-configurator-disabled{/if}" id="group_{$po.group_id}_product_{$group_product.product_id}" name="product_data[{$product.product_id}][configuration][{$po.group_id}]" value="{$group_product.product_id}" onclick="fn_change_options('{$obj_id|default:$product.product_id}', '{$obj_id|default:$product.product_id}', '0');" {if $group_product.selected == "Y" && false == $disable_product}checked="checked"{/if} {if $group_product.disabled == true || $disable_product}disabled="disabled"{/if} /></td>
+                        <td><input type="radio" class="radio cm-no-change {if $disable_product}cm-configurator-disabled{/if}" id="group_{$po.group_id}_product_{$group_product.product_id}" name="product_data[{$product.product_id}][configuration][{$po.group_id}][product_ids]" value="{$group_product.product_id}" onclick="fn_change_options('{$obj_id|default:$product.product_id}', '{$obj_id|default:$product.product_id}', '0');" {if $group_product.selected == "Y" && false == $disable_product}checked="checked"{/if} {if $group_product.disabled == true || $disable_product}disabled="disabled"{/if} /></td>
                         <td style="width: 100%">{if $group_product.is_accessible}{include file="common/popupbox.tpl" id="description_`$po.group_id`_`$group_product.product_id`" link_text=$group_product.product text=$group_product.product href="products.configuration_product?group_id=`$po.group_id`&product_id=`$group_product.product_id`" content=""}{else}{$group_product.product}{/if}{if $group_product.recommended == "Y"} <span>({__("recommended")})</span>{/if}</td>
                         <td class="right">&nbsp;{if $show_price_values == true}<span class="price">{include file="common/price.tpl" value=$group_product.price}</span>{/if}</td>
                     </tr>
@@ -105,7 +109,7 @@
                     {/if}
                     <tr>
                         <td>
-                            <input type="checkbox" class="checkbox cm-no-change {if $disable_product}cm-configurator-disabled{/if}" id="group_{$po.group_id}_product_{$group_product.product_id}" name="product_data[{$product.product_id}][configuration][{$po.group_id}][]" value="{$group_product.product_id}" onclick="fn_change_options('{$obj_id|default:$product.product_id}', '{$obj_id|default:$product.product_id}', '0');" {if $group_product.selected == "Y" && false == $disable_product}checked="checked"{/if} {if $group_product.disabled == true || $disable_product}disabled="disabled"{/if} /></td>
+                            <input type="checkbox" class="checkbox cm-no-change {if $disable_product}cm-configurator-disabled{/if}" id="group_{$po.group_id}_product_{$group_product.product_id}" name="product_data[{$product.product_id}][configuration][{$po.group_id}][product_ids][]" value="{$group_product.product_id}" onclick="fn_change_options('{$obj_id|default:$product.product_id}', '{$obj_id|default:$product.product_id}', '0');" {if $group_product.selected == "Y" && false == $disable_product}checked="checked"{/if} {if $group_product.disabled == true || $disable_product}disabled="disabled"{/if} /></td>
                         <td style="width: 100%">{if $group_product.is_accessible}{include file="common/popupbox.tpl" id="description_`$po.group_id`_`$group_product.product_id`" link_text=$group_product.product text=$group_product.product href="products.configuration_product?group_id=`$po.group_id`&product_id=`$group_product.product_id`" content=""}{else}{$group_product.product}{/if}{if $group_product.recommended == "Y"} <span>({__("recommended")})</span>{/if}</td>
                         <td class="right">&nbsp;{if $show_price_values == true}<span class="price">{include file="common/price.tpl" value=$group_product.price}</span>{/if}</td>
                     </tr>
@@ -113,6 +117,21 @@
                     </tbody>
                 {else}
                 <p class="price">{__("text_no_products_defined")}</p>
+                {/if}
+            {elseif $po.configurator_group_type == "T"}
+                {if $po.product}
+                    <tbody id="group_{$po.group_id}">
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="checkbox cm-no-change cm-configurator-disabled hidden" id="group_{$po.group_id}_product_{$po.product.product_id}" name="product_data[{$product.product_id}][configuration][{$po.group_id}][product_ids][]" value="{$po.product.product_id}" checked="checked" /></td>
+                        <td class="right">&nbsp;{if $show_price_values == true}<span class="price">{include file="common/price.tpl" value=$po.product.price}</span>{/if}</td>
+                    </tr>
+                    </tbody>
+                    <div class="ty-pc-group__products-item-options">
+                        {if $po.product.product_options}
+                            {include file="addons/product_configurator/views/products/components/configuration_product_options.tpl" product=$po.product id=$po.product.product_id product_options=$po.product.product_options name="product_data[`$product.product_id`][configuration][`$po.group_id`][options]" request_obj_prefix=$obj_prefix request_obj_id=$obj_id}
+                        {/if}
+                    </div>
                 {/if}
             {/if}
             <script type="text/javascript">
@@ -126,6 +145,14 @@
                         $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('title', $('#product_info_{$po.group_id}_{$group_product.product_id}').html());
                         $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('data-cetooltipclass', 'ty-pc-product-info');
                         $('#opt_product_{$po.group_id}_{$group_product.product_id}').attr('data-cetooltipposition', 'center');
+                        $('#opt_product_{$po.group_id}_{$group_product.product_id}').hover(function(e){
+                            $('#product_info_{$po.group_id}_{$group_product.product_id}').html('');
+                            $.ceAjax('request', fn_url('products.configuration_product?product_id={$group_product.product_id}&group_id={$po.group_id}'), {
+                                result_ids: 'pc_info_{$po.group_id}_{$group_product.product_id}',
+                                hidden: true,
+                                caching: true
+                            });
+                        });
                     }
                 {/foreach}
             }(Tygh, Tygh.$));

@@ -38,6 +38,7 @@
     padding-left: 15px;
     vertical-align: top;
     width: 205px;
+    overflow: hidden;
 }
 .sbHolder:focus .sbSelector{
 }
@@ -68,7 +69,7 @@
     top: 30px;
     z-index: 100;
     overflow-y: auto;
-    width: 400px;
+    width: 100%;
     box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.45);
     
 /*    max-height: none !important;*/

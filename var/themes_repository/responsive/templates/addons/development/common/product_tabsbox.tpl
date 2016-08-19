@@ -36,12 +36,18 @@
     {if $product.players}
         max_height += 175;
     {/if}
+    {*if $product.product_options}
+        max_height -= 32 * '{$product.product_options|count}';
+    {/if*}
+    {if $product.product_configurator_groups}
+        max_height -= 40 * '{$product.product_configurator_groups|count}';
+    {/if}
     {if $smarty.capture.block_product_cross_sales}
         max_height += 190;
     {/if}
     var mx_hght = 0;
     $('#tabs_content').children().each(function(){
-        if (mx_hght < $(this).outerHeight(true)) {
+        if ($(this).attr('id') != 'content_technologies' && mx_hght < $(this).outerHeight(true)) {
             mx_hght = $(this).outerHeight(true);
         }
     });

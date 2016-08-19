@@ -1,5 +1,5 @@
 {if $auth.user_id}
-<li class="ty-account-info__item ty-dropdown-box__item">
+<li class="ty-menu__item">
     <div class="ty-menu__submenu-item-header">
         <a href="{"reward_points.userlog"|fn_url}" rel="nofollow" class="ty-menu__item-link">
             <div class="ty-menu-icon ty-reward-icon"></div>

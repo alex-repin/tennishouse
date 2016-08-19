@@ -36,11 +36,7 @@
     <div class="ty-control-group ty-product-options__item{if !$capture_options_vs_qty} product-list-field{/if} clearfix" id="opt_{$obj_prefix}{$id}_{$po.option_id}">
         {if !("SRC"|strpos:$po.option_type !== false && !$po.variants && $po.missing_variants_handling == "H")}
             <label {if $po.option_type !== "R" && $po.option_type !== "F"}for="option_{$obj_prefix}{$id}_{$po.option_id}"{/if} class="hidden ty-control-group__label ty-product-options__item-label{if $po.required == "Y"} cm-required{/if}{if $po.regexp} cm-regexp{/if}" {if $po.regexp}data-ca-regexp="{$po.regexp}" data-ca-message="{$po.incorrect_message}"{/if} data-ca-default-text="{if $po.default_text}{$po.default_text}{else}{__('select_option')}{/if}">
-                {$po.option_name}
-                {if $po.note_url && $po.note_text}
-                    <div style="display: none;"><a class="cm-notification-note" href="{"`$po.note_url`"|fn_url}" target="_blank">{$po.note_text}</a></div>
-                    {include file="addons/development/common/tooltip.tpl" note_text=$po.note_text note_url=$po.note_url}
-                {/if}:
+                {$po.option_name}:
             </label>
             {if $po.option_type == "S"} {*Selectbox*}
                 {if ($po.disabled || $disabled) && !$po.not_required}<input type="hidden" value="{$po.value}" name="{$name}[{$id}][product_options][{$po.option_id}]" id="option_{$obj_prefix}{$id}_{$po.option_id}" />{/if}
@@ -97,7 +93,7 @@
                 {/foreach}
 
             {elseif $po.option_type == "I"} {*Input*}
-                <input id="option_{$obj_prefix}{$id}_{$po.option_id}" type="text" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$po.value|default:$po.inner_hint}" {if $product.exclude_from_calculate && !$product.aoc}disabled="disabled"{/if} class="ty-valign ty-input-text{if $po.inner_hint} cm-hint{/if}{if $product.exclude_from_calculate && !$product.aoc} disabled{/if}" {if $po.inner_hint}title="{$po.inner_hint}"{/if} />
+                <input id="option_{$obj_prefix}{$id}_{$po.option_id}" placeholder="{$po.option_name}" type="text" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$po.value|default:$po.inner_hint}" {if $product.exclude_from_calculate && !$product.aoc}disabled="disabled"{/if} class="ty-valign ty-input-text{if $po.inner_hint} cm-hint{/if}{if $product.exclude_from_calculate && !$product.aoc} disabled{/if}" {if $po.inner_hint}title="{$po.inner_hint}"{/if} {if $disabled}disabled="disabled"{/if} />
             {elseif $po.option_type == "T"} {*Textarea*}
                 <textarea id="option_{$obj_prefix}{$id}_{$po.option_id}" class="ty-product-options__textarea{if $po.inner_hint} cm-hint{/if}{if $product.exclude_from_calculate && !$product.aoc} disabled{/if}" rows="3" name="{$name}[{$id}][product_options][{$po.option_id}]" {if $product.exclude_from_calculate && !$product.aoc}disabled="disabled"{/if} {if $po.inner_hint}title="{$po.inner_hint}"{/if} >{$po.value|default:$po.inner_hint}</textarea>
             {elseif $po.option_type == "F"} {*File*}

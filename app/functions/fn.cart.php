@@ -74,6 +74,7 @@ function fn_get_cart_product_data($hash, &$product, $skip_promotion, &$cart, &$a
             '?:products.min_qty',
             '?:products.amount as in_stock',
             '?:products.shipping_params',
+            '?:products.product_type',
             '?:companies.status as company_status',
             '?:companies.company as company_name'
         );
@@ -317,6 +318,8 @@ function fn_update_cart_data(&$cart, &$cart_products)
             }
         }
     }
+    
+    fn_set_hook('update_cart_data_post', $cart, $cart_products);
 
     return true;
 }
@@ -903,6 +906,11 @@ function fn_create_order_details($order_id, $cart)
             if (isset($v['base_price'])) {
                 $extra['base_price'] = floatval($v['base_price']);
             }
+            // TennisHouse
+            if (isset($v['pc_original_price'])) {
+                $extra['pc_original_price'] = floatval($v['pc_original_price']);
+            }
+            // TennisHouse
             if (!empty($v['promotions'])) {
                 $extra['promotions'] = $v['promotions'];
             }
@@ -2679,6 +2687,8 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
 
     if (isset($cart['products']) && is_array($cart['products'])) {
 
+        fn_set_hook('calculate_cart_items_pre', $cart, $cart_products, $auth);
+        
         $amount_totals = array();
         if (Registry::get('settings.General.disregard_options_for_discounts') == 'Y') {
             foreach ($cart['products'] as $k => $v) {
@@ -2718,6 +2728,8 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
         }
         fn_check_promotion_notices();
 
+        fn_set_hook('calculate_cart_items_after_promotions', $cart, $cart_products, $auth);
+        
         if (Registry::get('settings.Shippings.disable_shipping') == 'Y') {
             $cart['shipping_required'] = false;
         }
@@ -6837,6 +6849,13 @@ function fn_update_cart_by_data(&$cart, $new_cart_data, $auth)
     // Clean up saved shipping rates
     unset($_SESSION['shipping_rates']);
 
+    if (!empty($new_cart_data['product_data'])) {
+        foreach ($new_cart_data['product_data'] as $k => $p_dt) {
+            if (!empty($p_dt['item_id']) && !empty($p_dt['group_id']) && !empty($p_dt['product_options'])) {
+                $new_cart_data['cart_products'][$p_dt['item_id']]['configuration'][$p_dt['group_id']]['options'][$k]['product_options'] = $p_dt['product_options'];
+            }
+        }
+    }
     // update products
     $product_data = !empty($new_cart_data['cart_products']) ? $new_cart_data['cart_products'] : array();
     fn_update_cart_products($cart, $product_data, $auth);

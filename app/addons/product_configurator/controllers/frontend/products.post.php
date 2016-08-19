@@ -47,6 +47,7 @@ if ($mode == 'configuration_group') {
 
         Registry::get('view')->assign('group_id', $_REQUEST['group_id']);
         Registry::get('view')->assign('product', $product);
+        Registry::get('view')->assign('show_info', true);
         Registry::get('view')->display('addons/product_configurator/views/products/components/configuration_product.tpl');
         exit;
     }

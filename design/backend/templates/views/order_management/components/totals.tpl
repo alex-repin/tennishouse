@@ -119,7 +119,7 @@
 
         <tr class="hidden cm-om-totals-recalculate">
             <td colspan="2">
-                <button class="btn cm-ajax" type="submit" name="dispatch[order_management.update_totals]" value="Recalculate" data-ca-check-filter="#om_ajax_update_totals"><i class="icon-refresh"></i> {__("recalculate_totals")}</button>
+                <button class="btn cm-skip-validation" id="recalculate_cart" type="submit" name="dispatch[order_management.update_totals]" value="Recalculate" data-ca-check-filter="#om_ajax_update_totals"><i class="icon-refresh"></i> {__("recalculate_totals")}</button>
             </td>
         </tr>
 

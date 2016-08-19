@@ -125,8 +125,8 @@ define('DEFAULT_TABLE_PREFIX', 'cscart_');
 define('CS_PHP_VERSION', phpversion());
 
 // Product information
-define('PRODUCT_NAME', 'CS-Cart');
-define('PRODUCT_VERSION', '4.2.3');
+define('PRODUCT_NAME', 'TennisHouse');
+define('PRODUCT_VERSION', '1.0');
 define('PRODUCT_STATUS', '');
 
 define('PRODUCT_EDITION', 'ULTIMATE');

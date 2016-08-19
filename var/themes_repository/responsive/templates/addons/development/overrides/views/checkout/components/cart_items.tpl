@@ -45,7 +45,7 @@
                                     {$product.product nofilter}
                                 </a>
                                 {if !$product.exclude_from_calculate}
-                                    <a class="{$ajax_class} ty-cart-content__product-delete ty-delete-big" href="{"checkout.delete?cart_id=`$key`&redirect_mode=`$runtime.mode`"|fn_url}" data-ca-target-id="cart_items,checkout_totals,cart_status*,checkout_steps,checkout_cart" title="{__("remove")}">&nbsp;<i class="ty-delete-big__icon ty-icon-cancel-circle"></i>
+                                    <a class="{$ajax_class} ty-cart-content__product-delete ty-delete-big" href="{"checkout.delete?cart_id=`$key`&redirect_mode=`$runtime.mode`"|fn_url}" data-ca-target-id="cart_items,checkout_totals,cart_status*,checkout_steps,checkout_cart" title="{__("remove")}">&nbsp;<i class="ty-delete-big__icon ty-icon-cancel"></i>
                                     </a>
                                 {/if}
                             {/strip}
@@ -74,16 +74,16 @@
                                                 <table class="ty-cart-content__more-info ty-table">
                                                     <tr>
                                                         <th class="ty-cart-content__more-info-title">{__("price")}</th>
-                                                        <th class="ty-cart-content__more-info-title">{__("quantity")}</th>
                                                         {if $product.discount|floatval}<th class="ty-cart-content__more-info-title">{__("discount")}</th>{/if}
                                                         {if $product.taxes && $settings.General.tax_calculation != "subtotal"}<th>{__("tax")}</th>{/if}
+                                                        <th class="ty-cart-content__more-info-title">{__("quantity")}</th>
                                                         <th class="ty-cart-content__more-info-title">{__("subtotal")}</th>
                                                     </tr>
                                                     <tr>
                                                         <td>{include file="common/price.tpl" value=$product.original_price span_id="original_price_`$key`" class="none"}</td>
-                                                        <td class="ty-center">{$product.amount}</td>
                                                         {if $product.discount|floatval}<td>{include file="common/price.tpl" value=$product.discount span_id="discount_subtotal_`$key`" class="none"}</td>{/if}
                                                         {if $product.taxes && $settings.General.tax_calculation != "subtotal"}<td>{include file="common/price.tpl" value=$product.tax_summary.total span_id="tax_subtotal_`$key`" class="none"}</td>{/if}
+                                                        <td class="ty-center">{$product.amount}</td>
                                                         <td>{include file="common/price.tpl" span_id="product_subtotal_2_`$key`" value=$product.display_subtotal class="none"}</td>
                                                     </tr>
                                                 </table>

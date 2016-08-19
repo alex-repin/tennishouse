@@ -74,13 +74,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $previous_state = md5(serialize($cart['products']));
         $cart['change_cart_products'] = true;
         list ($cart_products, $product_groups) = fn_calculate_cart_content($cart, $auth, 'S', true, 'F', true);
+        fn_gather_additional_products_data($cart_products, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => false));
 
         if (md5(serialize($cart['products'])) != $previous_state && empty($cart['skip_notification'])) {
             $product_cnt = 0;
             $added_products = array();
             foreach ($cart['products'] as $key => $data) {
                 if (empty($prev_cart_products[$key]) || !empty($prev_cart_products[$key]) && $prev_cart_products[$key]['amount'] != $data['amount']) {
-                    $added_products[$key] = $data;
+                    if (!empty($cart_products[$key]['main_pair'])) {
+                        $cart['products'][$key]['main_pair'] = $cart_products[$key]['main_pair'];
+                    }
+                    $added_products[$key] = $cart['products'][$key];
                     $added_products[$key]['product_option_data'] = fn_get_selected_product_options_info($data['product_options']);
                     if (!empty($prev_cart_products[$key])) {
                         $added_products[$key]['amount'] = $data['amount'] - $prev_cart_products[$key]['amount'];
@@ -136,6 +140,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['continue_url'] = fn_url_remove_service_params($_REQUEST['redirect_url']);
             }
             unset($_REQUEST['redirect_url']);
+        }
+        if (defined('AJAX_REQUEST')) {
+            $dmode = fn_get_session_data('dmode');
+            if ($dmode == 'M') {
+                Registry::get('view')->display('addons/development/common/cart_panel.tpl');
+            } else {
+                $cart_content = array('snapping_id' => 'cart_content', 'properties' => array('products_links_type' => 'thumb', 'display_delete_icons' => 'Y', 'display_bottom_buttons' => 'Y'));
+                Registry::get('view')->assign('block', $cart_content);
+                Registry::get('view')->assign('force_items_deletion', true);
+                Registry::get('view')->display('blocks/cart_content.tpl');
+            }
+            exit;
         }
     }
 
@@ -1065,10 +1081,20 @@ if ($mode == 'cart') {
     fn_save_cart_content($cart, $auth['user_id']);
 
     $cart['recalculate'] = true;
-    fn_calculate_cart_content($cart, $auth, 'A', true, 'F', true);
+    list ($cart_products, $product_groups) = fn_calculate_cart_content($cart, $auth, 'A', true, 'F', true);
 
     if (defined('AJAX_REQUEST')) {
-        fn_set_notification('N', __('notice'), __('text_product_has_been_deleted'));
+        $dmode = fn_get_session_data('dmode');
+        if ($dmode == 'M') {
+            Registry::get('view')->display('addons/development/common/cart_panel.tpl');
+        } else {
+            $cart_content = array('snapping_id' => 'cart_content', 'properties' => array('products_links_type' => 'thumb', 'display_delete_icons' => 'Y', 'display_bottom_buttons' => 'Y'));
+            Registry::get('view')->assign('force_items_deletion', true);
+            Registry::get('view')->assign('block', $cart_content);
+            Registry::get('view')->display('blocks/cart_content.tpl');
+//         fn_set_notification('N', __('notice'), __('text_product_has_been_deleted'));
+        }
+        exit;
     }
 
     $redirect_mode = empty($_REQUEST['redirect_mode']) ? 'cart' : $_REQUEST['redirect_mode'];

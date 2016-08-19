@@ -36,5 +36,13 @@ fn_register_hooks(
     'create_order_details',
     'get_order_items_info_post',
     'reorder_item',
-    'change_order_status'
+    'change_order_status',
+    'gather_additional_product_data_post',
+    'gather_additional_product_data_before_options',
+    'calculate_cart_items_after_promotions',
+    'calculate_cart_items_pre',
+    'update_cart_data_post',
+    'form_cart',
+    'calculate_cart_items',
+    'update_cart_products_pre'
 );

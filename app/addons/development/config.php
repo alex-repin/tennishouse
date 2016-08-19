@@ -112,6 +112,7 @@ define('KIDS_26_FV_ID', 455);
 /*Rackets*/
 /*Strings*/
 define('TW_M_STRINGS_FV_ID', 499);
+define('STRING_PACK_FV_ID', 338);
 
 define('NATURAL_GUT_STRINGS_FV_ID', 368);
 define('NYLON_STRINGS_FV_ID', 365);

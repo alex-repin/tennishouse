@@ -44,7 +44,7 @@
                                 {if $smarty.foreach.plrs.iteration < 5}
                                     <div class="ty-product-list__player_image">
                                         <a href="{"players.view?player_id=`$player.player_id`"|fn_url}">
-                                            {include file="common/image.tpl" obj_id=$obj_id_prefix images=$player.main_pair image_width=$settings.Thumbnails.product_lists_thumbnail_width image_height=$settings.Thumbnails.product_lists_thumbnail_height}
+                                            {include file="common/image.tpl" obj_id=$obj_id_prefix images=$player.main_pair image_width="90" image_height="90"}
                                         </a>
                                         <div>{$player.player}</div>
                                     </div>
@@ -167,6 +167,7 @@
                         </div>*}
                     </div>
                     {/if}
+                    {/hook}
                     
                     <div class="ty-avail-container">
                         {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
@@ -176,7 +177,6 @@
                         </div>
                         {if $capture_options_vs_qty}{/capture}{/if}
                     </div>
-                    {/hook}
                 </div>
 
                 {if $capture_buttons}{capture name="buttons"}{/if}

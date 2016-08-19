@@ -789,6 +789,59 @@ input:focus::placeholder, textarea:focus::placeholder {
     position: absolute;
     top: 1px;
 }
+.ty-product-notification__item {
+    margin-bottom: 10px;
+}
+.ty-product-notification__item:last-child {
+    margin-bottom: 0;
+}
+.ty-pc-ajax-loading-box {
+    min-height: 52px;
+    width: 52px;
+    background:url('../media/images/icons/ajax_loader.gif') no-repeat 10px 10px #0d0d0d;
+    opacity: 0.8;
+    .border-radius(5px);
+    margin: 70px auto;
+}
+.ty-pc-product-notification {
+    margin-top: 10px;
+}
+.ty-pc-title {
+    font-weight: bold;
+}
+.ty-pc-table tbody tr, .ty-pc-table th {
+    background: #fff !important;
+}
+table.ty-cart-content {
+    border: 1px solid #ECF0F1;
+    margin-top: 10px;
+}
+.ty-cart-content__description {
+    vertical-align: top;
+}
+.ty-cart-content__image {
+    text-align: center;
+    float: none;
+}
+.ty-cart-content__image-consult-stringing {
+    background-image: url("../../../media/images/addons/development/select_string.jpg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+}
+.ty-product-notification__image-consult-stringing {
+    background-image: url("../../../media/images/addons/development/select_string.jpg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+}
+.ty-cart-content__product-delete {
+    float: right;
+}
 .ty-minicart-title {
     padding-left: 30px;
 }
@@ -1193,6 +1246,19 @@ input:focus::placeholder, textarea:focus::placeholder {
 }
 .ty-image-wrapper {
     display: inline-block;
+}
+.ty-product-notification__image,
+.ty-product-notification__body .ty-no-image {
+    float: none;
+    margin-right: 0;
+    padding: 0;
+    
+}
+.ty-product-notification__item .ty-image-wrapper {
+    float: left;
+    margin-right: 10px;
+    padding: 10px;
+    
 }
 .ty-grid-list__image-product > .ty-image-wrapper, .ty-roundabout-item > .ty-image-wrapper {
     display: inline;
@@ -1615,10 +1681,27 @@ input:focus::placeholder, textarea:focus::placeholder {
 .ty-control-group {
     margin: 0;
 }
+.ty-pc-container-separator {
+    border-bottom: 1px solid #dfe2e6;
+    display: block;
+    margin: 10px 0;
+    width: 100%;
+}
 .ty-pc-zero-price-note {
     color: lighten(@font, 35%);
     display: inline-block;
     vertical-align: top;
+}
+.ty-pc-group__products .price {
+    padding: 6px 0;
+    display: inline-block;
+    font-family: @price_font;
+    font-weight: @price_font_weight;
+    font-style: @price_font_style;
+    text-decoration: @price_font_decoration;
+}
+.ty-pc-group__products .ty-product-options__description {
+    margin: 0;
 }
 .ty-product-free-shipping {
     color: lighten(@font, 35%);
@@ -2390,18 +2473,30 @@ input:focus::placeholder, textarea:focus::placeholder {
     position: relative;
 }
 .ty-products-scroller .owl-prev {
-    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat 0 10px #ffffff !important;
     top: 120px;
+    background-image: url("../../../media/images/addons/development/arrow-left.png");
+    width: 20px;
     height: 90px !important;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-color: #fff;
+    background-position: center;
+    margin: 0 auto;
 }
 /*.ty-products-scroller .owl-prev:hover {
     background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat -50px 10px #ffffff !important;
 }*/
 
 .ty-products-scroller .owl-next {
-    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat -25px 10px #ffffff !important;
     top: 120px;
+    background-image: url("../../../media/images/addons/development/arrow-right.png");
+    width: 20px;
     height: 90px !important;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-color: #fff;
+    background-position: center;
+    margin: 0 auto;
 }
 /*.ty-products-scroller .owl-next:hover {
     background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat -75px 10px #ffffff !important;

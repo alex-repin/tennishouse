@@ -18,13 +18,17 @@
         <div class="ty-pc-product-notification">
             {foreach from=$product.configuration item="_product" key="_key"}
                 <div class="ty-product-notification__item clearfix">
-                    {include file="common/image.tpl" image_width="50" image_height="50" images=$_product.main_pair no_ids=true class="ty-product-notification__image"}
+                    {if $_key == 'CONSULT_STRINGING'}
+                        <div class="ty-image-wrapper"><div class="ty-product-notification__image-consult-stringing"></div></div>
+                    {else}
+                        {include file="common/image.tpl" image_width="50" image_height="50" images=$_product.main_pair no_ids=true class="ty-product-notification__image"}
+                    {/if}
                     <div class="ty-product-notification__content clearfix">
-                        <a href="{"products.view?product_id=`$_product.product_id`"|fn_url}" class="ty-product-notification__product-name">{$_product.product_id|fn_get_product_name nofilter}</a>
+                        {if $_product.product_id}<a href="{"products.view?product_id=`$_product.product_id`"|fn_url}" class="ty-product-notification__product-name">{/if}{if $_product.product}{$_product.product}{else}{$_product.product_id|fn_get_product_name nofilter}{/if}{if $_product.product_id}</a>{/if}
                         {if !($settings.General.allow_anonymous_shopping == "hide_price_and_add_to_cart" && !$auth.user_id)}
                             <div class="ty-product-notification__price">
                                 {if !$hide_amount}
-                                    <span class="none">{$_product.extra.step}</span>&nbsp;x&nbsp;{include file="common/price.tpl" value=$_product.price span_id="price_`$_key`" class="none"}
+                                    <span class="none">{if $_product.extra.step}{$_product.extra.step}{else}{$_product.amount}{/if}</span>&nbsp;x&nbsp;{include file="common/price.tpl" value=$_product.price span_id="price_`$_key`" class="none"}
                                 {/if}
                             </div>
                         {/if}
@@ -37,4 +41,6 @@
         </div>
     </div>
 </div>
+{elseif $product.extra.parent}
+&nbsp;
 {/if}

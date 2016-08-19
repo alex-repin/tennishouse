@@ -761,5 +761,19 @@
         <item lang="ru" id="select_option">Выберите опцию</item>
         <item lang="ru" id="sidebox_collapsed">Свернутая секция</item>
         <item lang="ru" id="mobile_general">Основная мобильная</item>
+        <item lang="ru" id="select_stringing">Выберите струны</item>
+        <item lang="ru" id="string">Струна</item>
+        <item lang="ru" id="unstrung">Без струн</item>
+        <item lang="ru" id="consult_string">Подобрать со специалистом</item>
+        <item lang="ru" id="stringing_tension">Жесткость натяжки</item>
+        <item lang="ru" id="stringing_service">Услуга по натяжке</item>
+        <item lang="ru" id="over_items">более</item>
+        <item lang="ru" id="select_dampener">Выберите виброгаситель</item>
+        <item lang="ru" id="dampener">Виброгаситель</item>
+        <item lang="ru" id="no_dampener">Без виброгасителя</item>
+        <item lang="ru" id="select_overgrip">Выберите обмотку</item>
+        <item lang="ru" id="overgrip">Обмотка</item>
+        <item lang="ru" id="no_overgrip">Без обмотки (только базовая)</item>
+        <item lang="ru" id="recalculate_configuration">Пересчитать конфигурацию</item>
     </language_variables>
 </addon>

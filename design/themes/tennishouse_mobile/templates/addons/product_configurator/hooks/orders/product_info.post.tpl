@@ -1,4 +1,4 @@
-{if $product.extra.configuration_data}
+{*if $product.extra.configuration_data}
     <div class="ty-product-extra-info">
         <a id="sw_product_extra_{$key}" class="cm-combination ty-product-extra-info-link detailed-link">{__("configuration")}</a>
         <div id="product_extra_{$key}" class="ty-product-extra-info-block hidden">
@@ -55,4 +55,4 @@
         </table>
         </div>
     </div>
-{/if}
+{/if*}

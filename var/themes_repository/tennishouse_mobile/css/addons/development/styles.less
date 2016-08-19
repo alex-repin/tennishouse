@@ -1561,6 +1561,33 @@ input:focus::placeholder, textarea:focus::placeholder {
 .ty-image-wrapper {
     display: inline-block;
 }
+table.ty-cart-content {
+    border: 1px solid #ECF0F1;
+    margin-top: 10px;
+}
+.ty-product-notification__item .ty-image-wrapper {
+    float: left;
+    margin-right: 10px;
+    padding: 10px;
+    
+}
+.ty-product-notification__image,
+.ty-product-notification__body .ty-no-image {
+    float: none;
+    margin-right: 0;
+    padding: 0;
+    
+}
+.ty-cart-content__image {
+    text-align: center;
+    float: none;
+}
+.ty-pc-title {
+    font-weight: bold;
+}
+.ty-pc-table tbody tr, .ty-pc-table th {
+    background: #fff !important;
+}
 .ty-grid-list__image-product > .ty-image-wrapper, .ty-roundabout-item > .ty-image-wrapper {
     display: inline;
 }
@@ -1568,7 +1595,6 @@ input:focus::placeholder, textarea:focus::placeholder {
     background: none repeat scroll 0 0 #f6f7f8;
     position: relative;
     margin: 0 -1px -1px 0;
-    z-index:10;
     overflow: hidden;
     border: 1px solid #ebebeb;
 }
@@ -1576,7 +1602,7 @@ input:focus::placeholder, textarea:focus::placeholder {
 /*    outline: 1px solid #dadada;*/
     transition: all 100ms linear 0s;
     box-shadow: 0 0 5px 1px @font;
-    z-index:10;
+    z-index: 10;
 }
 .ty-scroller-list {
     .owl-item:hover {
@@ -2183,6 +2209,21 @@ input:focus::placeholder, textarea:focus::placeholder {
     display: inline-block;
     vertical-align: top;
     margin: 3px 0 3px 3px;
+}
+.ty-pc-group__products .price {
+    padding: 6px 0;
+    display: block;
+    font-family: @price_font;
+    font-weight: @price_font_weight;
+    font-style: @price_font_style;
+    text-decoration: @price_font_decoration;
+}
+.ty-pc-group__products .ty-product-options__description {
+    margin: 0;
+    text-align: left;
+}
+.ty-product-options .ty-input-text {
+    width: 100%;
 }
 .ty-product-free-shipping {
     color: lighten(@font, 35%);
@@ -3018,18 +3059,30 @@ a.ty-password-forgot__a {
     position: relative;
 }
 .ty-products-scroller .owl-prev {
-    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat 0 10px #ffffff !important;
     top: 120px;
+    background-image: url("../../../media/images/addons/development/arrow-left.png");
+    width: 20px;
     height: 90px !important;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-color: #fff;
+    background-position: center;
+    margin: 0 auto;
 }
 /*.ty-products-scroller .owl-prev:hover {
     background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat -50px 10px #ffffff !important;
 }*/
 
 .ty-products-scroller .owl-next {
-    background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat -25px 10px #ffffff !important;
     top: 120px;
+    background-image: url("../../../media/images/addons/development/arrow-right.png");
+    width: 20px;
     height: 90px !important;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-color: #fff;
+    background-position: center;
+    margin: 0 auto;
 }
 /*.ty-products-scroller .owl-next:hover {
     background: url("../../../design/themes/responsive/media/images/addons/development/arrows_hr.png") no-repeat -75px 10px #ffffff !important;

@@ -884,16 +884,19 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                 $color_prod_image_pairs = fn_get_image_pairs($color_ids, 'variant_additional', 'Z', false, true, CART_LANGUAGE);
             }
 
-            if (!empty($product['selected_options']) && $product['tracking'] == 'O' && !empty($product['product_options'])) {
-                foreach ($product['product_options'] as $i => $opt_data) {
-                    if (!empty($product['selected_options'][$opt_data['option_id']]) && !empty($opt_data['show_on_catalog']) && $opt_data['show_on_catalog'] == 'Y') {
-                        $product['ohash'] = 'ohash[' . $opt_data['option_id'] . ']=' . $product['selected_options'][$opt_data['option_id']];
-                        if(!empty($color_prod_image_pairs[$product['selected_options'][$opt_data['option_id']]])) {
-                            $product['main_pair'] = reset($color_prod_image_pairs[$product['selected_options'][$opt_data['option_id']]]);
+            foreach ($products as $i => &$product) {
+                if (!empty($product['selected_options']) && $product['tracking'] == 'O' && !empty($product['product_options'])) {
+                    foreach ($product['product_options'] as $i => $opt_data) {
+                        if (!empty($product['selected_options'][$opt_data['option_id']]) && !empty($opt_data['show_on_catalog']) && $opt_data['show_on_catalog'] == 'Y') {
+                            $product['ohash'] = 'ohash[' . $opt_data['option_id'] . ']=' . $product['selected_options'][$opt_data['option_id']];
+                            if(!empty($color_prod_image_pairs[$product['selected_options'][$opt_data['option_id']]])) {
+                                $product['main_pair'] = reset($color_prod_image_pairs[$product['selected_options'][$opt_data['option_id']]]);
+                            }
                         }
                     }
                 }
-            } elseif (Registry::get('settings.Appearance.catalog_options_mode') == 'Y' && !empty($params['allow_duplication'])) {
+            }
+            if (Registry::get('settings.Appearance.catalog_options_mode') == 'Y' && !empty($params['allow_duplication'])) {
                 $new_products = array();
                 foreach ($products as $i => &$product) {
                     $found = false;
@@ -1190,6 +1193,9 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
     }
     if (!empty($params['features_condition'])) {
         FeaturesCache::getProductsConditions($params['features_condition'], $join, $condition, $lang_code);
+    }
+    if (!empty($params['view_statuses'])) {
+        $condition = str_replace(db_quote(' AND products.status IN (?a)', array('A')), db_quote(' AND products.status IN (?a)', $params['view_statuses']), $condition);
     }
 }
 

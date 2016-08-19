@@ -167,6 +167,7 @@
                         </div>*}
                     </div>
                     {/if}
+                    {/hook}
                     
                     <div class="ty-avail-container">
                         {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
@@ -176,7 +177,6 @@
                         </div>
                         {if $capture_options_vs_qty}{/capture}{/if}
                     </div>
-                    {/hook}
                 </div>
 
                 {if $capture_buttons}{capture name="buttons"}{/if}

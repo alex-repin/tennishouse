@@ -36,7 +36,7 @@
                 </td>
                 {if $order_info.use_discount}
                 <td class="nowrap">
-                    {if $_product.extra.discount|floatval}{include file="common/price.tpl" value=$_product.extra.discount}{else}-{/if}</td>
+                    {if $_product.extra.discount|floatval}{include file="common/price.tpl" value=$_product.extra.discount}{elseif $_product.discount|floatval}{include file="common/price.tpl" value=$_product.discount}{else}-{/if}</td>
                 {/if}
                 {if $order_info.taxes && $settings.General.tax_calculation != "subtotal"}
                 <td class="nowrap">
