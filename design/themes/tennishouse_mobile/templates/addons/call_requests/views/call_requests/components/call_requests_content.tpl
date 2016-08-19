@@ -24,7 +24,7 @@
 
 <div class="ty-control-group">
     <label for="call_data_{$id}_phone" class="ty-control-group__title{if !$product} cm-required{/if}">{__("phone")}</label>
-    <input id="call_data_{$id}_phone" class="ty-input-text-full cm-cr-mask-phone" placeholder="{__("phone")}" size="50" type="text" name="call_data[phone]" value="" />
+    <input id="call_data_{$id}_phone" class="ty-input-text-full cm-cr-mask-phone" placeholder="{__("phone")}" size="50" type="tel" name="call_data[phone]" value="" />
 </div>
 
 {if $product}

@@ -35,6 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $shipment = reset($_shipments);
 
+                if (empty($sdek_info['RecCityCode']) && isset($shipment['group_key']) && !empty($order_info['product_groups'][$shipment['group_key']]['package_info']['location'])) {
+                    $sdek_info['Order']['RecCityCode'] = RusSdek::SdekCityId($order_info['product_groups'][$shipment['group_key']]['package_info']['location']);
+                }
                 $params_shipping = array(
                     'shipping_id' => $shipment['shipping_id'],
                     'Date' => date("Y-m-d", $shipment['shipment_timestamp'])
