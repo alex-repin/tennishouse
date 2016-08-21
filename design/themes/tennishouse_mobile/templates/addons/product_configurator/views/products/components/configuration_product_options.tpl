@@ -4,13 +4,13 @@
     {assign var="selected_variant" value=""}
     <div class="ty-control-group ty-product-options__item{if !$capture_options_vs_qty} product-list-field{/if} clearfix" id="opt_{$obj_prefix}{$id}_{$po.option_id}">
         {if !("SRC"|strpos:$po.option_type !== false && !$po.variants && $po.missing_variants_handling == "H")}
-            <label {if $po.option_type !== "R" && $po.option_type !== "F"}for="option_{$obj_prefix}{$id}_{$po.option_id}"{/if} class="ty-control-group__label ty-product-options__item-label{if $po.required == "Y"} cm-required cm-requirement-popup{/if}{if $po.regexp} cm-regexp{/if}" {if $po.regexp}data-ca-regexp="{$po.regexp}" data-ca-message="{$po.incorrect_message}"{/if}>
+            <label {if $po.option_type !== "R" && $po.option_type !== "F"}for="option_{$obj_prefix}{$id}_{$po.option_id}"{/if} class="ty-control-group__label ty-product-options__item-label{if $po.required == "Y"} cm-required{/if}{if $po.regexp} cm-regexp{/if}" {if $po.regexp}data-ca-regexp="{$po.regexp}" data-ca-message="{$po.incorrect_message}"{/if} data-ca-default-text="{if $po.default_text}{$po.default_text}{else}{__('select_option')}{/if}">
                 {$po.option_name}:
             </label>
             {if $po.option_type == "S"} {*Selectbox*}
                 {if $po.variants}
                     {if ($po.disabled || $disabled) && !$po.not_required}<input type="hidden" value="{$po.value}" name="{$name}[{$id}][product_options][{$po.option_id}]" id="option_{$obj_prefix}{$id}_{$po.option_id}" />{/if}
-                    <select name="{$name}[{$id}][product_options][{$po.option_id}]" id="option_{$obj_prefix}{$id}_{$po.option_id}" onchange="{if $product.options_update}fn_change_options('{$request_obj_prefix}{$request_obj_id}', '{$request_obj_id}', '0');{else} fn_change_variant_image('{$obj_prefix}{$id}', '{$po.option_id}');{/if}" class="cm-dropdown {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}disabled{/if}{if $product.options_update} cm-options-update{/if}" {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}disabled="disabled"{/if}>
+                    <select name="{$name}[{$id}][product_options][{$po.option_id}]" id="option_{$obj_prefix}{$id}_{$po.option_id}" onchange="{if $product.options_update}fn_change_options('{$request_obj_prefix}{$request_obj_id}', '{$request_obj_id}', '0');{else} fn_change_variant_image('{$obj_prefix}{$id}', '{$po.option_id}');{/if}" class="{if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}disabled{/if}{if $product.options_update} cm-options-update{/if}" {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}disabled="disabled"{/if}>
                         {if $product.options_type == "S"}
                             {if !$runtime.checkout || $po.disabled || $disabled || ($runtime.checkout && !$po.value)}
                                 <option value="">{if $po.disabled || $disabled}{__("select_option_above")}{elseif $po.default_text} - {$po.default_text} - {else}{__("please_select_one")}{/if}</option>
@@ -93,7 +93,6 @@
             <script type="text/javascript">
             (function(_, $) {
                 $('#option_{$obj_prefix}{$id}_{$po.option_id}').css('display', 'none');
-                $('#option_{$obj_prefix}{$id}_{$po.option_id}').removeClass('cm-dropdown');
             }(Tygh, Tygh.$));
             </script>
             <div class="ty-product-variant-image">{$smarty.capture.variant_images nofilter}</div>

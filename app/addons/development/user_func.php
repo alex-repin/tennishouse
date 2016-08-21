@@ -134,6 +134,7 @@ function fn_get_menu_items_th($value, $block, $block_scheme)
         );
 
         $menu_items = fn_top_menu_form(fn_get_static_data($params));
+        $block['properties'] = !empty($block['properties']) ? $block['properties'] : array();
         fn_dropdown_appearance_cut_second_third_levels($menu_items, 'subitems', $block['properties']);
         
         foreach ($menu_items as $i => $item) {

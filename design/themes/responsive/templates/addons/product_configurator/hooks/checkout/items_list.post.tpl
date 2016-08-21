@@ -1,5 +1,5 @@
 {if $product.configuration}
-    <tr><td colspan="5">
+    <tr class="ty-pc-configuration"><td colspan="5">
     <span class="ty-pc-title">{__("configuration")}:</span>
     <table class="ty-cart-content ty-table ty-pc-table">
 

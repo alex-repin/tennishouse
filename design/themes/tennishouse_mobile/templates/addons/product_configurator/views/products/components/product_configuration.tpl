@@ -7,6 +7,21 @@
     {foreach from=$product.detailed_params key="param" item="value"}
         <input type="hidden" name="additional_info[{$param}]" value="{$value}" />
     {/foreach}
+    {if $product.has_strings}
+        <div class="ty-control-group ty-product-options__item product-list-field clearfix">
+            <label class="ty-pc-group__label ty-control-group__label">
+                {__("string")}
+            </label>
+            <div class="ty-pc-group__products">
+                <div class="ty-pc-group__products-item-block">
+                    <select class="cm-dropdown cm-options-update" data-cesbClass="ty-sb-popup-large" disabled="disabled">
+                        <option> - {__("prestrung")} - </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="ty-pc-container-separator"></div>
+    {/if}
     {foreach from=$product.product_configurator_groups item="po" name="groups_name"}
     {if !$smarty.foreach.groups_name.first && $po.configurator_group_type != 'T'}<div class="ty-pc-container-separator"></div>{/if}
     <div class="ty-control-group ty-product-options__item product-list-field clearfix">

@@ -813,6 +813,9 @@ if ($mode == 'calculate_balance') {
         }
     }
     exit;
+} elseif ($mode == 'add_default_text') {
+    db_query("UPDATE ?:product_options_descriptions SET default_text = ?s WHERE option_name = ?s", 'Выберите цвет', 'Цвет');
+    exit;
 }
 
 function fn_normalize_string($string)

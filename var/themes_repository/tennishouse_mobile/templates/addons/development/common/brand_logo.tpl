@@ -1,6 +1,6 @@
 {if $brand.image_pair}
 {if !$img_height}
-    {if $brand_variant_id == $smarty.const.KIRSCHBAUM_BRAND_ID}
+    {if $brand_variant_id == $smarty.const.KIRSCHBAUM_BRAND_ID || $brand_variant_id == $smarty.const.SLAZENGER_BRAND_ID}
         {$img_height = "30"}
     {else}
         {$img_height = "19"}

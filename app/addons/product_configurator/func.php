@@ -269,6 +269,8 @@ function fn_product_configurator_gather_additional_product_data_post(&$product, 
                 $product['price'] += $c_price;
                 $product['original_price'] += $c_price;
             }
+        } else {
+            $product['has_strings'] = true;
         }
         list($dampener_options, $c_dp_price) = fn_get_dampener_options($product, $selected_configuration);
         if (!empty($c_dp_price)) {
@@ -981,11 +983,30 @@ function fn_get_stringing_options(&$product, $selected_configuration, $get_strin
         'subcats' => 'Y'
     );
     list($_products, $search) = fn_get_products($params);
-    $_products = array_merge($base_stringing_options, $_products);
     
     $default_ids = explode(':', $stringing_options['default_product_ids']);
     $selected_ids = empty($selected_configuration[$stringing_options['group_id']]['product_ids']) ? $default_ids : (!is_array($selected_configuration[$stringing_options['group_id']]['product_ids']) ? array($selected_configuration[$stringing_options['group_id']]['product_ids']) : $selected_configuration[$stringing_options['group_id']]['product_ids']);
     $selected_options = empty($selected_configuration[$stringing_options['group_id']]['options']) ? array() : $selected_configuration[$stringing_options['group_id']]['options'];
+    foreach ($_products as $_k => $_v) {
+        if (in_array($_v['product_id'], $selected_ids)) {
+            if (!empty($selected_options[$_v['product_id']]['product_options'])) {
+                $_products[$_k]['selected_options'] = $selected_options[$_v['product_id']]['product_options'];
+            }
+        }
+    }
+    
+    fn_gather_additional_products_data($_products, array(
+        'get_icon' => false,
+        'get_detailed' => false,
+        'get_additional' => false,
+        'get_options' => true,
+        'get_discounts' => false,
+        'get_features' => false,
+        'get_title_features' => false,
+        'allow_duplication' => false
+    ));
+    
+    $_products = array_merge($base_stringing_options, $_products);
     
     $class_ids = array();
     $is_selected = false;
@@ -994,11 +1015,12 @@ function fn_get_stringing_options(&$product, $selected_configuration, $get_strin
         $_products[$_k] = $_v;
 
         if (in_array($_v['product_id'], $selected_ids)) {
-            $stringing_options['no_product'] = $_v['no_product'];
+            $stringing_options['no_product'] = !empty($_v['no_product']) ? $_v['no_product'] : false;
             $is_selected = true;
             $_products[$_k]['selected'] = 'Y';
-            if (!empty($selected_options[$_v['product_id']]['product_options'])) {
-                $_products[$_k]['selected_options'] = $selected_options[$_v['product_id']]['product_options'];
+            $stringing_options['selected_product'] = $_v['product_id'];
+            if (!empty($_v['price'])) {
+                $c_price += $_v['price'] * $stringing_options['amount'];
             }
         } else {
             $_products[$_k]['selected'] = 'N';
@@ -1015,24 +1037,6 @@ function fn_get_stringing_options(&$product, $selected_configuration, $get_strin
         }
     }
     
-    fn_gather_additional_products_data($_products, array(
-        'get_icon' => false,
-        'get_detailed' => false,
-        'get_additional' => false,
-        'get_options' => true,
-        'get_discounts' => false,
-        'get_features' => false,
-        'get_title_features' => false,
-        'allow_duplication' => false
-    ));
-
-    foreach ($_products as $_k => $_v) {
-        if ($_v['selected'] == 'Y') {
-            $stringing_options['selected_product'] = $_v['product_id'];
-            $c_price += $_v['price'] * $stringing_options['amount'];
-        }
-    }
-
     $stringing_options['products_count'] = count($_products);
     $stringing_options['products'] = $_products;
 
@@ -1108,37 +1112,17 @@ function fn_get_dampener_options(&$product, $selected_configuration)
         'subcats' => 'Y'
     );
     list($_products, $search) = fn_get_products($params);
-    $_products = array_merge($base_dampener_options, $_products);
     
     $default_ids = explode(':', $dampener_options['default_product_ids']);
     $selected_ids = empty($selected_configuration[$dampener_options['group_id']]['product_ids']) ? $default_ids : (!is_array($selected_configuration[$dampener_options['group_id']]['product_ids']) ? array($selected_configuration[$dampener_options['group_id']]['product_ids']) : $selected_configuration[$dampener_options['group_id']]['product_ids']);
     $selected_options = empty($selected_configuration[$dampener_options['group_id']]['options']) ? array() : $selected_configuration[$dampener_options['group_id']]['options'];
     
-    $class_ids = array();
-    $is_selected = false;
     foreach ($_products as $_k => $_v) {
 
-        $_products[$_k] = $_v;
-
         if (in_array($_v['product_id'], $selected_ids)) {
-            $dampener_options['no_product'] = $_v['no_product'];
-            $is_selected = true;
-            $_products[$_k]['selected'] = 'Y';
             if (!empty($selected_options[$_v['product_id']]['product_options'])) {
                 $_products[$_k]['selected_options'] = $selected_options[$_v['product_id']]['product_options'];
             }
-        } else {
-            $_products[$_k]['selected'] = 'N';
-        }
-
-        // Recommended products
-        if (in_array($_v['product_id'], $default_ids)) {
-            $_products[$_k]['recommended'] = 'Y';
-        }
-
-        if (!empty($_v['class_ids'])) {
-            $_products[$_k]['class_ids'] = explode(',', $_v['class_ids']);
-            $class_ids = array_merge($class_ids, $_products[$_k]['class_ids']);
         }
     }
     
@@ -1153,10 +1137,34 @@ function fn_get_dampener_options(&$product, $selected_configuration)
         'allow_duplication' => false
     ));
 
+    $_products = array_merge($base_dampener_options, $_products);
+    
+    $class_ids = array();
+    $is_selected = false;
     foreach ($_products as $_k => $_v) {
-        if ($_v['selected'] == 'Y') {
+
+        $_products[$_k] = $_v;
+
+        if (in_array($_v['product_id'], $selected_ids)) {
+            $dampener_options['no_product'] = !empty($_v['no_product']) ? $_v['no_product'] : false;
+            $is_selected = true;
+            $_products[$_k]['selected'] = 'Y';
             $dampener_options['selected_product'] = $_v['product_id'];
-            $c_price += $_v['price'] * $dampener_options['amount'];
+            if (!empty($_v['price'])) {
+                $c_price += $_v['price'] * $dampener_options['amount'];
+            }
+        } else {
+            $_products[$_k]['selected'] = 'N';
+        }
+
+        // Recommended products
+        if (in_array($_v['product_id'], $default_ids)) {
+            $_products[$_k]['recommended'] = 'Y';
+        }
+
+        if (!empty($_v['class_ids'])) {
+            $_products[$_k]['class_ids'] = explode(',', $_v['class_ids']);
+            $class_ids = array_merge($class_ids, $_products[$_k]['class_ids']);
         }
     }
 
@@ -1203,11 +1211,31 @@ function fn_get_overgrip_options(&$product, $selected_configuration)
         'subcats' => 'Y'
     );
     list($_products, $search) = fn_get_products($params);
-    $_products = array_merge($base_overgrip_options, $_products);
     
     $default_ids = explode(':', $overgrip_options['default_product_ids']);
     $selected_ids = empty($selected_configuration[$overgrip_options['group_id']]['product_ids']) ? $default_ids : (!is_array($selected_configuration[$overgrip_options['group_id']]['product_ids']) ? array($selected_configuration[$overgrip_options['group_id']]['product_ids']) : $selected_configuration[$overgrip_options['group_id']]['product_ids']);
     $selected_options = empty($selected_configuration[$overgrip_options['group_id']]['options']) ? array() : $selected_configuration[$overgrip_options['group_id']]['options'];
+    
+    foreach ($_products as $_k => $_v) {
+
+        if (in_array($_v['product_id'], $selected_ids)) {
+            if (!empty($selected_options[$_v['product_id']]['product_options'])) {
+                $_products[$_k]['selected_options'] = $selected_options[$_v['product_id']]['product_options'];
+            }
+        }
+    }
+    
+    fn_gather_additional_products_data($_products, array(
+        'get_icon' => false,
+        'get_detailed' => true,
+        'get_additional' => false,
+        'get_options' => true,
+        'get_discounts' => false,
+        'get_features' => false,
+        'get_title_features' => false,
+        'allow_duplication' => false
+    ));
+    $_products = array_merge($base_overgrip_options, $_products);
     
     $class_ids = array();
     $is_selected = false;
@@ -1216,11 +1244,12 @@ function fn_get_overgrip_options(&$product, $selected_configuration)
         $_products[$_k] = $_v;
 
         if (in_array($_v['product_id'], $selected_ids)) {
-            $overgrip_options['no_product'] = $_v['no_product'];
+            $overgrip_options['no_product'] = !empty($_v['no_product']) ? $_v['no_product'] : false;
             $is_selected = true;
             $_products[$_k]['selected'] = 'Y';
-            if (!empty($selected_options[$_v['product_id']]['product_options'])) {
-                $_products[$_k]['selected_options'] = $selected_options[$_v['product_id']]['product_options'];
+            $overgrip_options['selected_product'] = $_v['product_id'];
+            if (!empty($_v['price'])) {
+                $c_price += $_v['price'] * $overgrip_options['amount'];
             }
         } else {
             $_products[$_k]['selected'] = 'N';
@@ -1237,24 +1266,6 @@ function fn_get_overgrip_options(&$product, $selected_configuration)
         }
     }
     
-    fn_gather_additional_products_data($_products, array(
-        'get_icon' => false,
-        'get_detailed' => true,
-        'get_additional' => false,
-        'get_options' => true,
-        'get_discounts' => false,
-        'get_features' => false,
-        'get_title_features' => false,
-        'allow_duplication' => false
-    ));
-
-    foreach ($_products as $_k => $_v) {
-        if ($_v['selected'] == 'Y') {
-            $overgrip_options['selected_product'] = $_v['product_id'];
-            $c_price += $_v['price'] * $overgrip_options['amount'];
-        }
-    }
-
     $overgrip_options['products_count'] = count($_products);
     $overgrip_options['products'] = $_products;
 

@@ -1057,8 +1057,12 @@ function fn_top_menu_form($top_menu, $level = 0, &$active = NULL)
             }
         }
 
-        $top_menu[$k]['item'] = $v['descr'];
-        $top_menu[$k]['href'] = $v['param'];
+        if (!empty($v['descr'])) {
+            $top_menu[$k]['item'] = $v['descr'];
+        }
+        if (!empty($v['param'])) {
+            $top_menu[$k]['href'] = $v['param'];
+        }
         $top_menu[$k]['level'] = $level;
 
         unset($top_menu[$k]['descr'], $top_menu[$k]['param']);
