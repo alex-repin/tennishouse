@@ -406,8 +406,8 @@ function fn_install_addon_templates($addon_name)
         }
 
         $repo_path = array(
-            fn_get_theme_path('[repo]/basic' . '/'),
-            $parent_path,
+//             fn_get_theme_path('[repo]/basic' . '/'),
+//             $parent_path,
             fn_get_theme_path('[repo]/' . $theme_name . '/')
         );
 
