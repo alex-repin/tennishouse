@@ -1571,39 +1571,41 @@ function fn_product_configurator_update_cart_products_post(&$cart, $product_data
         }
     }
 
-    foreach ($product_data as $i => $p_data) {
-        if (!empty($p_data['configuration'])) {
-            $org_cart = $cart;
-            $_product_data = array();
-            $count = 0;
-            $has_stringing = false;
-            foreach ($p_data['configuration'] as $j => $c_data) {
-                if ($j == STRINGING_GROUP_ID && (is_numeric(reset($c_data['product_ids'])) || reset($c_data['product_ids']) == 'CONSULT_STRINGING')) {
-                    $has_stringing = true;
-                }
-                if (is_numeric(reset($c_data['product_ids']))) {
-                    $count++;
-                }
-                if (!empty($c_data['options'])) {
-                    foreach ($c_data['options'] as $p_id => $o_data) {
-                        if (!in_array($p_id, $c_data['product_ids'])) {
-                            unset($p_data['configuration'][$j]['options'][$p_id]);
+    if (AREA == 'A') {
+        foreach ($product_data as $i => $p_data) {
+            if (!empty($p_data['configuration'])) {
+                $org_cart = $cart;
+                $_product_data = array();
+                $count = 0;
+                $has_stringing = false;
+                foreach ($p_data['configuration'] as $j => $c_data) {
+                    if ($j == STRINGING_GROUP_ID && (is_numeric(reset($c_data['product_ids'])) || reset($c_data['product_ids']) == 'CONSULT_STRINGING')) {
+                        $has_stringing = true;
+                    }
+                    if (is_numeric(reset($c_data['product_ids']))) {
+                        $count++;
+                    }
+                    if (!empty($c_data['options'])) {
+                        foreach ($c_data['options'] as $p_id => $o_data) {
+                            if (!in_array($p_id, $c_data['product_ids'])) {
+                                unset($p_data['configuration'][$j]['options'][$p_id]);
+                            }
                         }
                     }
                 }
+                if (!$has_stringing) {
+                    unset($p_data['configuration'][STRINGING_TENSION_GROUP_ID]);
+                    $count--;
+                }
+                $p_data['extra'] = $cart['products'][$i]['extra'];
+                $_product_data[$p_data['product_id']] = $p_data;
+                $ids = fn_add_product_to_cart($_product_data, $cart, $customer_auth);
+                $new_key = array_search($p_data['product_id'], $ids);
+                if ($count > count($cart['products'][$new_key]['configuration'])) {
+                    $cart = $org_cart;
+                }
+                unset($_REQUEST['redirect_url']);
             }
-            if (!$has_stringing) {
-                unset($p_data['configuration'][STRINGING_TENSION_GROUP_ID]);
-                $count--;
-            }
-            $p_data['extra'] = $cart['products'][$i]['extra'];
-            $_product_data[$p_data['product_id']] = $p_data;
-            $ids = fn_add_product_to_cart($_product_data, $cart, $customer_auth);
-            $new_key = array_search($p_data['product_id'], $ids);
-            if ($count > count($cart['products'][$new_key]['configuration'])) {
-                $cart = $org_cart;
-            }
-            unset($_REQUEST['redirect_url']);
         }
     }
 
