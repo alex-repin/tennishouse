@@ -46,7 +46,7 @@
                 {hook name="orders:product_info"}
                 {if $_product.product_code}<p style="margin: 2px 0px 3px 0px;">{__("sku")}: {$_product.product_code}</p>{/if}
                 {/hook}
-                {if $_product.product_options}{include file="common/options_info.tpl" product_options=$_product.product_options}{/if}
+                {if $_product.product_options}{include file="common/options_info.tpl" product_options=$_product.product_option_data}{/if}
             </td>
             <td style="padding: 5px 10px; background-color: #ffffff; text-align: center; font-size: 12px; font-family: Arial;">{$_product.extra.step}</td>
             <td style="padding: 5px 10px; background-color: #ffffff; text-align: right; font-size: 12px; font-family: Arial;">{if $_product.extra.exclude_from_calculate}{__("free")}{else}{include file="common/price.tpl" value=$_product.original_price}{/if}</td>

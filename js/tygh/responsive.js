@@ -179,13 +179,14 @@
                     tables.each(function() {
                         var thTexts = [];
                         var tbData = {};
+                        var sbTables = {};
 
-                        // if we have sub table detach it.
-                        var subTable = $(this).find('.ty-table');
-                        if(subTable.length) {
-                            subTable.parent().attr('data-ca-has-sub-table', 'true');
-                            subTable.parent().data('caSubTableData', subTable.detach());
-                        }
+                        var num = 1;
+                        $(this).find('.ty-table').each(function() {
+                            $(this).parent().attr('data-ca-has-sub-table', num);
+                            sbTables[num] = $(this).detach();
+                            num++;
+                        });
 
                         var irow = 0
                         $(this).find('tr').each(function() {
@@ -244,13 +245,11 @@
 // 
 //                         });
 
-                        if(subTable.length) {
-                            var $subTableElm = $(this).find('[data-ca-has-sub-table]');
-                            $subTableElm.append($subTableElm.data('caSubTableData'));
+                        $(this).find('[data-ca-has-sub-table]').each(function() {
+                            $(this).append(sbTables[$(this).data('caHasSubTable')]);
                             
-                            $subTableElm.removeAttr('data-ca-has-sub-table');
-                            $subTableElm.removeData('caSubTableData');
-                        }
+                            $(this).removeAttr('data-ca-has-sub-table');
+                        });
 
                     });
                 }

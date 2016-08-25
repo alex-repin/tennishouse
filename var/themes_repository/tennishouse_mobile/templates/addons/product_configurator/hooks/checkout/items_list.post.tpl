@@ -1,5 +1,6 @@
 {if $product.configuration}
     <tr class="ty-pc-configuration"><td colspan="5">
+    <div>
     <span class="ty-pc-title">{__("configuration")}:</span>
     <table class="ty-cart-content ty-table ty-pc-table">
 
@@ -116,5 +117,6 @@
     {/foreach}
     </tbody>
     </table>
+    </div>
     </td></tr>
 {/if}
