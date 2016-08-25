@@ -164,7 +164,7 @@ function fn_development_change_order_status_post($status_to, $status_from, $orde
 {
     $saving_data = db_get_hash_array("SELECT * FROM ?:savings_groups ORDER BY amount ASC", 'group_id');
     if (!empty($saving_data) && !empty($order_info['user_id'])) {
-        $orders_total = db_get_field("SELECT SUM(total) FROM ?:orders WHERE user_id = ?i AND status = 'C'", $order_info['user_id']);
+        $orders_total = db_get_field("SELECT SUM(total) FROM ?:orders WHERE user_id = ?i AND (status = 'C' OR status = 'E')", $order_info['user_id']);
         $usergroup_ids = array();
         foreach ($saving_data as $i => $group_data) {
             $usergroup_ids[] = $group_data['usergroup_id'];

@@ -174,6 +174,25 @@
             responsiveTables: function(e) {
                 
                 var tables = $('.ty-table');
+                var objSize = function(obj) {
+                    var count = 0;
+                    
+                    if (typeof obj == "object") {
+                    
+                        if (Object.keys) {
+                            count = Object.keys(obj).length;
+                        } else if (window._) {
+                            count = _.keys(obj).length;
+                        } else if (window.$) {
+                            count = $.map(obj, function() { return 1; }).length;
+                        } else {
+                            for (var key in obj) if (obj.hasOwnProperty(key)) count++;
+                        }
+                        
+                    }
+                    
+                    return count;
+                };
 
                 if(this.winWidth() <= 767) {
                     tables.each(function() {
@@ -218,8 +237,17 @@
                             var newHTML = '';
                             for (ikey in tbData) {
                                 newHTML += '<tr>';
+                                var show_header = false;
+                                if (thTexts.length == objSize(tbData[ikey])) {
+                                    show_header = true;
+                                }
                                 for (jkey in tbData[ikey]) {
-                                    newHTML += '<td><div class="ty-table__responsive-header">' + thTexts[jkey] + '</div><div class="ty-table__responsive-content">' + tbData[ikey][jkey] + '</div></td>';
+                                    if (show_header) {
+                                        var header = '<div class="ty-table__responsive-header">' + thTexts[jkey] + '</div>';
+                                    } else {
+                                        var header = '';
+                                    }
+                                    newHTML += '<td>' + header + '<div class="ty-table__responsive-content">' + tbData[ikey][jkey] + '</div></td>';
                                 }
                                 newHTML += '</tr>';
                             }

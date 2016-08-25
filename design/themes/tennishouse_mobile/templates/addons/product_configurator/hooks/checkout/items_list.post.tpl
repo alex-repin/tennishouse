@@ -6,6 +6,16 @@
 
     {assign var="prods" value=false}
 
+    <thead class="hidden">
+        <tr>
+            <th class="ty-cart-content__title ty-left">{__("product")}</th>
+            <th class="ty-cart-content__title ty-left">&nbsp;</th>
+            <th class="ty-cart-content__title ty-right">{__("unit_price")}</th>
+            <th class="ty-cart-content__title quantity-cell">{__("quantity")}</th>
+            <th class="ty-cart-content__title ty-right">{__("total_price")}</th>
+        </tr>
+    </thead>
+    
     <tbody>
     {foreach from=$product.configuration item="_product" key="key_conf"}
     <tr>
