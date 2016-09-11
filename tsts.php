@@ -21,8 +21,9 @@
 // 
 // print_r($info);
 
-$start = memory_get_usage();
-$variable = 'rvnerivurneov erne er orb rob en eov eore';
-print_r(memory_get_usage() - $start);
+// $start = memory_get_usage();
+// $variable = 'rvnerivurneov erne er orb rob en eov eore';
+// print_r(memory_get_usage() - $start);
+phpinfo();
 exit;
         
