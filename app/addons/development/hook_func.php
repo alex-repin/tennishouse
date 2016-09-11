@@ -1558,7 +1558,7 @@ function fn_development_render_block_content_pre($template_variable, $field, $bl
 {
     if ($block['wrapper'] == 'addons/development/blocks/wrappers/tennishouse_capture.tpl') {
         $product = Registry::get('view')->getTemplateVars('product');
-        if ($product['amount'] <= 0) {
+        if (($product['product_type'] != 'C' && $product['amount'] <= 0) || ($product['product_type'] == 'C' && empty($product['hide_stock_info']))) {
             $block['properties']['columns_number'] = 2;
             Registry::get('view')->assign('block', $block);
         }

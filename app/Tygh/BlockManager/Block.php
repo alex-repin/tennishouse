@@ -792,7 +792,7 @@ class Block extends CompanySingleton
         }
         
         // [TennisHouse]
-        if (empty($items) && is_callable($field_scheme['no_items_func'])) {
+        if (empty($items) && !empty($field_scheme['no_items_func']) && is_callable($field_scheme['no_items_func'])) {
             @list($items, ) = call_user_func($field_scheme['no_items_func'], $params);
         }
 

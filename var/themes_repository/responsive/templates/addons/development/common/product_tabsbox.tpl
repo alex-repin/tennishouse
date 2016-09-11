@@ -27,7 +27,7 @@
 <div class="cm-tabs-content ty-tabs__content clearfix" id="tabs_content">
     {$content nofilter}
 </div>
-{if $product.amount > 0 || $product.product_type == 'C'}
+{if $product.amount > 0 || ($product.product_type == 'C' && $product.hide_stock_info)}
 <script type="text/javascript">
 (function(_, $) {
     var max_height = 120;

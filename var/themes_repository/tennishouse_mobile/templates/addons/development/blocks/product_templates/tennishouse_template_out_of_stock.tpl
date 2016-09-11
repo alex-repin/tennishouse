@@ -66,9 +66,6 @@
                                             {$smarty.capture.$qty_discounts nofilter}
                                         </div>
                                     {/if}
-                                    <span class="cm-reload-{$obj_prefix}{$product.product_id} ty-pc-zero-price-note" id="pc_note_{$obj_prefix}{$product.product_id}">
-                                        {if $product.product_type == 'C' && !$product.price|floatval}{__("pc_zero_price_note")}{/if}
-                                    <!--pc_note_{$obj_prefix}{$product.product_id}--></span>
                                 </div>
                             {/if}
 
@@ -95,25 +92,6 @@
                 *}
 
                 <div class="ty-options-avail-container-wrap">
-                    {hook name="products:options_avail_container"}
-                    {if $product.product_options}
-                    <div class="ty-options-container">
-                        {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
-                        <div class="ty-product-block__option">
-                            {assign var="product_options" value="product_options_`$obj_id`"}
-                            {$smarty.capture.$product_options nofilter}
-                        </div>
-                        {if $capture_options_vs_qty}{/capture}{/if}
-                        
-                        {*<div class="ty-product-block__advanced-option">
-                            {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
-                            {assign var="advanced_options" value="advanced_options_`$obj_id`"}
-                            {$smarty.capture.$advanced_options nofilter}
-                            {if $capture_options_vs_qty}{/capture}{/if}
-                        </div>*}
-                    </div>
-                    {/if}
-                    
                     <div class="ty-avail-container">
                         {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
                         <div class="ty-product-block__field-group">
@@ -122,7 +100,6 @@
                         </div>
                         {if $capture_options_vs_qty}{/capture}{/if}
                     </div>
-                    {/hook}
                 </div>
 
                 {if $capture_buttons}{capture name="buttons"}{/if}
