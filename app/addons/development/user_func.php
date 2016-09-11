@@ -21,6 +21,17 @@ use Tygh\Menu;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_get_similar_category_products($params)
+{
+    $_params = array (
+        'same_cid' => 'Y',
+        'limit' => $params['limit']
+    );
+    $result = fn_get_products($_params);
+    
+    return $result;
+}
+
 function fn_format_submenu(&$menu_items)
 {
     if (count($menu_items) == 1) {
@@ -881,9 +892,9 @@ function fn_check_vars($description)
     return $description;
 }
 
-function fn_render_page_blocks($description, $smarty_capture)
+function fn_render_captured_blocks($description, $smarty_capture)
 {
-    if (preg_match_all('/\[([a-zA-Z1-9_]*)\]/', $description, $matches)) {
+    if (preg_match_all('/\[\-([a-zA-Z1-9_]*)\-\]/', $description, $matches)) {
         $blocks = array();
         foreach ($matches[1] as $i => $name) {
             $blocks[] = !empty($smarty_capture['block_' . $name]) ? $smarty_capture['block_' . $name] : '';

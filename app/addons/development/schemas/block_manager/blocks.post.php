@@ -14,15 +14,18 @@
 
 use Tygh\Registry;
 
-$schema['products']['content']['items']['fillings']['similar_products']['params'] = array (
-    'sort_by' => 'price',
-    'sort_order' => 'desc',
-    'request' => array (
-        'similar_pid' => '%PRODUCT_ID%',
-        'exclude_pid' => '%PRODUCT_ID%'
+$schema['products']['content']['items']['fillings']['similar_products'] = array(
+    'params' => array (
+        'sort_by' => 'price',
+        'sort_order' => 'desc',
+        'request' => array (
+            'similar_pid' => '%PRODUCT_ID%',
+            'exclude_pid' => '%PRODUCT_ID%'
+        ),
+        'shuffle' => 'Y',
+        'limit' => 10,
     ),
-    'shuffle' => 'Y',
-    'limit' => 10,
+    'no_items_func' => 'fn_get_similar_category_products'
 );
 $schema['pages']['content']['items']['fillings']['dynamic_content'] = array (
     'params' => array (

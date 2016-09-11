@@ -1,7 +1,7 @@
 <div class="ty-wysiwyg-content">
     {hook name="pages:page_content"}
     <div class="ty-page-description" {live_edit name="page:description:{$page.page_id}"}>
-        {$page.description|fn_check_vars|fn_render_page_blocks:$smarty.capture nofilter}
+        {$page.description nofilter}
     </div>
     {/hook}
 </div>

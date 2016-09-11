@@ -790,6 +790,11 @@ class Block extends CompanySingleton
         if (isset($block_scheme['templates'][$block['properties']['template']]['bulk_modifier'])) {
             $bulk_modifier = $block_scheme['templates'][$block['properties']['template']]['bulk_modifier'];
         }
+        
+        // [TennisHouse]
+        if (empty($items) && is_callable($field_scheme['no_items_func'])) {
+            @list($items, ) = call_user_func($field_scheme['no_items_func'], $params);
+        }
 
         // Picker values
         if (!empty($items)) {

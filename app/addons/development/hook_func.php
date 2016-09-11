@@ -1092,6 +1092,9 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
             $fields[] = "GROUP_CONCAT(',', sections_categorization.variant_id) AS sections_categorization";
         }
     }
+    if (!empty($params['same_cid']) && !empty($_SESSION['product_category'])) {
+        $condition .= db_quote(" AND ?:categories.category_id = ?i", $_SESSION['product_category']);
+    }
     if (!empty($params['similar_pid'])) {
         $similar_products_features = array(
             'R' => array(
@@ -1549,4 +1552,15 @@ function fn_development_get_products_post(&$products, $params, $lang_code)
 function fn_development_is_shared_product_pre($product_id, $company_id, &$return)
 {
     $return = 'N';
+}
+
+function fn_development_render_block_content_pre($template_variable, $field, $block_scheme, &$block)
+{
+    if ($block['wrapper'] == 'addons/development/blocks/wrappers/tennishouse_capture.tpl') {
+        $product = Registry::get('view')->getTemplateVars('product');
+        if ($product['amount'] <= 0) {
+            $block['properties']['columns_number'] = 2;
+            Registry::get('view')->assign('block', $block);
+        }
+    }
 }

@@ -27,6 +27,7 @@
 <div class="cm-tabs-content ty-tabs__content clearfix" id="tabs_content">
     {$content nofilter}
 </div>
+{if $product.amount > 0}
 <script type="text/javascript">
 (function(_, $) {
     var max_height = 120;
@@ -63,6 +64,7 @@
     }
 }(Tygh, Tygh.$));
 </script>
+{/if}
 {/if}
 
 {if $onclick}

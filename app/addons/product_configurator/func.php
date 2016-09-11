@@ -242,7 +242,7 @@ function fn_product_configurator_gather_additional_product_data_before_options(&
 
 function fn_product_configurator_gather_additional_product_data_post(&$product, $auth, $params)
 {
-    if (AREA == 'C' && !empty($params['get_for_one_product']) && isset($product['product_features'][R_WEIGHT_FEATURE_ID])) {
+    if (AREA == 'C' && !empty($params['get_for_one_product']) && isset($product['product_features'][R_WEIGHT_FEATURE_ID]) && $product['amount'] > 0) {
         $product['configuration_mode'] = true;
         $selected_configuration = array();
         if (!empty($product['cart_id'])) {

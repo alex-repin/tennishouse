@@ -17,7 +17,7 @@
 
 {if $containers.content}
 <div data-role="content" data-position-fixed="true" class="tygh-content clearfix">
-    {$containers.content nofilter}
+    {$containers.content|fn_check_vars|fn_render_captured_blocks:$smarty.capture nofilter}
 </div>
 {/if}
 
