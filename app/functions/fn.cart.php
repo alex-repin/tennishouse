@@ -629,6 +629,8 @@ function fn_get_ordered_products_amount($product_id, $user_id)
 
 function fn_update_product_amount($product_id, $amount, $product_options, $sign)
 {
+    fn_set_hook('update_product_amount_pre', $product_id, $amount, $product_options, $sign);
+    
     if (Registry::get('settings.General.inventory_tracking') != 'Y') {
         return true;
     }

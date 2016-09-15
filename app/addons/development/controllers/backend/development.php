@@ -816,6 +816,22 @@ if ($mode == 'calculate_balance') {
 } elseif ($mode == 'add_default_text') {
     db_query("UPDATE ?:product_options_descriptions SET default_text = ?s WHERE option_name = ?s", 'Выберите цвет', 'Цвет');
     exit;
+} elseif ($mode == 'get_likes') {
+    $result = db_get_hash_array("SELECT product_id, COUNT(product_id) as likes FROM ?:order_details GROUP BY product_id", 'product_id');
+    $wishlists = db_get_hash_array("SELECT product_id, COUNT(product_id) as likes FROM ?:user_session_products WHERE type = 'W' GROUP BY product_id", 'product_id');
+    if (!empty($wishlists)) {
+        foreach ($wishlists as $prod_id => $dt) {
+            if (!empty($result[$prod_id])) {
+                $result[$prod_id]['likes'] += $dt['likes'];
+            } else {
+                $result[$prod_id] = $dt;
+            }
+        }
+    }
+    foreach ($result as $prod_id => $dt) {
+        db_query("UPDATE ?:products SET likes = ?i WHERE product_id = ?i", $dt['likes'], $prod_id);
+    }
+    exit;
 }
 
 function fn_normalize_string($string)

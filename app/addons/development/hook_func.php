@@ -980,6 +980,9 @@ function fn_development_gather_additional_product_data_post(&$product, $auth, $p
             }
         }
     }
+    if (AREA == 'C') {
+        $product['is_liked'] = fn_check_wishlist($product['product_id']);
+    }
 }
 
 function fn_development_get_product_features_list_post(&$features_list, $product, $display_on, $lang_code)

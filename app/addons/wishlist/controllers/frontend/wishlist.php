@@ -86,7 +86,60 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     return array(CONTROLLER_STATUS_OK, "wishlist.view");
 }
 
-if ($mode == 'clear') {
+    // Add product to the wishlist
+if ($mode == 'like') {
+
+    if (empty($_REQUEST['product_id'])) {
+        exit;
+    }
+    // wishlist is empty, create it
+    if (empty($wishlist)) {
+        $wishlist = array(
+            'products' => array()
+        );
+    }
+
+    $product_data = array(
+        $_REQUEST['product_id'] => array(
+            'product_id' => $_REQUEST['product_id'],
+            'amount' => 1
+        )
+    );
+    $product_ids = fn_add_product_to_cart($product_data, $wishlist, $auth);
+    if (!empty($product_ids)) {
+        fn_save_cart_content($wishlist, $auth['user_id'], 'W');
+        Registry::get('view')->assign('state_changed', true);
+        fn_like_product($_REQUEST['product_id']);
+    }
+    Registry::get('view')->assign('likes', db_get_field('SELECT likes FROM ?:products WHERE product_id = ?i', $_REQUEST['product_id']));
+    Registry::get('view')->assign('product_id', $_REQUEST['product_id']);
+    Registry::get('view')->assign('but_id', 'button_wishlist_' . $_REQUEST['product_id']);
+    Registry::get('view')->display('addons/wishlist/views/wishlist/components/add_to_wishlist.tpl');
+    
+    exit;
+
+} elseif ($mode == 'unlike') {
+
+    if (empty($_REQUEST['product_id'])) {
+        exit;
+    }
+
+    $cart_id = fn_check_wishlist($_REQUEST['product_id']);
+    if (empty($cart_id)) {
+        exit;
+    }
+    
+    fn_delete_wishlist_product($wishlist, $cart_id);
+    fn_save_cart_content($wishlist, $auth['user_id'], 'W');
+    Registry::get('view')->assign('likes', db_get_field('SELECT likes FROM ?:products WHERE product_id = ?i', $_REQUEST['product_id']));
+    Registry::get('view')->assign('state_changed', true);
+    Registry::get('view')->assign('product_id', $_REQUEST['product_id']);
+    Registry::get('view')->assign('but_id', 'button_wishlist_' . $_REQUEST['product_id']);
+    Registry::get('view')->display('addons/wishlist/views/wishlist/components/add_to_wishlist.tpl');
+    
+    exit;
+
+} elseif ($mode == 'clear') {
     $wishlist = array();
 
     fn_save_cart_content($wishlist, $auth['user_id'], 'W');
@@ -279,6 +332,7 @@ function fn_add_product_to_wishlist($product_data, &$wishlist, &$auth)
 function fn_delete_wishlist_product(&$wishlist, $wishlist_id)
 {
     fn_set_hook('delete_wishlist_product', $wishlist, $wishlist_id);
+    fn_like_product($wishlist['products'][$wishlist_id]['product_id'], false);
 
     if (!empty($wishlist_id)) {
         unset($wishlist['products'][$wishlist_id]);

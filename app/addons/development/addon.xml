@@ -380,6 +380,9 @@
                 PRIMARY KEY (`anouncement_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
         </item>
+        <item>
+            ALTER TABLE `cscart_products` ADD `likes` SMALLINT UNSIGNED NOT NULL DEFAULT '0';
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>

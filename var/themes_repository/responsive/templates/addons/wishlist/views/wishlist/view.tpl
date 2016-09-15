@@ -45,7 +45,7 @@
 
 {if !$wishlist_is_empty}
     <div class="buttons-container ty-wish-list__buttons">
-        {include file="buttons/button.tpl" but_text=__("clear_wishlist") but_href="wishlist.clear" but_meta="ty-btn__tertiary"}
+        {*include file="buttons/button.tpl" but_text=__("clear_wishlist") but_href="wishlist.clear" but_meta="ty-btn__tertiary"*}
         {include file="buttons/continue_shopping.tpl" but_href=$continue_url|fn_url but_role="text"}
     </div>
 {else}

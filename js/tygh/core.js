@@ -1624,11 +1624,13 @@ var Tygh = {
             if (href) {
                 var caching = link_obj.hasClass('cm-ajax-cache');
                 var force_exec = link_obj.hasClass('cm-ajax-force');
+                var hidden = link_obj.hasClass('cm-ajax-hidden');
                 var full_render = link_obj.hasClass('cm-ajax-full-render');
                 var save_history = link_obj.hasClass('cm-history');
 
                 var data = {
                     result_ids: result_ids || target_id,
+                    hidden: hidden,
                     force_exec: force_exec,
                     caching: caching,
                     save_history: save_history,

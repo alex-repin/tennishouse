@@ -32,12 +32,17 @@
         </div>
         
         {if $mode == 'R'}
-        {assign var="rating" value="rating_`$obj_id`"}
-        {if $smarty.capture.$rating}
-            <div class="grid-list__rating">
-                {$smarty.capture.$rating nofilter}
-            </div>
-        {/if}
+            {*assign var="rating" value="rating_`$obj_id`"}
+            {if $smarty.capture.$rating}
+                <div class="grid-list__rating">
+                    {$smarty.capture.$rating nofilter}
+                </div>
+            {/if*}
+            {if $product.likes > 0}
+                <div class="ty-grid-list__likes">
+                    <div class="{if $product.is_liked}ty-grid-list__likes-heart-full{else}ty-grid-list__likes-heart{/if}"></div><span class="ty-grid-list__likes-num">{$product.likes}</span>
+                </div>
+            {/if}
         {/if}
     </div>
     

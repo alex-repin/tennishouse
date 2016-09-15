@@ -125,7 +125,7 @@
 
 {capture name="add_to_cart_`$obj_id`"}
 {if $show_add_to_cart}
-<div class="cm-reload-{$obj_prefix}{$obj_id} {$add_to_cart_class} ty-inline-block" id="add_to_cart_update_{$obj_prefix}{$obj_id}">
+<div class="cm-reload-{$obj_prefix}{$obj_id} {$add_to_cart_class} ty-inline-block ty-add-to-cart-block" id="add_to_cart_update_{$obj_prefix}{$obj_id}">
 <input type="hidden" name="appearance[show_add_to_cart]" value="{$show_add_to_cart}" />
 <input type="hidden" name="appearance[show_list_buttons]" value="{$show_list_buttons}" />
 <input type="hidden" name="appearance[but_role]" value="{$but_role}" />

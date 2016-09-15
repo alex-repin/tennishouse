@@ -14,6 +14,36 @@
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_wishlist_update_product_amount_pre($product_id, $amount, $product_options, $sign)
+{
+    if ($sign == '+') {
+        fn_like_product($product_id, false);
+    } elseif ($sign == '-') {
+        fn_like_product($product_id);
+    }
+}
+function fn_like_product($product_id, $is_like = true)
+{
+    if (!empty($is_like)) {
+        db_query('UPDATE ?:products SET likes = likes + 1 WHERE product_id = ?i', $product_id);
+    } else {
+        db_query('UPDATE ?:products SET likes = likes - 1 WHERE product_id = ?i', $product_id);
+    }
+}
+
+function fn_check_wishlist($product_id)
+{
+    if (!empty($_SESSION['wishlist']['products'])) {
+        foreach ($_SESSION['wishlist']['products'] as $id => $data) {
+            if ($data['product_id'] == $product_id) {
+                return $id;
+            }
+        }
+    }
+    
+    return false;
+}
+
 function fn_wishlist_fill_user_fields(&$exclude)
 {
     $exclude[] = 'wishlist';
