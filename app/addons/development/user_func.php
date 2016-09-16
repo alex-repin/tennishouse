@@ -23,11 +23,25 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 function fn_get_similar_category_products($params)
 {
-    $_params = array (
-        'same_cid' => 'Y',
-        'limit' => $params['limit']
-    );
-    $result = fn_get_products($_params);
+    $result = array();
+    if (!empty($_SESSION['product_category'])) {
+        $_params = array (
+            'cid' => $_SESSION['product_category'],
+            'subcats' => 'Y',
+            'sort_by' => 'popularity',
+            'limit' => $params['limit']
+        );
+        $result = fn_get_products($_params);
+    }
+    if (empty($result[0]) && !empty($_SESSION['main_product_category'])) {
+        $_params = array (
+            'cid' => $_SESSION['main_product_category'],
+            'subcats' => 'Y',
+            'sort_by' => 'popularity',
+            'limit' => $params['limit']
+        );
+        $result = fn_get_products($_params);
+    }
     
     return $result;
 }

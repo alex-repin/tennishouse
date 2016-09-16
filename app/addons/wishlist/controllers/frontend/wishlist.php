@@ -108,13 +108,8 @@ if ($mode == 'like') {
     $product_ids = fn_add_product_to_cart($product_data, $wishlist, $auth);
     if (!empty($product_ids)) {
         fn_save_cart_content($wishlist, $auth['user_id'], 'W');
-        Registry::get('view')->assign('state_changed', true);
         fn_like_product($_REQUEST['product_id']);
     }
-    Registry::get('view')->assign('likes', db_get_field('SELECT likes FROM ?:products WHERE product_id = ?i', $_REQUEST['product_id']));
-    Registry::get('view')->assign('product_id', $_REQUEST['product_id']);
-    Registry::get('view')->assign('but_id', 'button_wishlist_' . $_REQUEST['product_id']);
-    Registry::get('view')->display('addons/wishlist/views/wishlist/components/add_to_wishlist.tpl');
     
     exit;
 
@@ -131,11 +126,6 @@ if ($mode == 'like') {
     
     fn_delete_wishlist_product($wishlist, $cart_id);
     fn_save_cart_content($wishlist, $auth['user_id'], 'W');
-    Registry::get('view')->assign('likes', db_get_field('SELECT likes FROM ?:products WHERE product_id = ?i', $_REQUEST['product_id']));
-    Registry::get('view')->assign('state_changed', true);
-    Registry::get('view')->assign('product_id', $_REQUEST['product_id']);
-    Registry::get('view')->assign('but_id', 'button_wishlist_' . $_REQUEST['product_id']);
-    Registry::get('view')->display('addons/wishlist/views/wishlist/components/add_to_wishlist.tpl');
     
     exit;
 

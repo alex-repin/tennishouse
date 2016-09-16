@@ -1095,9 +1095,6 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
             $fields[] = "GROUP_CONCAT(',', sections_categorization.variant_id) AS sections_categorization";
         }
     }
-    if (!empty($params['same_cid']) && !empty($_SESSION['product_category'])) {
-        $condition .= db_quote(" AND ?:categories.category_id = ?i", $_SESSION['product_category']);
-    }
     if (!empty($params['similar_pid'])) {
         $similar_products_features = array(
             'R' => array(

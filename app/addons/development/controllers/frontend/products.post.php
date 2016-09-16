@@ -120,6 +120,7 @@ if ($mode == 'view') {
         }
     }
     $_SESSION['product_category'] = $product['main_category'];
+    $_SESSION['main_product_category'] = $product['category_main_id'];
     $_SESSION['product_features'] = $features;
     $_SESSION['category_type'] = $product['category_type'];
 
