@@ -777,7 +777,7 @@ function fn_product_configurator_change_order_status(&$status_to, $status_from, 
         if (!empty($v['extra']['configuration_data'])) {
             foreach ($v['extra']['configuration_data'] as $i => $_product) {
                 // Generate ekey if EDP is ordered
-                if (!empty($_product['extra']['is_edp']) && $_product['extra']['is_edp'] == 'Y') {
+                if ((!empty($_product['extra']['is_edp']) && $_product['extra']['is_edp'] == 'Y') || empty($_product['product_id'])) {
                     continue; // don't track inventory
                 }
 

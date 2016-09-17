@@ -49,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 if ($mode == 'cart_list') {
     $item_types = fn_get_cart_content_item_types();
 
+    $_REQUEST['product_type_c'] = (empty($_REQUEST['product_type_c']) && empty($_REQUEST['product_type_w'])) ? 'Y' : (!empty($_REQUEST['product_type_c']) ? $_REQUEST['product_type_c'] : false);
     list($carts_list, $search) = fn_get_carts($_REQUEST, Registry::get('settings.Appearance.admin_elements_per_page'));
     if (!empty($_REQUEST['user_id'])) {
         if (fn_allowed_for('ULTIMATE') && !empty($_REQUEST['c_company_id'])) {

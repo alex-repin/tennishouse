@@ -1785,6 +1785,9 @@ function fn_is_accessible_product($product)
 {
     $result = false;
 
+    if (empty($product['product_id'])) {
+        return false;
+    }
     $status = db_get_field('SELECT status FROM ?:products WHERE product_id = ?i', $product['product_id']);
     if (!empty($status) && $status != "D") {
         $result = true;
