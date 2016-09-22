@@ -375,7 +375,7 @@ function fn_update_rankings($ids = array())
         } elseif (!empty($errors)) {
             $ids = '';
             foreach ($errors as $i => $dt) {
-                $ids = (($ids != '') ', ' : ' ') . $dt['player_id'];
+                $ids = (($ids != '') ? ', ' : ' ') . $dt['player_id'];
             }
             LogFacade::error("Rankings update error ids:" . $ids);
 
