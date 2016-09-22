@@ -370,8 +370,15 @@ function fn_update_rankings($ids = array())
             }
         }
         if (empty($errors) && count($players) == count($update)) {
+            LogFacade::error("Rankings update error");
             //fn_set_notification('N', __('notice'), __('rankings_updated_successfully', array('[total]' => count($players), '[updated]' => count($update))));
-        } else {
+        } elseif (!empty($errors)) {
+            $ids = '';
+            foreach ($errors as $i => $dt) {
+                $ids = (($ids != '') ', ' : ' ') . $dt['player_id'];
+            }
+            LogFacade::error("Rankings update error ids:" . $ids);
+
             return array(false, $errors);
         }
     }
