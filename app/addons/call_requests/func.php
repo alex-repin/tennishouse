@@ -172,14 +172,14 @@ function fn_delete_call_request($request_id)
     return db_query("DELETE FROM ?:call_requests WHERE request_id = ?i", $request_id);
 }
 
-function fn_do_call_request($params, &$cart, &$auth)
+function fn_do_call_request($params, &$cart, &$auth, $product_data)
 {
     $result = array();
 
     $params['cart_products'] = fn_call_request_get_cart_products($cart);
 
-    if (!empty($params['product_id']) && (!empty($params['email']) || !empty($params['phone']))) {
-        $params['order_id'] = fn_call_requests_place_order($params, $cart, $auth);;
+    if ((!empty($product_data) || !empty($params['product_id'])) && (!empty($params['email']) || !empty($params['phone']))) {
+        $params['order_id'] = fn_call_requests_place_order($params, $cart, $auth, $product_data);
     }
 
     fn_update_call_request($params);
@@ -210,7 +210,7 @@ function fn_call_request_get_cart_products(&$cart)
     return $products;
 }
 
-function fn_call_requests_place_order($params, &$cart, &$auth)
+function fn_call_requests_place_order($params, &$cart, &$auth, $product_data)
 {
     // Save cart
     $buffer_cart = $cart;
@@ -244,12 +244,19 @@ function fn_call_requests_place_order($params, &$cart, &$auth)
         }
     }
 
-    fn_add_product_to_cart(array(
-        $params['product_id'] => array(
-            'product_id' => $params['product_id'],
-            'amount' => 1,
-        ),
-    ), $cart, $auth);
+    $added = false;
+    if (!empty($product_data)) {
+        $added = fn_add_product_to_cart($product_data, $cart, $auth);
+    }
+    if (!$added) {
+        fn_delete_notification('incorrect_options');
+        fn_add_product_to_cart(array(
+            $params['product_id'] => array(
+                'product_id' => $params['product_id'],
+                'amount' => 1,
+            ),
+        ), $cart, $auth);
+    }
 
     fn_calculate_cart_content($cart, $auth, 'A', true, 'F', true);
 

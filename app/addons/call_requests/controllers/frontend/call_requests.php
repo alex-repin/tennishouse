@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             return array(CONTROLLER_STATUS_REDIRECT);
         }
         if (!empty($_REQUEST['call_data'])) {
-            if ($res = fn_do_call_request($_REQUEST['call_data'], $_SESSION['cart'], $_SESSION['auth'])) {
+            if ($res = fn_do_call_request($_REQUEST['call_data'], $_SESSION['cart'], $_SESSION['auth'], $_REQUEST['product_data'])) {
                 if (!empty($res['error'])) {
                     fn_set_notification('E', __('error'), $res['error']);
                 } elseif (!empty($res['notice'])) {

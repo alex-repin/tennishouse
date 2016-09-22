@@ -306,11 +306,13 @@ function fn_update_rankings($ids = array())
             if ($result) {
                 //$player_data = array('data' => array());
                 if ($player['gender'] == 'M') {
-                    if (preg_match('/<div class="player-ranking-position">.*?(\d+).*?<\/div>/', preg_replace('/[\r\n]/', '', $result), $match)) {
-                        $player_data = array(
-                            'player_id' => $player['player_id'],
-                            'ranking' => isset($match['1']) ? $match['1'] : 'n/a'
-                        );
+                    if (preg_match('/<div class="player-ranking-position">.*?(\d+).*?<\/div>/', preg_replace('/[\r\n\t]/', '', $result), $match)) {
+                        if (preg_match('/>(\d+)</', $match[0], $_match)) {
+                            $player_data = array(
+                                'player_id' => $player['player_id'],
+                                'ranking' => isset($_match['1']) ? $_match['1'] : 'n/a'
+                            );
+                        }
                     }
                     if (preg_match('/id="playersStatsTable".*?>(.*?)<\/table>/', preg_replace('/[\r\n\t]/', '', $result), $match)) {
                         if (preg_match('/>Career<\/div>(.*)/', $match[1], $match)) {

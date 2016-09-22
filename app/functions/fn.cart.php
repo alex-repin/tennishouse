@@ -4597,7 +4597,7 @@ function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false)
                 }
 
                 if (!$sequential_completed) {
-                    fn_set_notification('E', __('error'), __('select_all_product_options'));
+                    fn_set_notification('E', __('error'), __('select_all_product_options'), '', 'incorrect_options');
                     // Even if customer tried to add the product from the catalog page, we will redirect he/she to the detailed product page to give an ability to complete a purchase
                     $redirect_url = fn_url('products.view?product_id=' . $product_id . '&combination=' . fn_get_options_combination($data['product_options']));
                     $_REQUEST['redirect_url'] = $redirect_url; //FIXME: Very very very BAD style to use the global variables in the functions!!!

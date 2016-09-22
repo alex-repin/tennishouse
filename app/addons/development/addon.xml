@@ -779,5 +779,6 @@
         <item lang="ru" id="no_overgrip">Без обмотки (только базовая)</item>
         <item lang="ru" id="recalculate_configuration">Пересчитать конфигурацию</item>
         <item lang="ru" id="prestrung">Заводская натяжка</item>
+        <item lang="ru" id="buy_now_cr">Отправить заявку</item>
     </language_variables>
 </addon>

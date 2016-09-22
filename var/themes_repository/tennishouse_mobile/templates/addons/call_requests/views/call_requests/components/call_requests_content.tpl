@@ -24,7 +24,7 @@
 
 <div class="ty-control-group">
     <label for="call_data_{$id}_phone" class="ty-control-group__title{if !$product} cm-required{/if}">{__("phone")}</label>
-    <input id="call_data_{$id}_phone" class="ty-input-text-full cm-cr-mask-phone" placeholder="{__("phone")}" size="50" type="text" name="call_data[phone]" value="" />
+    <input id="call_data_{$id}_phone" class="ty-input-text-full cm-cr-mask-phone" placeholder="{__("phone")}" size="50" type="tel" name="call_data[phone]" value="" />
 </div>
 
 {if $product}
@@ -53,7 +53,67 @@
 {include file="common/image_verification.tpl" option="use_for_call_request" align="left"}
 
 <div class="buttons-container">
-    {include file="buttons/button.tpl" but_name="dispatch[call_requests.request]" but_text=__("buy_now") but_role="submit" but_meta="ty-btn__primary ty-btn__big ty-btn"}
+    {include file="buttons/button.tpl" but_onclick="fn_send_call_request(`$product.product_id`);" but_text=__("buy_now_cr") but_role="submit" but_meta="ty-btn__primary ty-btn__big ty-btn"}
 </div>
 
 </form>
+
+{literal}
+<script type="text/javascript">
+
+function fn_send_call_request(obj_id) {
+
+    var cart_changed = true;
+    
+    var params = [];
+    var cache_query = true;
+    
+    var elms = $(':input:not([type=radio]):not([type=checkbox])', 'form[name="product_form_' + obj_id + '"]');
+    $.each(elms, function(id, elm) {
+        if (elm.type != 'submit' && elm.type != 'file' && !($(this).hasClass('cm-hint') && elm.value == elm.defaultValue) && elm.name.length != 0 && elm.name.match("^product_data")) {
+            if (elm.name == 'no_cache' && elm.value) {
+                cache_query = false;
+            }
+            params.push({name: elm.name, value: elm.value});
+        }
+    });
+    
+    var radio = $('input[type=radio]:checked, input[type=checkbox]', 'form[name="product_form_' + obj_id + '"]');
+    $.each(radio, function(id, elm) {
+        if (elm.name.match("^product_data")) {
+            if ($(elm).prop('disabled')) {
+                return true;
+            }
+            var value = elm.value;
+            if ($(elm).is('input[type=checkbox]:checked')) {
+                if (!$(elm).hasClass('cm-no-change')) {
+                    value = $(elm).val();
+                }
+            } else if ($(elm).is('input[type=checkbox]')) {
+                if (!$(elm).hasClass('cm-no-change')) {
+                    value = 'unchecked';
+                } else {
+                    value = '';
+                }
+            }
+            params.push({name: elm.name, value: value});
+        }
+    });
+
+    var elms = $(':input:not([type=radio]):not([type=checkbox])', '#form_call_request_' + obj_id);
+    $.each(elms, function(id, elm) {
+        if (elm.type != 'submit' && elm.type != 'file' && !($(this).hasClass('cm-hint') && elm.value == elm.defaultValue) && elm.name.length != 0) {
+            params.push({name: elm.name, value: elm.value});
+        }
+    });
+
+    var url = fn_url('call_requests.request');
+
+    $.ceAjax('request', url, {
+        data: params,
+        method: 'post'
+    });
+}
+
+</script>
+{/literal}
