@@ -1,5 +1,5 @@
 <div class="ty-racket-finder" id="rf_steps">
-    <form action="{""|fn_url}" method="post" class="cm-ajax cm-ajax-hidden" name="racket_finder_form">
+    <form action="{""|fn_url}" method="post" class="cm-ajax" name="racket_finder_form">
     <input type="hidden" name="result_ids" value="rf_steps">
     <input type="hidden" name="dispatch" value="racket_finder.submit">
     <input type="hidden" name="step" id="step" value="{$step}">

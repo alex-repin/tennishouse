@@ -810,5 +810,6 @@
         <item lang="ru" id="power_high">Высокая</item>
         <item lang="ru" id="complete_rf_again">Пройти тест заново</item>
         <item lang="ru" id="racket_finder_meta">Как подобрать теннисную ракетку. Выбрать ракетку для большого тенниса ребенку. Как правильно подобрать ракетку для взрослого.</item>
+        <item lang="ru" id="full_age">полных лет</item>
     </language_variables>
 </addon>
