@@ -15,7 +15,7 @@
                         <input type="hidden" name="racket_finder[{$q_name}]" id="rf_question_{$q_name}_value" value="{$racket_finder.$q_name}" />
                         {$v_width = 96 / $q_data.variants|count}
                         {foreach from=$q_data.variants item="var_text" key="var_key"}
-                            <div class="ty-rf_question-body-answer {if $racket_finder.gender == $var_key}ty-rf_question-body-answer-selected{/if}" onclick="fn_submit_answer('{$q_name}', '{$var_key}', 'F');" style="width: {$v_width}%;">
+                            <div class="ty-rf_question-body-answer {if $racket_finder.$q_name == $var_key}ty-rf_question-body-answer-selected{/if}" onclick="fn_submit_answer('{$q_name}', '{$var_key}', 'F');" style="width: {$v_width}%;">
                                 <div class="ty-rf_question-body-answer-title">{$var_text}</div>
                                 <div class="ty-rf_question-variant ty-rf_{$q_name}-{$var_key}"></div>
                             </div>

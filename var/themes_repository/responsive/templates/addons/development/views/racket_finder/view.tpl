@@ -11,7 +11,7 @@
             </div>
         {/foreach}
     </div>
-    <form action="{""|fn_url}" method="post" class="cm-ajax cm-ajax-hidden" name="racket_finder_form">
+    <form action="{""|fn_url}" method="post" class="cm-ajax" name="racket_finder_form">
     <input type="hidden" name="result_ids" value="rf_steps">
     <input type="hidden" name="dispatch" value="racket_finder.submit">
     <input type="hidden" name="step" id="step" value="{$step}">
@@ -27,7 +27,7 @@
                     {elseif $q_data.type == 'select'}
                         <input type="hidden" name="racket_finder[{$q_name}]" id="rf_question_{$q_name}_value" value="{$racket_finder.$q_name}" />
                         {foreach from=$q_data.variants item="var_text" key="var_key"}
-                            <div class="ty-rf_question-body-answer {if $racket_finder.gender == $var_key}ty-rf_question-body-answer-selected{/if}" onclick="fn_submit_answer('{$q_name}', '{$var_key}', 'F');">
+                            <div class="ty-rf_question-body-answer {if $racket_finder.$q_name == $var_key}ty-rf_question-body-answer-selected{/if}" onclick="fn_submit_answer('{$q_name}', '{$var_key}', 'F');">
                                 <div class="ty-rf_question-body-answer-title">{$var_text}</div>
                                 <div class="ty-rf_question-variant ty-rf_{$q_name}-{$var_key}"></div>
                             </div>

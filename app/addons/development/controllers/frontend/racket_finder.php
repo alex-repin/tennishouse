@@ -368,12 +368,15 @@ function fn_get_results(&$racket_finder)
         $limits = array();
         $expectations = array_keys($rf_schema['expectations']['variants']);
         foreach ($rf_schema['expectations']['variants'] as $key => $txt) {
-            $limits[$key] = $min_price + $part * (array_search($key, $expectations) + 1);
+            $limits[$key] = array(
+                'min' => $min_price + $part * array_search($key, $expectations),
+                'max' => $min_price + $part * (array_search($key, $expectations) + 1)
+            );
         }
         foreach ($results as $i => $prod) {
             $best_match = 10;
             foreach ($limits as $key => $lmt) {
-                if ($prod['price'] <= $lmt && $best_match > abs(array_search($racket_finder['expectations'], $expectations) - array_search($key, $expectations))) {
+                if ($prod['price'] >= $lmt['min'] && $prod['price'] <= $lmt && $best_match > abs(array_search($racket_finder['expectations'], $expectations) - array_search($key, $expectations))) {
                     $best_match = abs(array_search($racket_finder['expectations'], $expectations) - array_search($key, $expectations));
                 }
             }

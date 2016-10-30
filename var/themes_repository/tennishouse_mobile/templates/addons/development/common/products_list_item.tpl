@@ -8,6 +8,9 @@
 
     {assign var="form_open" value="form_open_`$obj_id`"}
     {$smarty.capture.$form_open nofilter}
+    {if $product.match_p}
+        <div class="ty-grid-list__match">{__("match")} {$product.match_p}%</div>
+    {/if}
     <div class="ty-grid-list__image">
         {if $product.option_images && ($mode == 'R' || $mode  == 'S')}
             <div class="ty-list-options">
