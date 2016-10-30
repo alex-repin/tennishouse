@@ -780,5 +780,35 @@
         <item lang="ru" id="recalculate_configuration">Пересчитать конфигурацию</item>
         <item lang="ru" id="prestrung">Заводская натяжка</item>
         <item lang="ru" id="buy_now_cr">Отправить заявку</item>
+        <item lang="ru" id="your_gender">Ваш пол</item>
+        <item lang="ru" id="your_age">Ваш возраст</item>
+        <item lang="ru" id="your_height">Ваш рост</item>
+        <item lang="ru" id="your_skill_level">Ваш уровень мастерства</item>
+        <item lang="ru" id="your_frequency">Частота тренировок</item>
+        <item lang="ru" id="your_expectations">Ваши ожидания</item>
+        <item lang="ru" id="skill_level_beginner">Начинающий</item>
+        <item lang="ru" id="skill_level_intermediate">Любительский</item>
+        <item lang="ru" id="skill_level_advanced">Продвинутый</item>
+        <item lang="ru" id="frequency_year">Несколько раз в год</item>
+        <item lang="ru" id="frequency_month">Несколько раз в месяц</item>
+        <item lang="ru" id="frequency_week">Несколько раз в неделю</item>
+        <item lang="ru" id="expectations_cheap">Что-нибудь подешевле</item>
+        <item lang="ru" id="expectations_good_price">Оптимальное сочетание цена-качество</item>
+        <item lang="ru" id="expectations_best">Лучшие игровые характеристики, самые передовые технологии</item>
+        <item lang="ru" id="find_tennis_racket">Подобрать теннисную ракетку</item>
+        <item lang="ru" id="find_tennis_racket_add">Подобрать ракетку</item>
+        <item lang="ru" id="find_tennis_racket_menu">Подобрать ракетку</item>
+        <item lang="ru" id="complete_test">Пройди тест</item>
+        <item lang="ru" id="match">Совпадение</item>
+        <item lang="ru" id="rf_results">Результаты</item>
+        <item lang="ru" id="rf_next">Дальше</item>
+        <item lang="ru" id="rf_results_no_products">К сожалению, подходящие ракетки не найдены. Попробуйте поменять параметры поиска.</item>
+        <item lang="ru" id="likes">Лайки</item>
+        <item lang="ru" id="power">Мощность</item>
+        <item lang="ru" id="power_low">Низкая</item>
+        <item lang="ru" id="power_moderate">Средняя</item>
+        <item lang="ru" id="power_high">Высокая</item>
+        <item lang="ru" id="complete_rf_again">Пройти тест заново</item>
+        <item lang="ru" id="racket_finder_meta">Как подобрать теннисную ракетку. Выбрать ракетку для большого тенниса ребенку. Как правильно подобрать ракетку для взрослого.</item>
     </language_variables>
 </addon>

@@ -233,10 +233,10 @@ class FeaturesCache
                         $conditions[] = db_quote("feature_?i.value != ?i", $feature_id, $feature_data['not_value']);
                     } elseif (!empty($feature_data['min_value']) || !empty($feature_data['max_value'])) {
                         if (!empty($feature_data['min_value'])) {
-                            $conditions[] = db_quote("feature_?i.value_int >= ?d", $feature_id, $feature_data['min_value']);
+                            $conditions[] = db_quote("feature_?i.value_int > ?d", $feature_id, $feature_data['min_value']);
                         }
                         if (!empty($feature_data['max_value'])) {
-                            $conditions[] = db_quote("feature_?i.value_int <= ?d", $feature_id, $feature_data['max_value']);
+                            $conditions[] = db_quote("feature_?i.value_int < ?d", $feature_id, $feature_data['max_value']);
                         }
                     }
                 }

@@ -51,6 +51,7 @@ define('R_HEADSIZE_FEATURE_ID', 20);
 define('R_STIFFNESS_FEATURE_ID', 23);
 define('R_STRING_PATTERN_FEATURE_ID', 21);
 define('R_STRINGS_FEATURE_ID', 82);
+define('R_POWER_FEATURE_ID', 119);
 define('CLOTHES_GENDER_FEATURE_ID', 52);
 define('SHOES_GENDER_FEATURE_ID', 54);
 define('BRAND_FEATURE_ID', 29);
@@ -109,6 +110,11 @@ define('KIDS_21_FV_ID', 460);
 define('KIDS_23_FV_ID', 465);
 define('KIDS_25_FV_ID', 458);
 define('KIDS_26_FV_ID', 455);
+define('POWER_VHIGH_FV_ID', 1050);
+define('POWER_HIGH_FV_ID', 1049);
+define('POWER_MOD_FV_ID', 1048);
+define('POWER_LOW_FV_ID', 1047);
+define('POWER_VLOW_FV_ID', 1046);
 /*Rackets*/
 /*Strings*/
 define('TW_M_STRINGS_FV_ID', 499);
@@ -129,6 +135,8 @@ define('NATURAL_GUT_STRINGS_STRUCTURE_FV_ID', 376);
 define('PRODUCT_BLOCK_TABS_GRID_ID', 200);
 
 define('CATALOG_MENU_ITEM_ID', 153);
+define('LCENTER_MENU_ITEM_ID', 156);
+define('RACKET_FINDER_MENU_ITEM_ID', 9999);
 
 define('KIRSCHBAUM_BRAND_ID', 340);
 define('SLAZENGER_BRAND_ID', 1020);
@@ -137,6 +145,7 @@ define('RACKETS_QTY_DSC_PRC', 5);
 
 /* Pages*/
 define('LEARNING_CENTER_PAGE_ID', 53);
+define('LC_RACKETS_PAGE_ID', 55);
 define('LETS_PLAY_PAGE_ID', 75);
 define('LOYALITY_PROGRAM_PAGE_ID', 77);
 define('SAVING_PROGRAM_PAGE_ID', 77);

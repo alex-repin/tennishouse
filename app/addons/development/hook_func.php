@@ -1098,8 +1098,9 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
     if (!empty($params['similar_pid'])) {
         $similar_products_features = array(
             'R' => array(
-                array('34' => 'self', '33' => '939'),
-                array(R_BALANCE_FEATURE_ID => 'self', R_LENGTH_FEATURE_ID => 'self', R_HEADSIZE_FEATURE_ID => 'self', R_WEIGHT_FEATURE_ID => 'self', R_STIFFNESS_FEATURE_ID => 'self')
+                array('34' => 'self', '33' => '939'), // komplekt
+                array('33' => '282', R_LENGTH_FEATURE_ID => 'self'), // kids rackets
+                array(R_BALANCE_FEATURE_ID => 'self', R_LENGTH_FEATURE_ID => 'self', R_HEADSIZE_FEATURE_ID => 'self', R_WEIGHT_FEATURE_ID => 'self', R_STIFFNESS_FEATURE_ID => 'self') // regular rackets
             ),
             'A' => array(
                 array('52' => 'self', '50' => 'self')

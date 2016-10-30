@@ -19,19 +19,20 @@
             <h4>{$subheader}</h4>
         {/if}
 
-        {if $discussion.object_type == 'E'}
-        {if $discussion.thread_id = $smarty.const.REVIEWS_THREAD_ID}
-        <div class="ty-rate-us-ym-reviews">
-            <a href="http://clck.yandex.ru/redir/dtype=stred/pid=47/cid=2508/*http://market.yandex.ru/shop/292708/reviews" target="_blank"><img src="https://clck.yandex.ru/redir/dtype=stred/pid=47/cid=2507/*https://grade.market.yandex.ru/?id=292708&action=image&size=2" border="0" width="150" height="101" alt="Читайте отзывы покупателей и оценивайте качество магазина на Яндекс.Маркете" /></a>
-        </div>
-        {/if}
         {if "CRB"|strpos:$discussion.type !== false && !$discussion.disable_adding}
             {include file="addons/discussion/views/discussion/components/new_post.tpl" new_post_title=$new_post_title}
-            
-            <div class="ty-discussion-post__buttons buttons-container">
-                {include file="buttons/button.tpl" but_id="opener_new_post_top" but_text=$new_post_title but_role="submit" but_target_id="new_post_dialog_`$obj_id`" but_meta="cm-dialog-opener cm-dialog-auto-size ty-btn__primary" but_rel="nofollow"}
-            </div>
         {/if}
+        {if $discussion.object_type == 'E'}
+            {if $discussion.thread_id = $smarty.const.REVIEWS_THREAD_ID}
+            <div class="ty-rate-us-ym-reviews">
+                <a href="http://clck.yandex.ru/redir/dtype=stred/pid=47/cid=2508/*http://market.yandex.ru/shop/292708/reviews" target="_blank"><img src="https://clck.yandex.ru/redir/dtype=stred/pid=47/cid=2507/*https://grade.market.yandex.ru/?id=292708&action=image&size=2" border="0" width="150" height="101" alt="Читайте отзывы покупателей и оценивайте качество магазина на Яндекс.Маркете" /></a>
+            </div>
+            {/if}
+            {if "CRB"|strpos:$discussion.type !== false && !$discussion.disable_adding}
+                <div class="ty-discussion-post__buttons buttons-container">
+                    {include file="buttons/button.tpl" but_id="opener_new_post_top" but_text=$new_post_title but_role="submit" but_target_id="new_post_dialog_`$obj_id`" but_meta="cm-dialog-opener cm-dialog-auto-size ty-btn__primary" but_rel="nofollow"}
+                </div>
+            {/if}
         {/if}
         <div id="posts_list">
             {if $discussion.posts}

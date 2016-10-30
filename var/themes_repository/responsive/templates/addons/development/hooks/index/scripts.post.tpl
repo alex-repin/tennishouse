@@ -25,23 +25,23 @@
 
     function fn_stick_element(sticky, footer)
     {
-        if (sticky.length > 0 && footer.length > 0) {
-            var top_margin = 115;
+        if (sticky.length > 0 && footer.length > 0 && (typeof(sticky.data('minStickyWidth')) == 'undefined' || $(window).width() >= sticky.data('minStickyWidth'))) {
+            var top_margin = $('.tygh-top-panel').outerHeight(true) + 1;
             var bottom_margin = 20;
-            var topmenu_offset = sticky.parent().offset();
-            if (!sticky.hasClass('sticky') && $(this).scrollTop() + top_margin >= sticky.offset().top && sticky.outerHeight(true) < footer.offset().top - sticky.offset().top - 50) {
-                init_position = sticky.offset().top;
+            var element_offset = sticky.parent().offset();
+            if (!sticky.hasClass('sticky') && $(window).scrollTop() + top_margin >= sticky.offset().top && sticky.outerHeight(true) < footer.offset().top - sticky.offset().top - 50) {
+                sticky.data('init_position', sticky.offset().top)
                 sticky.addClass('sticky');
             }
             if (sticky.hasClass('sticky')) {
-                sticky.css('left', topmenu_offset.left - $(this).scrollLeft() + 'px');
-                if (sticky.outerHeight(true) > footer.offset().top - init_position) {
+                sticky.css('left', element_offset.left - $(window).scrollLeft() + 'px');
+                if (sticky.outerHeight(true) > footer.offset().top - sticky.data('init_position')) {
                     sticky.removeClass('sticky');
-                } else if (sticky.outerHeight(true) + top_margin - bottom_margin > footer.offset().top - $(this).scrollTop()) {
-                    sticky.css('top', footer.offset().top - sticky.outerHeight(true) - $(this).scrollTop() + bottom_margin + 'px');
+                } else if (sticky.outerHeight(true) + top_margin - bottom_margin > footer.offset().top - $(window).scrollTop()) {
+                    sticky.css('top', footer.offset().top - sticky.outerHeight(true) - $(window).scrollTop() + bottom_margin + 'px');
                 } else {
-                    if ($(this).scrollTop() + top_margin < init_position) {
-                        sticky.css('top', init_position - $(this).scrollTop() + 'px');
+                    if ($(window).scrollTop() + top_margin < sticky.data('init_position')) {
+                        sticky.css('top', sticky.data('init_position') - $(window).scrollTop() + 'px');
                     } else {
                         sticky.css('top', top_margin + 'px');
                     }
@@ -60,18 +60,23 @@
         $(function() {
             if (!$('#tygh_main_container').hasClass('touch')) {
                 fn_fix_width();
-                var sticky = $(".ty-sticky");
                 var footer = $('#tygh_footer');
-                fn_stick_element(sticky, footer);
+                $(".ty-sticky").each(function(){
+                    fn_stick_element($(this), footer);
+                });
                 $(window).resize(function() {
                     fn_fix_width();
-                    var init_position = 0;
-                    fn_stick_element(sticky, footer);
+                    $(".ty-sticky").each(function(){
+                        var init_position = 0;
+                        fn_stick_element($(this), footer);
+                    });
                 });
                 $(window).scroll(function() {
                     fn_fix_width();
-                    var init_position = 0;
-                    fn_stick_element(sticky, footer);
+                    $(".ty-sticky").each(function(){
+                        var init_position = 0;
+                        fn_stick_element($(this), footer);
+                    });
                     $('.cm-parallax').each(function(){
                         if ($(window).scrollTop() < $(this).offset().top + $(this).outerHeight() - 115) {
                             $(this).css({ backgroundPosition: 'center '+ (109 - $(window).scrollTop() / $(this).data('speed')) + 'px' });

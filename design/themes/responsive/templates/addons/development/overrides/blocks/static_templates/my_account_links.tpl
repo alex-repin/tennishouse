@@ -15,5 +15,5 @@
 <!--account_info_links_{$block.snapping_id}--></ul>
 <div class="ty-mobile-version">
     {assign var="mobile_url" value=$config.current_url|fn_query_remove:"dmode"|fn_link_attach:"dmode=M"}
-    <a href="{"`$mobile_url`"|fn_url}">{__("mobile_version")}</a>
+    <a href="{"`$mobile_url`"|fn_url}" rel="nofollow">{__("mobile_version")}</a>
 </div>

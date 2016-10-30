@@ -270,6 +270,27 @@ if ($mode == 'catalog') {
                             $other[] = $product;
                         }
                     }
+                    foreach ($sections_categorization as $s_id => $prods) {
+                        $is_conf = $is_reg = false;
+                        foreach ($prods as $prod) {
+                            if (!$is_reg && $prod['product_type'] == 'P') {
+                                $is_reg = true;
+                            }
+                            if (!$is_conf && $prod['product_type'] == 'C') {
+                                $is_conf = true;
+                            }
+                            if ($is_conf && $is_reg) {
+                                break;
+                            }
+                        }
+                        if ($is_conf && !$is_reg) {
+                            foreach ($prods as $p_id => $prod) {
+                                if ($prod['product_type'] == 'C') {
+                                    unset($sections_categorization[$s_id][$p_id]);
+                                }
+                            }
+                        }
+                    }
                     $sc_feature = db_get_hash_array("SELECT ?:product_features.feature_id, ?:product_features_descriptions.description, ?:product_feature_variants.variant_id, ?:product_feature_variant_descriptions.variant, ?:product_feature_variant_descriptions.description AS variant_description FROM ?:product_features LEFT JOIN ?:product_features_descriptions ON ?:product_features_descriptions.feature_id = ?:product_features.feature_id AND ?:product_features_descriptions.lang_code = ?s INNER JOIN ?:product_feature_variants ON ?:product_feature_variants.feature_id = ?:product_features.feature_id LEFT JOIN ?:product_feature_variant_descriptions ON ?:product_feature_variant_descriptions.variant_id = ?:product_feature_variants.variant_id AND ?:product_feature_variant_descriptions.lang_code = ?s WHERE ?:product_features.feature_id IN (?n) AND ?:product_feature_variants.variant_id IN (?n) ORDER BY ?:product_feature_variants.position", 'variant_id', CART_LANGUAGE, CART_LANGUAGE, $category_data['sections_categorization'], array_keys($sections_categorization));
                     $sections_categorization['other'] = $other;
                     Registry::get('view')->assign('sections_categorization', $sections_categorization);

@@ -27,6 +27,9 @@ if ($mode == 'view') {
 
     $page = Registry::get('view')->gettemplatevars('page');
 
+    if (in_array(LC_RACKETS_PAGE_ID, explode('/', $page['id_path']))) {
+        Registry::get('view')->assign('show_racket_finder', true);
+    }
     if (!empty($page['image'])) {
         Registry::get('view')->assign('image_title', $page['image']);
         Registry::get('view')->assign('image_title_text', $page['page']);

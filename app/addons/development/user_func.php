@@ -103,6 +103,14 @@ function fn_get_catalog_panel_pages()
             unset($menu_items[$i]['subitems']);
         }
     }
+    $racket_finder = array(
+        'param_id' => RACKET_FINDER_MENU_ITEM_ID,
+        'status' => 'A',
+        'active' => 1,
+        'item' => __('find_tennis_racket_menu'),
+        'href' => 'racket_finder.view'
+    );
+    $menu_items = fn_insert_before_key($menu_items, LCENTER_MENU_ITEM_ID, RACKET_FINDER_MENU_ITEM_ID, $racket_finder);
     return $menu_items;
 }
 
@@ -370,7 +378,6 @@ function fn_update_rankings($ids = array())
             }
         }
         if (empty($errors) && count($players) == count($update)) {
-            LogFacade::error("Rankings update error");
             //fn_set_notification('N', __('notice'), __('rankings_updated_successfully', array('[total]' => count($players), '[updated]' => count($update))));
         } elseif (!empty($errors)) {
             $ids = '';

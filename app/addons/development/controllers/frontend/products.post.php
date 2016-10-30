@@ -123,6 +123,10 @@ if ($mode == 'view') {
     $_SESSION['main_product_category'] = $product['category_main_id'];
     $_SESSION['product_features'] = $features;
     $_SESSION['category_type'] = $product['category_type'];
+    
+    if ($product['category_main_id'] == RACKETS_CATEGORY_ID) {
+        Registry::get('view')->assign('show_racket_finder', true);
+    }
 
     $blocks = Block::instance()->getList(
         array('?:bm_blocks.*', '?:bm_blocks_descriptions.*'),

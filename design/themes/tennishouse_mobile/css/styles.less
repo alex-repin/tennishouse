@@ -324,6 +324,7 @@ Helper Classes
 /* Form */
 input[type="text"],
 input[type="tel"],
+input[type="number"],
 input[type="password"],
 textarea,
 select {
@@ -1095,7 +1096,7 @@ WYSIWYG
     .ty-columns(@index - 1);
     .ty-column@{index} {
         display: inline-block;
-        width: percentage((100 / 5) * 0.01);
+        width: percentage((100 / @index) * 0.01);
         vertical-align: top;
         margin-right: -0.25em;
     }
@@ -1105,7 +1106,7 @@ WYSIWYG
 
 @media (max-width: 962px) {
 .ty-columns(@columns);
-.ty-columns (@index) when (@index > 1) {
+.ty-columns (@index) when (@index > 4) {
     .ty-columns(@index - 1);
     .ty-column@{index} {
         width: percentage((100 / 4) * 0.01);
@@ -1116,7 +1117,7 @@ WYSIWYG
 
 @media (max-width: 774px) {
 .ty-columns(@columns);
-.ty-columns (@index) when (@index > 1) {
+.ty-columns (@index) when (@index > 3) {
     .ty-columns(@index - 1);
     .ty-column@{index} {
         width: percentage((100 / 3) * 0.01);
@@ -1128,7 +1129,7 @@ WYSIWYG
 @media (max-width: 587px) {
 .ty-columns(@columns);
 
-.ty-columns (@index) when (@index > 1) {
+.ty-columns (@index) when (@index > 2) {
     .ty-columns(@index - 1);
     .ty-column@{index} {
         width: percentage((100 / 2) * 0.01);

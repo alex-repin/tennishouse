@@ -399,6 +399,13 @@
                         </div>
                     </div>
 
+                    <div class="control-group">
+                        <label class="control-label" for="elm_product_likes">{__("likes")}:</label>
+                        <div class="controls">
+                            <input type="text" name="product_data[likes]" id="elm_product_likes" size="55" value="{$product_data.likes|default:0}" class="input-long" />
+                        </div>
+                    </div>
+
                     <div class="control-group {$no_hide_input_if_shared_product}">
                         <label class="control-label" for="elm_product_search_words">{__("search_words")}:</label>
                         <div class="controls">

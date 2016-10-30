@@ -196,12 +196,17 @@
                 };
 
                 $.ceNotification('closeAll');
-                $.toggleStatusBox('show');
 
                 var options = _getOptions(form, params);
 
                 if (options.force_exec) {
                     params['force_exec'] = true;
+                }
+                
+                if (options.hidden) {
+                    params['hidden'] = true;
+                } else {
+                    $.toggleStatusBox('show');
                 }
 
                 if (sessionData.name) {
@@ -358,6 +363,7 @@
                 'full_render': obj.hasClass('cm-ajax-full-render'),
                 'is_comet': is_comet,
                 'force_exec': obj.hasClass('cm-ajax-force'),
+                'hidden': obj.hasClass('cm-ajax-hidden'),
                 'transport': transport
             };
         }

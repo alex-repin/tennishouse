@@ -1,7 +1,7 @@
 {** block-description:tmpl_copyright **}
 <div class="ty-bottom-contact-info">
     {assign var="mobile_url" value=$config.current_url|fn_query_remove:"dmode"|fn_link_attach:"dmode=F"}
-    <a href="{"`$mobile_url`"|fn_url}">
+    <a href="{"`$mobile_url`"|fn_url}" rel="nofollow">
         <div class="ty-bottom-cell">
             <div class="ty-desktop-icon"></div>
             <div class="ty-bottom-cell_text">{__("full_version")}</div>

@@ -12,6 +12,48 @@
             </h1>
         {/if}
         <div class="ty-mainbox-body">{$content nofilter}</div>
+        {if $show_racket_finder}
+            <a href="{"racket_finder.view"|fn_url}"><div class="ty-racket-finder-block">
+                <div class="ty-sticky" data-min-sticky-width="1400">
+                <div class="ty-rf-slide-button ty-rf-slide-button-in {if !$smarty.session.hide_rf_add}hidden{/if}" id="rf_slide_in" onclick="fn_rf_slide_in();return false;"><div class="ty-rf-slide-icon"></div></div>
+                <div class="ty-rf-slide-button ty-rf-slide-button-out {if $smarty.session.hide_rf_add}hidden{/if}" id="rf_slide_out" onclick="fn_rf_slide_out();return false;"><div class="ty-rf-slide-icon"></div></div>
+                <div class="ty-racket-finder-block-content {if $smarty.session.hide_rf_add}hidden{/if}" id="rf_block">
+                    <div class="ty-racket-finder-block-bg">
+                        <div class="ty-racket-finder-block-text-vertical">{__("test")}</div>
+                    </div>
+                    <div class="ty-racket-finder-block-text-bottom">
+                        {__("find_tennis_racket_add")}
+                    </div>
+                </div>
+                </div>
+            </div></a>
+            <script type="text/javascript">
+            {literal}
+
+                function fn_rf_slide_in()
+                {
+                    $('#rf_block').animate({width:'toggle'}, 350);
+                    $('#rf_slide_in').hide();
+                    $('#rf_slide_out').show();
+                    Tygh.$.ceAjax('request', fn_url('racket_finder.show_add'), {
+                        method: 'get',
+                        hidden: true
+                    });
+                }
+                function fn_rf_slide_out()
+                {
+                    $('#rf_block').animate({width:'toggle'}, 350);
+                    $('#rf_slide_out').hide();
+                    $('#rf_slide_in').show();
+                    Tygh.$.ceAjax('request', fn_url('racket_finder.hide_add'), {
+                        method: 'get',
+                        hidden: true
+                    });
+                }
+                
+            {/literal}
+            </script>
+        {/if}
         {if $smarty.const.HTTPS}
             <div class="ty-hover-ssl-cert">{include file="addons/development/blocks/static_templates/ssl_seal.tpl" show_tooltip=true}</div>
         {/if}

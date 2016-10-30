@@ -37,14 +37,16 @@ if ($mode == 'view') {
     );
     list($subcategories, ) = fn_get_categories($params, CART_LANGUAGE);
 
+    $cat_ids = explode('/', $category_data['id_path']);
+    $main_parent = reset($cat_ids);
     if (empty($subcategories) && empty($products)) {
-        $cat_ids = explode('/', $category_data['id_path']);
-        $main_parent = reset($cat_ids);
         if (!empty($main_parent)) {
             return array(CONTROLLER_STATUS_REDIRECT, 'categories.view?category_id=' . $main_parent);
         }
     }
-    
+    if ($main_parent == RACKETS_CATEGORY_ID) {
+        Registry::get('view')->assign('show_racket_finder', true);
+    }
     Registry::get('view')->assign('subcategories', $subcategories);
     Registry::get('view')->assign('category_data', $category_data);
 }
