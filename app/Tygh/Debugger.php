@@ -25,7 +25,7 @@ class Debugger
 
     const MEDIUM_QUERY_TIME = 0.2;
     const LONG_QUERY_TIME = 3;
-    const EXPIRE_DEBUGGER = 10; // 1 hour
+    const EXPIRE_DEBUGGER = 360; // 1 hour
 
     protected static $active_debug_mode = false;
     protected static $allow_backtrace_sql = false;

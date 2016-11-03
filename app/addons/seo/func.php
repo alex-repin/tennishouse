@@ -14,6 +14,7 @@
 
 use Tygh\Registry;
 use Tygh\Settings;
+use Tygh\SeoCache;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
@@ -674,7 +675,7 @@ function fn_seo_validate_parents($path, $id_path, $parent_type, $vars, $lang_cod
  */
 function fn_seo_get_parent_items_path($seo_var, $object_type, $object_id, $company_id = null, $lang_code = CART_LANGUAGE)
 {
-    $id_path = fn_seo_get_cache_name('path', $object_type, $object_id, $company_id, $lang_code);
+    $id_path = SeoCache::get('path', $object_type, $object_id, $company_id, $lang_code);
 
     if (is_null($id_path)) {
 
@@ -683,7 +684,7 @@ function fn_seo_get_parent_items_path($seo_var, $object_type, $object_id, $compa
         // deprecated
         fn_set_hook('seo_get_parent_items_path', $object_type, $object_id, $id_path);
 
-        fn_seo_cache_name($object_type, $object_id, array('seo_path' => $id_path), $company_id, $lang_code);
+        SeoCache::set($object_type, $object_id, array('seo_path' => $id_path), $company_id, $lang_code);
     }
 
     $parent_item_names = array();
@@ -807,7 +808,7 @@ function fn_seo_get_name($object_type, $object_id = 0, $dispatch = '', $company_
     $lang_code = fn_get_corrected_seo_lang_code($lang_code);
 
     $_object_id = !empty($object_id) ? $object_id : $dispatch;
-    $name = fn_seo_get_cache_name('name', $object_type, $_object_id, $company_id, $lang_code);
+    $name = SeoCache::get('name', $object_type, $_object_id, $company_id, $lang_code);
 
     if (is_null($name)) {
 
@@ -850,7 +851,7 @@ function fn_seo_get_name($object_type, $object_id = 0, $dispatch = '', $company_
             $cache_data = array('seo_name' => $name);
         }
 
-        fn_seo_cache_name($object_type, $_object_id, $cache_data, $company_id, $lang_code);
+        SeoCache::set($object_type, $_object_id, $cache_data, $company_id, $lang_code);
     }
 
     /**
@@ -880,32 +881,7 @@ function fn_seo_get_name($object_type, $object_id = 0, $dispatch = '', $company_
  */
 function fn_seo_cache_name($object_type, $object_id, $object_data, $company_id, $lang_code, $area = AREA)
 {
-    static $init_cache = false;
-
-    if ($area != 'C') {
-        return false;
-    }
-
-    $cache_name = $object_type == 's' ? 'seo_cache_static' : 'seo_cache';
-    if ($object_type == 's' && !$init_cache) {
-        Registry::registerCache($cache_name, array('seo_names'), Registry::cacheLevel('static') . $lang_code, true);
-    }
-
-    $key = $lang_code . '_' . $object_id . '_' . $object_type . '_' . $company_id;
-
-    if (!empty($object_data['seo_name']) && isset($object_data['seo_path'])) {
-        Registry::set($cache_name . '.' . $key, array(
-            'name' => $object_data['seo_name'],
-            'path' => $object_data['seo_path']
-        ));
-
-    } elseif (isset($object_data['seo_name'])) {
-        Registry::set($cache_name . '.' . $key . '.name', $object_data['seo_name']);
-    } elseif (isset($object_data['seo_path'])) {
-        Registry::set($cache_name . '.' . $key . '.path', $object_data['seo_path']);
-    }
-
-    return true;
+    return SeoCache::set($object_type, $object_id, $object_data, $company_id, $lang_code, $area);
 }
 
 /**
@@ -1694,7 +1670,7 @@ function fn_seo_get_products_post(&$products, &$params, &$lang_code)
 {
     if (AREA == 'C' && !empty($products)) {
         foreach ($products as $k => $product) {
-            fn_seo_cache_name('p', $product['product_id'], $product,  isset($product['company_id']) ? $product['company_id'] : '', $lang_code);
+            SeoCache::set('p', $product['product_id'], $product,  isset($product['company_id']) ? $product['company_id'] : '', $lang_code);
         }
     }
 
@@ -1731,7 +1707,7 @@ function fn_seo_get_category_data(&$category_id, &$field_list, &$join, &$lang_co
 function fn_seo_get_category_data_post(&$category_id, &$field_list, &$get_main_pair, &$skip_company_condition, &$lang_code, &$category_data)
 {
     if (AREA == 'C' && !empty($category_data)) {
-        fn_seo_cache_name('c', $category_data['category_id'], $category_data, null, $lang_code);
+        SeoCache::set('c', $category_data['category_id'], $category_data, null, $lang_code);
     }
 
     if (empty($category_data['seo_name']) && !empty($category_data['category_id'])) {
@@ -1761,7 +1737,7 @@ function fn_seo_get_categories_post(&$categories, &$params, &$lang_code)
         }
 
         foreach ($cats as $k => $category) {
-            fn_seo_cache_name('c', $category['category_id'], $category, isset($category['company_id']) ? $category['company_id'] : '', $lang_code);
+            SeoCache::set('c', $category['category_id'], $category, isset($category['company_id']) ? $category['company_id'] : '', $lang_code);
         }
     }
 
@@ -1974,7 +1950,7 @@ function fn_seo_get_product_feature_variants_post(&$vars, &$params, &$lang_code)
                 $vars[$k]['seo_name'] = fn_seo_get_name('e', $variant['variant_id'], '', null, $lang_code);
             }
 
-            fn_seo_cache_name('e', $variant['variant_id'], $vars[$k], null, $lang_code);
+            SeoCache::set('e', $variant['variant_id'], $vars[$k], null, $lang_code);
         }
     }
 
@@ -2092,7 +2068,7 @@ function fn_seo_get_players_post(&$players, &$params)
 {
     if (AREA == 'C' && !empty($players)) {
         foreach ($players as $k => $player) {
-            fn_seo_cache_name('l', $player['player_id'], $player,  '', CART_LANGUAGE);
+            SeoCache::set('l', $player['player_id'], $player,  '', CART_LANGUAGE);
         }
     }
 
