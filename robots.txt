@@ -3,3 +3,9 @@ Disallow: /app/
 Disallow: /store_closed.html
 Sitemap: http://www.tennishouse.ru/sitemap.xml
 Host: www.tennishouse.ru
+
+User-agent: bingbot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /

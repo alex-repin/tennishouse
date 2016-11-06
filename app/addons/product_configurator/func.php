@@ -264,7 +264,7 @@ function fn_product_configurator_gather_additional_product_data_post(&$product, 
             $selected_configuration = $product['selected_configuration'];
         }
         if (isset($product['product_features'][R_STRINGS_FEATURE_ID]) && $product['product_features'][R_STRINGS_FEATURE_ID]['value'] == 'N') {
-            list($strining_options, $c_price) = fn_get_stringing_options($product, $selected_configuration, !empty(reset($selected_configuration[STRINGING_GROUP_ID]['product_ids'])) && !in_array('UNSTRUNG', $selected_configuration[STRINGING_GROUP_ID]['product_ids']));
+            list($strining_options, $c_price) = fn_get_stringing_options($product, $selected_configuration, !empty($selected_configuration[STRINGING_GROUP_ID]['product_ids']) && !empty(reset($selected_configuration[STRINGING_GROUP_ID]['product_ids'])) && !in_array('UNSTRUNG', $selected_configuration[STRINGING_GROUP_ID]['product_ids']));
             if (!empty($c_price)) {
                 $product['price'] += $c_price;
                 $product['original_price'] += $c_price;
