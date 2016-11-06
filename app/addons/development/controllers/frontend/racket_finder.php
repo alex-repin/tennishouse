@@ -46,6 +46,7 @@ if ($mode == 'view') {
         Registry::get('view')->assign('results', fn_get_results($racket_finder));
     }
     Registry::get('view')->assign('step', $step);
+    fn_add_breadcrumb(__('racket_finder_page_title'));
     Registry::get('view')->assign('racket_finder', $racket_finder);
     Registry::get('view')->assign('meta_description', __('racket_finder_meta'));
 }
@@ -331,6 +332,7 @@ function fn_get_results(&$racket_finder)
                 'get_discounts' => true,
                 'get_features' => true,
                 'get_title_features' => true,
+                'features_display_on' => 'P'
             ));
             foreach ($prods as $i => $prod) {
                 if ($min_price == 0 || $min_price > $prod['price']) {
@@ -354,6 +356,10 @@ function fn_get_results(&$racket_finder)
             POWER_VLOW_FV_ID => 0,
         );
         foreach ($results as $i => $prod) {
+            if (!empty($prod['product_features'][R_HEADSIZE_FEATURE_ID]['value_int']) && $prod['product_features'][R_HEADSIZE_FEATURE_ID]['value_int'] > 645 && array_search($racket_finder['power'], $power) < 2) {
+                unset($results[$i]);
+                continue;
+            }
             if (!empty($prod['product_features'][R_POWER_FEATURE_ID]['variant_id'])) {
                 $results[$i]['match_p'] -= fn_get_perc(abs(array_search($racket_finder['power'], $power) - $rel_power[$prod['product_features'][R_POWER_FEATURE_ID]['variant_id']]), false);
             } else {
@@ -407,6 +413,11 @@ function fn_is_adult($age)
     return ($age >= 16) ? true : false;
 }
 
+function fn_is_tall($height)
+{
+    return ($height >= 155) ? true : false;
+}
+
 function fn_get_step(&$racket_finder, $step = '', $direction = '')
 {
     global $rf_schema;
@@ -416,10 +427,10 @@ function fn_get_step(&$racket_finder, $step = '', $direction = '')
             if (empty($racket_finder[$q_key])) {
                 if (!isset($_step)) {
                     if (!empty($q_data['conditions'])) {
-                        $match = true;
+                        $match = false;
                         foreach ($q_data['conditions'] as $c_key => $func) {
-                            if (!call_user_func($func, $racket_finder[$c_key])) {
-                                $match = false;
+                            if (call_user_func($func, $racket_finder[$c_key])) {
+                                $match = true;
                                 break;
                             }
                         }
@@ -431,10 +442,10 @@ function fn_get_step(&$racket_finder, $step = '', $direction = '')
                 }
             } else {
                 if (!empty($q_data['conditions'])) {
-                    $match = true;
+                    $match = false;
                     foreach ($q_data['conditions'] as $c_key => $func) {
-                        if (!call_user_func($func, $racket_finder[$c_key])) {
-                            $match = false;
+                        if (call_user_func($func, $racket_finder[$c_key])) {
+                            $match = true;
                             break;
                         }
                     }
@@ -464,10 +475,10 @@ function fn_get_step(&$racket_finder, $step = '', $direction = '')
                 } else {
                     for ($i = $iter + 1; $i < count($schema_keys); $i++) {
                         if (!empty($rf_schema[$schema_keys[$i]]['conditions'])) {
-                            $match = true;
+                            $match = false;
                             foreach ($rf_schema[$schema_keys[$i]]['conditions'] as $c_key => $func) {
-                                if (!call_user_func($func, $racket_finder[$c_key])) {
-                                    $match = false;
+                                if (call_user_func($func, $racket_finder[$c_key])) {
+                                    $match = true;
                                     break;
                                 }
                             }
@@ -486,10 +497,10 @@ function fn_get_step(&$racket_finder, $step = '', $direction = '')
             } else {
                 for ($i = $iter - 1; $i >= 0; $i--) {
                     if (!empty($rf_schema[$schema_keys[$i]]['conditions'])) {
-                        $match = true;
+                        $match = false;
                         foreach ($rf_schema[$schema_keys[$i]]['conditions'] as $c_key => $func) {
-                            if (!call_user_func($func, $racket_finder[$c_key])) {
-                                $match = false;
+                            if (call_user_func($func, $racket_finder[$c_key])) {
+                                $match = true;
                                 break;
                             }
                         }

@@ -55,9 +55,6 @@
                 {/if}
             </div>
             <div class="ty-product-block__left">
-                {assign var="form_open" value="form_open_`$obj_id`"}
-                {$smarty.capture.$form_open nofilter}
-
                 {if $product.discussion.posts || $product.header_features}
                     <div class="ty-product-detail__before-title">
                     {hook name="products:brand"}
@@ -79,8 +76,11 @@
                         {if $product.price > $addons.development.free_shipping_cost}
                         <div class="ty-product-free-shipping">{__("free_shipping_product_text")}</div>
                         {/if}
+                        {include file="addons/development/common/product_shipping_estimation.tpl"}
                     </h1>
                 {/if}
+                {assign var="form_open" value="form_open_`$obj_id`"}
+                {$smarty.capture.$form_open nofilter}
 
                 <div class="ty-product-detail__buy-section">
                 {assign var="old_price" value="old_price_`$obj_id`"}

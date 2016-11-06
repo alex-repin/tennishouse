@@ -18,8 +18,71 @@ use Tygh\LogFacade;
 use Tygh\Http;
 use Tygh\FeaturesCache;
 use Tygh\Menu;
+use Tygh\Shippings\Shippings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
+
+function fn_get_big_cities()
+{
+    return unserialize(BIG_CITIES);
+}
+
+function fn_get_approximate_shipping($location)
+{
+    $priority = array(COURIER_SH_ID, SDEK_STOCK_SH_ID, SDEK_DOOR_SH_ID, RU_POST_SH_ID, EMS_SH_ID);
+    $shipping_time = 0;
+    $group = array(
+        'package_info' => array(
+            'W' => 1,
+            'C' => 5000,
+            'I' => 1,
+            'origination' => array(
+                'city' => Registry::get('settings.Company.company_city'),
+                'country' => Registry::get('settings.Company.company_country'),
+                'state' => Registry::get('settings.Company.company_state'),
+            ),
+            'location' => array(
+                'city' => $location['city'],
+                'country' => $location['country'],
+                'state' => $location['state'],
+            )
+        )
+    );
+    $shippings = array();
+    $shippings_group = Shippings::getShippingsList($group);
+    foreach ($shippings_group as $shipping_id => $shipping) {
+
+        $_shipping = $shipping;
+        $_shipping['package_info'] = $group['package_info'];
+        $_shipping['keys'] = array(
+            'shipping_id' => $shipping_id,
+        );
+        $shippings[] = $_shipping;
+
+        $shipping['rate'] = 0;
+    }
+
+    $rates = Shippings::calculateRates($shippings);
+    $est_ship = array();
+    
+    if (!empty($rates)) {
+        foreach ($rates as $i => $sh_r) {
+            if ($sh_r['price'] !== false && !empty($sh_r['delivery_time']) && empty($sh_r['error'])) {
+                $est_ship[$sh_r['keys']['shipping_id']] = preg_replace('/[^\-0-9]/', '', $sh_r['delivery_time']);
+            }
+        }
+        if (!empty($est_ship)) {
+            foreach ($priority as $k => $sh_id) {
+                if (!empty($est_ship[$sh_id])) {
+                    return $est_ship[$sh_id];
+                }
+            }
+            return reset($est_ship);
+        }
+    }
+    
+    return false;
+}
 
 function fn_get_similar_category_products($params)
 {
@@ -1601,4 +1664,34 @@ function fn_update_technology($technology_data, $technology_id = 0)
     
     return $technology_id;
 
+}
+
+function fn_get_state_parts($state)
+{
+    $state_parts = preg_split("/( |\-)/", trim(str_replace(array('область', 'республика', 'автономный', 'округ', 'автономная', 'край'), array('', '', '', '', '', ''), fn_strtolower($state))));
+    foreach ($state_parts as $i => $pr) {
+        if (empty($pr) || $pr == '—') {
+            unset($state_parts[$i]);
+        }
+    }
+    
+    return $state_parts;
+}
+
+function fn_find_state_match($state)
+{
+    $state_parts = fn_get_state_parts($state);
+
+    list($states,) = fn_get_states(array('country_code' => 'RU'));
+    $match = array();
+    foreach ($states as $i => $st_dt) {
+        $_state_parts = fn_get_state_parts($st_dt['state']);
+        $match[$st_dt['code']] = round(100 / count($state_parts) * count(array_intersect($_state_parts, $state_parts)), 2);
+    }
+    if (!empty($match)) {
+        arsort($match);
+        return key($match);
+    }
+    
+    return false;
 }

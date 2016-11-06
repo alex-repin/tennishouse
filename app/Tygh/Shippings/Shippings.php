@@ -563,7 +563,8 @@ class Shippings
                 $rates[] = array(
                     'price' => $rate,
                     'keys' => !empty($shipping['keys']) ? $shipping['keys'] : array(),
-                    'available_payments' => array()
+                    'available_payments' => array(),
+                    'delivery_time' => isset($shipping['delivery_time']) ? $shipping['delivery_time'] : false,
                 );
             }
         }

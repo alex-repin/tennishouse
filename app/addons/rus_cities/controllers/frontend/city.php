@@ -34,13 +34,13 @@ if ($mode == 'autocomplete_city') {
 
         $params['q'] = str_replace($prefix,'',$params['q']);
 
-        if (Registry::get('addons.rus_spsr.status') == 'A') {
-            $server = 'spsr';
-        } elseif (Registry::get('addons.rus_sdek.status') == 'A') {
+//         if (Registry::get('addons.rus_spsr.status') == 'A') {
+//             $server = 'spsr';
+//         } elseif (Registry::get('addons.rus_sdek.status') == 'A') {
             $server = 'sdek';
-        } else {
-            $server = 'edost';
-        }
+//         } else {
+//             $server = 'edost';
+//         }
 
         if ($server == 'spsr') {
 
@@ -73,13 +73,13 @@ if ($mode == 'autocomplete_city') {
 
             $condition = db_quote(" AND c.status = ?s", 'A');
 
-            if (!empty($params['check_country']) && $params['check_country'] != 'undefined') {
-                $condition .= db_quote(" AND c.country_code = ?s", $params['check_country']);
-
-                if (!empty($params['check_state']) && $params['check_state'] != 'undefined') {
-                    $condition .= db_quote(" AND c.state_code = ?s", $params['check_state']);
-                }
-            }
+//             if (!empty($params['check_country']) && $params['check_country'] != 'undefined') {
+//                 $condition .= db_quote(" AND c.country_code = ?s", $params['check_country']);
+// 
+//                 if (!empty($params['check_state']) && $params['check_state'] != 'undefined') {
+//                     $condition .= db_quote(" AND c.state_code = ?s", $params['check_state']);
+//                 }
+//             }
 
             $cities = db_get_array("SELECT d.city, c.city_code FROM $table_description as d ?p WHERE city LIKE ?l AND lang_code = ?s  ?p  LIMIT ?i", $join , $search , $lang_code, $condition, 10);
 

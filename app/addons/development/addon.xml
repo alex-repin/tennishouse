@@ -383,6 +383,9 @@
         <item>
             ALTER TABLE `cscart_products` ADD `likes` SMALLINT UNSIGNED NOT NULL DEFAULT '0';
         </item>
+        <item>
+            ALTER TABLE `cscart_user_profiles` ADD `b_city_kladr_id` BIGINT UNSIGNED NOT NULL AFTER `profile_name`, ADD `s_city_kladr_id` BIGINT UNSIGNED NOT NULL AFTER `b_city_kladr_id`;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -811,5 +814,10 @@
         <item lang="ru" id="complete_rf_again">Пройти тест заново</item>
         <item lang="ru" id="racket_finder_meta">Как подобрать теннисную ракетку. Выбрать ракетку для большого тенниса ребенку. Как правильно подобрать ракетку для взрослого.</item>
         <item lang="ru" id="full_age">полных лет</item>
+        <item lang="ru" id="product_shipping_estimation_text"><![CDATA[Время доставки до города <b>[city]</b> составляет <b>[ship_time]</b> раб. дн.]]></item>
+        <item lang="ru" id="your_city">Ваш город: [city]</item>
+        <item lang="ru" id="enter_another_city">Или укажите в поле</item>
+        <item lang="ru" id="select_other_city">Выберите другой населенный пункт</item>
+        <item lang="ru" id="racket_finder_page_title">Подобрать ракетку для большого тенниса - Тест TennisHouse</item>
     </language_variables>
 </addon>

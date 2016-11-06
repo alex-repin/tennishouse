@@ -172,7 +172,7 @@
                                     var that = $(this),
                                             li = $("<li>"),
                                             child;
-                                    if (that.attr('id') != '') {
+                                    if (typeof(that.attr('id')) != 'undefined') {
                                         li.attr('id', 'opt_' + that.attr('id'));
                                     }
                                     if (that.is(":selected")) {
@@ -184,7 +184,7 @@
                                     }
                                     if (!that.is(":disabled") && !disabled) {
                                             child = $("<div>", {
-                                                    "id": that.val()
+                                                    "id": inst.uid + '_' + that.val()
                                             }).text(that.text()).bind("click.sb", function (e) {
                                                     if (e && e.preventDefault) {
                                                             e.preventDefault();
@@ -193,7 +193,8 @@
                                                             $this = $(this),
                                                             uid = t.attr("id").split("_")[1];
                                                     if ($this.attr("id")) {
-                                                        self._changeSelectbox(target, $this.attr("id"), $this.text());
+                                                        aid = $this.attr("id").split("_")[1];
+                                                        self._changeSelectbox(target, aid, $this.text());
                                                         self._closeSelectbox(target);
                                                     }
                                             }).bind("mouseover.sb", function () {

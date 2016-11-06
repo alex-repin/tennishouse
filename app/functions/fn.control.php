@@ -518,7 +518,7 @@ function fn_dispatch($controller = '', $mode = '', $action = '', $dispatch_extra
         include_once DIR_ROOT . "/xhprof/xhprof_lib/utils/xhprof_runs.php";
 
         $xhprof_runs = new XHProfRuns_Default();
-        $run_id = $xhprof_runs->save_run($xhprof_data, "xhprof_foo");
+        $run_id = $xhprof_runs->save_run($xhprof_data, "TennisHouse");
 
         echo "<!--\n" . "/xhprof/xhprof_html/index.php?run=$run_id&source=xhprof_foo\n" . "--!>\n";
     }

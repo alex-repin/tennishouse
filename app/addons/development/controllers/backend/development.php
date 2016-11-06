@@ -832,6 +832,16 @@ if ($mode == 'calculate_balance') {
         db_query("UPDATE ?:products SET likes = ?i WHERE product_id = ?i", $dt['likes'], $prod_id);
     }
     exit;
+} elseif ($mode == 'cities') {
+
+    $data = array(
+        'token' => '5817c1e90a69de97408b4569',
+        'contentType' => 'city'
+    );
+    $response = Http::get('http://kladr-api.ru/api.php', $data);
+    fn_print_die($response);
+    
+    exit;
 }
 
 function fn_normalize_string($string)

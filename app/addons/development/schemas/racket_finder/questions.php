@@ -69,7 +69,8 @@ $schema = array(
             'high' => __('power_high'),
         ),
         'conditions' => array(
-            'age' => 'fn_is_adult'
+            'age' => 'fn_is_adult',
+            'height' => 'fn_is_tall'
         )
     ),
     'expectations' => array(

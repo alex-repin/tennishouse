@@ -155,3 +155,76 @@ define('ABOUT_US_PAGE_ID', 2);
 define('SIZE_CHART_TAB_ID', 10);
 
 define('REVIEWS_THREAD_ID', 259);
+
+define('COURIER_SH_ID', 10);
+define('SDEK_STOCK_SH_ID', 18);
+define('SDEK_DOOR_SH_ID', 13);
+define('RU_POST_SH_ID', 9);
+define('EMS_SH_ID', 7);
+
+define('BIG_CITIES', serialize(array(
+    array(
+        'city' => 'Москва',
+        'state' => 'MOW'
+    ),
+    array(
+        'city' => 'Санкт-Петербург',
+        'state' => 'SPE'
+    ),
+    array(
+        'city' => 'Новосибирск',
+        'state' => 'NVS'
+    ),
+    array(
+        'city' => 'Екатеринбург',
+        'state' => 'SVE'
+    ),
+    array(
+        'city' => 'Нижний Новгород',
+        'state' => 'NIZ'
+    ),
+    array(
+        'city' => 'Казань',
+        'state' => 'TA'
+    ),
+    array(
+        'city' => 'Челябинск',
+        'state' => 'CHE'
+    ),
+    array(
+        'city' => 'Омск',
+        'state' => 'OMS'
+    ),
+    array(
+        'city' => 'Самара',
+        'state' => 'SAM'
+    ),
+    array(
+        'city' => 'Ростов-на-Дону',
+        'state' => 'ROS'
+    ),
+    array(
+        'city' => 'Уфа',
+        'state' => 'BA'
+    ),
+    array(
+        'city' => 'Красноярск',
+        'state' => 'KIA'
+    ),
+    array(
+        'city' => 'Пермь',
+        'state' => 'PER'
+    ),
+    array(
+        'city' => 'Воронеж',
+        'state' => 'VOR'
+    ),
+    array(
+        'city' => 'Волгоград',
+        'state' => 'VGG'
+    ),
+    array(
+        'city' => 'Краснодар',
+        'state' => 'KDA'
+    ),
+)));
