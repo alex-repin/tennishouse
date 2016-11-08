@@ -36,6 +36,11 @@ class Storage
             throw new DeveloperException('Storage: undefined storage backend');
         }
 
+        // FIXME: backward compatibility for "statics"
+        if ($type == 'statics') {
+            $type = 'assets';
+        }
+
         if (!Registry::get('config.storage.' . $type)) {
             throw new DeveloperException('Storage: undefined storage type - ' . $type);
         }

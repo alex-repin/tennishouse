@@ -176,6 +176,7 @@ $config['dir'] = array(
     'cache_registry' => DIR_ROOT . '/var/cache/registry/',
     'files' => DIR_ROOT . '/var/files/',
     'cache_misc' => DIR_ROOT . '/var/cache/misc/',
+    'cache_static' => DIR_ROOT . '/var/cache/static/',
     'layouts' => DIR_ROOT . '/var/layouts/',
     'snapshots' => DIR_ROOT . '/var/snapshots/',
     'lang_packs' => DIR_ROOT . '/var/langs/',

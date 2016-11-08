@@ -18,49 +18,6 @@ use Tygh\Registry;
 
 class Less extends \lessc
 {
-    protected $overrides = array();
-
-    /**
-     * Override default lessc method
-     */
-    public function injectVariables($args)
-    {
-        $this->pushEnv();
-        $parser = new \lessc_parser($this, __METHOD__);
-        foreach ($args as $name => $strValue) {
-            if ($name{0} != '@') $name = '@'.$name;
-            $parser->count = 0;
-            $parser->buffer = (string) $strValue;
-            if (!$parser->propertyValue($value)) {
-                throw new \Exception("failed to parse passed in variable $name: $strValue");
-            }
-
-            $this->overrides[$name] = $value;
-        }
-    }
-
-    /**
-     * Override default lessc method
-     */
-    public function extractVars($less)
-    {
-        $vars = array();
-        $this->compile($less);
-
-        if (!empty($this->parser->env->props)) {
-            foreach ($this->parser->env->props as $prop) {
-                if ($prop[0] == 'assign') {
-                    list(, $var_name, $value) = $prop;
-
-                    $var_name = str_replace('@', '', $var_name);
-                    $vars[$var_name] = $this->_parseVarValue($value);
-                }
-            }
-        }
-
-        return $vars;
-    }
-
     /**
      * Compile LESS to CSS, appending data from styles and parsing urls
      * @param  string $less_output    LESS code
@@ -74,7 +31,7 @@ class Less extends \lessc
     {
         // Apply all Custom styles styles
         if ($area == 'C') {
-            $less_output .= Styles::factory(fn_get_theme_path('[theme]', $area))->getLess($data);
+            $less_output .= "\n" . Styles::factory(fn_get_theme_path('[theme]', $area))->getLess($data);
 
             // Inject Bootstrap fluid variables
             $less_output .= self::getLayoutStyleVariables();
@@ -84,21 +41,28 @@ class Less extends \lessc
             $less_output = $prepend_prefix . " {\n" . $less_output . "\n}";
         }
 
-        $output = $this->parse($less_output);
+        if (false) { // is not implemented completely
+            $output = self::parseWithNodeJs($less_output, $area);
+        } else {
+            $output = !empty($less_output) ? $this->parse($less_output) : '';
+        }
 
         // Remove "body" definition
         if (!empty($prepend_prefix)) {
             $output = str_replace($prepend_prefix . ' body', $prepend_prefix, $output);
         }
 
-        return Less::parseUrls($output, $dirname, fn_get_theme_path('[themes]/[theme]/media'));
+        // Quote font family names
+        $output = self::normalizeFontFamilies($output);
+
+        return Less::parseUrls($output, $dirname, fn_get_theme_path('[themes]/[theme]/media', $area));
 
     }
 
     /**
      * Gets data from layout to pass it to LESS
      * @param  string $layout_data layout data
-     * @return string LESS code
+     * @return string LESS markup
      */
     public static function getLayoutStyleVariables($layout_data = array())
     {
@@ -106,28 +70,27 @@ class Less extends \lessc
             $layout_data = Registry::get('runtime.layout');
         }
 
-        $variables = '';
+        // default values
+        $variables = array(
+            'gridColumns' => '16',
+            'fluidContainerMaxWidth' => '960px',
+            'fluidContainerMinWidth' => '760px'
+        );
 
         if ($layout_data['layout_width'] == 'fluid') {
-            $variables = self::arrayToLessVars(array(
-                'fluidContainerMinWidth' => $layout_data['min_width'] . 'px',
-                'fluidContainerMaxWidth' => $layout_data['max_width'] . 'px',
-            ));
+            $variables['fluidContainerMinWidth'] = $layout_data['min_width'] . 'px';
+            $variables['fluidContainerMaxWidth'] = $layout_data['max_width'] . 'px';
 
         } elseif ($layout_data['layout_width'] == 'full_width') {
-            $variables = self::arrayToLessVars(array(
-                'fluidContainerMinWidth' => 'auto',
-                'fluidContainerMaxWidth' => 'auto',
-            ));
+            $variables['fluidContainerMinWidth'] = 'auto';
+            $variables['fluidContainerMaxWidth'] = 'auto';
         }
 
         if (!empty($layout_data['width'])) {
-            $variables .= self::arrayToLessVars(array(
-                'gridColumns' => $layout_data['width'],
-            ));
+            $variables['gridColumns'] = $layout_data['width'];
         }
 
-        return $variables;
+        return self::arrayToLessVars($variables);
     }
 
     /**
@@ -155,51 +118,41 @@ class Less extends \lessc
      */
     public static function parseUrls($content, $from_path, $to_path)
     {
-        if (preg_match_all("/url\((?![\"]?data\:).*?\)/", $content, $m)) {
-            $relative_path = self::_relativePath($from_path, $to_path);
+        if (preg_match_all("/url\((?![\"']?data\:).*?\)/", $content, $m)) {
+            $relative_path = self::relativePath($from_path, $to_path);
 
             foreach ($m[0] as $match) {
-                if (strpos($match, '?') === false) { // if ? is added - it means that this url is already parsed
-                    $url = trim(str_replace('url(', '', $match), "'()\"");
-                    if (strpos($url, '://') !== false || strpos($url, '//') === 0) { // skip absolute URLs
-                        continue;
-                    }
+                $url = trim(str_replace('url(', '', $match), "'()\"");
 
-                    $url = $relative_path . '/' . preg_replace("/^(\.\.\/)+media\//", '', $url);
-
-                    $content = str_replace($match, "url('" . $url . '?' . TIME . "')", $content);
+                // Workaround for parse_url bug fixed in PHP 5.4.7
+                if (strpos($url, '//') === 0) {
+                    continue;
                 }
+
+                $parsed_url = parse_url($url);
+
+                if ($parsed_url === false
+                    || !isset($parsed_url['path']) // Incorrect URL
+                    || isset($parsed_url['host']) // Absolute URL
+                    || isset($parsed_url['query']) // URL contains query params
+                ) {
+                    continue;
+                }
+
+                $url = trim($relative_path, '/')
+                       . '/'
+                       . trim(preg_replace("/^(\.\.\/)+media\//", '', $parsed_url['path']), '/')
+                       . '?' . TIME;
+
+                if (isset($parsed_url['fragment'])) {
+                    $url .= '#' . $parsed_url['fragment'];
+                }
+
+                $content = str_replace($match, "url('{$url}')", $content);
             }
         }
 
         return $content;
-    }
-
-    /**
-     * Default method override
-     */
-    protected function get($name, $default=null)
-    {
-        $current = $this->env;
-
-        $isArguments = $name == $this->vPrefix . 'arguments';
-
-        while ($current) {
-            if ($isArguments && isset($current->arguments)) {
-                return array('list', ' ', $current->arguments);
-            }
-
-            if (isset($this->overrides[$name])) {
-                return $this->overrides[$name];
-            } elseif (isset($current->store[$name]))
-
-                return $current->store[$name];
-            else {
-                $current = isset($current->storeParent) ? $current->storeParent : $current->parent;
-            }
-        }
-
-        return $default;
     }
 
     /**
@@ -208,7 +161,7 @@ class Less extends \lessc
      * @param  string $to   to directory
      * @return string relative path
      */
-    private static function _relativePath($from, $to)
+    private static function relativePath($from, $to)
     {
         $from = fn_normalize_path($from);
         $to = fn_normalize_path($to);
@@ -225,11 +178,70 @@ class Less extends \lessc
     }
 
     /**
+     * Parse LESS markup and generate CSS with native nodejs parser
+     * @param  string $less_output LESS markup
+     * @param  string $area        current working area
+     * @return string generated CSS
+     */
+    private static function parseWithNodeJs($less_output, $area = AREA)
+    {
+        $output = '';
+        $cmd = 'lessc -';
+        $descriptorspec = array(
+           0 => array("pipe", "r"), // stdin is a pipe that the child will read from
+           1 => array("pipe", "w"), // stdout is a pipe that the child will write to
+           2 => array('pipe', 'w'), // stderr
+        );
+        chdir(fn_get_theme_path('[themes]/[theme]/css', $area));
+        $process = proc_open($cmd, $descriptorspec, $pipes);
+        if (is_resource($process)) {
+            fwrite($pipes[0], $less_output); // file_get_contents('php://stdin')
+            fclose($pipes[0]);
+
+            $output = stream_get_contents($pipes[1]);
+            $errors = stream_get_contents($pipes[2]);
+
+            if (!empty($errors)) {
+                fn_print_die($errors);
+            }
+
+            fclose($pipes[1]);
+            $return_value = proc_close($process);
+        }
+
+        return $output;
+    }
+
+    /**
+     * Extracts variables from LESS markup
+     * @param  string $less LESS markup
+     * @return array  variables list
+     */
+    public function extractVars($less)
+    {
+        $vars = array();
+        $this->compile($less);
+
+        if (!empty($this->parser->env->props)) {
+            foreach ($this->parser->env->props as $prop) {
+                if ($prop[0] == 'assign') {
+                    list(, $var_name, $value) = $prop;
+
+                    $var_name = str_replace('@', '', $var_name);
+                    $vars[$var_name] = $this->parseVarValue($value);
+                }
+            }
+        }
+
+        return $vars;
+    }
+
+    /**
      * Gets LESS variable value
      * @param  array  $value LESS variabe
      * @return string value
      */
-    private function _parseVarValue($value)
+    private function parseVarValue($value)
     {
         $result = '';
 
@@ -243,7 +255,7 @@ class Less extends \lessc
                 $delimiter = $value[1];
 
                 foreach ($value[2] as $iteration => $_val) {
-                    $result .= $this->_parseVarValue($_val);
+                    $result .= $this->parseVarValue($_val);
 
                     if (++$iteration < count($value[2])) {
                         $result .= $delimiter;
@@ -270,7 +282,7 @@ class Less extends \lessc
 
             case 'function':
                 $function_name = $value[1];
-                $result = $function_name . '(' . $this->_parseVarValue($value[2]) . ')';
+                $result = $function_name . '(' . $this->parseVarValue($value[2]) . ')';
 
                 break;
             case 'escape':
@@ -285,5 +297,110 @@ class Less extends \lessc
         $result = preg_replace('/,\s+/', ',', $result);
 
         return $result;
+    }
+
+    /*
+     * Adds caching to default lessc method
+     */
+    protected function tryImport($importPath, $parentBlock, $out)
+    {
+        if ($importPath[0] == "function" && $importPath[1] == "url") {
+            $importPath = $this->flattenList($importPath[2]);
+        }
+
+        $str = $this->coerceString($importPath);
+        if ($str === null) return false;
+
+        $url = $this->compileValue($this->lib_e($str));
+
+        // don't import if it ends in css
+        if (substr_compare($url, '.css', -4, 4) === 0) return false;
+
+        $realPath = $this->findImport($url);
+
+        if ($realPath === null) return false;
+
+        if ($this->importDisabled) {
+            return array(false, "/* import disabled */");
+        }
+
+        if (isset($this->allParsedFiles[realpath($realPath)])) {
+            return array(false, null);
+        }
+
+        $this->addParsedFile($realPath);
+
+        $hash = md5($realPath);
+        $cache_file = Registry::get('config.dir.cache_static') . '/less/' . $hash;
+        $parser = $this->makeParser($realPath);
+        $root = null;
+        if (file_exists($cache_file) && filemtime($realPath) < filemtime($cache_file)) {
+            $root = unserialize(fn_get_contents($cache_file));
+        }
+
+        if (!is_object($root)) {
+            $root = $parser->parse(fn_get_contents($realPath));
+            fn_mkdir(dirname($cache_file));
+            fn_put_contents($cache_file, serialize($root));
+        }
+
+        // set the parents of all the block props
+        foreach ($root->props as $prop) {
+            if ($prop[0] == "block") {
+                $prop[1]->parent = $parentBlock;
+            }
+        }
+
+        // copy mixins into scope, set their parents
+        // bring blocks from import into current block
+        // TODO: need to mark the source parser these came from this file
+        foreach ($root->children as $childName => $child) {
+            if (isset($parentBlock->children[$childName])) {
+                $parentBlock->children[$childName] = array_merge(
+                    $parentBlock->children[$childName],
+                    $child);
+            } else {
+                $parentBlock->children[$childName] = $child;
+            }
+        }
+
+        $pi = pathinfo($realPath);
+        $dir = $pi["dirname"];
+
+        list($top, $bottom) = $this->sortProps($root->props, true);
+        $this->compileImportedProps($top, $parentBlock, $out, $parser, $dir);
+
+        return array(true, $bottom, $parser, $dir);
+    }
+
+    /**
+     * Quote font family names.
+     * The functions processes compiled CSS content before saving the content on disk.
+     *
+     * @param  string $data Compiled CSS content
+     * @return string Compiled CSS content with font family names quoted where necessary
+     */
+    public static function normalizeFontFamilies($data)
+    {
+        if (preg_match_all('/font-family: ?(.+?);/', $data, $matches)) {
+            // get all unique definitions
+            $matches = array_unique($matches[0]);
+            foreach ($matches as $css_property) {
+                list($property_name, $property_value) = explode(':', $css_property);
+                $property_value = str_replace('!important', '', $property_value, $is_important);
+                $property_value = explode(',', $property_value);
+                // quote font families
+                $property_value = array_map(function($family) {
+                    $family = trim($family, ' ;\'"');
+                    // do not wrap single-word families and 'inherit' value
+                    return strpos($family, ' ') ? "'{$family}'" : $family;
+                }, $property_value);
+                $property_value = implode(',', $property_value);
+                $is_important = $is_important ? ' !important' : '';
+                $data = str_replace($css_property, "{$property_name}:{$property_value}{$is_important};", $data);
+            }
+        }
+
+        return $data;
     }
 }

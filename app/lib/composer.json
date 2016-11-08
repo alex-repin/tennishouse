@@ -8,6 +8,7 @@
     ],
     "require": {
         "educoder/pest": "1.0.0",
+        "pimple/pimple": "3.0.*",
         "monolog/monolog": "dev-master",
         "mobiledetect/mobiledetectlib": "^2.8"
     },

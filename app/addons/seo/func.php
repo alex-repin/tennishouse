@@ -791,7 +791,7 @@ function fn_seo_get_name($object_type, $object_id = 0, $dispatch = '', $company_
 
     $company_id_condition = '';
 
-    if (fn_allowed_for('ULTIMATE')) {
+//     if (fn_allowed_for('ULTIMATE')) {
         if ($company_id !== null) {
             $company_id_condition = fn_get_seo_company_condition("?:seo_names.company_id", $object_type, $company_id);
         } else {
@@ -800,7 +800,7 @@ function fn_seo_get_name($object_type, $object_id = 0, $dispatch = '', $company_
                 $company_id = Registry::get('runtime.company_id');
             }
         }
-    }
+//     }
 
     if ($company_id == null) {
         $company_id = '';
@@ -981,21 +981,22 @@ function fn_seo_url_post(&$url, &$area, &$original_url, &$prefix, &$company_id_i
     $d = SEO_DELIMITER;
     $parsed_query = array();
     $parsed_url = parse_url($url);
+    $config = Registry::get('config');
 
-    $index_script = Registry::get('config.customer_index');
+    $index_script = $config['customer_index'];
 
     $settings_company_id = empty($company_id_in_url) ? 0 : $company_id_in_url;
 
-    $http_path = Registry::get('config.http_path');
-    $https_path = Registry::get('config.https_path');
+    $http_path = $config['http_path'];
+    $https_path = $config['https_path'];
 
-    if (fn_allowed_for('ULTIMATE')) {
+//     if (fn_allowed_for('ULTIMATE')) {
         $urls = fn_get_storefront_urls($settings_company_id);
         if (!empty($urls)) {
             $http_path = $urls['http_path'];
             $https_path = $urls['https_path'];
         }
-    }
+//     }
 
     $seo_settings = fn_get_seo_settings($settings_company_id);
 
@@ -1011,8 +1012,8 @@ function fn_seo_url_post(&$url, &$area, &$original_url, &$prefix, &$company_id_i
             return $url;
         }
 
-        if (!empty($parsed_url['host']) && !in_array($parsed_url['host'], array(Registry::get('config.http_host'),  Registry::get('config.https_host')))) {
-            if (fn_allowed_for('ULTIMATE') && AREA == 'A') {
+        if (!empty($parsed_url['host']) && !in_array($parsed_url['host'], array($config['http_host'],  $config['https_host']))) {
+            if (/*fn_allowed_for('ULTIMATE') && */AREA == 'A') {
                 $storefront_exist = db_get_row('SELECT company_id, storefront FROM ?:companies WHERE storefront = ?s OR secure_storefront = ?s', $parsed_url['host'], $parsed_url['host']);
                 if (empty($storefront_exist)) {
                     return $url;  // This is external link
@@ -1025,7 +1026,7 @@ function fn_seo_url_post(&$url, &$area, &$original_url, &$prefix, &$company_id_i
             return $url;  // This is external link
 
         } else {
-            if (rtrim($url, '/') == Registry::get('config.http_location') || rtrim($url, '/') == Registry::get('config.https_location')) {
+            if (rtrim($url, '/') == $config['http_location'] || rtrim($url, '/') == $config['https_location']) {
                 $url = rtrim($url, '/') . "/" . $index_script;
                 $parsed_url['path'] = ((!empty($parsed_url['path'])) ? rtrim($parsed_url['path'], '/') : '') . "/" . $index_script;
             }
@@ -1036,14 +1037,14 @@ function fn_seo_url_post(&$url, &$area, &$original_url, &$prefix, &$company_id_i
         parse_str($parsed_url['query'], $parsed_query);
     }
 
-    if (!fn_allowed_for('ULTIMATE:FREE')) {
+//     if (!fn_allowed_for('ULTIMATE:FREE')) {
         if (!empty($parsed_query['lc'])) {
             //if localization parameter is exist we will get language code for this localization.
             $loc_languages = db_get_hash_single_array("SELECT a.lang_code, a.name FROM ?:languages as a LEFT JOIN ?:localization_elements as b ON b.element_type = 'L' AND b.element = a.lang_code WHERE b.localization_id = ?i ORDER BY position", array('lang_code', 'name'), $parsed_query['lc']);
             $new_lang_code = (!empty($loc_languages)) ? key($loc_languages) : '';
             $lang_code = (!empty($new_lang_code)) ? $new_lang_code : $lang_code;
         }
-    }
+//     }
 
     if (!empty($parsed_url['path']) && empty($parsed_url['query']) && $parsed_url['path'] == $index_script) {
         $url = $current_path . (($seo_settings['seo_language'] == 'Y') ? $lang_code . '/' : '');

@@ -33,15 +33,15 @@ class SeoCache {
      */
     public static function set($object_type, $object_id, $object_data, $company_id, $lang_code, $area = AREA)
     {
-        if (fn_allowed_for('ULTIMATE')) {
+//         if (fn_allowed_for('ULTIMATE')) {
             if (empty($company_id)) {
                 $company_id = Registry::get('runtime.company_id');
             }
-        }
+//         }
 
-        if (fn_allowed_for('MULTIVENDOR')) {
-            $company_id = 0;
-        }
+//         if (fn_allowed_for('MULTIVENDOR')) {
+//             $company_id = 0;
+//         }
 
         $key = $lang_code . '_' . $object_id . '_' . $object_type . '_' . $company_id;
 
@@ -76,9 +76,9 @@ class SeoCache {
      */
     public static function get($name, $object_type, $object_id, $company_id, $lang_code, $area = AREA)
     {
-        if (fn_allowed_for('MULTIVENDOR')) {
-            $company_id = 0;
-        }
+//         if (fn_allowed_for('MULTIVENDOR')) {
+//             $company_id = 0;
+//         }
 
         $key = $lang_code . '_' . $object_id . '_' . $object_type . '_' . $company_id;
 

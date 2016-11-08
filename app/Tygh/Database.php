@@ -110,8 +110,9 @@ class Database
     {
         $_query = self::process($query, array_slice(func_get_args(), 1), true);
         $hash = Memcache::instance()->call('validateSql',  $_query );
-        if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
-            $result = Memcache::instance()->call('get', $hash, 'D');
+        $res = Memcache::instance()->call('get', $hash, 'D');
+        if ( !empty($hash) && $res !== false) {
+            $result = $res;
         } else {
             if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
 
@@ -148,8 +149,9 @@ class Database
 
         $_query = self::process($query, array_slice($args, 1), true);
         $hash = Memcache::instance()->call('validateSql', $_query);
-        if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
-            $result = Memcache::instance()->call('get', $hash, 'D');
+        $res = Memcache::instance()->call('get', $hash, 'D');
+        if ( !empty($hash) && $res !== false) {
+            $result = $res;
         } else {
             if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
                 while ($arr = self::$_db->fetchRow($_result)) {
@@ -183,8 +185,9 @@ class Database
     {
         $_query = self::process($query, array_slice(func_get_args(), 1), true);
         $hash = Memcache::instance()->call('validateSql', $_query);
-        if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
-            $result = Memcache::instance()->call('get', $hash, 'D');
+        $res = Memcache::instance()->call('get', $hash, 'D');
+        if ( !empty($hash) && $res !== false) {
+            $result = $res;
         } else {
             if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
 
@@ -216,8 +219,9 @@ class Database
     {
         $_query = self::process($query, array_slice(func_get_args(), 1), true);
         $hash = Memcache::instance()->call('validateSql', $_query . 'indexed');
-        if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
-            $result = Memcache::instance()->call('get', $hash, 'D');
+        $res = Memcache::instance()->call('get', $hash, 'D');
+        if ( !empty($hash) && $res !== false) {
+            $result = $res;
         } else {
             if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
 
@@ -251,8 +255,9 @@ class Database
 
         $_query = self::process($query, array_slice(func_get_args(), 1), true);
         $hash = Memcache::instance()->call('validateSql', $_query . 'indexed');
-        if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
-            $result = Memcache::instance()->call('get', $hash, 'D');
+        $res = Memcache::instance()->call('get', $hash, 'D');
+        if ( !empty($hash) && $res !== false) {
+            $result = $res;
         } else {
             if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
                 while ($arr = self::$_db->fetchRow($_result, 'indexed')) {
@@ -294,8 +299,9 @@ class Database
 
         $_query = self::process($query, array_slice($args, 1), true);
         $hash = Memcache::instance()->call('validateSql', $_query);
-        if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
-            $result = Memcache::instance()->call('get', $hash, 'D');
+        $res = Memcache::instance()->call('get', $hash, 'D');
+        if ( !empty($hash) && $res !== false) {
+            $result = $res;
         } else {
             if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
                 while ($arr = self::$_db->fetchRow($_result)) {
@@ -338,8 +344,9 @@ class Database
 
         $_query = self::process($query, array_slice($args, 1), true);
         $hash = Memcache::instance()->call('validateSql', $_query);
-        if ( !empty($hash) && Memcache::instance()->call('get', $hash, 'D') !== false) {
-            $result = Memcache::instance()->call('get', $hash, 'D');
+        $res = Memcache::instance()->call('get', $hash, 'D');
+        if ( !empty($hash) && $res !== false) {
+            $result = $res;
         } else {
             if ($_result = call_user_func_array(array('self', 'query'), array($_query))) {
                 while ($arr = self::$_db->fetchRow($_result)) {

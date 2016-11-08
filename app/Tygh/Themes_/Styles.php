@@ -32,11 +32,8 @@ class Styles
     private $styles_path = '';
     private $schema = array();
     private $gfonts_tag = 'GFONTS';
-    private $google_fonts = array();
 
-    private $company_id = 0;
-
-    public function __construct($theme_name, $company_id = null)
+    public function __construct($theme_name)
     {
         $this->theme_name = $theme_name;
         $this->styles_path = fn_get_theme_path('[themes]/' . $theme_name . '/styles/', 'C');
@@ -52,8 +49,6 @@ class Styles
         } else {
             $this->schema = array();
         }
-
-        $this->company_id = is_null($company_id) ? Registry::get('runtime.company_id') : $company_id;
     }
 
     /**
@@ -105,7 +100,6 @@ class Styles
         $style = array();
         $data = array();
         $parsed = array();
-        $custom_fonts = array();
         $less_content = fn_get_contents($this->getStyleFile($style_id));
 
         /**
@@ -122,7 +116,6 @@ class Styles
                 $less = new Less();
                 $data = $less->extractVars($less_content);
                 $parsed = $this->cssToUrl($data);
-                $custom_fonts = $this->getCustomFonts($less_content);
             }
 
             $style = array(
@@ -133,7 +126,6 @@ class Styles
                 'name' => $style_id,
                 'is_default' => isset($manifest['default'][$style_id]),
                 'parsed' => $parsed,
-                'custom_fonts' => $custom_fonts,
                 'image' => $this->getStyleImage($style_id),
             );
 
@@ -144,16 +136,6 @@ class Styles
                 $style['custom_css'] = $custom_css;
             }
         }
-
-        /**
-         * Modifies style data (post-processing)
-         *
-         * @param object  $this Styles object
-         * @param string  $style_id style ID
-         * @param array   $params style retrieval params
-         * @param array   $style style data
-         */
-        fn_set_hook('styles_get_post', $this, $style_id, $params, $style);
 
         return $style;
     }
@@ -181,7 +163,7 @@ class Styles
             $less_var = Less::arrayToLessVars(array($var_name => $value));
 
             if (preg_match('/@' . $var_name . ':.*?;/m', $less)) {
-                $less = preg_replace('/(*ANYCRLF)@' . $var_name . ':.*?;$/m', str_replace("\n", '', $less_var), $less);
+                $less = preg_replace('/@' . $var_name . ':.*?;$/m', str_replace("\n", '', $less_var), $less);
             } else {
                 $less .= $less_var;
             }
@@ -207,14 +189,6 @@ class Styles
             fn_rm($this->getStyleFile($style_id, 'css')); // remove custom css
             fn_rm($this->getStyleFile($style_id, 'png')); // remove style image
             fn_rm(Patterns::instance($this->params)->getPath($style_id));
-
-            fn_delete_logo('theme', null, $style_id);
-            fn_delete_logo('mail', null, $style_id);
-            fn_delete_logo('favicon', null, $style_id);
-
-            fn_rm(fn_get_theme_path('[themes]/[theme]/media/images/logos/' . $style_id, 'C'));
-
-            fn_set_hook('delete_style_post', $style_id);
 
             return true;
         }
@@ -313,50 +287,17 @@ class Styles
     }
 
     /**
-     * Changes style ID of specified layout.
+     * Change style id for specified layout
      *
-     * @param int    $layout_id Layout ID
-     * @param string $style_id  New style ID (e.g. "satori", "ocean", etc.)
-     *
-     * @return true Whether style was changed successfully
+     * @param  int    $layout_id Layout ID
+     * @param  string $style_id  Style name (Like: "satori", "ocean", etc)
+     * @return true   if updated
      */
     public function setStyle($layout_id, $style_id)
     {
-        $result = db_query(
-            'UPDATE ?:bm_layouts SET style_id = ?s WHERE layout_id = ?i AND theme_name = ?s',
-            $style_id, $layout_id, $this->theme_name
-        );
-
-        $this->createMissedLogoTypesForLayout($layout_id, $style_id);
+        $result = db_query('UPDATE ?:bm_layouts SET style_id = ?s WHERE layout_id = ?i AND theme_name = ?s', $style_id, $layout_id, $this->theme_name);
 
         return $result;
-    }
-
-    /**
-     * Creates logos of missing logo types for given layout and style.
-     *
-     * @param int    $layout_id Layout ID
-     * @param string $style_id  Style ID
-     */
-    public function createMissedLogoTypesForLayout($layout_id, $style_id)
-    {
-        if ((fn_allowed_for('ULTIMATE') && !empty($this->company_id) || fn_allowed_for('MULTIVENDOR'))
-            && !empty($layout_id)
-            && !empty($style_id)
-            && !empty($this->theme_name)
-        ) {
-            $logos = fn_get_logos($this->company_id, $layout_id, $style_id);
-            $logo_types = fn_get_logo_types(false);
-
-            $missed_logo_types = array_diff_key($logo_types, $logos);
-
-            if (!empty($missed_logo_types)) {
-                fn_create_theme_logos_by_layout_id(
-                    $this->theme_name, $layout_id, $this->company_id, false, $style_id,
-                    array_keys($missed_logo_types)
-                );
-            }
-        }
     }
 
     /**
@@ -401,19 +342,6 @@ class Styles
                 $content = fn_get_contents($style_file_to);
                 $content = str_replace('/patterns/' . $from . '/', '/patterns/' . $to . '/', $content);
                 fn_put_contents($style_file_to, $content);
-
-                // Clone logos for new style
-                $logos = db_get_array('SELECT * FROM ?:logos WHERE style_id = ?s AND company_id = ?i', $from, $this->company_id);
-
-                foreach ($logos as $logo) {
-                    $object_id = fn_update_logo(array(
-                        'type' => $logo['type'],
-                        'layout_id' => $logo['layout_id'],
-                        'style_id' => $to,
-                    ), $this->company_id);
-
-                    fn_clone_image_pairs($object_id, $logo['logo_id'], 'logos');
-                }
 
                 return true;
             }
@@ -517,20 +445,17 @@ class Styles
         $less = preg_replace("#/\*{$this->gfonts_tag}\*/(.*?)/\*/{$this->gfonts_tag}\*/#s", '', $less);
 
         foreach ($this->schema['fonts']['fields'] as $field => $data) {
-            $font_name = trim($style_data[$field], "'\"");
-            if (empty($this->schema['fonts']['families'][$font_name])) {
+            if (empty($this->schema['fonts']['families'][$style_data[$field]])) {
                 // Google font!
-                if (empty($content[$font_name])) {
-                    list($family) = explode(',', $font_name);
-                    $font_data = $this->getGoogleFontData($family);
+                if (empty($content[$style_data[$field]])) {
 
                     // Set user agent manually to get IE-specific code
-                    $css = Http::get('http://fonts.googleapis.com/css?family=' . $family . (!empty($font_data['weight']) ? ':' . $font_data['weight'] : ''), array(), array(
+                    $css = Http::get('http://fonts.googleapis.com/css?family=' . $style_data[$field] . '&subset=latin,cyrillic', array(), array(
                         'headers' => array('User-Agent: Mozilla/5.0 (MSIE 9.0; Windows NT 6.1; Trident/5.0)')
                     ));
 
-                    if (Http::getStatus() == Http::STATUS_OK && !empty($css)) {
-                        $content[$font_name] = str_replace('http://', '//', $css);
+                    if (!empty($css)) {
+                        $content[$style_data[$field]] = str_replace('http://', '//', $css);
                     }
                 }
             }
@@ -541,23 +466,6 @@ class Styles
         }
 
         return $less;
-    }
-
-    /**
-     * Get custom fonts from LESS file
-     * @param  string $less LESS content
-     * @return array  custom fonts
-     */
-    public function getCustomFonts($less)
-    {
-        $families = array();
-        if (preg_match("#/\*{$this->gfonts_tag}\*/(.*?)/\*/{$this->gfonts_tag}\*/#s", $less, $matches)) {
-            if (preg_match_all('/font-family: \'([\w\-\_ ]+)\';/', $matches[1], $fonts)) {
-                $families = $fonts[1];
-            }
-        }
-
-        return $families;
     }
 
     /**
@@ -643,34 +551,6 @@ class Styles
         return $style_data;
     }
 
-    /**
-     * Gets google font properties
-     * @param  string $font font name
-     * @return array  font properties
-     */
-    private function getGoogleFontData($font)
-    {
-        if (empty($this->google_fonts)) {
-            $fonts = fn_get_contents(Registry::get('config.dir.root') . '/js/tygh/google_fonts_list.js');
-            $this->google_fonts = json_decode($fonts, true);
-        }
-
-        foreach ($this->google_fonts as $sections => $fonts) {
-            foreach ($fonts as $gfont) {
-                if ($gfont['name'] == $font) {
-                    return $gfont;
-                }
-            }
-        }
-
-        return array();
-    }
-
-    /**
-     * Gets a style preview image
-     * @param  string $style_id style ID
-     * @return string preview image URL
-     */
     public function getStyleImage($style_id)
     {
         $url = '';

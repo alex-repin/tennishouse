@@ -16,7 +16,6 @@ namespace Tygh\Themes;
 use Tygh\Less;
 use Tygh\Registry;
 use Tygh\BlockManager\Layout;
-use Tygh\Settings;
 use Tygh\Storage;
 use Tygh\Themes\Styles;
 
@@ -304,23 +303,12 @@ class Themes
             }
         }
 
-        // Backward compatibility
+        // Backward compatibility: "Theme" parameter will be completely removed in 4.4 version
         if (isset($this->manifest['logo'])) {
             $this->manifest['theme'] = $this->manifest['logo'];
         }
-        if (empty($this->manifest['mail'])) {
-            $this->manifest['mail'] = $this->manifest['theme'];
-        }
 
         return $this->manifest;
-    }
-
-    /**
-     * @param array $manifest_data Manifest data to set
-     */
-    public function setManifest($manifest_data)
-    {
-        $this->manifest = $manifest_data;
     }
 
     /**
@@ -377,11 +365,6 @@ class Themes
         return $this->theme_path;
     }
 
-    /**
-     * @param string $theme_name
-     *
-     * @return self
-     */
     public static function factory($theme_name)
     {
         if (empty(self::$instances[$theme_name])) {
@@ -419,14 +402,14 @@ class Themes
      */
     protected function fetchFrontendStyles($params = array())
     {
-        fn_clear_cache('assets', 'design/');
+        fn_clear_cache('statics', 'design/');
 
         $style_id = Registry::get('runtime.layout.style_id');
         if (empty($style_id)) {
             Registry::set('runtime.layout.style_id', Styles::factory($this->theme_name)->getDefault());
         }
 
-        $view = \Tygh::$app['view'];
+        $view = Registry::get('view');
 
         $view->setArea('C');
 
@@ -462,7 +445,7 @@ class Themes
 
         Registry::set('runtime.layout', Layout::instance()->getDefault($this->theme_name));
 
-        $from_path = Storage::instance('assets')->getAbsolutePath($this->relative_path . '/css');
+        $from_path = Storage::instance('statics')->getAbsolutePath($this->relative_path . '/css');
 
         $compiled_less = $less->customCompile($less_output, $from_path, array(), '', 'C');
 
@@ -521,138 +504,4 @@ class Themes
         return $this->less;
     }
 
-    /**
-     * Gets theme setting overrides
-     *
-     * @param  string $lang_code 2-letter language code
-     * @return array  Theme setting overrides
-     */
-    public function getSettingsOverrides($lang_code = CART_LANGUAGE)
-    {
-        $manifest = &$this->getManifest();
-
-        $settings = array();
-
-        if (!empty($manifest['settings_overrides'])) {
-            $settings_overrides = $manifest['settings_overrides'];
-            foreach ($settings_overrides as $section_name => $setting_group) {
-                $section = Settings::instance()->getSectionByName($section_name);
-                if ($section) {
-                    $settings[$section_name] = array(
-                        'name' => Settings::instance()->getSectionName($section['section_id']),
-                        'settings' => array()
-                    );
-
-                    foreach ($setting_group as $setting_name => $setting_value) {
-                        $setting = Settings::instance()->getSettingDataByName($setting_name, null, $lang_code);
-                        if ($setting) {
-                            if (is_bool($setting_value)) {
-                                $setting_value = $setting_value ? 'Y' : 'N';
-                            }
-                            $settings[$section_name]['settings'][$setting_name] = array(
-                                'object_id' => $setting['object_id'],
-                                'name' => $setting['description'],
-                                'value' => $setting_value
-                            );
-                        }
-                    }
-                }
-            }
-        }
-
-        return $settings;
-    }
-
-    /**
-     * Overrides settings values from theme manifest file
-     *
-     * @param array $settings   Settings to set
-     * @param int   $company_id Company identifier
-     */
-    public function overrideSettings($settings = null, $company_id = null)
-    {
-        if (is_null($settings)) {
-            $settings = array();
-
-            $theme_settings = $this->getSettingsOverrides();
-            foreach ($theme_settings as $section_data) {
-                foreach ($section_data['settings'] as $setting) {
-                    $settings[$setting['object_id']] = $setting['value'];
-                }
-            }
-        }
-
-        foreach ($settings as $object_id => $value) {
-            Settings::instance($company_id)->updateValueById($object_id, $value, $company_id);
-        }
-    }
-
-    /**
-     * Creates a clone of the theme.
-     *
-     * @param string $clone_name Name of the new theme
-     * @param array  $clone_data Array with "title" and "description" fields for the new theme
-     * @param int    $company_id ID of the owner company for the new theme
-     *
-     * @return bool Whether cloning has succeed
-     */
-    public function cloneAs($clone_name, $clone_data = array(), $company_id = 0)
-    {
-        $cloned = new self($clone_name);
-
-        if (file_exists($cloned->getThemePath())) {
-            fn_set_notification('W', __('warning'), __('warning_theme_clone_dir_exists'));
-
-            return false;
-        }
-
-        if (!fn_install_theme_files($this->getThemeName(), $cloned->getThemeName(), false)) {
-            return false;
-        }
-
-        // Layouts that belong to the theme
-        $layouts = Layout::instance()->getList(array('theme_name' => $this->getThemeName()));
-
-        // Clone layouts one by one
-        foreach ($layouts as $layout) {
-            $src_layout_id = $layout['layout_id'];
-            unset($layout['layout_id']);
-            $layout['theme_name'] = $cloned->getThemeName();
-            $layout['from_layout_id'] = $src_layout_id;
-
-            $dst_layout_id = Layout::instance()->update($layout);
-
-            if (!empty($layout['is_default'])) {
-                // Re-init layout data
-                fn_init_layout(array('s_layout' => $dst_layout_id));
-            }
-        }
-
-        $manifest = $cloned->getManifest();
-        if (isset($clone_data['title'])) {
-            $manifest['title'] = $clone_data['title'];
-        }
-        if (isset($clone_data['description'])) {
-            $manifest['description'] = $clone_data['description'];
-        }
-
-        // Put logos of current layout to manifest
-        $logos = fn_get_logos(Registry::get('runtime.company_id'));
-        foreach ($logos as $type => $logo) {
-            if (!empty($logo['image'])) {
-                $filename = fn_basename($logo['image']['relative_path']);
-                Storage::instance('images')->export(
-                    $logo['image']['relative_path'],
-                    $cloned->getThemePath() . '/media/images/' . $filename
-                );
-                $manifest[$type] = 'media/images/' . $filename;
-            }
-        }
-
-        $cloned->setManifest($manifest);
-        $cloned->saveManifest();
-
-        fn_install_theme($cloned->getThemeName(), $company_id, false);
-        $cloned->overrideSettings(null, $company_id);
-    }
 }

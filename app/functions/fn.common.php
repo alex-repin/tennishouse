@@ -5178,12 +5178,18 @@ function fn_get_frontend_css()
 function fn_merge_styles($files, $styles='', $prepend_prefix = '', $params = array(), $area = AREA)
 {
     $prefix = (!empty($prepend_prefix) ? 'embedded' : 'standalone');
+
+    $make_rtl = false;
+//     if (fn_is_rtl_language()) {
+//         $prefix .= '-rtl';
+//         $make_rtl = true;
+//     }
+
     $output = '';
     $less_output = '';
     $less_reflection = array();
     $compiled_less = '';
     $compiled_css = '';
-    $less_import_dirs = array();
     $relative_path = fn_get_theme_path('[relative]/[theme]/css', $area);
     $hashes = array();
 
@@ -5191,13 +5197,49 @@ function fn_merge_styles($files, $styles='', $prepend_prefix = '', $params = arr
         return !empty($v['relative']) ? $v['relative'] : false;
     }, $files);
 
+    $theme_path = fn_get_theme_path('[theme]', 'C');
+    $theme = Themes::factory($theme_path);
+    $theme_manifest = $theme->getManifest();
+
     // Check file changes
     if (Development::isEnabled('compile_check') || Debugger::isActive()) {
         $dir_root = Registry::get('config.dir.root');
+        $css_path = $dir_root . DIRECTORY_SEPARATOR . $relative_path;
+        $tracked_files = array();
+
+        $css_files = fn_get_dir_contents($css_path, false, true, array('css', 'less'), '', true);
+
+        foreach ($css_files as $file) {
+            $tracked_files[$file] = $css_path . DIRECTORY_SEPARATOR . $file;
+        }
+
         foreach ($names as $index => $name) {
             if (file_exists($dir_root . '/' . $name)) {
-                $hashes[] = $name . filemtime($dir_root . '/' . $name);
+                $tracked_files[$name] = $dir_root . '/' . $name;
             }
+        }
+
+        if ($area == 'C') {
+            $style_id = Registry::get('runtime.layout.style_id');
+
+            if ($style_id) {
+                /** @var Styles $style */
+                $style = Styles::factory(fn_get_theme_path('[theme]', $area));
+                $less_file = $style->getStyleFile($style_id);
+                $css_file = $style->getStyleFile($style_id, 'css');
+
+                if (file_exists($less_file)) {
+                    $tracked_files['less_' . $style_id] = $less_file;
+                }
+
+                if (file_exists($css_file)) {
+                    $tracked_files['css_' . $style_id] = $css_file;
+                }
+            }
+        }
+
+        foreach ($tracked_files as $key => $file) {
+            $hashes[] = $key . filemtime($file);
         }
     }
 
@@ -5211,12 +5253,10 @@ function fn_merge_styles($files, $styles='', $prepend_prefix = '', $params = arr
     arsort($hashes);
     $hash = md5(implode(',', $hashes) . PRODUCT_VERSION) . fn_get_storage_data('cache_id');
 
-    $gz_suffix = (Registry::get('config.tweaks.gzip_css_js') ? '.gz' : '');
     $filename = $prefix . '.' . $hash . '.css';
 
-    $theme_manifest = Themes::factory(fn_get_theme_path('[theme]', 'C'))->getManifest();
-
-    if (!Storage::instance('statics')->isExist($relative_path . '/' . $filename . $gz_suffix)) {
+    if (!Storage::instance('assets')->isExist($relative_path . '/' . $filename)) {
+        Debugger::checkpoint('Before styles compilation');
         foreach ($files as $src) {
             $m_prefix = '';
             $m_suffix = '';
@@ -5231,7 +5271,11 @@ function fn_merge_styles($files, $styles='', $prepend_prefix = '', $params = arr
 
                 $less_output_chunk = '';
                 if (file_exists($src['file'])) {
-                    $less_output_chunk = "\n" . $m_prefix . fn_get_contents($src['file']) . $m_suffix;
+                    if ($area == 'C' && (empty($theme_manifest['parent_theme']) || $theme_manifest['parent_theme'] == 'basic')) {
+                        $less_output_chunk = "\n" . $m_prefix . fn_get_contents($src['file']) . $m_suffix;
+                    } else {
+                        $less_output_chunk = "\n" . $m_prefix . '@import "' . str_replace($relative_path . '/', '', $src['relative']) . '";' . $m_suffix;
+                    }
                 }
 
                 if (!empty($params['reflect_less'])) {
@@ -5244,7 +5288,7 @@ function fn_merge_styles($files, $styles='', $prepend_prefix = '', $params = arr
                 }
 
                 $less_output .= $less_output_chunk;
-                $less_import_dirs[] = dirname($src['file']);
+
             }
         }
 
@@ -5261,7 +5305,7 @@ function fn_merge_styles($files, $styles='', $prepend_prefix = '', $params = arr
         }
 
         if (!empty($output)) {
-            $compiled_css = Less::parseUrls($output, Storage::instance('statics')->getAbsolutePath($relative_path), fn_get_theme_path('[themes]/[theme]/media', $area));
+            $compiled_css = Less::parseUrls($output, Storage::instance('assets')->getAbsolutePath($relative_path), fn_get_theme_path('[themes]/[theme]/media', $area));
         }
 
         if (!empty($theme_manifest['converted_to_css']) && $area == 'C') {
@@ -5284,10 +5328,14 @@ function fn_merge_styles($files, $styles='', $prepend_prefix = '', $params = arr
 
         if (!empty($less_output)) {
             $less = new Less();
-            $less->setImportDir($less_import_dirs);
 
+            if (!empty($params['compressed'])) {
+                $less->setFormatter('compressed');
+            }
+
+            $less->setImportDir($relative_path);
             try {
-                $compiled_less = $less->customCompile($less_output, Storage::instance('statics')->getAbsolutePath($relative_path), array(), $prepend_prefix, $area);
+                $compiled_less = $less->customCompile($less_output, Storage::instance('assets')->getAbsolutePath($relative_path), array(), $prepend_prefix, $area);
             } catch (Exception $e) {
                 $skip_save = true;
                 $shift = 4;
@@ -5299,7 +5347,7 @@ function fn_merge_styles($files, $styles='', $prepend_prefix = '', $params = arr
                 }
 
                 $message .= '</div>';
-                echo($message);
+                fn_set_notification('E', __('error'), $message);
             }
         }
 
@@ -5315,9 +5363,14 @@ function fn_merge_styles($files, $styles='', $prepend_prefix = '', $params = arr
                 }
             }
 
-            Storage::instance('statics')->put($relative_path . '/' . $filename . $gz_suffix, array(
+            if ($make_rtl) {
+                $compiled_content = \CSSJanus::transform($compiled_content);
+                $compiled_content = "body {\ndirection: rtl;\n}\n" . $compiled_content;
+            }
+
+            Storage::instance('assets')->put($relative_path . '/' . $filename, array(
                 'contents' => $header . $compiled_content,
-                'compress' => Registry::get('config.tweaks.gzip_css_js'),
+                'compress' => false,
                 'caching' => true
             ));
 
@@ -5326,13 +5379,14 @@ function fn_merge_styles($files, $styles='', $prepend_prefix = '', $params = arr
             }
 
             if (!empty($params['reflect_less'])) {
-                $less_reflection['import_dirs'] = $less_import_dirs;
+                $less_reflection['import_dirs'] = array($relative_path);
                 fn_put_contents(fn_get_cache_path(false) . 'less_reflection.json', json_encode($less_reflection));
             }
         }
+        Debugger::checkpoint('After styles compilation');
     }
 
-    $url = Storage::instance('statics')->getUrl($relative_path . '/' . $filename);
+    $url = Storage::instance('assets')->getUrl($relative_path . '/' . $filename);
 
     return $url;
 }
