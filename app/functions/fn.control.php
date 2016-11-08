@@ -34,34 +34,94 @@ define('GET_POST_CONTROLLERS', 3);
  * @param mixed $argN argument, passed to addon
  * @return boolean always true
  */
-function fn_set_hook($arg0 = NULL, &$arg1 = NULL, &$arg2 = NULL, &$arg3 = NULL, &$arg4 = NULL, &$arg5 = NULL, &$arg6 = NULL, &$arg7 = NULL, &$arg8 = NULL, &$arg9 = NULL, &$arg10 = NULL, &$arg11 = NULL, &$arg12 = NULL, &$arg13 = NULL, &$arg14 = NULL, &$arg15 = NULL)
+function fn_set_hook($hook_name = NULL, &$arg1 = NULL, &$arg2 = NULL, &$arg3 = NULL, &$arg4 = NULL, &$arg5 = NULL, &$arg6 = NULL, &$arg7 = NULL, &$arg8 = NULL, &$arg9 = NULL, &$arg10 = NULL, &$arg11 = NULL, &$arg12 = NULL, &$arg13 = NULL, &$arg14 = NULL, &$arg15 = NULL)
 {
-    $hooks = Registry::get('hooks');
+    /**
+     * @var bool[]|null $callable_functions Cache of validations that hook's function is callable groupped by func name.
+     */
     static $callable_functions;
-    static $hooks_already_sorted;
 
-    for ($args = array(), $i = 0; $i < 16; $i++) {
-        $name = 'arg' . $i;
-        if ($i < func_num_args()) {
-            $args[$i] = &$$name;
-        }
-        unset($$name, $name);
+    /**
+     * @var array $hooks_already_sorted Cache of hook lists ordered by addon priority and groupped by hook name.
+     */
+    static $hooks_already_sorted = array();
+
+    /**
+     * @var array|null $hooks Function's local cache of hooks that have been registered by addons.
+     */
+    static $hooks = null;
+
+    /**
+     * @var bool $addons_initiated Function's local cache of addons' initialization state.
+     */
+    static $addons_initiated = false;
+
+    // We use local hooks cache that was filled at previous fn_set_hook() call
+    // only if addons were already initiated at that call.
+    if ($addons_initiated) {
+        $update_hooks_cache = false;
+    }
+    // Otherwise, we should renew local hooks cache:
+    else {
+        $update_hooks_cache = true;
+
+        // Update local cache of addons' init state
+        $addons_initiated = Registry::get('addons_initiated');
     }
 
-    $hook_name = array_shift($args);
+    if (
+        $hooks === null
+        || $update_hooks_cache
+        || defined('DISABLE_HOOK_CACHE')
+    ) {
+        // Updating local hooks cache
+        $hooks = Registry::get('hooks');
+        $hooks_already_sorted = array();
+    }
+
+    $arg_count = func_num_args();
+    if ($arg_count === 1) {
+        $args = array();
+    } elseif ($arg_count === 2) {
+        $args = array(&$arg1);
+    } elseif ($arg_count === 3) {
+        $args = array(&$arg1, &$arg2);
+    } elseif ($arg_count === 4) {
+        $args = array(&$arg1, &$arg2, &$arg3);
+    } elseif ($arg_count === 5) {
+        $args = array(&$arg1, &$arg2, &$arg3, &$arg4);
+    } elseif ($arg_count === 6) {
+        $args = array(&$arg1, &$arg2, &$arg3, &$arg4, &$arg5);
+    } elseif ($arg_count === 7) {
+        $args = array(&$arg1, &$arg2, &$arg3, &$arg4, &$arg5, &$arg6);
+    } elseif ($arg_count === 8) {
+        $args = array(&$arg1, &$arg2, &$arg3, &$arg4, &$arg5, &$arg6, &$arg7);
+    } elseif ($arg_count === 9) {
+        $args = array(&$arg1, &$arg2, &$arg3, &$arg4, &$arg5, &$arg6, &$arg7, &$arg8);
+    } elseif ($arg_count === 10) {
+        $args = array(&$arg1, &$arg2, &$arg3, &$arg4, &$arg5, &$arg6, &$arg7, &$arg8, &$arg9);
+    } elseif ($arg_count === 11) {
+        $args = array(&$arg1, &$arg2, &$arg3, &$arg4, &$arg5, &$arg6, &$arg7, &$arg8, &$arg9, &$arg10);
+    } elseif ($arg_count === 12) {
+        $args = array(&$arg1, &$arg2, &$arg3, &$arg4, &$arg5, &$arg6, &$arg7, &$arg8, &$arg9, &$arg10, &$arg11);
+    } elseif ($arg_count === 13) {
+        $args = array(&$arg1, &$arg2, &$arg3, &$arg4, &$arg5, &$arg6, &$arg7, &$arg8, &$arg9, &$arg10, &$arg11, &$arg12);
+    } elseif ($arg_count === 14) {
+        $args = array(&$arg1, &$arg2, &$arg3, &$arg4, &$arg5, &$arg6, &$arg7, &$arg8, &$arg9, &$arg10, &$arg11, &$arg12, &$arg13);
+    } elseif ($arg_count === 15) {
+        $args = array(&$arg1, &$arg2, &$arg3, &$arg4, &$arg5, &$arg6, &$arg7, &$arg8, &$arg9, &$arg10, &$arg11, &$arg12, &$arg13, &$arg14);
+    } elseif ($arg_count === 16) {
+        $args = array(&$arg1, &$arg2, &$arg3, &$arg4, &$arg5, &$arg6, &$arg7, &$arg8, &$arg9, &$arg10, &$arg11, &$arg12, &$arg13, &$arg14, &$arg15);
+    }
 
     // Check for the core functions
-    $core_func = 'fn_core_' . $hook_name;
-    if (is_callable($core_func)) {
-        call_user_func_array($core_func, $args);
+    if (is_callable('fn_core_' . $hook_name)) {
+        call_user_func_array('fn_core_' . $hook_name, $args);
     }
 
     $edition_acronym = fn_get_edition_acronym(PRODUCT_EDITION);
-    if (!empty($edition_acronym)) {
-        $edition_hook_func = "fn_{$edition_acronym}_{$hook_name}";
-        if (function_exists($edition_hook_func)) {
-            call_user_func_array($edition_hook_func, $args);
-        }
+    if (!empty($edition_acronym) && function_exists("fn_{$edition_acronym}_{$hook_name}")) {
+        call_user_func_array("fn_{$edition_acronym}_{$hook_name}", $args);
     }
 
     if (isset($hooks[$hook_name])) {
@@ -77,7 +137,6 @@ function fn_set_hook($arg0 = NULL, &$arg1 = NULL, &$arg2 = NULL, &$arg3 = NULL, 
             if (!isset($callable_functions[$callback['func']])) {
                 if (!is_callable($callback['func'])) {
                     throw new DeveloperException("Hook $callback[func] is not callable");
-
                 }
                 $callable_functions[$callback['func']] = true;
             }
@@ -823,7 +882,9 @@ function fn_allowed_for($editions)
 
     $is_allowed = false;
 
-    $_mode = fn_get_storage_data('store_mode');
+//     $_mode = fn_get_storage_data('store_mode');
+//  speed optimization
+    $_mode = 'full';
 
     if ($_mode == 'free') {
         $store_mode = ':FREE';

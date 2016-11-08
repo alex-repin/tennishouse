@@ -423,7 +423,8 @@ function fn_gather_additional_products_data(&$products, $params)
      * @param array $products List of products
      * @param array $params   Parameters for gathering data
      */
-    fn_set_hook('gather_additional_products_data_pre', $products, $params);
+//      speed optimization
+//     fn_set_hook('gather_additional_products_data_pre', $products, $params);
 
     if (empty($products)) {
         return;
@@ -489,7 +490,8 @@ function fn_gather_additional_products_data(&$products, $params)
      * @param array $has_product_options       Array of flags determines if product has options
      * @param array $has_product_options_links Array of flags determines if product has option links
      */
-    fn_set_hook('gather_additional_products_data_params', $product_ids, $params, $products, $auth, $products_images, $additional_images, $product_options, $has_product_options, $has_product_options_links);
+//      speed optimization
+//     fn_set_hook('gather_additional_products_data_params', $product_ids, $params, $products, $auth, $products_images, $additional_images, $product_options, $has_product_options, $has_product_options_links);
 
     $combination_images = array();
     

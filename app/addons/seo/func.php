@@ -270,9 +270,9 @@ function fn_get_seo_vars($type = '', $param = '')
     if (empty($schema)) {
         $schema = fn_get_schema('seo', 'objects');
     }
-
+// speed optimization
     // Deprecated
-    fn_set_hook('get_seo_vars', $schema);
+//     fn_set_hook('get_seo_vars', $schema);
 
     $res = (!empty($type)) ? $schema[$type] : $schema;
 
@@ -786,7 +786,8 @@ function fn_seo_get_name($object_type, $object_id = 0, $dispatch = '', $company_
      * @param int    $company_id
      * @param string $lang_code   Two-letter language code (e.g. 'en', 'ru', etc.)
      */
-    fn_set_hook('seo_get_name_pre', $object_type, $object_id, $dispatch, $company_id, $lang_code);
+     // speed optimization
+//     fn_set_hook('seo_get_name_pre', $object_type, $object_id, $dispatch, $company_id, $lang_code);
 
     $company_id_condition = '';
 
@@ -864,7 +865,8 @@ function fn_seo_get_name($object_type, $object_id = 0, $dispatch = '', $company_
      * @param int    $company_id
      * @param string $lang_code   Two-letter language code (e.g. 'en', 'ru', etc.)
      */
-    fn_set_hook('seo_get_name_post', $name, $object_type, $object_id, $dispatch, $company_id, $lang_code);
+     // speed optimization
+//     fn_set_hook('seo_get_name_post', $name, $object_type, $object_id, $dispatch, $company_id, $lang_code);
 
     return $name;
 }

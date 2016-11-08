@@ -3171,8 +3171,9 @@ function fn_url($url = '', $area = AREA, $protocol = 'current', $lang_code = CAR
      * @param  string $lang_code     2 letters language code
      * @param  bool   $override_area
      * @return bool   Always true
-     */
-    fn_set_hook('url_pre', $url, $area, $protocol, $lang_code, $override_area);
+     */ 
+//      speed optimization
+//     fn_set_hook('url_pre', $url, $area, $protocol, $lang_code, $override_area);
 
     if (!$init_vars) {
         $vendor_index = Registry::get('config.vendor_index');
@@ -3263,7 +3264,9 @@ function fn_url($url = '', $area = AREA, $protocol = 'current', $lang_code = CAR
      * @param string $protocol          Output URL protocol (protocol://). If equals 'rel', no protocol will be included
      * @param int    $company_id_in_url Equals company_id if it is present in $url, otherwise false
      */
-    fn_set_hook('url_post', $_url, $area, $url, $protocol, $company_id_in_url, $lang_code);
+//     fn_set_hook('url_post', $_url, $area, $url, $protocol, $company_id_in_url, $lang_code);
+//  speed optimization
+    fn_seo_url_post($_url, $area, $url, $protocol, $company_id_in_url, $lang_code);
 
     if (!empty($prev_admin_index)) {
         $admin_index = $prev_admin_index;

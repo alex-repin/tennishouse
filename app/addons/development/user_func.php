@@ -179,8 +179,7 @@ function fn_get_catalog_panel_pages()
 
 function fn_process_php_errors($errno, $errstr, $errfile, $errline, $errcontext)
 {
-    $dirs = Registry::get('config.dir');
-    if (strpos($errfile, $dirs['var']) === false && strpos($errfile, $dirs['lib']) === false) {
+    if (strpos($errfile, DIR_ROOT . '/var/') === false && strpos($errfile, DIR_ROOT . '/app/lib/') === false) {
         LogFacade::error("Error #" . $errno . ":" . $errstr . " in " . $errfile . " at line " . $errline);
     }
 }
