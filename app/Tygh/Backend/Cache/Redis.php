@@ -64,20 +64,20 @@ class Redis extends ABackend
 
         if (!empty($tags)) {
             // we have to get all keys, because tags may have company suffix
-//             $tags = $this->_mapTags($tags, 0);
-//             $all_keys = $this->r->keys($this->_mapTags('', 0) . '*');
-//             $mapped_tags = array();
-//             foreach ($all_keys as $key) {
-//                 foreach ($tags as $tag) {
-//                     if (strpos($key, $tag) === 0) {
-//                         $mapped_tags[] = $key;
-//                     }
-//                 }
-//             }
-// 
-//             $this->r->del($mapped_tags);\
+            $tags = $this->_mapTags($tags, 0);
+            $all_keys = $this->r->keys($this->_mapTags('', 0) . '*');
+            $mapped_tags = array();
+            foreach ($all_keys as $key) {
+                foreach ($tags as $tag) {
+                    if (strpos($key, $tag) === 0) {
+                        $mapped_tags[] = $key;
+                    }
+                }
+            }
+
+            $this->r->del($mapped_tags);
 // the bitch takes too long because of that double loop
-            $this->r->del($this->r->keys($this->_mapTags('', 0) . '*'));
+//             $this->r->del($this->r->keys($this->_mapTags('', 0) . '*'));
         }
 
         return true;

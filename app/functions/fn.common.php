@@ -3265,7 +3265,36 @@ function fn_url($url = '', $area = AREA, $protocol = 'current', $lang_code = CAR
      * @param int    $company_id_in_url Equals company_id if it is present in $url, otherwise false
      */
 //     fn_set_hook('url_post', $_url, $area, $url, $protocol, $company_id_in_url, $lang_code);
-//  speed optimization
+
+    //  speed optimization
+    if ($company_id_in_url !== false) {
+        $company_id = $company_id_in_url;
+    } elseif (Registry::get('runtime.company_id') || Registry::get('runtime.forced_company_id')) {
+        $company_id = Registry::get('runtime.company_id');
+    }
+
+    if (isset($company_id) && ($protocol == 'https' || $protocol == 'http' || $protocol == 'current')) {
+        if ($area == 'C') { // Build link to the frontend in the backend
+
+            if ($protocol == 'current') {
+                $_protocol = defined('HTTPS') ? 'https' : 'http';
+            } else {
+                $_protocol = $protocol;
+            }
+
+            $storefront = fn_get_storefront_urls($company_id);
+            $location = Registry::get('config.' . $_protocol . '_location');
+
+            $_url = str_replace($location, $storefront[$_protocol . '_location'], $_url);
+            $_url = fn_query_remove($_url, 'company_id');
+        }
+    }
+
+    if (isset($company_id)) {
+        $company_id_in_url = $company_id;
+    }
+    //  speed optimization
+    
     fn_seo_url_post($_url, $area, $url, $protocol, $company_id_in_url, $lang_code);
 
     if (!empty($prev_admin_index)) {

@@ -17,6 +17,22 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_render_block_register_cache($block, &$cache_name, &$block_scheme, $register_cache, $display_block)
+{
+    if (isset($block['content']['items']['filling']) && isset($block_scheme['content']['items']['fillings'][$block['content']['items']['filling']]['cache'])) {
+        $block_scheme['cache'] = $block_scheme['content']['items']['fillings'][$block['content']['items']['filling']]['cache'];
+    }
+    if (!isset($block_scheme['cache']) && isset($block['properties']['template']) && isset($block_scheme['templates'][$block['properties']['template']]['cache'])) {
+        $block_scheme['cache'] = $block_scheme['templates'][$block['properties']['template']]['cache'];
+    }
+    if (isset($block_scheme['cache']['no_object'])) {
+        $grid_id = !empty($block['grid_id']) ? $block['grid_id'] : 0;
+        $cache_name = 'block_content_'
+            . $block['block_id'] . '_' . $block['snapping_id'] . '_' . $block['type']
+            . '_' . $grid_id;
+    }
+}
+
 function fn_development_get_notification_rules(&$force_notification, $params, $disable_notification)
 {
     if ($disable_notification) {
@@ -1558,13 +1574,20 @@ function fn_development_is_shared_product_pre($product_id, $company_id, &$return
     $return = 'N';
 }
 
-function fn_development_render_block_content_pre($template_variable, $field, $block_scheme, &$block)
+function fn_development_render_blocks($grid, &$block, $object, $content)
 {
-    if ($block['wrapper'] == 'addons/development/blocks/wrappers/tennishouse_capture.tpl') {
+    if (!empty($block['properties']['capture_content']) && $block['properties']['capture_content'] == 'Y' && $block['object_type'] == 'products' && !empty($block['object_id'])) {
         $product = Registry::get('view')->getTemplateVars('product');
-        if (($product['product_type'] != 'C' && $product['amount'] <= 0) || ($product['product_type'] == 'C' && empty($product['hide_stock_info']))) {
-            $block['properties']['columns_number'] = 2;
-            Registry::get('view')->assign('block', $block);
+        if (!empty($product) && ($product['product_type'] != 'C' && $product['amount'] <= 0) || ($product['product_type'] == 'C' && empty($product['hide_stock_info']))) {
+            $block['extra_properties']['columns_number'] = 2;
         }
+    }
+}
+
+function fn_development_render_block_content_pre($template_variable, $field, $block_scheme, &$block, $dynamic_object)
+{
+    if (!empty($block['extra_properties']['columns_number'])) {
+        $block['properties']['columns_number'] = $block['extra_properties']['columns_number'];
+        Registry::get('view')->assign('block', $block);
     }
 }

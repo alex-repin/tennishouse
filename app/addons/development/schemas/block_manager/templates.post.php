@@ -156,5 +156,50 @@ $schema['addons/development/blocks/products/products_cross_sales.tpl'] = array (
     ),
     'fillings' => array('product_cross_sales'),
 );
+$schema['common/breadcrumbs.tpl']['cache'] = array(
+    'cache_level' => 'static'
+);
+$schema['addons/development/blocks/static_templates/ssl_seal.tpl']['cache'] = array(
+    'cache_level' => 'static',
+    'no_object' => true
+);
+$schema['blocks/static_templates/copyright.tpl']['cache'] = array(
+    'cache_level' => 'static',
+    'no_object' => true
+);
+$schema['addons/development/blocks/static_templates/shipping_and_payment.tpl']['cache'] = array(
+    'cache_level' => 'static',
+    'no_object' => true
+);
+$schema['addons/development/blocks/static_templates/catalog.tpl']['cache'] = array(
+    'cache_level' => 'static',
+    'no_object' => true
+);
+$schema['addons/news_and_emails/blocks/static_templates/subscribe.tpl']['cache'] = array(
+    'cache_level' => 'static',
+    'no_object' => true
+);
+$schema['blocks/smarty_block.tpl']['cache'] = array(
+    'cache_level' => 'static',
+    'no_object' => true
+);
+$schema['blocks/static_templates/my_account_links.tpl']['cache'] = array(
+    'cache_level' => 'static',
+    'no_object' => true,
+    'auth_handlers' => array('user_id')
+);
+$schema['addons/development/blocks/static_templates/category_title.tpl']['cache'] = array(
+    'cache_level' => 'static',
+    'request_handlers' => array('%TC_ID%')
+);
+$schema['addons/development/blocks/static_templates/image_title.tpl']['cache'] = array(
+    'cache_level' => 'static',
+);
+$schema['addons/development/blocks/static_templates/top_block.tpl']['cache'] = array(
+    'cache_level' => 'static',
+    'no_object' => true,
+    'auth_handlers' => array('user_id'),
+    'session_handlers' => array('cart')
+);
 
 return $schema;

@@ -819,5 +819,7 @@
         <item lang="ru" id="enter_another_city">Или укажите в поле</item>
         <item lang="ru" id="select_other_city">Выберите другой населенный пункт</item>
         <item lang="ru" id="racket_finder_page_title">Подобрать ракетку для большого тенниса - Тест TennisHouse</item>
+        <item lang="ru" id="ajax_block_content">AJAX загрузка</item>
+        <item lang="ru" id="capture_block_content">Capture содержимое</item>
     </language_variables>
 </addon>

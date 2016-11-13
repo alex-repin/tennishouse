@@ -69,6 +69,7 @@ class RenderManager
      * @var array|bool
      */
     private $_dynamic_object_scheme;
+    private $_dynamic_object;
 
     /**
      * @var array
@@ -87,6 +88,7 @@ class RenderManager
     public function __construct($dispatch, $area, $dynamic_object = array(), $location_id = 0, $lang_code = DESCR_SL)
     {
         Debugger::checkpoint('Start render location');
+        $this->_dynamic_object = $dynamic_object;
         // Try to get location for this dispatch
         if ($location_id > 0) {
             $this->_location = Location::instance()->getById($location_id, $lang_code);
@@ -317,7 +319,7 @@ class RenderManager
                     continue;
                 }
 
-                $content .= self::renderBlock($block, $grid, $this->_area);
+                $content .= self::renderBlock($block, $grid, $this->_area, $this->_dynamic_object);
             }
         }
 
@@ -369,7 +371,7 @@ class RenderManager
      * @param  string $area        Area name
      * @return string
      */
-    public static function renderBlock($block, $parent_grid = array(), $area = 'C')
+    public static function renderBlock($block, $parent_grid = array(), $area = 'C', $dynamic_object = array())
     {
         if (SchemesManager::isBlockExist($block['type'])) {
             $view = Registry::get('view');
@@ -380,7 +382,20 @@ class RenderManager
             $view->assign('content_alignment', $content_alignment);
 
             if ($area == 'C') {
-                return self::renderBlockContent($block);
+                // tennishouse
+                if (!empty($block['properties']['ajax_content']) && $block['properties']['ajax_content'] == 'Y') {
+                    Registry::get('view')->assign('block', $block);
+                    Registry::get('view')->assign('dynamic_object', $dynamic_object);
+                    $content = $view->fetch('views/block_manager/render/ajax_block.tpl');
+                } else {
+                    $content = self::renderBlockContent($block);
+                }
+                if (!empty($block['properties']['capture_content']) && $block['properties']['capture_content'] == 'Y') {
+                    \Smarty::$_smarty_vars['capture']['block_' . $block['content']['items']['filling']] = $content;
+                } else {
+                    return $content;
+                }
+                // tennishouse
             } elseif ($area == 'A') {
                 $scheme = SchemesManager::getBlockScheme($block['type'], array());
                 if (!empty($scheme['single_for_location'])) {
@@ -453,12 +468,18 @@ class RenderManager
         $block_content = '';
 
         if (isset($block_scheme['cache']) && Registry::isExist($cache_name) == true && self::allowCache()) {
-            $block_content = Registry::get($cache_name);
+            // tennishouse capture block
+            if (!empty($block['wrapper']) && $block['wrapper'] == 'addons/development/blocks/wrappers/tennishouse_capture.tpl') {
+                \Smarty::$_smarty_vars['capture']['block_' . $block['content']['items']['filling']] = Registry::get($cache_name);
+            } else {
+                $block_content = Registry::get($cache_name);
+            }
+            // tennishouse capture block
         } else {
+//         fn_print_r($block['content']['items']['filling'], $block['properties']['template'], $cache_name);
             if ($block['type'] == 'main') {
                 $block_content = self::_renderMainContent();
             } else {
-
                 $title = $block['name'];
                 if (Registry::get('runtime.customization_mode.live_editor')) {
                     $le_block_types = fn_get_schema('customization', 'live_editor_block_types');
@@ -512,8 +533,14 @@ class RenderManager
 
             fn_set_hook('render_block_content_after', $block_scheme, $block, $block_content);
 
-            if (isset($block_scheme['cache']) && $display_block == true && self::allowCache()) {
-                Registry::set($cache_name, $block_content);
+            if (isset($block_scheme['cache'])/* && $display_block == true*/ && self::allowCache()) {
+                // tennishouse capture block
+                if ($block['wrapper'] != 'addons/development/blocks/wrappers/tennishouse_capture.tpl') {
+                    Registry::set($cache_name, $block_content);
+                } else {
+                    Registry::set($cache_name, \Smarty::$_smarty_vars['capture']['block_' . $block['content']['items']['filling']]);
+                }
+                // tennishouse capture block
             }
         }
 

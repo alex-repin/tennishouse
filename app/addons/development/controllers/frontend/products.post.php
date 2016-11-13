@@ -77,7 +77,7 @@ if ($mode == 'view') {
         }
         if (!empty($product['header_features'][BRAND_FEATURE_ID])) {
             $cat_type = '';
-            $brand_id = $product['header_features'][BRAND_FEATURE_ID]['variant_id'];
+            $_SESSION['product_brand'] = $brand_id = $product['header_features'][BRAND_FEATURE_ID]['variant_id'];
             if ($product['category_type'] == 'A') {
                 $cat_type = 'clothes';
             } elseif ($product['category_type'] == 'S') {

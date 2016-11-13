@@ -84,5 +84,7 @@ fn_register_hooks(
     'get_status_params_definition',
     'order_notification',
     'get_notification_rules',
-    'render_block_content_pre'
+    'render_block_content_pre',
+    'render_block_register_cache',
+    'render_blocks'
 );
