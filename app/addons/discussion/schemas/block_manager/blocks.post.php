@@ -29,6 +29,8 @@ $schema['testimonials'] = array(
     ),
     'cache' => array(
         'update_handlers' => array ('discussion', 'discussion_messages', 'discussion_posts', 'discussion_rating'),
+        'cache_level' => 'day',
+        'no_object' => true
     )
 );
 

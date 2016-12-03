@@ -109,21 +109,29 @@ function fn_get_similar_category_products($params)
     return $result;
 }
 
-function fn_format_submenu(&$menu_items)
+function fn_format_submenu(&$menu_items, $display_subheaders = true)
 {
-    if (count($menu_items) == 1) {
-        $elm_tmp = reset($menu_items);
-        if ($elm_tmp['is_virtual'] == 'Y' && !empty($elm_tmp['subitems'])) {
-            $menu_items = $elm_tmp['subitems'];
-        }
-    }
-    foreach ($menu_items as $j => $item) {
-        if (!empty($item['subitems'])) {
-            $menu_items[$j]['expand'] = false;
-            if ($item['is_virtual'] == 'Y' && !empty($item['parent_id'])) {
-                $menu_items[$j]['href'] = 'categories.view?category_id=' . $item['parent_id'];
+    if (!empty($menu_items)) {
+        if (count($menu_items) == 1) {
+            $elm_tmp = reset($menu_items);
+            if ($elm_tmp['is_virtual'] == 'Y' && !empty($elm_tmp['subitems'])) {
+                $menu_items = $elm_tmp['subitems'];
+            } elseif (empty($elm_tmp['subitems'])) {
+                $menu_items = array();
             }
-            fn_format_submenu($menu_items[$j]['subitems']);
+        }
+        foreach ($menu_items as $j => $item) {
+            $display_subheaders = ($item['level'] == 1) ? fn_display_subheaders($item['object_id']) : $display_subheaders;
+            if ($item['level'] == 2 && !$display_subheaders && !empty($item['subitems'])) {
+                unset($menu_items[$j]['subitems']);
+            }
+            if (!empty($item['subitems'])) {
+                $menu_items[$j]['expand'] = false;
+                if ($item['is_virtual'] == 'Y' && !empty($item['parent_id'])) {
+                    $menu_items[$j]['href'] = 'categories.view?category_id=' . $item['parent_id'];
+                }
+                fn_format_submenu($menu_items[$j]['subitems'], $display_subheaders);
+            }
         }
     }
 }
@@ -235,6 +243,7 @@ function fn_get_menu_items_th($value, $block, $block_scheme)
         foreach ($menu_items as $i => $item) {
             if (!empty($item['param_3'])) {
                 list($type, $id, $use_name) = fn_explode(':', $item['param_3']);
+                $menu_items[$i]['type'] = $type;
                 if ($type == 'P') {
                     $menu_items[$i]['show_more'] = true;
                     $menu_items[$i]['show_more_text'] = __('see_all_players');
@@ -242,7 +251,8 @@ function fn_get_menu_items_th($value, $block, $block_scheme)
                         $menu_items[$i]['subitems'][$j]['show_more'] = false;
                     }
                 } elseif ($type == 'C') {
-                    foreach ($item['subitems'] as $j => $group) {
+                    fn_format_submenu($menu_items[$i]['subitems']);
+                    foreach ($menu_items[$i]['subitems'] as $j => $group) {
                         if (!empty($group['subitems'])) {
                             $menu_items[$i]['subitems'][$j]['expand'] = false;
                             foreach ($group['subitems'] as $k => $item) {
@@ -264,9 +274,19 @@ function fn_get_menu_items_th($value, $block, $block_scheme)
     return $menu_items;
 }
 
-function fn_get_block_rss_news($value, $block, $block_scheme)
+function fn_get_news_feed($params)
 {
-    return fn_get_rss_news(array('rss_feed_link' => $block['properties']['rss_feed_link']));
+    $news = array();
+    if (!empty($params['player_id'])) {
+        $feed_link = db_get_field("SELECT rss_link FROM ?:players WHERE player_id = ?i", $params['player_id']);
+        if (!empty($feed_link)) {
+            $news = fn_get_rss_news(array('rss_feed_link' => $feed_link));
+        }
+    } elseif (!empty($params['rss_feed_link'])) {
+        $news = fn_get_rss_news(array('rss_feed_link' => $params['rss_feed_link']));
+    }
+    
+    return array($news, $params);
 }
 
 function fn_get_rss_news($params)
@@ -274,7 +294,7 @@ function fn_get_rss_news($params)
     $news_feed = array();
     if (!empty($params['rss_feed_link'])) {
         $extra = array(
-            'request_timeout' => 2
+            'request_timeout' => 10
         );
         $response = Http::get($params['rss_feed_link'], array(), $extra);
         if (!empty($response)) {
@@ -755,7 +775,7 @@ function fn_get_subtitle_feature($features, $type = 'R')
 
 function fn_display_subheaders($category_id)
 {
-    return in_array($category_id, array(RACKETS_CATEGORY_ID, APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, STRINGS_CATEGORY_ID, BAGS_CATEGORY_ID));
+    return in_array($category_id, array(STRINGS_CATEGORY_ID));
 }
 
 function fn_get_product_cross_sales($params)
@@ -870,7 +890,7 @@ function fn_get_same_brand_products($params)
         foreach ($products as $i => $product) {
             $ids[] = $product['product_id'];
         }
-        $objective_cat_ids = array(RACKETS_CATEGORY_ID, APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, BAGS_CATEGORY_ID, STRINGS_CATEGORY_ID, ACCESSORIES_CATEGORY_ID);
+        $objective_cat_ids = array(RACKETS_CATEGORY_ID, APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, BAGS_CATEGORY_ID, STRINGS_CATEGORY_ID, BALLS_CATEGORY_ID);
         $category_path = db_get_field("SELECT id_path FROM ?:categories AS c LEFT JOIN ?:products_categories AS pc ON pc.category_id = c.category_id AND pc.link_type = 'M' LEFT JOIN ?:products AS p ON p.product_id = pc.product_id WHERE p.product_id = ?i", $params['same_brand_pid']);
         $show_cat_ids = array_diff($objective_cat_ids, explode('/', $category_path));
         if (!empty($show_cat_ids)) {
@@ -1191,7 +1211,6 @@ function fn_get_category_type($category_id)
         BAGS_CATEGORY_ID => 'B',
         SPORTS_NUTRITION_CATEGORY_ID => 'N',
         STRINGS_CATEGORY_ID => 'ST',
-        ACCESSORIES_CATEGORY_ID => 'C',
         BALLS_CATEGORY_ID => 'BL',
         OVERGRIPS_CATEGORY_ID => 'OG',
         BASEGRIPS_CATEGORY_ID => 'BG',
@@ -1218,18 +1237,14 @@ function fn_identify_type_category_id($path)
             $type = SPORTS_NUTRITION_CATEGORY_ID;
         } elseif (in_array(STRINGS_CATEGORY_ID, $cats)) {
             $type = STRINGS_CATEGORY_ID;
-        } elseif (in_array(ACCESSORIES_CATEGORY_ID, $cats)) {
-            if (in_array(BALLS_CATEGORY_ID, $cats)) {
-                $type = BALLS_CATEGORY_ID;
-            } elseif (in_array(OVERGRIPS_CATEGORY_ID, $cats)) {
-                $type = OVERGRIPS_CATEGORY_ID;
-            } elseif (in_array(BASEGRIPS_CATEGORY_ID, $cats)) {
-                $type = BASEGRIPS_CATEGORY_ID;
-            } elseif (in_array(DAMPENERS_CATEGORY_ID, $cats)) {
-                $type = DAMPENERS_CATEGORY_ID;
-            } else {
-                $type = ACCESSORIES_CATEGORY_ID;
-            }
+        } elseif (in_array(BALLS_CATEGORY_ID, $cats)) {
+            $type = BALLS_CATEGORY_ID;
+        } elseif (in_array(OVERGRIPS_CATEGORY_ID, $cats)) {
+            $type = OVERGRIPS_CATEGORY_ID;
+        } elseif (in_array(BASEGRIPS_CATEGORY_ID, $cats)) {
+            $type = BASEGRIPS_CATEGORY_ID;
+        } elseif (in_array(DAMPENERS_CATEGORY_ID, $cats)) {
+            $type = DAMPENERS_CATEGORY_ID;
         }
     }
     

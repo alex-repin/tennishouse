@@ -25,7 +25,7 @@
                                     {assign var="href" value=$reset_lnk|fn_url}
                                 {/if}
                                 {assign var="use_ajax" value=$href|fn_compare_dispatch:$config.current_url}
-                                <a href="{$href}" class="ty-product-filters__item checked{if $allow_ajax && $use_ajax} cm-ajax-force cm-ajax cm-ajax-full-render cm-history"{/if} data-ca-target-id="{$ajax_div_ids}" rel="nofollow"><span class="ty-filter-icon"><i class="ty-icon-ok ty-filter-icon__check"></i><i class="ty-icon-cancel ty-filter-icon__delete"></i></span>{$filter.prefix}{$range.range_name|fn_text_placeholders}{$filter.suffix}</a>
+                                <div onclick="Tygh.$.ceAjax('request', '{$href}', {$ldelim}force_exec : true, full_render: true, save_history: true, result_ids: '{$ajax_div_ids}', scroll: '.cm-pagination-container'{$rdelim})" class="ty-product-filters__item checked"><span class="ty-filter-icon"><i class="ty-icon-ok ty-filter-icon__check"></i><i class="ty-icon-cancel ty-filter-icon__delete"></i></span>{$filter.prefix}{$range.range_name|fn_text_placeholders}{$filter.suffix}</div>
                             {/strip}
                     {else}
                         {include file="blocks/product_filters/components/variant_item.tpl" range=$range filter=$filter ajax_div_ids=$ajax_div_ids filter_qstring=$filter_qstring reset_qstring=$reset_qstring allow_ajax=$allow_ajax}

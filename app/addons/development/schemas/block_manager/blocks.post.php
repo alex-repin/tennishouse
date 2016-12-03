@@ -17,6 +17,69 @@ use Tygh\Registry;
 $schema['products']['cache'] = array(
     'update_handlers' => array ('products', 'product_descriptions', 'product_prices', 'products_categories')
 );
+$schema['products']['content']['items']['fillings']['bestsellers']['cache'] = array(
+    'update_handlers' => array ('products', 'product_descriptions', 'product_prices', 'products_categories'),
+    'cache_level' => 'static',
+    'no_object' => true
+);
+$schema['products']['content']['items']['fillings']['newest']['cache'] = array(
+    'update_handlers' => array ('products', 'product_descriptions', 'product_prices', 'products_categories'),
+    'cache_level' => 'static',
+    'no_object' => true
+);
+$schema['products']['content']['items']['fillings']['discounted_products']['cache'] = array(
+    'update_handlers' => array ('products', 'product_descriptions', 'product_prices', 'products_categories'),
+    'cache_level' => 'static',
+    'no_object' => true
+);
+$schema['pages']['content']['items']['fillings']['full_tree_pages']['cache'] = array(
+    'update_handlers' => array ('pages', 'page_descriptions'),
+    'cache_level' => 'static',
+    'no_object' => true
+);
+$schema['products']['content']['items']['fillings']['player_racket'] = array(
+    'params' => array (
+        'cid' => RACKETS_CATEGORY_ID,
+        'subcats' => 'Y',
+        'show_out_of_stock' => true,
+        'limit' => 1,
+        'request' => array (
+            'player_id' => '%PLAYER_ID%',
+        ),
+    ),
+    'cache' => array(
+        'update_handlers' => array ('products', 'product_descriptions', 'product_prices', 'products_categories', 'players_gear'),
+        'cache_level' => 'static',
+    )
+);
+$schema['products']['content']['items']['fillings']['player_bags_accessories'] = array(
+    'params' => array (
+        'cid' => array(BAGS_CATEGORY_ID, RACKETS_CATEGORY_ID, STRINGS_CATEGORY_ID, GRIPS_CATEGORY_ID, DAMPENERS_CATEGORY_ID),
+        'subcats' => 'Y',
+        'show_out_of_stock' => true,
+        'request' => array (
+            'player_id' => '%PLAYER_ID%',
+        ),
+    ),
+    'cache' => array(
+        'update_handlers' => array ('products', 'product_descriptions', 'product_prices', 'products_categories', 'players_gear'),
+        'cache_level' => 'static',
+    )
+);
+$schema['products']['content']['items']['fillings']['player_apparel_shoes'] = array(
+    'params' => array (
+        'cid' => array(APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID),
+        'subcats' => 'Y',
+        'show_out_of_stock' => true,
+        'request' => array (
+            'player_id' => '%PLAYER_ID%',
+        ),
+    ),
+    'cache' => array(
+        'update_handlers' => array ('products', 'product_descriptions', 'product_prices', 'products_categories', 'players_gear'),
+        'cache_level' => 'static',
+    )
+);
 $schema['products']['content']['items']['fillings']['similar_products'] = array(
     'params' => array (
         'sort_by' => 'price',
@@ -475,23 +538,39 @@ $schema['products']['content']['items']['fillings']['product_cross_sales'] = arr
 $schema['testimonials']['templates']['addons/discussion/blocks/homepage_testimonials.tpl'] = array();
 
 $schema['news'] = array (
-    'templates' => array(
-        'addons/development/blocks/news.tpl' => array(),
-    ),
-    'settings' => array(
-        'rss_feed_link' => array (
-            'type' => 'input',
-            'default_value' => 'http://www.championat.com/xml/rss_tennis-article.xml'
-        )
-    ),
+    'templates' => 'blocks/news_feed',
     'wrappers' => 'blocks/wrappers',
     'content' => array (
-        'news' => array (
-            'type' => 'function',
-            'function' => array('fn_get_block_rss_news')
+        'items' => array (
+            'type' => 'enum',
+            'object' => 'news_feed',
+            'items_function' => 'fn_get_news_feed',
+            'remove_indent' => true,
+//             'hide_label' => true,
+            'fillings' => array (
+                'news_feed' => array (
+                    'settings' => array (
+                        'rss_feed_link' => array (
+                            'type' => 'input_long',
+                            'default_value' => 'http://www.championat.com/xml/rss_tennis-article.xml'
+                        )
+                    )
+                ),
+                'player_news_feed' => array (
+                    'params' => array (
+                        'request' => array (
+                            'player_id' => '%PLAYER_ID%'
+                        )
+                    )
+                ),
+            )
         )
     )
 );
 $schema['menu']['content']['items']['function'] = array('fn_get_menu_items_th');
-// $schema['menu']['cache'] = array();
+$schema['menu']['cache'] = array(
+    'update_handlers' => array ('categories', 'players'),
+    'cache_level' => 'static',
+    'no_object' => true
+);
 return $schema;

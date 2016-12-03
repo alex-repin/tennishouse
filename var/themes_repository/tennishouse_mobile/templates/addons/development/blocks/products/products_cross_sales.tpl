@@ -27,7 +27,7 @@
 
         {include file="common/scroller_init.tpl" items_count="2"}
         <div class="ty-product-cross-sales-title">{$items[0]['title']}</div>
-        <a class="ty-product-cross-sales-all" href="{"categories.view?category_id=`$smarty.const.STRINGS_CATEGORY_ID`&features_hash=V`$smarty.const.TW_M_STRINGS_FV_ID`"|fn_url}">{__("view_all")}</a>
+        <a class="ty-product-cross-sales-all" href="{"categories.view?category_id=`$smarty.const.STRINGS_CATEGORY_ID`&features_hash=V`$smarty.const.TW_M_STRINGS_FV_ID`"|fn_url}" rel="nofollow">{__("view_all")}</a>
     </div>
 {elseif $items|count == 2 && $items[0]['items'] && $items[1]['items']}
     <div class="ty-product-cross-sales-left">
@@ -55,7 +55,7 @@
         </div>
         {include file="common/scroller_init.tpl" items_count="1" suf="_1"}
         <div class="ty-product-cross-sales-title">{$items[0]['title']}</div>
-        <a class="ty-product-cross-sales-all" href="{"categories.view?category_id=`$smarty.const.STRINGS_CATEGORY_ID`&features_hash=V`$smarty.const.TW_M_STRINGS_FV_ID`"|fn_url}">{__("view_all")}</a>
+        <a class="ty-product-cross-sales-all" href="{"categories.view?category_id=`$smarty.const.STRINGS_CATEGORY_ID`&features_hash=V`$smarty.const.TW_M_STRINGS_FV_ID`"|fn_url}" rel="nofollow">{__("view_all")}</a>
     </div>
     <div class="ty-product-cross-sales-right">
         {assign var="obj_prefix" value="`$block.block_id`000"}
@@ -83,6 +83,6 @@
 
         {include file="common/scroller_init.tpl" items_count="1" suf="_2"}
         <div class="ty-product-cross-sales-title">{$items[1]['title']}</div>
-        <a class="ty-product-cross-sales-all" href="{"categories.view?category_id=`$smarty.const.OVERGRIPS_CATEGORY_ID`"|fn_url}">{__("view_all")}</a>
+        <a class="ty-product-cross-sales-all" href="{"categories.view?category_id=`$smarty.const.OVERGRIPS_CATEGORY_ID`"|fn_url}" rel="nofollow">{__("view_all")}</a>
     </div>
 {/if}

@@ -14,6 +14,8 @@
 {/if}
 <!--account_info_links_{$block.snapping_id}--></ul>
 <div class="ty-mobile-version">
-    {assign var="mobile_url" value=$config.current_url|fn_query_remove:"dmode"|fn_link_attach:"dmode=M"}
-    <a href="{"`$mobile_url`"|fn_url}" rel="nofollow">{__("mobile_version")}</a>
+    <form action="{""|fn_url}" method="post" name="switch_dmode">
+        <input type="hidden" name="dmode" value="M">
+        {include file="buttons/button.tpl" but_text=__("mobile_version") but_name="dispatch[development.switch_dmode]" but_meta="ty-button-link"}
+    </form>
 </div>

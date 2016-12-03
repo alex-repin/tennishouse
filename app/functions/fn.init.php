@@ -514,14 +514,14 @@ function fn_init_layout($params)
         fn_set_session_data($key_name, $params['s_layout']);
     }
 
-    // [tennishouse]
-    if (!empty($_REQUEST['dmode'])) {
-        if (fn_get_session_data('dmode') != $_REQUEST['dmode']) {
-            fn_set_session_data('dmode', $_REQUEST['dmode']);
-            Registry::cleanup();
-        }
-        fn_set_session_data($key_name, false);
-    }
+//     // [tennishouse]
+//     if (!empty($_REQUEST['dmode'])) {
+//         if (fn_get_session_data('dmode') != $_REQUEST['dmode']) {
+//             fn_set_session_data('dmode', $_REQUEST['dmode']);
+//             Registry::cleanup();
+//         }
+//         fn_set_session_data($key_name, false);
+//     }
     // Replace default theme with selected for current area
     if (!empty($stored_layout)) {
         $layout = Layout::instance()->get($stored_layout);

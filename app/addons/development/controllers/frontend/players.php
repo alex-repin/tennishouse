@@ -28,46 +28,6 @@ if ($mode == 'view') {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
 
-    if (!empty($player_data['gear'])) {
-        $params = array(
-            'item_ids' => implode(',', $player_data['gear']),
-            'show_out_of_stock' => true
-        );
-        list($gear,) = fn_get_products($params);
-        if (!empty($gear)) {
-            fn_gather_additional_products_data($gear, array(
-                'get_icon' => true,
-                'get_detailed' => true,
-                'get_additional' => true,
-                'get_options' => true,
-                'get_discounts' => true,
-                'get_features' => false,
-                'get_title_features' => true,
-            ));
-
-            $player_data['gear'] = array(
-                'R' => array(),
-                'BC' => array(),
-                'AS' => array(),
-            );
-            foreach ($gear as $i => $prod) {
-                if ($prod['status'] == 'A' || $prod['type'] == 'R') {
-                    if (in_array($prod['type'], array('R')) && empty($player_data['gear']['R'])) {
-                        if (empty($player_data['gear']['R'])) {
-                            Registry::get('view')->assign('racket', '(' . $prod['product'] . ')');
-                        }
-                        $player_data['gear']['R'][] = $prod;
-                    } elseif (in_array($prod['type'], array('A', 'S'))) {
-                        $player_data['gear']['AS'][] = $prod;
-                    } else {
-                        $player_data['gear']['BC'][] = $prod;
-                    }
-                }
-            }
-        }
-    }
-    
-    $player_data['news_feed'] = fn_get_rss_news(array('rss_feed_link' => $player_data['rss_link']));
     fn_add_breadcrumb(__('professionals') . ' ' . (($player_data['gender'] == 'M') ? __("atp") : __("wta") ), 'players.list');
     fn_add_breadcrumb($player_data['player']);
 

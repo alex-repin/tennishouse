@@ -857,16 +857,26 @@ function fn_import_check_order_company_id(&$primary_object_id, &$object, &$patte
 
 function fn_ult_db_query_process(&$query)
 {
+    static $company_id, $skip_sharing_selection;
+    if (!isset($company_id)) {
+        $company_id = Registry::get('runtime.company_id');
+    }
+    if (!isset($skip_sharing_selection)) {
+        $skip_sharing_selection = Registry::get('runtime.skip_sharing_selection');
+    }
     // Automatically add Sharing condition for SELECT queries
     // Condition will be added only for sharing objects. (Share schema)
     // Example:
     //  before: SELECT ?:pages.page_id FROM ?:pages WHERE page_id = 2
     //  after:  SELECT ?:pages.page_id FROM ?:pages INNER JOIN ?:ult_objects_sharing ON (?:ult_objects_sharing.share_object_id = ?:pages.page_id AND ?:ult_objects_sharing.share_company_id = ?:pages.company_id) WHERE page_id = 2
 
-    if (Registry::get('runtime.company_id') && !Registry::get('runtime.skip_sharing_selection')) {
+    if ($company_id && !$skip_sharing_selection) {
         // Cart was inited
         if (stripos($query, 'select') === 0) { // Add condition only for SELECT queries
-            static $sharing_schema;
+            static $sharing_schema, $table_prefix;
+            if (empty($table_prefix)) {
+                $table_prefix = Registry::get('config.table_prefix');
+            }
             if (empty($sharing_schema) && Registry::get('addons_initiated') === true) {
                 $sharing_schema = fn_get_schema('sharing', 'schema');
             }
@@ -886,10 +896,10 @@ function fn_ult_db_query_process(&$query)
             }
 
             $tables = array_unique($tables);
-
+            
             foreach ($tables as $table) {
 
-                $table = str_replace(Registry::get('config.table_prefix'), '', $table);
+                $table = str_replace($table_prefix, '', $table);
                 if (isset($sharing_schema[$table])) {
 
                     // Divide query into separate parts, like SELECT, FROM, etc...
@@ -905,9 +915,9 @@ function fn_ult_db_query_process(&$query)
                             continue;
 
                         } elseif (is_array($condition) && !empty($where[1])) {
-                            $alias_pref = '(' . Registry::get('config.table_prefix') . $table . '\.|[^\.a-zA-Z_])'; // field used without alias or with full table name
+                            $alias_pref = '(' . $table_prefix . $table . '\.|[^\.a-zA-Z_])'; // field used without alias or with full table name
 
-                            if (preg_match('/' . Registry::get('config.table_prefix') . $table . '\s+AS\s+([a-zA-Z_]+)/i',$query, $alias)) {
+                            if (preg_match('/' . $table_prefix . $table . '\s+AS\s+([a-zA-Z_]+)/i',$query, $alias)) {
                                 $alias_pref = '(' . $alias[1] . '\.)';
                             }
 
@@ -959,7 +969,7 @@ function fn_ult_db_query_process(&$query)
                             . ' AND ?:ult_objects_sharing.share_object_type = ?s)'
                         . (!empty($where[1]) ? 'WHERE ' . $where[1] : '')
                         . " $additional_condition",
-                        Registry::get('runtime.company_id'),
+                        $company_id,
                         $table
                     );
 

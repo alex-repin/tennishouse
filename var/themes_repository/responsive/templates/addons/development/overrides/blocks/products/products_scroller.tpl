@@ -14,24 +14,6 @@
     {else}
         {assign var="_hide_price" value=true}
 {/if}
-{if $block.properties.all_items_url}
-    {$all_items_url = $block.properties.all_items_url}
-{else}
-    {if $block.content.items.filling == 'also_bought'}
-        {$all_items_url = "products.search&search_performed=Y&also_bought_for_product_id=`$product.product_id`"}
-    {elseif $block.content.items.filling == 'same_brand_products'}
-        {$brand_id = $smarty.const.BRAND_FEATURE_ID}
-        {$brand_type = $smarty.const.BRAND_FEATURE_TYPE}
-        {if $smarty.session.product_features.$brand_id.variant_id && $brand_type}
-            {$all_items_url = "products.search&search_performed=Y&features_hash=`$brand_type``$smarty.session.product_features.$brand_id.variant_id`"}
-        {/if}
-    {elseif $block.content.items.filling == 'similar_products'}
-        {$all_items_url = "products.search&search_performed=Y&similar_pid=`$product.product_id`"}
-    {*elseif $block.content.items.filling == 'bestsellers'}
-        {$all_items_url = "products.search&search_performed=Y&bestsellers=1&sort_by=sales_amount&sort_order=desc"*}
-    {/if}
-{/if}
-
 {assign var="obj_prefix" value="`$block.block_id`000"}
 <div id="content_block_tab_{$block.block_id}" class="ty-wysiwyg-content">
     <div id="scroll_list_{$block.block_id}" class="owl-carousel ty-scroller-list {if $block.properties.mode == 'S'}ty-small-mode{elseif $block.properties.mode == 'N'}ty-mini-mode{elseif $block.properties.mode == 'M'}ty-micro-mode{/if}">
@@ -50,9 +32,9 @@
             mode=$block.properties.mode}
         {/foreach}
     </div>
-    {if $all_items_url}
+    {if $block.properties.all_items_url}
         <div class="ty-check-all__block-link">
-            <a href="{"`$all_items_url`"|fn_url}">{__("check_all_items")|upper}</a>
+            {include file="addons/development/common/form_redirect.tpl" form_redirect="{$block.properties.all_items_url}" form_text=__("check_all_items")|upper form_class="ty-view-all-link"}
         </div>
     {/if}
 </div>

@@ -49,4 +49,15 @@ if ($mode == 'view') {
     }
     Registry::get('view')->assign('subcategories', $subcategories);
     Registry::get('view')->assign('category_data', $category_data);
+
+    $predefined_meta = array();
+    if ($category_data['is_noindex'] == 'Y') {
+        $predefined_meta['robots'] = 'noindex';
+        if ($category_data['is_nofollow'] == 'Y') {
+            $predefined_meta['robots'] .= ',nofollow';
+        }
+    } elseif (!empty($category_data['canonical'])) {
+        $predefined_meta['canonical'] = fn_url($category_data['canonical']);
+    }
+    Registry::get('view')->assign('predefined_meta', $predefined_meta);
 }

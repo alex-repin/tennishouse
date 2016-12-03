@@ -114,3 +114,15 @@ if ($mode == 'find_state_data') {
     fn_echo(json_encode($state_code));
     exit;
 }
+if ($mode == 'switch_dmode') {
+    if (!empty($_REQUEST['dmode'])) {
+        if (fn_get_session_data('dmode') != $_REQUEST['dmode']) {
+            fn_set_session_data('dmode', $_REQUEST['dmode']);
+        }
+    }
+    
+    return array(CONTROLLER_STATUS_REDIRECT, !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "index.index");
+}
+if ($mode == 'redirect') {
+    return array(CONTROLLER_STATUS_REDIRECT, !empty($_REQUEST['redirect_url']) ? $_REQUEST['redirect_url'] : (!empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "index.index"));
+}

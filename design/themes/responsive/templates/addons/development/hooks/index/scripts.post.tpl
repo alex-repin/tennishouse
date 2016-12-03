@@ -246,10 +246,20 @@
 
     function fn_mouseleave_tooltip(trigger)
     {
+        trigger.parents('.ty-top-mine__submenu-col').removeClass('ty-top-mine__submenu-col-hover');
         trigger.parents('.ty-menu__item-parent .ty-menu__item_full').each(function(){
+            $(this).removeClass('is-hover-menu');
             if (!$(this).hasClass('is-hover')) {
                 fn_hide_top_menu($(this));
             }
+        });
+    }
+
+    function fn_mouseon_tooltip(trigger)
+    {
+        trigger.parents('.ty-top-mine__submenu-col').addClass('ty-top-mine__submenu-col-hover');
+        trigger.parents('.ty-menu__item-parent .ty-menu__item_full').each(function(){
+            $(this).addClass('is-hover-menu');
         });
     }
 

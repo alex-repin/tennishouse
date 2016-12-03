@@ -1309,7 +1309,7 @@ function fn_get_seo_parent_path($object_id, $object_type)
         $s = $schema[$object_type];
 
         if (!empty($s['tree'])) {
-            return $s['path_function']($object_id);
+            return !empty($s['path_function']($object_id)) ? $s['path_function']($object_id) : '';
         }
 
     }

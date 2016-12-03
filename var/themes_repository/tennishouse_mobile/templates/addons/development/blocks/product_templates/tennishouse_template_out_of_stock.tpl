@@ -131,13 +131,6 @@
                 {/hook}
             </div>
             [-similar_products-]
-            <script type="text/javascript">
-            (function(_, $) {
-                $(document).ready(function() {
-                    $('.ty-similar-products-block .ty-mainbox-title').html('Похожие товары в наличии');
-                });
-            }(Tygh, Tygh.$));
-            </script>
             {if $show_product_tabs}
                 <div class="ty-product-tabs-oos">
                 {include file="views/tabs/components/product_popup_tabs.tpl"}

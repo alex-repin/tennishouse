@@ -75,7 +75,7 @@ if ($mode == 'catalog') {
         array_pop($category_parent_ids);
 
         $subtabs_string = $tab_string = '';
-        if (empty($subcategories) || !empty($category_data['parent_id']) || fn_display_subheaders($category_data['category_id'])) {
+//         if (empty($subcategories) || !empty($category_data['parent_id']) || fn_display_subheaders($category_data['category_id'])) {
             $params = $_REQUEST;
 
             if (!empty($_REQUEST['items_per_page'])) {
@@ -300,7 +300,7 @@ if ($mode == 'catalog') {
             // [tennishouse]
             Registry::get('view')->assign('products', $products);
             Registry::get('view')->assign('search', $search);
-        }
+//         }
     
         // If page title for this category is exist than assign it to template
         if (!empty($category_data['page_title'])) {

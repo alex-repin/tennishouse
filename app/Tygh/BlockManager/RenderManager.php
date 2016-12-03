@@ -476,10 +476,10 @@ class RenderManager
             }
             // tennishouse capture block
         } else {
-//         fn_print_r($block['content']['items']['filling'], $block['properties']['template'], $cache_name);
             if ($block['type'] == 'main') {
                 $block_content = self::_renderMainContent();
             } else {
+//             fn_print_r($block['content']['items']['filling'], $block['properties']['template'], $cache_name);
                 $title = $block['name'];
                 if (Registry::get('runtime.customization_mode.live_editor')) {
                     $le_block_types = fn_get_schema('customization', 'live_editor_block_types');

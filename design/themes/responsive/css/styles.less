@@ -693,10 +693,10 @@ Menus
 .ty-menu__item.ty-menu__item-active .ty-menu__item-link {
     background: darken(@menu, 5%)
 }
-.no-touch .ty-menu__item:hover .ty-menu__submenu-items,
+/*.no-touch .ty-menu__item:hover .ty-menu__submenu-items,
 .is-hover-menu .ty-menu__submenu-items {
     display: block;
-}
+}*/
 .no-touch .ty-menu__item:hover .ty-menu__item-link,
 .is-hover-menu .ty-menu__item-link,
 .is-hover-menu.ty-menu__item-active .ty-menu__item-link {
@@ -3252,10 +3252,6 @@ Layout
     min-height: 0;
     min-width: 0;
 }
-
-// Default value for fluid
-@fluidContainerMaxWidth:      960px;
-@fluidContainerMinWidth:      760px;
 
 .container-fluid {
     max-width: @fluidContainerMaxWidth;

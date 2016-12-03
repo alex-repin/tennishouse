@@ -68,6 +68,7 @@ function fn_check_expired_points()
  */
 function fn_get_reward_points($object_id, $object_type = PRODUCT_REWARD_POINTS, $usergroup_ids = array(), $company_id = 0)
 {
+    $ob_ids = is_array($object_id) ? $object_id : explode(',', $object_id);
     $op_suffix = (Registry::get('addons.reward_points.consider_zero_values') == 'Y') ? '=' : '';
 
     if (fn_allowed_for('ULTIMATE')) {
@@ -82,30 +83,42 @@ function fn_get_reward_points($object_id, $object_type = PRODUCT_REWARD_POINTS, 
 
     if (!empty($usergroup_ids)) {
         if (Registry::get('addons.reward_points.several_points_action') == 'minimal_absolute') {
-            $order_by = 'amount_type ASC, amount ASC';
+            $order_by = 'reward_points.amount_type ASC, reward_points.amount ASC';
+            $_order_by = 'tmp.amount_type ASC, tmp.amount ASC';
         } elseif (Registry::get('addons.reward_points.several_points_action') == 'minimal_percentage') {
-            $order_by = 'amount_type DESC, amount ASC';
+            $order_by = 'reward_points.amount_type DESC, reward_points.amount ASC';
+            $_order_by = 'tmp.amount_type DESC, tmp.amount ASC';
         } elseif (Registry::get('addons.reward_points.several_points_action') == 'maximal_absolute') {
-            $order_by = 'amount_type ASC, amount DESC';
+            $order_by = 'reward_points.amount_type ASC, reward_points.amount DESC';
+            $_order_by = 'tmp.amount_type ASC, tmp.amount DESC';
         } elseif (Registry::get('addons.reward_points.several_points_action') == 'maximal_percentage') {
-            $order_by = 'amount_type DESC, amount DESC';
+            $order_by = 'reward_points.amount_type DESC, reward_points.amount DESC';
+            $_order_by = 'tmp.amount_type DESC, tmp.amount DESC';
         }
 
-        return db_get_row(
-            "SELECT *, amount AS pure_amount FROM ?:reward_points"
-            . " WHERE object_id = ?i AND object_type = ?s AND company_id = ?i"
-                . " AND amount >$op_suffix 0 AND usergroup_id IN(?n)"
-            . " ORDER BY ?p LIMIT 1",
-            $object_id, $object_type, $company_id, $usergroup_ids, $order_by
+        $result = db_get_hash_array(
+            "SELECT reward_points.*, reward_points.amount AS pure_amount FROM ?:reward_points AS reward_points"
+            . " LEFT JOIN ?:categories ON ?:categories.category_id = reward_points.object_id AND ?:categories.is_op = 'Y'"
+            . " LEFT JOIN ?:products ON ?:products.product_id = reward_points.object_id AND ?:products.is_op = 'Y'"
+            . " WHERE reward_points.object_id IN (?n) AND reward_points.object_type = ?s AND reward_points.company_id = ?i AND reward_points.amount >$op_suffix 0"
+            . " AND reward_points.usergroup_id IN (?n) AND reward_points.reward_point_id = (SELECT tmp.reward_point_id FROM ?:reward_points AS tmp WHERE tmp.object_id = reward_points.object_id ORDER BY ?p LIMIT 1)"
+            . " AND CASE reward_points.object_type WHEN ?s THEN ?:categories.category_id IS NOT NULL WHEN ?s THEN ?:products.product_id IS NOT NULL ELSE 1 END"
+            . " ORDER BY ?p", 
+            'object_id', $ob_ids, $object_type, $company_id, $usergroup_ids, $_order_by, CATEGORY_REWARD_POINTS, PRODUCT_REWARD_POINTS, $order_by
         );
     } else {
-        return db_get_hash_array(
-            "SELECT *, amount AS pure_amount FROM ?:reward_points"
-            . " WHERE object_id = ?i AND object_type = ?s AND company_id = ?i AND amount >$op_suffix 0"
-            . " ORDER BY usergroup_id",
-            'usergroup_id', $object_id, $object_type, $company_id
+        $result = db_get_hash_multi_array(
+            "SELECT reward_points.*, reward_points.amount AS pure_amount FROM ?:reward_points AS reward_points"
+            . " LEFT JOIN ?:categories ON ?:categories.category_id = reward_points.object_id AND ?:categories.is_op = 'Y'"
+            . " LEFT JOIN ?:products ON ?:products.product_id = reward_points.object_id AND ?:products.is_op = 'Y'"
+            . " WHERE reward_points.object_id IN (?n) AND reward_points.object_type = ?s AND reward_points.company_id = ?i AND reward_points.amount >$op_suffix 0"
+            . " AND CASE reward_points.object_type WHEN ?s THEN ?:categories.category_id IS NOT NULL WHEN ?s THEN ?:products.product_id IS NOT NULL ELSE 1 END"
+            . " ORDER BY reward_points.usergroup_id",
+            array('object_id', 'usergroup_id'), $ob_ids, $object_type, $company_id, CATEGORY_REWARD_POINTS, PRODUCT_REWARD_POINTS
         );
     }
+
+    return (count($ob_ids) == 1 ) ? (!empty($result[reset($ob_ids)]) ? $result[reset($ob_ids)] : array()) : $result;
 }
 
 /**
@@ -561,66 +574,49 @@ function fn_gather_reward_points_data(&$product, &$auth, $get_point_info = true)
         return false;
     }
 
-    $main_category = db_get_field("SELECT category_id FROM ?:products_categories WHERE product_id = ?i AND link_type = 'M'", $product['product_id']);
+//     $main_category = db_get_field("SELECT category_id FROM ?:products_categories WHERE product_id = ?i AND link_type = 'M'", $product['product_id']);
     $candidates = array(
-        PRODUCT_REWARD_POINTS  => $product['product_id'],
-        CATEGORY_REWARD_POINTS => $main_category,
+//         PRODUCT_REWARD_POINTS  => $product['product_id'],
+//         CATEGORY_REWARD_POINTS => $main_category,
         GLOBAL_REWARD_POINTS   => 0
     );
 
     $reward_points = array();
     foreach ($candidates as $object_type => $object_id) {
-        $_reward_points = fn_get_reward_points($object_id, $object_type, $auth['usergroup_ids']);
-
-        if ($object_type == CATEGORY_REWARD_POINTS && !empty($_reward_points)) {
-            // get the "override point" setting
-            $category_is_op = db_get_field("SELECT is_op FROM ?:categories WHERE category_id = ?i", $_reward_points['object_id']);
-        }
-        if ($object_type == CATEGORY_REWARD_POINTS && (empty($_reward_points) || $category_is_op != 'Y')) {
-            // if there is no points of main category of the "override point" setting is disabled
-            // then get point of secondary categories
-            $secondary_categories = db_get_fields("SELECT category_id FROM ?:products_categories WHERE product_id = ?i AND link_type = 'A'", $product['product_id']);
-
-            if (!empty($secondary_categories)) {
-                $secondary_categories_points = array();
-                foreach ($secondary_categories as $value) {
-                    $_rp = fn_get_reward_points($value, $object_type, $auth['usergroup_ids']);
-                    if (isset($_rp['amount'])) {
-                        $secondary_categories_points[] = $_rp;
+        if ($object_type == CATEGORY_REWARD_POINTS) {
+            $paths = db_get_hash_single_array("SELECT category_id, id_path FROM ?:categories WHERE category_id IN (SELECT category_id FROM ?:products_categories WHERE product_id = ?i)", array('category_id', 'id_path'), $product['product_id']);
+            $main = $paths[$object_id];
+            unset($paths[$object_id]);
+            $paths = fn_insert_before_key($paths, key($paths), $object_id, $main);
+            $all_ids = array();
+            $use_order = array();
+            if (!empty($paths)) {
+                foreach ($paths as $cat_id => $path) {
+                    $ids = explode('/', $path);
+                    foreach(array_reverse($ids) as $j => $cat_id) {
+                        if (empty($use_order[$j]) || !in_array($cat_id, $use_order[$j])) {
+                            $use_order[$j][] = $cat_id;
+                        }
                     }
-                    unset($_rp);
-                }
-
-                if (!empty($secondary_categories_points)) {
-                    $sorted_points = fn_sort_array_by_key($secondary_categories_points, 'amount', (Registry::get('addons.reward_points.several_points_action') == 'minimal_absolute' || Registry::get('addons.reward_points.several_points_action') == 'minimal_percentage') ? SORT_ASC : SORT_DESC);
-                    $_reward_points = array_shift($sorted_points);
+                    $all_ids = array_merge($all_ids, $ids);
                 }
             }
-
-            if (!isset($_reward_points['amount'])) {
-                if (Registry::get('addons.reward_points.higher_level_extract') == 'Y' && !empty($candidates[$object_type])) {
-                    $id_path = db_get_field("SELECT REPLACE(id_path, '{$candidates[$object_type]}', '') FROM ?:categories WHERE category_id = ?i", $candidates[$object_type]);
-                    if (!empty($id_path)) {
-                        $c_ids = explode('/', trim($id_path, '/'));
-                        $c_ids = array_reverse($c_ids);
-                        foreach ($c_ids as $category_id) {
-                            $__reward_points = fn_get_reward_points($category_id, $object_type, $auth['usergroup_ids']);
-                            if (!empty($__reward_points)) {
-                                // get the "override point" setting
-                                $_category_is_op = db_get_field("SELECT is_op FROM ?:categories WHERE category_id = ?i", $__reward_points['object_id']);
-                                if ($_category_is_op == 'Y') {
-                                    $category_is_op = $_category_is_op;
-                                    $_reward_points = $__reward_points;
-                                    break;
-                                }
-                            }
+            $_rp = fn_get_reward_points($all_ids, $object_type, $auth['usergroup_ids']);
+            if (!empty($_rp) && !empty($use_order)) {
+                foreach ($use_order as $lvl => $cat_ids) {
+                    foreach ($cat_ids as $i => $ct_id) {
+                        if (empty($_reward_points) && !empty($_rp[$ct_id])) {
+                            $_reward_points = $_rp[$ct_id];
+                            break 2;
                         }
                     }
                 }
             }
+        } else {
+            $_reward_points = fn_get_reward_points($object_id, $object_type, $auth['usergroup_ids']);
         }
 
-        if (!empty($_reward_points) && (($object_type == GLOBAL_REWARD_POINTS) || ($object_type == PRODUCT_REWARD_POINTS && $product['is_op'] == 'Y') || ($object_type == CATEGORY_REWARD_POINTS && (!empty($category_is_op) && $category_is_op == 'Y')))) {
+        if (!empty($_reward_points) && (($object_type == GLOBAL_REWARD_POINTS) || $object_type == PRODUCT_REWARD_POINTS || $object_type == CATEGORY_REWARD_POINTS)) {
             // if global points or category points (and override points is enabled) or product points (and override points is enabled)
             $reward_points = $_reward_points;
             break;

@@ -19,10 +19,14 @@ use Tygh\BlockManager\RenderManager;
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 if ($mode == 'get_block') {
+
     if (!empty($_REQUEST['b_id'])) {
         $block = Block::instance()->getById($_REQUEST['b_id'], $_REQUEST['s_id'], $_REQUEST['dynamic_object']);
         if (!empty($_REQUEST['extra_properties'])) {
             $block['extra_properties'] = $_REQUEST['extra_properties'];
+        }
+        if (!empty($_REQUEST['request_data'])) {
+            $block['request_data'] = $_REQUEST['request_data'];
         }
         $content = RenderManager::renderBlockContent($block);
         echo '<div id="ajax_block_content_' . $_REQUEST['b_id'] . '">' . $content . '<!--ajax_block_content_' . $_REQUEST['b_id'] . '--></div>';

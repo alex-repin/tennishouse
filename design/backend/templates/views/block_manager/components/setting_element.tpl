@@ -36,7 +36,7 @@ Tygh.$(document).ready(function() {
         {/foreach}
     {/if}
 {elseif $option.type == "input" || $option.type == "input_long"}
-    <input type="text" id="{$html_id}" class="input-medium" name="{$html_name}" value="{if $value}{$value}{else}{$option.default_value}{/if}" />
+    <input type="text" id="{$html_id}" class="{if $option.type == 'input_long'}input-large{else}input-medium{/if}" name="{$html_name}" value="{if $value}{$value}{else}{$option.default_value}{/if}" />
 
 {elseif $option.type == "multiple_checkboxes"}
 

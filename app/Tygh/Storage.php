@@ -40,8 +40,9 @@ class Storage
         if ($type == 'statics') {
             $type = 'assets';
         }
+        $storage_type = Registry::get('config.storage.' . $type);
 
-        if (!Registry::get('config.storage.' . $type)) {
+        if (!$storage_type) {
             throw new DeveloperException('Storage: undefined storage type - ' . $type);
         }
 
@@ -50,7 +51,7 @@ class Storage
             self::$_instance[$storage] = new $class();
         }
 
-        self::$_instance[$storage]->options = fn_array_merge($options, Registry::get('config.storage.' . $type));
+        self::$_instance[$storage]->options = fn_array_merge($options, $storage_type);
         self::$_instance[$storage]->type = $type;
 
         return self::$_instance[$storage];

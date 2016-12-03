@@ -2103,7 +2103,12 @@ var Tygh = {
             }
 
             if (flag == false || flag == true) {
-                $(':input:not(.cm-skip-avail-switch)', this).prop('disabled', flag).toggleClass('disabled', flag);
+                $(':input:not(.cm-skip-avail-switch)', this).each(function() {
+                        if ($(this).hasClass('cm-switch-inverse')) {
+                                flag = (flag == true) ? false : true;
+                        }
+                       $(this).prop('disabled', flag).toggleClass('disabled', flag);
+                });
                 // TennisHouse
                 $('div[class^=ui-]', this).toggleClass('ui-state-disabled', flag);
                 $('.cm-dropdown', this).each(function() {
@@ -3409,6 +3414,9 @@ var Tygh = {
                     // [tennishouse]
                     params.onShow = function( event, ui ) {
                         elm.addClass('tooltip-shown');
+                        if (typeof fn_mouseon_tooltip == 'function') {
+                            fn_mouseon_tooltip(elm);
+                        }
                     }
                     params.onHide = function( event, ui ) {
                         elm.removeClass('tooltip-shown');

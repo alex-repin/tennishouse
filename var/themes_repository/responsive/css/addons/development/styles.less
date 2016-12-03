@@ -81,16 +81,16 @@ select {
     top: 30px;
 }
 .icon-question-sign {
-    background-image: url("../../../media/images/addons/development/glyphicons-halflings.png");
-    background-position: -96px  -96px;
+    background-image: url("../../../media/images/addons/development/tooltip_question.png");
     background-repeat: no-repeat;
+    background-size: contain;
     display: inline-block;
     height: 14px;
     line-height: 14px;
     margin-top: 1px;
     vertical-align: text-top;
     width: 14px;
-    opacity: 0.75;
+    opacity: 0.5;
 }
 .ty-exception__code {
     background-image: url("../../../media/images/addons/development/silhouette.png");
@@ -771,10 +771,6 @@ input:focus::placeholder, textarea:focus::placeholder {
 .ty-menu__submenu-items .ty-top-mine__submenu-col:last-child {
     margin-right: 0;
 }
-.no-touch .top-menu .ty-menu__item:hover .ty-menu__submenu-items,
-.top-menu .is-hover-menu .ty-menu__submenu-items {
-    display: none;
-}
 .ty-dropdown-box__title {
     padding: 7px 30px 6px 40px;
     cursor: pointer;
@@ -863,19 +859,13 @@ table.ty-cart-content {
     text-shadow: none;
     transition: all 400ms linear 0s;
 }
-.ty-menu__submenu-items {
-    background: none repeat scroll 0 0 #ffffff;
-    color: #000000;
-    text-align: left;
-    padding: 15px;
-}
 .ty-menu__catalog-items {
-    height: 400px;
+/*     height: 400px; */
 }
 .ty-menu__submenu-items .ty-menu__submenu-link {
     color: #454545;
-    font-size: 12px;
-    padding: 3px 5px 3px 12px;
+    font-size: 14px;
+    padding: 7px 0 7px 12px;
     display: block;
     transition: none;
 }
@@ -989,13 +979,164 @@ table.ty-cart-content {
 }
 .ty-menu__submenu-items .ty-top-mine__submenu-col {
     margin: 0;
-    width: 184px;
+    width: 215px;
 }
 .top-my-account {
     float: right;
 }
 .top-cart-content {
     float: right;
+}
+.ty-menu__submenu-item-header .ty-menu__submenu-link {
+    font-weight: normal;
+    font-size: 16px;
+}
+/*.no-touch .top-menu .ty-menu__item:hover .ty-menu__submenu-items,
+.top-menu .is-hover-menu .ty-menu__submenu-items {
+    display: none;
+}*/
+/*.no-touch .ty-menu__item:hover .ty-menu__submenu-items,
+.is-hover-menu .ty-menu__submenu-items {
+    display: inline-block;
+}*/
+.ty-menu__submenu-items {
+    color: #000000;
+    text-align: left;
+    padding: 15px;
+}
+.ty-menu__item_full > .ty-menu__submenu {
+/*    background: none repeat scroll 0 0 #ffffff;
+    width: 100%;
+    position: absolute;
+    left: 0;*/
+/*     border-bottom: 1px solid darken(@menu, 4%); */
+}
+.ty-menu__catalog {
+    .ty-menu__submenu-items .ty-top-mine__submenu-col {
+        display: block;
+        padding: 0;
+        width: 270px;
+        position: relative;
+        .ty-menu__submenu {
+            display: none;
+            right: 0px;
+            top: 0px;
+            position: absolute;
+            .ty-menu__submenu-list {
+                width: 250px;
+                min-width: 200px;
+                display: none;
+                position: absolute;
+                background: white;
+                z-index: 100;
+                border: 1px solid darken(@menu, 4%);
+                padding: 15px;
+                .ty-menu__submenu-item-subheader {
+                    background-color: #fff;
+                    border-bottom: 1px solid lighten(@font, 63%);
+                    .ty-menu__submenu-link {
+                        color: lighten(@font, 50%);
+                    }
+                    .ty-menu__submenu-link:hover {
+                        background-color: #fff;
+                        color: lighten(@font, 50%);
+                    }
+                }
+                .ty-menu__submenu-section {
+                    display: inline-block;
+                    width: 250px;
+                    vertical-align: top;
+                }
+            }
+            .ty-menu__submenu-link {
+                padding: 0 0 0 20px;
+                height: 40px;
+                line-height: 40px;
+                vertical-align: middle;
+            }
+        }
+    }
+    .ty-menu__submenu-item-header {
+        background: transparent;
+        display: table;
+        height: 40px;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+    }
+    .ty-menu__submenu-item-header .ty-menu__submenu-link {
+        color: #000;
+        display: table-cell;
+        padding: 0 0 0 20px;
+        vertical-align: middle;
+    }
+    .ty-menu__submenu-items {
+        padding: 0;
+    }
+    .ty-menu__submenu-item-header .ty-menu__submenu-link:hover {
+        color: #000;
+        background-color: lighten(#FBFF9A, 10%);
+    }
+    .ty-menu__submenu-item-header-text {
+        color: #000;
+        display: inline-block;
+        font-size: 16px;
+        line-height: 30px;
+        margin: 0 0 0 10px;
+        vertical-align: middle;
+    }
+    .ty-menu-icon {
+        background-size: contain;
+        float: left;
+        background-repeat: no-repeat;
+        width: 30px;
+        height: 30px;
+    }
+    .ty-category-icon-254 {
+        background-image: url("../../../media/images/addons/development/racket_.png");
+    }
+    .ty-category-icon-262 {
+        background-image: url("../../../media/images/addons/development/t-shirt.png");
+    }
+    .ty-category-icon-263 {
+        background-image: url("../../../media/images/addons/development/shoes.png");
+    }
+    .ty-category-icon-265 {
+        background-image: url("../../../media/images/addons/development/strings_icon.png");
+    }
+    .ty-category-icon-264 {
+        background-image: url("../../../media/images/addons/development/bag.png");
+    }
+    .ty-category-icon-266 {
+        background-image: url("../../../media/images/addons/development/ball.png");
+    }
+    .ty-category-icon-315 {
+        background-image: url("../../../media/images/addons/development/dampener.png");
+    }
+    .ty-category-icon-472 {
+        background-image: url("../../../media/images/addons/development/grips.png");
+    }
+    .ty-category-icon-471 {
+        background-image: url("../../../media/images/addons/development/ballport.png");
+    }
+    .ty-category-icon-463 {
+        background-image: url("../../../media/images/addons/development/str_machine.png");
+    }
+    .ty-category-icon-465 {
+        background-image: url("../../../media/images/addons/development/ball_machine.png");
+    }
+    .ty-category-icon-438 {
+        background-image: url("../../../media/images/addons/development/equipment.png");
+    }
+    .ty-category-icon-437 {
+        background-image: url("../../../media/images/addons/development/other.png");
+    }
+}
+.no-touch .ty-menu__catalog .ty-menu__submenu-items .ty-top-mine__submenu-col:hover .ty-menu__submenu, .no-touch .ty-menu__catalog .ty-menu__submenu-items .ty-top-mine__submenu-col-hover .ty-menu__submenu/*, .ty-menu__catalog .is-hover-menu .ty-menu__submenu-items .ty-top-mine__submenu-col .ty-menu__submenu*/ {
+    display: block;
+}
+.no-touch .ty-menu__catalog .ty-menu__submenu-items .ty-top-mine__submenu-col:hover .ty-menu__submenu-list, .no-touch .ty-menu__catalog .ty-menu__submenu-items .ty-top-mine__submenu-col-hover .ty-menu__submenu-list/*, .ty-menu__catalog .is-hover-menu .ty-menu__submenu-items .ty-top-mine__submenu-col .ty-menu__submenu-list*/ {
+    display: block;
 }
 /*Top menu*/
 
@@ -1203,6 +1344,10 @@ table.ty-cart-content {
 .ty-product-filters .ty-product-filters__item-more {
     padding: 0;
     margin: 0;
+}
+.ty-product-filters__item {
+    cursor: pointer;
+    display: block;
 }
 .ty-price-slider {
     background: lighten(@base, 3%);
@@ -1803,7 +1948,7 @@ table.ty-cart-content {
 
 /*Product page*/
 .ty-tabs__a, .ty-tabs .subtab a {
-    padding: 8px 14px 2px 15px;
+    padding: 8px 13px 2px;
 }
 .ty-prices-container-left {
     display: inline-block;
@@ -2656,6 +2801,10 @@ table.ty-cart-content {
     margin-bottom: 5px;
     padding: 2px 15px 1px;
 }
+.ty-player-gear-container h2 {
+    background-color: #000;
+    display: block;
+}
 .ty-tennishouse-container .ty-tabs__item, .ty-tennishouse-container .ty-tabs .subtab {
     margin: 2px 20px 0 0;
     width: 260px;
@@ -3121,8 +3270,8 @@ table.ty-cart-content {
 }
 .top-menu .ty-tooltip-block {
     position: absolute;
-    right: 20px;
-    top: 3px;
+    right: 40px;
+    top: 12px;
 }
 
 /*Homepage*/
@@ -3173,8 +3322,8 @@ table.ty-cart-content {
     width: 251px;
     height: 190px;
 }
-.ty-accessories {
-    background-image: url("../../../media/images/addons/development/accessories.png");
+.ty-balls {
+    background-image: url("../../../media/images/addons/development/tennisballs.jpg");
     width: 251px;
     height: 190px;
 }
@@ -4086,7 +4235,24 @@ input.ty-rf_input-answer{
     text-transform: uppercase;
     text-align: center;
 }
-
+.ty-button-link {
+    background: transparent;
+    color: @links;
+    font-size: 15px;
+    padding: 0;
+    border: none;
+}
+.ty-button-link:hover {
+    color: @links;
+}
+.ty-view-all-link {
+    color: @font;
+    font-weight: bold;
+    font-size: 13px;
+}
+.ty-view-all-link:hover {
+    color: @font;
+}
 /* KLADR */
 .kladr-error {
     color: #cb3e27;

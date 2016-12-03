@@ -65,6 +65,11 @@ $schema['banners'] = array (
         )
     ),
     'wrappers' => 'blocks/wrappers',
+    'cache' => array(
+        'update_handlers' => array ('banners', 'banner_descriptions', 'banner_images'),
+        'cache_level' => 'static',
+        'no_object' => true
+    )
 );
 
 return $schema;

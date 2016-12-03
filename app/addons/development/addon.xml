@@ -386,6 +386,9 @@
         <item>
             ALTER TABLE `cscart_user_profiles` ADD `b_city_kladr_id` BIGINT UNSIGNED NOT NULL AFTER `profile_name`, ADD `s_city_kladr_id` BIGINT UNSIGNED NOT NULL AFTER `b_city_kladr_id`;
         </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `is_nofollow` CHAR(1) NOT NULL DEFAULT 'N', ADD `is_noindex` CHAR(1) NOT NULL DEFAULT 'N', ADD `canonical` VARCHAR(255) NOT NULL;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -529,6 +532,7 @@
         <item lang="ru" id="tmpl_roundabout">Карусель</item>
         <item lang="ru" id="view_collection">Посмотреть коллекцию</item>
         <item lang="ru" id="tennis_bags">Теннисные сумки</item>
+        <item lang="ru" id="balls">Теннисные мячи</item>
         <item lang="ru" id="tennis_strings">Теннисные струны</item>
         <item lang="ru" id="mens_apparel">Мужская теннисная одежда</item>
         <item lang="ru" id="womens_apparel">Женская теннисная одежда</item>
@@ -821,5 +825,17 @@
         <item lang="ru" id="racket_finder_page_title">Подобрать ракетку для большого тенниса - Тест TennisHouse</item>
         <item lang="ru" id="ajax_block_content">AJAX загрузка</item>
         <item lang="ru" id="capture_block_content">Capture содержимое</item>
+        <item lang="ru" id="tag_nofollow">NoFollow</item>
+        <item lang="ru" id="tag_noindex">NoIndex</item>
+        <item lang="ru" id="tag_canonical">Canonical</item>
+        <item lang="ru" id="player_racket">Ракетка игрока</item>
+        <item lang="ru" id="player_bags_accessories">Сумки и аксессуары игрока</item>
+        <item lang="ru" id="player_apparel_shoes">Одежда и обувь игрока</item>
+        <item lang="ru" id="players_gear_general">Контейнер товаров игрока</item>
+        <item lang="ru" id="news_feed">Лента новостей</item>
+        <item lang="ru" id="player_news_feed">Лента новостей игрока</item>
+        <item lang="ru" id="news_list">Список новостей</item>
+        <item lang="ru" id="news_scroller">Скроллер с новостями</item>
+        <item lang="ru" id="delete_absolete_promotions">Удаляй ненужные акции, тк они замедляют сайт</item>
     </language_variables>
 </addon>

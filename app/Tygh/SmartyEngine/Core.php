@@ -256,7 +256,7 @@ class Core extends \Smarty
     {
         $dirs = $this->getTemplateDir();
         foreach ($dirs as $dir) {
-            if (file_exists($dir . trim($resource_name, '/'))) {
+            if (is_file($dir . trim($resource_name, '/'))) {
                 return true;
             }
         }

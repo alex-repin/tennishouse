@@ -188,10 +188,10 @@ $schema['blocks/static_templates/my_account_links.tpl']['cache'] = array(
     'no_object' => true,
     'auth_handlers' => array('user_id')
 );
-$schema['addons/development/blocks/static_templates/category_title.tpl']['cache'] = array(
-    'cache_level' => 'static',
-    'request_handlers' => array('%TC_ID%')
-);
+// $schema['addons/development/blocks/static_templates/category_title.tpl']['cache'] = array(
+//     'cache_level' => 'static',
+//     'request_handlers' => array('%TC_ID%')
+// );
 $schema['addons/development/blocks/static_templates/image_title.tpl']['cache'] = array(
     'cache_level' => 'static',
 );
@@ -200,6 +200,40 @@ $schema['addons/development/blocks/static_templates/top_block.tpl']['cache'] = a
     'no_object' => true,
     'auth_handlers' => array('user_id'),
     'session_handlers' => array('cart')
+);
+$schema['addons/development/blocks/static_templates/tennis_bags.tpl']['cache'] = array(
+    'update_handlers' => array ('categories', 'category_descriptions'),
+    'cache_level' => 'static',
+    'no_object' => true
+);
+$schema['addons/development/blocks/static_templates/tennis_strings.tpl']['cache'] = array(
+    'update_handlers' => array ('categories', 'category_descriptions'),
+    'cache_level' => 'static',
+    'no_object' => true
+);
+$schema['addons/development/blocks/static_templates/mens_apparel_and_shoes.tpl']['cache'] = array(
+    'update_handlers' => array ('categories', 'category_descriptions'),
+    'cache_level' => 'static',
+    'no_object' => true
+);
+$schema['addons/development/blocks/static_templates/womens_apparel_and_shoes.tpl']['cache'] = array(
+    'update_handlers' => array ('categories', 'category_descriptions'),
+    'cache_level' => 'static',
+    'no_object' => true
+);
+$schema['addons/development/blocks/static_templates/balls.tpl']['cache'] = array(
+    'update_handlers' => array ('categories', 'category_descriptions'),
+    'cache_level' => 'static',
+    'no_object' => true
+);
+$schema['addons/development/blocks/static_templates/player_profiles.tpl']['cache'] = array(
+    'update_handlers' => array ('players'),
+    'cache_level' => 'static',
+    'no_object' => true
+);
+$schema['addons/development/blocks/static_templates/learning_center.tpl']['cache'] = array(
+    'cache_level' => 'static',
+    'no_object' => true
 );
 
 return $schema;

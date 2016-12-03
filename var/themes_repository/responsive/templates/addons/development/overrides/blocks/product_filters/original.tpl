@@ -71,8 +71,8 @@
             } else {
                 $.cookie.set(block_id, 0);
             }
-            block.find('.ty-product-filters').toggle('slide');
-            block.find('.ty-price-slider').toggle('slide');
+            block.find('.ty-product-filters').toggle();
+            block.find('.ty-price-slider').toggle();
         {$rdelim});
         $('.ty-product-filters__block').hover(function(e){$ldelim}
             $(this).addClass('is-hover');
@@ -81,8 +81,8 @@
             setTimeout(function() {$ldelim}
                 if (submenu.hasClass('is-hover')) {
                     $.cookie.set(block_id, 1);
-                    submenu.find('.ty-product-filters').show('slide');
-                    submenu.find('.ty-price-slider').show('slide');
+                    submenu.find('.ty-product-filters').show();
+                    submenu.find('.ty-price-slider').show();
                 }
             {$rdelim}, 150);
         {$rdelim}, function(e){$ldelim}
@@ -93,8 +93,8 @@
                 setTimeout(function() {$ldelim}
                     if (!submenu.hasClass('is-hover')) {
                         $.cookie.remove(block_id);
-                        submenu.find('.ty-product-filters').hide('slide');
-                        submenu.find('.ty-price-slider').hide('slide');
+                        submenu.find('.ty-product-filters').hide();
+                        submenu.find('.ty-price-slider').hide();
                     }
                 {$rdelim}, 150);
             {$rdelim}

@@ -714,7 +714,9 @@ class Block extends CompanySingleton
         if (!empty($params['request'])) {
             foreach ($params['request'] as $param => $val) {
                 $val = fn_strtolower(str_replace('%', '', $val));
-                if (isset($_REQUEST[$val])) {
+                if (isset($block['request_data'][$val])) {
+                    $params[$param] = $block['request_data'][$val];
+                } elseif (isset($_REQUEST[$val])) {
                     $params[$param] = $_REQUEST[$val];
                 }
             }

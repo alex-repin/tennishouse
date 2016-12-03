@@ -9,7 +9,7 @@ use Tygh\Registry;
 
 function smarty_block_hook($params, $content, &$smarty)
 {
-    static $overrides = array();
+    static $overrides = array(), $addons;
     $hook_content = '';
     $hook_name = $smarty->template_area . '_' . str_replace(':', '__', $params['name']);
 
@@ -25,7 +25,10 @@ function smarty_block_hook($params, $content, &$smarty)
             'override' => array()
         );
 
-        foreach (Registry::get('addons') as $addon => $data) {
+        if (!isset($addons)) {
+            $addons = Registry::get('addons');
+        }
+        foreach ($addons as $addon => $data) {
 
             if ($data['status'] == 'D') {
                 continue;
@@ -33,12 +36,14 @@ function smarty_block_hook($params, $content, &$smarty)
 
             $files = array();
 
-            foreach (Registry::get('addons') as $_addon => $_data) {
-                if ($_data['status'] == 'D' || $_addon == $addon) {
-                    continue;
-                }
+            if (AREA != 'C') { // TennisHouse to speed up the site
+                foreach ($addons as $_addon => $_data) {
+                    if ($_data['status'] == 'D' || $_addon == $addon) {
+                        continue;
+                    }
 
-                $files[] = 'addons/' . $addon . '/addons/' . $_addon . '/hooks/' . $dir . '/' . $name;
+                    $files[] = 'addons/' . $addon . '/addons/' . $_addon . '/hooks/' . $dir . '/' . $name;
+                }
             }
 
             $files[] = 'addons/' . $addon . '/hooks/' . $dir . '/' . $name;
@@ -103,7 +108,7 @@ function smarty_block_hook($params, $content, &$smarty)
         }
     }
 
-    fn_set_hook('smarty_block_hook_post', $params, $content, $overrides, $smarty, $hook_content);
+//     fn_set_hook('smarty_block_hook_post', $params, $content, $overrides, $smarty, $hook_content);
 
     return $hook_content;
 }

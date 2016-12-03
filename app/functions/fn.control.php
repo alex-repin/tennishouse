@@ -700,10 +700,11 @@ function fn_init_addon_controllers($controller, $type = GET_CONTROLLERS, $area =
         $prefix = '.pre';
     }
 
+    $dir_addons = Registry::get('config.dir.addons');
     foreach ((array) Registry::get('addons') as $addon_name => $data) {
         if ($data['status'] == 'A') {
             // try to find area-specific controller
-            $dir = Registry::get('config.dir.addons') . $addon_name . '/controllers/' . $area_name . '/';
+            $dir = $dir_addons . $addon_name . '/controllers/' . $area_name . '/';
             if (is_readable($dir . $controller . $prefix . '.php')) {
                 $controllers[] = $dir . $controller . $prefix . '.php';
                 $addons[$addon_name] = true;
@@ -713,7 +714,7 @@ function fn_init_addon_controllers($controller, $type = GET_CONTROLLERS, $area =
             }
 
             // try to find common controller
-            $dir = Registry::get('config.dir.addons') . $addon_name . '/controllers/common/';
+            $dir = $dir_addons . $addon_name . '/controllers/common/';
             if (is_readable($dir . $controller . $prefix . '.php')) {
                 $controllers[] = $dir . $controller . $prefix . '.php';
                 $addons[$addon_name] = true;

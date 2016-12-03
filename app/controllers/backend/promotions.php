@@ -153,6 +153,7 @@ if ($mode == 'update') {
 
     Registry::get('view')->assign('search', $search);
     Registry::get('view')->assign('promotions', $promotions);
+    fn_set_notification('W', __('warning'), __('delete_absolete_promotions'));
 
 // Delete selected promotions
 } elseif ($mode == 'delete') {

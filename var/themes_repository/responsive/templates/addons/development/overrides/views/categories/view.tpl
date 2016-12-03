@@ -7,7 +7,7 @@
     <div class="ty-wysiwyg-content ty-mb-s" {live_edit name="category:description:{$category_data.category_id}"}>{$category_data.description nofilter}</div>
 {/if*}
 
-{if $subcategories && !$category_data.category_id|fn_display_subheaders && !$category_data.parent_id}
+{*if $subcategories && !$category_data.category_id|fn_display_subheaders && !$category_data.parent_id}
     {math equation="ceil(n/c)" assign="rows" n=$subcategories|count c="2"}
     {split data=$subcategories size=$rows assign="splitted_subcategories"}
     <ul class="subcategories clearfix">
@@ -34,7 +34,7 @@
         {/foreach}
     {/foreach}
     </ul>
-{/if}
+{/if*}
 
 {if $smarty.request.advanced_filter}
     {include file="views/products/components/product_filters_advanced_form.tpl" separate_form=true}

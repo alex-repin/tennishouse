@@ -1628,10 +1628,13 @@ function fn_promotions_get_features($lang_code = CART_LANGUAGE)
  */
 function fn_promotions_check_features($promotion, $product)
 {
-    $features = db_get_hash_multi_array("SELECT feature_id, variant_id, value, value_int FROM ?:product_features_values WHERE product_id = ?i AND lang_code = ?s", array('feature_id'), $product['product_id'], CART_LANGUAGE);
-
-    if (!empty($features) && !empty($promotion['condition_element']) && !empty($features[$promotion['condition_element']])) {
-        $f = $features[$promotion['condition_element']];
+    static $features = array();
+    
+    if (!isset($features[$product['product_id']])) {
+        $features[$product['product_id']] = db_get_hash_multi_array("SELECT feature_id, variant_id, value, value_int FROM ?:product_features_values WHERE product_id = ?i AND lang_code = ?s", array('feature_id'), $product['product_id'], CART_LANGUAGE);
+    }
+    if (!empty($features[$product['product_id']]) && !empty($promotion['condition_element']) && !empty($features[$product['product_id']][$promotion['condition_element']])) {
+        $f = $features[$product['product_id']][$promotion['condition_element']];
 
         $result = array();
         foreach ($f as $v) {

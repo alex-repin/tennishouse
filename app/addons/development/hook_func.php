@@ -17,22 +17,6 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-function fn_development_render_block_register_cache($block, &$cache_name, &$block_scheme, $register_cache, $display_block)
-{
-    if (isset($block['content']['items']['filling']) && isset($block_scheme['content']['items']['fillings'][$block['content']['items']['filling']]['cache'])) {
-        $block_scheme['cache'] = $block_scheme['content']['items']['fillings'][$block['content']['items']['filling']]['cache'];
-    }
-    if (!isset($block_scheme['cache']) && isset($block['properties']['template']) && isset($block_scheme['templates'][$block['properties']['template']]['cache'])) {
-        $block_scheme['cache'] = $block_scheme['templates'][$block['properties']['template']]['cache'];
-    }
-    if (isset($block_scheme['cache']['no_object'])) {
-        $grid_id = !empty($block['grid_id']) ? $block['grid_id'] : 0;
-        $cache_name = 'block_content_'
-            . $block['block_id'] . '_' . $block['snapping_id'] . '_' . $block['type']
-            . '_' . $grid_id;
-    }
-}
-
 function fn_development_get_notification_rules(&$force_notification, $params, $disable_notification)
 {
     if ($disable_notification) {
@@ -1217,6 +1201,10 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
     if (!empty($params['view_statuses'])) {
         $condition = str_replace(db_quote(' AND products.status IN (?a)', array('A')), db_quote(' AND products.status IN (?a)', $params['view_statuses']), $condition);
     }
+    if (!empty($params['player_id'])) {
+        $join .= db_quote(" LEFT JOIN ?:players_gear AS p_gear ON p_gear.product_id = products.product_id");
+        $condition .= db_quote(' AND p_gear.player_id = ?i', $params['player_id']);
+    }
 }
 
 function fn_development_get_products_pre(&$params, $items_per_page, $lang_code)
@@ -1580,14 +1568,49 @@ function fn_development_render_blocks($grid, &$block, $object, $content)
         $product = Registry::get('view')->getTemplateVars('product');
         if (!empty($product) && ($product['product_type'] != 'C' && $product['amount'] <= 0) || ($product['product_type'] == 'C' && empty($product['hide_stock_info']))) {
             $block['extra_properties']['columns_number'] = 2;
+            if ($block['content']['items']['filling'] == 'similar_products') {
+                $block['extra_properties']['name'] = 'Похожие товары в наличии';
+            }
         }
     }
 }
 
-function fn_development_render_block_content_pre($template_variable, $field, $block_scheme, &$block, $dynamic_object)
+function fn_development_render_block_content_pre($template_variable, $field, $block_scheme, &$block)
 {
-    if (!empty($block['extra_properties']['columns_number'])) {
-        $block['properties']['columns_number'] = $block['extra_properties']['columns_number'];
+    if (!empty($block['extra_properties'])) {
+        if (!empty($block['extra_properties']['columns_number'])) {
+            $block['properties']['columns_number'] = $block['extra_properties']['columns_number'];
+        }
+        if (!empty($block['extra_properties']['name'])) {
+            Registry::get('view')->assign('title', $block['extra_properties']['name']);
+        }
         Registry::get('view')->assign('block', $block);
+    }
+    if (!empty($block['content']['items']['filling']) && in_array($block['content']['items']['filling'], array('similar_products', 'also_bought', 'same_brand_products'))) {
+        $request_data = !empty($block['request_data']) ? $block['request_data'] : $_REQUEST;
+        if ($block['content']['items']['filling'] == 'similar_products') {
+            $block['properties']['all_items_url'] = 'products.search?search_performed=Y&similar_pid=' . $request_data['product_id'];
+        } elseif ($block['content']['items']['filling'] == 'also_bought') {
+            $block['properties']['all_items_url'] = 'products.search?search_performed=Y&also_bought_for_product_id=' . $request_data['product_id'];
+        } elseif ($block['content']['items']['filling'] == 'same_brand_products' && !empty($_SESSION['product_features'][BRAND_FEATURE_ID]['variant_id'])) {
+            $block['properties']['all_items_url'] = 'products.search?search_performed=Y&features_hash=' . BRAND_FEATURE_TYPE . $_SESSION['product_features'][BRAND_FEATURE_ID]['variant_id'];
+        }
+        Registry::get('view')->assign('block', $block);
+    }
+}
+
+function fn_development_render_block_register_cache($block, &$cache_name, &$block_scheme, $register_cache, $display_block)
+{
+    if (isset($block['content']['items']['filling']) && isset($block_scheme['content']['items']['fillings'][$block['content']['items']['filling']]['cache'])) {
+        $block_scheme['cache'] = $block_scheme['content']['items']['fillings'][$block['content']['items']['filling']]['cache'];
+    }
+    if (!isset($block_scheme['cache']) && isset($block['properties']['template']) && isset($block_scheme['templates'][$block['properties']['template']]['cache'])) {
+        $block_scheme['cache'] = $block_scheme['templates'][$block['properties']['template']]['cache'];
+    }
+    if (isset($block_scheme['cache']['no_object'])) {
+        $grid_id = !empty($block['grid_id']) ? $block['grid_id'] : 0;
+        $cache_name = 'block_content_'
+            . $block['block_id'] . '_' . $block['snapping_id'] . '_' . $block['type']
+            . '_' . $grid_id;
     }
 }

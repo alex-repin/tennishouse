@@ -1,12 +1,14 @@
 {** block-description:tmpl_copyright **}
 <div class="ty-bottom-contact-info">
-    {assign var="mobile_url" value=$config.current_url|fn_query_remove:"dmode"|fn_link_attach:"dmode=F"}
-    <a href="{"`$mobile_url`"|fn_url}" rel="nofollow">
-        <div class="ty-bottom-cell">
-            <div class="ty-desktop-icon"></div>
-            <div class="ty-bottom-cell_text">{__("full_version")}</div>
-        </div>
-    </a>
+    <form action="{""|fn_url}" method="post" name="switch_dmode">
+        <input type="hidden" name="dmode" value="F">
+        <button class="ty-button-link" type="submit" name="dispatch[development.switch_dmode]">
+            <div class="ty-bottom-cell">
+                <div class="ty-desktop-icon"></div>
+                <div class="ty-bottom-cell_text">{__("full_version")}</div>
+            </div>
+        </button>
+    </form>
     <a href="tel:{$company_phone}">
         <div class="ty-bottom-cell">
             <div class="ty-phone-icon"></div>

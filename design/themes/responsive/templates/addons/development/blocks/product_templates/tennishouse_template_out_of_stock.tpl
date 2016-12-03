@@ -151,13 +151,6 @@
                 {/hook}
 
                 [-similar_products-]
-                <script type="text/javascript">
-                (function(_, $) {
-                    $(document).ready(function() {
-                        $('.ty-similar-products-block .ty-mainbox-title').html('Похожие товары в наличии');
-                    });
-                }(Tygh, Tygh.$));
-                </script>
             </div>
         {/if}
     {/hook}
