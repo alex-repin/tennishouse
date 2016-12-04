@@ -62,6 +62,18 @@
 (function(_, $) {$ldelim}
 
     $(document).ready(function() {$ldelim}
+        $('.cm-filter-item').click(function(e){$ldelim}
+            if ($(this).data('targetUrl')) {$ldelim}
+                $.ceAjax('request', fn_url($(this).data('targetUrl')), {$ldelim}
+                    full_render: true,
+                    force_exec: true,
+                    save_history: true,
+                    caching: true,
+                    result_ids: '{$ajax_div_ids}',
+                    scroll: '.cm-pagination-container',
+                {$rdelim});
+            {$rdelim}
+        {$rdelim});
         $('.ty-product-filters__switch').click(function(e){$ldelim}
             var block = $(this).parent();
             block.toggleClass('is-hover');
