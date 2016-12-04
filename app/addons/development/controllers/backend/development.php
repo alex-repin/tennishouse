@@ -868,27 +868,6 @@ function fn_format_variant_name($variant_name)
     return $variant_name;
 }
 
-function fn_development_get_brands()
-{
-    $params = array(
-        'exclude_group' => true,
-        'get_descriptions' => true,
-        'feature_types' => array('E'),
-        'variants' => true,
-        'plain' => true,
-    );
-
-    list($features) = fn_get_product_features($params, 0);
-
-    $variants = array();
-
-    foreach ($features as $feature) {
-        $variants = array_merge($variants, $feature['variants']);
-    }
-
-    return $variants;
-}
-
 function fn_get_babolat_csv($file, $options)
 {
     $max_line_size = 65536; // 64 Кб

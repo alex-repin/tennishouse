@@ -1709,3 +1709,162 @@ function fn_find_state_match($state)
     
     return false;
 }
+
+function fn_get_warehouse_data($warehouse_id)
+{
+    $field_list = "?:warehouses.*";
+
+    fn_set_hook('get_warehouse_data', $warehouse_id, $field_list, $join, $condition);
+    
+    $warehouse_data = db_get_row("SELECT $field_list FROM ?:warehouses LEFT JOIN ?:product_warehouses ON ?:warehouses.warehouse_id = ?:product_warehouses.warehouse_id ?p WHERE ?:warehouses.warehouse_id = ?i  ?p", $join, $warehouse_id, $condition);
+
+    if (!empty($warehouse_data)) {
+        $warehouse_data['products'] = db_get_fields("SELECT product_id FROM ?:product_warehouses WHERE warehouse_id = ?i", $warehouse_id);
+    }
+
+    fn_set_hook('get_warehouse_data_post', $warehouse_data);
+
+    return (!empty($warehouse_data) ? $warehouse_data : false);
+}
+
+function fn_delete_warehouse($warehouse_id)
+{
+    if (empty($warehouse_id)) {
+        return false;
+    }
+
+    // Log warehouse deletion
+    fn_log_event('warehouses', 'delete', array(
+        'warehouse_id' => $warehouse_id,
+    ));
+
+    // Deleting warehouse
+    db_query("DELETE FROM ?:warehouses WHERE warehouse_id = ?i", $warehouse_id);
+    db_query("DELETE FROM ?:product_warehouses WHERE warehouse_id = ?i", $warehouse_id);
+
+    fn_set_hook('delete_warehouse', $warehouse_id);
+    
+    return true;
+}
+
+function fn_get_warehouses($params)
+{
+    $fields = array (
+        '?:warehouses.*',
+        'GROUP_CONCAT(?:product_warehouses.product_id) as products'
+    );
+
+    $condition = $join = '';
+    $join .= db_quote(" LEFT JOIN ?:product_warehouses ON ?:product_warehouses.warehouse_id = ?:warehouses.warehouse_id ");
+
+    if (!empty($params['warehouse'])) {
+        $condition .= db_quote(" AND ?:warehouses.name LIKE ?l", "%".trim($params['warehouse'])."%");
+    }
+
+    if (!empty($params['item_ids'])) {
+        $condition .= db_quote(' AND ?:warehouses.warehouse_id IN (?n)', explode(',', $params['item_ids']));
+    }
+
+    if (!empty($params['product_id'])) {
+        $condition .= db_quote(' AND ?:product_warehouses.product_id = ?i', $params['product_id']);
+    }
+
+    if (!empty($params['except_id']) && (empty($params['item_ids']) || !empty($params['item_ids']) && !in_array($params['except_id'], explode(',', $params['item_ids'])))) {
+        $condition .= db_quote(' AND ?:warehouses.warehouse_id != ?i', $params['except_id']);
+    }
+
+    $limit = '';
+
+    fn_set_hook('get_warehouses', $params, $join, $condition, $fields);
+    
+    if (!empty($params['limit'])) {
+        $limit = db_quote(' LIMIT 0, ?i', $params['limit']);
+    }
+
+    $warehouses = db_get_hash_array('SELECT ' . implode(',', $fields) . " FROM ?:warehouses ?p WHERE 1 ?p GROUP BY ?:warehouses.warehouse_id ORDER BY ?:warehouses.priority ASC ?p", 'warehouse_id', $join, $condition, $limit);
+
+    if (empty($warehouses)) {
+        return array(array(), $params);
+    }
+
+    fn_set_hook('get_warehouses_post', $warehouses, $params);
+    
+    return array($warehouses, $params);
+}
+
+function fn_update_warehouse($warehouse_data, $warehouse_id = 0)
+{
+    $_data = $warehouse_data;
+
+    // create new warehouse
+    if (empty($warehouse_id)) {
+
+        $create = true;
+
+        $warehouse_id = db_query("INSERT INTO ?:warehouses ?e", $_data);
+        $existing_products = array();
+        
+    // update existing warehouse
+    } else {
+
+        $arow = db_query("UPDATE ?:warehouses SET ?u WHERE warehouse_id = ?i", $_data, $warehouse_id);
+
+        if ($arow === false) {
+            fn_set_notification('E', __('error'), __('object_not_found', array('[object]' => __('warehouse'))),'','404');
+            $warehouse_id = false;
+        }
+        $existing_products = db_get_fields("SELECT product_id FROM ?:product_warehouses WHERE warehouse_id = ?i", $warehouse_id);
+    }
+
+    if (!empty($warehouse_id) && isset($_data['products'])) {
+
+        // Log warehouse add/update
+        fn_log_event('warehouses', !empty($create) ? 'create' : 'update', array(
+            'warehouse_id' => $warehouse_id,
+        ));
+        
+        $_data['products'] = (empty($_data['products'])) ? array() : explode(',', $_data['products']);
+        $to_delete = array_diff($existing_products, $_data['products']);
+
+        if (!empty($to_delete)) {
+            db_query("DELETE FROM ?:product_warehouses WHERE product_id IN (?n) AND warehouse_id = ?i", $to_delete, $warehouse_id);
+        }
+        $to_add = array_diff($_data['products'], $existing_products);
+
+        if (!empty($to_add)) {
+            foreach ($to_add as $i => $gr) {
+                $__data = array(
+                    'warehouse_id' => $warehouse_id,
+                    'product_id' => $gr
+                );
+                db_query("REPLACE INTO ?:product_warehouses ?e", $__data);
+            }
+        }
+    }
+    
+    fn_set_hook('update_warehouse_post', $_data, $warehouse_id);
+    
+    return $warehouse_id;
+
+}
+
+function fn_development_get_brands()
+{
+    $params = array(
+        'exclude_group' => true,
+        'get_descriptions' => true,
+        'feature_types' => array('E'),
+        'variants' => true,
+        'plain' => true,
+    );
+
+    list($features) = fn_get_product_features($params, 0);
+
+    $variants = array();
+
+    foreach ($features as $feature) {
+        $variants = array_merge($variants, $feature['variants']);
+    }
+
+    return $variants;
+}

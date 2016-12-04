@@ -389,6 +389,33 @@
         <item>
             ALTER TABLE `cscart_categories` ADD `is_nofollow` CHAR(1) NOT NULL DEFAULT 'N', ADD `is_noindex` CHAR(1) NOT NULL DEFAULT 'N', ADD `canonical` VARCHAR(255) NOT NULL;
         </item>
+        <item>
+            CREATE TABLE IF NOT EXISTS `cscart_warehouses` (
+                `warehouse_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+                `name` varchar(255) NOT NULL,
+                `priority` smallint(5) unsigned NOT NULL,
+                PRIMARY KEY (`warehouse_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+        </item>
+        <item>
+            CREATE TABLE IF NOT EXISTS `cscart_product_warehouses` (
+                `pair_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+                `warehouse_id` mediumint(8) unsigned NOT NULL,
+                `product_id` mediumint(8) unsigned NOT NULL,
+                PRIMARY KEY (`pair_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;            
+        </item>
+        <item>
+            CREATE TABLE IF NOT EXISTS `cscart_product_warehouses_inventory` (
+                `inventory` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                `warehouse_id` mediumint(8) unsigned NOT NULL,
+                `product_id` mediumint(8) unsigned NOT NULL,
+                `combination_hash` int(11) unsigned NOT NULL,
+                `amount` mediumint(8) NOT NULL,
+                PRIMARY KEY (`inventory`),
+                UNIQUE KEY `warehouse_id` (`warehouse_id`,`product_id`,`combination_hash`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -837,5 +864,15 @@
         <item lang="ru" id="news_list">Список новостей</item>
         <item lang="ru" id="news_scroller">Скроллер с новостями</item>
         <item lang="ru" id="delete_absolete_promotions">Удаляй ненужные акции, тк они замедляют сайт</item>
+        <item lang="ru" id="warehouse">Склад</item>
+        <item lang="ru" id="warehouses_menu_description">Склады для учета количества товаров</item>
+        <item lang="ru" id="warehouses">Склады</item>
+        <item lang="ru" id="warehouses.editing_warehouse">Редактирование склада</item>
+        <item lang="ru" id="text_warehouses_has_been_deleted">Склад был успешно удален.</item>
+        <item lang="ru" id="warehouses.new_warehouse">Новый склад</item>
+        <item lang="ru" id="add_warehouses">Добавить склады</item>
+        <item lang="ru" id="add_warehouse">Добавить склад</item>
+        <item lang="ru" id="add_warehouses_and_close">Добавить склад и закрыть</item>
+        <item lang="ru" id="warehouse_name">Название склада</item>
     </language_variables>
 </addon>
