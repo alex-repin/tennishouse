@@ -474,6 +474,7 @@ function fn_reorder($order_id, &$cart, &$auth)
         $order_info['products'][$k]['company_id'] = $company_id;
 
         unset($order_info['products'][$k]['extra']['ekey_info']);
+        unset($order_info['products'][$k]['extra']['warehouses']);
         $order_info['products'][$k]['product_options'] = empty($order_info['products'][$k]['extra']['product_options']) ? array() : $order_info['products'][$k]['extra']['product_options'];
         $order_info['products'][$k]['main_pair'] = fn_get_cart_product_icon($item['product_id'], $order_info['products'][$k]);
     }

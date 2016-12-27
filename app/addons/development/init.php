@@ -56,7 +56,6 @@ fn_register_hooks(
     'shippings_get_shippings_list_post',
     'shippings_get_shippings_list_conditions',
     'delete_product_option_post',
-    'clone_product_options_post',
     'validate_sef_object',
     'cron_routine',
     'get_filters_products_count_before_select',
@@ -86,5 +85,7 @@ fn_register_hooks(
     'get_notification_rules',
     'render_block_content_pre',
     'render_block_register_cache',
-    'render_blocks'
+    'render_blocks',
+    'generate_cart_id',
+    'clone_product'
 );

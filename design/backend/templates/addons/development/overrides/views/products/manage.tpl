@@ -78,13 +78,7 @@
     <td>{$product.purchased_qty}</td>
     <td>{$product.purchased_subtotal}</td>
     {/if}
-    <td>
-        {if $product.tracking == "ProductTracking::TRACK_WITH_OPTIONS"|enum}
-        {include file="buttons/button.tpl" but_text=__("edit") but_href="product_options.inventory?product_id=`$product.product_id`" but_role="edit"}
-        {else}
-        <input type="text" name="products_data[{$product.product_id}][amount]" size="6" value="{$product.amount}" class="input-micro input-hidden" />
-        {/if}
-    </td>
+    <td>{$product.amount}</td>
     <td>{hook name="products:manage_body"}{/hook}</td>
     <td class="nowrap">
         <div class="hidden-tools">
@@ -127,7 +121,7 @@
         <li>{btn type="list" text=__("product_subscriptions") href="products.p_subscr"}</li>
 		{if $products}
             <li class="divider"></li>
-            <li>{btn type="dialog" class="cm-process-items" text=__("edit_selected") target_id="content_select_fields_to_edit" form="manage_products_form"}</li>
+            {*<li>{btn type="dialog" class="cm-process-items" text=__("edit_selected") target_id="content_select_fields_to_edit" form="manage_products_form"}</li>*}
             <li>{btn type="list" text=__("clone_selected") dispatch="dispatch[products.m_clone]" form="manage_products_form"}</li>
             <li>{btn type="list" text=__("export_selected") dispatch="dispatch[products.export_range]" form="manage_products_form"}</li>
             <li>{btn type="delete_selected" dispatch="dispatch[products.m_delete]" form="manage_products_form"}</li>

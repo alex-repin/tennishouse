@@ -17,7 +17,7 @@
 {foreach from=$warehouses item=warehouse}
 <tr>
     <td class="left">
-        <input type="checkbox" name="warehouse_ids[]" value="{$warehouse.warehouse_id}" class="cm-item " /></td>
+        <input type="checkbox" name="warehouse_ids[]" value="{$warehouse.warehouse_id}" class="cm-item " {if $warehouse.warehouse_id == $smarty.const.TH_WAREHOUSE_ID}disabled="disabled"{/if} /></td>
     <td>
         <input type="text" name="warehouses_data[{$warehouse.warehouse_id}][priority]" value="{$warehouse.priority}" size="3" class="input-micro input-hidden" />
     </td>
@@ -27,7 +27,7 @@
     <td>
         {capture name="tools_list"}
             <li>{btn type="list" text=__("edit") href="warehouses.update?warehouse_id=`$warehouse.warehouse_id`"}</li>
-            <li>{btn type="list" class="cm-confirm" text=__("delete") href="warehouses.delete?warehouse_id=`$warehouse.warehouse_id`"}</li>
+            {if $warehouse.warehouse_id != $smarty.const.TH_WAREHOUSE_ID}<li>{btn type="list" class="cm-confirm" text=__("delete") href="warehouses.delete?warehouse_id=`$warehouse.warehouse_id`"}</li>{/if}
         {/capture}
         <div class="hidden-tools">
             {dropdown content=$smarty.capture.tools_list}

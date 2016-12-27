@@ -2,10 +2,21 @@
 
 <div id="product_filters_{$block.block_id}">
 <div  class="ty-product-filters__wrapper">
-{if $items && !$smarty.request.advanced_filter}
+{if "AJAX_REQUEST"|defined && $block.request_data}
+    {assign var="request_data" value=$block.request_data}
+{else}
+    {assign var="request_data" value=$smarty.request}
+{/if}
+{if "AJAX_REQUEST"|defined && $block.request_data.current_url}
+    {assign var="current_url" value=$block.request_data.current_url}
+{else}
+    {assign var="current_url" value=$config.current_url}
+{/if}
+
+{if $items && !$request_data.advanced_filter}
 
 {if $smarty.server.QUERY_STRING|strpos:"dispatch=" !== false}
-    {assign var="curl" value=$config.current_url}
+    {assign var="curl" value=$current_url}
     {assign var="filter_qstring" value=$curl|fn_query_remove:"result_ids":"full_render":"filter_id":"view_all":"req_range_id":"advanced_filter":"features_hash":"subcats":"page"}
 {else}
     {assign var="filter_qstring" value="products.search"}
@@ -13,7 +24,7 @@
 
 {assign var="reset_qstring" value="products.search"}
 
-{if $smarty.request.category_id && $settings.General.show_products_from_subcategories == "Y"}
+{if $request_data.category_id && $settings.General.show_products_from_subcategories == "Y"}
     {assign var="filter_qstring" value=$filter_qstring|fn_link_attach:"subcats=Y"}
     {assign var="reset_qstring" value=$reset_qstring|fn_link_attach:"subcats=Y"}
 {/if}
@@ -119,7 +130,7 @@
 <div class="ty-product-filters__tools clearfix">
     {*<a {if "FILTER_CUSTOM_ADVANCED"|defined}href="{"products.search?advanced_filter=Y"|fn_url}"{else}href="{$filter_qstring|fn_link_attach:"advanced_filter=Y"|fn_url}"{/if} rel="nofollow" class="ty-product-filters__advanced-button">{__("advanced")}</a>*}
     {if $smarty.capture.has_selected}
-    <a href="{if $smarty.request.category_id}{assign var="use_ajax" value=true}{"categories.view?category_id=`$smarty.request.category_id`"|fn_url}{else}{assign var="use_ajax" value=false}{""|fn_url}{/if}" rel="nofollow" class="ty-product-filters__reset-button{if $allow_ajax && $use_ajax} cm-ajax cm-ajax-force cm-ajax-full-render cm-history" data-ca-target-id="{$ajax_div_ids}{/if}"><i class="ty-product-filters__reset-icon ty-icon-cw"></i> {__("reset")}</a>
+    <a href="{if $request_data.category_id}{assign var="use_ajax" value=true}{"categories.view?category_id=`$request_data.category_id`"|fn_url}{else}{assign var="use_ajax" value=false}{""|fn_url}{/if}" rel="nofollow" class="ty-product-filters__reset-button{if $allow_ajax && $use_ajax} cm-ajax cm-ajax-force cm-ajax-full-render cm-history" data-ca-target-id="{$ajax_div_ids}{/if}"><i class="ty-product-filters__reset-icon ty-icon-cw"></i> {__("reset")}</a>
     {/if}
 </div>
 

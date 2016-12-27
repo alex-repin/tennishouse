@@ -199,7 +199,7 @@ class Yml implements IYml
 
                 if ($product['tracking'] == 'O') {
                     $product['amount'] = db_get_field(
-                        "SELECT SUM(amount) FROM ?:product_options_inventory WHERE product_id = ?i",
+                        "SELECT SUM(amount) FROM ?:product_warehouses_inventory WHERE product_id = ?i AND combination_hash != '0'",
                         $product['product_id']
                     );
                 }

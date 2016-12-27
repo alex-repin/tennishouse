@@ -20,7 +20,26 @@
         <div class="controls">
         <input type="text" name="warehouse_data[name]" id="elm_warehouse_name" value="{$warehouse_data.name}" size="25" class="input-long" /></div>
     </div>
-
+    {if $id != $smarty.const.TH_WAREHOUSE_ID}
+    <div class="control-group">
+        <label for="elm_warehouse_brand_id" class="control-label">{__("brand")}</label>
+        {$columns = "4"}
+        {split data=$brands size=$columns assign="splitted_brands" skip_complete=true}
+        {math equation="98 / x" x=$columns assign="cell_width"}
+        <div class="controls">
+        {foreach from=$splitted_brands item="_brands"}
+            <div style="display: inline-block;width: 100%;">
+                {foreach from=$_brands item=brand}
+                    <div style="display: inline-block;width: {$cell_width}%;">
+                        <div style="width: 100px;display: inline-block;">{$brand.variant}</div>
+                        <input type="checkbox" name="warehouse_data[brand_ids][]" value="{$brand.variant_id}" class="checkbox cm-item" {if $brand.variant_id|in_array:$warehouse_data.brand_ids}checked="checked"{/if}/>
+                    </div>
+                {/foreach}
+            </div>
+        {/foreach}
+        </div>
+    </div>
+    {/if}
     <div class="control-group">
         <label class="control-label" for="elm_warehouse_priority">{__("priority")}:</label>
         <div class="controls">
@@ -30,13 +49,15 @@
 
 </div>
 
-<div id="content_products">
-    {include file="pickers/products/picker.tpl" data_id="added_products" input_name="warehouse_data[products]" no_item_text=__("text_no_items_defined", ["[items]" => __("products")]) type="links" placement="right" item_ids=$warehouse_data.products}
-</div>
-
 <div id="content_addons">
 {hook name="warehouses:detailed_content"}
 {/hook}
+</div>
+
+</form>
+
+<div class="cm-hide-save-button hidden" id="content_import_inventory">
+    {include file="addons/development/components/supplier_stocks.tpl" warehouse_id=$warehouse_data.warehouse_id dispatch="development.update_warehouse_stocks"}
 </div>
 
 {capture name="buttons"}
@@ -47,12 +68,6 @@
     {/if}
 {/capture}
     
-</form>
-
-<div class="cm-hide-save-button hidden" id="content_import_inventory">
-    {include file="addons/development/components/supplier_stocks.tpl" warehouse_id=$warehouse_data.warehouse_id dispatch="development.update_warehouse_stocks"}
-</div>
-
 {/capture}
 {include file="common/tabsbox.tpl" content=$smarty.capture.tabsbox active_tab=$smarty.request.selected_section track=true}
 

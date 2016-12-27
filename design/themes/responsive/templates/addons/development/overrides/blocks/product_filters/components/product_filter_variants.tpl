@@ -10,11 +10,11 @@
                     {capture name="has_selected"}Y{/capture}
                     <div class="ty-product-filters__group">
                         {strip}
-                            {assign var="fh" value=$smarty.request.features_hash|fn_delete_range_from_url:$range:$filter.field_type}
+                            {assign var="fh" value=$request_data.features_hash|fn_delete_range_from_url:$range:$filter.field_type}
                             {if $fh}
                                 {assign var="attach_query" value="features_hash=`$fh`"}
                             {/if}
-                            {if $filter.feature_type == "E" && $range.range_id == $smarty.request.variant_id}
+                            {if $filter.feature_type == "E" && $range.range_id == $request_data.variant_id}
                                 {assign var="reset_lnk" value=$reset_qstring}
                             {else}
                                 {assign var="reset_lnk" value=$filter_qstring}
@@ -24,7 +24,7 @@
                             {else}
                                 {assign var="href" value=$reset_lnk}
                             {/if}
-                            {assign var="use_ajax" value=$href|fn_compare_dispatch:$config.current_url}
+                            {assign var="use_ajax" value=$href|fn_compare_dispatch:$current_url}
                             <div data-target-url="{$href}" class="ty-product-filters__item checked cm-filter-item"><span class="ty-filter-icon"><i class="ty-icon-ok ty-filter-icon__check"></i><i class="ty-icon-cancel ty-filter-icon__delete"></i></span>{$filter.prefix}{$range.range_name|fn_text_placeholders}{$filter.suffix}</div>
                         {/strip}
                     </div>

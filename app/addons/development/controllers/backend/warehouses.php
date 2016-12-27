@@ -82,10 +82,6 @@ if ($mode == 'add') {
             'title' => __('general'),
             'js' => true
         ),
-        'products' => array (
-            'title' => __('products'),
-            'js' => true
-        ),
         'addons' => array (
             'title' => __('addons'),
             'js' => true
@@ -93,6 +89,7 @@ if ($mode == 'add') {
     ));
     // [/Page sections]
 
+    Registry::get('view')->assign('brands', fn_development_get_brands());
 //
 // 'warehouse update' page
 //
@@ -110,10 +107,6 @@ if ($mode == 'add') {
     $tabs = array (
         'detailed' => array (
             'title' => __('general'),
-            'js' => true
-        ),
-        'products' => array (
-            'title' => __('products'),
             'js' => true
         ),
         'import_inventory' => array (

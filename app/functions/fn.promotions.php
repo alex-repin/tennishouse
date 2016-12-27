@@ -1619,6 +1619,21 @@ function fn_promotions_get_features($lang_code = CART_LANGUAGE)
     return $res;
 }
 
+function fn_get_promotion_features($product_ids)
+{
+    $features = db_get_hash_multi_array("SELECT feature_id, variant_id, value, value_int, product_id FROM ?:product_features_values WHERE product_id IN (?n) AND lang_code = ?s", array('product_id'), $product_ids, CART_LANGUAGE);
+    $result = array();
+    if (!empty($features)) {
+        foreach ($features as $prod_id => $fvs) {
+            foreach ($fvs as $i => $fv) {
+                $result[$prod_id][$fv['feature_id']][] = $fv;
+            }
+        }
+    }
+    
+    return $result;
+}
+
 /**
  * Check if product has certain features
  *
@@ -1631,7 +1646,11 @@ function fn_promotions_check_features($promotion, $product)
     static $features = array();
     
     if (!isset($features[$product['product_id']])) {
-        $features[$product['product_id']] = db_get_hash_multi_array("SELECT feature_id, variant_id, value, value_int FROM ?:product_features_values WHERE product_id = ?i AND lang_code = ?s", array('feature_id'), $product['product_id'], CART_LANGUAGE);
+        if (!empty($product['promotion_features'])) {
+            $features[$product['product_id']] = $product['promotion_features'];
+        } else {
+            $features[$product['product_id']] = db_get_hash_multi_array("SELECT feature_id, variant_id, value, value_int FROM ?:product_features_values WHERE product_id = ?i AND lang_code = ?s", array('feature_id'), $product['product_id'], CART_LANGUAGE);
+        }
     }
     if (!empty($features[$product['product_id']]) && !empty($promotion['condition_element']) && !empty($features[$product['product_id']][$promotion['condition_element']])) {
         $f = $features[$product['product_id']][$promotion['condition_element']];

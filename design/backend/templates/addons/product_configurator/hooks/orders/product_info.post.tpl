@@ -23,6 +23,13 @@
                     {if !$_product.deleted_product}<a href="{"products.update?product_id=`$_product.product_id`"|fn_url}">{/if}{$_product.product nofilter}{if !$_product.deleted_product}</a>{/if}
                     <div class="products-hint">
                         {if $_product.product_code}<p>{__("sku")}:{$_product.product_code}</p>{/if}
+                        {if $_product.extra.warehouses}
+                            <div class="ty-order-warehouses">
+                            {foreach from=$_product.extra.warehouses item="wh_amount" key="wh_hash"}
+                                {$_product.extra.warehouse_names.$wh_hash}: {$wh_amount}
+                            {/foreach}
+                            </div>
+                        {/if}
                     </div>
                     {if $_product.product_options}<div class="options-info">{include file="common/options_info.tpl" product_options=$_product.product_option_data}</div>{/if}
                 </td>

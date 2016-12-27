@@ -21,5 +21,6 @@ fn_register_hooks(
     'get_product_data',
     'add_to_cart',
     'get_status_params_definition',
-    'delete_order'
+    'delete_order',
+    'reorder'
 );

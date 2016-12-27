@@ -550,8 +550,10 @@ function fn_get_price_in_points($product_id, &$auth)
 
 function fn_reward_points_gather_additional_product_data_post(&$product, &$auth, &$params)
 {
-    $get_point_info = !empty($params['get_options']) ? true : false;
-    fn_gather_reward_points_data($product, $auth, $get_point_info);
+    if (!empty($params['get_for_one_product'])) {
+        $get_point_info = !empty($params['get_options']) ? true : false;
+        fn_gather_reward_points_data($product, $auth, $get_point_info);
+    }
 }
 
 function fn_gather_reward_points_data(&$product, &$auth, $get_point_info = true)

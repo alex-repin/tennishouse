@@ -902,10 +902,12 @@ function fn_exim_reset_inventory($reset_inventory)
                 $i += $step;
                 db_query("UPDATE ?:products SET amount = 0 WHERE product_id IN (?a)", $product_ids);
                 db_query("UPDATE ?:product_options_inventory SET amount = 0 WHERE product_id IN (?a)", $product_ids);
+                db_query("UPDATE ?:product_warehouses_inventory SET amount = 0 WHERE product_id IN (?a)", $product_ids);
             }
         } else {
             db_query("UPDATE ?:products SET amount = 0");
             db_query("UPDATE ?:product_options_inventory SET amount = 0");
+            db_query("UPDATE ?:product_warehouses_inventory SET amount = 0");
         }
     }
 

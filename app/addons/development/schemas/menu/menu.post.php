@@ -62,11 +62,11 @@ $schema['central']['products']['items']['warehouses'] = array(
     'position' => 210,
 );
 
-$schema['top']['administration']['items']['import_data']['subitems']['supplier_stocks'] = array(
-    'href' => 'development.supplier_stocks',
-    'position' => 1000,
-);
-
+// $schema['top']['administration']['items']['import_data']['subitems']['supplier_stocks'] = array(
+//     'href' => 'development.supplier_stocks',
+//     'position' => 1000,
+// );
+// 
 $schema['central']['marketing']['items']['saving_system'] = array(
     'attrs' => array(
         'class'=>'is-addon'

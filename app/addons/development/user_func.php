@@ -553,7 +553,7 @@ function fn_update_product_exception($product_id, $product_options, $new_amount)
 
 function fn_update_combinations($product_id)
 {
-    $combinations = db_get_array("SELECT * FROM ?:product_options_inventory WHERE product_id = ?i", $product_id);
+    $combinations = db_get_array("SELECT ?:product_options_inventory.combination, SUM(?:product_warehouses_inventory.amount) AS amount FROM ?:product_options_inventory LEFT JOIN ?:product_warehouses_inventory ON ?:product_options_inventory.combination_hash = ?:product_warehouses_inventory.combination_hash WHERE ?:product_options_inventory.product_id = ?i", $product_id);
     if (!empty($combinations)) {
         $option_variants_avail = $option_variants = array();
         foreach ($combinations as $i => $combination) {
@@ -1712,14 +1712,14 @@ function fn_find_state_match($state)
 
 function fn_get_warehouse_data($warehouse_id)
 {
-    $field_list = "?:warehouses.*";
+    $field_list = "?:warehouses.*, GROUP_CONCAT(?:warehouse_brands.brand_id SEPARATOR ',') AS brand_ids";
 
     fn_set_hook('get_warehouse_data', $warehouse_id, $field_list, $join, $condition);
     
-    $warehouse_data = db_get_row("SELECT $field_list FROM ?:warehouses LEFT JOIN ?:product_warehouses ON ?:warehouses.warehouse_id = ?:product_warehouses.warehouse_id ?p WHERE ?:warehouses.warehouse_id = ?i  ?p", $join, $warehouse_id, $condition);
-
-    if (!empty($warehouse_data)) {
-        $warehouse_data['products'] = db_get_fields("SELECT product_id FROM ?:product_warehouses WHERE warehouse_id = ?i", $warehouse_id);
+    $warehouse_data = db_get_row("SELECT $field_list FROM ?:warehouses LEFT JOIN ?:warehouse_brands ON ?:warehouse_brands.warehouse_id = ?:warehouses.warehouse_id ?p WHERE ?:warehouses.warehouse_id = ?i  ?p GROUP BY ?:warehouses.warehouse_id", $join, $warehouse_id, $condition);
+    
+    if (!empty($warehouse_data['brand_ids'])) {
+        $warehouse_data['brand_ids'] = explode(',', $warehouse_data['brand_ids']);
     }
 
     fn_set_hook('get_warehouse_data_post', $warehouse_data);
@@ -1729,7 +1729,7 @@ function fn_get_warehouse_data($warehouse_id)
 
 function fn_delete_warehouse($warehouse_id)
 {
-    if (empty($warehouse_id)) {
+    if (empty($warehouse_id) || $warehouse_id == TH_WAREHOUSE_ID) {
         return false;
     }
 
@@ -1740,22 +1740,33 @@ function fn_delete_warehouse($warehouse_id)
 
     // Deleting warehouse
     db_query("DELETE FROM ?:warehouses WHERE warehouse_id = ?i", $warehouse_id);
-    db_query("DELETE FROM ?:product_warehouses WHERE warehouse_id = ?i", $warehouse_id);
+    db_query("DELETE FROM ?:warehouse_brands WHERE warehouse_id = ?i", $warehouse_id);
+    db_query("DELETE FROM ?:product_warehouses_inventory WHERE warehouse_id = ?i", $warehouse_id);
 
     fn_set_hook('delete_warehouse', $warehouse_id);
     
     return true;
 }
 
+function fn_get_product_warehouses($product_id)
+{
+    $warehouses = array();
+    $warehouse_ids = db_get_field("SELECT warehouse_ids FROM ?:products WHERE product_id = ?i", $product_id);
+    if (!empty($warehouse_ids)) {
+        $warehouse_ids = unserialize($warehouse_ids);
+        $warehouses = db_get_hash_array("SELECT warehouse_id, name FROM ?:warehouses WHERE warehouse_id IN (?n) ORDER BY priority ASC", 'warehouse_id', $warehouse_ids);
+    }
+    
+    return $warehouses;
+}
+
 function fn_get_warehouses($params)
 {
     $fields = array (
         '?:warehouses.*',
-        'GROUP_CONCAT(?:product_warehouses.product_id) as products'
     );
 
     $condition = $join = '';
-    $join .= db_quote(" LEFT JOIN ?:product_warehouses ON ?:product_warehouses.warehouse_id = ?:warehouses.warehouse_id ");
 
     if (!empty($params['warehouse'])) {
         $condition .= db_quote(" AND ?:warehouses.name LIKE ?l", "%".trim($params['warehouse'])."%");
@@ -1763,10 +1774,6 @@ function fn_get_warehouses($params)
 
     if (!empty($params['item_ids'])) {
         $condition .= db_quote(' AND ?:warehouses.warehouse_id IN (?n)', explode(',', $params['item_ids']));
-    }
-
-    if (!empty($params['product_id'])) {
-        $condition .= db_quote(' AND ?:product_warehouses.product_id = ?i', $params['product_id']);
     }
 
     if (!empty($params['except_id']) && (empty($params['item_ids']) || !empty($params['item_ids']) && !in_array($params['except_id'], explode(',', $params['item_ids'])))) {
@@ -1802,8 +1809,8 @@ function fn_update_warehouse($warehouse_data, $warehouse_id = 0)
         $create = true;
 
         $warehouse_id = db_query("INSERT INTO ?:warehouses ?e", $_data);
-        $existing_products = array();
         
+        $existing_brands = array();
     // update existing warehouse
     } else {
 
@@ -1813,39 +1820,44 @@ function fn_update_warehouse($warehouse_data, $warehouse_id = 0)
             fn_set_notification('E', __('error'), __('object_not_found', array('[object]' => __('warehouse'))),'','404');
             $warehouse_id = false;
         }
-        $existing_products = db_get_fields("SELECT product_id FROM ?:product_warehouses WHERE warehouse_id = ?i", $warehouse_id);
+        $existing_brands = db_get_fields("SELECT brand_id FROM ?:warehouse_brands WHERE warehouse_id = ?i", $warehouse_id);
     }
 
-    if (!empty($warehouse_id) && isset($_data['products'])) {
+    if (!empty($warehouse_id) && isset($_data['brand_ids'])) {
+
+        $to_delete = array_diff($existing_brands, $_data['brand_ids']);
+
+        if (!empty($to_delete)) {
+            db_query("DELETE FROM ?:warehouse_brands WHERE brand_id IN (?n) AND warehouse_id = ?i", $to_delete, $warehouse_id);
+        }
+        $to_add = array_diff($_data['brand_ids'], $existing_brands);
+
+        if (!empty($to_add)) {
+            foreach ($to_add as $i => $gr) {
+                $__data = array(
+                    'warehouse_id' => $warehouse_id,
+                    'brand_id' => $gr
+                );
+                db_query("REPLACE INTO ?:warehouse_brands ?e", $__data);
+            }
+        }
 
         // Log warehouse add/update
         fn_log_event('warehouses', !empty($create) ? 'create' : 'update', array(
             'warehouse_id' => $warehouse_id,
         ));
         
-        $_data['products'] = (empty($_data['products'])) ? array() : explode(',', $_data['products']);
-        $to_delete = array_diff($existing_products, $_data['products']);
-
-        if (!empty($to_delete)) {
-            db_query("DELETE FROM ?:product_warehouses WHERE product_id IN (?n) AND warehouse_id = ?i", $to_delete, $warehouse_id);
-        }
-        $to_add = array_diff($_data['products'], $existing_products);
-
-        if (!empty($to_add)) {
-            foreach ($to_add as $i => $gr) {
-                $__data = array(
-                    'warehouse_id' => $warehouse_id,
-                    'product_id' => $gr
-                );
-                db_query("REPLACE INTO ?:product_warehouses ?e", $__data);
-            }
-        }
     }
     
     fn_set_hook('update_warehouse_post', $_data, $warehouse_id);
     
     return $warehouse_id;
 
+}
+
+function fn_get_warehouse_name($warehouse_id)
+{
+    return db_get_field("SELECT name FROM ?:warehouses WHERE warehouse_id = ?i", $warehouse_id);
 }
 
 function fn_development_get_brands()
@@ -1867,4 +1879,115 @@ function fn_development_get_brands()
     }
 
     return $variants;
+}
+
+function fn_rebuild_product_options_inventory_multi($product_ids, $products_options = array(), $product_data = array(), $amount = 50)
+{
+    if (empty($products_options)) {
+        $products_options = fn_get_product_options($product_ids, DESCR_SL, true, true);
+    }
+
+    if (!empty($products_options)) {
+    
+        if (empty($product_data)) {
+            $product_data = db_get_hash_array("SELECT product_code, warehouse_ids FROM ?:products WHERE product_id IN (?n)", 'product_id', $product_ids);
+        }
+        $inventory_data = db_get_hash_multi_array("SELECT combination_hash, amount, product_code, product_id FROM ?:product_options_inventory WHERE product_id IN (?n)", array('product_id', 'combination_hash'), $product_ids);
+        
+        $warehouse_data = db_get_hash_multi_array("SELECT * FROM ?:product_warehouses_inventory WHERE product_id IN (?n)", array('product_id', 'warehouse_hash'), $product_ids);
+        db_query("DELETE FROM ?:product_warehouses_inventory WHERE product_id IN (?n) AND combination_hash != '0'", $product_ids);
+
+        $new_inventory_data = $new_wh_inventory = $delete_combinations = array();
+        foreach ($products_options as $product_id => $_options) {
+
+            if (empty($_options)) {
+                continue;
+            }
+            fn_set_hook('rebuild_product_options_inventory_pre', $product_id, $amount);
+
+            $options = array_keys($_options);
+
+            $variants = $variant_codes = array();
+            foreach ($_options as $k => $option) {
+                $variants[] = array_keys($option['variants']);
+                $_codes = array();
+                foreach ($option['variants'] as $vr_id => $vr_data) {
+                    $_codes[$vr_id] = $vr_data['code_suffix'];
+                }
+                $variant_codes[$k] = $_codes;
+            }
+            fn_set_hook('look_through_variants_pre', $product_id, $amount, $options, $variants);
+        
+            $position = 0;
+            $hashes = array();
+            $combinations = fn_get_options_combinations($options, $variants);
+            
+            if (!empty($combinations)) {
+                foreach ($combinations as $combination) {
+
+                    $_data = array();
+                    $_data['product_id'] = $product_id;
+
+                    $_data['combination_hash'] = fn_generate_cart_id($product_id, array('product_options' => $combination));
+
+                    if (array_search($_data['combination_hash'], $hashes) === false) {
+                        $hashes[] = $_data['combination_hash'];
+                        $_data['combination'] = fn_get_options_combination($combination);
+                        $_data['position'] = $position++;
+
+                        $_data['product_code'] = (!empty($product_data[$product_id]['product_code'])) ? $product_data[$product_id]['product_code'] : '';
+                        foreach ($combination as $option_id => $variant_id) {
+                            if (isset($variant_codes[$option_id][$variant_id])) {
+                                $_data['product_code'] .= $variant_codes[$option_id][$variant_id];
+                            }
+                        }
+
+                        $_data['amount'] = isset($inventory_data[$product_id][$_data['combination_hash']]['amount']) ? $inventory_data[$product_id][$_data['combination_hash']]['amount'] : $amount;
+        //                $_data['product_code'] = isset($inventory_data[$product_id][$_data['combination_hash']]['product_code']) ? $inventory_data[$product_id][$_data['combination_hash']]['product_code'] : '';
+
+                        fn_set_hook('look_through_variants_update_combination', $combination, $_data, $product_id, $amount, $options, $variants);
+
+                        $new_inventory_data[] = $_data;
+//                         $combinations[] = $combination;
+                    }
+//                     echo str_repeat('. ', count($combination));
+                }
+                if (!empty($hashes)) {
+                    $warehouse_ids = explode(',', $product_data[$product_id]['warehouse_ids']);
+                    if (!empty($warehouse_ids)) {
+                        foreach ($combinations as $combination) {
+                            foreach ($warehouse_ids as $i => $wh_id) {
+                                $wh_hash = fn_generate_cart_id($product_id, array('product_options' => $combination, 'warehouse_id' => $wh_id));
+                                $new_wh_inventory[] = array(
+                                    'warehouse_hash' => $wh_hash,
+                                    'warehouse_id' => $wh_id,
+                                    'product_id' => $product_id,
+                                    'combination_hash' => fn_generate_cart_id($product_id, array('product_options' => $combination)),
+                                    'amount' => isset($warehouse_data[$product_id][$wh_hash]['amount']) ? $warehouse_data[$product_id][$wh_hash]['amount'] : 0
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+
+            fn_set_hook('look_through_variants_post', $combinations, $product_id, $amount, $options, $variants);
+            
+            $delete_combinations = array_merge($delete_combinations, array_diff(array_keys($inventory_data[$product_id]), $hashes));
+
+            fn_set_hook('rebuild_product_options_inventory_post', $product_id);
+        }
+        if (!empty($delete_combinations)) {
+            db_query("DELETE FROM ?:product_options_inventory WHERE combination_hash IN (?n)", $delete_combinations);
+            foreach ($delete_combinations as $v) {
+                fn_delete_image_pairs($v, 'product_option');
+            }
+        }
+        if (!empty($new_inventory_data)) {
+            db_query("REPLACE INTO ?:product_options_inventory ?m", $new_inventory_data);
+        }
+        if (!empty($new_wh_inventory)) {
+            db_query("REPLACE INTO ?:product_warehouses_inventory ?m", $new_wh_inventory);
+        }
+    }
 }

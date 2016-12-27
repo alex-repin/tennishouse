@@ -325,8 +325,8 @@ if ($mode == 'catalog') {
 
         fn_define('FILTER_CUSTOM_ADVANCED', true); // this constant means that extended filtering should be stayed on the same page
 
-        list($filters) = fn_get_filters_products_count($_REQUEST);
-        Registry::get('view')->assign('filter_features', $filters);
+//         list($filters) = fn_get_filters_products_count($_REQUEST);
+//         Registry::get('view')->assign('filter_features', $filters);
 
         // [Breadcrumbs]
         if (!empty($category_parent_ids)) {
@@ -341,11 +341,11 @@ if ($mode == 'catalog') {
 
         fn_add_breadcrumb($category_data['category'], (empty($_REQUEST['features_hash']) && empty($_REQUEST['advanced_filter'])) ? '' : "categories.view?category_id=$_REQUEST[category_id]");
 
-        if (!empty($params['features_hash'])) {
-            fn_add_filter_ranges_breadcrumbs($params, "categories.view?category_id=$_REQUEST[category_id]");
-        } elseif (!empty($_REQUEST['advanced_filter'])) {
-            fn_add_breadcrumb(__('advanced_filter'));
-        }
+//         if (!empty($params['features_hash'])) {
+//             fn_add_filter_ranges_breadcrumbs($params, "categories.view?category_id=$_REQUEST[category_id]");
+//         } elseif (!empty($_REQUEST['advanced_filter'])) {
+//             fn_add_breadcrumb(__('advanced_filter'));
+//         }
         // [/Breadcrumbs]
     } else {
         return array(CONTROLLER_STATUS_NO_PAGE);

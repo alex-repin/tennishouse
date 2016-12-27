@@ -12,6 +12,7 @@
         {foreach from=$smarty.request item="r_val" key="r_key"}
             <input type="hidden" name="request_data[{$r_key}]" value="{$r_val}" />
         {/foreach}
+        <input type="hidden" name="request_data[current_url]" value="{$config.current_url}" />
         {include file="buttons/button.tpl" but_text=__("submit") but_name="dispatch[block_manager.get_block]" but_id="ajax_block_`$block.block_id`_submit"}
     </form>
     <script type="text/javascript">

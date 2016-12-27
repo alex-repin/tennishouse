@@ -67,8 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
     
-    if ($mode == 'update_stocks') {
-
+    if ($mode == 'update_warehouse_stocks') {
         if (!empty($_REQUEST['calculate'])) {
             $file = fn_filter_uploaded_data('csv_file');
             $missing_products = $updated_products = $broken_options_products = $broken_net_cost = $trash = array();
@@ -82,6 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $params = array(
                             'features_hash' => 'V' . implode('.V', $_REQUEST['brand_ids']),
+                            'warehouse_id' => $_REQUEST['warehouse_id']
                             //'force_get_by_ids' => 'Y',
                         );
                         list($products,) = fn_get_products($params);
@@ -102,49 +102,65 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 $ignore_list = array_merge($ignore_list, unserialize($i_list));
                             }
                         }
+                        
+                        $product_codes = array_diff(array_keys($total_data), $ignore_list);
+                        $product_data = db_get_hash_array("SELECT product_id, net_cost, product_code, tracking, import_divider, warehouse_ids FROM ?:products WHERE product_id IN (?n)", 'product_id', $all_ids);
+                        $product_codes_data = array();
+                        foreach ($product_data as $i => $prod) {
+                            if (!empty($prod['product_code'])) {
+                                $product_codes_data[$prod['product_code']][$prod['product_id']] = $prod;
+                            }
+                        }
+
+                        
+                        $products_options = fn_get_product_options($all_ids, DESCR_SL, true, true);
+                        fn_rebuild_product_options_inventory_multi($all_ids, $products_options, $product_data);
+                        $warehouse_inventories = db_get_hash_multi_array("SELECT ?:product_warehouses_inventory.*, ?:product_options_inventory.combination FROM ?:product_warehouses_inventory LEFT JOIN ?:product_options_inventory ON ?:product_options_inventory.combination_hash = ?:product_warehouses_inventory.combination_hash WHERE ?:product_warehouses_inventory.combination_hash != '0' AND ?:product_warehouses_inventory.warehouse_id = ?i AND ?:product_warehouses_inventory.product_id IN (?n)", array('product_id', 'combination_hash'), $_REQUEST['warehouse_id'], array_keys($product_data));
+                        $updated_warehouse_inventories = $new_warehouse_inventories = array();
+                        
+
                         foreach ($total_data as $product_code => $data) {
                             if (!empty($ignore_list) && in_array($product_code, $ignore_list)) {
                                 continue;
                             }
-                            $ids = db_get_hash_single_array("SELECT product_id, net_cost FROM ?:products WHERE product_code = ?s", array('product_id', 'net_cost'), $product_code);
                             if (empty($data['data'])) {
                                 $missing_products[$product_code] = $data;
-                            } elseif (count($ids) == 0) {
+                                
+                            } elseif (empty($product_codes_data[$product_code])) {
                                 $combination_hash = db_get_array("SELECT combination_hash, product_id FROM ?:product_options_inventory WHERE product_code = ?s", $product_code);
                                 if (count($combination_hash) != 1 || count($data['data']) > 1 || empty($data['data'][0]['amount'])) {
                                     $missing_products[$product_code] = $data;
                                 } else {
-                                    db_query("UPDATE ?:product_options_inventory SET amount = ?i WHERE combination_hash = ?i", $data['data'][0]['amount'], $combination_hash[0]['combination_hash']);
+                                    db_query("UPDATE ?:product_warehouses_inventory SET amount = ?i WHERE combination_hash = ?i AND warehouse_id = ?i", $data['data'][0]['amount'], $combination_hash[0]['combination_hash'], $_REQUEST['warehouse_id']);
                                     $updated_products[$product_code] = array(
                                         'code' => $product_code,
                                         'data' => $data
                                     );
                                     if (!in_array($combination_hash[0]['product_id'], $in_stock)) {
-                                        $in_stock[] = $product_id;
+                                        $in_stock[] = $combination_hash[0]['product_id'];
                                     }
                                     $updated_by_combinations[$combination_hash[0]['product_id']] = (empty($updated_by_combinations[$combination_hash[0]['product_id']])) ? array() : $updated_by_combinations[$combination_hash[0]['product_id']];
                                     $updated_by_combinations[$combination_hash[0]['product_id']][] = $combination_hash[0]['combination_hash'];
                                 }
+                                
                             } else {
                                 $combinations_data = array();
                                 foreach ($data['data'] as $i => $variant) {
                                     $option_data = $var_id_tmp = $options_count = $missing_variants = $max = array();
                                     $break = false;
-                                    foreach ($ids as $product_id => $product_net_cost) {
+                                    foreach ($product_codes_data[$product_code] as $product_id => $_product) {
                                         $option_data[$product_id] = (empty($option_data[$product_id])) ? array() : $option_data[$product_id];
-                                        $product_data = fn_get_product_data($product_id, $auth, DESCR_SL, '', false, false, false, false, false, false, false);
-                                        $product_options = fn_get_product_options($product_id, DESCR_SL, true, true);
-                                        $options_count[$product_id] = array_keys($product_options);
+                                        $options_count[$product_id] = array_keys($products_options[$product_id]);
                                         $option_names = array();
-                                        if (!empty($product_options)) {
-                                            foreach ($product_options as $h => $option) {
+                                        if (!empty($products_options[$product_id])) {
+                                            foreach ($products_options[$product_id] as $h => $option) {
                                                 $option_names[] = $option['option_name'];
                                             }
                                         }
                                         if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
                                             fn_print_r($variant);
                                         }
-                                        if ($variant['name'] != '' && !empty($product_options) && $product_data['tracking'] == 'O' && !empty($variant['amount'])) {
+                                        if ($variant['name'] != '' && !empty($products_options[$product_id]) && $_product['tracking'] == 'O' && !empty($variant['amount'])) {
                                             $variants = explode(',', fn_normalize_string($variant['name']));
                                             $prev_numeric = false;
                                             $prev_id = '';
@@ -173,7 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     fn_print_r($variant_name);
                                                 }
                                                 $variant_found = false;
-                                                foreach ($product_options as $k => $opt_data) {
+                                                foreach ($products_options[$product_id] as $k => $opt_data) {
                                                     if (!empty($opt_data['variants'])) {
                                                         foreach ($opt_data['variants'] as $kk => $vr_data) {
                                                             $var_name = fn_format_variant_name($vr_data['variant_name']);
@@ -207,18 +223,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 if (!$variant_found) {
                                                     $missing_variants[$product_id][] = $j;
                                                 } else {
-                                                    if (!empty($variant['price']) && $product_net_cost != $variant['price']) {
+                                                    if (!empty($variant['price']) && $_product['net_cost'] != $variant['price']) {
                                                         $broken_net_cost[$product_code] = $data;
                                                     }
                                                 }
                                             }
-                                        } elseif (count($data['data']) == 1 && $product_data['tracking'] == 'B' && !empty($variant['amount']) && empty($product_options)) {
-                                            $amount = floor($variant['amount'] / $product_data['import_divider']);
-                                            $total_amount = db_get_field("SELECT amount FROM ?:products WHERE product_id = ?i", $product_id);
-                                            db_query("UPDATE ?:products SET amount = ?i WHERE product_id = ?i", $amount, $product_id);
-                                            if ($total_amount <= 0 && $amount > 0) {
-                                                fn_send_product_notifications($product_id);
-                                            }
+                                        } elseif (count($data['data']) == 1 && $_product['tracking'] == 'B' && !empty($variant['amount']) && empty($products_options[$product_id])) {
+                                            $amount = floor($variant['amount'] / $_product['import_divider']);
+//                                             $total_amount = db_get_field("SELECT SUM(amount) FROM ?:product_warehouses_inventory WHERE product_id = ?i AND combination_hash = '0'", $product_id);
+                                            db_query("UPDATE ?:product_warehouses_inventory SET amount = ?i WHERE product_id = ?i AND combination_hash = '0' AND warehouse_id = ?i", $amount, $product_id, $_REQUEST['warehouse_id']);
+//                                             if ($total_amount <= 0 && $amount > 0) {
+//                                                 fn_send_product_notifications($product_id);
+//                                             }
                                             $updated_products[$product_code] = array(
                                                 'code' => $product_code,
                                                 'data' => $data
@@ -279,32 +295,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
                                     fn_print_r($combinations_data);
                                 }
-                                db_query("DELETE FROM ?:product_options_exceptions WHERE product_id = ?i", $product_id);
                                 if (!empty($combinations_data)) {
                                     $ttl_updated = 0;
                                     foreach ($combinations_data as $product_id => $comb_data) {
                                         $ttl_updated += count($comb_data);
-                                        fn_rebuild_product_options_inventory($product_id);
-                                        $inventory = db_get_hash_array("SELECT amount, combination_hash FROM ?:product_options_inventory WHERE product_id = ?i", 'combination_hash', $product_id);
-
                                         $total_amount = $new_amount = 0;
-                                        foreach ($inventory as $k => $v) {
-                                            $total_amount += $inventory[$k]['amount'];
+                                        foreach ($warehouse_inventories[$product_id] as $k => $v) {
+                                            $total_amount += $warehouse_inventories[$product_id][$k]['amount'];
                                             if (!empty($comb_data[$k])) {
-                                                $inventory[$k]['amount'] = $comb_data[$k]['amount'];
+                                                $warehouse_inventories[$product_id][$k]['amount'] = $comb_data[$k]['amount'];
                                                 unset($comb_data[$k]);
                                             } else {
-                                                $inventory[$k]['amount'] = 0;
+                                                $warehouse_inventories[$product_id][$k]['amount'] = 0;
                                             }
-                                            $new_amount += $inventory[$k]['amount'];
-                                            db_query("UPDATE ?:product_options_inventory SET ?u WHERE combination_hash = ?s", $inventory[$k], $k);
+                                            $new_amount += $warehouse_inventories[$product_id][$k]['amount'];
+                                            $tmp = $warehouse_inventories[$product_id][$k];
+                                            unset($tmp['combination']);
+                                            $new_warehouse_inventories[] = $tmp;
                                         }
-                                        if (($total_amount <= 0) && ($new_amount > 0)) {
-                                            // [tennishouse]
-                                            fn_send_product_notifications($product_id);
-                                            // [tennishouse]
-                                        }
-                                        fn_update_product_exceptions($product_id, $inventory);
+//                                         if (($total_amount <= 0) && ($new_amount > 0)) {
+//                                             fn_send_product_notifications($product_id);
+//                                         }
+                                        $updated_warehouse_inventories[$product_id] = $warehouse_inventories[$product_id];
                                         if (!empty($comb_data)) {
                                             $broken_options_products[$product_code] = $data;
                                         } else {
@@ -324,44 +336,94 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 }
                             }
                         }
-                        $out_of_stock = array_diff($all_ids, $in_stock);
-//                         if (!empty($in_stock)) {
-//                             db_query("UPDATE ?:products SET status = 'A' WHERE product_id IN (?n)", $in_stock);
-//                         }
-                        if (!empty($out_of_stock)) {
-                            db_query("UPDATE ?:products SET amount = '0' WHERE product_id IN (?n)", $out_of_stock);
-                            foreach ($out_of_stock as $os_i => $pr_id) {
-                                fn_rebuild_product_options_inventory($pr_id);
-                                db_query("DELETE FROM ?:product_options_exceptions WHERE product_id = ?i", $pr_id);
-                                $all_combs = db_get_hash_single_array("SELECT combination_hash, combination FROM ?:product_options_inventory WHERE product_id = ?i", array('combination_hash', 'combination'), $pr_id);
-                                db_query("UPDATE ?:product_options_inventory SET amount = '0' WHERE combination_hash IN (?n)", array_keys($all_combs));
-                                foreach ($all_combs as $t => $comb_hash) {
-                                    $options_array = fn_get_product_options_by_combination($comb_hash);
-                                    $_data = array(
-                                        'product_id' => $pr_id,
-                                        'combination' => serialize($options_array)
-                                    );
-                                    db_query("REPLACE INTO ?:product_options_exceptions ?e", $_data);
-                                }
-                            }
+                        
+                        if (!empty($new_warehouse_inventories)) {
+                            db_query("REPLACE ?:product_warehouses_inventory ?m", $new_warehouse_inventories);
                         }
-                        if (!empty($updated_by_combinations)) {
-                            foreach ($updated_by_combinations as $pr_id => $combs) {
-                                $all_combs = db_get_hash_single_array("SELECT combination_hash, combination FROM ?:product_options_inventory WHERE product_id = ?i", array('combination_hash', 'combination'), $pr_id);
-                                db_query("DELETE FROM ?:product_options_exceptions WHERE product_id = ?i", $pr_id);
-                                $out = array_diff(array_keys($all_combs), $combs);
-                                if (!empty($out)) {
-                                    db_query("UPDATE ?:product_options_inventory SET amount = '0' WHERE combination_hash IN (?n)", $out);
-                                    foreach ($out as $t => $comb_hash) {
-                                        $options_array = fn_get_product_options_by_combination($all_combs[$comb_hash]);
-                                        $_data = array(
-                                            'product_id' => $pr_id,
-                                            'combination' => serialize($options_array)
-                                        );
-                                        db_query("INSERT INTO ?:product_options_exceptions ?e", $_data);
+                        
+                        $option_exceptions = array();
+                        if (!empty($updated_warehouse_inventories)) {
+                            db_query("DELETE FROM ?:product_options_exceptions WHERE product_id IN (?n)", array_keys($updated_warehouse_inventories));
+                            $features = db_get_hash_single_array("SELECT a.feature_id, option_id FROM ?:product_options AS a INNER JOIN ?:product_features ON ?:product_features.feature_id = a.feature_id", array('option_id', 'feature_id'));
+                            $feature_variants = db_get_hash_single_array("SELECT feature_variant_id, variant_id FROM ?:product_option_variants", array('variant_id', 'feature_variant_id'));
+                            foreach ($updated_warehouse_inventories as $pr_id => $combinations) {
+                                $option_variants_avail = $option_variants = array();
+                                foreach ($combinations as $hash => $wh_combination) {
+                                    $options_array = fn_get_product_options_by_combination($wh_combination['combination']);
+                                    if (!empty($combinations[$hash])) {
+                                        if ($combinations[$hash]['amount'] < 1) {
+                                            $option_exceptions[] = array(
+                                                'product_id' => $pr_id,
+                                                'combination' => serialize($options_array)
+                                            );
+                                        } else {
+                                            foreach ($options_array as $option_id => $variant_id) {
+                                                if (empty($option_variants_avail[$option_id]) || !in_array($variant_id, $option_variants_avail[$option_id])) {
+                                                    $option_variants_avail[$option_id][] = $option_variants[] = $variant_id;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                if (!empty($option_variants_avail)) {
+                                    $features_data = array();
+                                    foreach ($option_variants_avail as $option_id => $variants) {
+                                        if (!empty($features[$option_id])) {
+                                            $features_data[$features[$option_id]] = array();
+                                            if (!empty($variants)) {
+                                                foreach ($variants as $j => $variant_id) {
+                                                    if (!empty($feature_variants[$variant_id])) {
+                                                        $features_data[$features[$option_id]][] = $feature_variants[$variant_id];
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (!empty($features_data)) {
+                                        $add_new_variant = array();
+                                        fn_update_product_features_value($pr_id, $features_data, $add_new_variant, CART_LANGUAGE);
                                     }
                                 }
                             }
+                        }
+                        
+                        $out_of_stock = array_diff($all_ids, $in_stock);
+                        if (!empty($out_of_stock)) {
+                            db_query("UPDATE ?:product_warehouses_inventory SET amount = '0' WHERE product_id IN (?n) AND warehouse_id = ?i", $out_of_stock, $_REQUEST['warehouse_id']);
+                            db_query("DELETE FROM ?:product_options_exceptions WHERE product_id IN (?n)", $out_of_stock);
+                            $all_combinations = db_get_hash_multi_array("SELECT combination_hash, combination, product_id FROM ?:product_options_inventory WHERE product_id IN (?n)", array('product_id', 'combination_hash'), $out_of_stock);
+                            foreach ($out_of_stock as $os_i => $pr_id) {
+                                if (!empty($all_combinations[$pr_id])) {
+                                    foreach ($all_combinations[$pr_id] as $t => $comb_dt) {
+                                        $options_array = fn_get_product_options_by_combination($comb_dt['combination']);
+                                        $option_exceptions[] = array(
+                                            'product_id' => $pr_id,
+                                            'combination' => serialize($options_array)
+                                        );
+                                    }
+                                }
+                            }
+                        }
+
+                        if (!empty($updated_by_combinations)) {
+                            $all_combinations = db_get_hash_multi_array("SELECT combination_hash, combination, product_id FROM ?:product_options_inventory WHERE product_id IN (?n)", array('product_id', 'combination_hash'), array_keys($updated_by_combinations));
+                            db_query("DELETE FROM ?:product_options_exceptions WHERE product_id IN (?n)", array_keys($updated_by_combinations));
+                            foreach ($updated_by_combinations as $pr_id => $combs) {
+                                $out = array_diff(array_keys($all_combinations[$pr_id]), $combs);
+                                if (!empty($out)) {
+                                    db_query("UPDATE ?:product_warehouses_inventory SET amount = '0' WHERE combination_hash IN (?n) AND warehouse_id = ?i", $out, $_REQUEST['warehouse_id']);
+                                    foreach ($out as $t => $comb_hash) {
+                                        $options_array = fn_get_product_options_by_combination($all_combinations[$pr_id][$comb_hash]['combination']);
+                                        $option_exceptions[] = array(
+                                            'product_id' => $pr_id,
+                                            'combination' => serialize($options_array)
+                                        );
+                                    }
+                                }
+                            }
+                        }
+                        if (!empty($option_exceptions)) {
+                            db_query("REPLACE INTO ?:product_options_exceptions ?m", $option_exceptions);
                         }
                     }
                 }
@@ -379,6 +441,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             FeaturesCache::generate(CART_LANGUAGE);
             
+            Registry::get('view')->assign('warehouse_id', $_REQUEST['warehouse_id']);
             Registry::get('view')->assign('out_of_stock', count($out_of_stock) + count($no_code));
             Registry::get('view')->assign('in_stock', count($in_stock));
             Registry::get('view')->assign('brand_ids', implode(',', $_REQUEST['brand_ids']));
@@ -394,7 +457,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         Registry::get('view')->assign('brands', fn_development_get_brands());
-        Registry::get('view')->display('addons/development/views/development/supplier_stocks.tpl');
+        Registry::get('view')->display('addons/development/components/supplier_stocks.tpl');
         exit;
     }
     
@@ -841,6 +904,52 @@ if ($mode == 'calculate_balance') {
     $response = Http::get('http://kladr-api.ru/api.php', $data);
     fn_print_die($response);
     
+    exit;
+} elseif ($mode == 'generate_warehouse_inventory') {
+
+    $products = db_get_array("SELECT product_id, amount FROM ?:products");
+    $option_inventory = db_get_hash_multi_array("SELECT * FROM ?:product_options_inventory", array('product_id', 'combination_hash'));
+    
+    $data = array();
+    foreach ($products as $i => $prod) {
+        $brand_warehouse_ids = array(TH_WAREHOUSE_ID);
+        $product_features = fn_get_product_features_list($prod, 'C');
+        if (!empty($product_features[BRAND_FEATURE_ID]['variant_id'])) {
+            $_brand_warehouse_ids = db_get_fields("SELECT warehouse_id FROM ?:warehouse_brands WHERE brand_id = ?i", $product_features[BRAND_FEATURE_ID]['variant_id']);
+            if (!empty($_brand_warehouse_ids)) {
+                $brand_warehouse_ids = array_merge($brand_warehouse_ids, $_brand_warehouse_ids);
+            }
+        }
+        db_query("UPDATE ?:products SET warehouse_ids = ?s WHERE product_id = ?i", implode(',', $brand_warehouse_ids), $prod['product_id']);
+        foreach ($brand_warehouse_ids as $k => $wh_id) {
+            $data[] = array(
+                'warehouse_hash' => fn_generate_cart_id($prod['product_id'], array('warehouse_id' => $wh_id)),
+                'warehouse_id' => $wh_id,
+                'product_id' => $prod['product_id'],
+                'combination_hash' => 0,
+                'amount' => ($wh_id == BABOLAT_WAREHOUSE_ID) ? $prod['amount'] : 0
+            );
+        }
+        if (!empty($option_inventory[$prod['product_id']])) {
+            foreach ($option_inventory[$prod['product_id']] as $k => $comb) {
+                $options = fn_get_product_options_by_combination($comb['combination']);
+                foreach ($brand_warehouse_ids as $kk => $wh_id) {
+                    $data[] = array(
+                        'warehouse_hash' => fn_generate_cart_id($prod['product_id'], array('product_options' => $options, 'warehouse_id' => $wh_id)),
+                        'warehouse_id' => $wh_id,
+                        'product_id' => $prod['product_id'],
+                        'combination_hash' => $comb['combination_hash'],
+                        'amount' => ($wh_id == BABOLAT_WAREHOUSE_ID) ? $comb['amount'] : 0
+                    );
+                }
+            }
+        }
+    }
+    if (!empty($data)) {
+        db_query("REPLACE ?:product_warehouses_inventory ?m", $data);
+    }
+    
+    fn_echo('Done');
     exit;
 }
 

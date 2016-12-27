@@ -57,6 +57,13 @@
                     {hook name="orders:product_info"}
                         {if $oi.product_code}<p>{__("sku")}:{$oi.product_code}</p>{/if}
                     {/hook}
+                    {if $oi.extra.warehouses}
+                        <div class="ty-order-warehouses">
+                        {foreach from=$oi.extra.warehouses item="wh_amount" key="wh_hash"}
+                            {$oi.extra.warehouse_names.$wh_hash}: {$wh_amount}
+                        {/foreach}
+                        </div>
+                    {/if}
                     </div>
                     {if $oi.product_options}<div class="options-info">{include file="common/options_info.tpl" product_options=$oi.product_options}</div>{/if}
                 </td>

@@ -190,7 +190,8 @@ function fn_get_return_info($return_id)
                     $v['product'] = strtoupper(__('deleted_product'));
                 }
 
-                $return['items'][$type][$k]['product_options'] = !empty($return['items'][$type][$k]['product_options']) ? unserialize($return['items'][$type][$k]['product_options']) : array();
+                $extra = unserialize($return['items'][$type][$k]['product_options']);
+                $return['items'][$type][$k]['product_options'] = !empty($extra['product_options_value']) ? $extra['product_options_value'] : array();
             }
         }
 
@@ -485,25 +486,31 @@ function fn_rma_recalculate_order_routine(&$order, &$item, $mirror_item, $type =
             unset($mirror_item['extra']['discount'], $item['extra']['discount']);
         }
         if (in_array($type, array('O-', 'M-O+'))) {
-            $amount = fn_rma_recalculate_product_amount($item['item_id'], $item['product_id'], @$item['extra']['product_options'], $type, $ex_data);
+            $amount = fn_rma_recalculate_product_amount($item['item_id'], $item['product_id'], @$item['extra']['product_options'], $type, $ex_data, $item['extra']['warehouses']);
         }
     } else {
         if (in_array($type, array('O-', 'M-O+'))) {
-            fn_rma_recalculate_product_amount($item['item_id'], $item['product_id'], @$item['extra']['product_options'], $type, $ex_data);
+            fn_rma_recalculate_product_amount($item['item_id'], $item['product_id'], @$item['extra']['product_options'], $type, $ex_data, $item['extra']['warehouses']);
         }
     }
 
     fn_set_hook('rma_recalculate_order', $item, $mirror_item, $type, $ex_data, $amount);
 }
 
-function fn_rma_recalculate_product_amount($item_id, $product_id, $product_options, $type, $ex_data)
+function fn_rma_recalculate_product_amount($item_id, $product_id, $product_options, $type, $ex_data, &$order_warehouses)
 {
-
     $sign = ($type == 'O-') ? '-' : '+';
     $amount = db_get_field("SELECT amount FROM ?:rma_return_products WHERE return_id = ?i AND item_id = ?i AND type = ?s", $ex_data['return_id'], $item_id, RETURN_PRODUCT_ACCEPTED);
-    fn_update_product_amount($product_id, $amount, $product_options, $sign);
+    $order_warehouses = fn_update_product_amount($product_id, $amount, $product_options, $sign, $order_warehouses);
 
     return $amount;
+}
+
+function fn_rma_reorder(&$order_info, $cart, $auth)
+{
+    foreach ($order_info['products'] as $k => $item) {
+        unset($order_info['products'][$k]['extra']['returns']);
+    }
 }
 
 function fn_rma_recalculate_order($order_id, $recalculate_type, $return_id, $is_refund,  $ex_data)
@@ -655,12 +662,25 @@ function fn_rma_recalculate_order($order_id, $recalculate_type, $return_id, $is_
         );
 
         $return_products = db_get_hash_array("SELECT * FROM ?:rma_return_products WHERE return_id = ?i AND type = ?s", 'item_id', $return_id, RETURN_PRODUCT_ACCEPTED);
+        $order_warehouses = array();
+        
         foreach ((array) $return_products as $item_id => $v) {
-            $v['extra']['product_options'] = @unserialize($v['extra']['product_options']);
+            $v['extra'] = @unserialize($v['product_options']);
             if ($ex_data['inventory_to'] == 'D' || $ex_data['status_to'] == RMA_DEFAULT_STATUS) {
-                fn_update_product_amount($v['product_id'], $v['amount'], @$v['extra']['product_options'], '-');
+                $order_warehouses[$item_id] = fn_update_product_amount($v['product_id'], $v['amount'], @$v['extra']['product_options'], '-', @$v['extra']['warehouses']);
             } elseif ($ex_data['inventory_to'] == 'I') {
-                fn_update_product_amount($v['product_id'], $v['amount'], $v['extra']['product_options'], '+');
+                $order_warehouses[$item_id] = fn_update_product_amount($v['product_id'], $v['amount'], $v['extra']['product_options'], '+', @$v['extra']['warehouses']);
+            }
+        }
+        
+        if (!empty($order_warehouses)) {
+            foreach ($order_warehouses as $_hash => $warehouses) {
+                $order_items[$_hash]['extra'] = unserialize($order_items[$_hash]['extra']);
+                $order_items[$_hash]['extra']['warehouses'] = $warehouses;
+                $order_items[$_hash]['extra'] = serialize($order_items[$_hash]['extra']);
+                $return_products[$_hash]['product_options'] = $order_items[$_hash]['extra'];
+                db_query("UPDATE ?:order_details SET ?u WHERE item_id = ?i AND order_id = ?i", $order_items[$_hash], $_hash, $order_id);
+                db_query("UPDATE ?:rma_return_products SET ?u WHERE item_id = ?i AND return_id = ?i AND type = ?s", $return_products[$_hash], $_hash, $return_id, RETURN_PRODUCT_ACCEPTED);
             }
         }
     }

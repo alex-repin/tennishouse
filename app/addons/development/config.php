@@ -161,6 +161,9 @@ define('ABOUT_US_PAGE_ID', 2);
 
 define('SIZE_CHART_TAB_ID', 10);
 
+define('TH_WAREHOUSE_ID', 1);
+define('BABOLAT_WAREHOUSE_ID', 2);
+
 define('REVIEWS_THREAD_ID', 259);
 
 define('COURIER_SH_ID', 10);

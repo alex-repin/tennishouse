@@ -95,7 +95,7 @@ function fn_exim_put_product_combination($product_id, $product_name, $combinatio
             $combination = fn_get_options_combination($_combination);
             $combination_hash = fn_generate_cart_id($object_id, array('product_options' => $_combination));
 
-            $object_details = db_get_row('SELECT COUNT(*) as count, amount FROM ?:product_options_inventory WHERE combination_hash = ?i AND product_id = ?i', $combination_hash, $object_id);
+            $object_details = db_get_row('SELECT COUNT(?:product_options_inventory.*) as count, SUM(?:product_warehouses_inventory.amount) AS amount FROM ?:product_options_inventory LEFT JOIN ?:product_warehouses_inventory ON ?:product_warehouses_inventory.combination_hash = ?:product_options_inventory.combination_hash WHERE ?:product_options_inventory.combination_hash = ?i AND ?:product_options_inventory.product_id = ?i GROUP BY ?:product_options_inventory.combination_hash', $combination_hash, $object_id);
             $_data = array(
                 'product_id' => $object_id,
                 'product_code' => $combination_code,
@@ -111,12 +111,14 @@ function fn_exim_put_product_combination($product_id, $product_name, $combinatio
                     // [tennishouse]
                 }
                 db_query('UPDATE ?:product_options_inventory SET ?u WHERE combination_hash = ?i', $_data, $combination_hash);
+                db_query('UPDATE ?:product_warehouses_inventory SET ?u WHERE combination_hash = ?i', $_data, $combination_hash);
                 fn_set_progress('echo', __('updating') . ' ' . __('product_combinations') . '...', false);
 
                 $counter['E']++;
 
             } else {
                 db_query('INSERT INTO ?:product_options_inventory ?e', $_data);
+                db_query('INSERT INTO ?:product_warehouses_inventory ?e', $_data);
                 fn_set_progress('echo', __('creating') . ' ' . __('product_combinations') . '...', false);
 
                 $counter['N']++;

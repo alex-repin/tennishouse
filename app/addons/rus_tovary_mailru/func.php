@@ -445,7 +445,7 @@ function fn_mailru_filter_products($_result, $addon_settings, $error_products)
         $tracking = db_get_field("SELECT tracking FROM ?:products WHERE product_id = ?i", $product['product_id']);
 
         if (empty($tracking) || $tracking == 'O') {
-            $product['amount'] = db_get_field("SELECT SUM(amount) FROM ?:product_options_inventory WHERE product_id = ?i", $product['product_id']);
+            $product['amount'] = db_get_field("SELECT SUM(amount) FROM ?:product_warehouses_inventory WHERE product_id = ?i", $product['product_id']);
         }
 
         if ($addon_settings['export_stock'] == "Y" && $product['amount'] <= 0) {

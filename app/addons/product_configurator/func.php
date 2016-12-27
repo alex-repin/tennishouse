@@ -768,7 +768,18 @@ function fn_product_configurator_reorder_item(&$product)
     }
 }
 
-function fn_product_configurator_change_order_status(&$status_to, $status_from, $order_info, $force_notification, $order_statuses, $place_order)
+function fn_product_configurator_reorder(&$order_info, $cart, $auth)
+{
+    foreach ($order_info['products'] as $k => $v) {
+        if (!empty($v['extra']['configuration_data'])) {
+            foreach ($v['extra']['configuration_data'] as $i => $_product) {
+                unset($order_info['products'][$k]['extra']['configuration_data'][$i]['extra']['warehouses']);
+            }
+        }
+    }
+}
+
+function fn_product_configurator_change_order_status(&$status_to, $status_from, &$order_info, $force_notification, $order_statuses, $place_order)
 {
     $_updated_ids = array();
     $_error = false;
@@ -785,7 +796,8 @@ function fn_product_configurator_change_order_status(&$status_to, $status_from, 
                 if (Registry::get('settings.General.inventory_tracking') == 'Y') {
                     if ($order_statuses[$status_to]['params']['inventory'] == 'D' && $order_statuses[$status_from]['params']['inventory'] == 'I') {
                         // decrease amount
-                        if (fn_update_product_amount($_product['product_id'], $_product['amount'], @$_product['extra']['product_options'], '-') == false) {
+                        $order_warehouses = fn_update_product_amount($_product['product_id'], $_product['amount'], @$_product['extra']['product_options'], '-', @$_product['extra']['warehouses']);
+                        if ($order_warehouses == false) {
                             $status_to = 'B'; //backorder
                             $_error = true;
                             fn_set_notification('W', __('warning'), __('low_stock_subj', array(
@@ -794,11 +806,12 @@ function fn_product_configurator_change_order_status(&$status_to, $status_from, 
 
                             break;
                         } else {
+                            $order_info['products'][$k]['extra']['configuration_data'][$i]['extra']['warehouses'] = $order_warehouses;
                             $_updated_ids[$k][] = $i;
                         }
                     } elseif ($order_statuses[$status_to]['params']['inventory'] == 'I' && $order_statuses[$status_from]['params']['inventory'] == 'D') {
                         // increase amount
-                        fn_update_product_amount($_product['product_id'], $_product['amount'], @$_product['extra']['product_options'], '+');
+                        $order_info['products'][$k]['extra']['configuration_data'][$i]['extra']['warehouses'] = fn_update_product_amount($_product['product_id'], $_product['amount'], @$_product['extra']['product_options'], '+', @$_product['extra']['warehouses']);
                     }
                 }
             }
@@ -810,7 +823,7 @@ function fn_product_configurator_change_order_status(&$status_to, $status_from, 
             foreach ($_updated_ids as $id => $ids) {
                 foreach ($ids as $i => $_id) {
                     // increase amount
-                    fn_update_product_amount($order_info['products'][$id]['extra']['configuration_data'][$_id]['product_id'], $order_info['products'][$id]['extra']['configuration_data'][$_id]['amount'], @$order_info['products'][$id]['extra']['configuration_data'][$_id]['extra']['product_options'], '+');
+                    fn_update_product_amount($order_info['products'][$id]['extra']['configuration_data'][$_id]['product_id'], $order_info['products'][$id]['extra']['configuration_data'][$_id]['amount'], @$order_info['products'][$id]['extra']['configuration_data'][$_id]['extra']['product_options'], '+', @$order_info['products'][$id]['extra']['configuration_data'][$_id]['extra']['warehouses']);
                 }
             }
         }

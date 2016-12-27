@@ -398,23 +398,37 @@
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
         </item>
         <item>
-            CREATE TABLE IF NOT EXISTS `cscart_product_warehouses` (
-                `pair_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-                `warehouse_id` mediumint(8) unsigned NOT NULL,
-                `product_id` mediumint(8) unsigned NOT NULL,
-                PRIMARY KEY (`pair_id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;            
+            REPLACE INTO `cscart_warehouses` (
+                `warehouse_id`,
+                `name`,
+                `priority`,
+                `brand_id`
+            ) VALUES (
+                1, 'TennisHouse', 1, 0
+            );
         </item>
         <item>
             CREATE TABLE IF NOT EXISTS `cscart_product_warehouses_inventory` (
-                `inventory` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                `warehouse_hash` int(11) unsigned NOT NULL DEFAULT '0',
                 `warehouse_id` mediumint(8) unsigned NOT NULL,
                 `product_id` mediumint(8) unsigned NOT NULL,
-                `combination_hash` int(11) unsigned NOT NULL,
+                `combination_hash` int(11) unsigned NOT NULL DEFAULT '0',
                 `amount` mediumint(8) NOT NULL,
-                PRIMARY KEY (`inventory`),
-                UNIQUE KEY `warehouse_id` (`warehouse_id`,`product_id`,`combination_hash`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+                PRIMARY KEY (`warehouse_hash`),
+                UNIQUE KEY `warehouse_id` (`warehouse_id`,`combination_hash`,`product_id`),
+                KEY `product_id` (`product_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+        </item>
+        <item>
+            ALTER TABLE `cscart_products` ADD `warehouse_ids` TEXT NOT NULL AFTER `likes`;
+        </item>
+        <item>
+            CREATE TABLE `cscart_warehouse_brands` (
+                `pair_id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `warehouse_id` mediumint(8) UNSIGNED NOT NULL,
+                `brand_id` mediumint(8) UNSIGNED NOT NULL,
+                PRIMARY KEY (`pair_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
         </item>
     </queries>
     <language_variables>

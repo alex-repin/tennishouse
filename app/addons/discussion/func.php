@@ -534,10 +534,17 @@ function fn_get_rating_list($object_type, $parent_object_id = '')
     if ($object_type == 'P') {
         // Adding condition for the "Show out of stock products" setting
         if (Registry::get('settings.General.inventory_tracking') == 'Y' && Registry::get('settings.General.show_out_of_stock_products') == 'N' && AREA == 'C') {
-            $join["?:product_options_inventory AS inventory"] =  "inventory.product_id=?:discussion.object_id";
+            $join[db_quote("(SELECT SUM(?:product_warehouses_inventory.amount) as amount, ?:product_warehouses_inventory.combination_hash, ?:product_warehouses_inventory.product_id FROM ?:product_warehouses_inventory LEFT JOIN ?:products ON ?:products.product_id = ?:product_warehouses_inventory.product_id WHERE 1 AND (CASE ?:products.tracking
+                WHEN ?s THEN ?:product_warehouses_inventory.combination_hash != '0'
+                WHEN ?s THEN ?:product_warehouses_inventory.combination_hash = '0'
+                WHEN ?s THEN 1
+            END) GROUP BY product_id) AS warehouse_inventory", 
+            ProductTracking::TRACK_WITH_OPTIONS,
+            ProductTracking::TRACK_WITHOUT_OPTIONS,
+            ProductTracking::DO_NOT_TRACK)] =  "warehouse_inventory.product_id=?:discussion.object_id";
             $join['?:products'] = "?:products.product_id=?:discussion.object_id";
             $query .= db_quote(
-                " AND IF(?:products.tracking=?s, inventory.amount>0, ?:products.amount>0)",
+                " AND IF(?:products.tracking=?s, warehouse_inventory.amount>0, warehouse_inventory.amount>0)",
                 ProductTracking::TRACK_WITH_OPTIONS
             );
         }

@@ -137,7 +137,21 @@ if ($mode == 'sql_parse') {
             'list' => $data['sql']['queries'],
             'count' => array(),
         );
+        $sorted = array();
         foreach ($sql_data['list'] as $sql_query) {
+            if (!empty($sorted)) {
+                foreach ($sorted as $query_data) {
+                    if ($sql_query['time'] > $query_data['time']) {
+                        array_unshift($sorted, $sql_query);
+                        break;
+                    } else {
+                        array_push($sorted, $sql_query);
+                        break;
+                    }
+                }
+            } else {
+                array_push($sorted, $sql_query);
+            }
             if (empty($sql_data['count'][md5($sql_query['query'])])) {
                 $sql_data['count'][md5($sql_query['query'])] = array(
                     'query' => $sql_query['query'],
@@ -159,6 +173,7 @@ if ($mode == 'sql_parse') {
                 $sql_data['count'][md5($sql_query['query'])]['min_time'] = $sql_query['time'];
             }
         }
+//         $sql_data['list'] = $sorted;
         Registry::get('view')->assign('medium_query_time', Debugger::MEDIUM_QUERY_TIME);
         Registry::get('view')->assign('long_query_time', Debugger::LONG_QUERY_TIME);
 

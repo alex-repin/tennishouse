@@ -45,8 +45,8 @@
         <label for="elm_player_gender" class="control-label cm-required">{__("gender")}</label>
         <div class="controls">
         <select name="player_data[gender]" id="elm_player_gender">
-            <option {if $player_data.gender == "M"}selected="selected"{/if} value="M">{__("male")}
-            <option {if $player_data.gender == "F"}selected="selected"{/if} value="F">{__("female")}
+            <option {if $player_data.gender == "M"}selected="selected"{/if} value="M">{__("male")}</option>
+            <option {if $player_data.gender == "F"}selected="selected"{/if} value="F">{__("female")}</option>
         </select>
         </div>
     </div>
@@ -97,8 +97,8 @@
         <label for="elm_player_plays" class="control-label">{__("player_plays")}</label>
         <div class="controls">
             <select name="player_data[plays]" id="elm_player_plays">
-                <option {if $player_data.plays == "R"}selected="selected"{/if} value="R">{__("righty")}
-                <option {if $player_data.plays == "L"}selected="selected"{/if} value="L">{__("lefty")}
+                <option {if $player_data.plays == "R"}selected="selected"{/if} value="R">{__("righty")}</option>
+                <option {if $player_data.plays == "L"}selected="selected"{/if} value="L">{__("lefty")}</option>
             </select>
         </div>
     </div>

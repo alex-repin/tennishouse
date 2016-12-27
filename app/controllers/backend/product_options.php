@@ -69,6 +69,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_data = fn_array_merge($v, $_data);
 
                 db_query("REPLACE INTO ?:product_options_inventory ?e", $_data);
+
+                foreach ($v['warehouse_inventory'] as $wh_id => $wh_data) {
+                    $data = array(
+                        'warehouse_hash' => fn_generate_cart_id($_REQUEST['product_id'], array('product_options' => $_REQUEST['add_options_combination'][$k], 'warehouse_id' => $wh_id)),
+                        'warehouse_id' => $wh_id,
+                        'product_id' => $_REQUEST['product_id'],
+                        'combination_hash' => $combination_hash,
+                        'amount' => $wh_data['amount']
+                    );
+                    db_query("REPLACE INTO ?:product_warehouses_inventory ?e", $data);
+                }
             }
         }
 
@@ -80,17 +91,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Updating images
         fn_attach_image_pairs('combinations', 'product_option', 0, CART_LANGUAGE, array());
 
-        $inventory = db_get_hash_array("SELECT * FROM ?:product_options_inventory WHERE product_id = ?i", 'combination_hash', $_REQUEST['product_id']);
+        $inventory = db_get_hash_array("SELECT ?:product_options_inventory.*, SUM(?:product_warehouses_inventory.amount) AS wh_amount FROM ?:product_options_inventory LEFT JOIN ?:product_warehouses_inventory ON ?:product_warehouses_inventory.combination_hash = ?:product_options_inventory.combination_hash WHERE ?:product_options_inventory.product_id = ?i GROUP BY ?:product_options_inventory.combination_hash", 'combination_hash', $_REQUEST['product_id']);
 
         if (!empty($_REQUEST['inventory'])) {
             $total_amount = 0;
             foreach ($inventory as $key => $data) {
-                $total_amount += $data['amount'];
+                $total_amount += $data['wh_amount'];
             }
             $new_amount = 0;
             foreach ($_REQUEST['inventory'] as $k => $v) {
                 db_query("UPDATE ?:product_options_inventory SET ?u WHERE combination_hash = ?s", $v, $k);
-                $new_amount += $v['amount'];
+                $wh_total = 0;
+                foreach ($_REQUEST['inventory'][$k]['warehouse_inventory'] as $wh_hash => $w) {
+                    db_query("UPDATE ?:product_warehouses_inventory SET ?u WHERE warehouse_hash = ?s", $w, $wh_hash);
+                    $wh_total += $w['amount'];
+                }
+                $_REQUEST['inventory'][$k]['amount'] = $wh_total;
+                $new_amount += $wh_total;
             }
             if ($total_amount <= 0 && $new_amount > 0) {
                 // [tennishouse]
@@ -98,10 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // [tennishouse]
             }
         }
-//         $in_stock = db_get_field("SELECT combination_hash FROM ?:product_options_inventory WHERE amount > 0 AND product_id = ?i", $_REQUEST['product_id']);
-//         if (empty($in_stock)) {
-//             db_query("UPDATE ?:products SET status = 'H' WHERE product_id = ?i", $_REQUEST['product_id']);
-//         }
+
         // [tennishouse]
         fn_update_product_exceptions($_REQUEST['product_id'], $_REQUEST['inventory']);
         // [tennishouse]
@@ -113,6 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         foreach ($_REQUEST['combination_hashes'] as $v) {
             fn_delete_image_pairs($v, 'product_option');
             db_query("DELETE FROM ?:product_options_inventory WHERE combination_hash = ?i", $v);
+            db_query("DELETE FROM ?:product_warehouses_inventory WHERE combination_hash = ?i", $v);
         }
 
         $suffix = ".inventory?product_id=$_REQUEST[product_id]";
@@ -200,6 +215,7 @@ if ($mode == 'inventory') {
     Registry::get('view')->assign('product_options', $product_options);
     Registry::get('view')->assign('inventory', $inventory);
     Registry::get('view')->assign('search', $search);
+    Registry::get('view')->assign('warehouses', fn_get_product_warehouses($_REQUEST['product_id']));
 
 //
 // Options list
@@ -334,11 +350,15 @@ function fn_get_product_options_inventory($params, $items_per_page = 0, $lang_co
         $limit = db_paginate($params['page'], $params['items_per_page']);
     }
 
-    $inventory = db_get_array("SELECT * FROM ?:product_options_inventory WHERE product_id = ?i ORDER BY position $limit", $params['product_id']);
+    $inventory = db_get_hash_array("SELECT * FROM ?:product_options_inventory WHERE product_id = ?i ORDER BY position $limit", 'combination_hash', $params['product_id']);
+    $warehouse_inventory = db_get_hash_multi_array("SELECT ?:product_warehouses_inventory.*, ?:warehouses.name FROM ?:product_warehouses_inventory LEFT JOIN ?:warehouses ON ?:warehouses.warehouse_id = ?:product_warehouses_inventory.warehouse_id WHERE ?:product_warehouses_inventory.product_id = ?i AND ?:product_warehouses_inventory.combination_hash IN (?a)", array('combination_hash', 'warehouse_hash'), $params['product_id'], array_keys($inventory));
 
     foreach ($inventory as $k => $v) {
         $inventory[$k]['combination'] = fn_get_product_options_by_combination($v['combination']);
         $inventory[$k]['image_pairs'] = fn_get_image_pairs($v['combination_hash'], 'product_option', 'M', true, true, $lang_code);
+        if (!empty($warehouse_inventory[$k])) {
+            $inventory[$k]['warehouse_inventory'] = $warehouse_inventory[$k];
+        }
     }
 
     $product_options = fn_get_product_options($params['product_id'], $lang_code, true, true);

@@ -44,7 +44,17 @@
         <div class="control-group">
             <label class="control-label" for="inventory_{$i.combination_hash}_quantity">{__("quantity")}</label>
             <div class="controls">
-            <input type="text" id="inventory_{$i.combination_hash}_quantity" name="inventory[{$i.combination_hash}][amount]" size="10" value="{$i.amount}" />
+                {*<input type="text" id="inventory_{$i.combination_hash}_quantity" name="inventory[{$i.combination_hash}][amount]" size="10" value="{$i.amount}" />*}
+                <div class="ty-warehouse-inventory">
+                    {foreach from=$i.warehouse_inventory item="wh"}
+                        <div class="ty-warehouse-inventory__block">
+                            <div class="ty-warehouse-inventory__title">{$wh.name}</div>
+                            <div class="ty-warehouse-inventory__field">
+                                <input type="text" name="inventory[{$i.combination_hash}][warehouse_inventory][{$wh.warehouse_hash}][amount]" size="10" value="{$wh.amount}" class="input-medium" />
+                            </div>
+                        </div>
+                    {/foreach}
+                </div>
             </div>
         </div>
         {else}
@@ -128,7 +138,19 @@
         <input type="hidden" name="add_inventory[0][amount]" value="" />
     {/if}
     {if $product_inventory == "O"}
-    <td valign="top"><input type="text" name="add_inventory[0][amount]" size="10" value="1" class="input-text-short inventory" /></td>
+    <td valign="top">
+        {*<input type="text" name="add_inventory[0][amount]" size="10" value="1" class="input-text-short inventory" />*}
+        <div class="ty-warehouse-inventory">
+            {foreach from=$warehouses item="wh"}
+                <div class="ty-warehouse-inventory__block">
+                    <div class="ty-warehouse-inventory__title">{$wh.name}</div>
+                    <div class="ty-warehouse-inventory__field">
+                        <input type="text" name="add_inventory[0][warehouse_inventory][{$wh.warehouse_id}][amount]" size="10" value="1" class="input-medium" />
+                    </div>
+                </div>
+            {/foreach}
+        </div>
+    </td>
     {/if}
     <td valign="top" class="right">
         <div class="hidden-tools">

@@ -148,8 +148,12 @@ function fn_get_product_data($product_id, &$auth, $lang_code = CART_LANGUAGE, $f
         }
 
         // If tracking with options is enabled, check if at least one combination has positive amount
-        if (!empty($product_data['tracking']) && $product_data['tracking'] == ProductTracking::TRACK_WITH_OPTIONS) {
-            $product_data['amount'] = db_get_field("SELECT MAX(amount) FROM ?:product_options_inventory WHERE product_id = ?i", $product_id);
+        if (!empty($product_data['tracking'])) {
+            if ($product_data['tracking'] == ProductTracking::TRACK_WITH_OPTIONS) {
+                $product_data['amount'] = db_get_field("SELECT SUM(amount) FROM ?:product_warehouses_inventory WHERE product_id = ?i AND combination_hash != '0'", $product_id);
+            } elseif ($product_data['tracking'] == ProductTracking::TRACK_WITHOUT_OPTIONS) {
+                $product_data['amount'] = db_get_field("SELECT SUM(amount) FROM ?:product_warehouses_inventory WHERE product_id = ?i AND combination_hash = '0'", $product_id);
+            }
         }
 
         $product_data['product_id'] = $product_id;
@@ -423,8 +427,7 @@ function fn_gather_additional_products_data(&$products, $params)
      * @param array $products List of products
      * @param array $params   Parameters for gathering data
      */
-//      speed optimization
-//     fn_set_hook('gather_additional_products_data_pre', $products, $params);
+    fn_set_hook('gather_additional_products_data_pre', $products, $params);
 
     if (empty($products)) {
         return;
@@ -490,14 +493,16 @@ function fn_gather_additional_products_data(&$products, $params)
      * @param array $has_product_options       Array of flags determines if product has options
      * @param array $has_product_options_links Array of flags determines if product has option links
      */
-//      speed optimization
-//     fn_set_hook('gather_additional_products_data_params', $product_ids, $params, $products, $auth, $products_images, $additional_images, $product_options, $has_product_options, $has_product_options_links);
+    fn_set_hook('gather_additional_products_data_params', $product_ids, $params, $products, $auth, $products_images, $additional_images, $product_options, $has_product_options, $has_product_options_links);
 
     $combination_images = array();
     
     if (!fn_allowed_for('ULTIMATE:FREE')) {
         $products_exceptions = fn_get_products_exceptions($product_ids, true);
 //        $products_inventory = db_get_hash_multi_array("SELECT product_id, combination FROM ?:product_options_inventory WHERE product_id IN (?n) AND amount > 0 AND combination != ''", array('product_id', 'combination'), $product_ids);
+        if ($params['get_discounts']) {
+            $promotion_features = fn_get_promotion_features($product_ids);
+        }
     }
     
     // foreach $products
@@ -625,6 +630,9 @@ function fn_gather_additional_products_data(&$products, $params)
 
         // Get product discounts
         if ($params['get_discounts'] && !isset($product['exclude_from_calculate'])) {
+            if (!empty($promotion_features[$product_id])) {
+                $product['promotion_features'] = $promotion_features[$product_id];
+            }
             fn_promotion_apply('catalog', $product, $auth);
             if (!empty($product['prices']) && is_array($product['prices'])) {
                 $product_copy = $product;
@@ -2433,15 +2441,14 @@ function fn_update_product_features_value($product_id, $product_features, $add_n
         'lang_code' => $lang_code
     );
 
+    $id_paths = db_get_fields("SELECT ?:categories.id_path FROM ?:products_categories LEFT JOIN ?:categories ON ?:categories.category_id = ?:products_categories.category_id WHERE product_id = ?i", $product_id);
+    $_params = array(
+        'category_ids' => array_unique(explode('/', implode('/', $id_paths)))
+    );
     foreach ($product_features as $feature_id => $value) {
 
         // Check if feature is applicable for this product
-        $id_paths = db_get_fields("SELECT ?:categories.id_path FROM ?:products_categories LEFT JOIN ?:categories ON ?:categories.category_id = ?:products_categories.category_id WHERE product_id = ?i", $product_id);
-
-        $_params = array(
-            'category_ids' => array_unique(explode('/', implode('/', $id_paths))),
-            'feature_id' => $feature_id
-        );
+        $_params['feature_id'] = $feature_id;
         list($_feature) = fn_get_product_features($_params);
 
         if (empty($_feature)) {
@@ -2768,6 +2775,7 @@ function fn_delete_product_combination($combination_hash)
     fn_delete_image_pairs($combination_hash, 'product_option');
 
     db_query("DELETE FROM ?:product_options_inventory WHERE combination_hash = ?i", $combination_hash);
+    db_query("DELETE FROM ?:product_warehouses_inventory WHERE combination_hash = ?i", $combination_hash);
 
     return true;
 }
@@ -2851,6 +2859,7 @@ function fn_delete_product_option_combinations($product_id)
     if (!empty($product_id)) {
         $c_ids = db_get_fields("SELECT combination_hash FROM ?:product_options_inventory WHERE product_id = ?i", $product_id);
         db_query("DELETE FROM ?:product_options_inventory WHERE product_id = ?i", $product_id);
+        db_query("DELETE FROM ?:product_warehouses_inventory WHERE product_id = ?i", $product_id);
         foreach ($c_ids as $c_id) {
             fn_delete_image_pairs($c_id, 'product_option', '');
         }
@@ -3005,7 +3014,7 @@ function fn_get_product_options($product_ids, $lang_code = CART_LANGUAGE, $only_
 
     $_status = (AREA == 'A')? '' : " AND a.status='A'";
 
-    $v_fields = "a.variant_id, a.option_id, a.position, a.modifier, a.modifier_type, a.weight_modifier, a.weight_modifier_type, $extra_variant_fields b.variant_name";
+    $v_fields = "a.variant_id, a.option_id, a.position, a.modifier, a.modifier_type, a.weight_modifier, a.weight_modifier_type, a.code_suffix, $extra_variant_fields b.variant_name";
     $v_join = db_quote("LEFT JOIN ?:product_option_variants_descriptions as b ON a.variant_id = b.variant_id AND b.lang_code = ?s", $lang_code);
     $v_condition = db_quote("a.option_id IN (?n) $_status", array_unique($option_ids));
     $v_sorting = "a.position, a.variant_id";
@@ -3554,7 +3563,7 @@ function fn_get_default_product_options($product_id, $get_all = false, $product 
     $inventory_combinations = array();
     if ($track_with_options == ProductTracking::TRACK_WITH_OPTIONS) {
         if (!isset($product['inventory_combinations'])) {
-            $inventory_combinations = db_get_array("SELECT combination FROM ?:product_options_inventory WHERE product_id = ?i AND amount > 0 AND combination != ''", $product_id);
+            $inventory_combinations = db_get_array("SELECT ?:product_options_inventory.combination FROM ?:product_options_inventory LEFT JOIN ?:product_warehouses_inventory ON ?:product_warehouses_inventory.combination_hash = ?:product_options_inventory.combination_hash WHERE ?:product_options_inventory.product_id = ?i AND ?:product_warehouses_inventory.amount > 0 AND ?:product_options_inventory.combination != ''", $product_id);
         } else {
             $inventory_combinations = $product['inventory_combinations'];
         }
@@ -3702,9 +3711,10 @@ function fn_look_through_variants($product_id, $amount, $options, $variants)
     foreach ($options as $i => $option_id) {
         $variant_codes[$option_id] = db_get_hash_single_array("SELECT variant_id, code_suffix FROM ?:product_option_variants WHERE variant_id IN (?a)", array('variant_id', 'code_suffix'), $variants[$i]);
     }
-    $product_code = db_get_field("SELECT product_code FROM ?:products WHERE product_id = ?i", $product_id);
+    $product_data = db_get_row("SELECT product_code, warehouse_ids FROM ?:products WHERE product_id = ?i", $product_id);
 
     if (!empty($combinations)) {
+        $new_data = array();
         foreach ($combinations as $combination) {
 
             $_data = array();
@@ -3723,7 +3733,7 @@ function fn_look_through_variants($product_id, $amount, $options, $variants)
                     . "WHERE product_id = ?i AND combination_hash = ?i AND temp = 'Y'",
                     $product_id, $_data['combination_hash']
                 );
-                $_data['product_code'] = (!empty($product_code)) ? $product_code : '';
+                $_data['product_code'] = (!empty($product_data['product_code'])) ? $product_data['product_code'] : '';
                 foreach ($combination as $option_id => $variant_id) {
                     if (isset($variant_codes[$option_id][$variant_id])) {
                         $_data['product_code'] .= $variant_codes[$option_id][$variant_id];
@@ -3745,10 +3755,36 @@ function fn_look_through_variants($product_id, $amount, $options, $variants)
                  */
                 fn_set_hook('look_through_variants_update_combination', $combination, $_data, $product_id, $amount, $options, $variants);
 
-                db_query("REPLACE INTO ?:product_options_inventory ?e", $_data);
-                $combinations[] = $combination;
+                $new_data[] = $_data;
+//                 $combinations[] = $combination;
             }
             echo str_repeat('. ', count($combination));
+        }
+        if (!empty($new_data)) {
+            db_query("REPLACE INTO ?:product_options_inventory ?m", $new_data);
+        }
+        if (!empty($hashes)) {
+            $_old_data = db_get_hash_array("SELECT * FROM ?:product_warehouses_inventory WHERE combination_hash IN (?n)", 'warehouse_hash', $hashes);
+            db_query("DELETE FROM ?:product_warehouses_inventory WHERE combination_hash IN (?n)", $hashes);
+            $warehouse_ids = explode(',', $product_data['warehouse_ids']);
+            if (!empty($warehouse_ids)) {
+                $new_wh_inventory = array();
+                foreach ($combinations as $combination) {
+                    foreach ($warehouse_ids as $i => $wh_id) {
+                        $wh_hash = fn_generate_cart_id($product_id, array('product_options' => $combination, 'warehouse_id' => $wh_id));
+                        $new_wh_inventory[] = array(
+                            'warehouse_hash' => $wh_hash,
+                            'warehouse_id' => $wh_id,
+                            'product_id' => $product_id,
+                            'combination_hash' => fn_generate_cart_id($product_id, array('product_options' => $combination)),
+                            'amount' => isset($_old_data[$wh_hash]['amount']) ? $_old_data[$wh_hash]['amount'] : 0
+                        );
+                    }
+                }
+                if (!empty($new_wh_inventory)) {
+                    db_query("REPLACE INTO ?:product_warehouses_inventory ?m", $new_wh_inventory);
+                }
+            }
         }
     }
     // [tennishouse]
@@ -5368,11 +5404,20 @@ function fn_get_filters_products_count($params = array())
             Registry::get('settings.General.show_out_of_stock_products') == 'N' &&
             AREA == 'C'
         ) {
-            $inventory_join .= " LEFT JOIN ?:product_options_inventory as inventory ON inventory.product_id = ?:products.product_id";
+            $inventory_join .= db_quote(" LEFT JOIN ?:product_warehouses_inventory as warehouse_inventory ON warehouse_inventory.product_id = ?:products.product_id
+                AND warehouse_inventory.amount > 0 AND (CASE ?:products.tracking
+                    WHEN ?s THEN warehouse_inventory.combination_hash != '0'
+                    WHEN ?s THEN warehouse_inventory.combination_hash = '0'
+                    WHEN ?s THEN 1
+                END)", 
+                ProductTracking::TRACK_WITH_OPTIONS,
+                ProductTracking::TRACK_WITHOUT_OPTIONS,
+                ProductTracking::DO_NOT_TRACK
+            );
             $where .= db_quote(
                 " AND (CASE ?:products.tracking
-                    WHEN ?s THEN inventory.amount > 0
-                    WHEN ?s THEN ?:products.amount > 0
+                    WHEN ?s THEN warehouse_inventory.amount > 0
+                    WHEN ?s THEN warehouse_inventory.amount > 0
                     WHEN ?s THEN 1
                 END)",
                 ProductTracking::TRACK_WITH_OPTIONS,
@@ -5466,10 +5511,18 @@ function fn_get_filters_products_count($params = array())
 
                         if ($field['field_type'] == 'A') {
                             $db_field = db_quote(
-                                "IF(?:products.tracking = ?s, inventory.amount, ?:products.amount)",
+                                "IF(?:products.tracking = ?s, warehouse_inventory.amount, warehouse_inventory.amount)",
                                 ProductTracking::TRACK_WITH_OPTIONS
                             );
-                            $fields_join .= " LEFT JOIN ?:product_options_inventory as inventory ON inventory.product_id = ?:products.product_id";
+                            $fields_join .= db_quote(" LEFT JOIN (SELECT SUM(?:product_warehouses_inventory.amount) as amount, ?:product_warehouses_inventory.combination_hash, ?:product_warehouses_inventory.product_id FROM ?:product_warehouses_inventory LEFT JOIN ?:products ON ?:products.product_id = ?:product_warehouses_inventory.product_id WHERE 1 AND (CASE ?:products.tracking
+                                    WHEN ?s THEN ?:product_warehouses_inventory.combination_hash != '0'
+                                    WHEN ?s THEN ?:product_warehouses_inventory.combination_hash = '0'
+                                    WHEN ?s THEN 1
+                                END) GROUP BY product_id) AS warehouse_inventory ON warehouse_inventory.product_id = ?:products.product_id", 
+                                ProductTracking::TRACK_WITH_OPTIONS,
+                                ProductTracking::TRACK_WITHOUT_OPTIONS,
+                                ProductTracking::DO_NOT_TRACK
+                            );
                         } else {
                             $db_field = "?:$field[table].$field[db_field]";
                             $fields_join .= $inventory_join;
@@ -5569,9 +5622,18 @@ function fn_get_filters_products_count($params = array())
                                             $sliders_where .= db_quote(" AND ?:product_prices.price >= ?i AND ?:product_prices.price <= ?i", $vals[0], $vals[1]);
                                         }
                                     } elseif ($field['field_type'] == 'A') {
-                                        if (strpos($sliders_join, 'JOIN ?:product_options_inventory ') === false) {
-                                            if (strpos($join, 'JOIN ?:product_options_inventory ') === false) {
-                                                $sliders_join .= " LEFT JOIN ?:product_options_inventory as inventory ON inventory.product_id = ?:products.product_id";
+                                        if (strpos($sliders_join, 'JOIN ?:product_warehouses_inventory ') === false) {
+                                            if (strpos($join, 'JOIN ?:product_warehouses_inventory ') === false) {
+                                                $sliders_join .= db_quote(" LEFT JOIN ?:product_warehouses_inventory as warehouse_inventory ON warehouse_inventory.product_id = ?:products.product_id
+                                                    AND warehouse_inventory.amount > 0 AND (CASE ?:products.tracking
+                                                        WHEN ?s THEN warehouse_inventory.combination_hash != '0'
+                                                        WHEN ?s THEN warehouse_inventory.combination_hash = '0'
+                                                        WHEN ?s THEN 1
+                                                    END)", 
+                                                    ProductTracking::TRACK_WITH_OPTIONS,
+                                                    ProductTracking::TRACK_WITHOUT_OPTIONS,
+                                                    ProductTracking::DO_NOT_TRACK
+                                                );
                                             }
                                             $sliders_where .= db_quote(" AND $db_field >= ?i AND $db_field <= ?i", $field_range_values[$filter_id]['left'], $field_range_values[$filter_id]['right']);
                                         }
@@ -6742,6 +6804,7 @@ function fn_clone_options_inventory($from_product_id, $to_product_id, $options, 
     fn_set_hook('clone_options_inventory_pre', $from_product_id, $to_product_id, $options, $variants);
 
     $inventory = db_get_array("SELECT * FROM ?:product_options_inventory WHERE product_id = ?i", $from_product_id);
+    $warehouse_inventory = db_get_hash_multi_array("SELECT * FROM ?:product_warehouses_inventory WHERE product_id = ?i AND combination_hash != '0'", array('combination_hash', 'warehouse_hash'), $from_product_id);
 
     foreach ($inventory as $key => $value) {
         $_variants = explode('_', $value['combination']);
@@ -6763,6 +6826,15 @@ function fn_clone_options_inventory($from_product_id, $to_product_id, $options, 
         $_data['product_code'] = $value['product_code'];
         $_data['position'] = $value['position'];
         db_query("INSERT INTO ?:product_options_inventory ?e", $_data);
+
+        if (!empty($warehouse_inventory[$value['combination_hash']])) {
+            foreach ($warehouse_inventory[$value['combination_hash']] as $i => $wh_data) {
+                $wh_data['product_id'] = $to_product_id;
+                $wh_data['warehouse_hash'] = fn_generate_cart_id($to_product_id, array('product_options' => $new_variants, 'warehouse_id' => $wh_data['warehouse_id']));
+                $wh_data['combination_hash'] = $_data['combination_hash'];
+                db_query("INSERT INTO ?:product_warehouses_inventory ?e", $wh_data);
+            }
+        }
 
         // Clone option images
         fn_clone_image_pairs($_data['combination_hash'], $value['combination_hash'], 'product_option');
@@ -6934,6 +7006,18 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
     if (empty($params['only_short_fields'])) {
         $fields = array (
             'products.*',
+//             db_quote("(SELECT SUM(?:product_warehouses_inventory.amount) as amount FROM ?:product_warehouses_inventory WHERE ?:product_warehouses_inventory.product_id = products.product_id AND (CASE products.tracking
+//                 WHEN ?s THEN ?:product_warehouses_inventory.combination_hash != '0'
+//                 WHEN ?s THEN ?:product_warehouses_inventory.combination_hash = '0'
+//                 WHEN ?s THEN 1
+//                 END)) AS amount", 
+//                 ProductTracking::TRACK_WITH_OPTIONS,
+//                 ProductTracking::TRACK_WITHOUT_OPTIONS,
+//                 ProductTracking::DO_NOT_TRACK
+//             ),
+            'warehouse_inventory.amount',
+            "GROUP_CONCAT(DISTINCT CONCAT_WS('_', warehouse_inventory.warehouse_hash, warehouse_inventory.amount) SEPARATOR '|') AS wh_inventory",
+//             "GROUP_CONCAT(DISTINCT CONCAT_WS('_', warehouse_inventory.warehouse_hash, warehouse_inventory.amount) SEPARATOR '|') AS amount"
         );
     } else {
         $fields = array (
@@ -6943,7 +7027,17 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
             'status' => 'products.status',
             'company_id' => 'products.company_id',
             'list_price' => 'products.list_price',
-            'amount' => 'products.amount',
+//             'amount' => db_quote("(SELECT SUM(?:product_warehouses_inventory.amount) as amount FROM ?:product_warehouses_inventory WHERE ?:product_warehouses_inventory.product_id = products.product_id AND (CASE products.tracking
+//                 WHEN ?s THEN ?:product_warehouses_inventory.combination_hash != '0'
+//                 WHEN ?s THEN ?:product_warehouses_inventory.combination_hash = '0'
+//                 WHEN ?s THEN 1
+//                 END)) AS amount", 
+//                 ProductTracking::TRACK_WITH_OPTIONS,
+//                 ProductTracking::TRACK_WITHOUT_OPTIONS,
+//                 ProductTracking::DO_NOT_TRACK
+//             ),
+            'amount' => 'warehouse_inventory.amount',
+            'wh_inventory' => "GROUP_CONCAT(DISTINCT CONCAT_WS('_', warehouse_inventory.warehouse_hash, warehouse_inventory.amount) SEPARATOR '|')",
             'weight' => 'products.weight',
             'tracking' => 'products.tracking',
             'is_edp' => 'products.is_edp',
@@ -6959,7 +7053,7 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
         'price' => 'price',
         'list_price' => 'products.list_price',
         'weight' => 'products.weight',
-        'amount' => 'products.amount',
+        'amount' => 'amount',
         'timestamp' => 'products.timestamp',
         'updated_timestamp' => 'products.updated_timestamp',
         'popularity' => 'popularity.total',
@@ -6989,6 +7083,26 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
     $join = $condition = $u_condition = $inventory_condition = '';
     $having = array();
 
+    $join .= db_quote(" LEFT JOIN ?:product_warehouses_inventory AS warehouse_inventory ON warehouse_inventory.product_id = products.product_id 
+        AND warehouse_inventory.amount > 0 AND (CASE products.tracking
+            WHEN ?s THEN warehouse_inventory.combination_hash != '0'
+            WHEN ?s THEN warehouse_inventory.combination_hash = '0'
+            WHEN ?s THEN 1
+        END)", 
+        ProductTracking::TRACK_WITH_OPTIONS,
+        ProductTracking::TRACK_WITHOUT_OPTIONS,
+        ProductTracking::DO_NOT_TRACK
+    );
+//     $join .= db_quote(" LEFT JOIN (SELECT SUM(?:product_warehouses_inventory.amount) as amount, ?:product_warehouses_inventory.product_id FROM ?:product_warehouses_inventory LEFT JOIN ?:products ON ?:products.product_id = ?:product_warehouses_inventory.product_id WHERE 1 AND (CASE ?:products.tracking
+//             WHEN ?s THEN ?:product_warehouses_inventory.combination_hash != '0'
+//             WHEN ?s THEN ?:product_warehouses_inventory.combination_hash = '0'
+//             WHEN ?s THEN 1
+//         END) GROUP BY product_id) AS warehouse_inventory ON warehouse_inventory.product_id = products.product_id", 
+//         ProductTracking::TRACK_WITH_OPTIONS,
+//         ProductTracking::TRACK_WITHOUT_OPTIONS,
+//         ProductTracking::DO_NOT_TRACK
+//     );
+        
     // Search string condition for SQL query
     if (isset($params['q']) && fn_string_not_empty($params['q'])) {
 
@@ -7471,25 +7585,25 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
         $condition .= db_quote(' AND products.tracking IN(?a)', $params['tracking']);
     }
 
-    if (isset($params['amount_from']) && fn_is_numeric($params['amount_from'])) {
-        $condition .= db_quote(
-            " AND IF(products.tracking = ?s, inventory.amount >= ?i, products.amount >= ?i)",
-            ProductTracking::TRACK_WITH_OPTIONS,
-            $params['amount_from'],
-            $params['amount_from']
-        );
-        $inventory_condition .= db_quote(' AND inventory.amount >= ?i', $params['amount_from']);
-    }
-
-    if (isset($params['amount_to']) && fn_is_numeric($params['amount_to'])) {
-        $condition .= db_quote(
-            " AND IF(products.tracking = ?s, inventory.amount <= ?i, products.amount <= ?i)",
-            ProductTracking::TRACK_WITH_OPTIONS,
-            $params['amount_to'],
-            $params['amount_to']
-        );
-        $inventory_condition .= db_quote(' AND inventory.amount <= ?i', $params['amount_to']);
-    }
+//     if (isset($params['amount_from']) && fn_is_numeric($params['amount_from'])) {
+//         $condition .= db_quote(
+//             " AND IF(products.tracking = ?s, warehouse_inventory.amount >= ?i, warehouse_inventory.amount >= ?i)",
+//             ProductTracking::TRACK_WITH_OPTIONS,
+//             $params['amount_from'],
+//             $params['amount_from']
+//         );
+//         $inventory_condition .= db_quote(' AND warehouse_inventory.amount >= ?i', $params['amount_from']);
+//     }
+// 
+//     if (isset($params['amount_to']) && fn_is_numeric($params['amount_to'])) {
+//         $condition .= db_quote(
+//             " AND IF(products.tracking = ?s, warehouse_inventory.amount <= ?i, warehouse_inventory.amount <= ?i)",
+//             ProductTracking::TRACK_WITH_OPTIONS,
+//             $params['amount_to'],
+//             $params['amount_to']
+//         );
+//         $inventory_condition .= db_quote(' AND warehouse_inventory.amount <= ?i', $params['amount_to']);
+//     }
 
     // Cut off out of stock products
     if (Registry::get('settings.General.inventory_tracking') == 'Y' && // FIXME? Registry in model
@@ -7498,8 +7612,8 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
     ) {
         $condition .= db_quote(
             " AND (CASE products.tracking
-                WHEN ?s THEN inventory.amount > 0
-                WHEN ?s THEN products.amount > 0
+                WHEN ?s THEN warehouse_inventory.amount > 0
+                WHEN ?s THEN warehouse_inventory.amount > 0
                 WHEN ?s THEN 1
             END)",
             ProductTracking::TRACK_WITH_OPTIONS,
@@ -7533,9 +7647,6 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
         $fields['combination'] = 'inventory.combination';
         $u_condition .= db_quote(" $union_condition (inventory.product_code LIKE ?l OR products.product_code LIKE ?l)", "%$pcode%", "%$pcode%");
         $inventory_condition .= db_quote(" AND inventory.product_code LIKE ?l", "%$pcode%");
-    }
-
-    if ((isset($params['amount_to']) && fn_is_numeric($params['amount_to'])) || (isset($params['amount_from']) && fn_is_numeric($params['amount_from'])) || !empty($params['pcode']) || (Registry::get('settings.General.inventory_tracking') == 'Y' && Registry::get('settings.General.show_out_of_stock_products') == 'N' && $params['area'] == 'C')) {
         $join .= " LEFT JOIN ?:product_options_inventory as inventory ON inventory.product_id = products.product_id $inventory_condition";
     }
 
@@ -7754,6 +7865,30 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
     }
 
     $products = db_get_array("SELECT $calc_found_rows " . implode(', ', $fields) . " FROM ?:products as products $join WHERE 1 $condition GROUP BY $group_by $having $sorting $limit");
+
+    foreach ($products as $k => $v) {
+        if (!empty($products[$k]['wh_inventory'])) {
+            $amounts = explode('|', $products[$k]['wh_inventory']);
+            $amount = 0;
+            foreach ($amounts as $kk => $amnt) {
+                $tmp = explode('_', $amnt);
+                if (count($tmp) == 2) {
+                    $amount += $tmp[1];
+                }
+            }
+            $products[$k]['amount'] = $amount;
+            
+            if (isset($params['amount_from']) && fn_is_numeric($params['amount_from']) && $products[$k]['amount'] < $params['amount_from']) {
+                unset($products[$k]);
+                continue;
+            }
+
+            if (isset($params['amount_to']) && fn_is_numeric($params['amount_to']) && $products[$k]['amount'] > $params['amount_to']) {
+                unset($products[$k]);
+                continue;
+            }
+        }
+    }
 
     if (!empty($params['items_per_page'])) {
         $params['total_items'] = !empty($total)? $total : db_get_found_rows();
@@ -8562,7 +8697,7 @@ function fn_apply_options_rules($product)
             //[tennishouse]
 
         if (!$product['hide_stock_info']) {
-            $combination = db_get_row("SELECT product_code, amount FROM ?:product_options_inventory WHERE combination_hash = ?i", $combination_hash);
+            $combination = db_get_row("SELECT ?:product_options_inventory.product_code, SUM(?:product_warehouses_inventory.amount) AS amount FROM ?:product_options_inventory LEFT JOIN ?:product_warehouses_inventory ON ?:product_warehouses_inventory.combination_hash = ?:product_options_inventory.combination_hash WHERE ?:product_options_inventory.combination_hash = ?i", $combination_hash);
 
             if (!empty($combination['product_code'])) {
                     $product['product_code'] = $combination['product_code'];
@@ -9159,6 +9294,8 @@ function fn_clone_product($product_id)
         }
     }
 
+    fn_update_product_tracking($pid);
+    
     // Clone product features
     $data = db_get_array("SELECT * FROM ?:product_features_values WHERE product_id = ?i", $product_id);
     foreach ($data as $v) {

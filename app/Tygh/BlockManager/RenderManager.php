@@ -383,7 +383,7 @@ class RenderManager
 
             if ($area == 'C') {
                 // tennishouse
-                if (!empty($block['properties']['ajax_content']) && $block['properties']['ajax_content'] == 'Y') {
+                if (!empty($block['properties']['ajax_content']) && $block['properties']['ajax_content'] == 'Y' && !defined('AJAX_REQUEST')) {
                     Registry::get('view')->assign('block', $block);
                     Registry::get('view')->assign('dynamic_object', $dynamic_object);
                     $content = $view->fetch('views/block_manager/render/ajax_block.tpl');

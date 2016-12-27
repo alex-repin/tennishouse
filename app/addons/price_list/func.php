@@ -167,7 +167,9 @@ function fn_price_list_get_combination($product)
 
     if (!empty($poptions)) {
         if ($product['tracking'] = ProductTracking::TRACK_WITH_OPTIONS) {
-            $product['option_inventory'] = db_get_array("SELECT combination_hash as options, amount, product_code FROM ?:product_options_inventory WHERE product_id= ?i", $product['product_id']);
+            $product['option_inventory'] = db_get_array("SELECT ?:product_options_inventory.combination_hash as options, SUM(?:product_warehouses_inventory.amount) as amount, ?:product_options_inventory.product_code FROM ?:product_options_inventory LEFT JOIN ?:product_warehouses_inventory ON ?:product_warehouses_inventory.combination_hash = ?:product_options_inventory.combination_hash WHERE ?:product_options_inventory.product_id= ?i", $product['product_id']);
+        } elseif ($product['tracking'] = ProductTracking::TRACK_WITHOUT_OPTIONS) {
+            $product['amount'] = db_get_field("SELECT SUM(amount) FROM ?:product_warehouses_inventory WHERE combination_hash = '0' AND product_id = ?i", $product['product_id']);
         }
 
         $product['product_code'] = db_get_field("SELECT product_code FROM ?:products WHERE product_id= ?i", $product['product_id']);

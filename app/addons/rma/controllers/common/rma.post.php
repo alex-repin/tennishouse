@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             'product_id' => $v['product_id'],
                             'reason' => !empty($v['reason']) ? $v['reason'] : '',
                             'amount' => $v['amount'],
-                            'product_options' => !empty($extra['product_options_value']) ? serialize($extra['product_options_value']) : '',
+                            'product_options' => $_item['extra'],
                             'price' => fn_format_price((((!isset($extra['exclude_from_calculate'])) ? $_item['price'] : 0) * $_item['amount']) / $_item['amount']),
                             'product' => !empty($extra['product']) ? $extra['product'] : fn_get_product_name($v['product_id'], $oder_lang_code)
                         );

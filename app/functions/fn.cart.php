@@ -72,7 +72,7 @@ function fn_get_cart_product_data($hash, &$product, $skip_promotion, &$cart, &$a
             '?:products.list_qty_count',
             '?:products.max_qty',
             '?:products.min_qty',
-            '?:products.amount as in_stock',
+            'warehouse_inventory.amount as in_stock',
             '?:products.shipping_params',
             '?:products.product_type',
             '?:companies.status as company_status',
@@ -80,6 +80,15 @@ function fn_get_cart_product_data($hash, &$product, $skip_promotion, &$cart, &$a
         );
 
         $join  = db_quote("LEFT JOIN ?:product_descriptions ON ?:product_descriptions.product_id = ?:products.product_id AND ?:product_descriptions.lang_code = ?s", CART_LANGUAGE);
+        $join .= db_quote(" LEFT JOIN (SELECT SUM(?:product_warehouses_inventory.amount) as amount, ?:product_warehouses_inventory.combination_hash, ?:product_warehouses_inventory.product_id FROM ?:product_warehouses_inventory LEFT JOIN ?:products ON ?:products.product_id = ?:product_warehouses_inventory.product_id WHERE 1 AND (CASE ?:products.tracking
+                WHEN ?s THEN ?:product_warehouses_inventory.combination_hash != '0'
+                WHEN ?s THEN ?:product_warehouses_inventory.combination_hash = '0'
+                WHEN ?s THEN 1
+            END) GROUP BY product_id) AS warehouse_inventory ON warehouse_inventory.product_id = ?:products.product_id", 
+            ProductTracking::TRACK_WITH_OPTIONS,
+            ProductTracking::TRACK_WITHOUT_OPTIONS,
+            ProductTracking::DO_NOT_TRACK
+        );
 
         $_p_statuses = array('A', 'H');
         $_c_statuses = array('A', 'H');
@@ -132,10 +141,10 @@ function fn_get_cart_product_data($hash, &$product, $skip_promotion, &$cart, &$a
         }
 
         if (Registry::get('settings.General.inventory_tracking') == 'Y' &&
-            !empty($_pdata['tracking']) && $_pdata['tracking'] == ProductTracking::TRACK_WITH_OPTIONS &&
+            !empty($_pdata['tracking']) && $_pdata['tracking'] != ProductTracking::DO_NOT_TRACK &&
             !empty($product['selectable_cart_id'])
         ) {
-            $_pdata['in_stock'] = db_get_field("SELECT amount FROM ?:product_options_inventory WHERE combination_hash = ?i", $product['selectable_cart_id']);
+            $_pdata['in_stock'] = db_get_field("SELECT SUM(amount) FROM ?:product_warehouses_inventory WHERE combination_hash = ?i", $product['selectable_cart_id']);
         }
 
         $product['amount'] = fn_check_amount_in_stock($product['product_id'], $product['amount'], $product['product_options'], $hash, $_pdata['is_edp'], !empty($product['original_amount']) ? $product['original_amount'] : 0, $cart);
@@ -627,7 +636,7 @@ function fn_get_ordered_products_amount($product_id, $user_id)
 // returns true if inventory successfully updated and false if amount
 // is negative is allow_negative_amount option set to false
 
-function fn_update_product_amount($product_id, $amount, $product_options, $sign)
+function fn_update_product_amount($product_id, $amount, $product_options, $sign, $order_warehouses = array())
 {
     fn_set_hook('update_product_amount_pre', $product_id, $amount, $product_options, $sign);
     
@@ -642,19 +651,26 @@ function fn_update_product_amount($product_id, $amount, $product_options, $sign)
     }
 
     if ($tracking == ProductTracking::TRACK_WITHOUT_OPTIONS) {
-        $product = db_get_row("SELECT amount, product_code FROM ?:products WHERE product_id = ?i", $product_id);
-        $total_amount = $current_amount = $product['amount'];
-        $product_code = $product['product_code'];
+        $stock_warehouses = db_get_hash_array("SELECT ?:product_warehouses_inventory.* FROM ?:product_warehouses_inventory LEFT JOIN ?:warehouses ON ?:warehouses.warehouse_id = ?:product_warehouses_inventory.warehouse_id WHERE ?:product_warehouses_inventory.product_id = ?i AND ?:product_warehouses_inventory.combination_hash = '0' ORDER BY ?:warehouses.priority ASC", 'warehouse_hash', $product_id);
+        $total_amount = $current_amount = 0;
+        foreach ($stock_warehouses as $wh_hash => $wh_data) {
+            $total_amount += $wh_data['amount'];
+        }
+        $current_amount = $total_amount;
+        $product_code = db_get_field("SELECT product_code FROM ?:products WHERE product_id = ?i", $product_id);
     } else {
         $cart_id = fn_generate_cart_id($product_id, array('product_options' => $product_options), true);
-        $product = db_get_row("SELECT amount, product_code FROM ?:product_options_inventory WHERE combination_hash = ?i", $cart_id);
-        $total_amount = db_get_field("SELECT SUM(amount) FROM ?:product_options_inventory WHERE product_id = ?i", $product_id);
-        $current_amount = empty($product['amount']) ? 0 : $product['amount'];
+        $product_code = db_get_field("SELECT product_code FROM ?:product_options_inventory WHERE combination_hash = ?i", $cart_id);
+        
+        $stock_warehouses = db_get_hash_array("SELECT ?:product_warehouses_inventory.* FROM ?:product_warehouses_inventory LEFT JOIN ?:warehouses ON ?:warehouses.warehouse_id = ?:product_warehouses_inventory.warehouse_id WHERE ?:product_warehouses_inventory.combination_hash = ?i ORDER BY ?:warehouses.priority ASC", 'warehouse_hash', $cart_id);
+        
+        foreach ($stock_warehouses as $wh_hash => $wh_data) {
+            $total_amount += $wh_data['amount'];
+        }
+        $current_amount = $total_amount;
 
-        if (empty($product['product_code'])) {
+        if (empty($product_code)) {
             $product_code = db_get_field("SELECT product_code FROM ?:products WHERE product_id = ?i", $product_id);
-        } else {
-            $product_code = $product['product_code'];
         }
     }
 
@@ -692,27 +708,49 @@ function fn_update_product_amount($product_id, $amount, $product_options, $sign)
 
         if ($new_amount < 0 && Registry::get('settings.General.allow_negative_amount') != 'Y') {
             return false;
+        } else {
+            $_amount = $amount;
+            foreach ($stock_warehouses as $wh_hash => $wh_data) {
+                $_change = ($_amount <= $wh_data['amount']) ? $_amount : $wh_data['amount'];
+                $order_warehouses[$wh_hash] += $_change;
+                $stock_warehouses[$wh_hash]['amount'] -= $_change;
+                $_amount -= $_change;
+                if ($_amount <= 0) {
+                    break;
+                }
+            }
         }
     } else {
         $new_amount = $current_amount + $amount;
-    }
+        $_amount = $amount;
 
+        foreach ($stock_warehouses as $wh_hash => $wh_data) {
+            if (!empty($order_warehouses)) {
+                if (!empty($order_warehouses[$wh_hash])) {
+                    $_change = ($_amount > $order_warehouses[$wh_hash]) ? $order_warehouses[$wh_hash] : $_amount;
+                    $stock_warehouses[$wh_hash]['amount'] += $_change;
+                    $order_warehouses[$wh_hash] -= $_change;
+                    $_amount -= $_change;
+                }
+            } else {
+                $stock_warehouses[$wh_hash]['amount'] = $wh_data['amount'] + $amount;
+                break;
+            }
+            if ($_amount <= 0) {
+                break;
+            }
+        }
+    }
+        
     fn_set_hook('update_product_amount', $new_amount, $product_id, $cart_id, $tracking);
 
-    if ($tracking == ProductTracking::TRACK_WITHOUT_OPTIONS) {
-        db_query("UPDATE ?:products SET amount = ?i WHERE product_id = ?i", $new_amount, $product_id);
-//         if ($new_amount <= 0) {
-//             db_query("UPDATE ?:products SET status = 'H' WHERE product_id = ?i", $product_id);
-//         }
-    } else {
-        db_query("UPDATE ?:product_options_inventory SET amount = ?i WHERE combination_hash = ?i", $new_amount, $cart_id);
+    if (!empty($stock_warehouses)) {
+        db_query("REPLACE INTO ?:product_warehouses_inventory ?m", $stock_warehouses);
+    }
+    if ($tracking == ProductTracking::TRACK_WITH_OPTIONS) {
         // [tennishouse]
         fn_update_product_exception($product_id, $product_options, $new_amount);
         // [tennishouse]
-//         $in_stock = db_get_field("SELECT combination_hash FROM ?:product_options_inventory WHERE amount > 0 AND product_id = ?i", $product_id);
-//         if (empty($in_stock)) {
-//             db_query("UPDATE ?:products SET status = 'H' WHERE product_id = ?i", $product_id);
-//         }
     }
 
     if (($total_amount <= 0) && ($new_amount > 0)) {
@@ -721,7 +759,7 @@ function fn_update_product_amount($product_id, $amount, $product_options, $sign)
         // [tennishouse]
     }
 
-    return true;
+    return $order_warehouses;
 }
 
 function fn_update_order(&$cart, $order_id = 0)
@@ -1893,7 +1931,8 @@ function fn_change_order_status($order_id, $status_to, $status_from = '', $force
         if (Registry::get('settings.General.inventory_tracking') == 'Y') {
             if ($order_statuses[$status_to]['params']['inventory'] == 'D' && $order_statuses[$status_from]['params']['inventory'] == 'I') {
                 // decrease amount
-                if (fn_update_product_amount($v['product_id'], $v['amount'], @$v['extra']['product_options'], '-') == false) {
+                $order_warehouses = fn_update_product_amount($v['product_id'], $v['amount'], @$v['extra']['product_options'], '-', @$v['extra']['warehouses']);
+                if ($order_warehouses == false) {
                     $status_to = 'B'; //backorder
                     $_error = true;
                     fn_set_notification('W', __('warning'), __('low_stock_subj', array(
@@ -1902,11 +1941,12 @@ function fn_change_order_status($order_id, $status_to, $status_from = '', $force
 
                     break;
                 } else {
+                    $order_info['products'][$k]['extra']['warehouses'] = $order_warehouses;
                     $_updated_ids[] = $k;
                 }
             } elseif ($order_statuses[$status_to]['params']['inventory'] == 'I' && $order_statuses[$status_from]['params']['inventory'] == 'D') {
                 // increase amount
-                fn_update_product_amount($v['product_id'], $v['amount'], @$v['extra']['product_options'], '+');
+                $order_info['products'][$k]['extra']['warehouses'] = fn_update_product_amount($v['product_id'], $v['amount'], @$v['extra']['product_options'], '+', @$v['extra']['warehouses']);
             }
         }
     }
@@ -1915,7 +1955,7 @@ function fn_change_order_status($order_id, $status_to, $status_from = '', $force
         if (!empty($_updated_ids)) {
             foreach ($_updated_ids as $id) {
                 // increase amount
-                fn_update_product_amount($order_info['products'][$id]['product_id'], $order_info['products'][$id]['amount'], @$order_info['products'][$id]['extra']['product_options'], '+');
+                fn_update_product_amount($order_info['products'][$id]['product_id'], $order_info['products'][$id]['amount'], @$order_info['products'][$id]['extra']['product_options'], '+', @$order_info['products'][$id]['extra']['warehouses']);
             }
             unset($_updated_ids);
         }
@@ -1931,12 +1971,18 @@ function fn_change_order_status($order_id, $status_to, $status_from = '', $force
         if (!empty($_updated_ids)) {
             foreach ($_updated_ids as $id) {
                 // increase amount
-                fn_update_product_amount($order_info['products'][$id]['product_id'], $order_info['products'][$id]['amount'], @$order_info['products'][$id]['extra']['product_options'], '+');
+                fn_update_product_amount($order_info['products'][$id]['product_id'], $order_info['products'][$id]['amount'], @$order_info['products'][$id]['extra']['product_options'], '+', @$order_info['products'][$id]['extra']['warehouses']);
             }
             unset($_updated_ids);
         }
 
         return false;
+    }
+
+    if (!$_error) {
+        foreach ($order_info['products'] as $k => $v) {
+            db_query("UPDATE ?:order_details SET extra = ?s WHERE item_id = ?i AND order_id = ?i", serialize($v['extra']), $v['item_id'], $order_id);
+        }
     }
 
     fn_promotion_post_processing($status_to, $status_from, $order_info, $force_notification);
@@ -4045,7 +4091,7 @@ function fn_check_amount_in_stock($product_id, $amount, $product_options, $cart_
         return 1;
     }
 
-    $product = db_get_row("SELECT ?:products.tracking, ?:products.amount, ?:products.min_qty, ?:products.max_qty, ?:products.qty_step, ?:products.list_qty_count, ?:product_descriptions.product FROM ?:products LEFT JOIN ?:product_descriptions ON ?:product_descriptions.product_id = ?:products.product_id AND lang_code = ?s WHERE ?:products.product_id = ?i", CART_LANGUAGE, $product_id);
+    $product = db_get_row("SELECT ?:products.tracking, ?:products.min_qty, ?:products.max_qty, ?:products.qty_step, ?:products.list_qty_count, ?:product_descriptions.product FROM ?:products LEFT JOIN ?:product_descriptions ON ?:product_descriptions.product_id = ?:products.product_id AND lang_code = ?s WHERE ?:products.product_id = ?i", CART_LANGUAGE, $product_id);
 
     if (isset($product['tracking']) &&
         Registry::get('settings.General.inventory_tracking') == 'Y' &&
@@ -4053,15 +4099,12 @@ function fn_check_amount_in_stock($product_id, $amount, $product_options, $cart_
     ) {
         // Track amount for ordinary product
         if ($product['tracking'] == ProductTracking::TRACK_WITHOUT_OPTIONS) {
-            $current_amount = $product['amount'];
+            $current_amount = db_get_field("SELECT SUM(amount) FROM ?:product_warehouses_inventory WHERE combination_hash = '0' AND product_id = ?i", $product_id);
 
         // Track amount for product with options
         } elseif ($product['tracking'] == ProductTracking::TRACK_WITH_OPTIONS) {
             $selectable_cart_id = fn_generate_cart_id($product_id, array('product_options' => $product_options), true);
-            $current_amount = db_get_field(
-                "SELECT amount FROM ?:product_options_inventory WHERE combination_hash = ?i",
-                $selectable_cart_id
-            );
+            $current_amount = db_get_field("SELECT SUM(amount) FROM ?:product_warehouses_inventory WHERE combination_hash = ?i", $selectable_cart_id);
             $current_amount = intval($current_amount);
         }
 

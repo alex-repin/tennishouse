@@ -12,6 +12,12 @@
 * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
 ****************************************************************************/
 
+// [tennishouse]
+if (isset($_REQUEST['xhprof'])) {
+    xhprof_enable(XHPROF_FLAGS_NO_BUILTINS | XHPROF_FLAGS_CPU | XHPROF_FLAGS_MEMORY);
+}
+// [tennishouse]
+
 $php_value = phpversion();
 if (version_compare($php_value, '5.3.0') == -1) {
     echo 'Currently installed PHP version (' . $php_value . ') is not supported. Minimal required PHP version is  5.3.0.';

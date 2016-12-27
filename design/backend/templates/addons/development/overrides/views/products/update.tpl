@@ -210,7 +210,28 @@
                             {if $product_data.tracking == "ProductTracking::TRACK_WITH_OPTIONS"|enum}
                                 {include file="buttons/button.tpl" but_text=__("edit") but_href="product_options.inventory?product_id=`$id`" but_role="edit"}
                             {else}
-                                <input type="text" name="product_data[amount]" id="elm_in_stock" size="10" value="{$product_data.amount|default:"1"}" class="input-small" />
+                                {if $runtime.mode == "add"}
+                                    <div class="ty-warehouse-inventory">
+                                        <div class="ty-warehouse-inventory__block">
+                                            <div class="ty-warehouse-inventory__title">{$smarty.const.TH_WAREHOUSE_ID|fn_get_warehouse_name}</div>
+                                            <div class="ty-warehouse-inventory__field">
+                                                <input type="text" name="product_data[warehouse_inventory]" size="10" value="0" class="input-medium" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                {else}
+                                    {*<input type="text" name="product_data[amount]" id="elm_in_stock" size="10" value="{$product_data.amount|default:"1"}" class="input-small" />*}
+                                    <div class="ty-warehouse-inventory">
+                                        {foreach from=$product_data.warehouse_inventory item="wh"}
+                                            <div class="ty-warehouse-inventory__block">
+                                                <div class="ty-warehouse-inventory__title">{$wh.name}</div>
+                                                <div class="ty-warehouse-inventory__field">
+                                                    <input type="text" name="product_data[warehouse_inventory][{$wh.warehouse_hash}][amount]" size="10" value="{$wh.amount|default:"0"}" class="input-medium" />
+                                                </div>
+                                            </div>
+                                        {/foreach}
+                                    </div>
+                                {/if}
                             {/if}
                         </div>
                     </div>
