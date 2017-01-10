@@ -888,5 +888,6 @@
         <item lang="ru" id="add_warehouse">Добавить склад</item>
         <item lang="ru" id="add_warehouses_and_close">Добавить склад и закрыть</item>
         <item lang="ru" id="warehouse_name">Название склада</item>
+        <item lang="ru" id="import_inventory">Импортировать остатки</item>
     </language_variables>
 </addon>
