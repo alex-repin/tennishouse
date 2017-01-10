@@ -17,9 +17,9 @@
 {/if}
 
 {if $dynamic}
-    {assign var="filter_slider_hash" value=$smarty.request.features_hash|fn_add_range_to_url_hash:$placeholder:$filter.field_type}
+    {assign var="filter_slider_hash" value=$request_data.features_hash|fn_add_range_to_url_hash:$placeholder:$filter.field_type}
     {assign var="filter_slider_url" value=$filter_qstring|fn_link_attach:"features_hash=`$filter_slider_hash`"|fn_url}
-    {assign var="use_ajax" value=$filter_slider_url|fn_compare_dispatch:$config.current_url}
+    {assign var="use_ajax" value=$filter_slider_url|fn_compare_dispatch:$current_url}
 {else}
     {assign var="filter_slider_hash" value=""|fn_add_range_to_url_hash:$placeholder:$filter.field_type}
     {assign var="filter_slider_url" value="products.search?features_hash=`$filter_slider_hash`"|fn_url}

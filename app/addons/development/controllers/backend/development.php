@@ -116,6 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $products_options = fn_get_product_options($all_ids, DESCR_SL, true, true);
                         fn_rebuild_product_options_inventory_multi($all_ids, $products_options, $product_data);
                         $warehouse_inventories = db_get_hash_multi_array("SELECT ?:product_warehouses_inventory.*, ?:product_options_inventory.combination FROM ?:product_warehouses_inventory LEFT JOIN ?:product_options_inventory ON ?:product_options_inventory.combination_hash = ?:product_warehouses_inventory.combination_hash WHERE ?:product_warehouses_inventory.combination_hash != '0' AND ?:product_warehouses_inventory.warehouse_id = ?i AND ?:product_warehouses_inventory.product_id IN (?n)", array('product_id', 'combination_hash'), $_REQUEST['warehouse_id'], array_keys($product_data));
+                        $other_inventories = db_get_hash_multi_array("SELECT SUM(amount) AS amount, combination_hash, product_id FROM ?:product_warehouses_inventory WHERE combination_hash != '0' AND warehouse_id != ?i AND product_id IN (?n) GROUP BY combination_hash", array('product_id', 'combination_hash'), $_REQUEST['warehouse_id'], array_keys($product_data));
                         $updated_warehouse_inventories = $new_warehouse_inventories = array();
                         
 
@@ -158,7 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             }
                                         }
                                         if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
-                                            fn_print_r($variant);
+//                                             fn_print_r($variant);
                                         }
                                         if ($variant['name'] != '' && !empty($products_options[$product_id]) && $_product['tracking'] == 'O' && !empty($variant['amount'])) {
                                             $variants = explode(',', fn_normalize_string($variant['name']));
@@ -175,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 $prev_id = $j;
                                             }
                                             if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
-                                                fn_print_r($variants);
+//                                                 fn_print_r($variants);
                                             }
                                             foreach ($variants as $j => $variant_name) {
                                                 $max[$j] = (isset($max[$j])) ? $max[$j] : 0;
@@ -186,7 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     }
                                                 }
                                                 if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
-                                                    fn_print_r($variant_name);
+//                                                     fn_print_r($variant_name);
                                                 }
                                                 $variant_found = false;
                                                 foreach ($products_options[$product_id] as $k => $opt_data) {
@@ -248,7 +249,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             break 2;
                                         }
                                         if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
-                                            fn_print_r($option_data);
+//                                             fn_print_r($option_data);
                                         }
                                     }
                                     if ($break) {
@@ -257,7 +258,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     if (!empty($option_data)) {
                                         $combination_hash = false;
                                         if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
-                                            fn_print_r($options_count, $option_data, $var_id_tmp, $missing_variants, $max);
+//                                             fn_print_r($options_count, $option_data, $var_id_tmp, $missing_variants, $max);
                                         }
                                         foreach ($option_data as $product_id => $opt_data) {
                                             if (count($options_count[$product_id]) != count($option_data[$product_id]) && !empty($missing_variants[$product_id])) {
@@ -278,7 +279,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             $combination_hash = fn_generate_cart_id($product_id, array('product_options' => $option_data[$product_id]));
                                             $combinations_data[$product_id][$combination_hash]['amount'] = $variant['amount'];
                                             if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
-                                                fn_print_r('generate', $combination_hash, $product_id, array('product_options' => $option_data[$product_id]));
+//                                                 fn_print_r('generate', $combination_hash, $product_id, array('product_options' => $option_data[$product_id]));
                                             }
                                             $is_combination = true;
                                             break;
@@ -293,7 +294,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     }
                                 }
                                 if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
-                                    fn_print_r($combinations_data);
+//                                     fn_print_r($combinations_data);
                                 }
                                 if (!empty($combinations_data)) {
                                     $ttl_updated = 0;
@@ -331,12 +332,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         $broken_options_products[$product_code] = $data;
                                     }
                                 }
-                                if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
-                                    fn_print_die('broken', $broken_options_products);
-                                }
                             }
                         }
-                        
+
                         if (!empty($new_warehouse_inventories)) {
                             db_query("REPLACE ?:product_warehouses_inventory ?m", $new_warehouse_inventories);
                         }
@@ -350,17 +348,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 $option_variants_avail = $option_variants = array();
                                 foreach ($combinations as $hash => $wh_combination) {
                                     $options_array = fn_get_product_options_by_combination($wh_combination['combination']);
-                                    if (!empty($combinations[$hash])) {
-                                        if ($combinations[$hash]['amount'] < 1) {
-                                            $option_exceptions[] = array(
-                                                'product_id' => $pr_id,
-                                                'combination' => serialize($options_array)
-                                            );
-                                        } else {
-                                            foreach ($options_array as $option_id => $variant_id) {
-                                                if (empty($option_variants_avail[$option_id]) || !in_array($variant_id, $option_variants_avail[$option_id])) {
-                                                    $option_variants_avail[$option_id][] = $option_variants[] = $variant_id;
-                                                }
+                                    if ($combinations[$hash]['amount'] < 1 && $other_inventories[$pr_id][$hash]['amount'] < 1) {
+                                        $option_exceptions[] = array(
+                                            'product_id' => $pr_id,
+                                            'combination' => serialize($options_array)
+                                        );
+                                    } else {
+                                        foreach ($options_array as $option_id => $variant_id) {
+                                            if (empty($option_variants_avail[$option_id]) || !in_array($variant_id, $option_variants_avail[$option_id])) {
+                                                $option_variants_avail[$option_id][] = $option_variants[] = $variant_id;
                                             }
                                         }
                                     }
@@ -395,11 +391,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             foreach ($out_of_stock as $os_i => $pr_id) {
                                 if (!empty($all_combinations[$pr_id])) {
                                     foreach ($all_combinations[$pr_id] as $t => $comb_dt) {
-                                        $options_array = fn_get_product_options_by_combination($comb_dt['combination']);
-                                        $option_exceptions[] = array(
-                                            'product_id' => $pr_id,
-                                            'combination' => serialize($options_array)
-                                        );
+                                        if ($other_inventories[$pr_id][$comb_dt['combination_hash']]['amount'] < 1) {
+                                            $options_array = fn_get_product_options_by_combination($comb_dt['combination']);
+                                            $option_exceptions[] = array(
+                                                'product_id' => $pr_id,
+                                                'combination' => serialize($options_array)
+                                            );
+                                        }
                                     }
                                 }
                             }
@@ -413,11 +411,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 if (!empty($out)) {
                                     db_query("UPDATE ?:product_warehouses_inventory SET amount = '0' WHERE combination_hash IN (?n) AND warehouse_id = ?i", $out, $_REQUEST['warehouse_id']);
                                     foreach ($out as $t => $comb_hash) {
-                                        $options_array = fn_get_product_options_by_combination($all_combinations[$pr_id][$comb_hash]['combination']);
-                                        $option_exceptions[] = array(
-                                            'product_id' => $pr_id,
-                                            'combination' => serialize($options_array)
-                                        );
+                                        if ($other_inventories[$pr_id][$comb_hash]['amount'] < 1) {
+                                            $options_array = fn_get_product_options_by_combination($all_combinations[$pr_id][$comb_hash]['combination']);
+                                            $option_exceptions[] = array(
+                                                'product_id' => $pr_id,
+                                                'combination' => serialize($options_array)
+                                            );
+                                        }
                                     }
                                 }
                             }

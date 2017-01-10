@@ -7037,7 +7037,7 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
 //                 ProductTracking::DO_NOT_TRACK
 //             ),
             'amount' => 'warehouse_inventory.amount',
-            'wh_inventory' => "GROUP_CONCAT(DISTINCT CONCAT_WS('_', warehouse_inventory.warehouse_hash, warehouse_inventory.amount) SEPARATOR '|')",
+            'wh_inventory' => "GROUP_CONCAT(DISTINCT CONCAT_WS('_', warehouse_inventory.warehouse_hash, warehouse_inventory.amount) SEPARATOR '|') AS wh_inventory",
             'weight' => 'products.weight',
             'tracking' => 'products.tracking',
             'is_edp' => 'products.is_edp',

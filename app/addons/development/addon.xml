@@ -401,10 +401,9 @@
             REPLACE INTO `cscart_warehouses` (
                 `warehouse_id`,
                 `name`,
-                `priority`,
-                `brand_id`
+                `priority`
             ) VALUES (
-                1, 'TennisHouse', 1, 0
+                1, 'TennisHouse', 1
             );
         </item>
         <item>
@@ -885,6 +884,7 @@
         <item lang="ru" id="text_warehouses_has_been_deleted">Склад был успешно удален.</item>
         <item lang="ru" id="warehouses.new_warehouse">Новый склад</item>
         <item lang="ru" id="add_warehouses">Добавить склады</item>
+        <item lang="ru" id="try_on">Примерка</item>
         <item lang="ru" id="add_warehouse">Добавить склад</item>
         <item lang="ru" id="add_warehouses_and_close">Добавить склад и закрыть</item>
         <item lang="ru" id="warehouse_name">Название склада</item>

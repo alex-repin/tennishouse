@@ -13,7 +13,7 @@
                     <thead>
                     <tr>    
                         <th width="30%" class="shift-left">{__("sdek.sdek_address_shipping")}</th>
-                        <th width="10%">{__("sdek.sdek_tariff")}</th>
+                        {*<th width="10%">{__("sdek.sdek_tariff")}</th>*}
                         <th width="5%">{__("weight_sdek")}</th>
                         <th width="15%">{__("dimensions_sdek")}</th>
                         <th width="25%">
@@ -25,6 +25,7 @@
                                 {__("sdek.sdek_comment")}
                             {/if}
                         </th>
+                        <th width="10%">{__("try_on")}</th>
                         <th width="5%">{if !$shipment.register_id}{__("shipping_cost")}{/if}</th>
                         <th width="10%">&nbsp;</th>
                     </tr>
@@ -49,10 +50,10 @@
                                 {/if}
                             {/if}
                         </td>
-                        <td class="left nowrap {$no_hide_input}">
+                        {*<td class="left nowrap {$no_hide_input}">
                             <input type="hidden" name="add_sdek_info[{$shipment_id}][Order][TariffTypeCode]" value="{$shipment.tariff_id}" />
                             {$shipment.shipping}
-                        </td>
+                        </td>*}
                         <td class="left nowrap {$no_hide_input}">
                             {if !empty($shipment.register_id)}
                                 {$shipment.weight}
@@ -72,6 +73,14 @@
                                 {$shipment.notes}
                             {else}
                                 <textarea class="input-textarea checkout-textarea" name="add_sdek_info[{$shipment_id}][Order][Comment]" cols="60" rows="3" value="">{$shipment.comments}</textarea>
+                            {/if}
+                        </td>
+                        <td class="left nowrap">
+                            {if !empty($shipment.register_id)}
+                                {if $shipment.try_on == 'Y'}{__("yes")}{else}{__("no")}{/if}
+                            {else}
+                                <input type="hidden" name="add_sdek_info[{$shipment_id}][try_on]" value="N" />
+                                <input type="checkbox" name="add_sdek_info[{$shipment_id}][try_on]" value="Y" />
                             {/if}
                         </td>
                         <td class="right nowrap">

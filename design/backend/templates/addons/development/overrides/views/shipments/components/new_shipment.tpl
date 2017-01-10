@@ -100,7 +100,7 @@
             <div class="control-group">
                 <label class="control-label" for="shipment_comments">{__("comments")}</label>
                 <div class="controls">
-                    <textarea id="shipmentcomments" name="shipment_data[comments]" cols="55" rows="8" class="span9"></textarea>
+                    <textarea id="shipmentcomments" name="shipment_data[comments]" cols="55" rows="8" class="span9">{$order_info.notes}</textarea>
                 </div>
             </div>
             

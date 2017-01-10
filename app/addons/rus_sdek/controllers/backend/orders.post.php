@@ -167,6 +167,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
 
                 $xml .= '            ' . '</Package>';
+                if ($sdek_info['try_on'] == 'Y') {
+                    $xml .= '            ' . RusSdek::arraySimpleXml('AddService', array('ServiceCode' => 30));
+                    $xml .= '            ' . RusSdek::arraySimpleXml('AddService', array('ServiceCode' => 37));
+                }
                 $xml .= '            ' . '</Order>';
                 $xml .= '            ' . '</DeliveryRequest>';
 
