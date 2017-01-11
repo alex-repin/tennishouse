@@ -35,6 +35,9 @@ if ($mode == 'view') {
         Registry::get('view')->assign('image_title', $player_data['bg_image']);
     }
     Registry::get('view')->assign('player_data', $player_data);
+    Registry::get('view')->assign('seo_canonical', array(
+        'current' => fn_url('players.view?player_id=' . $_REQUEST['player_id'])
+    ));
 
 } elseif ($mode == 'list') {
 

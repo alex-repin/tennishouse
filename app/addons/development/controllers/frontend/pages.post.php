@@ -40,4 +40,7 @@ if ($mode == 'view') {
             return array(CONTROLLER_STATUS_REDIRECT, 'pages.view?page_id=' . reset($page['children']));
         }
     }
+    Registry::get('view')->assign('seo_canonical', array(
+        'current' => fn_url('pages.view?page_id=' . $_REQUEST['page_id'])
+    ));
 }

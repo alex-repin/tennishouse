@@ -165,7 +165,7 @@ function fn_create_seo_name($object_id, $object_type, $object_name, $index = 0, 
     }
 
     $exist = db_get_field(
-        "SELECT name FROM ?:seo_names WHERE name = ?s ?p AND (object_id != ?i OR type != ?s OR dispatch != ?s OR lang_code != ?s) ?p",
+        "SELECT name FROM ?:seo_names WHERE name = ?s ?p AND (object_id != ?i OR type != ?s OR dispatch != ?s OR lang_code != ?s) ?p AND type != 'h'",
         $_object_name, $path_condition, $object_id, $object_type, $dispatch, $lang_code, $condition
     );
 

@@ -195,7 +195,7 @@ $schema = array(
         'path_function' => function($object_id) {
             return '00';
         },
-        'parent_type' => 'l',
+        'parent_type' => 'h',
         
         'indexed_pages' => array(
             'players.view' => array(
