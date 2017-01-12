@@ -40,7 +40,7 @@
         {else}
             <div class="ty-menu__submenu" id="{$unique_elm_id}">
                 {hook name="blocks:topmenu_dropdown_3levels_cols"}
-                    <ul class="ty-menu__submenu-items cm-responsive-menu-submenu {if $item1.param_id == $smarty.const.CATALOG_MENU_ITEM_ID}ty-menu__catalog-items{/if}" style="display: none;">
+                    <ul class="ty-menu__submenu-items cm-responsive-menu-submenu ty-menu__catalog-items" style="display: none;">
                         {foreach from=$item1.$childs item="item2" name="item2"}
                             <li class="ty-top-mine__submenu-col">
                                 {assign var="item2_url" value=$item2|fn_form_dropdown_object_link:$block.type}

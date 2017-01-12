@@ -3,6 +3,8 @@
 {script src="js/addons/development/jquery.mCustomScrollbar.concat.min.js"}
 {script src="js/addons/development/jquery.magnific-popup.js"}
 {script src="js/addons/development/jquery.kladr.min.js"}
+{script src="js/addons/development/jquery.roundabout.min.js"}
+{script src="js/addons/development/jquery.roundabout-shapes.min.js"}
 
 <script type="text/javascript">
 {literal}
@@ -295,9 +297,49 @@
         $('.tygh-top-panel').css({"left": - $(this).scrollLeft() + "px", "width": width});
         $('#tygh_container').css({"width": width});
     }
+    function fn_hide_top_menu(top_menu)
+    {
+        if (!top_menu.find('.tooltip-shown').length) {
+            setTimeout(function() {
+                if (!top_menu.hasClass('is-hover')) {
+                    top_menu.find('.ty-menu__submenu-items').hide();
+                }
+            }, 150);
+        }
+    }
     
     (function(_, $) {
         $(function() {
+            $(document).ready(function() {
+                if ($('#tygh_main_container').hasClass('touch')) {
+                    $('.ty-menu__item-link').click(function(e){
+                        var submenu = $(this).parents('.ty-menu__item_full').find('.ty-menu__submenu-items');
+                        if (submenu.length) {
+                            submenu.slideToggle();
+                            e.preventDefault();
+                        }
+                    });
+                }
+                $('.ty-menu__item-parent .ty-menu__item_full').hover(function(e){
+                    $(this).addClass('is-hover');
+                    var submenu = $(this);
+                    setTimeout(function() {
+                        if (submenu.hasClass('is-hover')) {
+                            submenu.find('.ty-menu__submenu-items').show();
+                        }
+                    }, 150);
+                }, function(e){
+                    $(this).removeClass('is-hover');
+                    fn_hide_top_menu($(this));
+                });
+                $('.ty-menu__page-items').each(function(){
+                    var submenu_width = $(this).find('li.ty-top-mine__submenu-col').length * 250;
+                    if (submenu_width > 600) {
+                        $(this).css('left', Math.max(0, (($(window).width() - submenu_width) / 2) + $(window).scrollLeft()) + 'px');
+                    }
+                });
+            });
+            
             if (!$('#tygh_main_container').hasClass('touch')) {
                 fn_fix_width();
                 var footer = $('#tygh_footer');
@@ -324,6 +366,31 @@
                     });
                 });
             }
+            
+            $('.cm-roundabout').each(function(){
+                var roundabout = $(this).find('.cm-roundabout-images');
+                var roundabout_description = $(this).find('.cm-roundabout-descriptions');
+                roundabout.roundabout({
+                    childSelector: "div",
+                    duration: 1000,
+                    autoplay: true,
+                    autoplayDuration: 5000,
+                    autoplayPauseOnHover: true,
+                });
+                roundabout.bind( 'animationStart', function() {
+                    roundabout_description.find('.ty-roundabout-item-description').fadeOut('fast');
+                    roundabout.find('.ty-roundabout__brand-image').fadeOut('fast');
+                });
+                roundabout.bind( 'animationEnd', function() {
+                    roundabout_description.find($('.ty-roundabout-item-description')[roundabout.roundabout('getChildInFocus')]).stop().fadeIn('fast');
+                    roundabout.find($('.ty-roundabout__brand-image')[roundabout.roundabout('getChildInFocus')]).stop().fadeIn('fast');
+                });
+                roundabout_description.hover(function(e){
+                    roundabout.roundabout("stopAutoplay");
+                }, function(e){
+                    roundabout.roundabout("startAutoplay");
+                });
+            });
         });
     }(Tygh, Tygh.$));
 {/literal}

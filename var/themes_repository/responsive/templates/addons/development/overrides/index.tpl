@@ -43,47 +43,56 @@
 {include file="meta.tpl"}
 <link href="{$logos.favicon.image.image_path}" rel="shortcut icon" type="image/x-icon" />
 {include file="common/styles.tpl" include_dropdown=true}
-{include file="common/scripts.tpl"}
+{if "DEVELOPMENT"|defined && $smarty.const.DEVELOPMENT == true}
+<script type="text/javascript" data-no-defer>
+window.jsErrors = [];
+window.onerror = function(errorMessage) {
+    document.write('<div data-ca-debug="1" style="border: 2px solid red; margin: 2px;">' + errorMessage + '</div>');
+};
+</script>
+{/if}
 </head>
 
 <body>
-{if $runtime.customization_mode.design}
-    {include file="common/toolbar.tpl" title=__("on_site_template_editing") href="customization.disable_mode?type=design"}
-{/if}
-{if $runtime.customization_mode.live_editor}
-    {include file="common/toolbar.tpl" title=__("on_site_live_editing") href="customization.disable_mode?type=live_editor"}
-{/if}
-{if "THEMES_PANEL"|defined}
-    {include file="demo_theme_selector.tpl"}
-{/if}
+    {if $runtime.customization_mode.design}
+        {include file="common/toolbar.tpl" title=__("on_site_template_editing") href="customization.disable_mode?type=design"}
+    {/if}
+    {if $runtime.customization_mode.live_editor}
+        {include file="common/toolbar.tpl" title=__("on_site_live_editing") href="customization.disable_mode?type=live_editor"}
+    {/if}
+    {if "THEMES_PANEL"|defined}
+        {include file="demo_theme_selector.tpl"}
+    {/if}
 
-<div class="ty-tygh {if $runtime.customization_mode.theme_editor}te-mode{/if} {if $runtime.customization_mode.live_editor || $runtime.customization_mode.design}ty-top-panel-padding{/if}" id="tygh_container">
+    <div class="ty-tygh {if $runtime.customization_mode.theme_editor}te-mode{/if} {if $runtime.customization_mode.live_editor || $runtime.customization_mode.design}ty-top-panel-padding{/if}" id="tygh_container">
 
-{include file="common/loading_box.tpl"}
-{include file="common/notification.tpl"}
+    {include file="common/loading_box.tpl"}
+    {include file="common/notification.tpl"}
 
-<div class="ty-helper-container" id="tygh_main_container">
-    {hook name="index:content"}
-        {render_location}
-    {/hook}
-<!--tygh_main_container--></div>
+    <div class="ty-helper-container" id="tygh_main_container">
+        {hook name="index:content"}
+            {render_location}
+        {/hook}
+    <!--tygh_main_container--></div>
 
 
-{if $runtime.customization_mode.design}
-    {include file="common/template_editor.tpl"}
-{/if}
-{if $runtime.customization_mode.theme_editor}
-    {include file="common/theme_editor.tpl"}
-{/if}
-{hook name="index:footer"}{/hook}
-{if $anouncement}
-    <div class="ty-anouncement" id="anouncement_block">
-        <div class="ty-anouncement-text">{$anouncement}</div>
-        <div class="ty-anouncement-close" onclick="fn_close_anouncement();"></div>
-    </div>
-{/if}
-<!--tygh_container--></div>
-{hook name="index:body_footer"}{/hook}
+    {if $runtime.customization_mode.design}
+        {include file="common/template_editor.tpl"}
+    {/if}
+    {if $runtime.customization_mode.theme_editor}
+        {include file="common/theme_editor.tpl"}
+    {/if}
+    {hook name="index:footer"}{/hook}
+    {include file="common/scripts.tpl"}
+
+    {if $anouncement}
+        <div class="ty-anouncement" id="anouncement_block">
+            <div class="ty-anouncement-text">{$anouncement}</div>
+            <div class="ty-anouncement-close" onclick="fn_close_anouncement();"></div>
+        </div>
+    {/if}
+    <!--tygh_container--></div>
+    {hook name="index:body_footer"}{/hook}
 </body>
 
 </html>

@@ -14,13 +14,18 @@
             </label>
             <div class="ty-pc-group__products">
                 <div class="ty-pc-group__products-item-block">
-                    <select class="cm-dropdown cm-options-update" data-cesbClass="ty-sb-popup-large" disabled="disabled">
+                    <select class="cm-dropdown cm-options-update" data-cesbClass="ty-sb-popup-large" disabled="disabled" id="group_prestrung">
                         <option> - {__("prestrung")} - </option>
                     </select>
                 </div>
             </div>
         </div>
         <div class="ty-pc-container-separator"></div>
+        <script type="text/javascript">
+        (function(_, $) {
+            $('#group_prestrung').selectbox();
+        }(Tygh, Tygh.$));
+        </script>
     {/if}
     {foreach from=$product.product_configurator_groups item="po" name="groups_name"}
     {if !$smarty.foreach.groups_name.first && $po.configurator_group_type != 'T'}<div class="ty-pc-container-separator"></div>{/if}

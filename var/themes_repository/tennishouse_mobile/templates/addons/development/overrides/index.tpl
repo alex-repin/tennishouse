@@ -43,7 +43,14 @@
 {include file="meta.tpl"}
 <link href="{$logos.favicon.image.image_path}" rel="shortcut icon" type="image/x-icon" />
 {include file="common/styles.tpl" include_dropdown=true}
-{include file="common/scripts.tpl"}
+{if "DEVELOPMENT"|defined && $smarty.const.DEVELOPMENT == true}
+<script type="text/javascript" data-no-defer>
+window.jsErrors = [];
+window.onerror = function(errorMessage) {
+    document.write('<div data-ca-debug="1" style="border: 2px solid red; margin: 2px;">' + errorMessage + '</div>');
+};
+</script>
+{/if}
 </head>
 
 <body>
@@ -76,6 +83,7 @@
     {include file="common/theme_editor.tpl"}
 {/if}
 {hook name="index:footer"}{/hook}
+{include file="common/scripts.tpl"}
 {if $anouncement}
     <div class="ty-anouncement" id="anouncement_block">
         <div class="ty-anouncement-text">{$anouncement}</div>

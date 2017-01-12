@@ -12,6 +12,7 @@ return array(
     'PEAR' => array($baseDir . '/pear'),
     'Net' => array($baseDir . '/pear'),
     'Detection' => array($vendorDir . '/mobiledetect/mobiledetectlib/namespaced'),
+    'JShrink' => array($vendorDir . '/tedivm/jshrink/src'),
     'Crypt' => array($baseDir . '/pear'),
     'Archive' => array($baseDir . '/pear'),
 );

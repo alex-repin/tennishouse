@@ -49,18 +49,28 @@ function fn_init_templater($area = AREA)
 
     $view->registerResource('tygh', new Tygh\SmartyEngine\FileResource());
 
-    if ($area == 'A' && !empty($_SESSION['auth']['user_id'])) {
-        // Auto-tooltips for admin panel
-        $view->registerFilter('pre', array('Tygh\SmartyEngine\Filters', 'preFormTooltip'));
+    if ($area == 'A') {
+    
+        if (!empty($_SESSION['auth']['user_id'])) {
+            // Auto-tooltips for admin panel
+            $view->registerFilter('pre', array('Tygh\SmartyEngine\Filters', 'preFormTooltip'));
+        }
+        
+        $view->registerFilter('pre', array('Tygh\SmartyEngine\Filters', 'preScript'));
     }
 
-    // Customization mode
     if ($area == 'C') {
         $view->registerFilter('pre', array('Tygh\SmartyEngine\Filters', 'preTemplateWrapper'));
 
         if (Registry::get('runtime.customization_mode.design')) {
             $view->registerFilter('output', array('Tygh\SmartyEngine\Filters', 'outputTemplateIds'));
         }
+        
+        if (Registry::get('runtime.customization_mode.live_editor')) {
+            $view->registerFilter('output', array('Tygh\SmartyEngine\Filters', 'outputLiveEditorWrapper'));
+        }
+
+        $view->registerFilter('output', array('Tygh\SmartyEngine\Filters', 'outputScript'));
     }
 
     if (Registry::get('config.tweaks.anti_csrf') == true) {
@@ -79,11 +89,6 @@ function fn_init_templater($area = AREA)
 
     // Language variable retrieval optimization
     $view->registerFilter('post', array('Tygh\SmartyEngine\Filters', 'postTranslation'));
-
-    // Live editor mode
-    if (Registry::get('runtime.customization_mode.live_editor')) {
-        $view->registerFilter('output', array('Tygh\SmartyEngine\Filters', 'outputLiveEditorWrapper'));
-    }
 
     if (Registry::get('settings.General.debugging_console') == 'Y') {
         if (empty($_SESSION['debugging_console']) && !empty($_SESSION['auth']['user_id'])) {

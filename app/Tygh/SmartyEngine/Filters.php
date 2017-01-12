@@ -20,6 +20,89 @@ use Tygh\Tools\Url;
 
 class Filters
 {
+    public static function preScript($content, \Smarty_Internal_Template $template)
+    {
+        $pattern = '/\<script([^>]*)\>.*?\<\/script\>/s';
+        if (preg_match_all($pattern, $content, $matches)) {
+            $m = $matches[0];
+            $m_attrs = $matches[1];
+            $has_literals = strpos($content, '{literal}');
+            foreach ($m as $index => $match) {
+                if (!strpos($m_attrs[$index], 'data-no-defer') ) {
+                    $inline_wrapper_open = '{inline_script}';
+                    $inline_wrapper_close = '{/inline_script}';
+                    // Check if script was wrapped by the {literal} tag
+                    if ($has_literals !== false) {
+                        $end_pos = strpos($content, $match);
+                        // Calculate literals count to detect if script is between {literal}
+                        // If end_pos is equal to 0, {literal} tag inside <script>, so skip it
+                        if ($end_pos != 0) {
+                            $open_tags = substr_count($content, '{literal}', 0, $end_pos);
+                            $close_tags = substr_count($content, '{/literal}', 0, $end_pos);
+                            if ($open_tags != $close_tags) {
+                                $inline_wrapper_open = '{/literal}' . $inline_wrapper_open . '{literal}';
+                                $inline_wrapper_close = '{/literal}' . $inline_wrapper_close . '{literal}';
+                            }
+                        }
+                    }
+                    $content = str_replace($match, $inline_wrapper_open . $match . $inline_wrapper_close, $content);
+                }
+            }
+        }
+
+        return $content;
+    }
+
+    public static function outputScript($content, \Smarty_Internal_Template $template)
+    {
+        if (defined('AJAX_REQUEST')) {
+            return $content;
+        }
+
+        if ($template->smarty->getTemplateVars('block_rendering')) {
+            if (!$template->smarty->getTemplateVars('block_parse_js')) {
+                return $content;
+            }
+        }
+
+        $pattern = '/\<script([^>]*)\>.*?\<\/script\>/s';
+        if (preg_match_all($pattern, $content, $matches)) {
+            if (Registry::get('runtime.inside_scripts')) {
+                return $content;
+            }
+
+            $cache_name = $template->smarty->getTemplateVars('block_cache_name');
+
+            $m = $matches[0];
+            $m_attrs = $matches[1];
+
+            $javascript = '';
+
+            foreach ($m as $index => $match) {
+                if (strpos($m_attrs[$index], 'data-no-defer') === false) {
+                    $repeat = false;
+                    $template->smarty->loadPlugin('smarty_block_inline_script');
+                    smarty_block_inline_script(array(), $match, $template->smarty, $repeat);
+
+                    $content = str_replace($match, '<!-- Inline script moved to the bottom of the page -->', $content);
+                    $javascript .= $match;
+                }
+            }
+
+            if (!empty($cache_name)) {
+                $cached_content = Registry::get($cache_name);
+                if (!isset($cached_content['javascript'])) {
+                    $cached_content['javascript'] = '';
+                }
+                $cached_content['javascript'] .= $javascript;
+
+                Registry::set($cache_name, $cached_content, true);
+            }
+
+        }
+
+        return $content;
+    }
     /**
      * Prefilter: form tooltip
      * @param  string                    $content  template content
@@ -110,7 +193,10 @@ class Filters
             'views/block_manager/render/location.tpl',
             'views/block_manager/render/container.tpl',
             'views/block_manager/render/grid.tpl',
-            'views/block_manager/render/block.tpl'
+            'views/block_manager/render/block.tpl',
+            'backend:common/template_editor.tpl',
+            'backend:common/theme_editor.tpl',
+            'backend:views/debugger/debugger.tpl',
         );
 
         if (!in_array($cur_templ, $ignored_template) && fn_get_file_ext($cur_templ) == 'tpl') { // process only "real" templates (not eval'ed, etc.)
@@ -186,7 +272,7 @@ class Filters
         }
 
         $pattern = '/<title>(.*?)<\/title>/is';
-        $pattern_inner = '/\[(lang) name\=([\w-]+?)( cm\-pre\-ajax)?\](.*?)\[\/\1\]/is';
+        $pattern_inner = '/\[(lang) name\=([\w-\.]+?)( cm\-pre\-ajax)?\](.*?)\[\/\1\]/is';
         preg_match($pattern, $content, $matches);
         $phrase_replaced = $matches[0];
         $phrase_replaced = preg_replace($pattern_inner, '$4', $phrase_replaced);

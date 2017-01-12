@@ -3,6 +3,7 @@
 use Tygh\Development;
 use Tygh\Registry;
 use Tygh\Storage;
+use \JShrink\Minifier;
 
 /**
  * Smarty plugin
@@ -12,23 +13,33 @@ use Tygh\Storage;
 function smarty_block_scripts($params, $content, &$smarty, &$repeat)
 {
     if ($repeat == true) {
+        Registry::set('runtime.inside_scripts', 1);
+
         return;
     }
 
     if (Registry::get('config.tweaks.dev_js')) {
+        $content .= smarty_helper_inline_scripts($params, $content, $smarty, $repeat);
+
         return $content;
     }
 
     $scripts = array();
+    $external_scripts = array();
     $dir_root = Registry::get('config.dir.root');
     $return = '';
+    $current_location = Registry::get('config.current_location');
 
     if (preg_match_all('/\<script(.*?)\>(.*?)\<\/script\>/s', $content, $m)) {
         $contents = '';
 
         foreach ($m[1] as $src) {
             if (!empty($src) && preg_match('/src ?= ?"([^"]+)"/', $src, $_m)) {
-                $scripts[] = str_replace(Registry::get('config.current_location'), '', preg_replace('/\?.*?$/', '', $_m[1]));
+                if (strpos($_m[1], $current_location) !== false) {
+                    $scripts[] = str_replace($current_location, '', preg_replace('/\?.*?$/', '', $_m[1]));
+                } else {
+                    $external_scripts[] = $_m[1];
+                }
             }
         }
 
@@ -42,9 +53,8 @@ function smarty_block_scripts($params, $content, &$smarty, &$repeat)
             }
         }
 
-        $gz_suffix = (Registry::get('config.tweaks.gzip_css_js') ? '.gz' : '');
         $filename = 'js/tygh/scripts-' . md5(implode(',', $names)) . fn_get_storage_data('cache_id') . '.js';
-        if (!Storage::instance('statics')->isExist($filename . $gz_suffix)) {
+        if (!Storage::instance('assets')->isExist($filename)) {
 
             foreach ($scripts as $src) {
                 $contents .= fn_get_contents(Registry::get('config.dir.root') . $src);
@@ -52,14 +62,28 @@ function smarty_block_scripts($params, $content, &$smarty, &$repeat)
 
             $contents = str_replace('[files]', implode("\n", $scripts), Registry::get('config.js_css_cache_msg')) . $contents;
 
-            Storage::instance('statics')->put($filename . $gz_suffix, array(
+//             if (function_exists('jsmin')) {
+//                 $contents = jsmin($contents);
+//             } else {
+//                 $contents = Minifier::minify($contents, array(
+//                     'flaggedComments' => false
+//                 ));
+//             }
+
+            Storage::instance('assets')->put($filename, array(
                 'contents' => $contents,
-                'compress' => Registry::get('config.tweaks.gzip_css_js'),
+                'compress' => false,
                 'caching' => true
             ));
         }
 
-        $return = '<script type="text/javascript" src="' . Storage::instance('statics')->getUrl($filename) . '?ver=' . PRODUCT_VERSION . '"></script>';
+        $return = '<script type="text/javascript" src="' . Storage::instance('assets')->getUrl($filename) . '"></script>' . "\n";
+
+        if (!empty($external_scripts)) {
+            foreach ($external_scripts as $sc) {
+                $return .= '<script type="text/javascript" src="' . $sc . '"></script>' . "\n";
+            }
+        }
 
         foreach ($m[2] as $sc) {
             if (!empty($sc)) {
@@ -67,6 +91,22 @@ function smarty_block_scripts($params, $content, &$smarty, &$repeat)
             }
         }
     }
+    $return .= smarty_helper_inline_scripts($params, $content, $smarty, $repeat);
 
     return $return;
+}
+
+// TODO: Make a proper class to work with inline scripts
+function smarty_helper_inline_scripts($params, $content, &$smarty, &$repeat)
+{
+    Registry::del('runtime.inside_scripts');
+    // Get inline scripts
+    $repeat = false;
+    $smarty->loadPlugin('smarty_block_inline_script');
+    $inline_scripts = "\n\n<!-- Inline scripts -->\n" . smarty_block_inline_script(array('output' => true), '', $smarty, $repeat);
+
+    // FIXME: Backward compatibility. If {scripts} included at the TOP of the page, do not grab inline scripts.
+    Registry::set('runtime.inside_scripts', 1);
+
+    return $inline_scripts;
 }

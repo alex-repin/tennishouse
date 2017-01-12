@@ -1212,6 +1212,7 @@ button[disabled],
 .ui-page {
 	padding: 0;
 	margin: 0;
+        -webkit-backface-visibility: hidden;
 }
 .ui-mobile a img,
 .ui-mobile fieldset {

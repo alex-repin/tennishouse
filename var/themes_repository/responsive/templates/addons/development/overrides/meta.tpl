@@ -14,14 +14,14 @@
     <meta property="og:image" content="{$product.main_pair.detailed.http_image_path}" />
     {/if}
     <meta property="og:description" content="{$meta_descr}" />
-    <meta property="og:url" content="{$config.current_url|fn_url}"/>
+    <meta property="og:url" content="{"products.view?product_id=`$product.product_id`"|fn_url}"/>
 {elseif $runtime.controller == 'players' && $runtime.mode == 'list'}
     {$meta_descr = __('players_meta_description', ['[players]' => $meta_players])}
     <meta name="description" content="{$meta_descr}" />
 {elseif $runtime.controller == 'players' && $runtime.mode == 'view'}
     {$meta_descr = __('player_share_buttons_description', ['[player]' => "`$player_data.player`. `$player_data.player_en`", '[birthplace]' => {$player_data.birthplace}, '[racket]' => {$racket}])}
-    <meta property="og:type"   content="profile" /> 
-    <meta property="og:url"    content="{$config.current_url|fn_url}" /> 
+    <meta property="og:type"   content="profile" />
+    <meta property="og:url"    content="{"players.view?player_id=`$player_data.player_id`"|fn_url}" /> 
     <meta property="og:title"  content="{$player_data.player}" /> 
     <meta property="og:image"  content="{$player_data.main_pair.detailed.http_image_path}" /> 
     <meta property="og:description" content="{$meta_descr}" />

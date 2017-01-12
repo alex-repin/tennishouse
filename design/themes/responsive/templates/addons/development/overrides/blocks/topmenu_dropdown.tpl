@@ -60,7 +60,7 @@
                                 {hook name="blocks:topmenu_dropdown_3levels_cols"}
                                     {$submenu_width = 250 * $item1.$childs|count}
                                     {$col_with = 99 / $item1.$childs|count}
-                                    <ul class="ty-menu__submenu-items cm-responsive-menu-submenu {if $item1.param_id == $smarty.const.CATALOG_MENU_ITEM_ID}ty-menu__catalog-items{/if}" style="display: none;width: {$submenu_width}px;">
+                                    <ul class="ty-menu__submenu-items cm-responsive-menu-submenu ty-menu__page-items" style="display: none;width: {$submenu_width}px;">
                                         {foreach from=$item1.$childs item="item2" name="item2"}
                                             <li class="ty-top-mine__submenu-col" style="width: {$col_with}%;">
                                                 {assign var="item2_url" value=$item2|fn_form_dropdown_object_link:$block.type}
@@ -78,49 +78,33 @@
                                                         {if $item2.$childs}
                                                             {hook name="blocks:topmenu_dropdown_3levels_col_elements"}
                                                             {if $item2.object_id|fn_display_subheaders}
-                                                            <div id="submenu_{$item2.object_id}">
-                                                            {foreach from=$item2.$childs item="item3" name="item3"}
-                                                                {assign var="item3_url" value=$item3|fn_form_dropdown_object_link:$block.type}
-                                                                <div class="ty-menu__submenu-item-subheader">
-                                                                    <a{if $item3_url} href="{$item3_url}"{/if} class="ty-menu__submenu-link">
-                                                                        {$item3.$name nofilter}
-                                                                    </a>
-                                                                    {include file="addons/development/common/tooltip.tpl" note_url=$item3.note_url note_text=$item3.note_text}
-                                                                    <div class="ty-icon-down-open {if (!$item2.expand && $smarty.foreach.item3.first) || ($item2.expand && $item2.expand == $item3.object_id)}hidden{/if}"></div>
-                                                                    <div class="ty-icon-right-open {if (!$item2.expand && !$smarty.foreach.item3.first) || ($item2.expand && $item2.expand != $item3.object_id)}hidden{/if}"></div>
-                                                                </div>
-                                                                <div class="ty-menu__menu-subheader-items {if (!$item2.expand && !$smarty.foreach.item3.first) || ($item2.expand && $item2.expand != $item3.object_id)}hidden{/if}">
-                                                                {foreach from=$item3.$childs item="item4" name="item4"}
-                                                                    {assign var="item4_url" value=$item4|fn_form_dropdown_object_link:$block.type}
-                                                                    <li class="ty-menu__submenu-item">
-                                                                        <a{if $item4_url} href="{$item4_url}"{/if} class="ty-menu__submenu-link">{$item4.$name}</a>
-                                                                        {include file="addons/development/common/tooltip.tpl" note_url=$item4.note_url note_text=$item4.note_text}
-                                                                    </li>
+                                                                <div id="submenu_{$item2.object_id}">
+                                                                {foreach from=$item2.$childs item="item3" name="item3"}
+                                                                    {assign var="item3_url" value=$item3|fn_form_dropdown_object_link:$block.type}
+                                                                    <div class="ty-menu__submenu-item-subheader">
+                                                                        <a{if $item3_url} href="{$item3_url}"{/if} class="ty-menu__submenu-link">
+                                                                            {$item3.$name nofilter}
+                                                                        </a>
+                                                                        {include file="addons/development/common/tooltip.tpl" note_url=$item3.note_url note_text=$item3.note_text}
+                                                                        <div class="ty-icon-down-open {if (!$item2.expand && $smarty.foreach.item3.first) || ($item2.expand && $item2.expand == $item3.object_id)}hidden{/if}"></div>
+                                                                        <div class="ty-icon-right-open {if (!$item2.expand && !$smarty.foreach.item3.first) || ($item2.expand && $item2.expand != $item3.object_id)}hidden{/if}"></div>
+                                                                    </div>
+                                                                    <div class="ty-menu__menu-subheader-items {if (!$item2.expand && !$smarty.foreach.item3.first) || ($item2.expand && $item2.expand != $item3.object_id)}hidden{/if}">
+                                                                    {foreach from=$item3.$childs item="item4" name="item4"}
+                                                                        {assign var="item4_url" value=$item4|fn_form_dropdown_object_link:$block.type}
+                                                                        <li class="ty-menu__submenu-item">
+                                                                            <a{if $item4_url} href="{$item4_url}"{/if} class="ty-menu__submenu-link">{$item4.$name}</a>
+                                                                            {include file="addons/development/common/tooltip.tpl" note_url=$item4.note_url note_text=$item4.note_text}
+                                                                        </li>
+                                                                    {/foreach}
+                                                                    {if $item2.show_more && $item2_url}
+                                                                        <li class="ty-menu__submenu-item ty-menu__submenu-alt-link">
+                                                                            <a href="{$item2_url}" class="ty-menu__submenu-link">{__("text_topmenu_view_more")}</a>
+                                                                        </li>
+                                                                    {/if}
+                                                                    </div>
                                                                 {/foreach}
-                                                                {if $item2.show_more && $item2_url}
-                                                                    <li class="ty-menu__submenu-item ty-menu__submenu-alt-link">
-                                                                        <a href="{$item2_url}" class="ty-menu__submenu-link">{__("text_topmenu_view_more")}</a>
-                                                                    </li>
-                                                                {/if}
                                                                 </div>
-                                                            {/foreach}
-                                                            </div>
-                                                            <script type="text/javascript">
-                                                                Tygh.$(document).ready(function() {$ldelim}
-                                                                    Tygh.$('#submenu_' + '{$item2.object_id}' + ' .ty-menu__submenu-item-subheader').click(function(e){$ldelim}
-                                                                        if(Tygh.$(this).next('.ty-menu__menu-subheader-items').is(':visible') == false) {$ldelim}
-                                                                            Tygh.$(this).siblings('.ty-menu__menu-subheader-items').slideUp();
-                                                                            Tygh.$(this).siblings('.ty-menu__submenu-item-subheader').find('.ty-icon-down-open').show();
-                                                                            Tygh.$(this).siblings('.ty-menu__submenu-item-subheader').find('.ty-icon-right-open').hide();
-                                                                            //Toggles open/close on the <div> after the <a>, opening it if not open.
-                                                                            Tygh.$(this).next('.ty-menu__menu-subheader-items').slideToggle();
-                                                                            Tygh.$(this).find('.ty-icon-down-open').hide();
-                                                                            Tygh.$(this).find('.ty-icon-right-open').show();
-                                                                            return false;
-                                                                        {$rdelim}
-                                                                    {$rdelim});
-                                                                {$rdelim});
-                                                            </script>
                                                             {else}
                                                                 {foreach from=$item2.$childs item="item3" name="item3"}
                                                                     {assign var="item3_url" value=$item3|fn_form_dropdown_object_link:$block.type}
@@ -146,16 +130,6 @@
                                             </li></a>
                                         {/if}
                                     </ul>
-                                    <script type="text/javascript">
-                                        Tygh.$(document).ready(function() {$ldelim}
-                                            $('#' + '{$unique_elm_id}').find('.ty-menu__submenu-items').each(function(){$ldelim}
-                                                var submenu_width = '{$item1.$childs|sizeof}' * 250;
-                                                if (submenu_width > 600) {
-                                                    $(this).css('left', Math.max(0, (($(window).width() - submenu_width) / 2) + $(window).scrollLeft()) + 'px');
-                                                }
-                                            {$rdelim});
-                                        {$rdelim});
-                                    </script>
                                 {/hook}
                             </div>
                         {/if}
@@ -164,44 +138,6 @@
                 </li>
             {/if}
         {/foreach}
-        <script type="text/javascript">
-            Tygh.$(document).ready(function() {$ldelim}
-                if ($('#tygh_main_container').hasClass('touch')) {$ldelim}
-                    $('.ty-menu__item-link').click(function(e){$ldelim}
-                        var submenu = $(this).parents('.ty-menu__item_full').find('.ty-menu__submenu-items');
-                        if (submenu.length) {$ldelim}
-                            submenu.slideToggle();
-                            e.preventDefault();
-                        {$rdelim}
-                    {$rdelim});
-                {$rdelim}
-                Tygh.$('.ty-menu__item-parent .ty-menu__item_full').hover(function(e){$ldelim}
-                    $(this).addClass('is-hover');
-                    var submenu = $(this);
-                    setTimeout(function() {$ldelim}
-                        if (submenu.hasClass('is-hover')) {
-                            submenu.find('.ty-menu__submenu-items').show();
-                        }
-                    {$rdelim}, 150);
-                {$rdelim}, function(e){$ldelim}
-                    $(this).removeClass('is-hover');
-                    fn_hide_top_menu($(this));
-                {$rdelim});
-            {$rdelim});
-            {literal}
-            function fn_hide_top_menu(top_menu)
-            {
-                if (!top_menu.find('.tooltip-shown').length) {
-                    setTimeout(function() {
-                        if (!top_menu.hasClass('is-hover')) {
-                            top_menu.find('.ty-menu__submenu-items').hide();
-                        }
-                    }, 150);
-                }
-            }
-            {/literal}
-        </script>
-
         {/hook}
     </ul>
     </div>

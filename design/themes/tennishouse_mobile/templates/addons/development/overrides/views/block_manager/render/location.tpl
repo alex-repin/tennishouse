@@ -1,10 +1,10 @@
 <div data-role="page" id="mobile_page">
 {if $containers.header}
-<div data-role="panel" data-display="push" class="tygh-header clearfix ty-left-panel" id="left-panel">
+<div data-role="panel" data-display="push" class="tygh-header clearfix ty-left-panel hidden" id="left-panel">
     {*$containers.header nofilter*}
     {include file="addons/development/common/catalog_panel.tpl"}
 </div>
-<div data-role="panel" id="right-panel" class="ty-right-panel" data-display="push" data-position="right">
+<div data-role="panel" id="right-panel" class="ty-right-panel hidden" data-display="push" data-position="right">
     {include file="addons/development/common/cart_panel.tpl"}
 </div>
 {/if}

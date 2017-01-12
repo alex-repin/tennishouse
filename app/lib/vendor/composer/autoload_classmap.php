@@ -54,6 +54,7 @@ return array(
     'Pimple\\Tests\\Fixtures\\Service' => $vendorDir . '/pimple/pimple/src/Pimple/Tests/Fixtures/Service.php',
     'Pimple\\Tests\\PimpleServiceProviderInterfaceTest' => $vendorDir . '/pimple/pimple/src/Pimple/Tests/PimpleServiceProviderInterfaceTest.php',
     'Pimple\\Tests\\PimpleTest' => $vendorDir . '/pimple/pimple/src/Pimple/Tests/PimpleTest.php',
+    'JShrink\\Minifier' => $vendorDir . '/tedivm/jshrink/src/JShrink/Minifier.php',
     'PositionCalculator' => $baseDir . '/other/sqlparser/php-sql-parser.php',
     'Smarty' => $baseDir . '/other/smarty/Smarty.class.php',
     'SmartyCompilerException' => $baseDir . '/other/smarty/Smarty.class.php',
