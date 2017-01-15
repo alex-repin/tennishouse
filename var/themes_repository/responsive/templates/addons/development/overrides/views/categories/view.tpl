@@ -3,9 +3,6 @@
 {if $category_data.note_text}
     <div class="ty-category-title__note-block">{if $category_data.note_url}<a href="{"`$category_data.note_url`"|fn_url}" target="_blank">{/if}<div class="ty-category-title__note"><div class="ty-category-title__note-text">{$category_data.note_text}</div><div class="ty-category-title__note-question"></div></div>{if $category_data.note_url}</a>{/if}</div>
 {/if}
-{*if ($category_data.description || $runtime.customization_mode.live_editor) && !$category_data.category_id|fn_display_subheaders && !$category_data.parent_id}
-    <div class="ty-wysiwyg-content ty-mb-s" {live_edit name="category:description:{$category_data.category_id}"}>{$category_data.description nofilter}</div>
-{/if*}
 
 {*if $subcategories && !$category_data.category_id|fn_display_subheaders && !$category_data.parent_id}
     {math equation="ceil(n/c)" assign="rows" n=$subcategories|count c="2"}
@@ -85,6 +82,9 @@
 <p class="ty-no-items cm-pagination-container">{__("text_no_products")}</p>
 {else}
 <div class="cm-pagination-container"></div>
+{/if}
+{if ($category_data.full_description || $runtime.customization_mode.live_editor)}
+    <div class="ty-wysiwyg-content ty-mb-s" {live_edit name="category:full_description:{$category_data.category_id}"}>{$category_data.full_description nofilter}</div>
 {/if}
 <!--category_products_{$block.block_id}--></div>
 

@@ -98,6 +98,13 @@
     </div>
     
     <div class="control-group">
+        <label class="control-label" for="elm_category_descr">{__("full_description")}:</label>
+        <div class="controls">
+            <textarea id="elm_category_descr" name="category_data[full_description]" cols="55" rows="8" class="input-large cm-wysiwyg input-textarea-long">{$category_data.full_description}</textarea>
+        </div>
+    </div>
+    
+    <div class="control-group">
         <label class="control-label" for="elm_category_brand_id">{__("brand")}:</label>
 
         <div class="controls">
@@ -236,26 +243,27 @@
         <label class="control-label" for="elm_category_noindex">{__("tag_noindex")}:</label>
         <div class="controls">
         <input type="hidden" value="N" name="category_data[is_noindex]"/>
-        <input type="checkbox" class="cm-switch-availability" value="Y" name="category_data[is_noindex]" id="sw_category_robots"{if $category_data.is_noindex == 'Y'} checked="checked"{/if} />
+        <input type="checkbox" class="cm-switch-availability" value="Y" name="category_data[is_noindex]" id="sw_category_meta" {if $category_data.is_noindex == 'Y'} checked="checked"{/if} />
         </div>
     </div>
 
-    <div id="category_robots">
-    <div class="control-group">
-        <label class="control-label" for="elm_category_nofollow">{__("tag_nofollow")}:</label>
-        <div class="controls">
-        <input type="hidden" value="N" name="category_data[is_nofollow]"/>
-        <input type="checkbox" class="" value="Y" name="category_data[is_nofollow]" id="elm_category_nofollow"{if $category_data.is_nofollow == 'Y'} checked="checked"{/if} {if $category_data.is_noindex != 'Y'}disabled="disabled"{/if} />
+    <div id="category_meta">
+        <div class="control-group">
+            <label class="control-label" for="elm_category_nofollow">{__("tag_nofollow")}:</label>
+            <div class="controls">
+            <input type="hidden" value="N" name="category_data[is_nofollow]"/>
+            <input type="checkbox" class="" value="Y" name="category_data[is_nofollow]" id="elm_category_nofollow"{if $category_data.is_nofollow == 'Y'} checked="checked"{/if} {if $category_data.is_noindex != 'Y'}disabled="disabled"{/if} />
+            </div>
         </div>
-    </div>
 
-    <div class="control-group">
-        <label class="control-label" for="elm_category_canonical">{__("tag_canonical")}:</label>
-        <div class="controls">
-            <input type="text" name="category_data[canonical]" id="elm_category_canonical" size="55" value="{$category_data.canonical}" class="input-text-short cm-switch-inverse" {if $category_data.is_noindex == 'Y'}disabled="disabled"{/if} />
+        <div class="control-group">
+            <label class="control-label" for="elm_category_canonical">{__("tag_canonical")}:</label>
+            <div class="controls">
+                <input type="text" name="category_data[canonical]" id="elm_category_canonical" size="55" value="{$category_data.canonical}" class="input-text-short cm-switch-inverse" {if $category_data.is_noindex == 'Y'}disabled="disabled"{/if} />
+            </div>
         </div>
     </div>
-    </div>
+    
     </div>
     <hr />
     {if !"ULTIMATE:FREE"|fn_allowed_for}

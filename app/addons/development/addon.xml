@@ -429,6 +429,9 @@
                 PRIMARY KEY (`pair_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
         </item>
+        <item>
+            ALTER TABLE `cscart_category_descriptions` ADD `full_description` MEDIUMTEXT NOT NULL AFTER `description`;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>

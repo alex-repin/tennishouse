@@ -595,7 +595,10 @@ function fn_development_get_category_data_post($category_id, $field_list, $get_m
             fn_format_categorization($category_data, $categorization_data, 'subtabs_categorization');
             fn_format_categorization($category_data, $categorization_data, 'sections_categorization');
         }
-        $data = fn_get_category_global_data($category_data, array('note_url', 'note_text', 'products_sorting'));
+        $data = fn_get_category_global_data($category_data, array('note_url', 'note_text', 'products_sorting', 'canonical'));
+        if (empty($category_data['canonical']) && !empty($data['canonical'])) {
+            $category_data['canonical'] = $data['canonical'];
+        }
         if (empty($category_data['note_url']) && !empty($data['note_url'])) {
             $category_data['note_url'] = $data['note_url'];
         }
