@@ -21,7 +21,8 @@
                 but_role="action"
                 show_discount_label=true
                 mode=$block.properties.mode
-                hide_links=true}
+                hide_links=true
+                hide_form=true}
             {/foreach}
         </div>
     {elseif $block.properties.format == 'G'}
@@ -42,7 +43,8 @@
         show_add_to_cart=$show_add_to_cart|default:false
         but_role="action"
         show_discount_label=true
-        hide_links=true}
+        hide_links=true
+        hide_form=true}
     {/if}
     {*if $block.properties.all_items_url}
         <div class="ty-check-all__block-link">

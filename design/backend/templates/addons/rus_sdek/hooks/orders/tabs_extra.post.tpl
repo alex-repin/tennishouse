@@ -5,6 +5,7 @@
                 <input type="hidden" name="order_id" value="{$order_id}" />
                 <input type="hidden" name="add_sdek_info[{$shipment_id}][Order][RecCityCode]" value="{$rec_city_code}" />
                 <input type="hidden" name="add_sdek_info[{$shipment_id}][Order][SendCityCode]" value="{$shipment.send_city_code}" />
+                <input type="hidden" name="add_sdek_info[{$shipment_id}][Order][TariffTypeCode]" value="{$shipment.tariff_id}" />
                 <div class="control-group">
                     <div class="control">
                         <h4>{__("shipment")}: <a class="underlined" href="{"shipments.details?shipment_id=`$shipment_id`"|fn_url}" target="_blank"><span>#{$shipment_id} ({__("details")})</span></a></h4>

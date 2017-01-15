@@ -29,7 +29,9 @@
             hide_call_request=true
             but_role="action"
             show_discount_label=true
-            mode=$block.properties.mode}
+            mode=$block.properties.mode
+            hide_form=true
+            hide_links=true}
         {/foreach}
     </div>
     {*if $block.properties.all_items_url}

@@ -20,6 +20,7 @@
                     show_discount_label=true
                     mode=$block.properties.mode
                     hide_links=true
+                    hide_form=true
                     skip_to_add_cart=true}
                 {/foreach}
             </div>
@@ -49,6 +50,7 @@
                     show_discount_label=true
                     mode=$block.properties.mode
                     hide_links=true
+                    hide_form=true
                     skip_to_add_cart=true}
                 {/foreach}
             </div>
@@ -76,6 +78,7 @@
                     show_discount_label=true
                     mode=$block.properties.mode
                     hide_links=true
+                    hide_form=true
                     skip_to_add_cart=true}
                 {/foreach}
             </div>
