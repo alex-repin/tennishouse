@@ -21,7 +21,7 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 if ($mode == 'get_block') {
 
     if (!empty($_REQUEST['b_id'])) {
-        $block = Block::instance()->getById($_REQUEST['b_id'], $_REQUEST['s_id'], $_REQUEST['dynamic_object']);
+        $block = Block::instance()->getById($_REQUEST['b_id'], $_REQUEST['s_id'], @$_REQUEST['dynamic_object']);
         if (!empty($_REQUEST['extra_properties'])) {
             $block['extra_properties'] = $_REQUEST['extra_properties'];
         }

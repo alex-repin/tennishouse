@@ -274,7 +274,7 @@ function fn_get_seo_vars($type = '', $param = '')
     // Deprecated
 //     fn_set_hook('get_seo_vars', $schema);
 
-    $res = (!empty($type)) ? $schema[$type] : $schema;
+    $res = (!empty($type) && !empty($schema[$type])) ? $schema[$type] : $schema;
 
     if (!empty($param)) {
         $res = !empty($res[$param]) ? $res[$param] : false;
