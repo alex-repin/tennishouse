@@ -159,7 +159,7 @@ define('SAVING_PROGRAM_PAGE_ID', 77);
 define('ABOUT_US_PAGE_ID', 2);
 /* Pages*/
 
-define('SIZE_CHART_TAB_ID', 83);
+define('SIZE_CHART_TAB_ID', 10);
 
 define('TH_WAREHOUSE_ID', 1);
 define('BABOLAT_WAREHOUSE_ID', 2);
