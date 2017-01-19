@@ -1,9 +1,9 @@
 {if $image_title}
     <div class="ty-category-title cm-parallax" style="background: url({$category_data.main_pair.detailed.image_path}) center 109px no-repeat fixed;" data-speed="1.5">
         {*<img src="{$category_data.main_pair.detailed.image_path}" alt="{$category_data.category}" width="1015"/>*}
-        <div class="ty-image-title__name">
+        <h1 class="ty-image-title__name">
             {$category_data.category}
-        </div>
+        </h1>
     </div>
     {if $tb_feature.variants || $stb_feature.variants}
         <div class="ty-categorization clearfix" id="tabs_categorization">
@@ -20,7 +20,7 @@
                         {if !$active_tab}
                             {assign var="active_tab" value=$key}
                         {/if}
-                        <li class="ty-categorization-tabs__item {if $key == $active_tab} active{/if}"><a class="ty-categorization-tabs__a cm-ajax-force cm-ajax cm-ajax-full-render cm-history" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_tab}href="{$filter_qstring|fn_link_attach:"tc_id=`$key`"|fn_url}"{/if}>{$tab.variant}</a></li>
+                        <li class="ty-categorization-tabs__item {if $key == $active_tab} active{/if}"><a class="ty-categorization-tabs__a cm-ajax-force cm-ajax cm-ajax-full-render cm-history" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_tab}href="{$filter_qstring|fn_link_attach:"tc_id=`$key`"|fn_url}"{/if}><h2>{$tab.variant}</h2></a></li>
                     {/foreach}
                     </ul>
                 </div>

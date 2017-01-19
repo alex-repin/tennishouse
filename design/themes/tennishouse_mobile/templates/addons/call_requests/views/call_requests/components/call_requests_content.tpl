@@ -8,7 +8,7 @@
             {include file="common/image.tpl" images=$product.main_pair image_width=$settings.Thumbnails.product_cart_thumbnail_width image_height=$settings.Thumbnails.product_cart_thumbnail_height}
         </div>
         <div class="ty-cr-product-info-header">
-            <h1 class="ty-product-block-title">{$product.product}</h1>
+            <div class="ty-product-block-title">{$product.product}</div>
         </div>
     </div>
 {/if}

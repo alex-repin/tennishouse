@@ -670,8 +670,8 @@
         <item lang="ru" id="default_text">Текст по умолчанию</item>
         <item lang="ru" id="tab_groups_st_l_s">12 метров</item>
         <item lang="ru" id="tab_groups_st_l_r">Бобины</item>
-        <item lang="ru" id="tab_groups_r_t_a">Взрослые</item>
-        <item lang="ru" id="tab_groups_r_t_k">Детские</item>
+        <item lang="ru" id="tab_groups_r_t_a">Для взрослых</item>
+        <item lang="ru" id="tab_groups_r_t_k">Для детей</item>
         <item lang="ru" id="option_note">Пометка</item>
         <item lang="ru" id="define_option">Укажите опцию</item>
         <item lang="ru" id="rss_feed_link">Ссылка на RSS feed</item>

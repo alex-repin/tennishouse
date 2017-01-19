@@ -48,7 +48,7 @@
                     {if !$active_tab}
                         {assign var="active_tab" value=$key}
                     {/if}
-                    <div class="ty-categorization-tabs__item ty-categorization-tabs__item{$columns} {if $key == $active_tab}ty-categorization-tabs__item-active{/if}"><a class="ty-categorization-tabs__a cm-ajax-force cm-ajax cm-ajax-full-render cm-history" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_tab}href="{$filter_qstring|fn_link_attach:"tc_id=`$key`"|fn_url}"{/if}>{$tab.variant}</a></div>
+                    <div class="ty-categorization-tabs__item ty-categorization-tabs__item{$columns} {if $key == $active_tab}ty-categorization-tabs__item-active{/if}"><a class="ty-categorization-tabs__a cm-ajax-force cm-ajax cm-ajax-full-render cm-history" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_tab}href="{$filter_qstring|fn_link_attach:"tc_id=`$key`"|fn_url}"{/if}><h2>{$tab.variant}</h2></a></div>
                 {/foreach}
             </div>
         {/if}
@@ -73,10 +73,12 @@
                 {else}
                     {$img_ht = "35"}
                 {/if}
-                <div class="ty-categorization-subtabs__item {if $key == $active_subtab}ty-categorization-subtabs__item-active{/if}" style="width: {$cst_width}%;">
+                <h3 class="ty-categorization-subtabs__item {if $key == $active_subtab}ty-categorization-subtabs__item-active{/if}" style="width: {$cst_width}%;">
                     <a class="ty-categorization-subtabs__a cm-ajax-force cm-ajax cm-ajax-full-render cm-history" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_subtab}href="{$filter_qstring|fn_link_attach:"stc_id=`$key`"|fn_url}"{/if}>
-                    {include file="addons/development/common/brand_logo.tpl" brand=$tab brand_variant_id=$tab.variant_id img_height=$img_ht}</a>
-                </div>
+                        {include file="addons/development/common/brand_logo.tpl" brand=$tab brand_variant_id=$tab.variant_id img_height=$img_ht}
+                    </a>
+                    {$tab.variant}
+                </h3>
             {/foreach}
         <!--subtabs_categorization--></div>
     </div>
@@ -105,6 +107,7 @@
 <!--category_products_{$block.block_id}--></div>
 
 {capture name="mainbox_title"}
+{$category_data.category}
 {if $category_data.brand.image_pair.icon.image_path}
     <div class="ty-category__title">
         <div class="ty-category__title-logo">

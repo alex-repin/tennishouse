@@ -57,10 +57,12 @@
                 {else}
                     {$img_ht = "35"}
                 {/if}
-                <div class="ty-categorization-subtabs__item {if $key == $active_subtab}ty-categorization-subtabs__item-active{/if}" style="width: {$cst_width}%;">
+                <h3 class="ty-categorization-subtabs__item {if $key == $active_subtab}ty-categorization-subtabs__item-active{/if}" style="width: {$cst_width}%;">
                     <a class="ty-categorization-subtabs__a cm-ajax-force cm-ajax cm-ajax-full-render cm-history" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_subtab}href="{$filter_qstring|fn_link_attach:"stc_id=`$key`"|fn_url}"{/if}>
-                    {include file="addons/development/common/brand_logo.tpl" brand=$tab brand_variant_id=$tab.variant_id img_height=$img_ht}</a>
-                </div>
+                    {include file="addons/development/common/brand_logo.tpl" brand=$tab brand_variant_id=$tab.variant_id img_height=$img_ht}
+                    </a>
+                    {$tab.variant}
+                </h3>
             {/foreach}
         <!--subtabs_categorization--></div>
     </div>

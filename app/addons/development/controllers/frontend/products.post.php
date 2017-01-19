@@ -89,21 +89,21 @@ if ($mode == 'view') {
                 $product['size_chart'] = $product['header_features'][BRAND_FEATURE_ID]['variants'][$brand_id][$gender . '_' . $cat_type . '_size_chart'];
             }
         }
-        if (!empty($product['size_chart'])) {
-            Registry::get('view')->assign('product', $product);
-            if ($brand_size_chart) {
-                $_tabs = Registry::get('navigation.tabs');
-                $_tabs['size_chart']['title'] .= ' ' . $title;
-                Registry::set('navigation.tabs', $_tabs);
-            }
-        } else {
-            $tabs = Registry::get('view')->gettemplatevars('tabs');
+    }
+    if (!empty($product['size_chart'])) {
+        Registry::get('view')->assign('product', $product);
+        if ($brand_size_chart) {
             $_tabs = Registry::get('navigation.tabs');
-            unset($tabs[SIZE_CHART_TAB_ID]);
-            unset($_tabs['size_chart']);
+            $_tabs['size_chart']['title'] .= ' ' . $title;
             Registry::set('navigation.tabs', $_tabs);
-            Registry::get('view')->assign('tabs', $tabs);
         }
+    } else {
+        $tabs = Registry::get('view')->gettemplatevars('tabs');
+        $_tabs = Registry::get('navigation.tabs');
+        unset($tabs[SIZE_CHART_TAB_ID]);
+        unset($_tabs['size_chart']);
+        Registry::set('navigation.tabs', $_tabs);
+        Registry::get('view')->assign('tabs', $tabs);
     }
     if (!empty($product['header_features'])) {
         foreach ($product['header_features'] as $i => $f_data) {

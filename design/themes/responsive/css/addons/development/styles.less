@@ -1140,6 +1140,14 @@ table.ty-cart-content {
 }
 /*Top menu*/
 
+.ty-sidebox__title {
+    text-decoration: @headings_font_decoration;
+    font-weight: @headings_font_weight;
+    font-style: @headings_font_style;
+    font-size: @headings_font_size;
+    font-family: @headings_font;
+    margin: 0 0 15px;
+}
 
 /*Filters*/
 .ty-product-filters__group {
@@ -1642,7 +1650,7 @@ table.ty-cart-content {
     border-bottom: 2px solid #fff;
     opacity: 1;
 }
-.ty-categorization-tabs__a {
+.ty-categorization-tabs__a h2 {
     display: block;
     font-size: 16px;
     height: 38px;
@@ -1651,6 +1659,9 @@ table.ty-cart-content {
     text-decoration: none;
     width: 125px;
     color: #fff;
+    margin: 0;
+    font-family: @body_font, sans-serif;
+    font-weight: normal;
 }
 .ty-categorization-subtabs__a {
     display: block;
@@ -1667,6 +1678,8 @@ table.ty-cart-content {
     line-height: 40px;
     text-align: center;
     float: left;
+    margin: 0;
+    color: transparent;
 }
 .ty-categorization-subtabs__item:hover {
     background: lighten(@base, 3%);
@@ -1683,10 +1696,10 @@ table.ty-cart-content {
   filter: none;
   -webkit-filter: grayscale(0%);
 }
-.ty-categorization-tabs__item.active .ty-categorization-tabs__a {
+.ty-categorization-tabs__item.active .ty-categorization-tabs__a h2 {
     color: #000;
 }
-.ty-categorization-tabs__a:hover {
+.ty-categorization-tabs__a:hover h2 {
     text-decoration: none;
     color: #000;
 }
@@ -1705,6 +1718,15 @@ table.ty-cart-content {
     width: 50%;
     float: left;
     font-family: @headings_font;
+    margin: 0;
+}
+.ty-social-link__title {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 22px;
+    font-weight: normal;
+    margin: 0px 20px 0px 0px;
+    color: #fff;
 }
 .ty-categorize__description {
     color: darken(@base, 30%);
@@ -2121,6 +2143,7 @@ table.ty-cart-content {
     font-size: 25px;
     display: inline-block;
     width: 100%;
+    font-weight: bold;
 }
 .ty-product-block_oos .ty-product-block-title {
     font-size: 22px;
@@ -2493,12 +2516,15 @@ table.ty-cart-content {
     top: 0;
 }
 .ty-image-title__name {
+    font-family: @body_font, sans-serif;
+    font-weight: normal;
     color: #ffffff;
     font-size: 35px;
     left: 50px;
     padding: 2px 10px;
     position: absolute;
     top: 60px;
+    margin: 0;
 }
 .breadcrumbs-grid {
     margin-bottom: 5px;
@@ -2778,6 +2804,9 @@ table.ty-cart-content {
 }
 /*Discussion*/
 
+.ty-tabs__item h2 {
+    margin: 0;
+}
 /* TennisHouse scroller block*/
 .ty-tennishouse-container .ty-tabs__content {
     padding: 0;
