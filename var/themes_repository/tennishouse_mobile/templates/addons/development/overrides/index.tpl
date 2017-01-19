@@ -43,8 +43,7 @@
 {include file="meta.tpl"}
 <link href="{$logos.favicon.image.image_path}" rel="shortcut icon" type="image/x-icon" />
 {include file="common/styles.tpl" include_dropdown=true}
-    {*script src="js/lib/jquery/jquery.min.js" no-defer=true}
-    {script src="js/addons/development/jquery.mobile-1.4.5.min.js" no-defer=true*}
+{script src="js/lib/jquery/jquery.min.js" no-defer=true}
 {if "DEVELOPMENT"|defined && $smarty.const.DEVELOPMENT == true}
 <script type="text/javascript" data-no-defer>
 window.jsErrors = [];

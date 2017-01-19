@@ -1,21 +1,11 @@
-{if !$config.tweaks.dev_js}
-<script data-no-defer>
-    document.write('{script src="js/lib/jquery/jquery.min.js" no-defer=true escape=true}');
-    document.write('{script src="js/lib/jqueryui/jquery-ui.min.js" no-defer=true escape=true}');
-</script>
-{/if}
 
 {scripts}
-
-    {if $config.tweaks.dev_js}
-    {script src="js/lib/jquery/jquery.min.js"}
-    {script src="js/lib/jqueryui/jquery-ui.min.js"}
-    {/if}
 
 {script src="js/tygh/core.js"}
 {script src="js/tygh/ajax.js"}
 {script src="js/tygh/history.js"}
 {script src="js/lib/autonumeric/autoNumeric.js"}
+{script src="js/lib/jqueryui/jquery-ui.min.js"}
 {script src="js/lib/appear/jquery.appear-1.1.1.js"}
 {if !$runtime.customization_mode.live_editor}
     {script src="js/lib/tools/tooltip.min.js"}

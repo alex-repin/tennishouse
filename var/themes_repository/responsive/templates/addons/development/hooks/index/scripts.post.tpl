@@ -1,7 +1,5 @@
 {script src="js/addons/development/jquery.selectbox-0.2.js"}
-{script src="js/addons/development/jquery.magnific-popup.js"}
 {script src="js/addons/development/jquery.mCustomScrollbar.concat.min.js"}
-{script src="js/addons/development/jquery.magnific-popup.js"}
 {script src="js/addons/development/jquery.kladr.min.js"}
 {script src="js/addons/development/jquery.roundabout.min.js"}
 {script src="js/addons/development/jquery.roundabout-shapes.min.js"}

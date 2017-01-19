@@ -1,4 +1,3 @@
-{script src="js/addons/development/jquery.magnific-popup.js"}
 {script src="js/addons/development/jquery.mCustomScrollbar.concat.min.js"}
 {script src="js/addons/development/jquery.mobile-1.4.5.min.js"}
 
