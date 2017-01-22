@@ -70,7 +70,6 @@ function fn_get_reward_points($object_id, $object_type = PRODUCT_REWARD_POINTS, 
 {
     $ob_ids = is_array($object_id) ? $object_id : explode(',', $object_id);
     $op_suffix = (Registry::get('addons.reward_points.consider_zero_values') == 'Y') ? '=' : '';
-
     if (fn_allowed_for('ULTIMATE')) {
         if ($object_type == GLOBAL_REWARD_POINTS) {
             if (empty($company_id) && Registry::get('runtime.company_id')) {
@@ -80,7 +79,6 @@ function fn_get_reward_points($object_id, $object_type = PRODUCT_REWARD_POINTS, 
             }
         }
     }
-
     if (!empty($usergroup_ids)) {
         if (Registry::get('addons.reward_points.several_points_action') == 'minimal_absolute') {
             $order_by = 'reward_points.amount_type ASC, reward_points.amount ASC';
@@ -95,17 +93,18 @@ function fn_get_reward_points($object_id, $object_type = PRODUCT_REWARD_POINTS, 
             $order_by = 'reward_points.amount_type DESC, reward_points.amount DESC';
             $_order_by = 'tmp.amount_type DESC, tmp.amount DESC';
         }
-
-        $result = db_get_hash_array(
+        $result = db_get_hash_multi_array(
             "SELECT reward_points.*, reward_points.amount AS pure_amount FROM ?:reward_points AS reward_points"
             . " LEFT JOIN ?:categories ON ?:categories.category_id = reward_points.object_id AND ?:categories.is_op = 'Y'"
             . " LEFT JOIN ?:products ON ?:products.product_id = reward_points.object_id AND ?:products.is_op = 'Y'"
             . " WHERE reward_points.object_id IN (?n) AND reward_points.object_type = ?s AND reward_points.company_id = ?i AND reward_points.amount >$op_suffix 0"
-            . " AND reward_points.usergroup_id IN (?n) AND reward_points.reward_point_id = (SELECT tmp.reward_point_id FROM ?:reward_points AS tmp WHERE tmp.object_id = reward_points.object_id ORDER BY ?p LIMIT 1)"
-            . " AND CASE reward_points.object_type WHEN ?s THEN ?:categories.category_id IS NOT NULL WHEN ?s THEN ?:products.product_id IS NOT NULL ELSE 1 END"
+            . " AND reward_points.usergroup_id IN (?n) AND CASE reward_points.object_type WHEN ?s THEN ?:categories.category_id IS NOT NULL WHEN ?s THEN ?:products.product_id IS NOT NULL ELSE 1 END"
             . " ORDER BY ?p", 
-            'object_id', $ob_ids, $object_type, $company_id, $usergroup_ids, $_order_by, CATEGORY_REWARD_POINTS, PRODUCT_REWARD_POINTS, $order_by
+            array('object_id', 'reward_point_id'), $ob_ids, $object_type, $company_id, $usergroup_ids, CATEGORY_REWARD_POINTS, PRODUCT_REWARD_POINTS, $order_by
         );
+        foreach ($result as $obj_id => $obj_data) {
+            $result[$obj_id] = reset($obj_data);
+        }
     } else {
         $result = db_get_hash_multi_array(
             "SELECT reward_points.*, reward_points.amount AS pure_amount FROM ?:reward_points AS reward_points"
@@ -117,10 +116,8 @@ function fn_get_reward_points($object_id, $object_type = PRODUCT_REWARD_POINTS, 
             array('object_id', 'usergroup_id'), $ob_ids, $object_type, $company_id, CATEGORY_REWARD_POINTS, PRODUCT_REWARD_POINTS
         );
     }
-
     return (count($ob_ids) == 1 ) ? (!empty($result[reset($ob_ids)]) ? $result[reset($ob_ids)] : array()) : $result;
 }
-
 /**
  * Function adds record about reward point for given object
  *

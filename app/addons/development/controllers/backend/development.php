@@ -951,6 +951,62 @@ if ($mode == 'calculate_balance') {
     
     fn_echo('Done');
     exit;
+} elseif ($mode == 'fix_rp') {
+
+    $now = getdate(TIME);
+    $expire = mktime(0, 0, 0, $now['mon'] - 2, $now['mday'], $now['year']);
+    $res = db_get_array("SELECT order_id, subtotal, user_id FROM ?:orders WHERE subtotal >= 1000 AND user_id != '0' AND timestamp > ?i AND status IN ('C', 'E')", $expire);
+    $rp = db_get_hash_multi_array("SELECT * FROM ?:reward_point_changes", array('user_id'));
+    $to_add = array();
+    foreach ($res as $i => $o_dt) {
+        $add = false;
+        if (!empty($rp[$o_dt['user_id']])) {
+            $added = false;
+            foreach ($rp[$o_dt['user_id']] as $k => $rp_data) {
+                $reason = unserialize($rp_data['reason']);
+                if ($rp_data['action'] == 'O' && $reason['order_id'] == $o_dt['order_id']) {
+                    $added = true;
+                    break;
+                }
+            }
+            if (!$added) {
+                $add = true;
+            }
+        } else {
+            $add = true;
+        }
+        
+        if ($add) {
+            $new = $o_dt;
+            $new['rp'] = $rp[$o_dt['user_id']];
+            $to_add[] = $new;
+        }
+    }
+    fn_print_die($to_add);
+    if (!empty($to_add)) {
+        foreach ($to_add as $i => $_data) {
+            $reward_points = fn_get_reward_points(0, GLOBAL_REWARD_POINTS, fn_define_usergroups(array('user_id' => $_data['user_id'], 'user_type' => 'C'), 'C'), 1);
+  
+            if (isset($reward_points['amount'])) {
+                $reward_points['coefficient'] =(Registry::get('addons.reward_points.points_with_discounts') == 'Y' && $reward_points['amount_type'] == 'P' && isset($product['discounted_price'])) ? $product['discounted_price'] / $product['price'] : 1;
+
+                if ($reward_points['amount_type'] == 'P') {
+                    $reward_points['amount'] = floor($_data['subtotal'] / $reward_points['round_to'] ) * $reward_points['round_to'] * $reward_points['amount'] / 100;
+                }
+
+                $reward_points['raw_amount'] = $reward_points['coefficient'] * $reward_points['amount'];
+
+                $reward_points['amount'] = round($reward_points['raw_amount']);
+                $to_add[$i]['to_add'] = $reward_points['amount'];
+            }
+            if (!empty($to_add[$i]['to_add'])) {
+//                 fn_change_user_points($to_add[$i]['to_add'], $_data['user_id'], serialize(array('order_id' => $_data['order_id'],'to' => 'C','from' => 'O')), CHANGE_DUE_ORDER);
+            }
+        }
+    }
+    
+    fn_echo('Done');
+    exit;
 }
 
 function fn_normalize_string($string)
