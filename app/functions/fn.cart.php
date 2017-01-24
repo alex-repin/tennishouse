@@ -870,6 +870,12 @@ function fn_update_order(&$cart, $order_id = 0)
 
         // incomplete the order to increase inventory amount.
         fn_change_order_status($order_id, STATUS_INCOMPLETED_ORDER, $old_order['status'], fn_get_notification_rules(array(), false));
+        $extras = db_get_hash_single_array("SELECT extra, item_id FROM ?:order_details WHERE item_id IN (?a)", array('item_id', 'extra'), array_keys($cart['products']));
+        foreach ($cart['products'] as $it_id => $it_data) {
+            if (!empty($extras[$it_id])) {
+                $cart['products'][$it_id]['extra'] = unserialize($extras[$it_id]);
+            }
+        }
         $order['status'] = STATUS_INCOMPLETED_ORDER;
 
         fn_set_hook('edit_place_order', $order_id);
