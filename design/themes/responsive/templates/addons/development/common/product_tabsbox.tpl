@@ -27,44 +27,45 @@
 <div class="cm-tabs-content ty-tabs__content clearfix" id="tabs_content">
     {$content nofilter}
 </div>
-{if $product.amount > 0 || ($product.product_type == 'C' && $product.hide_stock_info)}
 <script type="text/javascript">
 (function(_, $) {
-    var max_height = 120;
-    {if $product.image_pairs}
-        max_height += 50;
-    {/if}
-    {if $product.players}
-        max_height += 175;
-    {/if}
-    {*if $product.product_options}
-        max_height -= 32 * '{$product.product_options|count}';
-    {/if*}
-    {if $product.product_configurator_groups}
-        max_height -= 40 * '{$product.product_configurator_groups|count}';
-    {/if}
-    {if $smarty.capture.block_product_cross_sales}
-        max_height += 190;
-    {/if}
-    var mx_hght = 0;
-    $('#tabs_content').children().each(function(){
-        if ($(this).attr('id') != 'content_technologies' && mx_hght < $(this).outerHeight(true)) {
-            mx_hght = $(this).outerHeight(true);
+    $(document).ready(function(){
+        if ($('#product_page_left').length && $('#product_page_right').length) {
+            var left = $('#product_page_left').outerHeight(true) + 90;
+            var right = $('#product_page_right').outerHeight(true);
+            var tabs_height = $('#tabs_content').outerHeight(true);
+            var mx_hght = 0;
+            $('#tabs_content').children().each(function(){
+                if ($(this).attr('id') != 'content_technologies' && mx_hght < $(this).outerHeight(true)) {
+                    mx_hght = $(this).outerHeight(true);
+                }
+            });
+            if (left > right) {
+                $('#tabs_content').css("max-height", mx_hght - 24 + left - right + 'px');
+                $('#tabs_content').children().each(function(){
+                    $(this).css("height", mx_hght + left - right + 'px');
+                });
+            } else {
+                $('#tabs_content').css("max-height", tabs_height - right + left + 100 + 'px');
+                $('#tabs_content').children().each(function(){
+                    $(this).css("height", tabs_height - right + left + 100 + 'px');
+                });
+            }
+        } else if ($('#tabs_content').length) {
+            var mx_hght = 0;
+            $('#tabs_content').children().each(function(){
+                if ($(this).attr('id') != 'content_technologies' && mx_hght < $(this).outerHeight(true)) {
+                    mx_hght = $(this).outerHeight(true);
+                }
+            });
+            $('#tabs_content').css("max-height", mx_hght + 30 + 'px');
+            $('#tabs_content').children().each(function(){
+                $(this).css("height", mx_hght + 'px');
+            });
         }
     });
-    if (max_height < mx_hght) {
-        diff = mx_hght - max_height;
-        max_height += (diff > 100) ? 100 : diff;
-    }
-    if (max_height) {
-        $('#tabs_content').css("max-height", max_height + 'px');
-        $('#tabs_content').children().each(function(){
-            $(this).css("height", max_height + 'px');
-        });
-    }
 }(Tygh, Tygh.$));
 </script>
-{/if}
 {/if}
 
 {if $onclick}

@@ -55,6 +55,8 @@
                     {/if}
                     </div>
                 {/if}
+                {hook name="products:left_block"}
+                {/hook}
             </div>
             <div class="ty-product-block__left">
                 {assign var="form_open" value="form_open_`$obj_id`"}

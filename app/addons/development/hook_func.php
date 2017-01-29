@@ -1503,16 +1503,25 @@ function fn_development_update_product_post($product_data, $product_id, $lang_co
     }
 }
 
+function fn_check_category_discussion($id_path)
+{
+    $enable_discussion = array(RACKETS_CATEGORY_ID, BALLS_CATEGORY_ID, STRINGS_CATEGORY_ID, SHOES_CATEGORY_ID, GRIPS_CATEGORY_ID, BALL_MACHINE_CATEGORY_ID, STR_MACHINE_CATEGORY_ID);
+    $disable_discussion = array(BALL_MACHINE_ACC_CATEGORY_ID);
+    if (!empty(array_intersect($id_path, $enable_discussion)) && empty(array_intersect($id_path, $disable_discussion))) {
+        return 'B';
+    } else {
+        return 'D';
+    }
+}
+
 function fn_development_update_product_pre(&$product_data, $product_id, $lang_code, $can_update)
 {
     if (!empty($product_data['category_ids'])) { // to exclude products list update
         $id_path = explode('/', db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $product_data['main_category']));
-        $enable_discussion = array('254', '263', '265', '266', '312', '313');
-        $intersection = array_intersect($id_path, $enable_discussion);
-        if (!empty($intersection) && $product_data['product_type'] == 'P') {
-            $product_data['discussion_type'] = 'B';
-        } else {
+        if ($product_data['product_type'] != 'P') {
             $product_data['discussion_type'] = 'D';
+        } else {
+            $product_data['discussion_type'] = fn_check_category_discussion($id_path);
         }
         
         $players = (empty($product_data['players'])) ? array() : explode(',', $product_data['players']);

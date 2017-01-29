@@ -66,10 +66,31 @@
                     </item>
                 </items>
             </section>
+            <section id="discussion">
+                <translations>
+                    <item lang="ru">Отзывы</item>
+                </translations>
+                <items>
+                    <item id="store_review">
+                        <type>input</type>
+                        <default_value>400</default_value>
+                        <translations>
+                            <item lang="ru">Отзыв о магазине</item>
+                        </translations>
+                    </item>
+                    <item id="product_review">
+                        <type>input</type>
+                        <default_value>100</default_value>
+                        <translations>
+                            <item lang="ru">Отзыв о товаре</item>
+                        </translations>
+                    </item>
+                </items>
+            </section>
         </sections>
     </settings>
     <compatibility>
-        <dependencies>discussion</dependencies>
+        <dependencies>discussion,reward_points</dependencies>
     </compatibility>
     <queries>
         <item>
@@ -892,5 +913,16 @@
         <item lang="ru" id="add_warehouses_and_close">Добавить склад и закрыть</item>
         <item lang="ru" id="warehouse_name">Название склада</item>
         <item lang="ru" id="import_inventory">Импортировать остатки</item>
+        <item lang="ru" id="product_reviews">Отзывы о товаре</item>
+        <item lang="ru" id="product_reviews_title">Отзывы</item>
+        <item lang="ru" id="write_product_review">Поделитесь впечатлениями...</item>
+        <item lang="ru" id="reviewer_name">Имя</item>
+        <item lang="ru" id="used_this_product_r">Играли этой ракеткой ?</item>
+        <item lang="ru" id="used_this_product_s">Играли в этих кроссовках ?</item>
+        <item lang="ru" id="used_this_product_bl">Играли этими мячами ?</item>
+        <item lang="ru" id="used_this_product_st">Играли этими струнами ?</item>
+        <item lang="ru" id="used_this_product_og">Играли этими обмотками ?</item>
+        <item lang="ru" id="used_this_product_bm">Пользовались этой пушкой ?</item>
+        <item lang="ru" id="used_this_product_sm">Пользовались этим станком ?</item>
     </language_variables>
 </addon>

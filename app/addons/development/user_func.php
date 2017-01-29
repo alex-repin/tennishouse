@@ -887,8 +887,15 @@ function fn_get_same_brand_products($params)
     list($products, ) = fn_get_products($params);
     $ids = array();
     if (!empty($products)) {
+        $_products = array();
         foreach ($products as $i => $product) {
             $ids[] = $product['product_id'];
+            $_products[$product['product_id']] = $product;
+//             $all_ids = array();
+//             foreach ($product['all_path'] as $k => $path) {
+//                 $all_ids = array_merge($all_ids, explode('/', $path));
+//             }
+//             $products[$i]['all_path_ids'] = array_unique($all_ids);
         }
         $objective_cat_ids = array(RACKETS_CATEGORY_ID, APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, BAGS_CATEGORY_ID, STRINGS_CATEGORY_ID, BALLS_CATEGORY_ID);
         $category_path = db_get_field("SELECT id_path FROM ?:categories AS c LEFT JOIN ?:products_categories AS pc ON pc.category_id = c.category_id AND pc.link_type = 'M' LEFT JOIN ?:products AS p ON p.product_id = pc.product_id WHERE p.product_id = ?i", $params['same_brand_pid']);
@@ -896,22 +903,50 @@ function fn_get_same_brand_products($params)
         if (!empty($show_cat_ids)) {
             fn_gender_categories($show_cat_ids);
             $limit = ceil($_limit / count($show_cat_ids));
+            
+//             $check_cats = array();
+//             foreach ($show_cat_ids as $j => $cats) {
+//                 $check_cats[$j] = $limit;
+//             }
+//             $start = microtime();
+//             foreach ($products as $i => $product) {
+//             fn_print_die($product, $show_cat_ids);
+//                 foreach ($show_cat_ids as $h => $id) {
+//                     if ($check_cats[$h] > 0) {
+//                         if (!empty(array_intersect($product['all_path_ids'], $id))) {
+//                             $result[] = $product;
+//                             $check_cats[$h]--;
+//                             if ($check_cats[$h] == 0) {
+//                                 unset($show_cat_ids[$h]);
+//                             }
+//                         }
+//                     }
+//                 }
+//                 if (empty($show_cat_ids)) {
+//                     break;
+//                 }
+//             }
+//         fn_print_die($start, microtime());
+
             $_params = array (
-//                 'sort_by' => 'bestsellers',
-//                 'sort_order' => 'desc',
                 'sort_by' => 'random',
                 'limit' => $limit,
                 'subcats' => 'Y',
                 'item_ids' => implode(',', $ids)
             );
-            $start = microtime();
             foreach ($show_cat_ids as $id) {
                 $_params['cid'] = $id;
                 list($prods,) = fn_get_products($_params);
+                foreach ($prods as $i => $prod) {
+                    unset($_products[$prod['product_id']]);
+                }
                 $result = array_merge($result, $prods);
             }
-            shuffle($result);
         }
+        if (count($result) < $_limit && !empty($_products)) {
+            $result = array_merge($result, array_slice($_products, 0, $_limit - count($result)));
+        }
+        shuffle($result);
     }
     $params['limit'] = $_limit;
 
@@ -1215,6 +1250,9 @@ function fn_get_category_type($category_id)
         OVERGRIPS_CATEGORY_ID => 'OG',
         BASEGRIPS_CATEGORY_ID => 'BG',
         DAMPENERS_CATEGORY_ID => 'DP',
+        BALL_HOPPER_CATEGORY_ID => 'BH',
+        BALL_MACHINE_CATEGORY_ID => 'BM',
+        STR_MACHINE_CATEGORY_ID => 'SM',
     );
     
     return !empty($types[$category_id]) ? $types[$category_id] : '';
@@ -1245,6 +1283,12 @@ function fn_identify_type_category_id($path)
             $type = BASEGRIPS_CATEGORY_ID;
         } elseif (in_array(DAMPENERS_CATEGORY_ID, $cats)) {
             $type = DAMPENERS_CATEGORY_ID;
+        } elseif (in_array(STR_MACHINE_CATEGORY_ID, $cats)) {
+            $type = STR_MACHINE_CATEGORY_ID;
+        } elseif (in_array(BALL_HOPPER_CATEGORY_ID, $cats)) {
+            $type = BALL_HOPPER_CATEGORY_ID;
+        } elseif (in_array(BALL_MACHINE_CATEGORY_ID, $cats)) {
+            $type = BALL_MACHINE_CATEGORY_ID;
         }
     }
     

@@ -1007,6 +1007,29 @@ if ($mode == 'calculate_balance') {
     
     fn_echo('Done');
     exit;
+} elseif ($mode == 'enable_reviews') {
+    $params['extend'] = array('categories');
+
+    list($products, $search) = fn_get_products($params);
+    $result = array();
+    foreach ($products as $i => $prod) {
+        if ($product_data['product_type'] != 'P') {
+            $result[$prod['product_id']] = 'D';
+        } else {
+            $result[$prod['product_id']] = fn_check_category_discussion(explode('/', $prod['id_path']));
+        }
+    }
+    foreach ($result as $prod_id => $dt) {
+        $discussion = array(
+            'object_type' => 'P',
+            'object_id' => $prod_id,
+            'type' => $dt,
+            'company_id' => 1
+        );
+
+//         fn_update_discussion($discussion);
+    }
+    exit;
 }
 
 function fn_normalize_string($string)

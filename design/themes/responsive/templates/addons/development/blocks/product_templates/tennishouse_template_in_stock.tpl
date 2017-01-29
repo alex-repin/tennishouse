@@ -5,7 +5,7 @@
         {if $product}
             {assign var="obj_id" value=$product.product_id}
             {include file="common/product_data.tpl" product=$product but_role="big" but_text=__("add_to_cart") hide_qty_label=true}
-            <div class="ty-product-block__img-wrapper">
+            <div class="ty-product-block__img-wrapper" id="product_page_left">
                 {hook name="products:image_wrap"}
                     {if !$no_images}
                         <div class="ty-product-block__img cm-reload-{$product.product_id}" id="product_images_{$product.product_id}_update">
@@ -36,9 +36,9 @@
                         {$title = __("`$product.category_type`_played_by")}
                     {/if}
                     <div class="ty-product-block__players">
-                        <h3 class="ty-mainbox-simple-title">
+                        <div class="ty-product-block__players-title">
                             {$title}
-                        </h3>
+                        </div>
                         <div>
                             {foreach from=$product.players item="player" name="plrs"}
                                 {if $smarty.foreach.plrs.iteration < 5}
@@ -53,8 +53,10 @@
                         </div>
                     </div>
                 {/if}
+                {hook name="products:left_block"}
+                {/hook}
             </div>
-            <div class="ty-product-block__left">
+            <div class="ty-product-block__left" id="product_page_right">
                 {if $product.discussion.posts || $product.header_features}
                     <div class="ty-product-detail__before-title">
                     {hook name="products:brand"}
