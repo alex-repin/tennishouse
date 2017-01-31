@@ -39,3 +39,4 @@ define('CHANGE_DUE_ADDITION', 'A');
 define('CHANGE_DUE_SUBTRACT', 'S');
 define('CHANGE_DUE_ORDER_DELETE', 'D');
 define('CHANGE_DUE_ORDER_PLACE', 'P');
+define('CHANGE_DUE_REVIEW', 'V');

@@ -87,5 +87,8 @@ fn_register_hooks(
     'render_block_register_cache',
     'render_blocks',
     'generate_cart_id',
-    'clone_product'
+    'clone_product',
+    'tools_change_status',
+    'add_post_post',
+    'delete_post_pre'
 );

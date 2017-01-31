@@ -116,6 +116,8 @@ function fn_get_discussion_posts($params, $items_per_page = 0)
 
     $join = $fields = '';
 
+    $join .= " LEFT JOIN ?:users ON ?:discussion_posts.user_id = ?:users.user_id ";
+    $fields .= ", CONCAT_WS(' ', ?:users.firstname, ?:users.lastname) AS user_name";
     if ($thread_data['type'] == 'C' || $thread_data['type'] == 'B') {
         $join .= " LEFT JOIN ?:discussion_messages ON ?:discussion_messages.post_id = ?:discussion_posts.post_id ";
         // [tennishouse]
@@ -733,6 +735,8 @@ function fn_discussion_get_predefined_statuses(&$type, &$statuses)
  */
 function fn_discussion_delete_post($post_id)
 {
+    fn_set_hook('delete_post_pre', $post_id);
+    
     db_query("DELETE FROM ?:discussion_messages WHERE post_id = ?i", $post_id);
     db_query("DELETE FROM ?:discussion_rating WHERE post_id = ?i", $post_id);
     db_query("DELETE FROM ?:discussion_posts WHERE post_id = ?i", $post_id);

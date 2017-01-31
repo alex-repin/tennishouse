@@ -182,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     ), 'A', fn_get_company_language($company_id));
                 }
             }
-
+            fn_set_hook('add_post_post', $post_data, $object);
         }
     }
 

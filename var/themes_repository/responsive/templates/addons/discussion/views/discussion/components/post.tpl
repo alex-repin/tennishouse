@@ -29,11 +29,11 @@
 </div>
 {/if}
 {/hook}
+{$user_info = $auth.user_id|fn_get_user_info:true}
 {if $discussion.object_type == 'P'}
 <div class="ty-new-post__additional-info">
 
 <div class="ty-new-post__additional-info-note">{__("additional_info_note")}</div>
-{$user_info = $auth.user_id|fn_get_user_info:true}
 {$birthday_pf_id = $smarty.const.BIRTHDAY_PF_ID}
 {$play_level_pf_id = $smarty.const.PLAY_LEVEL_PF_ID}
 {$surface_pf_id = $smarty.const.SURFACE_PF_ID}

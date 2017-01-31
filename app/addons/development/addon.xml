@@ -453,6 +453,9 @@
         <item>
             ALTER TABLE `cscart_category_descriptions` ADD `full_description` MEDIUMTEXT NOT NULL AFTER `description`;
         </item>
+        <item>
+            ALTER TABLE `cscart_discussion_posts` ADD `is_rewarded` CHAR(1) NOT NULL DEFAULT 'N';
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -924,5 +927,8 @@
         <item lang="ru" id="used_this_product_og">Играли этими обмотками ?</item>
         <item lang="ru" id="used_this_product_bm">Пользовались этой пушкой ?</item>
         <item lang="ru" id="used_this_product_sm">Пользовались этим станком ?</item>
+        <item lang="ru" id="review_reason_E">Отзыв о магазине</item>
+        <item lang="ru" id="review_reason_P">Отзыв о товаре</item>
+        <item lang="ru" id="product_review_added_reward_text">Спасибо за отзыв ! Вам добавлено [amount] бонусных баллов. Вы можете их использовать в заказе уже сейчас. В случае несоответствующего отзыва, скидка будет удалена из заказа.</item>
     </language_variables>
 </addon>

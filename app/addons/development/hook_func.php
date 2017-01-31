@@ -17,6 +17,54 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_delete_post_pre($post_id)
+{
+    $post_data = db_get_row("SELECT ?:discussion_posts.user_id, ?:discussion_posts.is_rewarded, ?:discussion.object_type, ?:discussion.object_id FROM ?:discussion_posts INNER JOIN ?:users ON ?:users.user_id = ?:discussion_posts.user_id LEFT JOIN ?:discussion ON ?:discussion.thread_id = ?:discussion_posts.thread_id WHERE ?:discussion_posts.post_id = ?i", $post_id);
+    if (!empty($post_data) && !empty($post_data['user_id']) && !empty($post_data['object_type']) && $post_data['object_type'] == 'P' && $post_data['is_rewarded'] == 'Y') {
+        fn_change_user_points(-Registry::get('addons.development.product_review'), $post_data['user_id'], serialize(array('post_id' => $post_id, 'object_id' => $post_data['object_id'], 'type' => $post_data['object_type'])), CHANGE_DUE_REVIEW);
+    }
+}
+
+function fn_development_add_post_post($post_data, $object)
+{
+    if ($object['object_type'] == 'P' && !empty($post_data['user_id'])) {
+        $exists = db_get_field("SELECT post_id FROM ?:discussion_posts WHERE thread_id = ?i AND user_id = ?i AND post_id != ?i", $post_data['thread_id'], $post_data['user_id'], $post_data['post_id']);
+        if (empty($exists)) {
+            $amount = Registry::get('addons.development.product_review');
+            fn_change_user_points(Registry::get('addons.development.product_review'), $post_data['user_id'], serialize(array('post_id' => $post_data['post_id'], 'object_id' => $object['object_id'], 'type' => $object['object_type'])), CHANGE_DUE_REVIEW);
+            db_query("UPDATE ?:discussion_posts SET is_rewarded = 'Y' WHERE post_id = ?i", $post_data['post_id']);
+            if (AREA == 'C') {
+                fn_set_notification('N', __('notice'), __('product_review_added_reward_text', array('[amount]' => Registry::get('addons.development.product_review'))), 'F');
+            }
+        }
+    }
+}
+
+function fn_development_tools_change_status($params, $result)
+{
+    if (!empty($result) && $params['old_status'] != $params['status'] && $params['table'] == 'discussion_posts' && !empty($params['id'])) {
+        $post_data = db_get_row("SELECT ?:discussion_posts.user_id, ?:discussion_posts.is_rewarded, ?:discussion.object_type, ?:discussion.object_id FROM ?:discussion_posts INNER JOIN ?:users ON ?:users.user_id = ?:discussion_posts.user_id LEFT JOIN ?:discussion ON ?:discussion.thread_id = ?:discussion_posts.thread_id WHERE ?:discussion_posts.post_id = ?i", $params['id']);
+        if (!empty($post_data) && !empty($post_data['user_id']) && !empty($post_data['object_type'])) {
+            $opt_suf = '';
+            if ($post_data['object_type'] == 'E') {
+                $opt_suf = 'store';
+//             } elseif ($post_data['object_type'] == 'P') {
+//                 $opt_suf = 'product';
+            }
+            $amount = Registry::get('addons.development.' . $opt_suf . '_review');
+            if (!empty($amount)) {
+                if ($params['status'] == 'A' && $post_data['is_rewarded'] == 'N') {
+                    fn_change_user_points($amount, $post_data['user_id'], serialize(array('post_id' => $params['id'], 'object_id' => $post_data['object_id'], 'type' => $post_data['object_type'], 'to' => $params['status'], 'from' => $params['old_status'])), CHANGE_DUE_REVIEW);
+                    db_query("UPDATE ?:discussion_posts SET is_rewarded = 'Y' WHERE post_id = ?i", $params['id']);
+                } elseif ($post_data['is_rewarded'] == 'Y') {
+                    fn_change_user_points(-$amount, $post_data['user_id'], serialize(array('post_id' => $params['id'], 'object_id' => $post_data['object_id'], 'type' => $post_data['object_type'], 'to' => $params['status'], 'from' => $params['old_status'])), CHANGE_DUE_REVIEW);
+                    db_query("UPDATE ?:discussion_posts SET is_rewarded = 'N' WHERE post_id = ?i", $params['id']);
+                }
+            }
+        }
+    }
+}
+
 function fn_development_get_notification_rules(&$force_notification, $params, $disable_notification)
 {
     if ($disable_notification) {
@@ -1102,6 +1150,9 @@ function fn_development_update_category_pre(&$category_data, $category_id, $lang
 
 function fn_development_get_products(&$params, &$fields, &$sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
 {
+    if (!empty($params['has_description'])) {
+        $condition .= db_quote(" AND IF(?s = 'Y', descr1.full_description != '', descr1.full_description = '')", $params['has_description']);
+    }
     if (!empty($params['warehouse_id'])) {
         $condition .= db_quote(" AND (products.warehouse_ids LIKE ?l OR products.warehouse_ids LIKE ?l OR products.warehouse_ids LIKE ?l OR products.warehouse_ids LIKE ?l)", $params['warehouse_id'], $params['warehouse_id'] . ',%', '%,' . $params['warehouse_id'], '%,' . $params['warehouse_id'] . ',%');
     }

@@ -3968,6 +3968,7 @@ function fn_tools_update_status($params)
 
     $result = db_query("UPDATE ?:$params[table] SET status = ?s WHERE ?w", $params['status'], array($params['id_name'] => $params['id']));
 
+    $params['old_status'] = $old_status;
     fn_set_hook('tools_change_status', $params, $result);
 
     if ($result) {
