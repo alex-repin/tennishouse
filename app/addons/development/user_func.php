@@ -22,6 +22,17 @@ use Tygh\Shippings\Shippings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_check_category_discussion($id_path)
+{
+    $enable_discussion = array(RACKETS_CATEGORY_ID, BALLS_CATEGORY_ID, STRINGS_CATEGORY_ID, SHOES_CATEGORY_ID, OVERGRIPS_CATEGORY_ID, BALL_MACHINE_CATEGORY_ID, STR_MACHINE_CATEGORY_ID);
+    $disable_discussion = array(BALL_MACHINE_ACC_CATEGORY_ID);
+    if (!empty(array_intersect($id_path, $enable_discussion)) && empty(array_intersect($id_path, $disable_discussion))) {
+        return 'B';
+    } else {
+        return 'D';
+    }
+}
+
 function fn_review_reward_available($user_id)
 {
     if (empty($user_id)) {

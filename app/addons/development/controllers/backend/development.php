@@ -1013,7 +1013,7 @@ if ($mode == 'calculate_balance') {
     list($products, $search) = fn_get_products($params);
     $result = array();
     foreach ($products as $i => $prod) {
-        if ($product_data['product_type'] != 'P') {
+        if ($prod['product_type'] != 'P') {
             $result[$prod['product_id']] = 'D';
         } else {
             $result[$prod['product_id']] = fn_check_category_discussion(explode('/', $prod['id_path']));
