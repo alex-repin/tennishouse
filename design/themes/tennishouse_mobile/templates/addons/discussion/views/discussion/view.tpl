@@ -1,15 +1,13 @@
-{assign var="discussion" value=$object_id|fn_get_discussion:$object_type:true:$smarty.request}
+{if !$discussion}
+    {assign var="discussion" value=$object_id|fn_get_discussion:$object_type:true:$smarty.request}
+{/if}
 {if $object_type == "P"}
 {$new_post_title = __("write_review")}
 {else}
 {$new_post_title = __("new_post")}
 {/if}
 {if $discussion && $discussion.type != "D"}
-        {if $object_type == 'P'}
-            <div class="discussion-block mCustomScrollbar" data-mcs-theme="dark" id="{if $container_id}{$container_id}{else}content_discussion{/if}">
-        {else}
-            <div class="discussion-block" id="{if $container_id}{$container_id}{else}content_discussion{/if}">
-        {/if}
+        <div class="discussion-block" id="{if $container_id}{$container_id}{else}content_discussion{/if}">
         {if $wrap == true}
             {capture name="content"}
             {include file="common/subheader.tpl" title=$title}
@@ -19,7 +17,7 @@
             <h4>{$subheader}</h4>
         {/if}
 
-        {if "CRB"|strpos:$discussion.type !== false && !$discussion.disable_adding}
+        {if "CRB"|strpos:$discussion.type !== false && !$discussion.disable_adding && !$hide_new_post}
             {include file="addons/discussion/views/discussion/components/new_post.tpl" new_post_title=$new_post_title}
         {/if}
         {if $discussion.object_type == 'E'}
@@ -28,7 +26,7 @@
                 <a href="http://clck.yandex.ru/redir/dtype=stred/pid=47/cid=2508/*http://market.yandex.ru/shop/292708/reviews" target="_blank"><img src="https://clck.yandex.ru/redir/dtype=stred/pid=47/cid=2507/*https://grade.market.yandex.ru/?id=292708&action=image&size=2" border="0" width="150" height="101" alt="Читайте отзывы покупателей и оценивайте качество магазина на Яндекс.Маркете" /></a>
             </div>
             {/if}
-            {if "CRB"|strpos:$discussion.type !== false && !$discussion.disable_adding}
+            {if "CRB"|strpos:$discussion.type !== false && !$discussion.disable_adding && !$hide_new_post}
                 <div class="ty-discussion-post__buttons buttons-container">
                     {include file="buttons/button.tpl" but_id="opener_new_post_top" but_text=$new_post_title but_role="submit" but_target_id="new_post_dialog_`$obj_id`" but_meta="cm-dialog-opener cm-dialog-auto-size ty-btn__primary" but_rel="nofollow"}
                 </div>
@@ -98,7 +96,7 @@
         {else}
             {capture name="mainbox_title"}{$title}{/capture}
         {/if}
-        {if "CRB"|strpos:$discussion.type !== false && !$discussion.disable_adding}
+        {if "CRB"|strpos:$discussion.type !== false && !$discussion.disable_adding && !$hide_new_post}
             <div class="ty-discussion-post__buttons buttons-container">
                 {include file="buttons/button.tpl" but_id="opener_new_post" but_text=$new_post_title but_role="submit" but_target_id="new_post_dialog_`$obj_id`" but_meta="cm-dialog-opener cm-dialog-auto-size ty-btn__primary" but_rel="nofollow"}
             </div>

@@ -85,6 +85,20 @@
                             <item lang="ru">Отзыв о товаре</item>
                         </translations>
                     </item>
+                    <item id="product_reviews_time_limit">
+                        <type>input</type>
+                        <default_value>1</default_value>
+                        <translations>
+                            <item lang="ru">Период времени(мес.) для лимита отзывов о товаре</item>
+                        </translations>
+                    </item>
+                    <item id="product_reviews_number_limit">
+                        <type>input</type>
+                        <default_value>5</default_value>
+                        <translations>
+                            <item lang="ru">Лимит отзывов о товаре за период времени</item>
+                        </translations>
+                    </item>
                 </items>
             </section>
         </sections>
@@ -929,6 +943,9 @@
         <item lang="ru" id="used_this_product_sm">Пользовались этим станком ?</item>
         <item lang="ru" id="review_reason_E">Отзыв о магазине</item>
         <item lang="ru" id="review_reason_P">Отзыв о товаре</item>
-        <item lang="ru" id="product_review_added_reward_text">Спасибо за отзыв ! Вам добавлено [amount] бонусных баллов. Вы можете их использовать в заказе уже сейчас. В случае несоответствующего отзыва, скидка будет удалена из заказа.</item>
+        <item lang="ru" id="product_review_added_reward_text">Спасибо за отзыв ! Вам добавлено [amount] бонусных баллов. Вы можете их использовать в заказе уже сейчас.</item>
+        <item lang="ru" id="get_discount_now">Получить скидку сейчас !</item>
+        <item lang="ru" id="get_product_review_reward_points"><![CDATA[<div class="ty-product-review-rp-text"><p>Для того, чтобы получить скидку на заказ нужно:</p><ol><li>Создать профиль: <a href="https://www.tennishouse.ru/profiles-add/" target="_blank">Регистрация</a></li><li>Оставить отзыв на любой товар из категорий: <a href="http://www.tennishouse.ru/tennis-rackets/" target="_blank">Ракетки</a>, <a href="http://www.tennishouse.ru/tennis-balls/" target="_blank">Мячи</a>, <a href="http://www.tennishouse.ru/tennis-strings/" target="_blank">Струны</a>, <a href="http://www.tennishouse.ru/tennis-shoes/" target="_blank">Обувь</a>, <a href="http://www.tennishouse.ru/ball-machines/" target="_blank">Пушки</a>, <a href="http://www.tennishouse.ru/stringing-machines/" target="_blank">Станки</a>, <a href="http://www.tennishouse.ru/overgrips-grips/overgrips/" target="_blank">Овергрипы</a></li><li>Скидка в [amount]руб. будет сразу же автоматически добавлена в заказ</li><li>Вы можете оставлять до [limit] отзывов за [limit_month] мес. и получать скидки на заказы.</li></ol><p>ВНИМАНИЕ. Отзывы будут приняты только, если они информативны и полезны для других покупателей. Отзывы, которые не соответствуют этому критерию, будут удалены, а скидка в заказе аннулирована.</p></div>]]></item>
+        <item lang="ru" id="thank_you_for_review">Спасибо за отзыв !</item>
     </language_variables>
 </addon>

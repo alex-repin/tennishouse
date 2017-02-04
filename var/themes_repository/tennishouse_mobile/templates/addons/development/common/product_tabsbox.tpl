@@ -27,36 +27,6 @@
 <div class="cm-tabs-content ty-tabs__content clearfix" id="tabs_content">
     {$content nofilter}
 </div>
-<script type="text/javascript">
-(function(_, $) {
-    var max_height = 120;
-    {if $product.image_pairs}
-        max_height += 50;
-    {/if}
-    {if $product.players}
-        max_height += 175;
-    {/if}
-    {if $smarty.capture.block_product_cross_sales}
-        max_height += 190;
-    {/if}
-    var mx_hght = 0;
-    $('#tabs_content').children().each(function(){
-        if (mx_hght < $(this).outerHeight(true)) {
-            mx_hght = $(this).outerHeight(true);
-        }
-    });
-    if (max_height < mx_hght) {
-        diff = mx_hght - max_height;
-        max_height += (diff > 100) ? 100 : diff;
-    }
-    if (max_height) {
-        $('#tabs_content').css("max-height", max_height + 'px');
-        $('#tabs_content').children().each(function(){
-            $(this).css("height", max_height + 'px');
-        });
-    }
-}(Tygh, Tygh.$));
-</script>
 {/if}
 
 {if $onclick}

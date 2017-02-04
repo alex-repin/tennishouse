@@ -33,13 +33,11 @@
     
     {/if}
 
-    {if ($cart.subtotal_discount|floatval)}
     <li class="ty-cart-statistic__item ty-statistic-list-subtotal-discount">
-        <span class="ty-cart-statistic__title">{__("order_discount")}</span>
+        <span class="ty-cart-statistic__title">{__("order_discount")}{if $auth.user_id|fn_review_reward_available}<div>{include file="addons/development/common/tooltip.tpl" note_text=__("get_product_review_reward_points", ["[amount]" => $addons.development.product_review, "[limit]" => $addons.development.product_reviews_number_limit, "[limit_month]" => $addons.development.product_reviews_time_limit]) tooltip_title=__("get_discount_now") tooltipclass="ty-category-tooltip"}{/if}</div></span>
         <span class="ty-cart-statistic__value discount-price">-{include file="common/price.tpl" value=$cart.subtotal_discount}</span>
     </li>
     {hook name="checkout:checkout_discount"}{/hook}
-    {/if}
 
     {if $cart.taxes}
     <li class="ty-cart-statistic__item ty-statistic-list-taxes ty-cart-statistic__group">

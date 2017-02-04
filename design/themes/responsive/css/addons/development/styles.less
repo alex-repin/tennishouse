@@ -420,9 +420,22 @@ input:focus::placeholder, textarea:focus::placeholder {
     padding: 9px;
     color: #fff;
 }
-.tooltip p {
-    color: #fff;
-    padding: 0px;
+.tooltip {
+    p, ol li {
+        color: #fff;
+        padding: 0px;
+    }
+    ol {
+        margin: 10px 0;
+    }
+    ol li {
+        list-style-type: decimal;
+    }
+    .ty-product-review-rp-text {
+        a {
+            color: @links;
+        }
+    }
 }
 .tooltip-arrow {
     top: auto;
@@ -2096,7 +2109,7 @@ table.ty-cart-content {
     letter-spacing: 1px;
 }
 .ty-technologies__item {
-    display: inline-block;
+    display: block;
     border-bottom:  1px solid @base;
 }
 .ty-technologies__item-logo {
@@ -3283,7 +3296,9 @@ table.ty-cart-content {
         background-color: #fff;
         border: 1px solid @font;
         color: @font;
-        padding: 5px 75px;
+        padding: 0;
+        width: 100%;
+        line-height: 30px;
     }
     .ty-btn__review-product:hover {
         background-color: @font;

@@ -12,7 +12,7 @@
     {else}
 
     {if $page.description}
-        <div class="ty-form-builder__description">{$page.description|fn_check_vars|fn_render_page_blocks:$smarty.capture nofilter}</div>
+        <div class="ty-form-builder__description">{$page.description nofilter}</div>
     {/if}
 
 <div class="ty-form-builder">

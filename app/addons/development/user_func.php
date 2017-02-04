@@ -22,6 +22,18 @@ use Tygh\Shippings\Shippings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_review_reward_available($user_id)
+{
+    if (empty($user_id)) {
+        return false;
+    }
+    $settings = Registry::get('addons.development');
+    $now = getdate(TIME);
+    $limit = db_get_field("SELECT COUNT(*) FROM ?:discussion_posts WHERE user_id = ?i AND is_rewarded = 'Y' AND timestamp >= ?i", $user_id, mktime(0, 0, 0, $now['mon'] - $settings['product_reviews_time_limit'], $now['mday'], $now['year']));
+    
+    return ($limit < $settings['product_reviews_number_limit']) ? true : false;
+}
+
 function fn_get_big_cities()
 {
     return unserialize(BIG_CITIES);

@@ -2,9 +2,6 @@
 <div class="summary">
     <input type="text" name="posts[{$post.post_id}][name]" value="{$post.name}" size="40" class="input-hidden ty-dm-name">
     <input type="text" name="posts[{$post.post_id}][city]" value="{$post.city}" size="20" class="input-hidden ty-dm-city">
-    {if $post.user_id && $post.user_name}
-        <a href="{"profiles.update?user_id=`$post.user_id`"|fn_url}" style="margin-left: 10px;">{$post.user_name}</a>
-    {/if}
     {if $discussion.object_type == 'P' || $discussion_object_type == 'P'}
     <input type="text" name="posts[{$post.post_id}][age]" value="{$post.age}" size="10" class="input-hidden ty-dm-age">
     <select name="posts[{$post.post_id}][play_level]" class="ty-dm-play-level">
@@ -74,6 +71,9 @@
 
 
     <div class="pull-right">
+        {if $post.user_id && $post.user_name}
+            <a href="{"profiles.update?user_id=`$post.user_id`"|fn_url}" style="float: left;margin-right: 10px;">{$post.user_name}</a>
+        {/if}
         <span class="muted">{$post.timestamp|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"} / {__("ip_address")}:&nbsp;{$post.ip_address}</span>
 
         {if ($type == "R" || $type == "B") && $post.rating_value > 0}

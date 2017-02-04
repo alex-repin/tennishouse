@@ -77,19 +77,22 @@ Discussion
 /* Template: templates/addons/discussion/views/discussion/components/rate.tpl */
 .ty-rating {
     float:left;
-    color: @links;
+    .ui-radio {
+        float: right;
+        color: @links;
+    }
 }
 .ty-rating__label {
     display: inline-block;
 }
-.ty-rating:not(:checked) > .ty-rating__check {
+.ty-rating > .ui-radio:not(:checked) > .ty-rating__check {
     position: absolute;
     left: -9999px;
     clip: rect(0,0,0,0);
 }
-.ty-rating:not(:checked) > .ty-rating__label {
+.ty-rating > .ui-radio:not(:checked) > .ty-rating__label {
     float: right;
-    width: 17px;
+    width: 30px;
     padding: 0;
     overflow: hidden;
     white-space: nowrap;
@@ -98,28 +101,31 @@ Discussion
     line-height: 1.2;
     margin-right: 2px;
 }
-.ty-rating:not(:checked) > .ty-rating__label:before {
+.ty-rating > .ui-radio:not(:checked) > .ty-rating__label:after {
+    content: none;
+}
+.ty-rating > .ui-radio:not(:checked) > .ty-rating__label:before {
     font-family: 'glyphs';
     speak: none;
     font-style: normal;
     font-weight: normal;
     font-variant: normal;
     text-transform: none;
-    font-size: 21px;
+    font-size: 35px;
     line-height: 1;
     -webkit-font-smoothing: antialiased;
     content: "\e004";
 }
-.ty-rating:not(:checked) > .ty-rating__label:hover:before,
-.ty-rating:not(:checked) > .ty-rating__label:hover ~ .ty-rating__label:before {
+.ty-rating > .ui-radio:not(:checked) > .ty-rating__label:hover:before,
+.ty-rating > .ui-radio:not(:checked):hover ~ .ui-radio > .ty-rating__label:before {
     content: "\e041";
 }
-.ty-rating > .ty-rating__check:checked ~ .ty-rating__label:before,
-.ty-rating > .ty-rating__check:checked + .ty-rating__label:hover:before,
-.ty-rating > .ty-rating__check:checked + .ty-rating__label:hover ~ .ty-rating__label:before,
-.ty-rating > .ty-rating__check:checked ~ .ty-rating__label:hover:before,
-.ty-rating > .ty-rating__check:checked ~ .ty-rating__label:hover ~ .ty-rating__label:before,
-.ty-rating > .ty-rating__label:hover ~ .ty-rating__check:checked ~ .ty-rating__label:before {
+.ty-rating > .ui-radio > .ty-rating__check:checked ~ .ty-rating__label:before,
+.ty-rating > .ui-radio > .ty-rating__check:checked + .ty-rating__label:hover:before,
+.ty-rating > .ui-radio > .ty-rating__check:checked + .ty-rating__label:hover ~ .ty-rating__label:before,
+.ty-rating > .ui-radio > .ty-rating__check:checked ~ .ty-rating__label:hover:before,
+.ty-rating > .ui-radio > .ty-rating__check:checked ~ .ty-rating__label:hover ~ .ty-rating__label:before,
+.ty-rating > .ui-radio > .ty-rating__label:hover ~ .ty-rating__check:checked ~ .ty-rating__label:before {
     content: "\e041";
 }
 /* /Rate stars */

@@ -11,9 +11,4 @@
             </div>
         {/foreach}
     </div>
-    <script type="text/javascript">
-    (function(_, $) {
-        $('#news_feed_{$block.block_id}').mCustomScrollbar();
-    }(Tygh, Tygh.$));
-    </script>
 {/if}

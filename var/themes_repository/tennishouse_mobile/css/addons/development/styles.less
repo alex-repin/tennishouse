@@ -1484,7 +1484,6 @@ input:focus::placeholder, textarea:focus::placeholder {
     border-bottom: 1px solid darken(@base, 7%);
     border-left: 1px solid darken(@base, 7%);
     padding: 15px 5px 15px 10px;
-    max-height: 390px;
     text-align: left;
     background: #fff;
 }
@@ -2237,6 +2236,12 @@ table.ty-cart-content {
 /*Player details*/
 
 /*Product page*/
+.ty-product-price-heder {
+    display: inline;
+    font-family: @price_font;
+    margin: 0 7px 0 0;
+    letter-spacing: -2px;
+}
 .ty-cr-product-info-container {
     width: auto;
 }
@@ -2310,7 +2315,7 @@ table.ty-cart-content {
     letter-spacing: 1px;
 }
 .ty-technologies__item {
-    display: inline-block;
+    display: block;
     border-bottom:  1px solid @base;
 }
 .ty-technologies__item-logo {
@@ -3048,9 +3053,6 @@ a.ty-password-forgot__a {
     padding: 5px 10px;
     margin-top: 15px;
 }
-.ty-product-block .discussion-block {
-    max-height: 290px;
-}
 .ty-block-discussion-post__author {
     font-weight: bold;
 }
@@ -3538,6 +3540,72 @@ a.ty-password-forgot__a {
 }
 .ty-product-block__img-wrapper .ty-tennishouse-container {
     margin: 10px 5px 0;
+}
+.ty-product-reviews-block {
+    display: block;
+    margin: 10px 0;
+    text-align: left;
+}
+.ty-product-reviews-title {
+    padding: 2px 15px 1px;
+}
+.ty-product-review-title {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+.ty-product-add-review-wrapper {
+    display: block;
+    text-align: left;    
+    .ty-control-group__title {
+        display: none;
+    }
+    .ty-input-textarea {
+        width: 100%;
+    }
+    .ty-control-group {
+        margin: 0 0 4px 0;
+        vertical-align: top;
+        input {
+            width: 100%;
+        }
+    }
+    .ty-product-review-rate {
+        width: 40%;
+        padding-top: 5px;
+        text-align: center;
+    }
+    .ty-product-review-submit {
+        width: 100%;
+        display: block;
+    }
+    .ty-btn__review-product {
+        background-color: #fff;
+        border: 1px solid @font;
+        color: @font;
+        padding: 0;
+        width: 100%;
+        line-height: 38px;
+    }
+    .ty-btn__review-product:hover {
+        background-color: @font;
+        color: #fff;
+    }
+    .ty-rating {
+        float: none;
+        display: inline-block;
+    }
+    .ty-product-add-review {
+        margin: 25px 0;
+        .ty-flicker-input {
+            display: none;
+        }
+    }
+    .ty-product-add-review-is-focus {
+        .ty-flicker-input {
+            display: block;
+        }
+    }
 }
 .ty-product-cross-block .ty-tennishouse-body {
     border: none;

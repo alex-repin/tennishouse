@@ -28,13 +28,14 @@ function fn_development_delete_post_pre($post_id)
 function fn_development_add_post_post($post_data, $object)
 {
     if ($object['object_type'] == 'P' && !empty($post_data['user_id'])) {
-        $exists = db_get_field("SELECT post_id FROM ?:discussion_posts WHERE thread_id = ?i AND user_id = ?i AND post_id != ?i", $post_data['thread_id'], $post_data['user_id'], $post_data['post_id']);
-        if (empty($exists)) {
-            $amount = Registry::get('addons.development.product_review');
-            fn_change_user_points(Registry::get('addons.development.product_review'), $post_data['user_id'], serialize(array('post_id' => $post_data['post_id'], 'object_id' => $object['object_id'], 'type' => $object['object_type'])), CHANGE_DUE_REVIEW);
+        $exists = db_get_field("SELECT post_id FROM ?:discussion_posts WHERE thread_id = ?i AND user_id = ?i AND post_id != ?i AND is_rewarded = 'Y'", $post_data['thread_id'], $post_data['user_id'], $post_data['post_id']);
+        $settings = Registry::get('addons.development');
+        if (empty($exists) && fn_review_reward_available($post_data['user_id'])) {
+            fn_change_user_points($settings['product_review'], $post_data['user_id'], serialize(array('post_id' => $post_data['post_id'], 'object_id' => $object['object_id'], 'type' => $object['object_type'])), CHANGE_DUE_REVIEW);
             db_query("UPDATE ?:discussion_posts SET is_rewarded = 'Y' WHERE post_id = ?i", $post_data['post_id']);
             if (AREA == 'C') {
-                fn_set_notification('N', __('notice'), __('product_review_added_reward_text', array('[amount]' => Registry::get('addons.development.product_review'))), 'F');
+                fn_delete_notification('thank_you_for_review');
+                fn_set_notification('N', __('notice'), __('product_review_added_reward_text', array('[amount]' => $settings['product_review'])), 'F');
             }
         }
     }

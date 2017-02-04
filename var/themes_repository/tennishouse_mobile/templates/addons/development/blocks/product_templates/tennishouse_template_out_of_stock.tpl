@@ -146,6 +146,8 @@
             {/if}
         {/if}
     {/hook}
+    {hook name="products:add_review"}
+    {/hook}
     </div>
 
     {if $smarty.capture.hide_form_changed == "Y"}

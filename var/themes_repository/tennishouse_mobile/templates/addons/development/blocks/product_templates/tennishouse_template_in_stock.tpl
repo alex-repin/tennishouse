@@ -165,8 +165,9 @@
                     {$smarty.capture.tabsbox_content nofilter}
                 {/if}
             {/if}
-            [-similar_products-]
         {/if}
+    {/hook}
+    {hook name="products:add_review"}
     {/hook}
     </div>
 
@@ -175,6 +176,7 @@
     {/if}
 
 </div>
+[-similar_products-]
 
 {if $block_tabs.tabs}
     <div class="ty-tennishouse-container ty-products-scroller">

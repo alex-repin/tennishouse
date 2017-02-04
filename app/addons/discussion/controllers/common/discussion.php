@@ -61,10 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Check if post needs to be approved
             if (AREA != 'A' && !empty($discussion_settings[$object_name . '_post_approval'])) {
                 if ($discussion_settings[$object_name . '_post_approval'] == 'any' || ($discussion_settings[$object_name . '_post_approval'] == 'anonymous' && empty($auth['user_id']))) {
-                    fn_set_notification('W', __('text_thank_you_for_post'), __('text_post_pended'));
+//                     fn_set_notification('W', __('text_thank_you_for_post'), __('text_post_pended'));
                     $post_data['status'] = 'D';
                 }
             }
+            fn_set_notification('N', __('notice'), __('thank_you_for_review'), 'F', 'thank_you_for_review');
 
             $post_data['timestamp'] = TIME;
             $post_data['user_id'] = $auth['user_id'];

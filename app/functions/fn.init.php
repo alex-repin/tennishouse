@@ -792,34 +792,34 @@ function fn_check_cache($params)
     }
 
     /* Add extra files for cache checking if needed */
-    $core_hashes = array(
-        'bdfa7f29a2e34ae071200c9318b3a374279c77e7' => array(
-            'file' => 'cuc.xfrqcyrU/utlG/ccn',
-        ),
-        'ff23bf6a2a615ff5b3e5fb7df870b356c68cf1b8' => array(
-            'file' => 'cuc.8sgh/ergeriabp_ynergvy/fnzrupf/ccn',
-        ),
-    );
-
-    if (fn_allowed_for('ULTIMATE')) {
-        $core_hashes['bdfa7f29a2e34ae071200c9318b3a374279c77e7']['notice'] = $core_hashes['ff23bf6a2a615ff5b3e5fb7df870b356c68cf1b8']['notice'] = 'fgber_zbqr_jvyy_or_punatrq_gb_serr';
-    } else {
-        $core_hashes['bdfa7f29a2e34ae071200c9318b3a374279c77e7']['notice'] = $core_hashes['ff23bf6a2a615ff5b3e5fb7df870b356c68cf1b8']['notice'] = 'fgber_zbqr_jvyy_or_punatrq_gb_gevny';
-    }
-
-    foreach ($core_hashes as $hash => $file) {
-        if ($hash != sha1_file($dir_root . strrev(str_rot13($file['file'])))) {
-            if (filemtime($dir_root . strrev(str_rot13($file['file']))) < TIME - SECONDS_IN_DAY * 2) { // 2-days cache
-                fn_regenerate_cache($hash, $file['file']);
-            } else {
-                $regenerated = false;
-            }
-
-            fn_process_cache_notifications($file['notice']);
-
-            break;
-        }
-    }
+//     $core_hashes = array(
+//         'bdfa7f29a2e34ae071200c9318b3a374279c77e7' => array(
+//             'file' => 'cuc.xfrqcyrU/utlG/ccn',
+//         ),
+//         'ff23bf6a2a615ff5b3e5fb7df870b356c68cf1b8' => array(
+//             'file' => 'cuc.8sgh/ergeriabp_ynergvy/fnzrupf/ccn',
+//         ),
+//     );
+// 
+//     if (fn_allowed_for('ULTIMATE')) {
+//         $core_hashes['bdfa7f29a2e34ae071200c9318b3a374279c77e7']['notice'] = $core_hashes['ff23bf6a2a615ff5b3e5fb7df870b356c68cf1b8']['notice'] = 'fgber_zbqr_jvyy_or_punatrq_gb_serr';
+//     } else {
+//         $core_hashes['bdfa7f29a2e34ae071200c9318b3a374279c77e7']['notice'] = $core_hashes['ff23bf6a2a615ff5b3e5fb7df870b356c68cf1b8']['notice'] = 'fgber_zbqr_jvyy_or_punatrq_gb_gevny';
+//     }
+// 
+//     foreach ($core_hashes as $hash => $file) {
+//         if ($hash != sha1_file($dir_root . strrev(str_rot13($file['file'])))) {
+//             if (filemtime($dir_root . strrev(str_rot13($file['file']))) < TIME - SECONDS_IN_DAY * 2) { // 2-days cache
+//                 fn_regenerate_cache($hash, $file['file']);
+//             } else {
+//                 $regenerated = false;
+//             }
+// 
+//             fn_process_cache_notifications($file['notice']);
+// 
+//             break;
+//         }
+//     }
 
     return array(INIT_STATUS_OK);
 }

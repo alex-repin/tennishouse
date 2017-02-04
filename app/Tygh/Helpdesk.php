@@ -64,9 +64,9 @@ class Helpdesk
 
         $request = '<?xml version="1.0" encoding="UTF-8"?>' . fn_array_to_xml($request);
 
-        $data = Http::get(Registry::get('config.resources.updates_server') . '/index.php?dispatch=product_updates.check_available', array('request' => $request), array(
-            'timeout' => 10
-        ));
+//         $data = Http::get(Registry::get('config.resources.updates_server') . '/index.php?dispatch=product_updates.check_available', array('request' => $request), array(
+//             'timeout' => 10
+//         ));
 
         if (empty($data)) {
             $data = fn_get_contents(Registry::get('config.resources.updates_server') . '/index.php?dispatch=product_updates.check_available&request=' . urlencode($request));

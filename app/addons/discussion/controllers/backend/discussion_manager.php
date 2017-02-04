@@ -70,6 +70,7 @@ function fn_get_discussions($params, $items_per_page)
     // Define fields that should be retrieved
     $fields = array (
         '?:discussion_posts.*',
+        "CONCAT_WS(' ', ?:users.firstname, ?:users.lastname) AS user_name",
         '?:discussion_messages.message',
         // [tennishouse]
         '?:discussion_messages.city',
@@ -139,6 +140,7 @@ function fn_get_discussions($params, $items_per_page)
     $join .= " INNER JOIN ?:discussion ON ?:discussion.thread_id = ?:discussion_posts.thread_id";
     $join .= " INNER JOIN ?:discussion_messages ON ?:discussion_messages.post_id = ?:discussion_posts.post_id";
     $join .= " INNER JOIN ?:discussion_rating ON ?:discussion_rating.post_id = ?:discussion_posts.post_id";
+    $join .= " LEFT JOIN ?:users ON ?:discussion_posts.user_id = ?:users.user_id ";
 
     $limit = '';
     if (!empty($params['items_per_page'])) {

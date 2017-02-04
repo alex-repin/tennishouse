@@ -272,7 +272,7 @@
             {if $show_price}
             {hook name="products:prices_block"}
                 {if $product.price|floatval || $product.zero_price_action == "P" || ($hide_add_to_cart_button == "Y" && $product.zero_price_action == "A")}
-                    <span class="ty-price{if !$product.price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}"><h2 class="ty-product-price-heder">{__("price")}</h2>{include file="common/price.tpl" value=$product.price span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num" live_editor_name="product:price:{$product.product_id}"}</span>
+                    <span class="ty-price{if !$product.price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}<h2 class="ty-product-price-heder">{__("price")}</h2>{/if}{include file="common/price.tpl" value=$product.price span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num" live_editor_name="product:price:{$product.product_id}"}</span>
                 {elseif $product.zero_price_action == "A" && $show_add_to_cart}
                     {assign var="base_currency" value=$currencies[$smarty.const.CART_PRIMARY_CURRENCY]}
                     <span class="ty-price-curency"><span class="ty-price-curency__title">{__("enter_your_price")}:</span>
