@@ -15,7 +15,7 @@
             {if $product.discussion.type == "C" || $product.discussion.type == "B"}
                 <div class="ty-control-group">
                     <label for="dsc_message_{$obj_prefix}{$obj_id}" class="ty-control-group__title cm-required">{__("your_message")}</label>
-                    <textarea id="dsc_message_{$obj_prefix}{$obj_id}" name="post_data[message]" class="ty-input-textarea" placeholder="{__("write_product_review")}">{$product.discussion.post_data.message}</textarea>
+                    <textarea id="dsc_message_{$obj_prefix}{$obj_id}" name="post_data[message]" class="ty-input-textarea" placeholder="{__('write_product_review')}">{$product.discussion.post_data.message}</textarea>
                 </div>
             {/if}
             <div class="ty-flicker-input">

@@ -4,32 +4,38 @@
 <input type ="hidden" name="redirect_url" value="{$post_redirect_url|default:$config.current_url}" />
 <input type="hidden" name="selected_section" value="" />
 
-<div id="new_post_{$obj_prefix}{$obj_id}">
-
-<div>
-<div class="ty-control-group ty-inline-block" style="width: 71%;">
-    <label for="dsc_name_{$obj_prefix}{$obj_id}" class="ty-control-group__title cm-required">{__("your_name")}</label>
-    <input type="text" id="dsc_name_{$obj_prefix}{$obj_id}" name="post_data[name]" value="{if $auth.user_id}{$user_info.firstname} {$user_info.lastname}{elseif $discussion.post_data.name}{$discussion.post_data.name}{/if}" size="45" class="ty-input-text" />
-</div>
-
-{if $discussion.type == "R" || $discussion.type == "B"}
-<div class="ty-control-group ty-inline-block" style="width: 27%;">
-    {$rate_id = "rating_`$obj_prefix``$obj_id`"}
-    <label class="ty-control-group__title cm-required cm-multiple-radios">{__("your_rating")}</label>
-    {include file="addons/discussion/views/discussion/components/rate.tpl" rate_id=$rate_id rate_name="post_data[rating_value]"}
-</div>
-{/if}
-</div>
+<div id="new_post_{$obj_prefix}{$obj_id}" class="ty-product-add-review-wrapper">
 
 {hook name="discussion:add_post"}
 {if $discussion.type == "C" || $discussion.type == "B"}
 <div class="ty-control-group">
     <label for="dsc_message_{$obj_prefix}{$obj_id}" class="ty-control-group__title cm-required">{__("your_message")}</label>
-    <textarea id="dsc_message_{$obj_prefix}{$obj_id}" name="post_data[message]" class="ty-input-textarea ty-input-text-large" rows="5" cols="72">{$discussion.post_data.message}</textarea>
+    <textarea id="dsc_message_{$obj_prefix}{$obj_id}" name="post_data[message]" class="ty-input-textarea ty-input-text-large" rows="5" cols="72" placeholder="{__('your_message')}">{$discussion.post_data.message}</textarea>
 </div>
 {/if}
 {/hook}
+<div>
 {$user_info = $auth.user_id|fn_get_user_info:true}
+<div class="ty-control-group ty-inline-block" style="width: 49%;margin-right: 1px;">
+    <label for="dsc_name_{$obj_prefix}{$obj_id}" class="ty-control-group__title cm-required">{__("your_name")}</label>
+    <input type="text" id="dsc_name_{$obj_prefix}{$obj_id}" name="post_data[name]" value="{if $auth.user_id}{$user_info.firstname} {$user_info.lastname}{elseif $discussion.post_data.name}{$discussion.post_data.name}{/if}" size="25" class="ty-input-text" placeholder="{__("your_name")}" />
+</div>
+{if $discussion.object_type != 'P'}
+<div class="ty-control-group ty-inline-block" style="width: 50%;">
+    <label for="dsc_city_{$obj_prefix}{$obj_id}" class="ty-control-group__title" style="padding-bottom: 7px;">{__("city")}</label>
+    <input type="text" id="dsc_city_{$obj_prefix}{$obj_id}" name="post_data[city]" value="{if $user_info.s_city}{$user_info.s_city}{elseif $discussion.post_data.city}{$discussion.post_data.city}{/if}" size="25" class="ty-input-text" placeholder="{__("city")}" />
+</div>
+{/if}
+
+{*if $discussion.type == "R" || $discussion.type == "B"}
+<div class="ty-control-group ty-inline-block" style="width: 27%;">
+    {$rate_id = "rating_`$obj_prefix``$obj_id`"}
+    <label class="ty-control-group__title cm-required cm-multiple-radios">{__("your_rating")}</label>
+    {include file="addons/discussion/views/discussion/components/rate.tpl" rate_id=$rate_id rate_name="post_data[rating_value]"}
+</div>
+{/if*}
+</div>
+
 {if $discussion.object_type == 'P'}
 <div class="ty-new-post__additional-info">
 
@@ -87,11 +93,6 @@
 </div>
 
 </div>
-{else}
-    <div class="ty-control-group ty-inline-block" style="width: 31%;">
-        <label for="dsc_city_{$obj_prefix}{$obj_id}" class="ty-control-group__title" style="padding-bottom: 7px;">{__("city")}</label>
-        <input type="text" id="dsc_city_{$obj_prefix}{$obj_id}" name="post_data[city]" value="{if $user_info.s_city}{$user_info.s_city}{elseif $discussion.post_data.city}{$discussion.post_data.city}{/if}" size="15" class="ty-input-text" />
-    </div>
 {/if}
 {include file="common/image_verification.tpl" option="use_for_discussion"}
 

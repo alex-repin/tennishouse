@@ -2542,40 +2542,40 @@ function fn_ult_get_categories(&$params, &$join, &$condition, &$fields, &$group_
 
 function fn_ult_get_categories_before_cut_levels(&$tmp, &$params)
 {
-    if (!Registry::get('runtime.company_id')) {
-        fn_ult_increase_category_level($tmp);
-        if (empty($params['category_id'])) {
-            $_tmp = $tmp;
-            if (!empty($params['group_by_level']) && empty($params['plain'])) {
-                foreach ($_tmp as $id => $c) {
-                    if (!empty($c['company_id'])) {
-                        unset($_tmp[$id]);
-                        $_key = 'company_' . $c['company_id'];
-                        $_tmp[$_key]['company_categories'] = 'Y';
-                        $_tmp[$_key]['category_id'] = $c['category_id'];
-                        $_tmp[$_key]['company_id'] = $c['company_id'];
-                        $_tmp[$_key]['subcategories'][] = $c;
-                    }
-                }
-                foreach ($_tmp as $key => $company_categories) {
-                    if (!empty($company_categories['company_id'])) {
-                        $_tmp[$key]['category'] = __('vendor') . ': ' . fn_get_company_name($company_categories['company_id']);
-                    }
-                }
-            } elseif (!empty($params['group_by_level']) && !empty($params['plain'])) {
-                $result_cat = array();
-                foreach ($_tmp as $cat) {
-                    $result_cat[$cat['company_id']][] = $cat;
-                }
-                $_tmp = array();
-                foreach ($result_cat as $cid => $cats) {
-                    $_tmp[] = array('category' => __('vendor') . ': ' . fn_get_company_name($cid), 'store' => true);
-                    $_tmp = array_merge($_tmp, $cats);
-                }
-            }
-            $tmp = $_tmp;
-        }
-    }
+//     if (!Registry::get('runtime.company_id')) {
+//         fn_ult_increase_category_level($tmp);
+//         if (empty($params['category_id'])) {
+//             $_tmp = $tmp;
+//             if (!empty($params['group_by_level']) && empty($params['plain'])) {
+//                 foreach ($_tmp as $id => $c) {
+//                     if (!empty($c['company_id'])) {
+//                         unset($_tmp[$id]);
+//                         $_key = 'company_' . $c['company_id'];
+//                         $_tmp[$_key]['company_categories'] = 'Y';
+//                         $_tmp[$_key]['category_id'] = $c['category_id'];
+//                         $_tmp[$_key]['company_id'] = $c['company_id'];
+//                         $_tmp[$_key]['subcategories'][] = $c;
+//                     }
+//                 }
+//                 foreach ($_tmp as $key => $company_categories) {
+//                     if (!empty($company_categories['company_id'])) {
+//                         $_tmp[$key]['category'] = __('vendor') . ': ' . fn_get_company_name($company_categories['company_id']);
+//                     }
+//                 }
+//             } elseif (!empty($params['group_by_level']) && !empty($params['plain'])) {
+//                 $result_cat = array();
+//                 foreach ($_tmp as $cat) {
+//                     $result_cat[$cat['company_id']][] = $cat;
+//                 }
+//                 $_tmp = array();
+//                 foreach ($result_cat as $cid => $cats) {
+//                     $_tmp[] = array('category' => __('vendor') . ': ' . fn_get_company_name($cid), 'store' => true);
+//                     $_tmp = array_merge($_tmp, $cats);
+//                 }
+//             }
+//             $tmp = $_tmp;
+//         }
+//     }
 }
 
 /**
