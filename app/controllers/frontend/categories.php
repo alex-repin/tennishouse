@@ -317,7 +317,10 @@ if ($mode == 'catalog') {
         $show_no_products_block = ((!empty($params['features_hash']) || !empty($params['features_condition'])) && !$products);
         Registry::get('view')->assign('show_no_products_block', $show_no_products_block);
 
-        $selected_layout = fn_get_products_layout($_REQUEST);
+        $_request_data = $_REQUEST;
+        $_request_data['default_layout'] = $category_data['default_layout'];
+        $_request_data['selected_layouts'] = $category_data['selected_layouts'];
+        $selected_layout = fn_get_products_layout($_request_data);
         Registry::get('view')->assign('show_qty', true);
         Registry::get('view')->assign('selected_layout', $selected_layout);
 

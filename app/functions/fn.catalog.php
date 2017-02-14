@@ -8351,9 +8351,14 @@ function fn_get_products_layout($params)
     $default_layout = Registry::get('settings.Appearance.default_products_view');
 
     if (!empty($params['category_id'])) {
-        $_layout = db_get_row("SELECT default_layout, selected_layouts FROM ?:categories WHERE category_id = ?i", $params['category_id']);
-        $category_default_layout = $_layout['default_layout'];
-        $category_layouts = unserialize($_layout['selected_layouts']);
+        if (empty($params['default_layout']) || empty($params['selected_layouts'])) {
+            $_layout = db_get_row("SELECT default_layout, selected_layouts FROM ?:categories WHERE category_id = ?i", $params['category_id']);
+            $category_default_layout = $_layout['default_layout'];
+            $category_layouts = unserialize($_layout['selected_layouts']);
+        } else {
+            $category_default_layout = $params['default_layout'];
+            $category_layouts = $params['selected_layouts'];
+        }
         if (!empty($category_layouts)) {
             if (!empty($category_default_layout)) {
                 $default_layout = $category_default_layout;

@@ -15,6 +15,6 @@
                 {/hook}
             </h2>
         {/if}
-        <div class="ty-tennishouse-body hide-phone" id="sidebox_{$block.block_id}">{$content nofilter}</div>
+        <div class="ty-tennishouse-body" id="sidebox_{$block.block_id}">{$content nofilter}</div>
     </div>
 {/if}

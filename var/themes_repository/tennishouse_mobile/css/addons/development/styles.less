@@ -1661,16 +1661,19 @@ table.ty-cart-content {
     margin: 0 -1px -1px 0;
     overflow: hidden;
     border: 1px solid #ebebeb;
+    .ty-list-price {
+        line-height: 20px;
+    }
 }
 .ty-grid-list__item:hover {
 /*    outline: 1px solid #dadada;*/
-    transition: all 100ms linear 0s;
+/*     transition: all 100ms linear 0s; */
     box-shadow: 0 0 5px 1px @font;
     z-index: 10;
 }
 .ty-scroller-list {
     .owl-item:hover {
-        transition: all 100ms linear 0s;
+/*         transition: all 100ms linear 0s; */
         box-shadow: 0 0 5px 1px @font;
         z-index:10;
     }
@@ -1742,6 +1745,40 @@ table.ty-cart-content {
     float: left;
     min-width: 100px;
 }
+@columns: 10;
+
+.ty-extgrid-columns (@index) when (@index > 0) {
+    .ty-extgrid-columns(@index - 1);
+    .ty-grid-list__item-wrapper-extended .ty-column@{index} {
+        width: percentage((100 / 3) * 0.01);
+    }
+}
+.ty-extgrid-columns(0) { }
+.ty-extgrid-columns(@columns);
+
+@media (max-width: 1229px) {
+    .ty-extgrid-columns(@columns);
+    .ty-extgrid-columns (@index) when (@index > 0) {
+        .ty-extgrid-columns(@index - 1);
+        .ty-grid-list__item-wrapper-extended .ty-column@{index} {
+            width: percentage((100 / 2) * 0.01); 
+        }
+    }
+    .ty-extgrid-columns(0) { }
+}
+
+@media (max-width: 829px) {
+    .ty-extgrid-columns(@columns);
+    .ty-extgrid-columns (@index) when (@index > 0) {
+        .ty-extgrid-columns(@index - 1);
+        .ty-grid-list__item-wrapper-extended .ty-column@{index} {
+            width: percentage(100 * 0.01); 
+        }
+    }
+    .ty-extgrid-columns(0) { }
+}
+
+
 @columns: 10;
 
 .ty-ctg-columns (@index) when (@index > 0) {
@@ -2026,6 +2063,71 @@ table.ty-cart-content {
 .ty-grid-list__image a{
     display: inline;
 }
+.ty-price-num {
+    font-size: 17px;
+    color: darken(#ed1c24, 20%);
+}
+.ty-grid-list__item-wrapper-extended {
+    .ty-grid-list__item-description {
+        margin: 0 0 5px;
+        font-size: 12px;
+        height: 80px;
+    }
+    .ty-grid-list__item-features {
+        margin: 5px 0;
+        height: 52px;
+    }
+    .ty-grid-list__item-feature {
+        color: lighten(@font, 35%);
+        font-size: 12px;
+    }
+    .ty-grid-list__item-description div {
+        font-size: 12px;
+    }
+    .ty-price-num {
+        font-size: 17px;
+        color: darken(#ed1c24, 20%);
+    }
+    .ty-grid-list__item-title {
+        font-weight: bold;
+    }
+    .ty-grid-list__price {
+        max-width: none;
+        width: auto;
+        margin-top: 0;
+        height: 20px;
+        float: none;
+        display: inline;
+    }
+    .ty-grid-list__item-name {
+        width: auto;
+        display: inline;
+        padding: 0;
+    }
+}
+@media (min-width: 420px) {
+.ty-grid-list__item-wrapper-extended {
+    .ty-discount-label {
+        right: 5px;
+    }
+    .ty-grid-list__item {
+        border: 1px solid #ebebeb;
+        background: transparent;
+    }
+    .ty-grid-list__image {
+        border: none;
+        display: inline-block;
+        float: left;
+    }
+    .ty-grid-list__item-info {
+        width: auto;
+        display: block;
+        vertical-align: top;
+        padding: 5px 2px 2px;
+        background: transparent;
+    }
+}
+}
 
 /*.ty-player-details .ty-grid-list__item {
     margin: 0 10px 10px;
@@ -2146,11 +2248,11 @@ table.ty-cart-content {
 }
 .ty-grid-list__item-title {
     display: block;
-    height: 30px;
-    line-height: 15px;
+    height: 39px;
+    line-height: 13px;
     overflow: hidden;
-    font-size: 14px;
-    margin-bottom: 10px;
+    font-size: 13px;
+    margin-bottom: 0;
 }
 .ty-grid-list__price .ty-price-update {
     float: left;
@@ -2389,6 +2491,7 @@ table.ty-cart-content {
     font-weight: bold;
     display: inline-block;
     width: 100%;
+    line-height: 25px;
 }
 .ty-product-switcher {
     top: 10px;
@@ -2661,7 +2764,7 @@ table.ty-cart-content {
     width: 220px;
     display: block;
 }
-.grid-list .ty-column4 {
+.grid-list .ty-column4, .grid-list .ty-column2, .grid-list .ty-column3 {
     margin: 0;
 }
 .ty-pagination-sorting, .ty-pagination__bottom {

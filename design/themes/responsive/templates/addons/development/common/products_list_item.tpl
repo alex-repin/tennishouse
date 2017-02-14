@@ -52,7 +52,7 @@
     <div class="ty-grid-list__item-info">
         {hook name="products:product_multicolumns_list_item_info"}
         <div class="ty-grid-list__item-name">
-            {if $mode == 'R'}
+            {if $mode == 'R' && !$extended}
                 <div class="ty-product-series">{$product.subtitle}</div>
             {/if}
             <div class="ty-grid-list__item-title">
@@ -60,7 +60,19 @@
                 {$smarty.capture.$name nofilter}
             </div>
         </div>
+        {if $extended}
+        <div class="ty-grid-list__item-description">
+            {assign var="name" value="prod_descr_`$obj_id`"}
+            {$smarty.capture.$name nofilter}
+        </div>
+        <div class="ty-grid-list__item-features">
+            {foreach from=$product.description_features item="feature"}
+                <div class="ty-grid-list__item-feature">{$feature.description}: {$feature.variants}</div>
+            {/foreach}
+        </div>
+        {/if}
 
+        {hook name="products:product_multicolumns_list_item_price"}
         <div class="ty-grid-list__price {if $product.price == 0}ty-grid-list__no-price{/if}">
             {assign var="old_price" value="old_price_`$obj_id`"}
             {if $mode == 'R' && $smarty.capture.$old_price|trim}{$smarty.capture.$old_price nofilter}{/if}
@@ -74,8 +86,9 @@
             {assign var="list_discount" value="list_discount_`$obj_id`"}
             {$smarty.capture.$list_discount nofilter}
         </div>
-        
-        <div class="ty-grid-list__control">
+        {/hook}
+   
+        {*<div class="ty-grid-list__control">
             {if $settings.Appearance.enable_quick_view == 'Y'}
                 {include file="views/products/components/quick_view_link.tpl" quick_nav_ids=$quick_nav_ids}
             {/if}
@@ -86,7 +99,7 @@
                     {$smarty.capture.$add_to_cart nofilter}
                 </div>
             {/if}
-        </div>
+        </div>*}
         {/hook}
     </div>
     

@@ -644,18 +644,12 @@ function fn_development_get_category_data_post($category_id, $field_list, $get_m
             fn_format_categorization($category_data, $categorization_data, 'subtabs_categorization');
             fn_format_categorization($category_data, $categorization_data, 'sections_categorization');
         }
-        $data = fn_get_category_global_data($category_data, array('note_url', 'note_text', 'products_sorting', 'canonical'));
-        if (empty($category_data['canonical']) && !empty($data['canonical'])) {
-            $category_data['canonical'] = $data['canonical'];
-        }
-        if (empty($category_data['note_url']) && !empty($data['note_url'])) {
-            $category_data['note_url'] = $data['note_url'];
-        }
-        if (empty($category_data['note_text']) && !empty($data['note_text'])) {
-            $category_data['note_text'] = $data['note_text'];
-        }
-        if (empty($category_data['products_sorting']) && !empty($data['products_sorting'])) {
-            $category_data['products_sorting'] = $data['products_sorting'];
+        $data_array = array('note_url', 'note_text', 'products_sorting', 'canonical', 'default_layout', 'selected_layouts', 'product_columns');
+        $data = fn_get_category_global_data($category_data, $data_array);
+        foreach ($data_array as $i => $f_name) {
+            if (empty($category_data[$f_name]) && !empty($data[$f_name])) {
+                $category_data[$f_name] = $data[$f_name];
+            }
         }
     }
     if (!empty($category_data['sections_categorization'])) {
@@ -882,12 +876,13 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
         
         if (!empty($params['get_title_features'])) {
             $condition = db_quote("f.display_on_catalog = 'Y' AND f.status = 'A' AND IF(f.parent_id, (SELECT status FROM ?:product_features as df WHERE df.feature_id = f.parent_id), 'A') = 'A' ?p AND (v.variant_id != 0 OR (f.feature_type != 'C' AND v.value != '') OR (f.feature_type = 'C') OR v.value_int != '') AND v.lang_code = ?s", db_quote(" AND (?p)", implode('OR', $features_condition)), CART_LANGUAGE);
-            $fields = db_quote("f.feature_type, v.variant_id, v.feature_id, GROUP_CONCAT(vd.variant SEPARATOR ',') as variants, v.product_id, gf.position as gposition");
+            $fields = db_quote("f.feature_type, fd.description, v.variant_id, v.feature_id, GROUP_CONCAT(vd.variant SEPARATOR ',') as variants, v.product_id, gf.position as gposition");
             $join = db_quote(
-                "LEFT JOIN ?:product_features_values as v ON v.feature_id = f.feature_id "
+                " LEFT JOIN ?:product_features_descriptions as fd ON fd.feature_id = f.feature_id AND fd.lang_code = ?s"
+                . " LEFT JOIN ?:product_features_values as v ON v.feature_id = f.feature_id"
                 . " LEFT JOIN ?:product_feature_variant_descriptions as vd ON vd.variant_id = v.variant_id AND vd.lang_code = ?s"
                 . " LEFT JOIN ?:product_features as gf ON gf.feature_id = f.parent_id AND gf.feature_type = ?s ",
-                CART_LANGUAGE, 'G');
+                CART_LANGUAGE, CART_LANGUAGE, 'G');
             $products_features = db_get_hash_multi_array("SELECT $fields FROM ?:product_features as f $join WHERE $condition GROUP BY v.product_id, v.feature_id ORDER BY f.position", array('product_id', 'feature_id'));
             $brands = fn_get_product_feature_data(BRAND_FEATURE_ID, true, true);
         }
@@ -922,6 +917,12 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                     $product['brand'] = $brands['variants'][$products_features[$product['product_id']][BRAND_FEATURE_ID]['variant_id']];
                     if ($product['type'] == 'R') {
                         $product['subtitle'] = __("type") .  ' - ' .  $products_features[$product['product_id']][TYPE_FEATURE_ID]['variants'];
+                        $product['description_features'] = array();
+                        foreach ($products_features[$product['product_id']] as $f_id => $ft) {
+                            if (in_array($f_id, array(R_HEADSIZE_FEATURE_ID, R_WEIGHT_FEATURE_ID, TYPE_FEATURE_ID))) {
+                                $product['description_features'][] = $ft;
+                            }
+                        }
 //                         if (!empty($variants)) {
 //                             $product['subtitle'] = __("series") .  ' - ' .  reset($variants);
 //                         } else {
