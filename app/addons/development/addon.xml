@@ -947,8 +947,8 @@
         <item lang="ru" id="get_discount_now">Получить скидку сейчас !</item>
         <item lang="ru" id="get_product_review_reward_points"><![CDATA[<div class="ty-product-review-rp-text"><p>Для того, чтобы получить скидку на заказ нужно:</p><ol><li>Создать профиль: <a href="https://www.tennishouse.ru/profiles-add/" target="_blank">Регистрация</a></li><li>Оставить отзыв на любой товар из категорий: <a href="http://www.tennishouse.ru/tennis-rackets/" target="_blank">Ракетки</a>, <a href="http://www.tennishouse.ru/tennis-balls/" target="_blank">Мячи</a>, <a href="http://www.tennishouse.ru/tennis-strings/" target="_blank">Струны</a>, <a href="http://www.tennishouse.ru/tennis-shoes/" target="_blank">Обувь</a>, <a href="http://www.tennishouse.ru/ball-machines/" target="_blank">Пушки</a>, <a href="http://www.tennishouse.ru/stringing-machines/" target="_blank">Станки</a>, <a href="http://www.tennishouse.ru/overgrips-grips/overgrips/" target="_blank">Овергрипы</a></li><li>Скидка в [amount]руб. будет сразу же автоматически добавлена в заказ</li><li>Вы можете оставлять до [limit] отзывов за [limit_month] мес. и получать скидки на заказы.</li></ol><p>ВНИМАНИЕ. Отзывы будут приняты только, если они информативны и полезны для других покупателей. Отзывы, которые не соответствуют этому критерию, будут удалены, а скидка в заказе аннулирована.</p></div>]]></item>
         <item lang="ru" id="thank_you_for_review">Спасибо за отзыв !</item>
-        <item lang="ru" id="has_description">Есть полное описание</item>
-        <item lang="ru" id="has_description_short">Есть краткое описание</item>
+        <item lang="ru" id="has_full_description">Есть полное описание</item>
+        <item lang="ru" id="has_short_description">Есть краткое описание</item>
         <item lang="ru" id="grid_extended">Секция расширенная</item>
     </language_variables>
 </addon>

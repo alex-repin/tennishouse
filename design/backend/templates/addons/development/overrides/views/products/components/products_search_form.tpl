@@ -201,12 +201,22 @@
 <div class="row-fluid">
     <div class="group span6 form-horizontal">
         <div class="control-group">
-            <label class="control-label" for="has_description">{__("has_description")}</label>
+            <label class="control-label" for="has_description">{__("has_full_description")}</label>
             <div class="controls">
             <select name="has_description" id="has_description">
                 <option value="">--</option>
                 <option value="Y" {if $search.has_description == "Y"}selected="selected"{/if}>{__("yes")}</option>
                 <option value="N" {if $search.has_description == "N"}selected="selected"{/if}>{__("no")}</option>
+            </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="has_sdescription">{__("has_short_description")}</label>
+            <div class="controls">
+            <select name="has_sdescription" id="has_sdescription">
+                <option value="">--</option>
+                <option value="Y" {if $search.has_sdescription == "Y"}selected="selected"{/if}>{__("yes")}</option>
+                <option value="N" {if $search.has_sdescription == "N"}selected="selected"{/if}>{__("no")}</option>
             </select>
             </div>
         </div>

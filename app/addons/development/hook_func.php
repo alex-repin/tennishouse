@@ -1155,6 +1155,9 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
     if (!empty($params['has_description'])) {
         $condition .= db_quote(" AND IF(?s = 'Y', descr1.full_description != '', descr1.full_description = '')", $params['has_description']);
     }
+    if (!empty($params['has_sdescription'])) {
+        $condition .= db_quote(" AND IF(?s = 'Y', descr1.short_description != '', descr1.short_description = '')", $params['has_sdescription']);
+    }
     if (!empty($params['warehouse_id'])) {
         $condition .= db_quote(" AND (products.warehouse_ids LIKE ?l OR products.warehouse_ids LIKE ?l OR products.warehouse_ids LIKE ?l OR products.warehouse_ids LIKE ?l)", $params['warehouse_id'], $params['warehouse_id'] . ',%', '%,' . $params['warehouse_id'], '%,' . $params['warehouse_id'] . ',%');
     }

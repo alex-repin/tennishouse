@@ -139,6 +139,14 @@
                             <textarea id="elm_product_full_descr" name="product_data[full_description]" cols="55" rows="8" class="cm-wysiwyg input-large">{$product_data.full_description}</textarea>
                         </div>
                     </div>
+                    <div class="control-group {$no_hide_input_if_shared_product}">
+                        <label class="control-label" for="elm_product_short_descr">{__("short_description")}:</label>
+                        <div class="controls">
+                            <textarea id="elm_product_short_descr" name="product_data[short_description]" maxlength="160" cols="55" rows="2" class="input-large">{$product_data.short_description}</textarea>
+                            {include file="buttons/update_for_all.tpl" display=$show_update_for_all object_id="short_description" name="update_all_vendors[short_description]"}
+                        </div>
+                    </div>
+
                     {** /General info section **}
 
                     {if !$product_data}
@@ -404,14 +412,6 @@
                     </div>
 
                     {include file="views/localizations/components/select.tpl" data_from=$product_data.localization data_name="product_data[localization]"}
-
-                    <div class="control-group {$no_hide_input_if_shared_product}">
-                        <label class="control-label" for="elm_product_short_descr">{__("short_description")}:</label>
-                        <div class="controls">
-                            <textarea id="elm_product_short_descr" name="product_data[short_description]" maxlength="180" cols="55" rows="2" class="input-large">{$product_data.short_description}</textarea>
-                            {include file="buttons/update_for_all.tpl" display=$show_update_for_all object_id="short_description" name="update_all_vendors[short_description]"}
-                        </div>
-                    </div>
 
                     <div class="control-group">
                         <label class="control-label" for="elm_product_popularity">{__("popularity")}:</label>
