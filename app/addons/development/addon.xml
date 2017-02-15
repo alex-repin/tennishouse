@@ -950,5 +950,6 @@
         <item lang="ru" id="has_full_description">Есть полное описание</item>
         <item lang="ru" id="has_short_description">Есть краткое описание</item>
         <item lang="ru" id="grid_extended">Секция расширенная</item>
+        <item lang="ru" id="hide_out_of_stock">Спрятать товары, которых нет в наличии</item>
     </language_variables>
 </addon>

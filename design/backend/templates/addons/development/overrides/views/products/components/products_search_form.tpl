@@ -179,12 +179,13 @@
         {/foreach}
     {/if}
     {if !$have_amount_filter}
-    <div class="control-group">
-        <label class="control-label" for="amount_from">{__("quantity")}:</label>
-        <div class="controls">
-            <input type="text" name="amount_from" id="amount_from" value="{$search.amount_from}" onfocus="this.select();" class="input-mini" /> - <input type="text" name="amount_to" value="{$search.amount_to}" onfocus="this.select();" class="input-mini" />
+        <div class="control-group">
+            <label class="control-label" for="hide_out_of_stock">{__("hide_out_of_stock")}</label>
+            <div class="controls">
+                <input type="hidden" name="hide_out_of_stock" value="N" />
+                <input type="checkbox" value="Y"{if $search.hide_out_of_stock == "Y"} checked="checked"{/if} name="hide_out_of_stock" />
+            </div>
         </div>
-    </div>
     {/if}
 
     {hook name="companies:products_advanced_search"}

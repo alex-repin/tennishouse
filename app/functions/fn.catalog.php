@@ -7606,9 +7606,9 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
 //     }
 
     // Cut off out of stock products
-    if (Registry::get('settings.General.inventory_tracking') == 'Y' && // FIXME? Registry in model
+    if ((Registry::get('settings.General.inventory_tracking') == 'Y' && // FIXME? Registry in model
         Registry::get('settings.General.show_out_of_stock_products') == 'N' &&
-        $params['area'] == 'C' && empty($params['show_out_of_stock'])
+        $params['area'] == 'C' && empty($params['show_out_of_stock']) || ($params['area'] == 'A' && isset($params['hide_out_of_stock']) && $params['hide_out_of_stock'] == 'Y'))
     ) {
         $condition .= db_quote(
             " AND (CASE products.tracking
@@ -7865,30 +7865,6 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
     }
 
     $products = db_get_array("SELECT $calc_found_rows " . implode(', ', $fields) . " FROM ?:products as products $join WHERE 1 $condition GROUP BY $group_by $having $sorting $limit");
-
-    foreach ($products as $k => $v) {
-        if (!empty($products[$k]['wh_inventory'])) {
-            $amounts = explode('|', $products[$k]['wh_inventory']);
-            $amount = 0;
-            foreach ($amounts as $kk => $amnt) {
-                $tmp = explode('_', $amnt);
-                if (count($tmp) == 2) {
-                    $amount += $tmp[1];
-                }
-            }
-            $products[$k]['amount'] = $amount;
-            
-            if (isset($params['amount_from']) && fn_is_numeric($params['amount_from']) && $products[$k]['amount'] < $params['amount_from']) {
-                unset($products[$k]);
-                continue;
-            }
-
-            if (isset($params['amount_to']) && fn_is_numeric($params['amount_to']) && $products[$k]['amount'] > $params['amount_to']) {
-                unset($products[$k]);
-                continue;
-            }
-        }
-    }
 
     if (!empty($params['items_per_page'])) {
         $params['total_items'] = !empty($total)? $total : db_get_found_rows();
