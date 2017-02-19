@@ -7866,6 +7866,20 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
 
     $products = db_get_array("SELECT $calc_found_rows " . implode(', ', $fields) . " FROM ?:products as products $join WHERE 1 $condition GROUP BY $group_by $having $sorting $limit");
 
+    foreach ($products as $k => $v) {
+        if (!empty($products[$k]['wh_inventory'])) {
+            $amounts = explode('|', $products[$k]['wh_inventory']);
+            $amount = 0;
+            foreach ($amounts as $kk => $amnt) {
+                $tmp = explode('_', $amnt);
+                if (count($tmp) == 2) {
+                    $amount += $tmp[1];
+                }
+            }
+            $products[$k]['amount'] = $amount;
+        }
+    }
+    
     if (!empty($params['items_per_page'])) {
         $params['total_items'] = !empty($total)? $total : db_get_found_rows();
     } else {
