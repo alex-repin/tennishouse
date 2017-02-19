@@ -29,6 +29,9 @@ class Backend extends ACommon
      */
     public function prepare(&$params)
     {
+        // GC
+        db_query("DELETE FROM ?:views WHERE active = 'N' AND timestamp < ?i", (TIME - SECONDS_IN_DAY * 30));
+        
         if (!empty($params['return_to_list']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
         $params['redirect_url'] = $this->_controller . '.' . (empty($this->_schema['list_mode']) ? 'manage' : $this->_schema['list_mode']) . '.last_view';
             if ($this->_controller == 'profiles' && !empty($params['user_type'])) {
@@ -85,7 +88,8 @@ class Backend extends ACommon
                         'object' => 'lv_' . $this->_controller,
                         'params' => serialize($_params),
                         'view_results' => serialize(array('items_ids' => array(), 'total_pages' => 0, 'items_per_page' => 0, 'total_items' => 0)),
-                        'user_id' => $this->_auth['user_id']
+                        'user_id' => $this->_auth['user_id'],
+                        'timestamp' => TIME
                     );
                     $this->_updateCurrentView($data);
                 }
@@ -94,6 +98,7 @@ class Backend extends ACommon
                     $data = array (
                         'params' => serialize($_params),
                         'view_results' => serialize(array('items_ids' => array(), 'total_pages' => 0, 'items_per_page' => 0, 'total_items' => 0)),
+                        'timestamp' => TIME
                     );
                     $this->_updateCurrentView($data);
                 }
@@ -211,7 +216,8 @@ class Backend extends ACommon
                 'object' => $object,
                 'name' => $name,
                 'params' => serialize($params),
-                'user_id' => $this->_auth['user_id']
+                'user_id' => $this->_auth['user_id'],
+                'timestamp' => TIME
             );
 
             if ($update_view_id) {

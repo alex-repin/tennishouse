@@ -9243,6 +9243,7 @@ function fn_clone_product($product_id)
     // Clone main data
     $data = db_get_row("SELECT * FROM ?:products WHERE product_id = ?i", $product_id);
     unset($data['product_id']);
+    unset($data['likes']);
     $data['status'] = 'D';
     $data['timestamp'] = $data['updated_timestamp'] = time();
     $pid = db_query("INSERT INTO ?:products ?e", $data);

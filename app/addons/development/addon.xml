@@ -470,6 +470,9 @@
         <item>
             ALTER TABLE `cscart_discussion_posts` ADD `is_rewarded` CHAR(1) NOT NULL DEFAULT 'N';
         </item>
+        <item>
+            ALTER TABLE `cscart_views` ADD `timestamp` INT(11) UNSIGNED NOT NULL DEFAULT '0';
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
