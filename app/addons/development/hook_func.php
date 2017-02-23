@@ -1507,46 +1507,48 @@ function fn_development_update_product_post($product_data, $product_id, $lang_co
         }
     }
     
-    if ($create) {
-        $_data = array(
-            'warehouse_hash' => fn_generate_cart_id($product_id, array('warehouse_id' => TH_WAREHOUSE_ID)),
-            'warehouse_id' => TH_WAREHOUSE_ID,
-            'product_id' => $product_id,
-            'amount' => $product_data['warehouse_inventory']
-        );
-        db_query("REPLACE ?:product_warehouses_inventory ?e", $_data);
-        
-    } elseif (isset($product_data['warehouse_inventory'])) {
-        foreach ($product_data['warehouse_inventory'] as $wh_hash => $wh_data) {
-            db_query("UPDATE ?:product_warehouses_inventory SET ?u WHERE warehouse_hash = ?i", $wh_data, $wh_hash);
-        }
-    }
-    
-    $warehouse_ids = explode(',', $product_data['warehouse_ids']);
-    db_query("DELETE FROM ?:product_warehouses_inventory WHERE warehouse_id NOT IN (?a) AND product_id = ?i", $warehouse_ids, $product_id);
-    
-    $to_add = array_diff($warehouse_ids, db_get_fields("SELECT warehouse_id FROM ?:product_warehouses_inventory WHERE product_id = ?i AND combination_hash = '0'", $product_id));
-    if (!empty($to_add)) {
-        $combinations = db_get_array("SELECT * FROM ?:product_options_inventory WHERE product_id = ?i", $product_id);
-        foreach ($to_add as $i => $wh_id) {
+    if (isset($product_data['warehouse_inventory']) && isset($product_data['warehouse_ids'])) { // to exclude products list update
+        if ($create) {
             $_data = array(
-                'warehouse_hash' => fn_generate_cart_id($product_id, array('warehouse_id' => $wh_id)),
-                'warehouse_id' => $wh_id,
+                'warehouse_hash' => fn_generate_cart_id($product_id, array('warehouse_id' => TH_WAREHOUSE_ID)),
+                'warehouse_id' => TH_WAREHOUSE_ID,
                 'product_id' => $product_id,
-                'amount' => 0
+                'amount' => $product_data['warehouse_inventory']
             );
             db_query("REPLACE ?:product_warehouses_inventory ?e", $_data);
-            if (!empty($combinations)) {
-                foreach ($combinations as $k => $combination) {
-                    $options = fn_get_product_options_by_combination($combination['combination']);
-                    $_data = array(
-                        'warehouse_hash' => fn_generate_cart_id($product_id, array('product_options' => $options, 'warehouse_id' => $wh_id)),
-                        'warehouse_id' => $wh_id,
-                        'product_id' => $product_id,
-                        'combination_hash' => $combination['combination_hash'],
-                        'amount' => 0
-                    );
-                    db_query("REPLACE ?:product_warehouses_inventory ?e", $_data);
+            
+        } elseif (isset($product_data['warehouse_inventory'])) {
+            foreach ($product_data['warehouse_inventory'] as $wh_hash => $wh_data) {
+                db_query("UPDATE ?:product_warehouses_inventory SET ?u WHERE warehouse_hash = ?i", $wh_data, $wh_hash);
+            }
+        }
+        
+        $warehouse_ids = explode(',', $product_data['warehouse_ids']);
+        db_query("DELETE FROM ?:product_warehouses_inventory WHERE warehouse_id NOT IN (?a) AND product_id = ?i", $warehouse_ids, $product_id);
+        
+        $to_add = array_diff($warehouse_ids, db_get_fields("SELECT warehouse_id FROM ?:product_warehouses_inventory WHERE product_id = ?i AND combination_hash = '0'", $product_id));
+        if (!empty($to_add)) {
+            $combinations = db_get_array("SELECT * FROM ?:product_options_inventory WHERE product_id = ?i", $product_id);
+            foreach ($to_add as $i => $wh_id) {
+                $_data = array(
+                    'warehouse_hash' => fn_generate_cart_id($product_id, array('warehouse_id' => $wh_id)),
+                    'warehouse_id' => $wh_id,
+                    'product_id' => $product_id,
+                    'amount' => 0
+                );
+                db_query("REPLACE ?:product_warehouses_inventory ?e", $_data);
+                if (!empty($combinations)) {
+                    foreach ($combinations as $k => $combination) {
+                        $options = fn_get_product_options_by_combination($combination['combination']);
+                        $_data = array(
+                            'warehouse_hash' => fn_generate_cart_id($product_id, array('product_options' => $options, 'warehouse_id' => $wh_id)),
+                            'warehouse_id' => $wh_id,
+                            'product_id' => $product_id,
+                            'combination_hash' => $combination['combination_hash'],
+                            'amount' => 0
+                        );
+                        db_query("REPLACE ?:product_warehouses_inventory ?e", $_data);
+                    }
                 }
             }
         }

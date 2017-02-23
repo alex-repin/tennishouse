@@ -2040,7 +2040,9 @@ function fn_rebuild_product_options_inventory_multi($product_ids, $products_opti
 
             fn_set_hook('look_through_variants_post', $combinations, $product_id, $amount, $options, $variants);
             
-            $delete_combinations = array_merge($delete_combinations, array_diff(array_keys($inventory_data[$product_id]), $hashes));
+            if (!empty($inventory_data[$product_id])) {
+                $delete_combinations = array_merge($delete_combinations, array_diff(array_keys($inventory_data[$product_id]), $hashes));
+            }
 
             fn_set_hook('rebuild_product_options_inventory_post', $product_id);
         }
