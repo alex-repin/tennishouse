@@ -83,8 +83,8 @@
             {/if}
         </div>
     </div>
-    <div class="ty-player__share-buttons">
+    {*<div class="ty-player__share-buttons">
         {include file="addons/development/common/share_buttons.tpl" title=$player_data.player description=__("player_share_buttons_description") image=$player_data.main_pair}
-    </div>
+    </div>*}
     </div>
 </div>

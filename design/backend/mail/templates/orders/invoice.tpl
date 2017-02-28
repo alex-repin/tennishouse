@@ -16,22 +16,21 @@
     <td align="center" style="width: 100%; height: 100%;">
     <table cellpadding="0" cellspacing="0" border="0" style=" width: 620px; table-layout: fixed; margin: 24px 0 24px 0;">
     <tr>
-        <td style="background-color: #ffffff; border: 1px solid #e6e6e6; margin: 0px auto 0px auto; padding: 0px 44px 0px 46px; text-align: left;">
-            <table cellpadding="0" cellspacing="0" border="0" width="100%" style="padding: 27px 0px 0px 0px; border-bottom: 1px solid #868686; margin-bottom: 8px;">
+        <td style="background-color: #ffffff; border: 1px solid #e6e6e6; margin: 0px auto 0px auto; padding: 0px 16px 0px 18px; text-align: left;">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%" style="padding: 10px 0px 0px 0px; border-bottom: 1px solid #868686; margin-bottom: 8px;">
             <tr>
                 <td align="left" style="padding-bottom: 3px;" valign="middle"><img src="{$logos.mail.image.image_path}" width="{$logos.mail.image.image_x}" height="{$logos.mail.image.image_y}" border="0" alt="{$logos.mail.image.alt}" /></td>
                 <td width="100%" valign="bottom" style="text-align: right;  font: bold 26px Arial; text-transform: uppercase;  margin: 0px;">{$order_header|default:__("invoice_title")}</td>
             </tr>
             </table>
 
+            <h2 style="font: bold 17px Tahoma; margin: 0px;">{if $doc_id_text}{$doc_id_text} <br />{/if}{__("order")}&nbsp;#{$order_info.order_id}</h2>
             <table cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr valign="top">
                 {hook name="orders:invoice_company_info"}
-                <td style="width: 50%; padding: 14px 0px 0px 2px; font-size: 12px; font-family: Arial;">
+                <td style="width: 40%; padding: 14px 0px 0px 2px; font-size: 12px; font-family: Arial;">
                     <h2 style="font: bold 12px Arial; margin: 0px 0px 3px 0px;">{$company_data.company_name}</h2>
-                    {$company_data.company_address}<br />
-                    {$company_data.company_city}{if $company_data.company_city && ($company_data.company_state_descr || $company_data.company_zipcode)},{/if} {$company_data.company_state_descr} {$company_data.company_zipcode}<br />
-                    {$company_data.company_country_descr}
+                    {if $company_data.company_address}{$company_data.company_address}, {/if}{$company_data.company_city}{if $company_data.company_city && ($company_data.company_state_descr || $company_data.company_zipcode)},{/if} {*$company_data.company_state_descr} {$company_data.company_zipcode}, *}{$company_data.company_country_descr}
                     <table cellpadding="0" cellspacing="0" border="0">
                     {if $company_data.company_phone}
                     <tr valign="top">
@@ -67,8 +66,7 @@
                 </td>
                 {/hook}
                 {hook name="orders:invoice_order_status_info"}
-                <td style="padding-top: 14px;">
-                    <h2 style="font: bold 17px Tahoma; margin: 0px;">{if $doc_id_text}{$doc_id_text} <br />{/if}{__("order")}&nbsp;#{$order_info.order_id}</h2>
+                <td style="padding-top: 0;">
                     <table cellpadding="0" cellspacing="0" border="0">
                     <tr valign="top">
                         <td style="font-size: 12px; font-family: verdana, helvetica, arial, sans-serif; text-transform: uppercase; color: #000000; padding-right: 10px; white-space: nowrap;">{__("status")}:</td>
@@ -121,18 +119,18 @@
             {assign var="profile_fields" value='I'|fn_get_profile_fields}
             {/if}
             {if $profile_fields}
-            <table cellpadding="0" cellspacing="0" border="0" width="100%" style="padding: 32px 0px 24px 0px;">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%" style="padding: 7px 0px 10px 0px;">
             <tr valign="top">
                 {if $profile_fields.C}
                 {assign var="profields_c" value=$profile_fields.C|fn_fields_from_multi_level:"field_name":"field_id"}
                 <td width="33%" style="font-size: 12px; font-family: Arial;">
                     <h3 style="font: bold 17px Tahoma; padding: 0px 0px 3px 1px; margin: 0px;">{__("customer")}:</h3>
-                    <p style="margin: 2px 0px 3px 0px;">{if $profields_c.firstname}{$order_info.firstname}&nbsp;{/if}{if $profields_c.lastname}{$order_info.lastname}{/if}</p>
-                    {if $profields_c.email}<p style="margin: 2px 0px 3px 0px;"><a href="mailto:{$order_info.email|escape:url}">{$order_info.email}</a></p>{/if}
-                    {if $profields_c.phone}<p style="margin: 2px 0px 3px 0px;"><span style="text-transform: uppercase;">{__("phone")}:</span>&nbsp;{$order_info.phone}</p>{/if}
-                    {if $profields_c.fax && $order_info.fax}<p style="margin: 2px 0px 3px 0px;"><span style="text-transform: uppercase;">{__("fax")}:</span>&nbsp;{$order_info.fax}</p>{/if}
-                    {if $profields_c.company && $order_info.company}<p style="margin: 2px 0px 3px 0px;"><span style="text-transform: uppercase;">{__("company")}:</span>&nbsp;{$order_info.company}</p>{/if}
-                    {if $profields_c.url && $order_info.url}<p style="margin: 2px 0px 3px 0px;"><span style="text-transform: uppercase;">{__("url")}:</span>&nbsp;{$order_info.url}</p>{/if}
+                    <p style="margin: 0;">{if $profields_c.firstname}{$order_info.firstname}&nbsp;{/if}{if $profields_c.lastname}{$order_info.lastname}{/if}</p>
+                    {if $profields_c.email}<p style="margin: 0;"><a href="mailto:{$order_info.email|escape:url}">{$order_info.email}</a></p>{/if}
+                    {if $profields_c.phone}<p style="margin: 0;"><span style="text-transform: uppercase;">{__("phone")}:</span>&nbsp;{$order_info.phone}</p>{/if}
+                    {if $profields_c.fax && $order_info.fax}<p style="margin: 0;"><span style="text-transform: uppercase;">{__("fax")}:</span>&nbsp;{$order_info.fax}</p>{/if}
+                    {if $profields_c.company && $order_info.company}<p style="margin: 0;"><span style="text-transform: uppercase;">{__("company")}:</span>&nbsp;{$order_info.company}</p>{/if}
+                    {if $profields_c.url && $order_info.url}<p style="margin: 0;"><span style="text-transform: uppercase;">{__("url")}:</span>&nbsp;{$order_info.url}</p>{/if}
                     {include file="profiles/profiles_extra_fields.tpl" fields=$profile_fields.C}
                 </td>
                 {/if}
@@ -141,27 +139,23 @@
                 <td width="34%" style="font-size: 12px; font-family: Arial; {if $profile_fields.S}padding-right: 10px;{/if} {if $profile_fields.C}padding-left: 10px;{/if}">
                     <h3 style="font: bold 17px Tahoma; padding: 0px 0px 3px 1px; margin: 0px;">{__("bill_to")}:</h3>
                     {if $order_info.b_firstname && $profields_b.b_firstname || $order_info.b_lastname && $profields_b.b_lastname}
-                    <p style="margin: 2px 0px 3px 0px;">
+                    <p style="margin: 0;">
                         {if $profields_b.b_firstname}{$order_info.b_firstname} {/if}{if $profields_b.b_lastname}{$order_info.b_lastname}{/if}
                     </p>
                     {/if}
+                    <p style="margin: 0;">
                     {if $order_info.b_address && $profields_b.b_address || $order_info.b_address_2 && $profields_b.b_address_2}
-                    <p style="margin: 2px 0px 3px 0px;">
                         {if $profields_b.b_address}{$order_info.b_address} {/if}{if $profields_b.b_address_2}<br />{$order_info.b_address_2}{/if}
-                    </p>
                     {/if}
                     {if $order_info.b_city && $profields_b.b_city || $order_info.b_state_descr && $profields_b.b_state || $order_info.b_zipcode && $profields_b.b_zipcode}
-                    <p style="margin: 2px 0px 3px 0px;">
                         {if $profields_b.b_city}{$order_info.b_city}{if $profields_b.b_state},{/if} {/if}{if $profields_b.b_state}{$order_info.b_state_descr} {/if}{if $profields_b.b_zipcode}{$order_info.b_zipcode}{/if}
-                    </p>
                     {/if}
                     {if $order_info.b_country_descr && $profields_b.b_country}
-                    <p style="margin: 2px 0px 3px 0px;">
                         {$order_info.b_country_descr}
-                    </p>
                     {/if}
+                    </p>
                     {if $order_info.b_phone && $profields_b.b_phone}
-                    <p style="margin: 2px 0px 3px 0px;">
+                    <p style="margin: 0;">
                         {if $profields_b.b_phone}{$order_info.b_phone} {/if}
                     </p>
                     {/if}
@@ -173,27 +167,23 @@
                 <td width="33%" style="font-size: 12px; font-family: Arial;">
                     <h3 style="font: bold 17px Tahoma; padding: 0px 0px 3px 1px; margin: 0px;">{__("ship_to")}:</h3>
                     {if $order_info.s_firstname && $profields_s.s_firstname || $order_info.s_lastname && $profields_s.s_lastname}
-                    <p style="margin: 2px 0px 3px 0px;">
+                    <p style="margin: 0;">
                         {if $profields_s.s_firstname}{$order_info.s_firstname} {/if}{if $profields_s.s_lastname}{$order_info.s_lastname}{/if}
                     </p>
                     {/if}
+                    <p style="margin: 0;">
                     {if $order_info.s_address && $profields_s.s_address || $order_info.s_address_2 && $profields_s.s_address_2}
-                    <p style="margin: 2px 0px 3px 0px;">
                         {if $profields_s.s_address}{$order_info.s_address} {/if}{if $profields_s.s_address_2}<br />{$order_info.s_address_2}{/if}
-                    </p>
                     {/if}
                     {if $order_info.s_city && $profields_s.s_city || $order_info.s_state_descr && $profields_s.s_state || $order_info.s_zipcode && $profields_s.s_zipcode}
-                    <p style="margin: 2px 0px 3px 0px;">
                         {if $profields_s.s_city}{$order_info.s_city}{if $profields_s.s_state},{/if} {/if}{if $profields_s.s_state}{$order_info.s_state_descr} {/if}{if $profields_s.s_zipcode}{$order_info.s_zipcode}{/if}
-                    </p>
                     {/if}
                     {if $order_info.s_country_descr && $profields_s.s_country}
-                    <p style="margin: 2px 0px 3px 0px;">
                         {$order_info.s_country_descr}
-                    </p>
                     {/if}
+                    </p>
                     {if $order_info.s_phone && $profields_s.s_phone}
-                    <p style="margin: 2px 0px 3px 0px;">
+                    <p style="margin: 0;">
                         {if $profields_s.s_phone}{$order_info.s_phone} {/if}
                     </p>
                     {/if}
@@ -209,40 +199,40 @@
         
             {* Ordered products *}
             
-            <table width="100%" cellpadding="0" cellspacing="1" style="background-color: #dddddd;">
+            <table width="100%" cellpadding="0" cellspacing="1" style="background-color: #dddddd;border: 1px solid #868686;border-spacing: 0;border-collapse: collapse;">
             <tr>
-                <th width="70%" style="background-color: #eeeeee; padding: 6px 10px; white-space: nowrap; font-size: 12px; font-family: Arial;">{__("product")}</th>
-                <th style="background-color: #eeeeee; padding: 6px 10px; white-space: nowrap; font-size: 12px; font-family: Arial;">{__("quantity")}</th>
-                <th style="background-color: #eeeeee; padding: 6px 10px; white-space: nowrap; font-size: 12px; font-family: Arial;">{__("unit_price")}</th>
+                <th width="70%" style="background-color: #eeeeee; padding: 6px 10px; white-space: nowrap; font-size: 12px; font-family: Arial;border-right: 1px solid #868686;border-bottom: 1px solid #868686;">{__("product")}</th>
+                <th style="background-color: #eeeeee; padding: 6px 10px; white-space: nowrap; font-size: 12px; font-family: Arial;border-right: 1px solid #868686;border-bottom: 1px solid #868686;">{__("quantity")}</th>
+                <th style="background-color: #eeeeee; padding: 6px 10px; white-space: nowrap; font-size: 12px; font-family: Arial;border-right: 1px solid #868686;border-bottom: 1px solid #868686;">{__("unit_price")}</th>
                 {if $order_info.use_discount}
-                    <th style="background-color: #eeeeee; padding: 6px 10px; white-space: nowrap; font-size: 12px; font-family: Arial;">{__("discount")}</th>
+                    <th style="background-color: #eeeeee; padding: 6px 10px; white-space: nowrap; font-size: 12px; font-family: Arial;border-right: 1px solid #868686;border-bottom: 1px solid #868686;">{__("discount")}</th>
                 {/if}
                 {if $order_info.taxes && $settings.General.tax_calculation != "subtotal"}
-                    <th style="background-color: #eeeeee; padding: 6px 10px; white-space: nowrap; font-size: 12px; font-family: Arial;">{__("tax")}</th>
+                    <th style="background-color: #eeeeee; padding: 6px 10px; white-space: nowrap; font-size: 12px; font-family: Arial;border-right: 1px solid #868686;border-bottom: 1px solid #868686;">{__("tax")}</th>
                 {/if}
-                <th style="background-color: #eeeeee; padding: 6px 10px; white-space: nowrap; font-size: 12px; font-family: Arial;">{__("subtotal")}</th>
+                <th style="background-color: #eeeeee; padding: 6px 10px; white-space: nowrap; font-size: 12px; font-family: Arial;border-bottom: 1px solid #868686;">{__("subtotal")}</th>
             </tr>
             {foreach from=$order_info.products item="oi"}
             {hook name="orders:items_list_row"}
                 {if !$oi.extra.parent}
                 <tr>
-                    <td style="padding: 5px 10px; background-color: #ffffff; font-size: 12px; font-family: Arial;">
+                    <td style="padding: 2px 10px; background-color: #ffffff; font-size: 12px; font-family: Arial;border-right: 1px solid #868686;border-bottom: 1px solid #868686;">
                         {$oi.product|default:__("deleted_product") nofilter}
                         {hook name="orders:product_info"}
-                        {if $oi.product_code}<p style="margin: 2px 0px 3px 0px;">{__("sku")}: {$oi.product_code}</p>{/if}
+                        {if $oi.product_code}<p style="margin: 0;">{__("sku")}: {$oi.product_code}</p>{/if}
                         {/hook}
                         {if $oi.product_options}{include file="common/options_info.tpl" product_options=$oi.product_options}{/if}
                     </td>
-                    <td style="padding: 5px 10px; background-color: #ffffff; text-align: center; font-size: 12px; font-family: Arial;">{$oi.amount}</td>
-                    <td style="padding: 5px 10px; background-color: #ffffff; text-align: right; font-size: 12px; font-family: Arial;">{if $oi.extra.exclude_from_calculate}{__("free")}{else}{include file="common/price.tpl" value=$oi.original_price}{/if}</td>
+                    <td style="padding: 2px 10px; background-color: #ffffff; text-align: center; font-size: 12px; font-family: Arial;border-right: 1px solid #868686;border-bottom: 1px solid #868686;">{$oi.amount}</td>
+                    <td style="padding: 2px 10px; background-color: #ffffff; text-align: right; font-size: 12px; font-family: Arial;border-right: 1px solid #868686;border-bottom: 1px solid #868686;">{if $oi.extra.exclude_from_calculate}{__("free")}{else}{include file="common/price.tpl" value=$oi.original_price}{/if}</td>
                     {if $order_info.use_discount}
-                    <td style="padding: 5px 10px; background-color: #ffffff; text-align: right; font-size: 12px; font-family: Arial;">{if $oi.extra.discount|floatval}{include file="common/price.tpl" value=$oi.extra.discount}{else}&nbsp;-&nbsp;{/if}</td>
+                    <td style="padding: 2px 10px; background-color: #ffffff; text-align: right; font-size: 12px; font-family: Arial;border-right: 1px solid #868686;border-bottom: 1px solid #868686;">{if $oi.extra.discount|floatval}{include file="common/price.tpl" value=$oi.extra.discount}{else}&nbsp;-&nbsp;{/if}</td>
                     {/if}
                     {if $order_info.taxes && $settings.General.tax_calculation != "subtotal"}
-                        <td style="padding: 5px 10px; background-color: #ffffff; text-align: right; font-size: 12px; font-family: Arial;">{if $oi.tax_value}{include file="common/price.tpl" value=$oi.tax_value}{else}&nbsp;-&nbsp;{/if}</td>
+                        <td style="padding: 2px 10px; background-color: #ffffff; text-align: right; font-size: 12px; font-family: Arial;border-right: 1px solid #868686;border-bottom: 1px solid #868686;">{if $oi.tax_value}{include file="common/price.tpl" value=$oi.tax_value}{else}&nbsp;-&nbsp;{/if}</td>
                     {/if}
         
-                    <td style="padding: 5px 10px; background-color: #ffffff; text-align: right; white-space: nowrap; font-size: 12px; font-family: Arial;"><b>{if $oi.extra.exclude_from_calculate}{__("free")}{else}{include file="common/price.tpl" value=$oi.display_subtotal}{/if}</b>&nbsp;</td>
+                    <td style="padding: 2px 10px; background-color: #ffffff; text-align: right; white-space: nowrap; font-size: 12px; font-family: Arial;border-bottom: 1px solid #868686;"><b>{if $oi.extra.exclude_from_calculate}{__("free")}{else}{include file="common/price.tpl" value=$oi.display_subtotal}{/if}</b>&nbsp;</td>
                 </tr>
                 {/if}
             {/hook}
@@ -345,7 +335,7 @@
                 <td style="font-size: 12px; font-family: Arial;"><strong>{__("notes")}:</strong></td>
             </tr>
             <tr valign="top">
-                <td><div style="overflow-x: auto; clear: both; width: 510px; height: 100%; padding-bottom: 20px; overflow-y: hidden; font-size: 12px; font-family: Arial;">{$order_info.notes|nl2br nofilter}</div></td>
+                <td><div style="overflow-x: auto; clear: both; width: 510px; height: 100%; padding-bottom: 10px; overflow-y: hidden; font-size: 12px; font-family: Arial;">{$order_info.notes|nl2br nofilter}</div></td>
             </tr>
             </table>
             {/if}
