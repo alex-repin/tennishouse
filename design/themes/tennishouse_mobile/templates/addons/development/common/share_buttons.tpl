@@ -23,4 +23,4 @@
 })();
 {/literal}
 </script>
-<div data-user="1981544303" data-title="{$smarty.capture.title|strip|trim nofilter}" data-url="{$config.current_url|fn_url}" data-image="{$image_data.image_path}" class="pluso" data-background="transparent" data-options="medium,round,line,vertical,nocounter,theme=08" data-services="vkontakte,odnoklassniki,facebook,twitter,google,moimir"></div>
+<div data-user="1981544303" data-title="{$smarty.capture.title|strip|trim nofilter}" data-url="{$config.current_url|fn_url}" data-image="{$image_data.image_path}" class="pluso" data-background="transparent" data-options="medium,round,line,vertical,nocounter,theme=08" data-services="vkontakte,odnoklassniki,facebook"></div>

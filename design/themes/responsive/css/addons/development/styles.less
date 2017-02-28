@@ -90,7 +90,6 @@ select {
     margin-top: 1px;
     vertical-align: text-top;
     width: 14px;
-    opacity: 0.5;
 }
 .ty-exception__code {
     background-image: url("../../../media/images/addons/development/silhouette.png");
@@ -421,15 +420,18 @@ input:focus::placeholder, textarea:focus::placeholder {
     color: #fff;
 }
 .tooltip {
-    p, ol li {
+    p, ol li, ul li {
         color: #fff;
         padding: 0px;
     }
-    ol {
-        margin: 10px 0;
+    ol, ul {
+        margin: 10px 0 0 10px;
     }
     ol li {
         list-style-type: decimal;
+    }
+    ul li {
+        list-style-type: disc;
     }
     .ty-product-review-rp-text {
         a {
@@ -466,17 +468,23 @@ input:focus::placeholder, textarea:focus::placeholder {
     padding: 9px;
     text-align: left !important;
 }
-.arrow-top.right .tooltip-arrow {
-    left: 3px;
+.arrow-up.right .tooltip-arrow {
+    left: 10px;
     right: auto;
-    border-width: 10px 10px 0 0;
-    border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
+    border-width: 0 10px 10px 0;
+    border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent;
 }
 .arrow-down.right .tooltip-arrow {
     right: auto;
     top: -10px;
-    left: 3px;
+    left: 10px;
     border-width: 10px 0 0 10px;
+    border-color: transparent transparent transparent rgba(0, 0, 0, 0.8);
+}
+.top.right .tooltip-arrow {
+    right: auto;
+    left: 10px;
+    border-width: 0 0 10px 10px;
     border-color: transparent transparent transparent rgba(0, 0, 0, 0.8);
 }
 .tooltip-ssl .tooltip-content{
@@ -2074,7 +2082,10 @@ table.ty-cart-content {
     font-size: 15px;
     height: 20px;
     padding-left: 25px;
-    background: url("../../../media/images/addons/development/phone.png") no-repeat scroll left center;
+    background-image: url("../../../media/images/addons/development/phone.png");
+    background-position: left center;
+    background-repeat: no-repeat;
+    background-size: contain;
 }
 .ty-product-block__option, .ty-product-block__advanced-option, .ty-product-block__field-group {
     margin: 0;
@@ -2273,7 +2284,12 @@ table.ty-cart-content {
     display: inline;
 }
 .ty-qty-in-stock .icon-question-sign {
-    background: url("../../../media/images/addons/development/exclamation.png") no-repeat scroll;
+    background-image: url("../../../media/images/addons/development/exclamation.png");
+    background-position: left center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 15px;
+    width: 15px;
 }
 .ty-qty-in-stock div {
     color: @in_stock;
@@ -3926,7 +3942,7 @@ and (max-device-width : 480px) {
     position: relative;
     margin: 0 28px;
 }
-.ty-category-tooltip {
+.ty-category-tooltip, .ty-option-tooltip, .ty-filter-tooltip, .ty-feature-tooltip, .ty-reward-tooltip {
     max-width: 500px;
 }
 .ui-icon {
@@ -3954,7 +3970,9 @@ and (max-device-width : 480px) {
     to   {transform: scale(1);}
 }
 .ty-add-to-wish-block {
-    float: right;
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
     .ty-wishlist-likes {
         color: #555555;
         font-size: 14px;
@@ -3995,6 +4013,9 @@ and (max-device-width : 480px) {
     }
     .hidden {
         display: none;
+    }
+    .ty-wishlist-form {
+        display: inline;
     }
     /*.ty-added-to-wish:hover {
         animation-name: change-state;

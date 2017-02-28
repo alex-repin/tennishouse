@@ -33,10 +33,10 @@
                 {/hook}
             </div>
             <div class="ty-product-block__left">
+                <div class="ty-product-detail__buy-section">
                 {assign var="form_open" value="form_open_`$obj_id`"}
                 {$smarty.capture.$form_open nofilter}
 
-                <div class="ty-product-detail__buy-section">
                 {assign var="old_price" value="old_price_`$obj_id`"}
                 {assign var="price" value="price_`$obj_id`"}
                 {assign var="clean_price" value="clean_price_`$obj_id`"}
@@ -147,12 +147,12 @@
                     {$smarty.capture.$list_buttons nofilter}
                 </div>
                 {if $capture_buttons}{/capture}{/if}
-                </div>
                 {assign var="form_close" value="form_close_`$obj_id`"}
                 {$smarty.capture.$form_close nofilter}
 
                 {hook name="products:product_detail_bottom"}
                 {/hook}
+                </div>
             </div>
             {if $show_product_tabs}
                 {include file="views/tabs/components/product_popup_tabs.tpl"}

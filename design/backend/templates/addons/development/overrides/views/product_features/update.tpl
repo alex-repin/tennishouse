@@ -163,7 +163,8 @@
         <div class="control-group">
             <label class="control-label" for="elm_feature_note_text_{$id}">{__("note_text")}</label>
             <div class="controls">
-            <input type="text" name="feature_data[note_text]" value="{$feature.note_text}" id="elm_feature_note_text_{$id}" /></div>
+                <textarea id="elm_feature_note_text_{$id}" name="feature_data[note_text]" cols="55" rows="8" class="input-large cm-wysiwyg input-textarea-long">{$feature.note_text}</textarea>
+            </div>
         </div>
         
         {hook name="product_features:properties"}

@@ -10,7 +10,7 @@
         {foreach from=$splitted_shippings item="sshippings"}
             <div class="bottom-ps-icons-row">
             {foreach from=$sshippings item="shipping" key="shipping_id"}
-                {if $shipping.website}<a href="{$shipping.website}" target="_blank">{/if}{include file="common/image.tpl" obj_id=$shipping.shipping_id images=$shipping.image image_width="100" image_height="30" keep_transparent=true}{if $shipping.website}</a>{/if}
+                {*if $shipping.website}<a href="{$shipping.website}" target="_blank">{/if*}{include file="common/image.tpl" obj_id=$shipping.shipping_id images=$shipping.image image_width="100" image_height="30" keep_transparent=true}{*if $shipping.website}</a>{/if*}
             {/foreach}
             </div>
         {/foreach}
@@ -27,7 +27,7 @@
         {foreach from=$splitted_payments item="spayments"}
             <div class="bottom-ps-icons-row">
             {foreach from=$spayments item="payment" key="payment_id"}
-                {if $payment.website}<a href="{$payment.website}" target="_blank">{/if}{include file="common/image.tpl" obj_id=$payment.payment_id images=$payment.image image_width="100" image_height="30" keep_transparent=true}{if $payment.website}</a>{/if}
+                {*if $payment.website}<a href="{$payment.website}" target="_blank">{/if*}{include file="common/image.tpl" obj_id=$payment.payment_id images=$payment.image image_width="100" image_height="30" keep_transparent=true}{*if $payment.website}</a>{/if*}
             {/foreach}
             </div>
         {/foreach}

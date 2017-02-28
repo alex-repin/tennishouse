@@ -1,11 +1,14 @@
 <p class="ty-footer-menu__header">
-    <span>{__("catalog")}</span>
+    <span>{__("popular_categories")}</span>
 </p>
 <ul class="ty-footer-menu__items">
-    {$categories = "0"|fn_get_categories_tree}
-    {foreach from=$categories item="category"}
-        <li class="ty-footer-menu__item"><a href="{"categories.view?category_id={$category.category_id}"|fn_url}">{$category.category}</a></li>
-    {/foreach}
-    <li class="ty-footer-menu__item"><a href="{"players.list"|fn_url}">{__("players")}</a></li>
-    <li class="ty-footer-menu__item"><a href="{"pages.view?page_id=53"|fn_url}">{__("learning_center")}</a></li>
+    <li class="ty-footer-menu__item"><a href="{"categories.view?category_id={$smarty.const.RACKETS_CATEGORY_ID}"|fn_url}">{__("tennis_rackets")}</a></li>
+    <li class="ty-footer-menu__item"><a href="{"categories.view?category_id={$smarty.const.BAGS_CATEGORY_ID}"|fn_url}">{__("tennis_bags_mod")}</a></li>
+    <li class="ty-footer-menu__item"><a href="{"categories.view?category_id={$smarty.const.BALLS_CATEGORY_ID}"|fn_url}">{__("tennis_balls")}</a></li>
+    <li class="ty-footer-menu__item"><a href="{"categories.view?category_id={$smarty.const.STRINGS_CATEGORY_ID}"|fn_url}">{__("tennis_strings")}</a></li>
+    <li class="ty-footer-menu__item"><a href="{"categories.view?category_id={$smarty.const.APPAREL_CATEGORY_ID}"|fn_url}">{__("tennis_apparel")}</a></li>
+    <li class="ty-footer-menu__item"><a href="{"categories.view?category_id={$smarty.const.SHOES_CATEGORY_ID}"|fn_url}">{__("tennis_shoes")}</a></li>
+    <li class="ty-footer-menu__item"><a href="{"categories.view?category_id={$smarty.const.BALL_HOPPER_CATEGORY_ID}"|fn_url}">{__("ball_hopper")}</a></li>
+    <li class="ty-footer-menu__item"><a href="{"categories.view?category_id={$smarty.const.BALL_MACHINE_CATEGORY_ID}"|fn_url}">{__("ball_machine")}</a></li>
+    <li class="ty-footer-menu__item"><a href="{"categories.view?category_id={$smarty.const.STR_MACHINE_CATEGORY_ID}"|fn_url}">{__("stringing_machine")}</a></li>
 </ul>

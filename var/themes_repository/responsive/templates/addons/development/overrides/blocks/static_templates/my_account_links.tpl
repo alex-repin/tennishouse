@@ -14,8 +14,5 @@
 {/if}
 <!--account_info_links_{$block.snapping_id}--></ul>
 <div class="ty-mobile-version">
-    <form action="{""|fn_url}" method="post" name="switch_dmode">
-        <input type="hidden" name="dmode" value="M">
-        {include file="buttons/button.tpl" but_text=__("mobile_version") but_name="dispatch[development.switch_dmode]" but_meta="ty-button-link"}
-    </form>
+    {include file="addons/development/common/form_link.tpl" form_method="post" hidden_input=["dmode" => "M"] link_text=__("mobile_version") link_meta="ty-button-link" link_name="dispatch[development.switch_dmode]" link_role=""}
 </div>

@@ -84,16 +84,15 @@ select {
     top: 30px;
 }
 .icon-question-sign {
-    background-image: url("../../../media/images/addons/development/glyphicons-halflings.png");
-    background-position: -96px  -96px;
+    background-image: url("../../../media/images/addons/development/tooltip_question.png");
     background-repeat: no-repeat;
+    background-size: contain;
     display: inline-block;
     height: 14px;
     line-height: 14px;
     margin-top: 1px;
     vertical-align: text-top;
     width: 14px;
-    opacity: 0.75;
 }
 .ty-exception__code {
     background-image: url("../../../media/images/addons/development/silhouette.png");
@@ -2374,7 +2373,10 @@ table.ty-cart-content {
     font-size: 15px;
     height: 20px;
     padding-left: 25px;
-    background: url("../../../media/images/addons/development/phone.png") no-repeat scroll left center;
+    background-image: url("../../../media/images/addons/development/phone.png");
+    background-position: left center;
+    background-repeat: no-repeat;
+    background-size: contain;
 }
 .ty-product-block__option, .ty-product-block__advanced-option, .ty-product-block__field-group {
     margin: 0;
@@ -2539,7 +2541,12 @@ table.ty-cart-content {
     margin-bottom: 10px;
 }
 .ty-qty-in-stock .icon-question-sign {
-    background: url("../../../media/images/addons/development/exclamation.png") no-repeat scroll;
+    background-image: url("../../../media/images/addons/development/exclamation.png");
+    background-position: left center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 15px;
+    width: 15px;
 }
 .ty-qty-in-stock div {
     color: @in_stock;
@@ -4364,7 +4371,7 @@ input.ty-value-changer__input {
         font-weight: bold;
         margin-left: -4px;
     }
-    a.ty-add-to-wish {
+    .ty-add-to-wish {
         background-color: transparent;
         background-image:  url("../../../media/images/addons/development/heart.png");
         background-size: contain;
@@ -4375,6 +4382,7 @@ input.ty-value-changer__input {
         padding: 0;
         margin: 0;
         border: 0;
+        box-shadow: none;
     }
     .ty-wishlist-change-state {
         animation-name: add-to-wishlist;
@@ -4386,7 +4394,10 @@ input.ty-value-changer__input {
         animation-duration: 0.3s;
         animation-timing-function: ease-in-out;
     }*/
-    a.ty-added-to-wish {
+    .ty-wishlist-form {
+        display: inline;
+    }
+    .ty-added-to-wish {
         background-image:  url("../../../media/images/addons/development/heart-full.png");
         background-color: transparent;
         background-size: contain;
@@ -4397,8 +4408,9 @@ input.ty-value-changer__input {
         padding: 0;
         margin: 0;
         border: 0;
+        box-shadow: none;
     }
-    a.hidden {
+    .hidden {
         display: none;
     }
     /*.ty-added-to-wish:hover {

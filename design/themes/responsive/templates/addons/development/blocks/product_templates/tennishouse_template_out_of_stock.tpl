@@ -59,9 +59,6 @@
                 {/hook}
             </div>
             <div class="ty-product-block__left">
-                {assign var="form_open" value="form_open_`$obj_id`"}
-                {$smarty.capture.$form_open nofilter}
-
                 {if $product.discussion.posts || $product.header_features}
                     <div class="ty-product-detail__before-title">
                     {hook name="products:brand"}
@@ -77,13 +74,16 @@
                 {if !$hide_title}
                     <h1 class="ty-product-block-title" {live_edit name="product:product:{$product.product_id}"}>
                         {$product.product nofilter}
-                        <div class="ty-product__share-buttons">
+                        {*<div class="ty-product__share-buttons">
                             {include file="addons/development/common/share_buttons.tpl" title=$product.product description=$product.full_description|strip_tags|truncate:160 image=$product.main_pair}
-                        </div>
+                        </div>*}
                     </h1>
                 {/if}
 
                 <div class="ty-product-detail__buy-section">
+                {assign var="form_open" value="form_open_`$obj_id`"}
+                {$smarty.capture.$form_open nofilter}
+
                 {assign var="price" value="price_`$obj_id`"}
 
                 <div class="ty-prices-container-wrap">
@@ -143,14 +143,14 @@
 
                     </div>
                     {if $capture_buttons}{/capture}{/if}
-                </div>
+                {hook name="products:product_detail_bottom"}
+                {/hook}
 
                 </div>
                 {assign var="form_close" value="form_close_`$obj_id`"}
                 {$smarty.capture.$form_close nofilter}
 
-                {hook name="products:product_detail_bottom"}
-                {/hook}
+                </div>
 
                 [-similar_products-]
             </div>

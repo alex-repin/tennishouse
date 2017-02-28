@@ -60,7 +60,7 @@
         <div class="control-group">
             <label class="control-label" for="elm_filter_note_text_{$id}">{__("note_text")}</label>
             <div class="controls">
-            <input type="text" id="elm_filter_note_text_{$id}" name="filter_data[note_text]" size="3" value="{$filter.note_text}"/>
+                <textarea id="elm_filter_note_text_{$id}" name="filter_data[note_text]" cols="55" rows="8" class="input-large cm-wysiwyg input-textarea-long">{$filter.note_text}</textarea>
             </div>
         </div>
 

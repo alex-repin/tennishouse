@@ -29,18 +29,18 @@
         </div>
     </div>
     <div class="ty-top-block_bottom-wrapper">
-        <a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=2"|fn_url}">
+        {*<a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=2"|fn_url}">*}
             <div class="ty-benefits-guarantees__top">
                 <div class="ty-benefits-guarantees__icon-block"><div class="ty-benefits-low-price"></div></div>
-                <div class="ty-benefits-guarantees__text ty-benefits-guarantees__text-single-line">{__("our_advantages_text")}</div>
+                <div class="ty-benefits-guarantees__text">{__("only_original_goods")}</div>
             </div>
-        </a>
-        <a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=5"|fn_url}">
+        {*</a>*}
+        {*<a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=5"|fn_url}">*}
         <div class="ty-benefits-guarantees__top">
             <div class="ty-benefits-guarantees__icon-block"><div class="ty-benefits-free-shipping"></div></div>
             <div class="ty-benefits-guarantees__text">{__("free_delivery_text")}</div>
         </div>
-        </a>
+        {*</a>*}
         {*
         <a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=4"|fn_url}">
         <div class="ty-benefits-guarantees__top">
@@ -49,12 +49,12 @@
         </div>
         </a>
         *}
-        <a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=73"|fn_url}">
+        {*<a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=73"|fn_url}">*}
         <div class="ty-benefits-guarantees__top">
             <div class="ty-benefits-guarantees__icon-block"><div class="ty-benefits-paymenton-delivery"></div></div>
             <div class="ty-benefits-guarantees__text">{__("payment_on_delivery_text")}</div>
         </div>
-        </a>
+        {*</a>*}
     </div>
 </div>
 </div>

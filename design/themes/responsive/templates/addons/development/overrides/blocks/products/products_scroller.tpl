@@ -36,7 +36,7 @@
     </div>
     {if $block.properties.all_items_url}
         <div class="ty-check-all__block-link">
-            {include file="addons/development/common/form_redirect.tpl" form_redirect="{$block.properties.all_items_url}" form_text=__("check_all_items")|upper form_class="ty-view-all-link"}
+            {include file="addons/development/common/form_link.tpl" form_method="post" hidden_input=["redirect_url" => "{$block.properties.all_items_url}"] link_text=__("check_all_items")|upper link_meta="ty-button-link ty-view-all-link" link_name="dispatch[development.redirect]" link_role=""}
         </div>
     {/if}
 </div>

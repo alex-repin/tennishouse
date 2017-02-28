@@ -5,14 +5,14 @@
         {/capture}
         <a class="cm-tooltip" data-ceTooltipPosition="ssl" title="{$smarty.capture.category_note}">
 {else}
-    <a href="https://www.rapidssl.com" target="_blank" style="outline: none;">
+    {*<a href="https://www.rapidssl.com" target="_blank" style="outline: none;">*}
 {/if}
 <div class="ty-ssl-cert" id="ssl-cert"></div>
 {if $show_tooltip}
         </a>
     </span>
 {else}
-    </a>
+    {*</a>*}
 {/if}
 
 {if $smarty.session.display_ssl_tooltip == 'Y'}

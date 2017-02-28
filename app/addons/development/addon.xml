@@ -473,6 +473,15 @@
         <item>
             ALTER TABLE `cscart_views` ADD `timestamp` INT(11) UNSIGNED NOT NULL DEFAULT '0';
         </item>
+        <item>
+            ALTER TABLE `cscart_product_filters` CHANGE `note_text` `note_text` MEDIUMTEXT NOT NULL;
+        </item>
+        <item>
+            ALTER TABLE `cscart_product_options` CHANGE `note_text` `note_text` MEDIUMTEXT NOT NULL;
+        </item>
+        <item>
+            ALTER TABLE `cscart_product_features` CHANGE `note_text` `note_text` MEDIUMTEXT NOT NULL;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -641,8 +650,8 @@
         <item lang="ru" id="kids_23_rackets">Детские ракетки 48.4 см</item>
         <item lang="ru" id="kids_25_rackets">Детские ракетки 63.5 см</item>
         <item lang="ru" id="kids_26_rackets">Детские ракетки 66.0 см</item>
-        <item lang="ru" id="rackets_description_note"><![CDATA[Подробную информацию о том, как выбрать теннисную ракетку Вы можете получить в нашем <a href="[learning_center_link]" target="_blank">Учебном центре</a>.]]></item>
-        <item lang="ru" id="strings_description_note"><![CDATA[Подробную информацию о том, как выбрать струны для теннисной ракетки Вы можете получить в нашем <a href="[learning_center_link]" target="_blank">Учебном центре</a>.]]></item>
+        <item lang="ru" id="rackets_description_note">Подробную информацию о том, как выбрать теннисную ракетку Вы можете получить в нашем разделе "Как выбрать", ссылка на который находится в верхнем меню.</item>
+        <item lang="ru" id="strings_description_note">Подробную информацию о том, как выбрать струны для теннисной ракетки Вы можете получить в нашем разделе "Как выбрать", ссылка на который находится в верхнем меню.</item>
         <item lang="ru" id="mode">Режим</item>
         <item lang="ru" id="regular">Обычный</item>
         <item lang="ru" id="small">Уменьшенный</item>
@@ -804,7 +813,7 @@
         <item lang="ru" id="expiration_date">Дата сгорания</item>
         <item lang="ru" id="reward_points_expire_reason">Обнуление неиспользованных баллов от [date]</item>
         <item lang="ru" id="discount_level">Уровень Вашей бонусной программы</item>
-        <item lang="ru" id="reward_points_note">Накопительная бонусная программа</item>
+        <item lang="ru" id="reward_points_note"><![CDATA[<p>[amount] бонусных баллов Вы получите при покупке этого товара. 1 балл = 1 рубль. Баллы можно будет использовать во время следующего заказа и получить скидку до 30%. Кроме этого бонусные баллы можно получить за:</p><ul><li>Отзыв о магазине - 400 баллов</li><li>Отзыв о товаре - 100 баллов</li></ul>]]></item>
         <item lang="ru" id="cross_categories">Кросс-категории</item>
         <item lang="ru" id="cross_recomendation_text">Рекомендуем приобрести</item>
         <item lang="ru" id="what_for">Для чего они нужны ?</item>
@@ -954,5 +963,15 @@
         <item lang="ru" id="has_short_description">Есть краткое описание</item>
         <item lang="ru" id="grid_extended">Секция расширенная</item>
         <item lang="ru" id="hide_out_of_stock">Спрятать товары, которых нет в наличии</item>
+        <item lang="ru" id="tennis_rackets">Ракетки для большого тенниса</item>
+        <item lang="ru" id="tennis_bags_mod">Теннисные сумки и чехлы</item>
+        <item lang="ru" id="popular_categories">Популярные категории</item>
+        <item lang="ru" id="tennis_apparel">Одежда для тенниса</item>
+        <item lang="ru" id="tennis_shoes">Обувь для тенниса</item>
+        <item lang="ru" id="ball_hopper">Корзины для мячей</item>
+        <item lang="ru" id="ball_machine">Теннисные пушки</item>
+        <item lang="ru" id="tennis_balls">Мячи для большого тенниса</item>
+        <item lang="ru" id="stringing_machine">Станки для перетяжки ракеток</item>
+        <item lang="ru" id="only_original_goods">Только оригинальные товары</item>
     </language_variables>
 </addon>

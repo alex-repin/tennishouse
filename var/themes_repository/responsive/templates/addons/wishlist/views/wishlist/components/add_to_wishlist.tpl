@@ -1,7 +1,10 @@
 <div class="ty-add-to-wish-block">
     {$wishlist_id=$product_id|fn_check_wishlist}
-    {include file="buttons/button.tpl" but_id="unlike_`$but_id`" but_meta="{if !$wishlist_id}hidden{/if} ty-added-to-wish {if $state_changed}ty-wishlist-change-state{/if} cm-ajax cm-ajax-hidden" but_text="" but_role="text" but_onclick="fn_unlike();" but_href="wishlist.unlike?product_id=`$product_id`" but_name=""}
-    {include file="buttons/button.tpl" but_id="like_`$but_id`" but_meta="{if $wishlist_id}hidden{/if} ty-add-to-wish {if $state_changed}ty-wishlist-change-state{/if} cm-ajax cm-ajax-hidden" but_text="" but_role="text" but_onclick="fn_like();" but_href="wishlist.like?product_id=`$product_id`" but_name=""}
+    
+    {include file="addons/development/common/form_link.tpl" form_class="ty-wishlist-form cm-ajax cm-ajax-hidden" form_method="get" hidden_input=["product_id" => "{$product_id}"] link_text="" link_onclick="fn_unlike();" link_meta="{if !$wishlist_id}hidden{/if} ty-added-to-wish {if $state_changed}ty-wishlist-change-state{/if}" link_name="dispatch[wishlist.unlike]" link_id="unlike_`$but_id`" link_role=""}
+
+    {include file="addons/development/common/form_link.tpl" form_class="ty-wishlist-form cm-ajax cm-ajax-hidden" form_method="get" hidden_input=["product_id" => "{$product_id}"] link_text="" link_onclick="fn_like();" link_meta="{if $wishlist_id}hidden{/if} ty-add-to-wish {if $state_changed}ty-wishlist-change-state{/if}" link_name="dispatch[wishlist.like]" link_id="like_`$but_id`" link_role=""}
+
     <span id="likes_num_{$but_id}" class="ty-wishlist-likes {if $likes <= 0}hidden{/if}">{$likes}</span>
     <script type="text/javascript">
         var likes = '{$likes}';

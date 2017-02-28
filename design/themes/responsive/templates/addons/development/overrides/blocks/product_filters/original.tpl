@@ -57,7 +57,7 @@
                 </span>
                 {if $filter.open || $filter.selected_ranges}<i class="ty-icon-ok"></i>{/if}
                 {*<i class="ty-product-filters__switch-right ty-icon-left-open"></i>*}
-                {include file="addons/development/common/tooltip.tpl" note_url=$filter.note_url note_text=$filter.note_text}
+                {include file="addons/development/common/tooltip.tpl" note_url=$filter.note_url note_text=$filter.note_text tooltipclass="ty-filter-tooltip"}
             </div>
             
             {if $filter.slider}

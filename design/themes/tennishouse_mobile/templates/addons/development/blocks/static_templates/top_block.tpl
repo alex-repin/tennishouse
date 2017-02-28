@@ -14,12 +14,12 @@
 <div class="ty-top-block__search">
     {include file="common/search.tpl"}
 </div>
-<a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=5"|fn_url}">
+{*<a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=5"|fn_url}">*}
 <div class="ty-benefits-guarantees__top">
     <div class="ty-benefits-guarantees__icon-block"><div class="ty-benefits-free-shipping"></div></div>
     <div class="ty-benefits-guarantees__text">{__("free_delivery_and_paymet_on_delivery_text")}</div>
 </div>
-</a>
+{*</a>*}
 {*
 <div class="ty-top-block_top_left-wrapper">
     <div class="ty-top-block_top-wrapper">

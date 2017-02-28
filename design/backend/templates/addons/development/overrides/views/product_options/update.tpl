@@ -163,7 +163,7 @@
         <div class="control-group">
             <label class="control-label" for="elm_option_note_text_{$id}">{__("note_text")}</label>
             <div class="controls">
-            <input type="text" name="option_data[note_text]" id="elm_option_note_text_{$id}" value="{$option_data.note_text}" class="span9" />
+                <textarea id="elm_option_note_text_{$id}" name="option_data[note_text]" cols="55" rows="8" class="input-large cm-wysiwyg input-textarea-long">{$option_data.note_text}</textarea>
             </div>
         </div>
         <div id="extra_options_{$id}" {if $option_data.option_type != "I" && $option_data.option_type != "T"}class="hidden"{/if}>

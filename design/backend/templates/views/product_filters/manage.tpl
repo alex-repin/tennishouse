@@ -17,8 +17,8 @@ function fn_check_product_filter_type(value, tab_id, id)
     $('#display_count_' + id + '_container').toggleBy(!(value.indexOf('R') == 0) && !(value.indexOf('F') == 0) && !(value.indexOf('S') > 0));
     $('#display_more_count_' + id + '_container').toggleBy(!(value.indexOf('R') == 0) && !(value.indexOf('F') == 0) && !(value.indexOf('S') > 0));
 }
-</script>
 {/literal}
+</script>
 
 {capture name="mainbox"}
 

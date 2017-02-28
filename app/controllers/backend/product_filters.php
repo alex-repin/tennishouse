@@ -18,6 +18,10 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    fn_trusted_vars (
+        'filter_data'
+    );
+
     if ($mode == 'update') {
         fn_update_product_filter($_REQUEST['filter_data'], $_REQUEST['filter_id'], DESCR_SL);
     }
