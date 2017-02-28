@@ -32,7 +32,7 @@
         {*<a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=2"|fn_url}">*}
             <div class="ty-benefits-guarantees__top">
                 <div class="ty-benefits-guarantees__icon-block"><div class="ty-benefits-low-price"></div></div>
-                <div class="ty-benefits-guarantees__text">{__("only_original_goods")}</div>
+                <div class="ty-benefits-guarantees__text ty-benefits-guarantees__text-single-line">{__("only_original_goods")}</div>
             </div>
         {*</a>*}
         {*<a class="ty-benefits-guarantees__a" href="{"pages.view?page_id=5"|fn_url}">*}

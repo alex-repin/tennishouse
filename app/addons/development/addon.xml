@@ -201,7 +201,7 @@
         </item>
         <item>
             ALTER TABLE `cscart_product_filters` ADD `note_url` VARCHAR( 255 ) NOT NULL ,
-            ADD `note_text` VARCHAR( 255 ) NOT NULL ;
+            ADD `note_text` MEDIUMTEXT NOT NULL ;
         </item>
         <item>
             ALTER TABLE `cscart_categories` ADD `brand_id` MEDIUMINT( 8 ) UNSIGNED NOT NULL ;
@@ -299,7 +299,7 @@
         </item>
         <item>
             ALTER TABLE `cscart_product_options` ADD `note_url` VARCHAR( 255 ) NOT NULL ,
-            ADD `note_text` VARCHAR( 255 ) NOT NULL ;
+            ADD `note_text` MEDIUMTEXT NOT NULL ;
         </item>
         <item>
             ALTER TABLE `cscart_shippings` ADD `available_payments` TEXT NOT NULL ;
@@ -321,7 +321,7 @@
         </item>
         <item>
             ALTER TABLE `cscart_product_features` ADD `note_url` VARCHAR( 255 ) NOT NULL ,
-            ADD `note_text` VARCHAR( 255 ) NOT NULL ;
+            ADD `note_text` MEDIUMTEXT NOT NULL ;
         </item>
         <item>
             ALTER TABLE `cscart_categories` ADD `code` CHAR( 1 ) NOT NULL ;
@@ -472,15 +472,6 @@
         </item>
         <item>
             ALTER TABLE `cscart_views` ADD `timestamp` INT(11) UNSIGNED NOT NULL DEFAULT '0';
-        </item>
-        <item>
-            ALTER TABLE `cscart_product_filters` CHANGE `note_text` `note_text` MEDIUMTEXT NOT NULL;
-        </item>
-        <item>
-            ALTER TABLE `cscart_product_options` CHANGE `note_text` `note_text` MEDIUMTEXT NOT NULL;
-        </item>
-        <item>
-            ALTER TABLE `cscart_product_features` CHANGE `note_text` `note_text` MEDIUMTEXT NOT NULL;
         </item>
     </queries>
     <language_variables>
