@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $product_ids = db_get_fields("SELECT product_id FROM ?:products WHERE product_code = ?s AND import_divider = '1'", $data[0]);
                         if (!empty($product_ids)) {
                             foreach ($product_ids as $i => $product_id) {
-                                db_query("UPDATE ?:products SET auto_price = 'N', list_price = '0' WHERE product_id = ?s", $product_id);
+                                db_query("UPDATE ?:products SET auto_price = 'N', update_with_currencies = 'N', list_price = '0' WHERE product_id = ?s", $product_id);
                                 $product_data = array(
                                     'price' => $data[1]
                                 );

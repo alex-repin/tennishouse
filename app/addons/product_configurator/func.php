@@ -536,7 +536,7 @@ function fn_product_configurator_calculate_cart_items_after_promotions(&$cart, &
                 $cart_products[$k]['price'] += $cart_products[$item_id]['price'] * $_data['extra']['step'];
 //                $cart_products[$k]['base_price'] += $cart_products[$item_id]['base_price'] * $_data['extra']['step'];
                 $cart_products[$k]['original_price'] += $cart_products[$item_id]['original_price'] * $_data['extra']['step'];
-                $cart_products[$k]['discount'] += $cart_products[$item_id]['discount'] * $_data['extra']['step'];
+                $cart_products[$k]['discount'] = !empty($cart_products[$k]['discount']) ? ($cart_products[$k]['discount'] + $cart_products[$item_id]['discount'] * $_data['extra']['step']) : ($cart_products[$item_id]['discount'] * $_data['extra']['step']);
                 $cart_products[$k]['weight'] += $cart_products[$item_id]['weight'] * $_data['extra']['step'];
                 
                 $_tax = (!empty($cart_products[$item_id]['tax_summary']) ? ($cart_products[$item_id]['tax_summary']['added'] / $cart_products[$item_id]['amount']) : 0);

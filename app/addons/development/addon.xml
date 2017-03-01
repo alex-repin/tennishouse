@@ -565,7 +565,7 @@
         <item lang="ru" id="points_lower_1">балл</item>
         <item lang="ru" id="points_lower_2_4">балла</item>
         <item lang="ru" id="points_lower_5">баллов</item>
-        <item lang="ru" id="auto_price_calculation">Автоматический пересчет цены</item>
+        <item lang="ru" id="auto_price_calculation">Автоматический расчет цены</item>
         <item lang="ru" id="material">Материал</item>
         <item lang="ru" id="price_margin">Надбавка</item>
         <item lang="ru" id="configuration">Конфигурация</item>

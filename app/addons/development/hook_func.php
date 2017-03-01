@@ -270,7 +270,7 @@ function fn_development_get_order_info(&$order, $additional_data)
         }
         if (!empty($prod['extra']['configuration_data'])) {
             foreach ($prod['extra']['configuration_data'] as $ii => $_product) {
-                if (!empty($_product['extra']['warehouses'])) {
+                if (!empty($_product['extra']['warehouses']) && is_array($_product['extra']['warehouses'])) {
                     $order['products'][$i]['extra']['configuration_data'][$ii]['extra']['warehouse_names'] = db_get_hash_single_array("SELECT ?:warehouses.name, ?:product_warehouses_inventory.warehouse_hash FROM ?:warehouses LEFT JOIN ?:product_warehouses_inventory ON ?:product_warehouses_inventory.warehouse_id = ?:warehouses.warehouse_id WHERE ?:product_warehouses_inventory.warehouse_hash IN (?n)", array('warehouse_hash', 'name'), array_keys($_product['extra']['warehouses']));
                 }
             }

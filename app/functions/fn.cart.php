@@ -650,9 +650,9 @@ function fn_update_product_amount($product_id, $amount, $product_options, $sign,
         return true;
     }
 
+    $total_amount = $current_amount = 0;
     if ($tracking == ProductTracking::TRACK_WITHOUT_OPTIONS) {
         $stock_warehouses = db_get_hash_array("SELECT ?:product_warehouses_inventory.* FROM ?:product_warehouses_inventory LEFT JOIN ?:warehouses ON ?:warehouses.warehouse_id = ?:product_warehouses_inventory.warehouse_id WHERE ?:product_warehouses_inventory.product_id = ?i AND ?:product_warehouses_inventory.combination_hash = '0' ORDER BY ?:warehouses.priority ASC", 'warehouse_hash', $product_id);
-        $total_amount = $current_amount = 0;
         foreach ($stock_warehouses as $wh_hash => $wh_data) {
             $total_amount += $wh_data['amount'];
         }
@@ -712,7 +712,7 @@ function fn_update_product_amount($product_id, $amount, $product_options, $sign,
             $_amount = $amount;
             foreach ($stock_warehouses as $wh_hash => $wh_data) {
                 $_change = ($_amount <= $wh_data['amount']) ? $_amount : $wh_data['amount'];
-                $order_warehouses[$wh_hash] += $_change;
+                $order_warehouses[$wh_hash] = !empty($order_warehouses[$wh_hash]) ? ($order_warehouses[$wh_hash] + $_change) : $_change;
                 $stock_warehouses[$wh_hash]['amount'] -= $_change;
                 $_amount -= $_change;
                 if ($_amount <= 0) {
@@ -1938,9 +1938,10 @@ function fn_change_order_status($order_id, $status_to, $status_from = '', $force
 
         // Update product amount if inventory tracking is enabled
         if (Registry::get('settings.General.inventory_tracking') == 'Y') {
+            $wrhs = !empty($v['extra']['warehouses']) ? $v['extra']['warehouses'] : array();
             if ($order_statuses[$status_to]['params']['inventory'] == 'D' && $order_statuses[$status_from]['params']['inventory'] == 'I') {
                 // decrease amount
-                $order_warehouses = fn_update_product_amount($v['product_id'], $v['amount'], @$v['extra']['product_options'], '-', @$v['extra']['warehouses']);
+                $order_warehouses = fn_update_product_amount($v['product_id'], $v['amount'], @$v['extra']['product_options'], '-', $wrhs);
                 if ($order_warehouses == false) {
                     $status_to = 'B'; //backorder
                     $_error = true;
@@ -1955,7 +1956,7 @@ function fn_change_order_status($order_id, $status_to, $status_from = '', $force
                 }
             } elseif ($order_statuses[$status_to]['params']['inventory'] == 'I' && $order_statuses[$status_from]['params']['inventory'] == 'D') {
                 // increase amount
-                $order_info['products'][$k]['extra']['warehouses'] = fn_update_product_amount($v['product_id'], $v['amount'], @$v['extra']['product_options'], '+', @$v['extra']['warehouses']);
+                $order_info['products'][$k]['extra']['warehouses'] = fn_update_product_amount($v['product_id'], $v['amount'], @$v['extra']['product_options'], '+', $wrhs);
             }
         }
     }
