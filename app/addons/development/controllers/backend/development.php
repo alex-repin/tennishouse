@@ -38,13 +38,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $delimiter = ',';
                 while (($data = fn_fgetcsv($f, $max_line_size, $delimiter)) !== false) {
-                    if (!empty($data[1])) {
-                        $product_ids = db_get_fields("SELECT product_id FROM ?:products WHERE product_code = ?s AND import_divider = '1'", $data[0]);
+                    $code = $data[0];
+                    $price = $net_cost = 0;
+                    if (count($data) == 2) {
+                        $price = floatval(str_replace(',', '.', $data[1]));
+                    } elseif (count($data) == 3) {
+                        $price = floatval(str_replace(',', '.', $data[2]));
+                        $net_cost = floatval(str_replace(',', '.', $data[1]));
+                    }
+                    if (!empty($code) && !empty($price)) {
+                        $product_ids = db_get_fields("SELECT product_id FROM ?:products WHERE product_code = ?s AND import_divider = '1'", $code);
                         if (!empty($product_ids)) {
                             foreach ($product_ids as $i => $product_id) {
-                                db_query("UPDATE ?:products SET auto_price = 'N', update_with_currencies = 'N', list_price = '0' WHERE product_id = ?s", $product_id);
+                                if (!empty($net_cost)) {
+                                    db_query("UPDATE ?:products SET auto_price = 'N', update_with_currencies = 'N', list_price = '0', net_cost = ?d WHERE product_id = ?s", $net_cost, $product_id);
+                                } else {
+                                    db_query("UPDATE ?:products SET auto_price = 'N', update_with_currencies = 'N', list_price = '0' WHERE product_id = ?s", $product_id);
+                                }
                                 $product_data = array(
-                                    'price' => $data[1]
+                                    'price' => $price
                                 );
                                 fn_get_product_prices($product_id, $product_data, $auth);
                                 if (!empty($product_data['prices'])) {
