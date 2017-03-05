@@ -47,29 +47,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $net_cost = floatval(str_replace(',', '.', $data[1]));
                     }
                     if (!empty($code) && !empty($price)) {
-                        $product_ids = db_get_fields("SELECT product_id FROM ?:products WHERE product_code = ?s AND import_divider = '1'", $code);
+                        $product_ids = db_get_array("SELECT product_id, import_divider FROM ?:products WHERE product_code = ?s", $code);
                         if (!empty($product_ids)) {
-                            foreach ($product_ids as $i => $product_id) {
+                            foreach ($product_ids as $i => $p_data) {
                                 if (!empty($net_cost)) {
-                                    db_query("UPDATE ?:products SET auto_price = 'N', update_with_currencies = 'N', list_price = '0', net_cost = ?d WHERE product_id = ?s", $net_cost, $product_id);
+                                    db_query("UPDATE ?:products SET auto_price = 'N', update_with_currencies = 'N', list_price = '0', net_cost = ?d WHERE product_id = ?s", $p_data['import_divider'] * $net_cost, $p_data['product_id']);
                                 } else {
-                                    db_query("UPDATE ?:products SET auto_price = 'N', update_with_currencies = 'N', list_price = '0' WHERE product_id = ?s", $product_id);
+                                    db_query("UPDATE ?:products SET auto_price = 'N', update_with_currencies = 'N', list_price = '0' WHERE product_id = ?s", $p_data['product_id']);
                                 }
-                                $product_data = array(
-                                    'price' => $price
-                                );
-                                fn_get_product_prices($product_id, $product_data, $auth);
-                                if (!empty($product_data['prices'])) {
-                                    foreach ($product_data['prices'] as $j => $pr) {
-                                        if (!empty($pr['percentage_discount'])) {
-                                            $product_data['prices'][$j]['price'] = $pr['percentage_discount'];
-                                            $product_data['prices'][$j]['type'] = 'P';
-                                        } else {
-                                            $product_data['prices'][$j]['type'] = 'A';
+                                if ($p_data['import_divider'] == '1') {
+                                    $product_data = array(
+                                        'price' => $price
+                                    );
+                                    fn_get_product_prices($p_data['product_id'], $product_data, $auth);
+                                    if (!empty($product_data['prices'])) {
+                                        foreach ($product_data['prices'] as $j => $pr) {
+                                            if (!empty($pr['percentage_discount'])) {
+                                                $product_data['prices'][$j]['price'] = $pr['percentage_discount'];
+                                                $product_data['prices'][$j]['type'] = 'P';
+                                            } else {
+                                                $product_data['prices'][$j]['type'] = 'A';
+                                            }
                                         }
                                     }
+                                    fn_update_product_prices($p_data['product_id'], $product_data);
                                 }
-                                fn_update_product_prices($product_id, $product_data);
                             }
                         }
                     }

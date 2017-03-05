@@ -4705,7 +4705,7 @@ function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false)
 
             $cart['products'][$_id]['extra'] = (empty($data['extra'])) ? array() : $data['extra'];
             $cart['products'][$_id]['stored_discount'] = (!empty($data['stored_discount'])) ? $data['stored_discount'] : 0;
-            if (defined('ORDER_MANAGEMENT')) {
+            if (defined('ORDER_MANAGEMENT') && !empty($data['discount'])) {
                 $cart['products'][$_id]['discount'] = @$data['discount'];
             }
 

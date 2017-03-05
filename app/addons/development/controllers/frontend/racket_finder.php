@@ -46,6 +46,7 @@ if ($mode == 'view') {
         Registry::get('view')->assign('results', fn_get_results($racket_finder));
     }
     Registry::get('view')->assign('step', $step);
+    fn_add_breadcrumb(__('tennis_raquets'), 'categories.view?category_id=' . RACKETS_CATEGORY_ID);
     fn_add_breadcrumb(__('racket_finder_page_title'));
     Registry::get('view')->assign('racket_finder', $racket_finder);
     Registry::get('view')->assign('meta_description', __('racket_finder_meta'));

@@ -145,6 +145,13 @@
             {if $player_data.data_link}<a href="{$player_data.data_link}" target="_blank">{$player_data.data_link}</a>{/if}
         </div>
     </div>
+    
+    <div class="control-group cm-no-hide-input">
+        <label class="control-label" for="elm_player_data_descr">{__("description")}:</label>
+        <div class="controls">
+            <textarea id="elm_player_data_descr" name="player_data[description]" cols="55" rows="8" class="cm-wysiwyg input-large">{$player_data.description}</textarea>
+        </div>
+    </div>
 
     {include file="common/select_status.tpl" input_name="player_data[status]" id="elm_player_status" obj_id=$id obj=$player_data hidden=true}
     

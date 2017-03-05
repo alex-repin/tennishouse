@@ -62,6 +62,7 @@
     <button class="hidden" id="form_racket_finder_submit" type="submit"></button>
     </form>
 <!--rf_steps--></div>
+<div>{__("racket_finder_description")}</div>
 <script type="text/javascript">
     {literal}
         function fn_submit_answer(step, value, dir)

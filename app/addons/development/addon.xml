@@ -473,6 +473,9 @@
         <item>
             ALTER TABLE `cscart_views` ADD `timestamp` INT(11) UNSIGNED NOT NULL DEFAULT '0';
         </item>
+        <item>
+            ALTER TABLE `cscart_players` ADD `description` MEDIUMTEXT NOT NULL;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -955,6 +958,7 @@
         <item lang="ru" id="grid_extended">Секция расширенная</item>
         <item lang="ru" id="hide_out_of_stock">Спрятать товары, которых нет в наличии</item>
         <item lang="ru" id="tennis_rackets">Ракетки для большого тенниса</item>
+        <item lang="ru" id="tennis_raquets">Теннисные ракетки</item>
         <item lang="ru" id="tennis_bags_mod">Теннисные сумки и чехлы</item>
         <item lang="ru" id="popular_categories">Популярные категории</item>
         <item lang="ru" id="tennis_apparel">Одежда для тенниса</item>
@@ -964,5 +968,6 @@
         <item lang="ru" id="tennis_balls">Мячи для большого тенниса</item>
         <item lang="ru" id="stringing_machine">Станки для перетяжки ракеток</item>
         <item lang="ru" id="only_original_goods">Только оригинальные товары</item>
+        <item lang="ru" id="racket_finder_description"><![CDATA[Этот тест поможет подобрать нужную <a href="http://www.tennishouse.ru/tennis-rackets/" target="_blank">ракетку для большого тенниса</a>, исходя из ваших параметров и предпочтений.]]></item>
     </language_variables>
 </addon>

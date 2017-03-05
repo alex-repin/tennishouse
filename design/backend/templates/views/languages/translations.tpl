@@ -2,7 +2,7 @@
 
 <div id="content_translations">
 
-<form action="{""|fn_url}" method="post" name="language_variables_form">
+<form action="{""|fn_url}" method="post" name="language_variables_form" class="ty-translation-form">
 <input type="hidden" name="q" value="{$smarty.request.q}">
 <input type="hidden" name="selected_section" value="{$smarty.request.selected_section}">
 
@@ -14,8 +14,8 @@
 <thead>
     <tr>
         <th width="1%">{include file="common/check_items.tpl"}</th>
-        <th width="60%">{__("value")}</th>
-        <th width="33%">{__("language_variable")}</th>
+        <th width="68%">{__("value")}</th>
+        <th width="26%">{__("language_variable")}</th>
         <th>&nbsp;</th>
     </tr>
 </thead>
@@ -26,7 +26,7 @@
         <input type="checkbox" name="names[]" value="{$var.name}" class="checkbox cm-item">
     </td>
     <td>
-        <textarea name="lang_data[{$key}][value]" rows="3" class="span7">{$var.value}</textarea>
+        <textarea name="lang_data[{$key}][value]" rows="3" class="span7 {if $var.value|strpos:'<' !== false || $var.value|strpos:'>' !== false}cm-wysiwyg{/if}">{$var.value}</textarea>
     </td>
     <td>
         <input type="hidden" name="lang_data[{$key}][name]" value="{$var.name}">

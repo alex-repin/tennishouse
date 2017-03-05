@@ -7,6 +7,9 @@ convert xls to csv - ssconvert -O 'quoting-mode=always' Остатки\ по\ с
 - бонусы за share
 
 
+- отредактирвать заголовки писем чтобы они не попадали в спам
+- сброс пароля на смс
+- галочка для автоматической регистрации на чекауте, инфо с регистрационными данными на почут
 - при сколле вниз, топ меню уменьшается
 - валидатор html https://validator.w3.org/nu/?doc=http%3A%2F%2Fwww.tennishouse.ru%2F https://a.pr-cy.ru/www.tennishouse.ru/
 - описание игроков
