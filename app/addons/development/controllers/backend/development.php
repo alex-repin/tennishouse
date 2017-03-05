@@ -1046,6 +1046,10 @@ if ($mode == 'calculate_balance') {
 //         fn_update_discussion($discussion);
     }
     exit;
+} elseif ($mode == 'check_inventory') {
+    $result = db_get_hash_multi_array("SELECT prods.product_id, inv.amount, descr.product FROM ?:products AS prods INNER JOIN ?:product_warehouses_inventory AS inv ON inv.product_id = prods.product_id AND inv.warehouse_id = ?i AND inv.amount > 0 LEFT JOIN ?:product_descriptions AS descr ON descr.product_id = prods.product_id AND descr.lang_code = 'ru'", array('product_id'), $_REQUEST['warehouse_id']);
+    fn_print_die($result);
+    exit;
 }
 
 function fn_normalize_string($string)

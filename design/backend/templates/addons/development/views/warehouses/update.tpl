@@ -46,6 +46,11 @@
             <input type="text" name="warehouse_data[priority]" id="elm_warehouse_priority" size="10" value="{$warehouse_data.priority}" class="input-text-short" />
         </div>
     </div>
+    {if $id}
+    <div class="control-group">
+        <a href="{"development.check_inventory?warehouse_id=`$id`"|fn_url}" target="_blank">{__("check_inventory")}</a>
+    </div>
+    {/if}
 
 </div>
 
