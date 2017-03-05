@@ -18,6 +18,10 @@ set_error_handler("fn_process_php_errors");
 
 /*Categories*/
 define('RACKETS_CATEGORY_ID', 254);
+define('PRO_RACKETS_CATEGORY_ID', 344);
+define('CLUB_RACKETS_CATEGORY_ID', 345);
+define('BEGINNERS_RACKETS_CATEGORY_ID', 346);
+define('KIDS_RACKETS_CATEGORY_ID', 409);
 define('APPAREL_CATEGORY_ID', 262);
 define('MENS_APPAREL_CATEGORY_ID', 295);
 define('WOMEN_APPAREL_CATEGORY_ID', 296);

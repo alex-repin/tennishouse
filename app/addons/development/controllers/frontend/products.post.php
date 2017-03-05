@@ -119,7 +119,8 @@ if ($mode == 'view') {
             }
         }
     }
-    $_SESSION['product_category'] = $product['main_category'];
+    $inters = array_intersect(array(PRO_RACKETS_CATEGORY_ID, CLUB_RACKETS_CATEGORY_ID, BEGINNERS_RACKETS_CATEGORY_ID, KIDS_RACKETS_CATEGORY_ID), $product['category_ids']);
+    $_SESSION['product_category'] = (!empty($inters)) ? $inters[0] : $product['main_category'];
     $_SESSION['main_product_category'] = $product['category_main_id'];
     $_SESSION['product_features'] = $features;
     $_SESSION['category_type'] = $product['category_type'];
