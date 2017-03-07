@@ -468,13 +468,7 @@ class RenderManager
         $block_content = '';
 
         if (isset($block_scheme['cache']) && Registry::isExist($cache_name) == true && self::allowCache()) {
-            // tennishouse capture block
-            if (!empty($block['properties']['capture_content']) && $block['properties']['capture_content'] == 'Y') {
-                \Smarty::$_smarty_vars['capture']['block_' . $block['content']['items']['filling']] = Registry::get($cache_name);
-            } else {
-                $block_content = Registry::get($cache_name);
-            }
-            // tennishouse capture block
+            $block_content = Registry::get($cache_name);
         } else {
             if ($block['type'] == 'main') {
                 $block_content = self::_renderMainContent();
