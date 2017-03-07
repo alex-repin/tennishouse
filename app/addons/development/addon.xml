@@ -965,9 +965,16 @@
         <item lang="ru" id="tennis_shoes">Обувь для тенниса</item>
         <item lang="ru" id="ball_hopper">Корзины для мячей</item>
         <item lang="ru" id="ball_machine">Теннисные пушки</item>
+        <item lang="ru" id="check_inventory">Посмотреть выгрузку</item>
         <item lang="ru" id="tennis_balls">Мячи для большого тенниса</item>
         <item lang="ru" id="stringing_machine">Станки для перетяжки ракеток</item>
         <item lang="ru" id="only_original_goods">Только оригинальные товары</item>
         <item lang="ru" id="racket_finder_description"><![CDATA[Этот тест поможет подобрать нужную <a href="http://www.tennishouse.ru/tennis-rackets/" target="_blank">ракетку для большого тенниса</a>, исходя из ваших параметров и предпочтений.]]></item>
+        <item lang="ru" id="product_page_title">купить в интернет-магазине в Москве с доставкой</item>
+        <item lang="ru" id="product_page_title_A">купить одежду для тенниса в интернет-магазине в Москве с доставкой</item>
+        <item lang="ru" id="product_page_title_B">купить теннисную сумку в интернет-магазине в Москве – TennisHouse</item>
+        <item lang="ru" id="product_page_title_BL">купить мячи для большого тенниса в интернет-магазине в Москве – TennisHouse</item>
+        <item lang="ru" id="product_page_title_ST">купить теннисную струну в интернет-магазине в Москве – TennisHouse</item>
+        <item lang="ru" id="product_page_title_S">купить обувь для тенниса в интернет-магазине в Москве – TennisHouse</item>
     </language_variables>
 </addon>

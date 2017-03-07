@@ -33,10 +33,14 @@
 <head>
 {capture name="title"}
 {hook name="index:title"}
-{foreach from=$breadcrumbs|array_reverse item=i name="bkt"}
-    {if $smarty.foreach.bkt.iteration == $smarty.foreach.bkt.total - 1 || $smarty.foreach.bkt.first}{if $page_title && $smarty.foreach.bkt.iteration == 1}{$page_title}{else}{$i.title|strip_tags}{/if}{if $smarty.foreach.bkt.iteration != $smarty.foreach.bkt.total - 1} – {/if}{/if}
-{/foreach}
-{if !$skip_page_title && $location_data.title}{if $breadcrumbs|count > 1} - {/if}{$location_data.title}{/if}
+{if $runtime.controller == 'products' && $runtime.mode == 'view' && $page_title}
+    {$page_title}
+{else}
+    {foreach from=$breadcrumbs|array_reverse item=i name="bkt"}
+        {if $smarty.foreach.bkt.iteration == $smarty.foreach.bkt.total - 1 || $smarty.foreach.bkt.first}{if $page_title && $smarty.foreach.bkt.iteration == 1}{$page_title}{else}{$i.title|strip_tags}{/if}{if $smarty.foreach.bkt.iteration != $smarty.foreach.bkt.total - 1} – {/if}{/if}
+    {/foreach}
+    {if !$skip_page_title && $location_data.title}{if $breadcrumbs|count > 1} - {/if}{$location_data.title}{/if}
+{/if}
 {/hook}
 {/capture}
 <title>{$smarty.capture.title|strip|trim nofilter}</title>

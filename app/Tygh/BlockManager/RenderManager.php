@@ -534,13 +534,7 @@ class RenderManager
             fn_set_hook('render_block_content_after', $block_scheme, $block, $block_content);
 
             if (isset($block_scheme['cache'])/* && $display_block == true*/ && self::allowCache()) {
-                // tennishouse capture block
-                if (empty($block['properties']['capture_content']) || $block['properties']['capture_content'] != 'Y') {
-                    Registry::set($cache_name, $block_content);
-                } else {
-                    Registry::set($cache_name, \Smarty::$_smarty_vars['capture']['block_' . $block['content']['items']['filling']]);
-                }
-                // tennishouse capture block
+                Registry::set($cache_name, $block_content);
             }
         }
 
