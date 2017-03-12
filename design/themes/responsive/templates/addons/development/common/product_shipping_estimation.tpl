@@ -13,13 +13,13 @@
                 {$biggest = $cities|array_shift}
                 <div class="ty-select-city-block">
                     <div class="ty-select-city-row">
-                        <div class="ty-select-city-item" user-city="{$biggest.city}" user-state="{$biggest.state}"><strong>{$biggest.city}</strong></div>
+                        <div class="ty-select-city-item" data-usercity="{$biggest.city}" data-userstate="{$biggest.state}"><strong>{$biggest.city}</strong></div>
                     </div>
                     {split data=$cities size=$c_columns assign="splitted_cities"}
                     {foreach from=$splitted_cities item="scities"}
                         <div class="ty-select-city-row">
                         {foreach from=$scities item="city"}
-                            <div class="ty-select-city-item" user-city="{$city.city}" user-state="{$city.state}">{$city.city}</div>
+                            <div class="ty-select-city-item" data-usercity="{$city.city}" data-userstate="{$city.state}">{$city.city}</div>
                         {/foreach}
                         </div>
                     {/foreach}
@@ -39,8 +39,8 @@
                     $('#user_location_block').each(function() {
                         fn_init_autocomplete($(this));
                         $('.ty-select-city-item').click(function() {
-                            $("[name='user_city']").val($(this).attr('user-city'));
-                            $("[name='state']").val($(this).attr('user-state'));
+                            $("[name='user_city']").val($(this).data('usercity'));
+                            $("[name='state']").val($(this).data('userstate'));
                             $('#user_location_submit').click();
                         });
                     });
