@@ -3,10 +3,10 @@
         {capture name="user_location_popup"}
         <form name="user_location_form" action="{""|fn_url}" method="post" class="cm-ajax cm-ajax-force" id="user_location_block">
             <input type="hidden" name="result_ids" value="product_shipping_estimation" />
-            <input type="hidden" x-autocompletetype="city_id" name="city_id" value="" />
-            <input type="hidden" x-autocompletetype="state" name="state" value="" />
+            <input type="hidden" data-autocompletetype="city_id" name="city_id" value="" />
+            <input type="hidden" data-autocompletetype="state" name="state" value="" />
             <input type="hidden" name="user_city" value="" />
-            <div class="ty-product-shipping-section" id="user_location_block">
+            <div class="ty-product-shipping-section">
                 {$cities = ""|fn_get_big_cities}
                 {$c_columns = "3"}
                 <div class="ty-product-shipping-title">{__("select_other_city")}</div>
@@ -28,7 +28,7 @@
             <div class="ty-product-shipping-section">
                 <div class="ty-product-shipping-title">{__("enter_another_city")}</div>
                 <div class="ty-product-shipping-input">
-                    <input x-autocompletetype="city" type="text" name="city" size="32" value="" class="ty-input-text "/>
+                    <input data-autocompletetype="city" type="text" name="city" size="32" value="" class="ty-input-text "/>
                 </div>
                 {include file="buttons/button.tpl" but_text=__("select") but_name="dispatch[development.update_user_city]" but_meta="ty-btn__secondary cm-form-dialog-closer" but_id="user_location_submit"}
             </div>

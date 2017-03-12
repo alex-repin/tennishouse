@@ -72,11 +72,11 @@
         }
         function fn_init_autocomplete(elm)
         {
-            var city = $("[x-autocompletetype='city']", elm);
-            var address = $("[x-autocompletetype='street-address']", elm);
-            var state = $("[x-autocompletetype='state']", elm);
-            var zip = $("[x-autocompletetype='postal-code']", elm);
-            var city_id = $("[x-autocompletetype='city_id']", elm);
+            var city = $("[data-autocompletetype='city']", elm);
+            var address = $("[data-autocompletetype='street-address']", elm);
+            var state = $("[data-autocompletetype='state']", elm);
+            var zip = $("[data-autocompletetype='postal-code']", elm);
+            var city_id = $("[data-autocompletetype='city_id']", elm);
             
             if (city.length) {
                 $.kladr.setDefault({
@@ -191,9 +191,9 @@
     } else {
         function fn_init_autocomplete(elm)
         {
-            var city = $("[x-autocompletetype='city']", elm);
-            var state = $("[x-autocompletetype='state']", elm);
-            var city_id = $("[x-autocompletetype='city_id']", elm);
+            var city = $("[data-autocompletetype='city']", elm);
+            var state = $("[data-autocompletetype='state']", elm);
+            var city_id = $("[data-autocompletetype='city_id']", elm);
 
             if (city.length) {
                 city.autocomplete({
@@ -224,8 +224,8 @@
         }
         function getRusCities(elm, request, response) {
 
-            var check_state = $("[x-autocompletetype='state']", elm).val();
-            var check_country = $("[x-autocompletetype='country']", elm).val();
+            var check_state = $("[data-autocompletetype='state']", elm).val();
+            var check_country = $("[data-autocompletetype='country']", elm).val();
 
             $.ceAjax('request', fn_url('city.autocomplete_city?q=' + encodeURIComponent(request.term) + '&check_state=' + check_state + '&check_country=' + check_country), {
                 callback: function(data) {

@@ -263,6 +263,7 @@ if ($mode == 'catalog') {
                             $sections = array_unique(explode(',', $product['sections_categorization']));
                             foreach ($sections as $k => $section_id) {
                                 if (!empty($section_id)) {
+                                    $product['obj_prefix'] = (empty($product['obj_prefix'])) ? $section_id : $product['obj_prefix'] . '_' . $section_id;
                                     $sections_categorization[$section_id][] = $product;
                                 }
                             }
