@@ -6,7 +6,7 @@
             <input type="hidden" x-autocompletetype="city_id" name="city_id" value="" />
             <input type="hidden" x-autocompletetype="state" name="state" value="" />
             <input type="hidden" name="user_city" value="" />
-            <div class="ty-product-shipping-section" id="user_location_block">
+            <div class="ty-product-shipping-section">
                 {$cities = ""|fn_get_big_cities}
                 {$c_columns = "3"}
                 <div class="ty-product-shipping-title">{__("select_other_city")}</div>
