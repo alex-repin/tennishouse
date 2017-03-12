@@ -1698,6 +1698,20 @@ table.ty-cart-content {
     text-decoration: none;
     width: 100%;
     border-right: 1px solid lighten(@font, 63%);
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.text-hide {
+   text-indent: 100%;
+   white-space: nowrap;
+   overflow: hidden;
+}
+.ty-categorization-subtabs__item-logo {
+    position: absolute;
+    width: 50%;
+    left: 25%;
+    top: 0;
 }
 .ty-categorization-subtabs__item {
     display: inline-block;
@@ -1706,7 +1720,7 @@ table.ty-cart-content {
     text-align: center;
     float: left;
     margin: 0;
-    color: transparent;
+    position: relative;
 }
 .ty-categorization-subtabs__item:hover {
     background: lighten(@base, 3%);
@@ -1997,6 +2011,9 @@ table.ty-cart-content {
     font-size: 13px;
     margin-bottom: 0;
 }
+.ty-price-update {
+    display: inline;
+}
 .ty-grid-list__price .ty-price-update {
     float: left;
 }
@@ -2059,6 +2076,9 @@ table.ty-cart-content {
     font-family: @price_font;
     margin: 0 7px 0 0;
     letter-spacing: -2px;
+}
+.ty-product-price-title {
+    margin-right: 10px;
 }
 .ty-tabs__a, .ty-tabs .subtab a {
     padding: 8px 13px 2px;
@@ -2244,6 +2264,12 @@ table.ty-cart-content {
 }
 .ty-product-block_oos .ty-product-block-title {
     font-size: 22px;
+}
+.ty-product-block-title-wrapper {
+    margin-bottom: 10px;
+    .ty-product-block-title {
+        margin: 0;
+    }
 }
 .ty-product-switcher {
     top: 10px;
@@ -2931,9 +2957,12 @@ table.ty-cart-content {
     font-size: 21px;
     margin: 0 0 5px 0;
 }
-.ty-player-gear-container h2 {
+.ty-player-details-wrapper .ty-mainbox-title {
     background-color: #000;
     display: block;
+}
+.ty-page-description .ty-mainbox-title {
+    background-color: #000;
 }
 .ty-tennishouse-container .ty-tabs__item, .ty-tennishouse-container .ty-tabs .subtab {
     margin: 2px 20px 0 0;
@@ -3181,6 +3210,9 @@ table.ty-cart-content {
 }
 .ty-menu-vertical .dropdown-vertical__dir:hover {
     border-right: 1px solid darken(@category_menu, 10%);
+}
+.ty-price-num {
+    letter-spacing: -1px;
 }
 .ty-ti-price-wrap .ty-product-block__price-actual .ty-price-num {
     font-size: 16px;

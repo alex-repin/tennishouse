@@ -3,7 +3,11 @@
 {/hook}
 <a href="{"products.view?product_id=`$product.product_id`{if $product.ohash}&`$product.ohash`{/if}"|fn_url}">
 <div class="ty-grid-list__item">
-    {assign var="obj_id" value=$product.product_id}
+    {if $product.obj_prefix}
+        {assign var="obj_id" value="`$product.obj_prefix`_`$product.product_id`"}
+    {else}
+        {assign var="obj_id" value=$product.product_id}
+    {/if}
     {include file="common/product_data.tpl" product=$product}
 
     {assign var="form_open" value="form_open_`$obj_id`"}

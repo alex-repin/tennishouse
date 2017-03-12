@@ -266,14 +266,14 @@
 
 {********************** Price *********************}
 {capture name="price_`$obj_id`"}
-    <span class="cm-reload-{$obj_prefix}{$obj_id} ty-price-update" id="price_update_{$obj_prefix}{$obj_id}">
+    <div class="cm-reload-{$obj_prefix}{$obj_id} ty-price-update" id="price_update_{$obj_prefix}{$obj_id}">
         <input type="hidden" name="appearance[show_price_values]" value="{$show_price_values}" />
         <input type="hidden" name="appearance[show_price]" value="{$show_price}" />
         {if $show_price_values}
             {if $show_price}
             {hook name="products:prices_block"}
                 {if $product.price|floatval || $product.zero_price_action == "P" || ($hide_add_to_cart_button == "Y" && $product.zero_price_action == "A")}
-                    <span class="ty-price{if !$product.price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}<h2 class="ty-product-price-heder">{__("price")}</h2>{/if}{include file="common/price.tpl" value=$product.price span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num" live_editor_name="product:price:{$product.product_id}"}</span>
+                    {if $details_page}<h2 class="ty-product-price-heder">{/if}<span class="ty-price{if !$product.price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}<span class="ty-product-price-title">{__("price")}</span>{/if}{include file="common/price.tpl" value=$product.price span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num" live_editor_name="product:price:{$product.product_id}"}</span>{if $details_page}</h2>{/if}
                 {elseif $product.zero_price_action == "A" && $show_add_to_cart}
                     {assign var="base_currency" value=$currencies[$smarty.const.CART_PRIMARY_CURRENCY]}
                     <span class="ty-price-curency"><span class="ty-price-curency__title">{__("enter_your_price")}:</span>
@@ -291,7 +291,7 @@
         {elseif $settings.General.allow_anonymous_shopping == "hide_price_and_add_to_cart" && !$auth.user_id}
             <span class="ty-price">{__("sign_in_to_view_price")}</span>
         {/if}
-    <!--price_update_{$obj_prefix}{$obj_id}--></span>
+    <!--price_update_{$obj_prefix}{$obj_id}--></div>
 {/capture}
 {if $no_capture}
     {assign var="capture_name" value="price_`$obj_id`"}

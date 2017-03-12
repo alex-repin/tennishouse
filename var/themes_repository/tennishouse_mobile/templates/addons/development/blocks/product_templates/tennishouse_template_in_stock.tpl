@@ -53,10 +53,10 @@
                 <div class="ty-prices-container-wrap">
                     <div class="ty-prices-container-left">
                         <div class="{if $smarty.capture.$old_price|trim || $smarty.capture.$clean_price|trim || $smarty.capture.$list_discount|trim}prices-container {/if}">
-                            {if $smarty.capture.$old_price|trim || $smarty.capture.$clean_price|trim || $smarty.capture.$list_discount|trim}
+                            {*if $smarty.capture.$old_price|trim || $smarty.capture.$clean_price|trim || $smarty.capture.$list_discount|trim}
                                 <div class="ty-product-prices">
-                                    {*if $smarty.capture.$old_price|trim}{$smarty.capture.$old_price nofilter}{/if*}
-                            {/if}
+                                    {if $smarty.capture.$old_price|trim}{$smarty.capture.$old_price nofilter}{/if}
+                            {/if*}
 
                             {if $smarty.capture.$price|trim}
                                 <div class="ty-product-block__price-actual">

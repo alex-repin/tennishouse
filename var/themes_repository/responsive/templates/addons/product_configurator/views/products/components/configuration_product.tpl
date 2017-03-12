@@ -32,5 +32,4 @@
 {else}
     <div class="ty-pc-ajax-loading-box"></div>
 {/if}
-</a>
 <!--pc_info_{$group_id}_{$product.product_id}--></div>

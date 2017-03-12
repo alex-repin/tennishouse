@@ -1,7 +1,7 @@
 {** block-description:tmpl_subscription **}
 {if $addons.news_and_emails}
 <div class="ty-footer-form-block" id="newsletters_subscribe_form">
-    <form action="{""|fn_url}" method="get" class="cm-ajax cm-ajax-full-render" name="subscribe_form" class="cm-ajax">
+    <form action="{""|fn_url}" method="get" class="cm-ajax cm-ajax-full-render" name="subscribe_form">
         <input type="hidden" name="result_ids" value="newsletters_subscribe_form" />
         <input type="hidden" name="redirect_url" value="{$config.current_url}" />
         <input type="hidden" name="newsletter_format" value="2" />

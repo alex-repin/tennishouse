@@ -33,9 +33,9 @@
     {/if}
     
     <div id="{$id}">
-        <input type="text" class="ty-price-slider__input-text" id="{$id}_left" name="left_{$id}" value="{$left}"{if $disable_slider} disabled="disabled"{/if} min="{$min}" max="{$max - $filter.round_to}" step="{$filter.round_to}"/>
+        <input type="text" class="ty-price-slider__input-text" id="{$id}_left" name="left_{$id}" value="{$left}"{if $disable_slider} disabled="disabled"{/if} data-min="{$min}" data-max="{$max - $filter.round_to}" data-step="{$filter.round_to}"/>
         <div class="ty-slider-text"> – </div>
-        <input type="text" class="ty-price-slider__input-text" id="{$id}_right" name="right_{$id}" value="{$right}"{if $disable_slider} disabled="disabled"{/if} min="{$min + $filter.round_to}" max="{$max}" step="{$filter.round_to}"/>
+        <input type="text" class="ty-price-slider__input-text" id="{$id}_right" name="right_{$id}" value="{$right}"{if $disable_slider} disabled="disabled"{/if} data-min="{$min + $filter.round_to}" data-max="{$max}" data-step="{$filter.round_to}"/>
         <div class="ty-slider-text">
         {if $filter.units}
             {$filter.units nofilter}

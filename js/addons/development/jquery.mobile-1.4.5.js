@@ -8537,9 +8537,9 @@ $.widget( "mobile.slider", $.extend( {
 			controlID = control.attr( "id" ),
 			$label = $( "[for='" + controlID + "']" ),
 			labelID = $label.attr( "id" ) || controlID + "-label",
-			min = !isToggleSwitch ? parseFloat( control.attr( "min" ) ) : 0,
-			max =  !isToggleSwitch ? parseFloat( control.attr( "max" ) ) : control.find( "option" ).length-1,
-			step = window.parseFloat( control.attr( "step" ) || 1 ),
+			min = !isToggleSwitch ? parseFloat( control.data( "min" ) ) : 0,
+			max =  !isToggleSwitch ? parseFloat( control.data( "max" ) ) : control.find( "option" ).length-1,
+			step = window.parseFloat( control.data( "step" ) || 1 ),
 			domHandle = document.createElement( "a" ),
 			handle = $( domHandle ),
 			domSlider = document.createElement( "div" ),
@@ -8909,9 +8909,9 @@ $.widget( "mobile.slider", $.extend( {
 		control = this.element;
 		isInput = !this.isToggleSwitch;
 		optionElements = isInput ? [] : control.find( "option" );
-		min =  isInput ? parseFloat( control.attr( "min" ) ) : 0;
-		max = isInput ? parseFloat( control.attr( "max" ) ) : optionElements.length - 1;
-		step = ( isInput && parseFloat( control.attr( "step" ) ) > 0 ) ? parseFloat( control.attr( "step" ) ) : 1;
+		min =  isInput ? parseFloat( control.data( "min" ) ) : 0;
+		max = isInput ? parseFloat( control.data( "max" ) ) : optionElements.length - 1;
+		step = ( isInput && parseFloat( control.data( "step" ) ) > 0 ) ? parseFloat( control.data( "step" ) ) : 1;
 
 		if ( typeof val === "object" ) {
 			data = val;

@@ -4,7 +4,7 @@
         <div class="ty-menu__submenu-item-header">
             <a{if $item_url} href="{$item_url}"{/if} {if $item.new_window}target="_blank"{/if} class="ty-menu__item-link">
                 <div class="ty-menu-icon {if $type == 'C'}ty-category-icon-{$item.object_id}{elseif $type == 'A'}ty-menu-icon-{$item.param_id}{/if}"></div>
-                <div class="ty-menu__submenu-item-header-text" {if $type == 'C' && $item.object_id == $smarty.const.STR_MACHINE_CATEGORY_ID}style="margin-right: -20px;{/if}">{$item.item}</div>
+                <div class="ty-menu__submenu-item-header-text" {if $type == 'C' && $item.object_id == $smarty.const.STR_MACHINE_CATEGORY_ID}style="margin-right: -20px;"{/if}>{$item.item}</div>
             </a>
             {if $item.subitems}
                 <div class="ty-menu__item-toggle">

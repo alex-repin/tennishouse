@@ -1,3 +1,4 @@
+<div class="ty-player-details-wrapper">
 {assign var="obj_id" value=$player_data.player_id}
 {assign var="obj_id_prefix" value="`$obj_prefix``$obj_id`"}
 <div class="ty-player-details {if $image_title}ty-player-details-it{/if}">
@@ -97,3 +98,4 @@
 {if $player_data.description}
     <div class="ty-player-description">{$player_data.description nofilter}</div>
 {/if}
+</div>

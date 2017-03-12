@@ -72,12 +72,14 @@
                     </div>
                 {/if}
                 {if !$hide_title}
-                    <h1 class="ty-product-block-title" {live_edit name="product:product:{$product.product_id}"}>
-                        {$product.product nofilter}
+                    <div class="ty-product-block-title-wrapper">
+                        <h1 class="ty-product-block-title" {live_edit name="product:product:{$product.product_id}"}>
+                            {$product.product nofilter}
+                        </h1>
                         {*<div class="ty-product__share-buttons">
                             {include file="addons/development/common/share_buttons.tpl" title=$product.product description=$product.full_description|strip_tags|truncate:160 image=$product.main_pair}
                         </div>*}
-                    </h1>
+                    </div>
                 {/if}
 
                 <div class="ty-product-detail__buy-section">

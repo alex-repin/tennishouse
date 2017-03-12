@@ -3,7 +3,7 @@
         <input type="hidden" name="product_data[{$product.product_id}][cart_id]" value="{$product.edit_configuration}" />
     {/if}
     <input type="hidden" name="appearance[details_page]" value="{$details_page}" />
-    <input type="hidden" name="appearance[auto_process]" id="auto_process_form" value="" />
+    {*<input type="hidden" name="appearance[auto_process]" value="" />*}
     {foreach from=$product.detailed_params key="param" item="value"}
         <input type="hidden" name="additional_info[{$param}]" value="{$value}" />
     {/foreach}
