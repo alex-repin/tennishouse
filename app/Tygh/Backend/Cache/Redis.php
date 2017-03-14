@@ -142,7 +142,7 @@ class Redis extends ABackend
             return true;
         }
 
-        return false;
+        throw new \Exception('Cache: can not connect to the Redis server');
     }
 
     private function _connect()

@@ -15,6 +15,7 @@
 use Tygh\BlockManager\Layout;
 use Tygh\Development;
 use Tygh\Embedded;
+use Tygh\Exceptions\PHPErrorException;
 use Tygh\Exceptions\InitException;
 use Tygh\Registry;
 use Tygh\Debugger;
@@ -1045,6 +1046,64 @@ function fn_init_api()
 {
     $api = new Api();
     Registry::set('api', $api, true);
+
+    return array(INIT_STATUS_OK);
+}
+
+/**
+ * Registers custom error handlers
+ *
+ * @return array
+ */
+function fn_init_error_handler()
+{
+    // Fatal error handler
+    defined('AREA') && AREA == 'C' && register_shutdown_function(function () {
+        $error = error_get_last();
+
+        // Check whether error is fatal (i.e. couldn't have been catched with trivial error handler)
+        if (isset($error['type']) &&
+            in_array($error['type'], array(
+                E_ERROR, E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR, E_COMPILE_WARNING
+            ))
+        ) {
+            // Try to hide PHP's fatal error message
+            fn_clear_ob();
+
+            $exception = new PHPErrorException($error['message'], $error['type'], $error['file'], $error['line']);
+            $exception->output();
+
+            exit(1);
+        }
+    });
+
+    // Non-fatal errors, warnings and notices are caught and properly formatted
+    defined('DEVELOPMENT')
+    && DEVELOPMENT
+    && !extension_loaded('xdebug')
+    && set_error_handler(function($code, $message, $filename, $line) {
+        if (error_reporting() & $code) {
+            switch ($code) {
+                // Non-fatal errors, code execution wouldn't be stopped
+                case E_NOTICE:
+                case E_USER_NOTICE:
+                case E_WARNING:
+                case E_USER_WARNING:
+                case E_DEPRECATED:
+                case E_USER_DEPRECATED:
+                    $exception = new PHPErrorException($message, $code, $filename, $line);
+                    $exception->output();
+
+                    error_log(addslashes((string) $exception), 0);
+
+                    return true;
+                break;
+            }
+        }
+
+        // Let PHP's internal error handler handle other cases
+        return false;
+    });
 
     return array(INIT_STATUS_OK);
 }

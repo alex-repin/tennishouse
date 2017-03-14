@@ -994,3 +994,16 @@ function fn_url_remove_service_params($url)
 
     return call_user_func_array('fn_query_remove', $params);
 }
+
+
+/**
+ * Clears output buffers contents
+ *
+ * @return void
+ */
+function fn_clear_ob()
+{
+    for ($level = ob_get_level(); $level > 0; --$level) {
+        @ob_end_clean() || @ob_clean();
+    }
+}

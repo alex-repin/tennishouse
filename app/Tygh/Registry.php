@@ -275,10 +275,18 @@ class Registry
     public static function cacheInit()
     {
         if (empty(self::$_cache)) {
-            $_cache_class = self::ifGet('config.cache_backend', 'file');
-            $_cache_class = '\\Tygh\\Backend\\Cache\\' . ucfirst($_cache_class);
+            $cache_class = self::ifGet('config.cache_backend', 'file');
+            $_cache_class = '\\Tygh\\Backend\\Cache\\' . ucfirst($cache_class);
 
-            self::$_cache = new $_cache_class(self::get('config'));
+            try {
+                self::$_cache = new $_cache_class(self::get('config'));
+            } catch (\Exception $e) {
+                if ($cache_class != 'file') {
+                    $_cache_class = '\\Tygh\\Backend\\Cache\\' . ucfirst('file');
+
+                    self::$_cache = new $_cache_class(self::get('config'));
+                }
+            }   
             self::$_cache_handlers = self::$_cache->getHandlers();
         }
 

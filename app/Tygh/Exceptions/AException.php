@@ -45,7 +45,8 @@ abstract class AException extends \Exception
             echo($this->printDebug(defined('CONSOLE')));
         } else {
             LogFacade::error($this->printDebug(true));
-            $debug = "<!--\n" . $this->printDebug(true) . "\n-->";
+            $error = str_replace('-->', '->', $this->printDebug(true));
+            $debug = "<!--\n" . $error . "\n-->";
 
             Development::showStub(array(
                 '[title]' =>  'Ошибка',

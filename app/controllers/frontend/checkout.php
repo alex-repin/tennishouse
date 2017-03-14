@@ -605,9 +605,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $shipping_hash = fn_get_shipping_hash($cart['product_groups']);
 
         if (!empty($_SESSION['shipping_hash']) && $_SESSION['shipping_hash'] != $shipping_hash && $_REQUEST['next_step'] == 'step_four' && $cart['shipping_required']) {
-            if (!empty($cart['chosen_shipping'])) {
-                fn_set_notification('W', __('important'), __('text_shipping_rates_changed'));
-            }
+//             if (!empty($cart['chosen_shipping'])) {
+//                 fn_set_notification('W', __('important'), __('text_shipping_rates_changed'));
+//             }
             $cart['chosen_shipping'] = array();
 
             return array(CONTROLLER_STATUS_REDIRECT, 'checkout.checkout?edit_step=step_three');
@@ -941,7 +941,7 @@ if ($mode == 'cart') {
 
     if (!empty($_SESSION['shipping_hash']) && $_SESSION['shipping_hash'] != $shipping_hash && !empty($completed_steps['step_three']) && $cart['shipping_required']) {
         $_SESSION['chosen_shipping'] = array();
-        fn_set_notification('W', __('important'), __('text_shipping_rates_changed'));
+//         fn_set_notification('W', __('important'), __('text_shipping_rates_changed'));
 
         if ($edit_step == 'step_four') {
             return array(CONTROLLER_STATUS_REDIRECT, 'checkout.checkout?edit_step=step_three');

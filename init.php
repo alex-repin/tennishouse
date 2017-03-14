@@ -85,6 +85,7 @@ if (!db_initiate(Registry::get('config.db_host'), Registry::get('config.db_user'
 register_shutdown_function(array('\\Tygh\\Registry', 'save'));
 
 fn_init_stack(
+    array('fn_init_error_handler'),
     array('fn_init_unmanaged_addons')
 );
 
