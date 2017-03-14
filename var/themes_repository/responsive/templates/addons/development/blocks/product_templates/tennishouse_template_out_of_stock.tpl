@@ -1,5 +1,5 @@
 <div class="ty-product-block ty-product-block_oos">
-    <div class="ty-product-block__wrapper clearfix">
+    <div itemscope itemtype="http://schema.org/Product" class="ty-product-block__wrapper clearfix">
     {hook name="products:view_main_info"}
         {if $product}
             {assign var="obj_id" value=$product.product_id}
@@ -65,7 +65,7 @@
                         <div class="ty-product-detail__brand-image">
                             {$brand_id = $smarty.const.BRAND_FEATURE_ID}
                             {$brand_variant_id = $product.header_features.$brand_id.variant_id}
-                            {include file="addons/development/common/brand_logo.tpl" brand=$product.header_features.$brand_id.variants.$brand_variant_id brand_variant_id=$brand_variant_id}
+                            {include file="addons/development/common/brand_logo.tpl" brand=$product.header_features.$brand_id.variants.$brand_variant_id brand_variant_id=$brand_variant_id itemprop="brand"}
                         </div>
                     {/hook}
                     {hook name="products:main_info_title"}{/hook}
@@ -73,7 +73,7 @@
                 {/if}
                 {if !$hide_title}
                     <div class="ty-product-block-title-wrapper">
-                        <h1 class="ty-product-block-title" {live_edit name="product:product:{$product.product_id}"}>
+                        <h1 itemprop="name" class="ty-product-block-title" {live_edit name="product:product:{$product.product_id}"}>
                             {$product.product nofilter}
                         </h1>
                         {*<div class="ty-product__share-buttons">
@@ -118,12 +118,10 @@
                     {/if}
                 </div>
 
-                {*
-                <div class="ty-product-block__sku">
+                <div class="hidden">
                     {assign var="sku" value="sku_`$obj_id`"}
                     {$smarty.capture.$sku nofilter}
                 </div>
-                *}
 
                 <div class="ty-options-avail-container-wrap">
                     <div class="ty-avail-container">

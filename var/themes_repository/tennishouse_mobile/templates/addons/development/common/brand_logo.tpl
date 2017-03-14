@@ -13,3 +13,6 @@ no_ids=true
 image_height=$img_height
 keep_transparent=true}
 {/if}
+{if $itemprop}
+<meta itemprop="{$itemprop}" content="{$brand.variant}" />
+{/if}

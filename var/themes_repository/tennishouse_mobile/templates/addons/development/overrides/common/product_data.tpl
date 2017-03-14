@@ -57,7 +57,7 @@
         <div class="ty-control-group product-list-field cm-reload-{$obj_prefix}{$obj_id}{if !$product.product_code} hidden{/if}" id="sku_update_{$obj_prefix}{$obj_id}">
             <input type="hidden" name="appearance[show_sku]" value="{$show_sku}" />
             <label class="ty-control-group__label" id="sku_{$obj_prefix}{$obj_id}">{__("sku")}:</label>
-            <span class="ty-control-group__item" id="product_code_{$obj_prefix}{$obj_id}">{$product.product_code}</span>
+            <span itemprop="sku" class="ty-control-group__item" id="product_code_{$obj_prefix}{$obj_id}">{$product.product_code}</span>
         <!--sku_update_{$obj_prefix}{$obj_id}--></div>
     {/if}
 {/capture}
