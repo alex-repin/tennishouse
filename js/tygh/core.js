@@ -1202,6 +1202,14 @@ var Tygh = {
                 $('textarea.cm-wysiwyg', elms).appear(function() {
                     $(this).ceEditor();
                 });
+                // [tennishouse]
+                $('textarea:not(.cm-wysiwyg)', elms).each(function(){
+                    $(this).after('<div class="ty-text-length" id="textarea_counter_' + $(this).attr('id') + '">' + $(this).val().length + '</div>');
+                    $(this).keyup(function(){
+                        $('#textarea_counter_' + $(this).attr('id')).html($(this).val().length);
+                    });
+                });
+                // [tennishouse]
 
             }
         },
