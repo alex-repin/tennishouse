@@ -1,7 +1,7 @@
-<div class="ty-grid-list__item-wrapper">
+<div {if $microdata} itemprop="itemListElement" itemscope itemtype="http://schema.org/Product"{/if} class="ty-grid-list__item-wrapper">
 {hook name="products:product_multicolumns_list"}
 {/hook}
-<a href="{"products.view?product_id=`$product.product_id`{if $product.ohash}&`$product.ohash`{/if}"|fn_url}">
+<a {if $microdata} itemprop="url"{/if} href="{"products.view?product_id=`$product.product_id`{if $product.ohash}&`$product.ohash`{/if}"|fn_url}">
 <div class="ty-grid-list__item">
     {if $product.obj_prefix}
         {assign var="obj_id" value="`$product.obj_prefix`_`$product.product_id`"}
@@ -26,7 +26,11 @@
             </div>
         {/if}
         <div class="ty-grid-list__image-product">
-            {include file="views/products/components/product_icon.tpl" product=$product show_gallery=false}
+            {if $microdata}
+                {include file="views/products/components/product_icon.tpl" product=$product show_gallery=false itemprop="image"}
+            {else}
+                {include file="views/products/components/product_icon.tpl" product=$product show_gallery=false}
+            {/if}
         </div>
 
         {if $mode == 'R'}
@@ -35,7 +39,11 @@
         {/if}
         
         <div class="ty-grid-list__brand-image">
-            {include file="addons/development/common/brand_logo.tpl"  brand=$product.brand brand_variant_id=$product.brand.variant_id}
+            {if $microdata}
+                {include file="addons/development/common/brand_logo.tpl"  brand=$product.brand brand_variant_id=$product.brand.variant_id itemprop="brand"}
+            {else}
+                {include file="addons/development/common/brand_logo.tpl"  brand=$product.brand brand_variant_id=$product.brand.variant_id}
+            {/if}
         </div>
         
         {if $mode == 'R'}
@@ -59,13 +67,13 @@
             {if $mode == 'R' && !$extended}
                 <div class="ty-product-series">{$product.subtitle}</div>
             {/if}
-            <div class="ty-grid-list__item-title">
+            <div {if $microdata} itemprop="name"{/if} class="ty-grid-list__item-title">
                 {assign var="name" value="name_`$obj_id`"}
                 {$smarty.capture.$name nofilter}
             </div>
         </div>
         {if $extended}
-        <div class="ty-grid-list__item-description">
+        <div itemprop="description" class="ty-grid-list__item-description">
             {assign var="name" value="prod_descr_`$obj_id`"}
             {$smarty.capture.$name nofilter}
         </div>
@@ -74,16 +82,23 @@
                 <div class="ty-grid-list__item-feature">{$feature.description}: {$feature.variants}</div>
             {/foreach}
         </div>
+        {else}
+            <meta itemprop="description" content="{$product.product nofilter}" />
         {/if}
 
         {hook name="products:product_multicolumns_list_item_price"}
-        <div class="ty-grid-list__price {if $product.price == 0}ty-grid-list__no-price{/if}">
+        <div {if $microdata} itemprop="offers"{/if} itemscope itemtype="http://schema.org/Offer" class="ty-grid-list__price {if $product.price == 0}ty-grid-list__no-price{/if}">
             {assign var="old_price" value="old_price_`$obj_id`"}
             {if $mode == 'R' && $smarty.capture.$old_price|trim}{$smarty.capture.$old_price nofilter}{/if}
 
             {assign var="price" value="price_`$obj_id`"}
             {$smarty.capture.$price nofilter}
-
+            {if $microdata}
+                <link itemprop="availability" href="http://schema.org/InStock" />
+                <meta itemprop="price" content="{$product.price|fn_format_price:$primary_currency}" />
+                <meta itemprop="priceCurrency" content="{$currencies[$smarty.const.CART_PRIMARY_CURRENCY].currency_code}" />
+            {/if}
+            
             {assign var="clean_price" value="clean_price_`$obj_id`"}
             {$smarty.capture.$clean_price nofilter}
 

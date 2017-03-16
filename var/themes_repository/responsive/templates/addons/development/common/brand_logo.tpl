@@ -6,13 +6,14 @@
         {$img_height = "19"}
     {/if}
 {/if}
+{if $itemprop}
+<meta itemprop="{$itemprop}" content="{$brand.variant}" />
+{$itemprop = ''}
+{/if}
 {include file="common/image.tpl"
 show_detailed_link=false
 images=$brand.image_pair
 no_ids=true
 image_height=$img_height
 keep_transparent=true}
-{/if}
-{if $itemprop}
-<meta itemprop="{$itemprop}" content="{$brand.variant}" />
 {/if}

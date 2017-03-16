@@ -95,7 +95,9 @@
 {/if}
 
 {if $layouts.$selected_layout.template}
-    {include file="`$layouts.$selected_layout.template`" columns=$product_columns}
+    <div itemscope itemtype="http://schema.org/ItemList">
+        {include file="`$layouts.$selected_layout.template`" columns=$product_columns microdata=true}
+    </div>
 {/if}
 
 {elseif !$subcategories || $show_no_products_block}
