@@ -929,11 +929,11 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
 //                             $product['subtitle'] = __("type") .  ' - ' .  $products_features[$product['product_id']][TYPE_FEATURE_ID]['variants'];
 //                         }
                     } elseif ($product['type'] == 'A') {
-                        $product['subtitle'] = reset($variants) .  ' - ' .  $brand;
+//                         $product['subtitle'] = reset($variants) .  ' - ' .  $brand;
                     } elseif ($product['type'] == 'S') {
                         $product['subtitle'] = __("surface") .  ' - ' .  reset($variants);
                     } elseif ($product['type'] == 'B') {
-                        $product['subtitle'] = __("bag") .  ' - ' .  $brand;
+                        $product['subtitle'] = __("size") .  ' - ' .  $products_features[$product['product_id']][BAG_SIZE_FEATURE_ID]['variants'];
                     } elseif ($product['type'] == 'ST') {
                         if (!empty($variants) && count($variants) > 1 && $series_feature['feature_type'] == 'M') {
                             $product['subtitle'] = __("hybrid");
@@ -942,6 +942,12 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                         }
                     } elseif ($product['type'] == 'BL') {
                         $product['subtitle'] = __("type") .  ' - ' .  reset($variants);
+                        $product['description_features'] = array();
+                        foreach ($products_features[$product['product_id']] as $f_id => $ft) {
+                            if (in_array($f_id, array(BALLS_TYPE_FEATURE_ID))) {
+                                $product['description_features'][] = $ft;
+                            }
+                        }
                     } elseif ($product['type'] == 'OG') {
                         $product['subtitle'] = __("type") .  ' - ' .  reset($variants);
                     } elseif ($product['type'] == 'BG') {
