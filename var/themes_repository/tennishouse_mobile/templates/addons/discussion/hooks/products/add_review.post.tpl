@@ -15,7 +15,7 @@
             {if $product.discussion.type == "C" || $product.discussion.type == "B"}
                 <div class="ty-control-group">
                     <label for="dsc_message_{$obj_prefix}{$obj_id}" class="ty-control-group__title cm-required">{__("your_message")}</label>
-                    <textarea id="dsc_message_{$obj_prefix}{$obj_id}" name="post_data[message]" class="ty-input-textarea" placeholder="{__("write_product_review")}">{$product.discussion.post_data.message}</textarea>
+                    <textarea id="dsc_message_{$obj_prefix}{$obj_id}" name="post_data[message]" class="ty-input-textarea" placeholder="{__('write_product_review')}">{$product.discussion.post_data.message}</textarea>
                 </div>
             {/if}
             <div class="ty-flicker-input">
@@ -23,7 +23,7 @@
                     <label for="dsc_name_{$obj_prefix}{$obj_id}" class="ty-control-group__title cm-required">{__("reviewer_name")}</label>
                     <input type="text" id="dsc_name_{$obj_prefix}{$obj_id}" name="post_data[name]" value="{if $auth.user_id}{$user_info.firstname} {$user_info.lastname}{elseif $product.discussion.post_data.name}{$product.discussion.post_data.name}{/if}" size="25" class="ty-input-text" placeholder="{__("reviewer_name")}" />
                 </div>
-                <div class="ty-control-group ty-inline-block" style="width: 50.7%;">
+                <div class="ty-control-group ty-inline-block" style="width: 50%;">
                     <label for="dsc_city_{$obj_prefix}{$obj_id}" class="ty-control-group__title" style="padding-bottom: 7px;">{__("city")}</label>
                     <input type="text" id="dsc_city_{$obj_prefix}{$obj_id}" name="post_data[city]" value="{if $user_info.s_city}{$user_info.s_city}{elseif $product.discussion.post_data.city}{$product.discussion.post_data.city}{/if}" size="25" class="ty-input-text" placeholder="{__("city")}" />
                 </div>

@@ -245,7 +245,7 @@
     {include file="addons/development/common/tabsbox.tpl" content=$smarty.capture.block_tabsbox navigation=$_block_tabs}
     </div>
 {/if}
-{include file="addons/development/common/share_buttons.tpl" title=$product.product description=$product.full_description|strip_tags|truncate:160 image=$product.main_pair.detailed.image_path}
+{include file="addons/development/common/share_buttons.tpl" short=true title=$product.product description=$product.full_description|strip_tags|truncate:160 image=$product.main_pair.detailed.image_path}
 [-similar_products-]
 
 {capture name="mainbox_title"}{assign var="details_page" value=true}{/capture}
