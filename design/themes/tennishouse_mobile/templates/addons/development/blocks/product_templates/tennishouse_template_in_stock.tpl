@@ -174,6 +174,7 @@
     {/if}
 
 </div>
+{include file="addons/development/common/share_buttons.tpl" title=$product.product description=$product.full_description|strip_tags|truncate:160 image=$product.main_pair.detailed.image_path}
 [-similar_products-]
 
 {if $block_tabs.tabs}

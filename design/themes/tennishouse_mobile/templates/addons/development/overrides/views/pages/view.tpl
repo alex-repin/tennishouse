@@ -10,3 +10,5 @@
     
 {hook name="pages:page_extra"}
 {/hook}
+
+{include file="addons/development/common/share_buttons.tpl" title=$page.page}

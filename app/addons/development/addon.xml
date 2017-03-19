@@ -977,5 +977,9 @@
         <item lang="ru" id="product_page_title_ST">купить теннисную струну в интернет-магазине в Москве – TennisHouse</item>
         <item lang="ru" id="product_page_title_S">купить обувь для тенниса в интернет-магазине в Москве – TennisHouse</item>
         <item lang="ru" id="tennis_player">Теннисист</item>
+        <item lang="ru" id="twitter">Twitter</item>
+        <item lang="ru" id="vkontakte">ВКонтакте</item>
+        <item lang="ru" id="google_plus">Google+</item>
+        <item lang="ru" id="odnoklassniki">OK</item>
     </language_variables>
 </addon>

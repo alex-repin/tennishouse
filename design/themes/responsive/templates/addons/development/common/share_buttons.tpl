@@ -1,26 +1,11 @@
-<script type="text/javascript">
-{$image_data=$image|fn_image_to_display:200:200}
-{literal}
-(function() {
-    if (window.pluso)if (typeof window.pluso.start == "function") return;
-    if (window.ifpluso==undefined) { window.ifpluso = 1;
-        var d = document, s = d.createElement('script'), g = 'getElementsByTagName';
-        s.type = 'text/javascript'; s.charset='UTF-8'; s.async = true;
-        s.src = ('https:' == window.location.protocol ? 'https' : 'http')  + '://share.pluso.ru/pluso-like.js';
-        var h=d[g]('body')[0];
-        h.appendChild(s);
-    }
-//     $(document).ready(function() {
-//         setTimeout(function(){
-//             if (true) {
-//                 var clicks = Math.floor(Math.random() * (5 - 0 + 1)) + 0;
-//                 for (var i = 0; i <= clicks; i++) {
-//                     $('.pluso-vkontakte').trigger('click');
-//                 }
-//             }
-//         }, 5000);
-//     });
-})();
-{/literal}
-</script>
-<div data-user="1981544303" data-title="{$smarty.capture.title|strip|trim nofilter}" data-url="{$config.current_url|fn_url}" data-image="{$image_data.image_path}" class="pluso" data-background="transparent" data-options="medium,round,line,vertical,nocounter,theme=08" data-services="vkontakte,odnoklassniki,facebook"></div>
+{script src="js/addons/development/share.js"}
+
+<div class="ty-social-share">
+    <div class="social" data-url="{$config.current_url|fn_url}" data-title="{$title nofilter}" data-description="{$description}" data-image="{$image}">
+        <div class="push facebook" data-id="fb"><i class="fa fa-facebook"></i><span class="ty-push-title">{__("facebook")}</span></div>
+        <div class="push twitter" data-id="tw"><i class="fa fa-twitter"></i><span class="ty-push-title">{__("twitter")}</span></div>
+        <div class="push vkontakte" data-id="vk"><i class="fa fa-vk"></i><span class="ty-push-title">{__("vkontakte")}</span></div>
+        <div class="push google" data-id="gp"><i class="fa fa-google-plus"></i><span class="ty-push-title">{__("google_plus")}</span></div>
+        <div class="push ok" data-id="ok"><i class="fa fa-odnoklassniki"></i><span class="ty-push-title">{__("odnoklassniki")}</span></div>
+    </div>
+</div>
