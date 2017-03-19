@@ -1,9 +1,9 @@
 @font-face {
     font-family: "Play";
-    src: url("../css/addons/development/fonts/PlayRegular/PlayRegular.eot");
-    src: url("../css/addons/development/fonts/PlayRegular/PlayRegular.eot?#iefix")format("embedded-opentype"),
-    url("../css/addons/development/fonts/PlayRegular/PlayRegular.woff") format("woff"),
-    url("../css/addons/development/fonts/PlayRegular/PlayRegular.ttf") format("truetype");
+    src: url("../../../../../../../../design/themes/responsive/css/addons/development/fonts/PlayRegular/PlayRegular.eot");
+    src: url("../../../../../../../../design/themes/responsive/css/addons/development/fonts/PlayRegular/PlayRegular.eot?#iefix")format("embedded-opentype"),
+    url("../../../../../../../../design/themes/responsive/css/addons/development/fonts/PlayRegular/PlayRegular.woff") format("woff"),
+    url("../../../../../../../../design/themes/responsive/css/addons/development/fonts/PlayRegular/PlayRegular.ttf") format("truetype");
     font-style: normal;
     font-weight: normal;
 }
@@ -410,6 +410,11 @@ input:focus::placeholder, textarea:focus::placeholder {
     -moz-border-radius: 3px;
     border-radius: 3px;
     margin: 0;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
 }
 .tooltip a {
     color: #fff;
@@ -1677,7 +1682,7 @@ table.ty-cart-content {
     border-bottom: 2px solid #fff;
     opacity: 1;
 }
-.ty-categorization-tabs__a h2 {
+.ty-categorization-tabs__a h2, .ty-categorization-tabs__a span {
     display: block;
     font-size: 16px;
     height: 38px;
@@ -1737,10 +1742,10 @@ table.ty-cart-content {
   filter: none;
   -webkit-filter: grayscale(0%);
 }
-.ty-categorization-tabs__item.active .ty-categorization-tabs__a h2 {
+.ty-categorization-tabs__item.active .ty-categorization-tabs__a h2, .ty-categorization-tabs__item.active .ty-categorization-tabs__a span {
     color: #000;
 }
-.ty-categorization-tabs__a:hover h2 {
+.ty-categorization-tabs__a:hover h2, .ty-categorization-tabs__a:hover span {
     text-decoration: none;
     color: #000;
 }
@@ -1860,7 +1865,7 @@ table.ty-cart-content {
         background: transparent;
     }
     .ty-grid-list__item-description {
-        margin: 0 0 5px;
+        margin: 0 0 10px;
         font-size: 12px;
         height: 80px;
         overflow: hidden;
@@ -2005,11 +2010,11 @@ table.ty-cart-content {
 }
 .ty-grid-list__item-title {
     display: block;
-    height: 39px;
+    height: 26px;
     line-height: 13px;
     overflow: hidden;
     font-size: 13px;
-    margin-bottom: 0;
+    margin-bottom: 10px;
 }
 .ty-price-update {
     display: inline;
@@ -3098,6 +3103,48 @@ table.ty-cart-content {
     right: 5px;
     top: 115px;
 }
+/* Social share*/
+.ty-social-share {
+    width: 100%;
+    margin: 10px auto;
+    background: #fff;
+    text-align: right;
+}
+.like {
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 50px;
+}
+.push {
+    display: inline-block;
+    width: 110px;
+    line-height: 35px;
+    margin: 0 2px 0 2px;
+    text-align: center;
+    color: #fff;
+    cursor: pointer;
+}
+.push i {
+    font-size: 15px;
+}
+.ty-push-title {
+    text-transform: uppercase;
+    margin-left: 5px;
+    font-size: 12px;
+}
+.facebook {background-color:#3b5998;}
+.facebook:hover {background-color:#2d4373; color:#fff;}
+.google {background-color:#dd4b39;}
+.google:hover {background-color:#c23321; color:#fff;}
+.twitter {background-color:#55acee;}
+.twitter:hover {background-color:#2795e9; color:#fff;}
+.vkontakte {background-color:#587ea3;}
+.vkontakte:hover {background-color:#466482; color:#fff;}
+.ok {background-color:#ee8208;}
+.ok:hover {background-color:#ee7808; color:#fff;}
+
+/* Social share*/
+
 /*Category menu*/
 
 .ty-menu .ty-menu__items {

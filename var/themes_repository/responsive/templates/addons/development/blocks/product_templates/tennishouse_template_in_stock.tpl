@@ -74,9 +74,6 @@
                         <h1 itemprop="name" class="ty-product-block-title" {live_edit name="product:product:{$product.product_id}"}>
                             {$product.product nofilter}
                         </h1>
-                        {*<div class="ty-product__share-buttons">
-                            {include file="addons/development/common/share_buttons.tpl" title=$product.product description=$product.full_description|strip_tags|truncate:160 image=$product.main_pair}
-                        </div>*}
                         {if $product.price > $addons.development.free_shipping_cost}
                         <div class="ty-product-free-shipping">{__("free_shipping_product_text")}</div>
                         {/if}
@@ -248,6 +245,7 @@
     {include file="addons/development/common/tabsbox.tpl" content=$smarty.capture.block_tabsbox navigation=$_block_tabs}
     </div>
 {/if}
+{include file="addons/development/common/share_buttons.tpl" title=$product.product description=$product.full_description|strip_tags|truncate:160 image=$product.main_pair.detailed.image_path}
 [-similar_products-]
 
 {capture name="mainbox_title"}{assign var="details_page" value=true}{/capture}
