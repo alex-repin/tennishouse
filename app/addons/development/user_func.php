@@ -22,6 +22,11 @@ use Tygh\Shippings\Shippings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_is_icon_feature($feature_id)
+{
+    return (in_array($feature_id, array(R_WEIGHT_FEATURE_ID, R_HEADSIZE_FEATURE_ID))) ? true : false;
+}
+
 function fn_check_category_discussion($id_path)
 {
     $enable_discussion = array(RACKETS_CATEGORY_ID, BALLS_CATEGORY_ID, STRINGS_CATEGORY_ID, SHOES_CATEGORY_ID, OVERGRIPS_CATEGORY_ID, BALL_MACHINE_CATEGORY_ID, STR_MACHINE_CATEGORY_ID);
