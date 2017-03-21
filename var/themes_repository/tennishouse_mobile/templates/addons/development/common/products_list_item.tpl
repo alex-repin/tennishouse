@@ -59,6 +59,15 @@
                 </div>
             {/if}
         {/if}
+        <div class="ty-grid-list__item-icon-features">
+            {foreach from=$product.description_features item="feature"}
+                {if $feature.feature_id|fn_is_icon_feature}
+                    <div class="ty-grid-list__item-feature ty-grid-list__item-feature-icon">
+                        <div class="ty-feature-icon ty-feature-icon-{$feature.feature_id}"></div><span class="ty-feature-icon-value">{$feature.variants}</span>
+                    </div>
+                {/if}
+            {/foreach}
+        </div>
     </div>
     
     <div class="ty-grid-list__item-info">
@@ -76,15 +85,6 @@
         <div itemprop="description" class="ty-grid-list__item-description">
             {assign var="name" value="prod_descr_`$obj_id`"}
             {$smarty.capture.$name nofilter}
-        </div>
-        <div class="ty-grid-list__item-icon-features">
-            {foreach from=$product.description_features item="feature"}
-                {if $feature.feature_id|fn_is_icon_feature}
-                    <div class="ty-grid-list__item-feature ty-grid-list__item-feature-icon">
-                        <div class="ty-feature-icon ty-feature-icon-{$feature.feature_id}"></div><span class="ty-feature-icon-value">{$feature.variants}</span>
-                    </div>
-                {/if}
-            {/foreach}
         </div>
         <div class="ty-grid-list__item-features">
             {foreach from=$product.description_features item="feature"}

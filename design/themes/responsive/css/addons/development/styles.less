@@ -1819,6 +1819,7 @@ table.ty-cart-content {
 }
 .ty-grid-list__image {
     padding: 5px 0 20px;
+    position: relative;
 }
 .ty-grid-list__item .ty-grid-list__image-product {
     width: 187px;
@@ -1879,6 +1880,9 @@ table.ty-cart-content {
         top: 100px;
         left: 10px;
     }
+    .ty-grid-list__item:hover .ty-grid-list__item-icon-features {
+        top: 105px;
+    }
     .ty-grid-list__item-description div {
         font-size: 12px;
         line-height: 13px;
@@ -1901,6 +1905,8 @@ table.ty-cart-content {
         height: 20px;
         float: none;
         display: inline;
+        position: absolute;
+        bottom: 3px;
     }
     .ty-grid-list__item-name {
         width: auto;
