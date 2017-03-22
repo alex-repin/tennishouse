@@ -33,7 +33,7 @@
 <head>
 {capture name="title"}
 {hook name="index:title"}
-{if $runtime.controller == 'products' && $runtime.mode == 'view' && $page_title}
+{if ($runtime.controller == 'products' || $runtime.controller == 'categories') && $page_title}
     {$page_title}
 {else}
     {foreach from=$breadcrumbs|array_reverse item=i name="bkt"}

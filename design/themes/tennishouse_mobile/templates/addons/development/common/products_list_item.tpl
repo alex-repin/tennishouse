@@ -59,6 +59,7 @@
                 </div>
             {/if}
         {/if}
+        {if $extended}
         <div class="ty-grid-list__item-icon-features">
             {foreach from=$product.description_features item="feature"}
                 {if $feature.feature_id|fn_is_icon_feature}
@@ -68,6 +69,7 @@
                 {/if}
             {/foreach}
         </div>
+        {/if}
     </div>
     
     <div class="ty-grid-list__item-info">
