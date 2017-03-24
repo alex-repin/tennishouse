@@ -981,5 +981,9 @@
         <item lang="ru" id="vkontakte">ВКонтакте</item>
         <item lang="ru" id="google_plus">Google+</item>
         <item lang="ru" id="odnoklassniki">OK</item>
+        <item lang="ru" id="tab_groups_ap_m">Мужская</item>
+        <item lang="ru" id="tab_groups_ap_f">Женская</item>
+        <item lang="ru" id="tab_groups_ap_b">Для мальчиков</item>
+        <item lang="ru" id="tab_groups_ap_g">Для девочек</item>
     </language_variables>
 </addon>

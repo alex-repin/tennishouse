@@ -288,7 +288,7 @@ function fn_dispatch($controller = '', $mode = '', $action = '', $dispatch_extra
         fn_redirect(Registry::get('config.current_location') . $qstring, false, true);
     }
 
-    if (isset($_SERVER['CONTENT_LENGTH']) && ($_SERVER['CONTENT_LENGTH'] > fn_return_bytes(ini_get('upload_max_filesize')) || $_SERVER['CONTENT_LENGTH'] > fn_return_bytes(ini_get('post_max_size')))) {
+    if (AREA != 'A' && isset($_SERVER['CONTENT_LENGTH']) && ($_SERVER['CONTENT_LENGTH'] > fn_return_bytes(ini_get('upload_max_filesize')) || $_SERVER['CONTENT_LENGTH'] > fn_return_bytes(ini_get('post_max_size')))) {
         $max_size = fn_return_bytes(ini_get('upload_max_filesize')) < fn_return_bytes(ini_get('post_max_size')) ? ini_get('upload_max_filesize') : ini_get('post_max_size');
 
         fn_set_notification('E', __('error'), __('text_forbidden_uploaded_file_size', array(
