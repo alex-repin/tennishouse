@@ -188,7 +188,7 @@ function fn_restore_dump($files)
         return false;
     }
 
-    fn_set_progress('parts', sizeof($files));
+//     fn_set_progress('parts', sizeof($files));
 
     foreach ($files as $file) {
         $is_archive = false;

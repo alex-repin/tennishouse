@@ -345,14 +345,18 @@ function db_export_to_file($file_name, $dbdump_tables, $dbdump_schema, $dbdump_d
             }
             for ($i = 0; $i < $total_rows; $i = $i + $it) {
                 $table_data = Database::getArray("SELECT * FROM $table LIMIT $i, $it");
+                $query = "INSERT INTO $_table (`" . implode('`, `', array_keys(reset($table_data))) . "`) VALUES ";
+                $_values = '';
                 foreach ($table_data as $_tdata) {
                     $_tdata = fn_add_slashes($_tdata, true);
                     $values = array();
                     foreach ($_tdata as $v) {
                         $values[] = ($v !== null) ? "'$v'" : 'NULL';
                     }
-                    fwrite($fd, "INSERT INTO $_table (`" . implode('`, `', array_keys($_tdata)) . "`) VALUES (" . implode(', ', $values) . ");\n");
+                    $_values .= (($_values == '') ? '' : ",\n") . "(" . implode(', ', $values) . ")";
                 }
+                $query .= $_values . ";\n";
+                fwrite($fd, $query);
 
                 if ($show_progress) {
                     fn_echo(' .');
@@ -403,19 +407,21 @@ function db_import_sql_file($file, $buffer = 16384, $show_status = true, $show_c
         if ($fd) {
             $ret = array();
             $rest = '';
+            $table_names = array();
             $fs = filesize($file);
 
             if ($show_status && $move_progress_bar) {
                 fn_set_progress('step_scale', ceil($fs / $buffer));
             }
 
+            $table_name = '';
             while (!feof($fd)) {
                 $str = $rest.fread($fd, $buffer);
 
                 $rest = fn_parse_queries($ret, $str);
 
                 if ($show_status) {
-                    fn_set_progress('echo', '<br />'. __('importing_data'), $move_progress_bar);
+                    fn_set_progress('echo', '<br />'. __('importing_data') . ' <b>' . $table_name . '</b>', $move_progress_bar);
                 }
 
                 if (!empty($ret)) {

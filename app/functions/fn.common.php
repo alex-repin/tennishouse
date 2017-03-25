@@ -1397,6 +1397,51 @@ function fn_parse_queries(&$sql, $str)
     $ignore = false;
     $len = strlen($str);
 
+// fn_print_r(microtime());
+//     while (!empty($str)) {
+// //         preg_match("/([^'\"\`\;]*)[\'\"\`\;]/m", $str, $matches);
+// //     fn_print_r('matches: ' . $matches[0]);
+//         if (preg_match("/([^'\"`;]*)['\"`;]/m", $str, $matches)) {
+//             $char = $matches[0][strlen($matches[0]) - 1];
+// //     fn_print_r('character: ' . $char);
+//             $query .= $matches[0];
+// //     fn_print_r('query: ' . $query);
+//             if ($ignore == false) {
+//                 if ($char == ';' && $quote == '') {
+//                     $sql[] = $query;
+//                     $query = '';
+//                 } elseif ($char == '\\') {
+// //                     fn_print_r('ignore on');
+//                     $ignore = true;
+// 
+//                 } elseif ($char == '"' || $char == "'" || $char == '`') {
+//                     if ($matches[0][strlen($matches[0]) - 2] != '\\') {
+//                         if ($quote == '') {
+//                             $quote = $char;
+//                         } elseif ($char == $quote) {
+//                             $quote = '';
+//                         }
+//                     }
+//                 }
+//             } else {
+// //                     fn_print_r('ignore off');
+//                 $ignore = false;
+//             }
+// //     fn_print_r('quote: ' . $quote);
+//             $_str = substr_replace($str, '', 0, strlen($matches[0]));
+// //             if ($_str === $str) {
+// //                 fn_print_die($matches[0], $str);
+// //             }
+//             $str = $_str;
+// //             $str = preg_replace("/$match/", "", $str, 1);
+// //     fn_print_r('sqls', $sql);
+// //     fn_print_r('new str', $str);
+//         } else {
+//             $query .= $str;
+//             break;
+//         }
+//     }
+// fn_print_r(microtime());
     for ($i = 0; $i < $len; $i++) {
         $char = $str[$i];
         $query .= $char;
@@ -1419,7 +1464,9 @@ function fn_parse_queries(&$sql, $str)
             $ignore = false;
         }
     }
-
+//     fn_print_r($sql, $query);
+//     
+// fn_print_die(microtime());
     if (!empty($query)) {
         return $query;
     }
