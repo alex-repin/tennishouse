@@ -33,11 +33,6 @@
             {/if}
         </div>
 
-        {if $mode == 'R'}
-            {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
-            {$smarty.capture.$discount_label nofilter}
-        {/if}
-        
         <div class="ty-grid-list__brand-image">
             {if $microdata}
                 {include file="addons/development/common/brand_logo.tpl"  brand=$product.brand brand_variant_id=$product.brand.variant_id itemprop="brand"}
@@ -58,6 +53,15 @@
                     <div class="{if $product.is_liked}ty-grid-list__likes-heart-full{else}ty-grid-list__likes-heart{/if}"></div><span class="ty-grid-list__likes-num">{$product.likes}</span>
                 </div>
             {/if}
+        {/if}
+        {if $mode == 'R'}
+            <div class="ty-product-tags">
+                {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
+                {$smarty.capture.$discount_label nofilter}
+                {if $product.tags.new}
+                    <div class="ty-new-item-tag">{__("new_item")}</div>
+                {/if}
+            </div>
         {/if}
         {if $extended}
         <div class="ty-grid-list__item-icon-features">

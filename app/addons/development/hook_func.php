@@ -1701,12 +1701,18 @@ function fn_development_get_products_post(&$products, $params, $lang_code)
             $main_ids = array_merge($main_ids, $product['category_ids']);
         }
         $id_paths = db_get_hash_single_array("SELECT category_id, id_path FROM ?:categories WHERE category_id IN (?n)", array('category_id', 'id_path'), array_unique($main_ids));
+        $new_period = Registry::get('addons.development.new');
+        $now = getdate(TIME);
+        $time_limit = mktime($now['hours'], $now['minutes'], $now['seconds'], $now['mon'] - $new_period, $now['mday'], $now['year']);
         foreach ($products as $i => $product) {
             $products[$i]['id_path'] = $id_paths[$product['main_category']];
             foreach ($product['category_ids'] as $j => $cat_id) {
                 $products[$i]['all_path'][$cat_id] = $id_paths[$cat_id];
             }
             $products[$i]['type'] = fn_identify_category_type($products[$i]['id_path']);
+            if (!empty($product['timestamp']) && $product['timestamp'] > $time_limit) {
+                $products[$i]['tags']['new'] = 1;
+            }
         }
     }
     if (!empty($params['shuffle']) && $params['shuffle'] == 'Y') {

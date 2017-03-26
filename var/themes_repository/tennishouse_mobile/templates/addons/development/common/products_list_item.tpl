@@ -33,11 +33,6 @@
             {/if}
         </div>
 
-        {if $mode == 'R'}
-            {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
-            {$smarty.capture.$discount_label nofilter}
-        {/if}
-        
         <div class="ty-grid-list__brand-image">
             {if $microdata}
                 {include file="addons/development/common/brand_logo.tpl"  brand=$product.brand brand_variant_id=$product.brand.variant_id itemprop="brand"}
@@ -59,6 +54,16 @@
                 </div>
             {/if}
         {/if}
+        {if $mode == 'R'}
+            <div class="ty-product-tags">
+                {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
+                {$smarty.capture.$discount_label nofilter}
+                {if $product.tags.new}
+                    <div class="ty-new-item-tag">{__("new_item")}</div>
+                {/if}
+            </div>
+        {/if}
+        {if $extended}
         <div class="ty-grid-list__item-icon-features">
             {foreach from=$product.description_features item="feature"}
                 {if $feature.feature_id|fn_is_icon_feature}
@@ -68,6 +73,7 @@
                 {/if}
             {/foreach}
         </div>
+        {/if}
     </div>
     
     <div class="ty-grid-list__item-info">

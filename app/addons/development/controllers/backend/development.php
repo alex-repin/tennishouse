@@ -272,7 +272,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     if (!empty($option_data)) {
                                         $combination_hash = false;
                                         if (!empty($_REQUEST['debug']) && ($product_id == $_REQUEST['debug'] || $product_code == $_REQUEST['debug'])) {
-//                                             fn_print_r($options_count, $option_data, $var_id_tmp, $missing_variants, $max);
+//                                             fn_print_die($options_count, $option_data, $var_id_tmp, $missing_variants, $max);
                                         }
                                         foreach ($option_data as $product_id => $opt_data) {
                                             if (count($options_count[$product_id]) != count($option_data[$product_id]) && !empty($missing_variants[$product_id])) {
@@ -1067,6 +1067,10 @@ function fn_normalize_string($string)
 function fn_format_variant_name($variant_name)
 {
     $variant_name = fn_strtolower($variant_name);
+    $variant_name = preg_replace('/флуоресцентно/', 'ярко', $variant_name);
+    $variant_name = preg_replace('/ярко /', 'ярко-', $variant_name);
+    $variant_name = preg_replace('/светло /', 'светло-', $variant_name);
+    $variant_name = preg_replace('/темно /', 'темно-', $variant_name);
     $variant_name = preg_replace('/ /', '', $variant_name);
     $variant_name = preg_replace('/:/', '', $variant_name);
     $variant_name = preg_replace('/[\+\-]/', '/', $variant_name);

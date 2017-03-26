@@ -29,6 +29,13 @@
                             <item lang="ru">Бесплатная доставка</item>
                         </translations>
                     </item>
+                    <item id="new">
+                        <type>input</type>
+                        <default_value>3</default_value>
+                        <translations>
+                            <item lang="ru">Сколько месяцев товар считается новым</item>
+                        </translations>
+                    </item>
                 </items>
             </section>
             <section id="vk">
@@ -985,5 +992,6 @@
         <item lang="ru" id="tab_groups_ap_f">Женская</item>
         <item lang="ru" id="tab_groups_ap_b">Для мальчиков</item>
         <item lang="ru" id="tab_groups_ap_g">Для девочек</item>
+        <item lang="ru" id="new_item">Новинка</item>
     </language_variables>
 </addon>
