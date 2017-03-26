@@ -346,16 +346,17 @@ function db_export_to_file($file_name, $dbdump_tables, $dbdump_schema, $dbdump_d
             for ($i = 0; $i < $total_rows; $i = $i + $it) {
                 $table_data = Database::getArray("SELECT * FROM $table LIMIT $i, $it");
                 $query = "INSERT INTO $_table (`" . implode('`, `', array_keys(reset($table_data))) . "`) VALUES ";
-                $_values = '';
+                $first = true;
                 foreach ($table_data as $_tdata) {
                     $_tdata = fn_add_slashes($_tdata, true);
                     $values = array();
                     foreach ($_tdata as $v) {
                         $values[] = ($v !== null) ? "'$v'" : 'NULL';
                     }
-                    $_values .= (($_values == '') ? '' : ",\n") . "(" . implode(', ', $values) . ")";
+                    $query .= ((!empty($first)) ? '' : ",\n") . "(" . implode(', ', $values) . ")";
+                    $first = false;
                 }
-                $query .= $_values . ";\n";
+                $query .= ";\n";
                 fwrite($fd, $query);
 
                 if ($show_progress) {
