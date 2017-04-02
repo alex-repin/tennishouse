@@ -80,7 +80,7 @@
 
 {if $layouts.$selected_layout.template}
     <div itemscope itemtype="http://schema.org/ItemList">
-        {include file="`$layouts.$selected_layout.template`" columns=$product_columns microdata=true}
+        {include file="`$layouts.$selected_layout.template`" columns=$product_columns microdata=true category_grid=true}
     </div>
 {/if}
 

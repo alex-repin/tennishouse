@@ -220,20 +220,22 @@ function fn_product_configurator_get_products(&$params, &$fields, &$sortings, &$
 
 function fn_product_configurator_gather_additional_product_data_before_options(&$product, $auth, $params)
 {
-    if (((!empty($product['product_type']) && $product['product_type'] == 'C') || (/*isset($product['product_features'][R_STRINGS_FEATURE_ID]) && $product['product_features'][R_STRINGS_FEATURE_ID]['value'] == 'N' && */isset($product['product_features'][R_WEIGHT_FEATURE_ID]))) && AREA == 'C' && !empty($params['get_for_one_product'])) {
-        if (!empty($product['cart_id'])) {
-            $product['edit_configuration'] = $product['cart_id'];
-        } elseif (!empty($_REQUEST['cart_id'])) {
-            $product['edit_configuration'] = $_REQUEST['cart_id'];
-        }
-        if (!empty($_REQUEST['cart_id'])) {
-            $cart = & $_SESSION['cart'];
-            if (isset($cart['products'][$product['edit_configuration']]['extra'])) {
-                $product['extra'] = $cart['products'][$product['edit_configuration']]['extra'];
-                $product['selected_amount'] = $cart['products'][$product['edit_configuration']]['amount'];
-                if (!empty($cart['products'][$product['edit_configuration']]['extra']['product_options'])) {
-                    $product['selected_options'] = $cart['products'][$product['edit_configuration']]['extra']['product_options'];
-                    $product['get_default_options'] = false;
+    if (!empty($params['get_for_one_product'])) {
+        if (((!empty($product['product_type']) && $product['product_type'] == 'C') || (/*isset($product['product_features'][R_STRINGS_FEATURE_ID]) && $product['product_features'][R_STRINGS_FEATURE_ID]['value'] == 'N' && */isset($product['product_features'][R_WEIGHT_FEATURE_ID]))) && AREA == 'C' && !empty($params['get_for_one_product'])) {
+            if (!empty($product['cart_id'])) {
+                $product['edit_configuration'] = $product['cart_id'];
+            } elseif (!empty($_REQUEST['cart_id'])) {
+                $product['edit_configuration'] = $_REQUEST['cart_id'];
+            }
+            if (!empty($_REQUEST['cart_id'])) {
+                $cart = & $_SESSION['cart'];
+                if (isset($cart['products'][$product['edit_configuration']]['extra'])) {
+                    $product['extra'] = $cart['products'][$product['edit_configuration']]['extra'];
+                    $product['selected_amount'] = $cart['products'][$product['edit_configuration']]['amount'];
+                    if (!empty($cart['products'][$product['edit_configuration']]['extra']['product_options'])) {
+                        $product['selected_options'] = $cart['products'][$product['edit_configuration']]['extra']['product_options'];
+                        $product['get_default_options'] = false;
+                    }
                 }
             }
         }

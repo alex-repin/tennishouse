@@ -164,6 +164,13 @@ define('SAVING_PROGRAM_PAGE_ID', 77);
 define('ABOUT_US_PAGE_ID', 2);
 /* Pages*/
 
+/* Global options */
+define('GLOBAL_COLOR_OPT_ID', 139);
+define('SHOE_SIZE_OPT_ID', 112);
+define('APPAREL_SIZE_OPT_ID', 141);
+define('APPAREL_KIDS_SIZE_OPT_ID', 209);
+/* Global options */
+
 define('SIZE_CHART_TAB_ID', 10);
 
 define('TH_WAREHOUSE_ID', 1);

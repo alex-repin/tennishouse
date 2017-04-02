@@ -474,7 +474,11 @@ function fn_gather_additional_products_data(&$products, $params)
     }
 
     if ($params['get_options']) {
-        $product_options = fn_get_product_options($product_ids, CART_LANGUAGE);
+        if (!empty($params['get_for_one_product'])) {
+            $product_options = fn_get_product_options($product_ids, CART_LANGUAGE);
+        } else {
+            $product_options = fn_get_product_options($product_ids, CART_LANGUAGE, false, false, false, false, false);
+        }
     } else {
         $has_product_options = db_get_hash_array("SELECT a.option_id, a.product_id FROM ?:product_options AS a WHERE a.product_id IN (?n) AND a.status = 'A'", 'product_id', $product_ids);
         $has_product_options_links = db_get_hash_array("SELECT c.option_id, c.product_id FROM ?:product_global_option_links AS c LEFT JOIN ?:product_options AS a ON a.option_id = c.option_id WHERE a.status = 'A' AND c.product_id IN (?n)", 'product_id', $product_ids);
@@ -2920,7 +2924,7 @@ function fn_delete_product_option_variants($option_id = 0, $variant_ids = array(
  * @param bool $skip_global Get only general options, not global options, applied as link
  * @return array List of product options data
  */
-function fn_get_product_options($product_ids, $lang_code = CART_LANGUAGE, $only_selectable = false, $inventory = false, $only_avail = false, $skip_global = false)
+function fn_get_product_options($product_ids, $lang_code = CART_LANGUAGE, $only_selectable = false, $inventory = false, $only_avail = false, $skip_global = false, $get_images = true)
 {
     $condition = $_status = $join = '';
     $extra_variant_fields = '';
@@ -3014,7 +3018,7 @@ function fn_get_product_options($product_ids, $lang_code = CART_LANGUAGE, $only_
 
     $_status = (AREA == 'A')? '' : " AND a.status='A'";
 
-    $v_fields = "a.variant_id, a.option_id, a.position, a.modifier, a.modifier_type, a.weight_modifier, a.weight_modifier_type, a.code_suffix, $extra_variant_fields b.variant_name";
+    $v_fields = "a.variant_id, a.option_id, a.position, a.modifier, a.modifier_type, a.weight_modifier, a.weight_modifier_type, $extra_variant_fields b.variant_name";
     $v_join = db_quote("LEFT JOIN ?:product_option_variants_descriptions as b ON a.variant_id = b.variant_id AND b.lang_code = ?s", $lang_code);
     $v_condition = db_quote("a.option_id IN (?n) $_status", array_unique($option_ids));
     $v_sorting = "a.position, a.variant_id";
@@ -3040,11 +3044,13 @@ function fn_get_product_options($product_ids, $lang_code = CART_LANGUAGE, $only_
         return is_array($product_ids)? $options: $options[$product_ids];
     }
 
-    $image_pairs = fn_get_image_pairs(array_unique($variants_ids), 'variant_image', 'V', true, true, $lang_code);
+    if ($get_images) {
+        $image_pairs = fn_get_image_pairs(array_unique($variants_ids), 'variant_image', 'V', true, true, $lang_code);
 
-    foreach ($variants as $option_id => &$_variants) {
-        foreach ($_variants as $variant_id => &$_variant) {
-            $_variant['image_pair'] = !empty($image_pairs[$variant_id])? reset($image_pairs[$variant_id]) : array();
+        foreach ($variants as $option_id => &$_variants) {
+            foreach ($_variants as $variant_id => &$_variant) {
+                $_variant['image_pair'] = !empty($image_pairs[$variant_id])? reset($image_pairs[$variant_id]) : array();
+            }
         }
     }
 
@@ -6708,6 +6714,9 @@ function fn_clone_product_options($from_product_id, $to_product_id, $from_global
                 $v['company_id'] = Registry::get('runtime.company_id');
             }
             unset($v['option_id']);
+            if (!empty($from_global_option_id)) {
+                $v['parent_option_id'] = $from_global_option_id;
+            }
             $new_option_id = db_query("INSERT INTO ?:product_options ?e", $v);
 
             if (fn_allowed_for('ULTIMATE')) {
@@ -7199,7 +7208,7 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
 
     if (!empty($params['features_hash'])) {
         list($av_ids, $ranges_ids, $fields_ids, $slider_vals, $fields_ids_revert) = fn_parse_features_hash($params['features_hash']);
-        $advanced_variant_ids = db_get_hash_multi_array("SELECT feature_id, variant_id FROM ?:product_feature_variants WHERE variant_id IN (?n)", array('feature_id', 'variant_id'), $av_ids);
+        $params['av_ids'] = $advanced_variant_ids = db_get_hash_multi_array("SELECT feature_id, variant_id FROM ?:product_feature_variants WHERE variant_id IN (?n)", array('feature_id', 'variant_id'), $av_ids);
 
         if (!empty($advanced_variant_ids)) {
             foreach ($advanced_variant_ids as $f_id => $f_data) {
@@ -7243,7 +7252,6 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
     if (!empty($params['multiple_variants'])) {
         $simple_variant_ids = $params['multiple_variants'];
     }
-
     if (!empty($f_condition)) {
         // [tennishouse]
         FeaturesCache::getProductsConditions(array($f_condition), $join, $condition, $lang_code);

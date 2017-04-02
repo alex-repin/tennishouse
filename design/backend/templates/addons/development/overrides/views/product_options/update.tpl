@@ -284,6 +284,12 @@
                         {include file="common/attach_images.tpl" image_name="variant_image" image_key=$num hide_titles=true no_detailed=true image_object_type="variant_image" image_type="V" image_pair=$vr.image_pair prefix=$id}
                     </div>
                 </div>
+                <div class="control-group cm-non-cb">
+                    <label class="control-label">{__("color_codes")}</label>
+                    <div class="controls">
+                        <input type="text" name="option_data[variants][{$num}][color_codes]" value="{$vr.color_codes}" class="input-medium" />
+                    </div>
+                </div>
                 {/hook}
                 
                 {if $smarty.request.product_id}

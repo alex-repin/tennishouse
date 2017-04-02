@@ -1,7 +1,7 @@
 <div {if $microdata} itemprop="itemListElement" itemscope itemtype="http://schema.org/Product"{/if} class="ty-grid-list__item-wrapper">
 {hook name="products:product_multicolumns_list"}
 {/hook}
-<a {if $microdata} itemprop="url"{/if} href="{"products.view?product_id=`$product.product_id`{if $product.ohash}&`$product.ohash`{/if}"|fn_url}">
+<a {if $microdata} itemprop="url"{/if} href="{"products.view?product_id=`$product.product_id`{if $product.ohash}&`$product.ohash`{/if}"|fn_url}" class="ty-grid-list__item-link">
 <div class="ty-grid-list__item">
     {if $product.obj_prefix}
         {assign var="obj_id" value="`$product.obj_prefix`_`$product.product_id`"}
@@ -16,7 +16,7 @@
         <div class="ty-grid-list__match">{__("match")} {$product.match_p}%</div>
     {/if}
     <div class="ty-grid-list__image">
-        {if $product.option_images && ($mode == 'R' || $mode  == 'S')}
+        {if $product.option_images && ($mode == 'R' || $mode  == 'S') && !$product.hide_icons}
             <div class="ty-list-options">
             {foreach from=$product.option_images item="opt_icon"}
                 <div class="ty-list-options_box">
@@ -59,7 +59,7 @@
                 {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
                 {$smarty.capture.$discount_label nofilter}
                 {if $product.tags.new}
-                    <div class="ty-new-item-tag">{__("new_item")}</div>
+                    <div class="ty-new-item-tag"></div>
                 {/if}
             </div>
         {/if}
@@ -145,4 +145,16 @@
     {$smarty.capture.$form_close nofilter}
 </div>
 </a>
+{if $category_grid}
+<div class="ty-grid-list__item-additional-wrapper">
+    <div class="ty-grid-list__item-additional">
+        {if $product.sizes}
+            <div class="ty-grid-list__item-additional-sizes">
+                <div class="ty-grid-list__item-additional-sizes-title">{$product.sizes.name}:</div>
+                <div>{foreach from=$product.sizes.variants item="v_name" name="av_sizes"}{if !$smarty.foreach.av_sizes.first}, {/if}{$v_name}{/foreach}</div>
+            </div>
+        {/if}
+    </div>
+</div>
+{/if}
 </div>

@@ -1052,6 +1052,10 @@ if ($mode == 'calculate_balance') {
     $result = db_get_hash_multi_array("SELECT prods.product_id, inv.amount, descr.product FROM ?:products AS prods INNER JOIN ?:product_warehouses_inventory AS inv ON inv.product_id = prods.product_id AND inv.warehouse_id = ?i AND inv.amount > 0 LEFT JOIN ?:product_descriptions AS descr ON descr.product_id = prods.product_id AND descr.lang_code = 'ru'", array('product_id'), $_REQUEST['warehouse_id']);
     fn_print_die($result);
     exit;
+} elseif ($mode == 'apply_parent_option_id') {
+    $opt_ids = db_get_fields("SELECT ?:product_options_descriptions.option_id FROM ?:product_options_descriptions LEFT JOIN ?:product_options ON ?:product_options.option_id = ?:product_options_descriptions.option_id WHERE ?:product_options_descriptions.option_name = 'Цвет' AND ?:product_options.product_id != '0'");
+    db_query("UPDATE ?:product_options SET parent_option_id = '139' WHERE option_id IN (?n)", $opt_ids);
+    exit;
 }
 
 function fn_normalize_string($string)

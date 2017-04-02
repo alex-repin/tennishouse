@@ -202,9 +202,9 @@ function fn_delete_image_thumbnails($filename, $prefix = '')
 //
 // Get image pair(s)
 //
-function fn_get_image_pairs($object_ids, $object_type, $pair_type, $get_icon = true, $get_detailed = true, $lang_code = CART_LANGUAGE)
+function fn_get_image_pairs($object_ids, $object_type, $pair_type, $get_icon = true, $get_detailed = true, $lang_code = CART_LANGUAGE, $only_first = false)
 {
-    $icon_pairs = $detailed_pairs = $pairs_data = array();
+    $icon_pairs = $detailed_pairs = $pairs_data = $only_first_icons = $only_first_detailed = array();
 
     $cond = is_array($object_ids)? db_quote("AND ?:images_links.object_id IN (?n)", $object_ids) : db_quote("AND ?:images_links.object_id = ?i", $object_ids);
 
@@ -241,6 +241,9 @@ function fn_get_image_pairs($object_ids, $object_type, $pair_type, $get_icon = t
 
         // Convert the received data to the standard format in order to keep the backward compatibility
         foreach ($icon_pairs as $pair) {
+            if ($only_first && !empty($only_first_icons[$pair['object_id']])) {
+                continue;
+            }
             $_pair = array(
                 'pair_id' => $pair['pair_id'],
                 'image_id' => $pair['image_id'],
@@ -263,9 +266,13 @@ function fn_get_image_pairs($object_ids, $object_type, $pair_type, $get_icon = t
             }
 
             $pairs_data[$pair['object_id']][$pair['pair_id']] = $_pair;
+            $only_first_icons[$pair['object_id']] = 1;
         }// -foreach icon_pairs
 
         foreach ($detailed_pairs as $pair) {
+            if ($only_first && !empty($only_first_detailed[$pair['object_id']])) {
+                continue;
+            }
             $pair_id = $pair['pair_id'];
             $object_id = $pair['object_id'];
 
@@ -301,8 +308,8 @@ function fn_get_image_pairs($object_ids, $object_type, $pair_type, $get_icon = t
                     );
                 }
             }
+            $only_first_detailed[$pair['object_id']] = 1;
         }// -foreach detailed_pairs
-
     } else {
         $pairs_data = db_get_hash_multi_array("SELECT pair_id, image_id, detailed_id, object_id FROM ?:images_links WHERE object_type = ?s AND type = ?s $cond", array('object_id', 'pair_id'), $object_type, $pair_type);
     }

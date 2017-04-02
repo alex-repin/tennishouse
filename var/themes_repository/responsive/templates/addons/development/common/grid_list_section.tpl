@@ -15,7 +15,7 @@
 {if $settings.Appearance.enable_quick_view == 'Y'}
     {$quick_nav_ids = $products|fn_fields_from_multi_level:"product_id":"product_id"}
 {/if}
-<div class="grid-list {if $extended}ty-grid-list__item-wrapper-extended{elseif $block.properties.mode == 'S'}ty-small-mode{elseif $block.properties.mode == 'N'}ty-mini-mode{elseif $block.properties.mode == 'M'}ty-micro-mode{/if}">
+<div class="grid-list {if $extended}ty-grid-list__item-wrapper-extended{elseif $block.properties.mode == 'S'}ty-small-mode{elseif $block.properties.mode == 'N'}ty-mini-mode{elseif $block.properties.mode == 'M'}ty-micro-mode{/if} {if $category_grid}ty-grid-list__item-wrapper-regular{/if}">
     {strip}
         {$type_id = $smarty.const.TYPE_FEATURE_ID}
         {foreach from=$splitted_products item="sproducts" name="sprod"}

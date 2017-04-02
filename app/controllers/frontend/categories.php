@@ -111,7 +111,6 @@ if ($mode == 'catalog') {
             if (isset($search['page']) && ($search['page'] > 1) && empty($products)) {
                 return array(CONTROLLER_STATUS_NO_PAGE);
             }
-
             fn_gather_additional_products_data($products, array(
                 'get_icon' => false,
                 'get_detailed' => true,
@@ -120,7 +119,8 @@ if ($mode == 'catalog') {
                 'get_discounts' => true,
                 'get_features' => false,
                 'get_title_features' => true,
-                'allow_duplication' => true
+                'allow_duplication' => true,
+                'av_ids' => (!empty($search['av_ids'])) ? $search['av_ids'] : array()
             ));
             if (!empty($products)) {
                 if (empty($category_data['brand']) || $category_data['brand']['feature_id'] != $category_data['tabs_categorization']) {

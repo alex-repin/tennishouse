@@ -483,6 +483,12 @@
         <item>
             ALTER TABLE `cscart_players` ADD `description` MEDIUMTEXT NOT NULL;
         </item>
+        <item>
+            ALTER TABLE `cscart_product_options` ADD `parent_option_id` MEDIUMINT(8) UNSIGNED NOT NULL;
+        </item>
+        <item>
+            ALTER TABLE `cscart_product_option_variants` ADD `color_codes` VARCHAR(32) NOT NULL;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -993,5 +999,8 @@
         <item lang="ru" id="tab_groups_ap_b">Для мальчиков</item>
         <item lang="ru" id="tab_groups_ap_g">Для девочек</item>
         <item lang="ru" id="new_item">Новинка</item>
+        <item lang="ru" id="available_option_112">Размеры(EUR)</item>
+        <item lang="ru" id="available_option_141">Размеры</item>
+        <item lang="ru" id="available_option_209">Размеры</item>
     </language_variables>
 </addon>

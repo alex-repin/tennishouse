@@ -581,7 +581,7 @@ function fn_update_product_exception($product_id, $product_options, $new_amount)
 
 function fn_update_combinations($product_id)
 {
-    $combinations = db_get_array("SELECT ?:product_options_inventory.combination, SUM(?:product_warehouses_inventory.amount) AS amount FROM ?:product_options_inventory LEFT JOIN ?:product_warehouses_inventory ON ?:product_options_inventory.combination_hash = ?:product_warehouses_inventory.combination_hash WHERE ?:product_options_inventory.product_id = ?i", $product_id);
+    $combinations = db_get_array("SELECT ?:product_options_inventory.combination, SUM(?:product_warehouses_inventory.amount) AS amount FROM ?:product_warehouses_inventory LEFT JOIN ?:product_options_inventory ON ?:product_options_inventory.combination_hash = ?:product_warehouses_inventory.combination_hash WHERE ?:product_warehouses_inventory.product_id = ?i GROUP BY ?:product_warehouses_inventory.combination_hash", $product_id);
     if (!empty($combinations)) {
         $option_variants_avail = $option_variants = array();
         foreach ($combinations as $i => $combination) {

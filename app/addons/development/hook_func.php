@@ -326,7 +326,7 @@ function fn_development_update_page_post($page_data, $page_id, $lang_code, $crea
 
 function fn_development_seo_is_indexed_page(&$indexed_pages)
 {
-    $indexed_pages['products.view']['noindex'][] = 'ohash';
+//     $indexed_pages['products.view']['noindex'][] = 'ohash';
 }
 
 function fn_development_apply_option_modifiers_pre($product_options, $base_value, &$orig_options, $extra, $fields, $type)
@@ -590,7 +590,7 @@ function fn_development_update_product_option_post($option_data, $option_id, $de
 
 function fn_development_get_product_option_data_pre($option_id, $product_id, &$fields, $condition, $join, &$extra_variant_fields, $lang_code)
 {
-    $extra_variant_fields .= ' a.code_suffix,';
+    $extra_variant_fields .= ' a.code_suffix, a.color_codes,';
     $fields .= ', b.default_text, b.option_note';
 }
 
@@ -740,9 +740,10 @@ function fn_development_top_menu_form(&$v, $type, $id, $use_name)
     }
 }
 
-function fn_development_get_product_options(&$fields, $condition, $join, $extra_variant_fields, $product_ids, $lang_code)
+function fn_development_get_product_options(&$fields, $condition, $join, &$extra_variant_fields, $product_ids, $lang_code)
 {
     $fields .= ", b.default_text";
+    $extra_variant_fields .= "a.code_suffix, a.color_codes, a.feature_variant_id, ";
 }
 
 function fn_development_get_selected_product_options_post(&$_opts, $product_id, $selected_options, $lang_code)
@@ -830,6 +831,10 @@ function fn_development_calculate_cart_items(&$cart, &$cart_products, $auth)
 // ДЛЯ СПИСКА ТОВАРОВ
 function fn_development_gather_additional_products_data_post($product_ids, $params, &$products, $auth)
 {
+    $size_ids = array(
+        'A' => array(APPAREL_SIZE_OPT_ID, APPAREL_KIDS_SIZE_OPT_ID),
+        'S' => SHOE_SIZE_OPT_ID
+    );
     if (AREA == 'C' && empty($params['get_for_one_product']) && !empty($products)) {
         $color_ids = $color_image_pairs = $color_prod_image_pairs = $features_condition = array();
         if (!empty($params['get_options'])) {
@@ -838,28 +843,51 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
         
         foreach ($products as $i => $product) {
             if (!empty($params['get_options'])) {
-                // Для иконок цветов в списке товаров
+                // Для иконок цветов в списке товаров и размеров
                 if ($product['tracking'] == 'O' && !empty($product['product_options'])) {
-                    $show_opt_id = false;
-                    foreach ($product['product_options'] as $i => $opt_data) {
-                        if (!empty($opt_data['show_on_catalog']) && $opt_data['show_on_catalog'] == 'Y' && !empty($opt_data['variants'])) {
+                    $show_opt_id = $size_id = false;
+                    foreach ($product['product_options'] as $ii => $opt_data) {
+                        if (!empty($opt_data['parent_option_id']) && $opt_data['parent_option_id'] == GLOBAL_COLOR_OPT_ID && !empty($opt_data['variants'])) {
                             $show_opt_id = $opt_data['option_id'];
                             break;
                         }
                     }
-                    if (!empty($show_opt_id)) {
-                        if (!empty($avail_combinations[$product['product_id']])) {
-                            foreach (array_keys($avail_combinations[$product['product_id']]) as $i => $combination) {
-                                $options = fn_get_product_options_by_combination($combination);
-                                if (!empty($options[$show_opt_id])) {
-                                    $color_ids[] = $options[$show_opt_id];
+                    if (!empty($size_ids[$product['type']])) {
+                        if (!is_array($size_ids[$product['type']]) && !empty($product['product_options'][$size_ids[$product['type']]])) {
+                            $size_id = $size_ids[$product['type']];
+                        } elseif (is_array($size_ids[$product['type']])) {
+                            foreach ($size_ids[$product['type']] as $k => $opt_id) {
+                                if (!empty($product['product_options'][$opt_id])) {
+                                    $size_id = $opt_id;
+                                    break;
                                 }
                             }
                         }
                     }
+                    if ((!empty($show_opt_id) || !empty($size_id)) && !empty($avail_combinations[$product['product_id']])) {
+                        if (!empty($size_id)) {
+                            $products[$i]['sizes']['feature_id'] = $product['product_options'][$size_id]['feature_id'];
+                            $products[$i]['sizes']['name'] = __('available_option_' . $size_id);
+                        }
+                        foreach (array_keys($avail_combinations[$product['product_id']]) as $ii => $combination) {
+                            $options = fn_get_product_options_by_combination($combination);
+                            if (!empty($show_opt_id) && !empty($options[$show_opt_id])) {
+                                $color_ids[] = $options[$show_opt_id];
+                            }
+                            if (!empty($size_id) && !empty($options[$size_id])) {
+                                $products[$i]['sizes']['variants'][$product['product_options'][$size_id]['variants'][$options[$size_id]]['variant_id']] = $product['product_options'][$size_id]['variants'][$options[$size_id]]['variant_name'];
+                                $products[$i]['sizes']['feature_variants'][$product['product_options'][$size_id]['variants'][$options[$size_id]]['variant_id']] = $product['product_options'][$size_id]['variants'][$options[$size_id]]['feature_variant_id'];
+                                if (!empty($show_opt_id) && !empty($options[$show_opt_id])) {
+                                    $products[$i]['sizes']['color_variants'][$product['product_options'][$show_opt_id]['variants'][$options[$show_opt_id]]['variant_id']][$options[$size_id]] = 1;
+                                }
+                            }
+                        }
+                        if (!empty($products[$i]['sizes']['variants'])) {
+                            ksort($products[$i]['sizes']['variants']);
+                        }
+                    }
                 }
             }
-            
             if (!empty($params['get_title_features'])) {
                 // Условие для хак-к
                 $find_set = array(
@@ -887,18 +915,18 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
             $brands = fn_get_product_feature_data(BRAND_FEATURE_ID, true, true);
         }
 
-        if (!empty($params['get_options'])) {
+        if (!empty($params['get_options']) && !(Registry::get('settings.Appearance.catalog_options_mode') == 'Y' && !empty($params['allow_duplication']))) {
             if (!empty($color_ids)) {
                 $color_image_pairs = fn_get_image_pairs($color_ids, 'variant_image', 'V', true, false, CART_LANGUAGE);
             }
         }
 
         foreach ($products as $i => &$product) {
-            if (!empty($params['get_options'])) {
+            if (!empty($params['get_options']) && !(Registry::get('settings.Appearance.catalog_options_mode') == 'Y' && !empty($params['allow_duplication']))) {
                 // Для иконок цветов в списке товаров
                 if ($product['tracking'] == 'O' && !empty($product['product_options'])) {
                     foreach ($product['product_options'] as $j => $opt_data) {
-                        if (!empty($opt_data['show_on_catalog']) && $opt_data['show_on_catalog'] == 'Y' && !empty($opt_data['variants'])) {
+                        if (!empty($opt_data['parent_option_id']) && $opt_data['parent_option_id'] == GLOBAL_COLOR_OPT_ID && !empty($opt_data['variants'])) {
                             foreach ($opt_data['variants'] as $k => $v_data) {
                                 if (!empty($color_image_pairs[$v_data['variant_id']])) {
                                     $product['option_images'][$v_data['variant_id']] = reset($color_image_pairs[$v_data['variant_id']]);
@@ -959,13 +987,13 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
 
         if (!empty($params['get_options'])) {
             if (!empty($color_ids)) {
-                $color_prod_image_pairs = fn_get_image_pairs($color_ids, 'variant_additional', 'Z', false, true, CART_LANGUAGE);
+                $color_prod_image_pairs = fn_get_image_pairs($color_ids, 'variant_additional', 'Z', false, true, CART_LANGUAGE, true);
             }
 
             foreach ($products as $i => &$product) {
                 if (!empty($product['selected_options']) && $product['tracking'] == 'O' && !empty($product['product_options'])) {
                     foreach ($product['product_options'] as $i => $opt_data) {
-                        if (!empty($product['selected_options'][$opt_data['option_id']]) && !empty($opt_data['show_on_catalog']) && $opt_data['show_on_catalog'] == 'Y') {
+                        if (!empty($product['selected_options'][$opt_data['option_id']]) && !empty($opt_data['parent_option_id']) && $opt_data['parent_option_id'] == GLOBAL_COLOR_OPT_ID) {
                             $product['ohash'] = 'ohash[' . $opt_data['option_id'] . ']=' . $product['selected_options'][$opt_data['option_id']];
                             if(!empty($color_prod_image_pairs[$product['selected_options'][$opt_data['option_id']]])) {
                                 $product['main_pair'] = reset($color_prod_image_pairs[$product['selected_options'][$opt_data['option_id']]]);
@@ -980,29 +1008,44 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                     $found = false;
                     if ($product['tracking'] == 'O' && !empty($product['product_options'])) {
                         foreach ($product['product_options'] as $j => $opt_data) {
-                            if (!empty($opt_data['show_on_catalog']) && $opt_data['show_on_catalog'] == 'Y' && !empty($opt_data['variants'])) {
+                            if (!empty($opt_data['parent_option_id']) && $opt_data['parent_option_id'] == GLOBAL_COLOR_OPT_ID && !empty($opt_data['variants'])) {
                                 $iteration = 0;
+                                $found = true;
                                 foreach ($opt_data['variants'] as $k => $v_data) {
-                                    $image_pair = !empty($color_prod_image_pairs[$v_data['variant_id']]) ? reset($color_prod_image_pairs[$v_data['variant_id']]) : array();
-                                    $new_product = array();
-                                    if (!empty($image_pair) && $image_pair['pair_id'] != $product['main_pair']['pair_id'] && !empty($color_image_pairs[$v_data['variant_id']])) {
-                                        $new_product = $product;
-                                        $new_product['main_pair'] = reset($color_prod_image_pairs[$v_data['variant_id']]);
-                                    } elseif (!empty($color_image_pairs[$v_data['variant_id']]) && empty($image_pair)) {
-                                        $new_product = $product;
-                                    }
-                                    if (!empty($new_product)) {
-                                        if ($iteration > 0) {
-                                            $new_product['ohash'] = 'ohash[' . $opt_data['option_id'] . ']=' . $v_data['variant_id'];
-                                            $new_product['obj_prefix'] = $v_data['variant_id'];
+                                    if (empty($params['av_ids'][$opt_data['feature_id']]) || (!empty($params['av_ids'][$opt_data['feature_id']]) && !empty($params['av_ids'][$opt_data['feature_id']][$v_data['feature_variant_id']]))) {
+                                        $image_pair = !empty($color_prod_image_pairs[$v_data['variant_id']]) ? reset($color_prod_image_pairs[$v_data['variant_id']]) : array();
+                                        $new_product = array();
+                                        if (!empty($image_pair) && $image_pair['pair_id'] != $product['main_pair']['pair_id']) {
+                                            $new_product = $product;
+                                            $new_product['main_pair'] = reset($color_prod_image_pairs[$v_data['variant_id']]);
+                                        } elseif (empty($image_pair)) {
+                                            $new_product = $product;
                                         }
-                                        if (!empty($v_data['variant_name'])) {
-                                            $new_product['product'] .= ' ' . $v_data['variant_name'];
+                                        if (!empty($new_product)) {
+                                            if (!empty($new_product['sizes']) && !empty($new_product['sizes']['color_variants'][$v_data['variant_id']])) {
+                                                $filter_passed = empty($params['av_ids'][$new_product['sizes']['feature_id']]) ? true : false;
+                                                foreach ($new_product['sizes']['variants'] as $v_id => $v_name) {
+                                                    if (empty($new_product['sizes']['color_variants'][$v_data['variant_id']][$v_id])) {
+                                                        unset($new_product['sizes']['variants'][$v_id]);
+                                                    } elseif (!$filter_passed && !empty($params['av_ids'][$new_product['sizes']['feature_id']][$new_product['sizes']['feature_variants'][$v_id]])) {
+                                                        $filter_passed = true;
+                                                    }
+                                                }
+                                                if (!$filter_passed) {
+                                                    continue;
+                                                }
+                                            }
+                                            if ($iteration > 0) {
+                                                $new_product['ohash'] = 'ohash[' . $opt_data['option_id'] . ']=' . $v_data['variant_id'];
+                                                $new_product['obj_prefix'] = $v_data['variant_id'];
+                                            }
+                                            if (!empty($v_data['variant_name'])) {
+                                                $new_product['product'] .= ' ' . $v_data['variant_name'];
+                                            }
+                                            $new_products[] = $new_product;
                                         }
-                                        $new_products[] = $new_product;
-                                        $found = true;
+                                        $iteration++;
                                     }
-                                    $iteration++;
                                 }
                             }
                         }
@@ -1021,6 +1064,12 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
 function fn_development_gather_additional_product_data_post(&$product, $auth, $params)
 {
     if (AREA == 'C' && !empty($params['get_for_one_product'])) {
+        $new_period = Registry::get('addons.development.new');
+        $now = getdate(TIME);
+        $time_limit = mktime($now['hours'], $now['minutes'], $now['seconds'], $now['mon'] - $new_period, $now['mday'], $now['year']);
+        if (!empty($product['timestamp']) && $product['timestamp'] > $time_limit) {
+            $product['tags']['new'] = 1;
+        }
         if (!empty($params['get_options'])) {
             if (!empty($product['category_main_id'])) {
                 $product['category_main_title'] = db_get_field("SELECT category FROM ?:category_descriptions WHERE category_id = ?i AND lang_code = ?s", $product['category_main_id'], CART_LANGUAGE);
