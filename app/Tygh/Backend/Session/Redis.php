@@ -14,12 +14,40 @@
 
 namespace Tygh\Backend\Session;
 use Tygh\Debugger;
-
 use Tygh\Session;
+use Tygh\Exceptions\DatabaseException;
 
 class Redis extends ABackend
 {
+    /**
+     * @var Redis
+     */
     private $r;
+
+    /**
+     * @var int Max reconnect attempts
+     */
+    private $max_reconnects = 5;
+
+    /**
+     * @var int Current reconnect attempts
+     */
+    private $reconnects = 0;
+
+    /**
+     * @var int Sleep between reconnects
+     */
+    private $sleep = 200000; // 100 ms
+
+    /**
+     * @var string Connection host
+     */
+    private $host;
+
+    /**
+     * @var int Connection port
+     */
+    private $port = 6379;
 
     /**
      * Init backend
@@ -33,21 +61,25 @@ class Redis extends ABackend
     {
         parent::__construct($config, $params);
 
-        $this->r = new \Redis();
         $this->config = fn_array_merge(array(
             'redis_server' => $config['session_redis_server'],
-            'saas_uid' => !empty($config['saas_uid']) ? $config['saas_uid'] : null,
+            'store_prefix' => !empty($config['store_prefix']) ? $config['store_prefix'] : null,
         ), $this->config);
 
-        Debugger::checkpoint('Session: before redis connect');
-        if ($this->r->connect($this->config['redis_server']) == true) {
-            $this->r->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
-            Debugger::checkpoint('Session: after redis connect');
+        $this->host = $config['session_redis_server'];
 
-            return true;
+        if (strncmp($this->host, '/', 1) === 0) {
+            $this->port = null;
+        } else {
+            $parsed = parse_url($this->host);
+
+            if ($parsed && isset($parsed['host'], $parsed['port'])) {
+                $this->host = $parsed['host'];
+                $this->port = $parsed['port'];
+            }
         }
 
-        return false;
+        return $this->connect();
     }
 
     /**
@@ -59,33 +91,19 @@ class Redis extends ABackend
      */
     public function read($sess_id)
     {
-        $session = $this->r->hGetAll($this->_id($sess_id));
+        $session = $this->query('hGetAll', $this->id($sess_id));
 
-        if (empty($session) || $session['expiry'] < TIME) {
+        if (!empty($session)) {
 
-            if (!empty($session)) {
+            if ($session['expiry'] > TIME) {
+                return $session['data'];
+            } else {
                 // the session did not have time to get in "stored_sessions" and got out of date, it is necessary to return only settings
                 $this->delete($sess_id);
-                $session = Session::decode($session['data']);
+                $session = \Tygh::$app['session']->decode($session['data']);
 
-                return Session::encode(array ('settings' => !empty($session['settings']) ? $session['settings'] : array()));
+                return \Tygh::$app['session']->encode(array ('settings' => !empty($session['settings']) ? $session['settings'] : array()));
             }
-
-            $stored_data = db_get_field('SELECT data FROM ?:stored_sessions WHERE session_id = ?s', $sess_id);
-
-            if (!empty($stored_data)) {
-
-                db_query('DELETE FROM ?:stored_sessions WHERE session_id = ?s', $sess_id);
-
-                $current = array();
-                $_stored = Session::decode($stored_data);
-                $_current['settings'] = !empty($_stored['settings']) ? $_stored['settings'] : array();
-
-                return Session::encode($_current);
-            }
-
-        } else {
-            return $session['data'];
         }
 
         return false;
@@ -101,11 +119,11 @@ class Redis extends ABackend
      */
     public function write($sess_id, $data)
     {
-        $this->r->hmSet($this->_id($sess_id), $data);
-        $this->r->setTimeout($this->_id($sess_id), $this->config['ttl'] + SECONDS_IN_HOUR); // increase alive time to allow garbage collector move session to stored sessions storage
+        $this->query('hmSet', $this->id($sess_id), $data);
+        $this->query('setTimeout', $this->id($sess_id), $this->config['ttl'] + SECONDS_IN_HOUR); // increase alive time to allow garbage collector move session to stored sessions storage
 
-        $this->r->set($this->_id($sess_id, 'online:'), 1);
-        $this->r->setTimeout($this->_id($sess_id, 'online:'), $this->config['ttl_online']);
+        $this->query('set', $this->id($sess_id, 'online:'), 1);
+        $this->query('setTimeout', $this->id($sess_id, 'online:'), $this->config['ttl_online']);
 
         return true;
     }
@@ -120,9 +138,8 @@ class Redis extends ABackend
      */
     public function regenerate($old_id, $new_id)
     {
-        $this->r->rename($this->_id($old_id), $this->_id($new_id));
-        $this->r->rename($this->_id($old_id, 'online:'), $this->_id($new_id, 'online:'));
-        db_query('UPDATE ?:stored_sessions SET session_id = ?s WHERE session_id = ?s', $new_id, $old_id);
+        $this->query('rename', $this->id($old_id), $this->id($new_id));
+        $this->query('rename', $this->id($old_id, 'online:'), $this->id($new_id, 'online:'));
 
         return true;
     }
@@ -136,7 +153,7 @@ class Redis extends ABackend
      */
     public function delete($sess_id)
     {
-        $this->r->del($this->_id($sess_id));
+        $this->query('del', $this->id($sess_id));
 
         return true;
     }
@@ -153,25 +170,19 @@ class Redis extends ABackend
         // Move expired sessions to sessions storage
         $session_ids = array_map(function($key) {
             return substr($key, strrpos($key, ':') + 1);
-        }, $this->r->keys($this->_id('*')));
+        }, $this->query('keys', $this->id('*')));
 
         if (!empty($session_ids)) {
             foreach ($session_ids as $sess_id) {
-                $session = $this->r->hGetAll($this->_id($sess_id));
-                if ($session['expiry'] < TIME) {
-                    db_query('REPLACE INTO ?:stored_sessions ?e', array(
-                        'session_id' => $sess_id,
-                        'data' => $session['data'],
-                        'expiry' => $session['expiry']
-                    ));
-                    fn_log_user_logout($session, Session::decode($session['data']));
+                $session = $this->query('hGetAll', $this->id($sess_id));
+                if (empty($session) || $session['expiry'] < TIME) {
+                    if (!empty($session['data'])) {
+                        Session::expire($sess_id, $session);
+                    }
                     $this->delete($sess_id);
                 }
             }
         }
-
-        // Cleanup sessions storage
-        db_query('DELETE FROM ?:stored_sessions WHERE expiry < ?i', TIME - $this->config['ttl_storage']);
 
         return true;
     }
@@ -183,7 +194,7 @@ class Redis extends ABackend
      */
     public function getOnline($area)
     {
-        $keys = $this->r->keys($this->_id('*_' . $area, 'online:'));
+        $keys = $this->query('keys', $this->id('*_' . $area, 'online:'));
 
         return array_map(function($key) {
             return substr($key, strrpos($key, ':') + 1);
@@ -191,15 +202,56 @@ class Redis extends ABackend
     }
 
     /**
-     * Generate prefix for session id to separate sessions with same ID but from different stores
+     * Generates prefix for session id to separate sessions with same ID but from different stores
      *
      * @param string $sess_id session ID
      * @param string $prefix  key prefix
      *
      * @return string prefixed session ID
      */
-    private function _id($sess_id, $prefix = '')
+    protected function id($sess_id, $prefix = '')
     {
-        return $prefix . 'session:' . (!empty($this->config['saas_uid']) ? $this->config['saas_uid'] . ':' : '') . $sess_id;
+        return $prefix . 'session:' . (!empty($this->config['store_prefix']) ? $this->config['store_prefix'] . ':' : '') . $sess_id;
+    }
+
+    /**
+     * Connects to the Redis server
+     * @return boolean true on success, false - otherwise
+     */
+    protected function connect()
+    {
+        $this->r = new \Redis();
+
+        Debugger::checkpoint('Session: before redis connect');
+        if ($this->r->connect($this->host, $this->port) == true) {
+            $this->r->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
+            Debugger::checkpoint('Session: after redis connect');
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Queries Redis server and handle reconnects if case of failure
+     */
+    protected function query()
+    {
+        $args = func_get_args();
+        $cmd = array_shift($args);
+
+        try {
+            return call_user_func_array(array($this->r, $cmd), $args);
+        } catch (\RedisException $e) {
+            if ($this->reconnects < $this->max_reconnects) {
+                $this->reconnects++;
+                usleep($this->sleep);
+                $this->connect();
+                return call_user_func_array(array($this, 'query'), func_get_args());
+            }
+
+            throw new DatabaseException('Sessions: can not connect to the Redis server');
+        }
     }
 }

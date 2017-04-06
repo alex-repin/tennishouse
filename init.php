@@ -21,6 +21,7 @@ use Tygh\Registry;
 $this_dir = dirname(__FILE__);
 $classLoader = require($this_dir . '/app/lib/vendor/autoload.php');
 $classLoader->add('Tygh', $this_dir . '/app');
+class_alias('\Tygh\Tygh', 'Tygh');
 
 // Prepare environment and process request vars
 list($_REQUEST, $_SERVER) = Bootstrap::initEnv($_GET, $_POST, $_SERVER, $this_dir);
@@ -77,10 +78,14 @@ Registry::set('class_loader', $classLoader);
 Registry::set('config', $config);
 unset($config);
 
-// Connect to database
+$application = Tygh\Tygh::createApplication();
+$application['class_loader'] = $classLoader;
+
+// Register service providers
 if (!db_initiate(Registry::get('config.db_host'), Registry::get('config.db_user'), Registry::get('config.db_password'), Registry::get('config.db_name'))) {
     throw new DatabaseException('Cannot connect to the database server');
 }
+$application->register(new \Tygh\Providers\SessionProvider());
 
 register_shutdown_function(array('\\Tygh\\Registry', 'save'));
 
@@ -105,7 +110,9 @@ if (fn_allowed_for('ULTIMATE')) {
 }
 
 fn_init_stack(
-    array(array('\\Tygh\\Session', 'init'), &$_REQUEST),
+    array(function() use ($application) {
+        $application['session']->init();
+    }),
     array('fn_init_ajax'),
     array('fn_init_company_id', &$_REQUEST),
     array('fn_check_cache', $_REQUEST),
