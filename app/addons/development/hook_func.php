@@ -118,6 +118,9 @@ function fn_development_order_notification($order_info, $order_statuses, $force_
                 }
                 $order_status['sms_text'] = str_replace('[office_info]', $office_info, $order_status['sms_text']);
             }
+            if (AREA == 'A') {
+                fn_set_notification('N', __('notice'), $order_status['sms_text'], 'F');
+            }
             fn_rus_unisender_send_sms($order_status['sms_text'], $phone);
         }
     }
