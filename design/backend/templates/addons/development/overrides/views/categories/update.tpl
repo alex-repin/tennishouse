@@ -194,6 +194,12 @@
             </label>
         </div>
     </div>
+    <div class="control-group">
+        <label class="control-label" for="elm_category_product_pretitle">{__("product_pretitle")}:</label>
+        <div class="controls">
+            <input type="text" name="category_data[product_pretitle]" id="elm_category_product_pretitle" size="55" value="{$category_data.product_pretitle}" class="input-text-medium" />
+        </div>
+    </div>
 
     {include file="common/select_status.tpl" input_name="category_data[status]" id="elm_category_status" obj=$category_data hidden=true}
 

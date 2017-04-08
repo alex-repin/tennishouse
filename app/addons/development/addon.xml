@@ -489,6 +489,9 @@
         <item>
             ALTER TABLE `cscart_product_option_variants` ADD `color_codes` VARCHAR(32) NOT NULL;
         </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `product_pretitle` VARCHAR(255) NOT NULL;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -1002,5 +1005,6 @@
         <item lang="ru" id="available_option_112">Размеры(EUR)</item>
         <item lang="ru" id="available_option_141">Размеры</item>
         <item lang="ru" id="available_option_209">Размеры</item>
+        <item lang="ru" id="product_pretitle">Предзаголовок товаров</item>
     </language_variables>
 </addon>

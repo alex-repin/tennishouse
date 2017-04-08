@@ -947,7 +947,7 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                     $brand = $products_features[$product['product_id']][BRAND_FEATURE_ID]['variants'];
                     $product['brand'] = $brands['variants'][$products_features[$product['product_id']][BRAND_FEATURE_ID]['variant_id']];
                     if ($product['type'] == 'R') {
-                        $product['subtitle'] = __("type") .  ' - ' .  $products_features[$product['product_id']][TYPE_FEATURE_ID]['variants'];
+                        $product['subtitle'] = /*__("type") .  ' - ' .  */$products_features[$product['product_id']][TYPE_FEATURE_ID]['variants'];
                         $product['description_features'] = array();
                         foreach ($products_features[$product['product_id']] as $f_id => $ft) {
                             if (in_array($f_id, array(R_HEADSIZE_FEATURE_ID, R_WEIGHT_FEATURE_ID, TYPE_FEATURE_ID))) {
@@ -1109,6 +1109,10 @@ function fn_development_gather_additional_product_data_post(&$product, $auth, $p
                     }
                 }
             }
+        }
+        $global_data = fn_get_product_global_data($product, array('product_pretitle'));
+        if (!empty($global_data['product_pretitle'])) {
+            $product['product'] = $global_data['product_pretitle'] . ' ' . $product['product'];
         }
     }
     if (AREA == 'C') {
@@ -1827,5 +1831,12 @@ function fn_development_render_block_register_cache($block, &$cache_name, &$bloc
         $cache_name = 'block_content_'
             . $block['block_id'] . '_' . $block['snapping_id'] . '_' . $block['type']
             . '_' . $grid_id;
+    }
+    if ($_REQUEST['dispatch'] == 'categories.view' && $block['type'] == 'main') {
+        $block_scheme['cache'] = array();
+        $params = $_REQUEST;
+        unset($params['dispatch']);
+        unset($params['save_view_results']);
+        $block_scheme['cache']['request_handlers'] = array_keys($params);
     }
 }
