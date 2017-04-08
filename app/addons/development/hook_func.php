@@ -1838,5 +1838,6 @@ function fn_development_render_block_register_cache($block, &$cache_name, &$bloc
         unset($params['dispatch']);
         unset($params['save_view_results']);
         $block_scheme['cache']['request_handlers'] = array_keys($params);
+        $block_scheme['cache']['update_handlers'] = array ('products', 'product_descriptions', 'product_prices', 'products_categories', 'categories', 'category_descriptions', 'product_warehouses_inventory');
     }
 }
