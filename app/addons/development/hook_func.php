@@ -1042,7 +1042,7 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                                                 $new_product['ohash'] = 'ohash[' . $opt_data['option_id'] . ']=' . $v_data['variant_id'];
                                                 $new_product['obj_prefix'] = $v_data['variant_id'];
                                             }
-                                            if (!empty($v_data['variant_name'])) {
+                                            if ($new_product['type'] == 'A' && !empty($v_data['variant_name'])) {
                                                 $new_product['product'] .= ' ' . $v_data['variant_name'];
                                             }
                                             $new_products[] = $new_product;
