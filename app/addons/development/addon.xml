@@ -1006,5 +1006,13 @@
         <item lang="ru" id="available_option_141">Размеры</item>
         <item lang="ru" id="available_option_209">Размеры</item>
         <item lang="ru" id="product_pretitle">Предзаголовок товаров</item>
+        <item lang="ru" id="title_header">Хидер заголовка</item>
+        <item lang="ru" id="no_header">Без хидера</item>
+        <item lang="ru" id="header_1_tag">H1</item>
+        <item lang="ru" id="header_2_tag">H2</item>
+        <item lang="ru" id="header_3_tag">H3</item>
+        <item lang="ru" id="header_4_tag">H4</item>
+        <item lang="ru" id="header_5_tag">H5</item>
+        <item lang="ru" id="header_6_tag">H6</item>
     </language_variables>
 </addon>

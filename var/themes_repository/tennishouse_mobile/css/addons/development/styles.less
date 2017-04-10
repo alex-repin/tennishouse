@@ -1741,6 +1741,9 @@ table.ty-cart-content {
     }
     .ty-grid-list__item-title {
         font-weight: bold;
+        .ty-grid-list__item-title-header {
+            font-weight: bold;
+        }
     }
     .ty-grid-list__price {
         max-width: none;
@@ -2324,6 +2327,11 @@ table.ty-cart-content {
     overflow: hidden;
     font-size: 13px;
     margin-bottom: 3px;
+    .ty-grid-list__item-title-header {
+        font-weight: normal;
+        font-size: 13px;
+        margin: 0;
+    }
 }
 .ty-price-update {
     display: inline;
@@ -2529,6 +2537,9 @@ table.ty-cart-content {
     font-size: @headings_font_size;
     font-family: @headings_font;
     margin: 0 0 15px;
+}
+.ty-sidebox__title-wrapper, .ty-sidebox__title span, .ty-sidebox__title a {
+    margin: 0;
 }
 .ty-sidebox__title-toggle {
     text-align: right;

@@ -5,7 +5,11 @@
             {if $smarty.capture.title|trim}
                 {$smarty.capture.title nofilter}
             {else}
-                <span class="ty-sidebox__title-wrapper">{$title nofilter}</span>
+                {if $block.properties.title_header != ''}
+                    <h{$block.properties.title_header} class="ty-sidebox__title-wrapper">{$title nofilter}</h{$block.properties.title_header}>
+                {else}
+                    <span class="ty-sidebox__title-wrapper">{$title nofilter}</span>
+                {/if}
             {/if}
             <div class="ty-sidebox__title-toggle cm-combination visible-phone" id="sw_sidebox_{$block.block_id}">
                 <i class="ty-sidebox__icon-open ty-icon-up-open"></i>
