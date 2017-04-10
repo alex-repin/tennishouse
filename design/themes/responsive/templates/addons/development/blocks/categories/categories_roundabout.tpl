@@ -25,7 +25,7 @@
     <div id="roundabout_description_{$block.block_id}" class="ty-rounabout-description cm-roundabout-descriptions">
         {foreach from=$items item="category" name="roundabout_descr"}
             <div class="ty-roundabout-item-description" {if !$smarty.foreach.roundabout_descr.first}style="display: none;"{/if}>
-                <h2>{$category.category}</h2>
+                <h3>{$category.category}</h3>
                 <div class="ty-wysiwyg-content ty-mb-s">{$category.description nofilter}</div>
                 <a id="roundabout_category_link_{$category.category_id}" href="{"categories.view?category_id=`$category.category_id`"|fn_url}">
                     <div class="ty-roundabout-view-collection">{__("view_collection")}</div>

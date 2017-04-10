@@ -1428,6 +1428,13 @@ table.ty-cart-content {
     -o-user-select: none;
     user-select: none;
 }
+.ty-no-select {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
 .ty-product-qty {
     display: inline-block;
     margin-top: 2px;
@@ -3773,6 +3780,9 @@ table.ty-cart-content {
     padding: 3px 10px;
     color: #fff;
     font-size: 17px;
+    margin: 0;
+    font-weight: normal;
+    font-family: @body_font, sans-serif;
 }
 .ty-block-categories__overlay {
     width: 100%;
@@ -3870,7 +3880,7 @@ table.ty-cart-content {
     overflow: hidden;
     width: 230px;
 }
-.ty-roundabout-item-description h2 {
+.ty-roundabout-item-description h3 {
     background-color: @top_menu_background;
     color: #ffffff;
     padding: 2px 0;

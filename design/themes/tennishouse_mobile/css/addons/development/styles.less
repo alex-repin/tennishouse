@@ -1469,6 +1469,13 @@ input:focus::placeholder, textarea:focus::placeholder {
     -o-user-select: none;
     user-select: none;
 }
+.ty-no-select {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
 .ty-page-description {
     .ty-mainbox-title {
         background-color: #000;
@@ -4029,6 +4036,9 @@ a.ty-password-forgot__a {
     padding: 3px 10px;
     color: #fff;
     font-size: 17px;
+    margin: 0;
+    font-weight: normal;
+    font-family: @body_font, sans-serif;
 }
 .ty-block-categories__overlay {
     width: 100%;
@@ -4130,7 +4140,7 @@ a.ty-password-forgot__a {
     overflow: hidden;
     width: 230px;
 }
-.ty-roundabout-item-description h2 {
+.ty-roundabout-item-description h3 {
     background-color: @top_menu_background;
     color: #ffffff;
     padding: 2px 0;
