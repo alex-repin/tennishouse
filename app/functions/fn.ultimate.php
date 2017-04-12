@@ -1615,7 +1615,8 @@ function fn_init_store_params_by_host(&$request, $area = AREA)
         return array(INIT_STATUS_OK);
     }
 
-    $host = $_SERVER['HTTP_HOST'];
+    $_hst = parse_url($_SERVER['HTTP_HOST']);
+    $host = (!empty($_hst['host'])) ? $_hst['host'] : $_SERVER['HTTP_HOST'];
     $short_host = preg_replace('/^www[0-9]*\./i', '', $host);
 
     $field = defined('HTTPS') ? 'secure_storefront' : 'storefront';
