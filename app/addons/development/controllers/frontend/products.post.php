@@ -22,7 +22,7 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 if ($mode == 'view') {
 
     $product = Registry::get('view')->gettemplatevars('product');
-    if (__('product_page_title_' . $product['category_type']) != '_product_page_title_' . strtolower($product['category_type'])) {
+    if (__('product_page_title_' . $product['category_type']) != '_product_page_title_' . strtolower($product['category_type']) && __('product_page_title_' . $product['category_type']) != '') {
         Registry::get('view')->assign('page_title', $product['product'] . ' – ' . __('product_page_title_' . $product['category_type']));
     } else {
         Registry::get('view')->assign('page_title', $product['product'] . ' – ' . __('product_page_title'));
