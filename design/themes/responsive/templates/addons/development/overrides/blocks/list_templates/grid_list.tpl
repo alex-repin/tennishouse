@@ -12,7 +12,7 @@
             {if $sections_categorization.$vt_id}
                 {$products = $sections_categorization.$vt_id}
                 <div class="ty-categorize">
-                    <div class="ty-categorize__title">{$f_category.description} {$f_category.variant}</div>
+                    <h4 class="ty-categorize__title">{$f_category.description} {$f_category.variant}</h4>
                     <div class="ty-categorize__description">{$f_category.variant_description}</div>
                 </div>
                 <div class="ty-categorize__section">
