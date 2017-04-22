@@ -9,17 +9,13 @@
             <div class="ty-checkout-select-office">
                 {foreach from=$shipping.data.offices item=office}
                     <div class="ty-one-office">
-                        <input type="radio" name="select_office[{$group_key}][{$shipping.shipping_id}]" value="{$office.Code}" {if $old_office_id == $office.Code || $office_count == 1}checked="checked"{/if} id="office_{$group_key}_{$shipping.shipping_id}_{$office.Code}" class="ty-office-radio" >
-                        <div class="ty-office__label">
-                            <label for="office_{$group_key}_{$shipping.shipping_id}_{$office.Code}" >
-                                <p class="ty-one-office__name">{$office.Name}</p>
-                                <div class="ty-one-office__description">
-                                    {$office.City}, {$office.Address}<br />
-                                    {$office.WorkTime}<br />
-                                    {$office.Phone}<br />
-                                    {$office.Note}<br />
-                                </div>
-                            </label>
+                        <input type="radio" name="select_office[{$group_key}][{$shipping.shipping_id}]" value="{$office.Code}" {if $old_office_id == $office.Code || $office_count == 1}checked="checked"{/if} id="office_{$group_key}_{$shipping.shipping_id}_{$office.Code}" class="ty-office-radio radio" >
+                        <label for="office_{$group_key}_{$shipping.shipping_id}_{$office.Code}" class="ty-one-office__name">{$office.Name}</label>
+                        <div class="ty-one-office__description">
+                            {$office.City}, {$office.Address}<br />
+                            {$office.WorkTime}<br />
+                            {$office.Phone}<br />
+                            {$office.Note}<br />
                         </div>
                     </div>
                 {/foreach}

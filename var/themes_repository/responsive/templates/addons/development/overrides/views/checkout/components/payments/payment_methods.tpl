@@ -54,12 +54,10 @@
                         {if $payment.image}
                             {include file="common/image.tpl" obj_id=$payment.payment_id images=$payment.image image_width="100" image_height="35" keep_transparent=true}
                         {/if}
-                        <div class="ty-payments-list__item-title-block">
-                            <label for="payment_{$payment.payment_id}" class="ty-payments-list__item-title">
-                                {$payment.payment}
-                            </label>
-                            {if $payment.description}<div class="ty-payments-list__item-description">{$payment.description}</div>{/if}
-                        </div>
+                        <label for="payment_{$payment.payment_id}" class="ty-payments-list__item-title">
+                            {$payment.payment}
+                        </label>
+                        {if $payment.description}<div class="ty-payments-list__item-description">{$payment.description}</div>{/if}
                     </div>
                 </div>
                         
@@ -105,16 +103,20 @@
 
         {if $auth.act_as_user}
             <div class="ty-control-group">
-                <label>
-                    <input type="checkbox" id="skip_payment" name="skip_payment" value="Y" class="checkbox" />
-                {__("skip_payment")}
-                </label>
+                <input type="checkbox" id="skip_payment" name="skip_payment" value="Y" class="checkbox" />
+                <label for="skip_payment">{__("skip_payment")}</label>
             </div>
         {/if}
 
+        {include file="views/checkout/components/customer_notes.tpl"}
+        {if !$auth.user_id}
+        <div class="ty-control-group">
+            <input type="checkbox" id="create_profile" name="create_profile" value="Y" class="checkbox" checked="checked"/>
+            <label for="create_profile">{__("create_profile_checkout_text")}</label>
+        </div>
+        {/if}
         {hook name="checkout:extra_payment_info"}
         {/hook}
-        {include file="views/checkout/components/customer_notes.tpl"}
         </div>
 
         {if $iframe_mode}

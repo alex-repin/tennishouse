@@ -5706,6 +5706,11 @@ function fn_order_notification(&$order_info, $edp_data = array(), $force_notific
         
         // Notify customer
         if ($notify_user == true) {
+            $ekey_sfx = '';
+            if (!empty($order_info['user_id'])) {
+                $ekey_sfx = '&lkey=' . fn_generate_ekey($order_info['user_id'], 'L', SECONDS_IN_DAY * 90);
+            }
+            $order_status['email_header'] = str_replace('[write_review_link]', fn_url('discussion.view?thread_id=' . REVIEWS_THREAD_ID . $ekey_sfx, 'C'), $order_status['email_header']);
             Mailer::sendMail(array(
                 'to' => $order_info['email'],
                 'from' => 'company_orders_department',
@@ -5718,7 +5723,8 @@ function fn_order_notification(&$order_info, $edp_data = array(), $force_notific
                     'status_settings' => $status_settings,
                     'profile_fields' => $profile_fields,
                     'secondary_currency' => $secondary_currency,
-                    'take_surcharge_from_vendor' => $take_surcharge_from_vendor
+                    'take_surcharge_from_vendor' => $take_surcharge_from_vendor,
+                    'ekey_sfx' => $ekey_sfx
                 ),
                 'tpl' => 'orders/order_notification.tpl',
                 'company_id' => $order_info['company_id'],

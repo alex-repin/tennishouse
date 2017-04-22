@@ -1014,5 +1014,11 @@
         <item lang="ru" id="header_4_tag">H4</item>
         <item lang="ru" id="header_5_tag">H5</item>
         <item lang="ru" id="header_6_tag">H6</item>
+        <item lang="ru" id="fill_in_checkout_data">Заполнить данные для доставки</item>
+        <item lang="ru" id="create_profile_checkout_text">Сохранить адресные данные для следующих заказов</item>
+        <item lang="ru" id="personal_area">Личный кабинет</item>
+        <item lang="ru" id="subscribe_to_store_newsletters">Получать уведомления о скидках, акциях и новых поступлениях</item>
+        <item lang="ru" id="write_product_review_email_text">Также Вы можете поделиться своим мнением о купленном товаре</item>
+        <item lang="ru" id="write_review_about_product">Написать отзыв о "[product_name]"</item>
     </language_variables>
 </addon>

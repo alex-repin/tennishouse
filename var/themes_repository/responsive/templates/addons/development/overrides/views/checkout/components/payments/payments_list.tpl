@@ -9,15 +9,13 @@
 
                 <div class="ty-payments-list__item">
                     <div class="ty-payments-list__item-group" id="payment_group_{$payment.payment_id}">
-                        <input id="payment_{$payment.payment_id}" class="cm-select-payment" type="radio" name="payment_id" value="{$payment.payment_id}" {if $payment_id == $payment.payment_id}checked="checked"{/if} />
+                        <input id="payment_{$payment.payment_id}" class="cm-select-payment radio" type="radio" name="payment_id" value="{$payment.payment_id}" {if $payment_id == $payment.payment_id}checked="checked"{/if} />
+                        <label for="payment_{$payment.payment_id}" class="ty-payments-list__item-title">
+                            {$payment.payment}
+                        </label>
                         {if $payment.image}
-                            {include file="common/image.tpl" obj_id=$payment.payment_id images=$payment.image image_width="100" image_height="35" keep_transparent=true}
+                            <div class="ty-payments-list__item-image">{include file="common/image.tpl" obj_id=$payment.payment_id images=$payment.image image_width="100" image_height="35" keep_transparent=true}</div>
                         {/if}
-                        <div class="ty-payments-list__item-title-block">
-                            <label for="payment_{$payment.payment_id}" class="ty-payments-list__item-title">
-                                {$payment.payment}
-                            </label>
-                        </div>
                     </div>
                     <div class="payment_carrier_link">
                         {if $payment.website}

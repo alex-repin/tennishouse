@@ -585,6 +585,14 @@ function fn_init_layout($params)
 function fn_init_user($area = AREA)
 {
     $user_info = array();
+    // [tennishouse]
+    if (empty($_SESSION['auth']['user_id']) && !empty($_REQUEST['lkey'])) {
+        $u_id = fn_get_object_by_ekey($_REQUEST['lkey'], 'L', true);
+        if (!empty($u_id)) {
+            $user_status = fn_login_user($u_id);
+        }
+    }
+    // [tennishouse]
     if (!empty($_SESSION['auth']['user_id'])) {
         $user_info = fn_get_user_short_info($_SESSION['auth']['user_id']);
         if (empty($user_info)) { // user does not exist in the database, but exists in session

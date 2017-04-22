@@ -368,6 +368,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (empty($cart['user_data']['email'])) {
             return array(CONTROLLER_STATUS_DENIED);
         }
+        
+        if (empty($auth['user_id']) && !empty($_REQUEST['create_profile']) && $_REQUEST['create_profile'] == 'Y') {
+            $user_data = $cart['user_data'];
+            fn_fill_user_fields($user_data);
+            list($cart['user_data']['user_id'], $profile_id) = fn_update_user(0, $user_data, $auth, true, true, true, true);
+        }
 
         // Prevent using disabled payment method by challenging HTTP data
         if (!empty($_REQUEST['payment_id'])) {

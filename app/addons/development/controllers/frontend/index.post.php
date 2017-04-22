@@ -12,31 +12,15 @@
 * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
 ****************************************************************************/
 
+use Tygh\Registry;
+
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-fn_register_hooks(
-    'update_product_post',
-    'delete_product_post',
-    'update_category_post',
-    'delete_category_after',
-    'delete_order',
-    'update_news',
-    'delete_news',
-    'update_page_post',
-    'delete_page',
-    'update_event',
-    'delete_event',
-    'clone_product',
-    'get_product_data',
-    'get_products',
-    'get_categories',
-    'get_pages',
-    'get_companies',
-    'delete_company',
-    'companies_sorting',
-    'get_predefined_statuses',
-    'init_secure_controllers',
-    'update_company',
-    'get_status_params_definition',
-    'get_order_info'
-);
+//
+// Forbid posts to index script
+//
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    return array(CONTROLLER_STATUS_NO_PAGE);
+}
+$predefined_meta['canonical'] = fn_url();
+Registry::get('view')->assign('predefined_meta', $predefined_meta);

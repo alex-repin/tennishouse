@@ -5064,3 +5064,69 @@ input.ty-rf_input-answer{
 .ty-button-link:hover {
     background-color: lighten(@top_menu_background, 12%);
 }
+/* KLADR */
+.kladr-error {
+    color: #cb3e27;
+}
+
+#kladr_autocomplete ul {
+    position: absolute;
+    display: block;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #c4c4c4;
+    background-color: white;
+    z-index: 9999;
+    overflow-x: hidden;
+    overflow-y: auto;
+    min-width: 200px;
+    max-height: 420px;
+    color: #313131;
+}
+
+#kladr_autocomplete li {
+    display: list-item;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    line-height: 30px;
+}
+
+#kladr_autocomplete li + li {
+    border-top: 1px solid #ededed;
+}
+
+#kladr_autocomplete li:hover {
+    background-color: #f2f2f2;
+    cursor: pointer;
+}
+
+#kladr_autocomplete li.active {
+    background-color: #e9e9e9;
+}
+
+#kladr_autocomplete a {
+    text-decoration: none;
+    color: @font;
+    padding: 1px 7px;
+    width: 100%;
+}
+
+#kladr_autocomplete strong {
+/*     color: darken(@menu, 30%); */
+}
+
+#kladr_autocomplete .spinner {
+    position: absolute;
+    display: block;
+    margin: 0;
+    padding: 0;
+    width: 16px;
+    height: 16px;
+    background: transparent url("./images/spinner.png") center center no-repeat;
+    z-index: 9999;
+}
+/* KLADR */

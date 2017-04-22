@@ -25,7 +25,7 @@
             {/if}
             <tr>
                 <td style="font-style: italic;" nowrap>{__("login_url")}:&nbsp;</td>
-                <td>{if $user_data.company_id}{"auth.login_form?company_id=`$user_data.company_id`"|fn_url:'C':'http'}{else}{""|fn_url:'C':'http'}{/if}</td>
+                <td><a href="{"auth.login_form"|fn_url:'C':'http'}">{__("personal_area")}</a></td>
             </tr>
         {/if}
         {if !"ULTIMATE:FREE"|fn_allowed_for}

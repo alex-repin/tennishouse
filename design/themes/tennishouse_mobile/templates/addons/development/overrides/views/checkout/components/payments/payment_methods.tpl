@@ -112,9 +112,15 @@
             </div>
         {/if}
 
+        {include file="views/checkout/components/customer_notes.tpl"}
+        {if !$auth.user_id}
+        <div class="ty-control-group">
+            <input type="checkbox" id="create_profile" name="create_profile" value="Y" class="checkbox" checked="checked"/>
+            <label for="create_profile">{__("create_profile_checkout_text")}</label>
+        </div>
+        {/if}
         {hook name="checkout:extra_payment_info"}
         {/hook}
-        {include file="views/checkout/components/customer_notes.tpl"}
         </div>
 
         {if $iframe_mode}

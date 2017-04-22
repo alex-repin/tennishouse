@@ -26,7 +26,7 @@
     {assign var="_class" value=""}
 {/if}
 
-<div class="clearfix {if $section == 'C'}ty-additional-info{/if}">
+<div class="clearfix {if $section == 'C'}ty-additional-info{/if} {if $section == "S" || $section == "B"}cm-autocomplete-block{/if}">
 {if $body_id || $grid_wrap}
     <div id="{$body_id}" class="{if $hide_fields}hidden{/if}">
         <div class="{$grid_wrap}">
@@ -68,7 +68,7 @@
 
     {if $field.field_type == "A"}  {* State selectbox *}
         {$_country = $settings.General.default_country}
-        {$_state = $value}
+        {$_state = $value|default:$settings.General.default_state}
 
         <select {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} id="{$id_prefix}elm_{$field.field_id}" class="ty-profile-field__select-state cm-state  {if $section == "S"}cm-location-shipping{else}cm-location-billing{/if} {if !$skip_field}{$_class}{/if}" name="{$data_name}[{$data_id}]" {if !$skip_field}{$disabled_param nofilter}{/if}>
             <option value="" class="ty-select__default-value">- {__("select_state")} -</option>
@@ -126,6 +126,10 @@
         <input class="radio {if !$skip_field}{$_class}{else}cm-skip-avail-switch{/if} {$id_prefix}elm_{$field.field_id}" type="radio" id="{$id_prefix}elm_{$field.field_id}_commercial" name="{$data_name}[{$data_id}]" value="commercial" {if $value == "commercial"}checked="checked"{/if} {if !$skip_field}{$disabled_param nofilter}{/if} /><span class="radio">{__("address_commercial")}</span>
 
     {else}  {* Simple input *}
+        {if $data_id == 's_city' || $data_id == 'b_city'}
+            {$kladr_name = "`$data_id`_kladr_id"}
+            <input type="hidden" {if $field.autocomplete_type}data-autocompletetype="city_id"{/if} name="{$data_name}[{$data_id}_kladr_id]" value="{$user_data.$kladr_name}" />
+        {/if}
         <input {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} type="{if $field.class == 'shipping-phone' || $field.class == 'billing-phone'}tel{else}text{/if}" id="{$id_prefix}elm_{$field.field_id}" name="{$data_name}[{$data_id}]" size="32" placeholder="{$field.description}" value="{$value}" class="ty-input-text {if !$skip_field}{$_class}{else}cm-skip-avail-switch{/if}{if $field.class == 'shipping-phone' || $field.class == 'billing-phone'} cm-cr-mask-phone{/if}" {if !$skip_field}{$disabled_param nofilter}{/if} />
     {/if}
 
@@ -136,6 +140,13 @@
 {/hook}
 {/foreach}
 
+<script type="text/javascript" class="cm-ajax-force">
+(function(_, $) {
+    $('.cm-autocomplete-block').each(function() {
+        fn_init_autocomplete($(this));
+    });
+}(Tygh, Tygh.$));
+</script>
 {if $body_id || $grid_wrap}
         </div>
     </div>

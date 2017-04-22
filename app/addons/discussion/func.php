@@ -17,6 +17,36 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_discussion_get_order_info(&$order, $additional_data)
+{
+    $prod_ids = $prod_names = array();
+    foreach ($order['products'] as $k => $v) {
+        $prod_ids[$k] = $v['product_id'];
+        $prod_names[$v['product_id']] = $v['product'];
+    }
+    $discussions = db_get_hash_single_array("SELECT type, object_id FROM ?:discussion WHERE object_type = 'P' AND object_id IN (?a)", array('object_id', 'type'), $prod_ids);
+    if (!empty($discussions)) {
+        foreach ($discussions as $pr_id => $type) {
+            if (in_array($type, array('B', 'C'))) {
+                $order['discussion'][] = array(
+                    'product_id' => $pr_id,
+                    'product' => $prod_names[$pr_id],
+                    'type' => $type
+                );
+            }
+        }
+    }
+}
+
+function fn_discussion_get_status_params_definition(&$status_params, $type)
+{
+    $status_params[] = array (
+        'type' => 'checkbox',
+        'label' => 'product_reviews',
+        'default_value' => 'N'
+    );
+}
+
 function fn_get_discussion_company_condition($field)
 {
     if (fn_allowed_for('ULTIMATE')) {

@@ -7,7 +7,7 @@
             {if $complete && !$edit}
                 {hook name="checkout:edit_link"}
                 <span class="ty-step__title-right">
-                    {include file="buttons/button.tpl" but_meta="ty-btn__secondary cm-ajax" but_href="checkout.checkout?edit_step=step_three&from_step=$edit_step" but_target_id="checkout_*" but_text=__("change") but_role="tool"}
+                    {include file="buttons/button.tpl" but_meta="cm-ajax" but_href="checkout.checkout?edit_step=step_three&from_step=$edit_step" but_target_id="checkout_*" but_text=__("change") but_role="tool"}
                 </span>
                 {/hook}
             {/if}

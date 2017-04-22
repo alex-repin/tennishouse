@@ -19,8 +19,8 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
     if ($mode == 'place_order' || $mode == 'subscribe_customer') {
-        $subscriber = db_get_row("SELECT * FROM ?:subscribers WHERE email = ?s", $_SESSION['cart']['user_data']['email']);
-        if (!empty($_REQUEST['mailing_lists']) && !fn_is_empty($_REQUEST['mailing_lists'])) {
+        if (!empty($_REQUEST['subscribe_to_store_newsletters']) && $_REQUEST['subscribe_to_store_newsletters'] == 'Y') {
+            $subscriber = db_get_row("SELECT * FROM ?:subscribers WHERE email = ?s", $_SESSION['cart']['user_data']['email']);
             if (empty($subscriber)) {
                 $_data = array(
                     'email' => $_SESSION['cart']['user_data']['email'],
@@ -31,12 +31,19 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             } else {
                 $subscriber_id = $subscriber['subscriber_id'];
             }
-
-            fn_update_subscriptions($subscriber_id, $_REQUEST['mailing_lists'], NULL, fn_get_notification_rules(true));
-        } elseif (isset($_REQUEST['mailing_lists'])) {
-            if (!empty($subscriber)) {
-                fn_delete_subscribers($subscriber['subscriber_id']);
+            list($page_mailing_lists) = fn_get_mailing_lists();
+            if (!empty($page_mailing_lists)) {
+                fn_update_subscriptions($subscriber_id, array_keys($page_mailing_lists), true, fn_get_notification_rules(true));
             }
+            
+    //         if (!empty($_REQUEST['mailing_lists']) && !fn_is_empty($_REQUEST['mailing_lists'])) {
+    // 
+    //             fn_update_subscriptions($subscriber_id, $_REQUEST['mailing_lists'], NULL, fn_get_notification_rules(true));
+    //         } elseif (isset($_REQUEST['mailing_lists'])) {
+    //             if (!empty($subscriber)) {
+    //                 fn_delete_subscribers($subscriber['subscriber_id']);
+    //             }
+    //         }
         }
     }
 

@@ -2,7 +2,7 @@
     <div class="ty-block-categories__overlay"></div>
     <div class="ty-block-categories-first-wrapper" id="link_{$first_category_id}">
         <div class="ty-block-categories-top-left">
-            <a href="{"categories.view?category_id=$first_category_id"|fn_url}"><div class="ty-block-categories__item ty-block-categories__title">{$first_title}</div></a>
+            <a href="{"categories.view?category_id=$first_category_id"|fn_url}"><h2 class="ty-block-categories__item ty-block-categories__title">{$first_title}</h2></a>
             {$categories = $first_category_id|fn_get_block_categories}
             {foreach from=$categories item="category" name="block_categories"}
                 {if $smarty.foreach.block_categories.iteration < 4}
@@ -14,7 +14,7 @@
     </div>
     <div class="ty-block-categories-second-wrapper" id="link_{$second_category_id}">
         <div class="ty-block-categories-top-left">
-            <a href="{"categories.view?category_id=$second_category_id"|fn_url}"><div class="ty-block-categories__item ty-block-categories__title">{$second_title}</div></a>
+            <a href="{"categories.view?category_id=$second_category_id"|fn_url}"><h2 class="ty-block-categories__item ty-block-categories__title">{$second_title}</h2></a>
             {$categories = $second_category_id|fn_get_block_categories}
             {foreach from=$categories item="category" name="block_categories"}
                 {if $smarty.foreach.block_categories.iteration < 4}

@@ -2,7 +2,7 @@
 <div class="{$class_name} ty-block-categories-wrapper">
     <div class="ty-block-categories__overlay"></div>
     <div class="ty-block-categories-{$location}">
-        <a href="{"categories.view?category_id=$category_id"|fn_url}"><div class="ty-block-categories__item ty-block-categories__title">{$title}</div></a>
+        <a href="{"categories.view?category_id=$category_id"|fn_url}"><h2 class="ty-block-categories__item ty-block-categories__title">{$title}</h2></a>
         {if !$no_subcategories}
             {$categories = $category_id|fn_get_block_categories}
             {foreach from=$categories item="category" name="block_categories"}

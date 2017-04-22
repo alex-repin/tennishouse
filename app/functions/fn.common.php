@@ -5788,7 +5788,7 @@ function fn_generate_ekey($object_id, $type, $ttl = 0, $ekey = '')
  * @param string $type object type
  * @return mixed object ID
  */
-function fn_get_object_by_ekey($ekey, $type)
+function fn_get_object_by_ekey($ekey, $type, $keep_the_key = false)
 {
     $key_data = db_get_row("SELECT object_id, object_string FROM ?:ekeys WHERE ekey = ?s AND object_type = ?s AND (ttl > ?i OR ttl = '0')", $ekey, $type, time());
     $return = false;
@@ -5797,8 +5797,10 @@ function fn_get_object_by_ekey($ekey, $type)
         // Cleanup expired keys
         db_query("DELETE FROM ?:ekeys WHERE ttl > 0 AND ttl < ?i", time());
 
-        // Delete current key
-        db_query("DELETE FROM ?:ekeys WHERE ekey = ?s", $ekey);
+        if (!$keep_the_key) {
+            // Delete current key
+            db_query("DELETE FROM ?:ekeys WHERE ekey = ?s", $ekey);
+        }
 
         $return = !empty($key_data['object_string']) ? $key_data['object_string'] : $key_data['object_id'];
     }

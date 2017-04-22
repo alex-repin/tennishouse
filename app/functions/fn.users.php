@@ -1200,7 +1200,7 @@ function fn_restore_processed_user_password(&$destination, &$source)
  * @param bool $send_password - TRUE if the password should be included into the e-mail
  * @return array with user ID and profile ID if success, false otherwise
  */
-function fn_update_user($user_id, $user_data, &$auth, $ship_to_another, $notify_user, $send_password = false)
+function fn_update_user($user_id, $user_data, &$auth, $ship_to_another, $notify_user, $send_password = false, $generate_password = false)
 {
     /**
      * Actions before updating user
@@ -1339,6 +1339,10 @@ function fn_update_user($user_id, $user_data, &$auth, $ship_to_another, $notify_
             return false;
         }
 
+        if (empty($user_data['password1']) && $generate_password) {
+            $user_data['password1'] = fn_generate_password();
+        }
+        
         // Check the passwords
         if (!empty($user_data['password1'])) {
             $original_password = trim($user_data['password1']);
