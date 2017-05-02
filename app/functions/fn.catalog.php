@@ -6755,6 +6755,7 @@ function fn_clone_product_options($from_product_id, $to_product_id, $from_global
 
                     // Clone variant images
                     fn_clone_image_pairs($new_variant_id, $variant_id, 'variant_image');
+                    fn_clone_image_pairs($new_variant_id, $variant_id, 'variant_additional');
                 }
                 unset($_data, $__data);
             }

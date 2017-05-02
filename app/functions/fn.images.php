@@ -495,7 +495,7 @@ function fn_clean_image_pairs($object_id, $object_type)
 function fn_clone_image_pairs($target_object_id, $object_id, $object_type, $lang_code = CART_LANGUAGE)
 {
     // Get all pairs
-    $pair_data = db_get_hash_array("SELECT pair_id, image_id, detailed_id, type FROM ?:images_links WHERE object_id = ?i AND object_type = ?s", 'pair_id', $object_id, $object_type);
+    $pair_data = db_get_hash_array("SELECT pair_id, image_id, detailed_id, type FROM ?:images_links WHERE object_id = ?i AND object_type = ?s ORDER BY pair_id ASC", 'pair_id', $object_id, $object_type);
 
     if (empty($pair_data)) {
         return false;

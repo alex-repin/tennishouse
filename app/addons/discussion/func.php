@@ -40,7 +40,7 @@ function fn_discussion_get_order_info(&$order, $additional_data)
 
 function fn_discussion_get_status_params_definition(&$status_params, $type)
 {
-    $status_params[] = array (
+    $status_params['product_reviews'] = array (
         'type' => 'checkbox',
         'label' => 'product_reviews',
         'default_value' => 'N'

@@ -8,7 +8,7 @@
         {$order_info.destination_delivery_info}
     </p>
 {/if}
-{if $order_info.discussion}
+{if $order_info.discussion && $status_settings.product_reviews == 'Y'}
     <p>
         {__("write_product_review_email_text")}:
     </p>
