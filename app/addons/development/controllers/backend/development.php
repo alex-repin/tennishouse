@@ -1112,14 +1112,14 @@ if ($mode == 'calculate_balance') {
             }
         }
     }
-    if (!empty($missed)) {
-        foreach ($missed as $i => $pair) {
-            fn_delete_image_pair($pair['pair_id'], $pair['object_type']);
-        }
-    }
-    if (!empty($update)) {
-        db_query("REPLACE ?:common_descriptions ?m", $update);
-    }
+//     if (!empty($missed)) {
+//         foreach ($missed as $i => $pair) {
+//             fn_delete_image_pair($pair['pair_id'], $pair['object_type']);
+//         }
+//     }
+//     if (!empty($update)) {
+//         db_query("REPLACE ?:common_descriptions ?m", $update);
+//     }
     
     fn_echo('Done');
     exit;
