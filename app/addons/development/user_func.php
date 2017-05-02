@@ -22,6 +22,16 @@ use Tygh\Shippings\Shippings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_add_img_alt($name, $product_name)
+{
+    if (!empty($_REQUEST[$name . '_image_data'])) {
+        foreach ($_REQUEST[$name . '_image_data'] as $i => $pair) {
+            $_REQUEST[$name . '_image_data'][$i]['image_alt'] = empty($_REQUEST[$name . '_image_data'][$i]['image_alt']) ? $product_name : $_REQUEST[$name . '_image_data'][$i]['image_alt'];
+            $_REQUEST[$name . '_image_data'][$i]['detailed_alt'] = empty($_REQUEST[$name . '_image_data'][$i]['detailed_alt']) ? $product_name : $_REQUEST[$name . '_image_data'][$i]['detailed_alt'];
+        }
+    }
+}
+
 function fn_is_icon_feature($feature_id)
 {
     return (in_array($feature_id, array(R_WEIGHT_FEATURE_ID, R_HEADSIZE_FEATURE_ID))) ? true : false;

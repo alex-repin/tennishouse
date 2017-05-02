@@ -2404,14 +2404,19 @@ function fn_update_product($product_data, $product_id = 0, $lang_code = CART_LAN
             }
 
             fn_update_product_categories($product_id, $product_data);
+            
+            $alt_text = $product_data['product'] . (!empty($product_data['product_code']) ? ' ' . $product_data['product_code'] : '');
 
             // Update main images pair
+            fn_add_img_alt('product_main', $alt_text);
             fn_attach_image_pairs('product_main', 'product', $product_id, $lang_code);
 
             // Update additional images
+            fn_add_img_alt('product_additional', $alt_text);
             fn_attach_image_pairs('product_additional', 'product', $product_id, $lang_code);
 
             // Adding new additional images
+            fn_add_img_alt('product_add_additional', $alt_text);
             fn_attach_image_pairs('product_add_additional', 'product', $product_id, $lang_code);
 
             if (fn_allowed_for('ULTIMATE')) {
@@ -2897,6 +2902,7 @@ function fn_delete_product_option_variants($option_id = 0, $variant_ids = array(
         foreach ($_vars as $v_id) {
             db_query("DELETE FROM ?:product_option_variants_descriptions WHERE variant_id = ?i", $v_id);
             fn_delete_image_pairs($v_id, 'variant_image');
+            fn_delete_image_pairs($v_id, 'variant_additional');
         }
 
         db_query("DELETE FROM ?:product_option_variants WHERE variant_id IN (?n)", $_vars);
@@ -8096,6 +8102,7 @@ function fn_update_product_option($option_data, $option_id = 0, $lang_code = DES
 
             if ($option_data['option_type'] == 'C') {
                 fn_delete_image_pairs($v['variant_id'], 'variant_image'); // force deletion of variant image for "checkbox" option
+                fn_delete_image_pairs($v['variant_id'], 'variant_additional'); // force deletion of variant image for "checkbox" option
             } else {
                 $variant_images[$k] = $v['variant_id'];
             }
@@ -8113,6 +8120,7 @@ function fn_update_product_option($option_data, $option_id = 0, $lang_code = DES
             db_query("DELETE FROM ?:product_option_variants_descriptions WHERE variant_id IN (?n)", $deleted_variants);
             foreach ($deleted_variants as $v_id) {
                 fn_delete_image_pairs($v_id, 'variant_image');
+                fn_delete_image_pairs($v_id, 'variant_additional');
             }
         }
     }

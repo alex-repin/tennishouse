@@ -584,7 +584,11 @@ function fn_development_update_product_option_post($option_data, $option_id, $de
                 }
                 db_query('UPDATE ?:product_option_variants SET feature_variant_id = ?i WHERE variant_id = ?i', $feature_variant_id, $variant['variant_id']);
 
+                $product_code = db_get_field("SELECT product_code FROM ?:products WHERE product_id = ?i", $option_data['product_id']);
+                $alt_text = fn_get_product_name($option_data['product_id']) . ' ' . $option_data['option_name'] . ' ' . $variant['variant_name'] . (!empty($product_code) ? ' ' . $product_code . $variant['code_suffix'] : '');
+                fn_add_img_alt('variant_additional_' . $variant['variant_id'], $alt_text);
                 fn_attach_image_pairs('variant_additional_' . $variant['variant_id'], 'variant_additional', $variant['variant_id'], $lang_code);
+                fn_add_img_alt('variant_add_additional_' . $variant['variant_id'], $alt_text);
                 fn_attach_image_pairs('variant_add_additional_' . $variant['variant_id'], 'variant_additional', $variant['variant_id'], $lang_code);
             }
         }

@@ -1056,6 +1056,73 @@ if ($mode == 'calculate_balance') {
     $opt_ids = db_get_fields("SELECT ?:product_options_descriptions.option_id FROM ?:product_options_descriptions LEFT JOIN ?:product_options ON ?:product_options.option_id = ?:product_options_descriptions.option_id WHERE ?:product_options_descriptions.option_name = 'Цвет' AND ?:product_options.product_id != '0'");
     db_query("UPDATE ?:product_options SET parent_option_id = '139' WHERE option_id IN (?n)", $opt_ids);
     exit;
+} elseif ($mode == 'generate_alt_text') {
+    $update = array();
+    $product_images = db_get_hash_multi_array("SELECT * FROM ?:images_links WHERE object_type = 'product'", array('object_id', 'pair_id'));
+    $product_names = db_get_hash_array("SELECT ?:product_descriptions.product, ?:products.product_id, ?:products.product_code FROM ?:products LEFT JOIN ?:product_descriptions ON ?:products.product_id = ?:product_descriptions.product_id AND ?:product_descriptions.lang_code = 'ru'", 'product_id');
+    foreach ($product_images as $prod_id => $pairs) {
+        foreach ($pairs as $pair_id => $pair) {
+            if (!empty($pair['image_id'])) {
+                $update[] = array(
+                    'object_id' => $pair['image_id'],
+                    'description' => $product_names[$prod_id]['product'] . (!empty($product_names[$prod_id]['product_code']) ? ' ' . $product_names[$prod_id]['product_code'] : ''),
+                    'lang_code' => 'ru',
+                    'object_holder' => 'images'
+                );
+            }
+            if (!empty($pair['detailed_id'])) {
+                $update[] = array(
+                    'object_id' => $pair['detailed_id'],
+                    'description' => $product_names[$prod_id]['product'] . (!empty($product_names[$prod_id]['product_code']) ? ' ' . $product_names[$prod_id]['product_code'] : ''),
+                    'lang_code' => 'ru',
+                    'object_holder' => 'images'
+                );
+            }
+        }
+    }
+    $variant_images = db_get_hash_multi_array("SELECT ?:images_links.*, ?:product_option_variants.option_id, ?:product_options.product_id FROM ?:images_links LEFT JOIN ?:product_option_variants ON ?:product_option_variants.variant_id = ?:images_links.object_id LEFT JOIN ?:product_options ON ?:product_options.option_id = ?:product_option_variants.option_id WHERE ?:images_links.object_type = 'variant_additional'", array('product_id', 'pair_id'));
+    $variant_names = db_get_hash_array("SELECT ?:product_option_variants_descriptions.variant_name, ?:product_option_variants_descriptions.variant_id, ?:product_option_variants.code_suffix FROM ?:product_option_variants LEFT JOIN ?:product_option_variants_descriptions ON ?:product_option_variants.variant_id = ?:product_option_variants_descriptions.variant_id AND ?:product_option_variants_descriptions.lang_code = 'ru'", 'variant_id');
+    $option_names = db_get_hash_array("SELECT ?:product_options_descriptions.option_name, ?:product_options_descriptions.option_id FROM ?:product_options_descriptions WHERE ?:product_options_descriptions.lang_code = 'ru'", 'option_id');
+    $missed = array();
+    foreach ($variant_images as $prod_id => $pairs) {
+        foreach ($pairs as $pair_id => $pair) {
+            if (empty($option_names[$pair['option_id']])) {
+                $missed[] = $pair;
+                continue;
+            }
+            if (empty($variant_names[$pair['object_id']])) {
+                $missed[] = $pair;
+                continue;
+            }
+            if (!empty($pair['image_id'])) {
+                $update[] = array(
+                    'object_id' => $pair['image_id'],
+                    'description' => $product_names[$prod_id]['product'] .  ' ' . $option_names[$pair['option_id']]['option_name'] . ' ' . $variant_names[$pair['object_id']]['variant_name'] . (!empty($product_names[$prod_id]['product_code']) ? ' ' . $product_names[$prod_id]['product_code']  . (!empty($variant_names[$pair['object_id']]['code_suffix']) ? $variant_names[$pair['object_id']]['code_suffix'] : '') : ''),
+                    'lang_code' => 'ru',
+                    'object_holder' => 'images'
+                );
+            }
+            if (!empty($pair['detailed_id'])) {
+                $update[] = array(
+                    'object_id' => $pair['detailed_id'],
+                    'description' => $product_names[$prod_id]['product'] .  ' ' . $option_names[$pair['option_id']]['option_name'] . ' ' . $variant_names[$pair['object_id']]['variant_name'] . (!empty($product_names[$prod_id]['product_code']) ? ' ' . $product_names[$prod_id]['product_code']  . (!empty($variant_names[$pair['object_id']]['code_suffix']) ? $variant_names[$pair['object_id']]['code_suffix'] : '') : ''),
+                    'lang_code' => 'ru',
+                    'object_holder' => 'images'
+                );
+            }
+        }
+    }
+    if (!empty($missed)) {
+        foreach ($missed as $i => $pair) {
+            fn_delete_image_pair($pair['pair_id'], $pair['object_type']);
+        }
+    }
+    if (!empty($update)) {
+        db_query("REPLACE ?:common_descriptions ?m", $update);
+    }
+    
+    fn_echo('Done');
+    exit;
 }
 
 function fn_normalize_string($string)
