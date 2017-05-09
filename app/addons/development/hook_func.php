@@ -665,6 +665,7 @@ function fn_development_get_category_data_post($category_id, $field_list, $get_m
     if (!empty($category_data['cross_categories'])) {
         $category_data['cross_categories'] = unserialize($category_data['cross_categories']);
     }
+    $category_data['type'] = fn_identify_category_type($category_data['id_path']);
 }
 
 function fn_development_get_product_feature_variants(&$fields, $join, &$condition, $group_by, $sorting, $lang_code, $limit)
@@ -1044,6 +1045,7 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                                             }
                                             if ($iteration > 0) {
                                                 $new_product['ohash'] = 'ohash[' . $opt_data['option_id'] . ']=' . $v_data['variant_id'];
+                                                $new_product['selected_options'][$opt_data['option_id']] = $v_data['variant_id'];
                                                 $new_product['obj_prefix'] = $v_data['variant_id'];
                                             }
                                             if ($new_product['type'] == 'A' && !empty($v_data['variant_name'])) {

@@ -29,6 +29,7 @@
                 {include file="addons/development/common/grid_list_section.tpl" products=$products}
             </div>
         {/if}
+        {hook name="products:grid_list"}{/hook}
     {else}
         {include file="addons/development/common/grid_list_section.tpl" products=$products}
     {/if}

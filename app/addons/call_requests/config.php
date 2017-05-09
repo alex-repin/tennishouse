@@ -14,6 +14,7 @@
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+define('CALL_REQUEST_ORDER_STATUS', 'Y');
 define('CALL_REQUESTS_BLOCK_CONTENT',
     '{if $addons.call_requests.status == "A"}' . PHP_EOL
     . '<div class="ty-cr-phone-number-link">' . PHP_EOL

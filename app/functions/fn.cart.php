@@ -4516,7 +4516,7 @@ function fn_check_add_product_to_cart($cart, $product, $product_id)
 // @param array $product_data array with data for the product to add)(product_id, price, amount, product_options, is_edp)
 // @return mixed cart ID for the product if addition is successful and false otherwise
 //
-function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false)
+function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false, $auto_options = false)
 {
     $ids = array();
     if (!empty($product_data) && is_array($product_data)) {
@@ -4546,8 +4546,11 @@ function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false)
             }
 
             // Check if product options exist
+            if (!empty($auto_options)) {
+                $default_options = fn_get_default_product_options($product_id);
+            }
             if (!isset($data['product_options'])) {
-                $data['product_options'] = fn_get_default_product_options($product_id);
+                $data['product_options'] = !empty($auto_options) ? $default_options : fn_get_default_product_options($product_id);
             }
 
             // Generate cart id
@@ -4643,8 +4646,12 @@ function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false)
                 if (!empty($inventory_options)) {
                     foreach ($inventory_options as $option_id) {
                         if (!isset($data['product_options'][$option_id]) || empty($data['product_options'][$option_id])) {
-                            $sequential_completed = false;
-                            break;
+                            if (!empty($default_options[$option_id])) {
+                                $data['product_options'][$option_id] = $default_options[$option_id];
+                            } else {
+                                $sequential_completed = false;
+                                break;
+                            }
                         }
                     }
                 }

@@ -152,6 +152,7 @@
                 <div>{foreach from=$product.sizes.variants item="v_name" name="av_sizes"}{if !$smarty.foreach.av_sizes.first}, {/if}{$v_name}{/foreach}</div>
             </div>
         {/if}
+        {hook name="products:list_item_additional"}{/hook}
     </div>
 </div>
 {/if}

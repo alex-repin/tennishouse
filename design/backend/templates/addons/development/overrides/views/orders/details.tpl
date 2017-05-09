@@ -65,7 +65,7 @@
                         </div>
                     {/if}
                     </div>
-                    {if $oi.product_options}<div class="options-info">{include file="common/options_info.tpl" product_options=$oi.product_options}</div>{/if}
+                    {if $oi.product_options}<div class="options-info {if $order_info.status == $smarty.const.CALL_REQUEST_ORDER_STATUS}ty-call-request-order-options{/if}">{include file="common/options_info.tpl" product_options=$oi.product_options}</div>{/if}
                 </td>
                 <td class="nowrap">
                     {if $oi.extra.exclude_from_calculate}{__("free")}{else}{include file="common/price.tpl" value=$oi.original_price}{/if}</td>

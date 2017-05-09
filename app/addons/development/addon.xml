@@ -1020,5 +1020,21 @@
         <item lang="ru" id="subscribe_to_store_newsletters">Получать уведомления о скидках, акциях и новых поступлениях</item>
         <item lang="ru" id="write_product_review_email_text">Также Вы можете поделиться своим мнением о купленном товаре</item>
         <item lang="ru" id="write_review_about_product">Написать отзыв о "[product_name]"</item>
+        <item lang="ru" id="firstname_lastname">Имя Фамилия</item>
+        <item lang="ru" id="call_requests.quick_order">Быстрый заказ</item>
+        <item lang="ru" id="call_requests.buy_now_with_one_click_r">Купить теннисную ракетку</item>
+        <item lang="ru" id="call_requests.buy_now_with_one_click_b">Купить теннисную сумку</item>
+        <item lang="ru" id="call_requests.buy_now_with_one_click_bl">Купить теннисные мячи</item>
+        <item lang="ru" id="call_requests.buy_now_with_one_click_st">Купить теннисные струны</item>
+        <item lang="ru" id="call_requests.buy_now_with_one_click_a">Купить одежду для тенниса</item>
+        <item lang="ru" id="call_requests.buy_now_with_one_click_s">Купить кроссовки для тенниса</item>
+        <item lang="ru" id="call_requests.buy_now_with_one_click_og">Купить овергрипы</item>
+        <item lang="ru" id="call_requests.buy_now_with_one_click_bg">Купить обмотку для теннисной ракетки</item>
+        <item lang="ru" id="call_requests.buy_now_with_one_click_dp">Купить виброгаситель</item>
+        <item lang="ru" id="call_requests.buy_now_with_one_click_bh">Купить корзину для мячей</item>
+        <item lang="ru" id="call_requests.buy_now_with_one_click_bm">Купить теннисную пушку</item>
+        <item lang="ru" id="call_requests.buy_now_with_one_click_sm">Купить станок для натяжки</item>
+        <item lang="ru" id="call_requests.buy_now_with_one_click_">Купить в 1 клик</item>
+        <item lang="ru" id="call_requests.buy_now_with_one_click_bm">Купить пульт для пушки</item>
     </language_variables>
 </addon>

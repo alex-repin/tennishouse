@@ -156,8 +156,10 @@
                                         $('#' + state.attr('sb') + '_' + data.text.replace(/\"/g, "")).trigger('click.sb');
                                     } else {
                                         state.val(data.text.replace(/\"/g, ""));
-                                        state.selectmenu();
-                                        state.selectmenu('refresh');
+                                        if (state.is("select")) {
+                                            state.selectmenu();
+                                            state.selectmenu('refresh');
+                                        }
                                     }
                                 },
                             });

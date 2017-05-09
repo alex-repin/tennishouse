@@ -594,10 +594,11 @@ function fn_init_user($area = AREA)
     }
     // [tennishouse]
     if (!empty($_SESSION['auth']['user_id'])) {
-        $user_info = fn_get_user_short_info($_SESSION['auth']['user_id']);
+        $user_info = fn_get_user_info($_SESSION['auth']['user_id']);
         if (empty($user_info)) { // user does not exist in the database, but exists in session
             $_SESSION['auth'] = array();
         } else {
+            $_SESSION['auth']['user_data'] = $user_info;
             $_SESSION['auth']['usergroup_ids'] = fn_define_usergroups(array('user_id' => $_SESSION['auth']['user_id'], 'user_type' => $user_info['user_type']));
         }
     }

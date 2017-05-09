@@ -4898,3 +4898,29 @@ input.ty-rf_input-answer{
     z-index: 9999;
 }
 /* KLADR */
+.ty-call-request-button {
+    a {
+        color: @font;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+        padding: 7px 0;
+        width: 100%;
+    }
+    margin: 0 10px 5px 10px;
+    border: 1px solid @font;
+    text-align: center;
+}
+.ty-call-request-button:hover {
+    a {
+        color: #fff;
+        padding: 7px 0;
+    }    
+    background-color: @font;
+    transition: all 200ms linear 0s;
+}
+
+.ty-grid-list__item-wrapper-extended .ty-call-request-button {
+    float: right;
+    width: 50%;
+}

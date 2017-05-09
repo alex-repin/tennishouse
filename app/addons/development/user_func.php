@@ -1291,6 +1291,7 @@ function fn_get_category_type($category_id)
         BALL_HOPPER_CATEGORY_ID => 'BH',
         BALL_MACHINE_CATEGORY_ID => 'BM',
         STR_MACHINE_CATEGORY_ID => 'SM',
+        BALL_MACHINE_ACC_CATEGORY_ID => 'BA',
     );
     
     return !empty($types[$category_id]) ? $types[$category_id] : '';
@@ -1325,6 +1326,8 @@ function fn_identify_type_category_id($path)
             $type = STR_MACHINE_CATEGORY_ID;
         } elseif (in_array(BALL_HOPPER_CATEGORY_ID, $cats)) {
             $type = BALL_HOPPER_CATEGORY_ID;
+        } elseif (in_array(BALL_MACHINE_ACC_CATEGORY_ID, $cats)) {
+            $type = BALL_MACHINE_ACC_CATEGORY_ID;
         } elseif (in_array(BALL_MACHINE_CATEGORY_ID, $cats)) {
             $type = BALL_MACHINE_CATEGORY_ID;
         }

@@ -2771,6 +2771,10 @@ var Tygh = {
                     $('<div class="hidden" title="' + title + '" id="' + params.data('caTargetId') + '"><!--' + params.data('caTargetId') + '--></div>').appendTo(_.body);
                 }
 
+                if (typeof(params.data('caCallRequestId')) != 'undefined' && $('#' + params.data('caCallRequestId')).length && $('#call_request_product_block').length) {
+                    $('#call_request_product_block').html($('#' + params.data('caCallRequestId')).html());
+                }
+                
                 if (params.prop('href') && params.data('caViewId')) {
                     dialog_params['view_id'] = params.data('caViewId');
                 }
@@ -4018,6 +4022,10 @@ var Tygh = {
                     form.prop('target', '_self');
                 }
 
+                if (clicked_elm.closest('.cm-dialog-closer').length) {
+                    $.ceDialog('get_last').ceDialog('close');
+                }
+
                 if ((form.hasClass('cm-ajax') || clicked_elm.hasClass('cm-ajax')) && !clicked_elm.hasClass('cm-no-ajax')) {
 
                     // FIXME: this code should be moved to another place I believe
@@ -4055,10 +4063,6 @@ var Tygh = {
                     form.append('<input type="hidden" name="result_ids" value="' + _.container + '" />');
                     clicked_elm.data('caScroll', '#' + _.container);
                     return $.ceAjax('submitForm', form, clicked_elm);
-                }
-
-                if (clicked_elm.closest('.cm-dialog-closer').length) {
-                    $.ceDialog('get_last').ceDialog('close');
                 }
 
                 return form_result;

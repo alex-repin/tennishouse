@@ -238,15 +238,19 @@ function fn_call_requests_place_order($params, &$cart, &$auth, $product_data)
     $cart['user_data']['phone'] = $params['phone'];
     $cart['user_data']['b_phone'] = $params['phone'];
     $cart['user_data']['s_phone'] = $params['phone'];
-    foreach (array('b_address', 's_address', 'b_city', 's_city', 'b_country', 's_country', 'b_state', 's_state') as $key) {
-        if (!isset($cart['user_data'][$key])) {
-            $cart['user_data'][$key] = ' ';
-        }
-    }
+    $cart['user_data']['b_address'] = $cart['user_data']['s_address'] = $params['address'];
+    $cart['user_data']['b_state'] = $cart['user_data']['s_state'] = $params['state'];
+    $cart['user_data']['b_city'] = $cart['user_data']['s_city'] = $params['city'];
+    $cart['user_data']['b_country'] = $cart['user_data']['s_country'] = $params['country'];
+//     foreach (array('b_country', 's_country') as $key) {
+//         if (!isset($cart['user_data'][$key])) {
+//             $cart['user_data'][$key] = ' ';
+//         }
+//     }
 
     $added = false;
     if (!empty($product_data)) {
-        $added = fn_add_product_to_cart($product_data, $cart, $auth);
+        $added = fn_add_product_to_cart($product_data, $cart, $auth, false, true);
     }
     if (!$added) {
         fn_delete_notification('incorrect_options');
