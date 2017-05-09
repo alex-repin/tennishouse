@@ -12,7 +12,7 @@
 {foreach from=$userlog item="ul"}
 <tr>
     <td>{$ul.timestamp|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"}</td>
-    <td>{$ul.amount}</td>
+    <td>{include file="common/price.tpl" value=$ul.amount}</td>
     <td>
         {if $ul.action == $smarty.const.CHANGE_DUE_ORDER}
             {assign var="statuses" value=$smarty.const.STATUSES_ORDER|fn_get_simple_statuses:true:true}
@@ -48,7 +48,7 @@
     {__("reward_points_log")}
     <div class="ty-profile-subtitle">
         <div class="ty-profile-reward-points">
-            {__("balance")}:&nbsp;<a href="{"pages.view?page_id=`$smarty.const.SAVING_PROGRAM_PAGE_ID`"|fn_url}">{$auth.points|default:"0"|fn_show_points}</a>
+            {__("balance")}:&nbsp;<a href="{"pages.view?page_id=`$smarty.const.SAVING_PROGRAM_PAGE_ID`"|fn_url}">{include file="common/price.tpl" value=$auth.points|default:"0"}</a>
         </div>
     </div>
 {/capture}

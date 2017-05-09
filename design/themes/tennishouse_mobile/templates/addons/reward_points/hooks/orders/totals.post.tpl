@@ -1,7 +1,7 @@
 {if $order_info.points_info.reward}
     <tr class="ty-orders-summary__row">
         <td><strong>{__("points")}:&nbsp;</strong></td>
-        <td>{$order_info.points_info.reward|fn_show_points}</td>
+        <td>{include file="common/price.tpl" value=$order_info.points_info.reward}</td>
     </tr>
 {/if}
 {*if $order_info.points_info.in_use}

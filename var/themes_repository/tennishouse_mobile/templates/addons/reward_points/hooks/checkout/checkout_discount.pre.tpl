@@ -9,6 +9,6 @@
 {if $cart.points_info.reward}
     <li class="ty-cart-statistic__item">
         <span class="ty-cart-statistic__title">{__("points")}</span>
-        <span class="ty-cart-statistic__value">+{$cart.points_info.reward|fn_show_points}</span>
+        <span class="ty-cart-statistic__value">+{include file="common/price.tpl" value=$cart.points_info.reward}</span>
     </li>
 {/if}

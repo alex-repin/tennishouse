@@ -1,7 +1,7 @@
 {if $cart.points_info.reward}
     <div class="ty-reward-points__info clearfix">
         <span>{__("points")}</span>
-        <span class="ty-float-right">{$cart.points_info.reward|fn_show_points}</span>
+        <span class="ty-float-right">{include file="common/price.tpl" value=$cart.points_info.reward}</span>
     </div>
 {/if}
 
