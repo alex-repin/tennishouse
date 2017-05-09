@@ -10105,6 +10105,7 @@ var dialog = $.widget( "ui.dialog", {
 		show: null,
 		title: null,
 		width: 300,
+                titleTag: "span",
 
 		// callbacks
 		beforeClose: null,
@@ -10148,8 +10149,10 @@ var dialog = $.widget( "ui.dialog", {
 			parent: this.element.parent(),
 			index: this.element.parent().children().index( this.element )
 		};
-		this.originalTitle = this.element.attr( "title" );
+                this.originalTitle = this.element.attr( "title" );
 		this.options.title = this.options.title || this.originalTitle;
+                this.originalTitleTag = this.element.data('titleTag');
+                this.options.titleTag = this.originalTitleTag || this.options.titleTag;
 
 		this._createWrapper();
 
@@ -10464,7 +10467,7 @@ var dialog = $.widget( "ui.dialog", {
 			}
 		});
 
-		uiDialogTitle = $( "<span>" )
+		uiDialogTitle = $( "<" + this.options.titleTag + ">" )
 			.uniqueId()
 			.addClass( "ui-dialog-title" )
 			.prependTo( this.uiDialogTitlebar );
