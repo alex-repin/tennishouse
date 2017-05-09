@@ -111,22 +111,9 @@
         </sections>
     </settings>
     <compatibility>
-        <dependencies>discussion,reward_points</dependencies>
+        <dependencies>discussion,reward_points,call_requests</dependencies>
     </compatibility>
     <queries>
-        <item>
-            REPLACE INTO `cscart_payment_processors` (
-                `processor_id` ,
-                `processor` ,
-                `processor_script` ,
-                `processor_template` ,
-                `admin_template` ,
-                `callback` ,
-                `type`
-            ) VALUES (
-                '134' , 'OpenBank', 'openbank.php', 'views/orders/components/payments/cc_outside.tpl', 'openbank.tpl', 'Y', 'P'
-            );
-        </item>
         <item>
             CREATE TABLE IF NOT EXISTS `cscart_players` (
             `player_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
@@ -337,34 +324,6 @@
             ALTER TABLE `cscart_categories` ADD `is_virtual` CHAR( 1 ) NOT NULL DEFAULT 'N';
         </item>
         <item>
-            REPLACE INTO `cscart_settings_objects` (
-                `object_id` ,
-                `edition_type` ,
-                `name` ,
-                `section_id` ,
-                `section_tab_id` ,
-                `type` ,
-                `value` ,
-                `position` ,
-                `is_global` ,
-                `handler` ,
-                `parent_id`
-            ) VALUES (
-                '6627' , 'ROOT,ULT:VENDOR', 'use_for_call_request', '11', '0', 'C', 'Y', '1000', 'Y', '', '0'
-            );
-        </item>
-        <item>
-            REPLACE INTO `cscart_settings_descriptions` (
-                `object_id` ,
-                `object_type` ,
-                `lang_code` ,
-                `value` ,
-                `tooltip`
-            ) VALUES (
-                '6627', 'O', 'ru', 'Формы "Купить в один клик"', ''
-            );
-        </item>
-        <item>
             ALTER TABLE `cscart_shippings` ADD `min_total` DECIMAL( 12, 2 ) NOT NULL ,
             ADD `max_total` DECIMAL( 12, 2 ) NOT NULL ;
         </item>
@@ -438,15 +397,6 @@
                 `priority` smallint(5) unsigned NOT NULL,
                 PRIMARY KEY (`warehouse_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-        </item>
-        <item>
-            REPLACE INTO `cscart_warehouses` (
-                `warehouse_id`,
-                `name`,
-                `priority`
-            ) VALUES (
-                1, 'TennisHouse', 1
-            );
         </item>
         <item>
             CREATE TABLE IF NOT EXISTS `cscart_product_warehouses_inventory` (
@@ -1035,6 +985,5 @@
         <item lang="ru" id="call_requests.buy_now_with_one_click_bm">Купить теннисную пушку</item>
         <item lang="ru" id="call_requests.buy_now_with_one_click_sm">Купить станок для натяжки</item>
         <item lang="ru" id="call_requests.buy_now_with_one_click_">Купить в 1 клик</item>
-        <item lang="ru" id="call_requests.buy_now_with_one_click_bm">Купить пульт для пушки</item>
     </language_variables>
 </addon>
