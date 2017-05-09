@@ -19,7 +19,7 @@
 
 <div class="ty-control-group">
     <label class="ty-control-group__title" for="call_data_{$id}_name">{__("firstname_lastname")}</label>
-    <input id="call_data_{$id}_name" size="50" class="ty-input-text-full" placeholder="{__("firstname_lastname")}" type="text" name="call_data[name]" value="{$smarty.session.auth.user_data.firstname} {$smarty.session.auth.user_data.lastname}" />
+    <input id="call_data_{$id}_name" size="50" class="ty-input-text-full" placeholder="{__("firstname_lastname")}" type="text" name="call_data[name]" value="{if $smarty.session.auth.user_data.firstname || $smarty.session.auth.user_data.lastname}{$smarty.session.auth.user_data.firstname} {$smarty.session.auth.user_data.lastname}{/if}" />
 </div>
 
 <div class="ty-control-group">
