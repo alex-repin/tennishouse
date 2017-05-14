@@ -5,7 +5,44 @@
 {script src="js/addons/development/jquery.roundabout-shapes.min.js"}
 
 <script type="text/javascript">
+var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
+
 {literal}
+
+    function fn_check_city(obj, show_error)
+    {
+        lbl = $("label[for='" + obj.attr('id') + "']");
+        $('#' + obj.attr('id') + '_error_message').remove();
+        
+        if ($("[data-autocompletetype='city_id']").length && obj.val() != '') {
+            if ($("[data-autocompletetype='city_id']").val() == '' && obj.hasClass('cm-city-change')) {
+                if (show_error) {
+                    lbl.parent().addClass('error');
+                    obj.addClass('cm-failed-field');
+                    lbl.addClass('cm-failed-label');
+
+                    if (!obj.hasClass('cm-no-failed-msg')) {
+                        obj.after('<span id="' + obj.attr('id') + '_error_message" class="help-inline"><p>' + error_validator_city + '</p></span>');
+                    }
+                }
+                
+                return false;
+            } else {
+                if (show_error) {
+                    lbl.parent().removeClass('error');
+                    obj.removeClass('cm-failed-field');
+                    lbl.removeClass('cm-failed-label');
+                }
+            }
+        }
+        
+        return true;
+    }
+    function fn_city_change(obj)
+    {
+        $("[data-autocompletetype='city_id']").val('');
+        obj.addClass('cm-city-change');
+    }
 
     if ($.kladr) {
         function fn_format_obj(obj, query, is_label)
@@ -110,9 +147,11 @@
                                 label += obj.name;
                         }
 
-                        if (typeof(obj.parents[0]) != 'undefined') {
-                            if (obj.parents[0].name) {
-                                label += ' ( ' + obj.parents[0].name + ' ' + obj.parents[0].typeShort + ' )';
+                        if (typeof(obj.parents) != 'undefined') {
+                            for (var i = obj.parents.length - 1; i >= 0; i--) {
+                                if (obj.parents[i].name) {
+                                    label += ', ' + obj.parents[i].name + ' ' + obj.parents[i].typeShort;
+                                }
                             }
                         }
 
@@ -130,6 +169,7 @@
                         if (zip.length) {
                             zip.val(obj.zip);
                         }
+                        fn_check_city(city, true);
                         if (address.length) {
                             address.kladr({
                                 oneString: true,
@@ -205,6 +245,7 @@
                         if (city_id.length) {
                             city_id.val('');
                         }
+                        fn_check_city(city, true);
                         if (state.length) {
                             $.ceAjax('request', fn_url('development.find_state_data'), {
                                 method: 'post',

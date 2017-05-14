@@ -40,6 +40,7 @@
         text_invalid_url: '{__("text_invalid_url")|escape:"javascript"}',
         error_validator_email: '{__("error_validator_email")|escape:"javascript"}',
         error_validator_phone: '{__("error_validator_phone")|escape:"javascript"}',
+        error_validator_city: '{__("error_validator_city")|escape:"javascript"}',
         error_validator_integer: '{__("error_validator_integer")|escape:"javascript"}',
         error_validator_multiple: '{__("error_validator_multiple")|escape:"javascript"}',
         error_validator_password: '{__("error_validator_password")|escape:"javascript"}',

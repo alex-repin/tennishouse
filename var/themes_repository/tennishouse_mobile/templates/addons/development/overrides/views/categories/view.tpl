@@ -106,7 +106,7 @@
 <div class="cm-pagination-container"></div>
 {/if}
 {if ($category_data.full_description || $runtime.customization_mode.live_editor)}
-    <div class="ty-wysiwyg-content ty-mb-s" {live_edit name="category:full_description:{$category_data.category_id}"}>{$category_data.full_description nofilter}</div>
+    <div class="ty-wysiwyg-content ty-mb-s ty-no-select" {live_edit name="category:full_description:{$category_data.category_id}"}>{$category_data.full_description nofilter}</div>
 {/if}
 <!--category_products_{$block.block_id}--></div>
 
@@ -123,7 +123,7 @@
             {include file="addons/development/common/brand_logo.tpl"  brand=$category_data.brand brand_variant_id=$category_data.brand_id img_height=$img_height}
         </div>
         {if $category_data.description}
-            <div class="ty-wysiwyg-content ty-category__title-descr" {live_edit name="category:description:{$category_data.category_id}"}>{$category_data.description nofilter}</div>
+            <div class="ty-wysiwyg-content ty-category__title-descr ty-no-select" {live_edit name="category:description:{$category_data.category_id}"}>{$category_data.description nofilter}</div>
         {/if}
     </div>
 {/if}

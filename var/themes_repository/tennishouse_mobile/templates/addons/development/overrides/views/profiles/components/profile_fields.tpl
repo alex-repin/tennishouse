@@ -32,7 +32,7 @@
         <div class="{$grid_wrap}">
 {/if}
 
-{if !$nothing_extra}
+{if !$nothing_extra && $title}
     {include file="common/subheader.tpl" title=$title}
 {/if}
 
@@ -59,16 +59,23 @@
         {assign var="skip_field" value=true}
     {/if}
 {/if}
+{if $smarty.session.approx_shipping.state && $smarty.session.approx_shipping.city}
+    {assign var="session_city" value=$smarty.session.approx_shipping.city}    
+    {assign var="session_state" value=$smarty.session.approx_shipping.state}   
+    {if $user_data.s_city == '' && $user_data.s_state == '' && $smarty.session.approx_shipping.city_id}
+        {assign var="session_city_id" value=$smarty.session.approx_shipping.city_id}    
+    {/if}
+{/if}
 
 {hook name="profiles:profile_fields"}
 <div class="ty-control-group ty-profile-field__item ty-{$field.class}">
     {if $pref_field_name != $field.description || $field.required == "Y"}
-        <label for="{$id_prefix}elm_{$field.field_id}" class="ty-control-group__title cm-profile-field {if $field.required == "Y"}cm-required{/if}{if $field.field_type == "P"} cm-phone{/if}{if $field.field_type == "Z"} cm-zipcode{/if}{if $field.field_type == "E"} cm-email{/if} {if $field.field_type == "Z"}{if $section == "S"}cm-location-shipping{else}cm-location-billing{/if}{/if}">{$field.description}</label>
+        <label for="{$id_prefix}elm_{$field.field_id}" class="ty-control-group__title cm-profile-field {if $field.required == "Y"}cm-required{/if}{if $field.field_type == "P"} cm-phone{/if}{if $field.field_type == "Z"} cm-zipcode{/if}{if $field.field_type == "E"} cm-email{/if} {if $field.field_type == "Z"}{if $section == "S"}cm-location-shipping{else}cm-location-billing{/if}{/if}{if $data_id == 's_city' || $data_id == 'b_city'} cm-city{/if}">{$field.description}</label>
     {/if}
 
     {if $field.field_type == "A"}  {* State selectbox *}
         {$_country = $settings.General.default_country}
-        {$_state = $value|default:$settings.General.default_state}
+        {$_state = $value|default:$session_state|default:$settings.General.default_state}
 
         <select {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} id="{$id_prefix}elm_{$field.field_id}" class="ty-profile-field__select-state cm-state  {if $section == "S"}cm-location-shipping{else}cm-location-billing{/if} {if !$skip_field}{$_class}{/if}" name="{$data_name}[{$data_id}]" {if !$skip_field}{$disabled_param nofilter}{/if}>
             <option value="" class="ty-select__default-value">- {__("select_state")} -</option>
@@ -126,11 +133,11 @@
         <input class="radio {if !$skip_field}{$_class}{else}cm-skip-avail-switch{/if} {$id_prefix}elm_{$field.field_id}" type="radio" id="{$id_prefix}elm_{$field.field_id}_commercial" name="{$data_name}[{$data_id}]" value="commercial" {if $value == "commercial"}checked="checked"{/if} {if !$skip_field}{$disabled_param nofilter}{/if} /><span class="radio">{__("address_commercial")}</span>
 
     {else}  {* Simple input *}
+        <input {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} type="{if $field.class == 'shipping-phone' || $field.class == 'billing-phone'}tel{else}text{/if}" id="{$id_prefix}elm_{$field.field_id}" name="{$data_name}[{$data_id}]" size="32" placeholder="{$field.description}" value="{if $data_id == 's_city' || $data_id == 'b_city'}{$value|default:$session_city}{else}{$value}{/if}" class="ty-input-text {if !$skip_field}{$_class}{else}cm-skip-avail-switch{/if}{if $field.class == 'shipping-phone' || $field.class == 'billing-phone'} cm-cr-mask-phone{/if}" {if !$skip_field}{$disabled_param nofilter}{/if}  {if $data_id == 's_city' || $data_id == 'b_city'}onblur="fn_check_city($(this), true);" onkeydown="fn_city_change($(this));"{/if} />
         {if $data_id == 's_city' || $data_id == 'b_city'}
             {$kladr_name = "`$data_id`_kladr_id"}
-            <input type="hidden" {if $field.autocomplete_type}data-autocompletetype="city_id"{/if} name="{$data_name}[{$data_id}_kladr_id]" value="{$user_data.$kladr_name}" />
+            <input type="hidden" {if $field.autocomplete_type}data-autocompletetype="city_id"{/if} name="{$data_name}[{$data_id}_kladr_id]" value="{$user_data.$kladr_name|default:$session_city_id}" />
         {/if}
-        <input {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} type="{if $field.class == 'shipping-phone' || $field.class == 'billing-phone'}tel{else}text{/if}" id="{$id_prefix}elm_{$field.field_id}" name="{$data_name}[{$data_id}]" size="32" placeholder="{$field.description}" value="{$value}" class="ty-input-text {if !$skip_field}{$_class}{else}cm-skip-avail-switch{/if}{if $field.class == 'shipping-phone' || $field.class == 'billing-phone'} cm-cr-mask-phone{/if}" {if !$skip_field}{$disabled_param nofilter}{/if} />
     {/if}
 
     {if $field.class == 'ntrp-selectbox'}<div class="ty-profile-field-note"><a href="{"pages.view?page_id=42"|fn_url}">{__("how_to_know_your_game_level")}</a></div>{/if}

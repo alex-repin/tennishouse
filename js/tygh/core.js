@@ -3744,6 +3744,13 @@ var Tygh = {
                     }
                 }
 
+                // TennisHouse
+                if (lbl.hasClass('cm-city')) {
+                    if (!fn_check_city(elm, false)) {
+                        _formMessage(_.tr('error_validator_city'), lbl);
+                        set_mark = true;
+                    }
+                }
                 // Check the zipcode field
                 if (lbl.hasClass('cm-zipcode')) {
                     var loc = lbl.prop('class').match(/cm-location-([^\s]+)/i)[1] || '';
@@ -3846,7 +3853,11 @@ var Tygh = {
                     elm = container;
                 }
 
-                $('[id="' + elm_id + '_error_message"].help-inline', elm.parent()).remove();
+                if ($.mobile) {
+                    $('[id="' + elm_id + '_error_message"].help-inline', elm.parent().parent()).remove();
+                } else {
+                    $('[id="' + elm_id + '_error_message"].help-inline', elm.parent()).remove();
+                }
 
                 if (set_mark == true) {
                     if (lbl.hasClass('cm-requirement-popup')) {
@@ -3859,11 +3870,13 @@ var Tygh = {
                             if (lbl.data('ca-default-text')) {
                                 alert(lbl.data('ca-default-text'));
                             } else {
-                                if (!lbl.next().hasClass('ty-field-error')) {
+                                if (!elm.hasClass('cm-no-failed-msg')) {
                                     lbl.next().after('<span id="' + elm_id + '_error_message" class="help-inline">' + _getMessage(elm_id) + '</span>');
                                 }
                             }
-                            lbl.next().addClass('ty-field-error');
+                            lbl.parent().addClass('error');
+                            elm.addClass('cm-failed-field');
+                            lbl.addClass('cm-failed-label');
                         } else {
                             lbl.parent().addClass('error');
                             elm.addClass('cm-failed-field');

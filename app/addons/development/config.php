@@ -187,66 +187,82 @@ define('EMS_SH_ID', 7);
 define('BIG_CITIES', serialize(array(
     array(
         'city' => 'Москва',
-        'state' => 'MOW'
+        'state' => 'MOW',
+        'city_id' => '7700000000000'
     ),
     array(
         'city' => 'Санкт-Петербург',
-        'state' => 'SPE'
+        'state' => 'SPE',
+        'city_id' => '7800000000000'
     ),
     array(
         'city' => 'Новосибирск',
-        'state' => 'NVS'
+        'state' => 'NVS',
+        'city_id' => '5400000100000'
     ),
     array(
         'city' => 'Екатеринбург',
-        'state' => 'SVE'
+        'state' => 'SVE',
+        'city_id' => '6600000100000'
     ),
     array(
         'city' => 'Нижний Новгород',
-        'state' => 'NIZ'
+        'state' => 'NIZ',
+        'city_id' => '5200000100000'
     ),
     array(
         'city' => 'Казань',
-        'state' => 'TA'
+        'state' => 'TA',
+        'city_id' => '1600000100000'
     ),
     array(
         'city' => 'Челябинск',
-        'state' => 'CHE'
+        'state' => 'CHE',
+        'city_id' => '7400000100000'
     ),
     array(
         'city' => 'Омск',
-        'state' => 'OMS'
+        'state' => 'OMS',
+        'city_id' => '5500000100000'
     ),
     array(
         'city' => 'Самара',
-        'state' => 'SAM'
+        'state' => 'SAM',
+        'city_id' => '6300000100000'
     ),
     array(
         'city' => 'Ростов-на-Дону',
-        'state' => 'ROS'
+        'state' => 'ROS',
+        'city_id' => '6100000100000'
     ),
     array(
         'city' => 'Уфа',
-        'state' => 'BA'
+        'state' => 'BA',
+        'city_id' => '0200000100000'
     ),
     array(
         'city' => 'Красноярск',
-        'state' => 'KIA'
+        'state' => 'KIA',
+        'city_id' => '2400000100000'
     ),
     array(
         'city' => 'Пермь',
-        'state' => 'PER'
+        'state' => 'PER',
+        'city_id' => '5900000100000'
     ),
     array(
         'city' => 'Воронеж',
-        'state' => 'VOR'
+        'state' => 'VOR',
+        'city_id' => '3600000100000'
     ),
     array(
         'city' => 'Волгоград',
-        'state' => 'VGG'
+        'state' => 'VGG',
+        'city_id' => '3400000100000'
     ),
     array(
         'city' => 'Краснодар',
-        'state' => 'KDA'
+        'state' => 'KDA',
+        'city_id' => '2300000100000'
     ),
 )));

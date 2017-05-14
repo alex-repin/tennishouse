@@ -5,7 +5,7 @@
 <div class="ty-step__container{if $edit}-active{/if} ty-step-two" data-ct-checkout="billing_shipping_address" id="step_two">
     {if $settings.General.checkout_style != "multi_page"}
         <h3 class="ty-step__title{if $edit}-active{/if}{if $complete && !$edit}-complete{/if} clearfix">
-            <span class="ty-step__title-left">{if !$complete || $edit}2{/if}{if $complete && !$edit}<i class="ty-step__title-icon ty-icon-ok"></i>{/if}</span>
+            <span class="ty-step__title-left">{if !$complete || $edit}1{/if}{if $complete && !$edit}<i class="ty-step__title-icon ty-icon-ok"></i>{/if}</span>
             <i class="ty-step__title-arrow ty-icon-down-micro"></i>
 
             
@@ -68,16 +68,17 @@
                 {if $profile_fields[$first_section]}
                     <div class="clearfix" data-ct-address="billing-address">
                         <div class="checkout__block">
-                            {include file="views/profiles/components/profile_fields.tpl" section=$first_section body_id="" ship_to_another=true title=$first_section_text}
+                            {include file="views/profiles/components/profile_fields.tpl" section=$first_section body_id="" ship_to_another=true}
                         </div>
                     </div>
                 {/if}
 
-                {if $profile_fields[$sec_section]}
+                {*if $profile_fields[$sec_section]}
                     <div class="clearfix shipping-address__switch" data-ct-address="shipping-address">
                         {include file="views/profiles/components/profile_fields.tpl" section=$sec_section body_id=$body_id address_flag=$profile_fields|fn_compare_shipping_billing ship_to_another=$cart.ship_to_another title=$sec_section_text grid_wrap="checkout__block"}
                     </div>
-                {/if}
+                {/if*}
+                <input class="hidden" type="radio" name="ship_to_another" value="0" checked="checked" />
                 
                 <div class="ty-checkout-buttons">
                     {include file="buttons/button.tpl" but_meta="ty-btn__secondary" but_name="dispatch[checkout.update_steps`$_action`]" but_text=__("continue")}

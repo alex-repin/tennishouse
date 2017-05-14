@@ -965,7 +965,7 @@
         <item lang="ru" id="header_5_tag">H5</item>
         <item lang="ru" id="header_6_tag">H6</item>
         <item lang="ru" id="fill_in_checkout_data">Заполнить данные для доставки</item>
-        <item lang="ru" id="create_profile_checkout_text">Сохранить адресные данные для следующих заказов</item>
+        <item lang="ru" id="create_profile_checkout_text">Сохранить адрес для следующих заказов</item>
         <item lang="ru" id="personal_area">Личный кабинет</item>
         <item lang="ru" id="subscribe_to_store_newsletters">Получать уведомления о скидках, акциях и новых поступлениях</item>
         <item lang="ru" id="write_product_review_email_text">Также Вы можете поделиться своим мнением о купленном товаре</item>
@@ -985,5 +985,7 @@
         <item lang="ru" id="call_requests.buy_now_with_one_click_bm">Купить теннисную пушку</item>
         <item lang="ru" id="call_requests.buy_now_with_one_click_sm">Купить станок для натяжки</item>
         <item lang="ru" id="call_requests.buy_now_with_one_click_">Купить в 1 клик</item>
+        <item lang="ru" id="just_name">Только название</item>
+        <item lang="ru" id="error_validator_city">Пожалуйста, выберите населенный пункт из списка</item>
     </language_variables>
 </addon>

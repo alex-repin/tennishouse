@@ -787,10 +787,15 @@ if ($mode == 'cart') {
     $profile_fields = fn_get_profile_fields('O');
 
     // Array notifying that one or another step is completed.
-    $completed_steps = array();
+    $completed_steps = array(
+        'step_one' => true
+    );
 
     // Array responsible for what step has editing status
     $edit_step = !empty($_REQUEST['edit_step']) ? $_REQUEST['edit_step'] : (!empty($_SESSION['edit_step']) ? $_SESSION['edit_step'] : '');
+    if ($edit_step == 'step_one') {
+        $edit_step = 'step_two';
+    }
     $next_step = !empty($_REQUEST['next_step']) ? $_REQUEST['next_step'] : '';
 
     $cart['user_data'] = !empty($cart['user_data']) ? $cart['user_data'] : array();

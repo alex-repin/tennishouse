@@ -62,16 +62,16 @@
                     <div class="ty-new-item-tag"></div>
                 {/if}
             </div>
+            <div class="ty-grid-list__item-icon-features">
+                {foreach from=$product.description_features item="feature"}
+                    {if $feature.feature_id|fn_is_icon_feature}
+                        <div class="ty-grid-list__item-feature ty-grid-list__item-feature-icon">
+                            <div class="ty-feature-icon ty-feature-icon-{$feature.feature_id}"></div><span class="ty-feature-icon-value">{$feature.variants}</span>
+                        </div>
+                    {/if}
+                {/foreach}
+            </div>
         {/if}
-        <div class="ty-grid-list__item-icon-features">
-            {foreach from=$product.description_features item="feature"}
-                {if $feature.feature_id|fn_is_icon_feature}
-                    <div class="ty-grid-list__item-feature ty-grid-list__item-feature-icon">
-                        <div class="ty-feature-icon ty-feature-icon-{$feature.feature_id}"></div><span class="ty-feature-icon-value">{$feature.variants}</span>
-                    </div>
-                {/if}
-            {/foreach}
-        </div>
     </div>
     
     <div class="ty-grid-list__item-info">
@@ -82,7 +82,7 @@
             {/if}
             <div {if $microdata} itemprop="name"{/if} class="ty-grid-list__item-title">
                 {assign var="name" value="name_`$obj_id`"}
-                {*if $category_grid}<h4 class="ty-grid-list__item-title-header">{/if*}{$smarty.capture.$name nofilter}{*if $category_grid}</h4>{/if*}
+                {if $category_grid}<h4 class="ty-grid-list__item-title-header">{/if}{$smarty.capture.$name nofilter}{if $category_grid}</h4>{/if}
             </div>
         </div>
         {if $extended}
