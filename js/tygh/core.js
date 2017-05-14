@@ -3874,18 +3874,17 @@ var Tygh = {
                                     lbl.next().after('<span id="' + elm_id + '_error_message" class="help-inline">' + _getMessage(elm_id) + '</span>');
                                 }
                             }
-                            lbl.parent().addClass('error');
-                            elm.addClass('cm-failed-field');
-                            lbl.addClass('cm-failed-label');
+                            if (lbl.next().hasClass('ui-select')) {
+                                lbl.next().addClass('ty-field-error');
+                            }
                         } else {
-                            lbl.parent().addClass('error');
-                            elm.addClass('cm-failed-field');
-                            lbl.addClass('cm-failed-label');
-
                             if (!elm.hasClass('cm-no-failed-msg')) {
                                 elm.after('<span id="' + elm_id + '_error_message" class="help-inline">' + _getMessage(elm_id) + '</span>');
                             }
                         }
+                        lbl.parent().addClass('error');
+                        elm.addClass('cm-failed-field');
+                        lbl.addClass('cm-failed-label');
                         if (!message_set) {
                             $.scrollToElm(elm);
                             message_set = true;
@@ -3901,6 +3900,11 @@ var Tygh = {
                     }
 
                 } else {
+                    if ($.mobile) {
+                        if (lbl.next().hasClass('ui-select')) {
+                            lbl.next().removeClass('ty-field-error');
+                        }
+                    }
                     lbl.parent().removeClass('error');
                     elm.removeClass('cm-failed-field');
                     lbl.removeClass('cm-failed-label');

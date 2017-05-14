@@ -14,18 +14,35 @@ var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
         if ($("[data-autocompletetype='city_id']").length && obj.val() != '') {
             if ($("[data-autocompletetype='city_id']").val() == '' && obj.hasClass('cm-city-change')) {
                 if (show_error) {
+                    if ($.mobile) {
+                        if (lbl.data('ca-default-text')) {
+                            alert(lbl.data('ca-default-text'));
+                        } else {
+                            if (!obj.hasClass('cm-no-failed-msg')) {
+                                obj.after('<span id="' + obj.attr('id') + '_error_message" class="help-inline"><p>' + error_validator_city + '</p></span>');
+                            }
+                        }
+                        if (lbl.next().hasClass('ui-select')) {
+                            lbl.next().addClass('ty-field-error');
+                        }
+                    } else {
+                        if (!obj.hasClass('cm-no-failed-msg')) {
+                            obj.after('<span id="' + obj.attr('id') + '_error_message" class="help-inline"><p>' + error_validator_city + '</p></span>');
+                        }
+                    }
                     lbl.parent().addClass('error');
                     obj.addClass('cm-failed-field');
                     lbl.addClass('cm-failed-label');
-
-                    if (!obj.hasClass('cm-no-failed-msg')) {
-                        obj.after('<span id="' + obj.attr('id') + '_error_message" class="help-inline"><p>' + error_validator_city + '</p></span>');
-                    }
                 }
                 
                 return false;
             } else {
                 if (show_error) {
+                    if ($.mobile) {
+                        if (lbl.next().hasClass('ui-select')) {
+                            lbl.next().removeClass('ty-field-error');
+                        }
+                    }
                     lbl.parent().removeClass('error');
                     obj.removeClass('cm-failed-field');
                     lbl.removeClass('cm-failed-label');
