@@ -82,7 +82,7 @@
             {/if}
             <div {if $microdata} itemprop="name"{/if} class="ty-grid-list__item-title">
                 {assign var="name" value="name_`$obj_id`"}
-                {if $category_grid}<h4 class="ty-grid-list__item-title-header">{/if}{$smarty.capture.$name nofilter}{if $category_grid}</h4>{/if}
+                {if $category_grid}<h5 class="ty-grid-list__item-title-header">{/if}{$smarty.capture.$name nofilter}{if $category_grid}</h5>{/if}
             </div>
         </div>
         {if $extended}

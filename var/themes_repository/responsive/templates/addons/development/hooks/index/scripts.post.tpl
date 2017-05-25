@@ -43,6 +43,45 @@ var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
         $("[data-autocompletetype='city_id']").val('');
         obj.addClass('cm-city-change');
     }
+    function fn_send_call_request(obj_id) {
+
+        var cart_changed = true;
+        
+        var params = [];
+        
+        if ($('form[name="product_form_' + obj_id + '"]').length) {
+            $('#product_data_block').html('');
+            
+            var elms = $(':input:not([type=radio]):not([type=checkbox])', 'form[name="product_form_' + obj_id + '"]');
+            $.each(elms, function(id, elm) {
+                if (elm.type != 'submit' && elm.type != 'file' && !($(this).hasClass('cm-hint') && elm.value == elm.defaultValue) && elm.name.length != 0 && elm.name.match("^product_data")) {
+                    $('#product_data_block').append('<input type="hidden" name="' + elm.name + '" value="' + elm.value + '" />');
+                }
+            });
+            
+            var radio = $('input[type=radio]:checked, input[type=checkbox]', 'form[name="product_form_' + obj_id + '"]');
+            $.each(radio, function(id, elm) {
+                if (elm.name.match("^product_data")) {
+                    if ($(elm).prop('disabled')) {
+                        return true;
+                    }
+                    var value = elm.value;
+                    if ($(elm).is('input[type=checkbox]:checked')) {
+                        if (!$(elm).hasClass('cm-no-change')) {
+                            value = $(elm).val();
+                        }
+                    } else if ($(elm).is('input[type=checkbox]')) {
+                        if (!$(elm).hasClass('cm-no-change')) {
+                            value = 'unchecked';
+                        } else {
+                            value = '';
+                        }
+                    }
+                    $('#product_data_block').append('<input type="hidden" name="' + elm.name + '" value="' + value + '" />');
+                }
+            });
+        }
+    }
 
     if ($.kladr) {
         function fn_format_obj(obj, query, is_label)
@@ -429,6 +468,10 @@ var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
                 }, function(e){
                     roundabout.roundabout("startAutoplay");
                 });
+            });
+            
+            $('.cm-autocomplete-form').each(function(){
+                fn_init_autocomplete($(this));
             });
         });
     }(Tygh, Tygh.$));

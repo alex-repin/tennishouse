@@ -688,7 +688,7 @@
         <item lang="ru" id="available_payments">Доступные способы оплаты</item>
         <item lang="ru" id="payment_po">Оплата на сайте</item>
         <item lang="ru" id="payment_pod">Оплата при получении</item>
-        <item lang="ru" id="call_requests.information">Оставьте свои контактные данные, и наш менеджер свяжется с Вами в течение 24 часов в рабочее время ([working_hours]) для уточнения деталей заказа и доставки.</item>
+        <item lang="ru" id="call_requests.information">Оставьте свои контактные данные, и мы свяжемся с Вами в ближайшее время в рабочие часы ([working_hours]) для уточнения деталей заказа и доставки.</item>
         <item lang="ru" id="womens_shoes_size_chart">Таблица размеров женской обуви</item>
         <item lang="ru" id="mens_clothes_size_chart">Таблица размеров мужской одежды</item>
         <item lang="ru" id="mens_shoes_size_chart">Таблица размеров мужской обуви</item>
@@ -987,5 +987,8 @@
         <item lang="ru" id="call_requests.buy_now_with_one_click_">Купить в 1 клик</item>
         <item lang="ru" id="just_name">Только название</item>
         <item lang="ru" id="error_validator_city">Пожалуйста, выберите населенный пункт из списка</item>
+        <item lang="ru" id="call_back">Обратный звонок</item>
+        <item lang="ru" id="order_call_back">Заказать обратный звонок</item>
+        <item lang="ru" id="call_requests_order_call_back">Оставьте свой телефон, и мы перезвоним Вами в самое ближайшее время ([working_hours]).</item>
     </language_variables>
 </addon>

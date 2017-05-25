@@ -4,6 +4,13 @@
         <div class="ty-logo-wrapper"><img src="{$logos.theme.image.image_path}" width="{$logos.theme.image.image_x}" height="{$logos.theme.image.image_y}" alt="{$logos.theme.image.alt}" class="ty-logo-container__image" /></div>
     </a>
 </div>
+<div class="ty-store-phone-block">
+    <div class="ty-store-phone"><a href="tel:{$company_phone}">{$settings.Company.company_phone}</a></div>
+    <div class="ty-store-phone__call_back"><a id="opener_store_call" class="cm-dialog-opener cm-dialog-auto-size ty-btn ty-btn__text" data-ca-target-id="content_store_call">{__("call_back")}</a></div>
+    <div class="hidden" id="content_store_call" title="{__("order_call_back")}">
+        {include file="addons/call_requests/views/call_requests/components/call_requests_content.tpl" id="store_call"}
+    </div>
+</div>
 <div class="ty-top-block_top_left-wrapper">
     <div class="ty-top-block_top-wrapper">
         <div class="ty-top-block__search">

@@ -17,6 +17,7 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 use Tygh\Registry;
 use Tygh\Navigation\LastView;
 use Tygh\BlockManager\Block;
+use Tygh\Mailer;
 
 function fn_call_requests_info()
 {
@@ -188,6 +189,16 @@ function fn_do_call_request($params, &$cart, &$auth, $product_data)
         $result['notice'] = __('call_requests.order_placed', array('[order_id]' => $params['order_id']));
     } else {
         $result['notice'] = __('call_requests.request_recieved');
+        Mailer::sendMail(array(
+            'to' => 'company_orders_department',
+            'from' => 'default_company_orders_department',
+            'data' => array(
+                'name' => $params['name'],
+                'phone' => $params['phone'],
+                'phone_link' => preg_replace('/[^0-9+]/', '', $params['phone']),
+            ),
+            'tpl' => 'addons/call_requests/order_call_back.tpl',
+        ), 'A');
     }
 
     return $result;
