@@ -181,9 +181,9 @@
     {if $show_list_buttons}
         {capture name="product_buy_now_`$obj_id`"}
             {hook name="products:buy_now"}
-            {if $product.feature_comparison == "Y"}
+            {*if $product.feature_comparison == "Y"}
                 {include file="buttons/add_to_compare_list.tpl" product_id=$product.product_id}
-            {/if}
+            {/if*}
             {/hook}
         {/capture}
         {assign var="capture_buy_now" value="product_buy_now_`$obj_id`"}

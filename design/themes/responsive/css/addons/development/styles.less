@@ -4387,6 +4387,36 @@ and (max-device-width : 480px) {
         animation-timing-function: ease-in-out;
     }*/
 }
+.ty-add-to-compare-block {
+    display: block;
+    text-align: center;
+}
+.ty-add-to-compare-block-details {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.ty-wishlist-form {
+    display: inline;
+}
+.ty-product-tabs {
+    position: relative;
+}
+.ty-add-to-compare {
+    background-color: transparent;
+    background-image:  url("../../../media/images/addons/development/compare.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    height: 32px;
+    width: 103px;
+    padding: 0 0 0 35px;
+    margin: 0;
+    color: @font;
+}
+.ty-add-to-compare:hover {
+    color: @font;
+}
 .ty-feature-icon-value {
     line-height: 25px;
     display: inline-block;
@@ -4959,7 +4989,12 @@ input.ty-rf_input-answer{
     transition: all 200ms linear 0s;
 }
 
-.ty-grid-list__item-wrapper-extended .ty-call-request-button {
-    float: right;
-    width: 50%;
+.ty-grid-list__item-wrapper-extended {
+    .ty-call-request-button {
+        float: right;
+        width: 50%;
+    }
+    .ty-add-to-compare-block {
+        width: 45%;
+    }
 }

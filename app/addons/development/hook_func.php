@@ -1639,6 +1639,7 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
         } else {
             $product_data['discussion_type'] = fn_check_category_discussion($id_path);
         }
+        $product_data['feature_comparison'] = fn_check_category_comparison($id_path);
         
         $players = (empty($product_data['players'])) ? array() : explode(',', $product_data['players']);
         $variant_ids = db_get_fields("SELECT feature_variant_id FROM ?:players WHERE player_id IN (?n)", $players);

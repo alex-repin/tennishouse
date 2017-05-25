@@ -48,6 +48,17 @@ function fn_check_category_discussion($id_path)
     }
 }
 
+function fn_check_category_comparison($id_path)
+{
+    $enable_discussion = array(RACKETS_CATEGORY_ID, STRINGS_CATEGORY_ID, BALL_MACHINE_CATEGORY_ID, BAGS_CATEGORY_ID);
+    $disable_discussion = array(BALL_MACHINE_ACC_CATEGORY_ID);
+    if (!empty(array_intersect($id_path, $enable_discussion)) && empty(array_intersect($id_path, $disable_discussion))) {
+        return 'Y';
+    } else {
+        return 'N';
+    }
+}
+
 function fn_review_reward_available($user_id)
 {
     if (empty($user_id)) {

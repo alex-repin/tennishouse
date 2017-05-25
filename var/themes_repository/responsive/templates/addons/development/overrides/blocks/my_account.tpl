@@ -33,7 +33,7 @@
             {/if}
             <li class="ty-account-info__item ty-dropdown-box__item"><a class="ty-account-info__a underlined" href="{"orders.search"|fn_url}" rel="nofollow">{__("orders")}</a></li>
             {assign var="compared_products" value=""|fn_get_comparison_products}
-            {*<li class="ty-account-info__item ty-dropdown-box__item"><a class="ty-account-info__a underlined" href="{"product_features.compare"|fn_url}" rel="nofollow">{__("view_compare_list")}{if $compared_products} ({$compared_products|count}){/if}</a></li>*}
+            <li class="ty-account-info__item ty-dropdown-box__item"><a class="ty-account-info__a underlined" href="{"product_features.compare"|fn_url}" rel="nofollow">{__("view_compare_list")}{*if $compared_products} ({$compared_products|count}){/if*}</a></li>
         {/hook}
 
         {if "MULTIVENDOR"|fn_allowed_for && $settings.Vendors.apply_for_vendor == "Y" && !$user_info.company_id}
