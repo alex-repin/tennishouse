@@ -4,7 +4,7 @@
             {hook name="products:notification_product"}
             <div class="ty-product-notification__item clearfix">
                 <div class="ty-product-notification__image">
-                    {include file="common/image.tpl" image_width="50" image_height="50" images=$product.main_pair no_ids=true}
+                    {include file="common/image.tpl" image_width="70" image_height="70" images=$product.main_pair no_ids=true}
                 </div>
                 <div class="ty-product-notification__content clearfix">
                     <a href="{"products.view?product_id=`$product.product_id`{if $product.ohash}&{$product.ohash}{/if}"|fn_url}" class="ty-product-notification__product-name">{$product.product_id|fn_get_product_name nofilter}</a>

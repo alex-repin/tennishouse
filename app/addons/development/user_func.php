@@ -22,6 +22,25 @@ use Tygh\Shippings\Shippings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_allow_user_rate($discussion)
+{
+    $auth = $_SESSION['auth'];
+    if (!empty($discussion['all_posts'])) {
+        foreach ($discussion['all_posts'] as $i => $post) {
+            if (!empty($post['rating_value'])) {
+                if (!empty($auth['user_id']) && $post['user_id'] == $auth['user_id']) {
+                    return false;
+                }
+                if (empty($auth['user_id']) && !empty($_SESSION['post_ids'][$discussion['object_type']]) && in_array($post['post_id'], $_SESSION['post_ids'][$discussion['object_type']])) {
+                    return false;
+                }
+            }
+        }
+    }
+    
+    return true;
+}
+
 function fn_add_img_alt($name, $product_name)
 {
     if (!empty($_REQUEST[$name . '_image_data'])) {

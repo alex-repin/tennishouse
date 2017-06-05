@@ -90,5 +90,7 @@ fn_register_hooks(
     'clone_product',
     'tools_change_status',
     'add_post_post',
-    'delete_post_pre'
+    'delete_post_pre',
+    'update_profile',
+    'set_point_payment'
 );

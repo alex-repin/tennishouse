@@ -48,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $post_data['ip_address'] = $ip['host'];
             $post_data['status'] = 'A';
 
+            $post_data['rating_value'] = empty($post_data['rating_value']) ? 5 : $post_data['rating_value'];
             // Check if post is permitted from this IP address
             if (AREA != 'A' && !empty($discussion_settings[$object_name . '_post_ip_check']) && $discussion_settings[$object_name . '_post_ip_check'] == 'Y') {
                 $is_exists = db_get_field("SELECT COUNT(*) FROM ?:discussion_posts WHERE thread_id = ?i AND ip_address = ?s", $post_data['thread_id'], $ip['host']);
@@ -69,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $post_data['timestamp'] = TIME;
             $post_data['user_id'] = $auth['user_id'];
-            $post_data['post_id'] = db_query("INSERT INTO ?:discussion_posts ?e", $post_data);
+            $post_data['post_id'] = db_query("REPLACE INTO ?:discussion_posts ?e", $post_data);
 
             db_query("REPLACE INTO ?:discussion_messages ?e", $post_data);
             db_query("REPLACE INTO ?:discussion_rating ?e", $post_data);

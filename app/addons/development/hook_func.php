@@ -17,6 +17,37 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_update_profile($action, $user_data, $current_user_data)
+{
+    if ($action == 'add') {
+        $settings = Registry::get('addons.development');
+        if (!empty($_SESSION['post_ids'])) {
+            $post_ids = array();
+            foreach ($_SESSION['post_ids'] as $obj_type => $_post_ids) {
+                $post_ids = array_merge($post_ids, $_post_ids);
+            }
+            db_query("UPDATE ?:discussion_posts SET user_id = ?i WHERE post_id IN (?n)", $user_data['user_id'], array_unique($post_ids));
+            unset($_SESSION['post_ids']);
+        }
+        
+        if (!empty($_SESSION['review_ids'])) {
+            $review_ids = array();
+            foreach ($_SESSION['review_ids'] as $obj_type => $_post_ids) {
+                $review_ids = array_merge($review_ids, $_post_ids);
+            }
+            unset($_SESSION['review_ids']);
+            $exists = db_get_array("SELECT ?:discussion_posts.post_id, ?:discussion.object_id, ?:discussion.object_type FROM ?:discussion_posts LEFT JOIN ?:discussion ON ?:discussion.thread_id = ?:discussion_posts.thread_id WHERE ?:discussion_posts.post_id IN (?n) AND ?:discussion_posts.is_rewarded = 'Y'", array_unique($review_ids));
+            
+            if (!empty($exists)) {
+                foreach ($exists as $i => $post_data) {
+                    fn_change_user_points($settings['product_review'], $user_data['user_id'], serialize(array('post_id' => $post_data['post_id'], 'object_id' => $post_data['object_id'], 'type' => $post_data['object_type'])), CHANGE_DUE_REVIEW);
+                }
+            }
+        }
+        unset($_SESSION['reward_points']);
+    }
+}
+
 function fn_development_delete_post_pre($post_id)
 {
     $post_data = db_get_row("SELECT ?:discussion_posts.user_id, ?:discussion_posts.is_rewarded, ?:discussion.object_type, ?:discussion.object_id FROM ?:discussion_posts INNER JOIN ?:users ON ?:users.user_id = ?:discussion_posts.user_id LEFT JOIN ?:discussion ON ?:discussion.thread_id = ?:discussion_posts.thread_id WHERE ?:discussion_posts.post_id = ?i", $post_id);
@@ -25,15 +56,52 @@ function fn_development_delete_post_pre($post_id)
     }
 }
 
+function fn_development_set_point_payment(&$user_points, $auth)
+{
+    if (empty($auth['user_id']) && !empty($_SESSION['reward_points'])) {
+        $user_points = $_SESSION['reward_points'];
+    }
+}
+
 function fn_development_add_post_post($post_data, $object)
 {
-    if ($object['object_type'] == 'P' && !empty($post_data['user_id'])) {
-        $exists = db_get_field("SELECT post_id FROM ?:discussion_posts WHERE thread_id = ?i AND user_id = ?i AND post_id != ?i AND is_rewarded = 'Y'", $post_data['thread_id'], $post_data['user_id'], $post_data['post_id']);
+    $auth = $_SESSION['auth'];
+    if (empty($auth['user_id'])) {
+        if (empty($_SESSION['post_ids'][$object['object_type']]) || !in_array($post_data['post_id'], $_SESSION['post_ids'][$object['object_type']])) {
+            $_SESSION['post_ids'][$object['object_type']] = empty($_SESSION['post_ids'][$object['object_type']]) ? array() : $_SESSION['post_ids'][$object['object_type']];
+            $_SESSION['post_ids'][$object['object_type']][] = $post_data['post_id'];
+        }
+    }
+    if (AREA == 'C' && $_REQUEST['force_review'] == 'Y') {
+        $discussion = $object;
+        $discussion['post_data'] = $post_data;
+        $discussion['thread_id'] = $post_data['thread_id'];
+        Registry::get('view')->assign('discussion', $discussion);
+        Registry::get('view')->assign('obj_id', $object['object_id']);
+        $msg = Registry::get('view')->fetch('addons/discussion/views/discussion/components/force_review.tpl');
+        fn_delete_notification('thank_you_for_review');
+        fn_set_notification('I', __('thank_you_for_rating'), $msg);
+    } else {
+        fn_set_notification('N', __('notice'), __('thank_you_for_review'), 'F', 'thank_you_for_review');
+    }
+
+    if ($object['object_type'] == 'P' && !empty($post_data['message'])) {
+        db_query("UPDATE ?:discussion_posts SET is_rewarded = 'Y' WHERE post_id = ?i", $post_data['post_id']);
         $settings = Registry::get('addons.development');
-        if (empty($exists) && fn_review_reward_available($post_data['user_id'])) {
-            fn_change_user_points($settings['product_review'], $post_data['user_id'], serialize(array('post_id' => $post_data['post_id'], 'object_id' => $object['object_id'], 'type' => $object['object_type'])), CHANGE_DUE_REVIEW);
-            db_query("UPDATE ?:discussion_posts SET is_rewarded = 'Y' WHERE post_id = ?i", $post_data['post_id']);
-            if (AREA == 'C') {
+        if (!empty($post_data['user_id'])) {
+            $exists = db_get_field("SELECT post_id FROM ?:discussion_posts WHERE thread_id = ?i AND user_id = ?i AND post_id != ?i AND is_rewarded = 'Y'", $post_data['thread_id'], $post_data['user_id'], $post_data['post_id']);
+            if (empty($exists) && fn_review_reward_available($post_data['user_id'])) {
+                fn_change_user_points($settings['product_review'], $post_data['user_id'], serialize(array('post_id' => $post_data['post_id'], 'object_id' => $object['object_id'], 'type' => $object['object_type'])), CHANGE_DUE_REVIEW);
+                if (AREA == 'C') {
+                    fn_delete_notification('thank_you_for_review');
+                    fn_set_notification('N', __('notice'), __('product_review_added_reward_text', array('[amount]' => $settings['product_review'])), 'F');
+                }
+            }
+        } elseif (AREA == 'C') {
+            if (empty($_SESSION['review_ids'][$object['object_type']]) || ($settings['product_reviews_number_limit'] > count($_SESSION['review_ids'][$object['object_type']]) && !in_array($post_data['post_id'], $_SESSION['review_ids'][$object['object_type']]))) {
+                $_SESSION['review_ids'][$object['object_type']] = empty($_SESSION['review_ids'][$object['object_type']]) ? array() : $_SESSION['review_ids'][$object['object_type']];
+                $_SESSION['review_ids'][$object['object_type']][] = $post_data['post_id'];
+                $_SESSION['reward_points'] += $settings['product_review'];
                 fn_delete_notification('thank_you_for_review');
                 fn_set_notification('N', __('notice'), __('product_review_added_reward_text', array('[amount]' => $settings['product_review'])), 'F');
             }

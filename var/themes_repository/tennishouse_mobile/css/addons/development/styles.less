@@ -4565,6 +4565,30 @@ input.ty-value-changer__input {
         animation-timing-function: ease-in-out;
     }*/
 }
+.ty-add-to-compare-block-details {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.ty-product-tabs {
+    position: relative;
+}
+.ty-add-to-compare {
+    background-color: transparent;
+    background-image:  url("../../../media/images/addons/development/compare.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    height: 32px;
+    width: 103px;
+    padding: 0 0 0 35px;
+    margin: 0;
+    color: @font;
+    box-shadow: none !important;
+}
+.ty-add-to-compare:hover {
+    color: @font;
+}
 .ty-feature-icon-value {
     line-height: 25px;
     display: inline-block;
@@ -5134,3 +5158,51 @@ input.ty-rf_input-answer{
     z-index: 9999;
 }
 /* KLADR */
+.ty-popup-notification-title {
+    background: #fff;
+    border-bottom: 1px solid @base;
+    position: relative;
+    padding: 13px 30px 10px 20px;
+    font-weight: normal;
+    font-size: 18px;
+    white-space: nowrap;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-decoration: @headings_font_decoration;
+    font-style: @headings_font_style;
+    font-family: @headings_font;
+    margin: 0 0 15px;
+    .box-sizing(border-box);
+    .border-radius(0px);
+    span {
+        position: absolute;
+        top: 15px;
+        right: 14px;
+        width: 16px;
+        height: 16px;
+        color: #acacac;
+        text-shadow: none;
+        font: 20px/1 'glyphs';
+        opacity: 1;
+        cursor: pointer;
+        speak: none;
+        -webkit-font-smoothing: antialiased;
+    }
+    span:before {
+        font-family: 'glyphs';
+        content: "\e009";
+        speak: none;
+        -webkit-font-smoothing: antialiased;
+    }
+    span:hover {
+        color: #dfdfdf;
+        opacity: 1;
+    }
+}
+.ty-icon-cancel-circle {
+    font-size: 20px;
+}
+.ty-remove__txt {
+    font-size: 20px;
+}

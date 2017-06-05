@@ -80,14 +80,14 @@
                 <items>
                     <item id="store_review">
                         <type>input</type>
-                        <default_value>400</default_value>
+                        <default_value>500</default_value>
                         <translations>
                             <item lang="ru">Отзыв о магазине</item>
                         </translations>
                     </item>
                     <item id="product_review">
                         <type>input</type>
-                        <default_value>100</default_value>
+                        <default_value>500</default_value>
                         <translations>
                             <item lang="ru">Отзыв о товаре</item>
                         </translations>
@@ -101,7 +101,7 @@
                     </item>
                     <item id="product_reviews_number_limit">
                         <type>input</type>
-                        <default_value>5</default_value>
+                        <default_value>1</default_value>
                         <translations>
                             <item lang="ru">Лимит отзывов о товаре за период времени</item>
                         </translations>
@@ -771,9 +771,9 @@
         <item lang="ru" id="in_use">Использовано</item>
         <item lang="ru" id="points_max_allowed">Можно применить</item>
         <item lang="ru" id="expiration_date">Дата сгорания</item>
-        <item lang="ru" id="reward_points_expire_reason">Обнуление неиспользованных баллов от [date]</item>
+        <item lang="ru" id="reward_points_expire_reason">Обнуление неиспользованных рублей от [date]</item>
         <item lang="ru" id="discount_level">Уровень Вашей бонусной программы</item>
-        <item lang="ru" id="reward_points_note"><![CDATA[<p>[amount] бонусных баллов Вы получите при покупке этого товара. 1 балл = 1 рубль. Баллы можно будет использовать во время следующего заказа и получить скидку до 30%. Кроме этого бонусные баллы можно получить за:</p><ul><li>Отзыв о магазине - 400 баллов</li><li>Отзыв о товаре - 100 баллов</li></ul>]]></item>
+        <item lang="ru" id="reward_points_note"><![CDATA[<p>[amount] бонусных рублей Вы получите при покупке этого товара. Рубли можно будет использовать во время следующего заказа и получить скидку до 30%. Кроме этого бонусные рубли можно получить за:</p><ul><li>Отзыв о магазине - 500 рублей</li><li>Отзыв о товаре - 500 рублей</li></ul>]]></item>
         <item lang="ru" id="cross_categories">Кросс-категории</item>
         <item lang="ru" id="cross_recomendation_text">Рекомендуем приобрести</item>
         <item lang="ru" id="what_for">Для чего они нужны ?</item>
@@ -904,7 +904,7 @@
         <item lang="ru" id="import_inventory">Импортировать остатки</item>
         <item lang="ru" id="product_reviews">Отзывы о товаре</item>
         <item lang="ru" id="product_reviews_title">Отзывы</item>
-        <item lang="ru" id="write_product_review">Поделитесь впечатлениями...</item>
+        <item lang="ru" id="write_product_review">Опишите Ваши впечатления...</item>
         <item lang="ru" id="reviewer_name">Имя</item>
         <item lang="ru" id="used_this_product_r">Играли этой ракеткой ?</item>
         <item lang="ru" id="used_this_product_s">Играли в этих кроссовках ?</item>
@@ -913,11 +913,18 @@
         <item lang="ru" id="used_this_product_og">Играли этими обмотками ?</item>
         <item lang="ru" id="used_this_product_bm">Пользовались этой пушкой ?</item>
         <item lang="ru" id="used_this_product_sm">Пользовались этим станком ?</item>
+        <item lang="ru" id="rate_product_r">Оцените эту ракетку</item>
+        <item lang="ru" id="rate_product_s">Оцените эти кроссовки</item>
+        <item lang="ru" id="rate_product_bl">Оцените эти мячи</item>
+        <item lang="ru" id="rate_product_st">Оцените эти струны ?</item>
+        <item lang="ru" id="rate_product_og">Оцените эти обмотки</item>
+        <item lang="ru" id="rate_product_bm">Оцените эту пушку</item>
+        <item lang="ru" id="rate_product_sm">Оцените этот станок</item>
         <item lang="ru" id="review_reason_E">Отзыв о магазине</item>
         <item lang="ru" id="review_reason_P">Отзыв о товаре</item>
-        <item lang="ru" id="product_review_added_reward_text">Спасибо за отзыв ! Вам добавлено [amount] бонусных баллов. Вы можете их использовать в заказе уже сейчас.</item>
+        <item lang="ru" id="product_review_added_reward_text">Спасибо за отзыв ! Вам добавлено [amount] бонусных рублей. Вы можете их использовать в заказе уже сейчас.</item>
         <item lang="ru" id="get_discount_now">Получить скидку сейчас !</item>
-        <item lang="ru" id="get_product_review_reward_points"><![CDATA[<div class="ty-product-review-rp-text"><p>Для того, чтобы получить скидку на заказ нужно:</p><ol><li>Создать профиль: <a href="https://www.tennishouse.ru/profiles-add/" target="_blank">Регистрация</a></li><li>Оставить отзыв на любой товар из категорий: <a href="http://www.tennishouse.ru/tennis-rackets/" target="_blank">Ракетки</a>, <a href="http://www.tennishouse.ru/tennis-balls/" target="_blank">Мячи</a>, <a href="http://www.tennishouse.ru/tennis-strings/" target="_blank">Струны</a>, <a href="http://www.tennishouse.ru/tennis-shoes/" target="_blank">Обувь</a>, <a href="http://www.tennishouse.ru/ball-machines/" target="_blank">Пушки</a>, <a href="http://www.tennishouse.ru/stringing-machines/" target="_blank">Станки</a>, <a href="http://www.tennishouse.ru/overgrips-grips/overgrips/" target="_blank">Овергрипы</a></li><li>Скидка в [amount]руб. будет сразу же автоматически добавлена в заказ</li><li>Вы можете оставлять до [limit] отзывов за [limit_month] мес. и получать скидки на заказы.</li></ol><p>ВНИМАНИЕ. Отзывы будут приняты только, если они информативны и полезны для других покупателей. Отзывы, которые не соответствуют этому критерию, будут удалены, а скидка в заказе аннулирована.</p></div>]]></item>
+        <item lang="ru" id="get_product_review_reward_points"><![CDATA[<div class="ty-product-review-rp-text"><p>Для того, чтобы получить скидку на заказ нужно:</p><ol><li>Создать профиль: <a href="https://www.tennishouse.ru/profiles-add/" target="_blank">Регистрация</a></li><li>Оставить отзыв на любой товар из категорий: <a href="http://www.tennishouse.ru/tennis-rackets/" target="_blank">Ракетки</a>, <a href="http://www.tennishouse.ru/tennis-balls/" target="_blank">Мячи</a>, <a href="http://www.tennishouse.ru/tennis-strings/" target="_blank">Струны</a>, <a href="http://www.tennishouse.ru/tennis-shoes/" target="_blank">Обувь</a>, <a href="http://www.tennishouse.ru/ball-machines/" target="_blank">Пушки</a>, <a href="http://www.tennishouse.ru/stringing-machines/" target="_blank">Станки</a>, <a href="http://www.tennishouse.ru/overgrips-grips/overgrips/" target="_blank">Овергрипы</a></li><li>Скидка в [amount]руб. будет сразу же автоматически добавлена в заказ.</li></ol><br><p>ВНИМАНИЕ. Отзывы будут приняты только, если они информативны и полезны для других покупателей. Отзывы, которые не соответствуют этому критерию, будут удалены, а скидка в заказе аннулирована.</p></div>]]></item>
         <item lang="ru" id="thank_you_for_review">Спасибо за отзыв !</item>
         <item lang="ru" id="has_full_description">Есть полное описание</item>
         <item lang="ru" id="has_short_description">Есть краткое описание</item>
@@ -968,7 +975,7 @@
         <item lang="ru" id="create_profile_checkout_text">Сохранить адрес для следующих заказов</item>
         <item lang="ru" id="personal_area">Личный кабинет</item>
         <item lang="ru" id="subscribe_to_store_newsletters">Получать уведомления о скидках, акциях и новых поступлениях</item>
-        <item lang="ru" id="write_product_review_email_text">Также Вы можете поделиться своим мнением о купленном товаре</item>
+        <item lang="ru" id="write_product_review_email_text">Вы можете поделиться своим мнением о купленном товаре и также получить бонусные рубли</item>
         <item lang="ru" id="write_review_about_product">Написать отзыв о "[product_name]"</item>
         <item lang="ru" id="firstname_lastname">Имя Фамилия</item>
         <item lang="ru" id="call_requests.quick_order">Быстрый заказ</item>
@@ -990,5 +997,9 @@
         <item lang="ru" id="call_back">Обратный звонок</item>
         <item lang="ru" id="order_call_back">Заказать обратный звонок</item>
         <item lang="ru" id="call_requests_order_call_back">Оставьте свой телефон, и мы перезвоним Вами в самое ближайшее время ([working_hours]).</item>
+        <item lang="ru" id="rate_product">Оцените товар</item>
+        <item lang="ru" id="thank_you_for_rating">Спасибо за оценку !</item>
+        <item lang="ru" id="force_review_reward_text">Напишите отзыв и получите скидку [amount] на заказ.</item>
+        <item lang="ru" id="force_review_text">Поделитесь Вашим мнением с другими теннисистами.</item>
     </language_variables>
 </addon>

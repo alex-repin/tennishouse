@@ -161,15 +161,22 @@
                 </div>
             </div>
             {if $show_product_tabs}
-                {include file="views/tabs/components/product_popup_tabs.tpl"}
-                {$smarty.capture.popupsbox_content nofilter}
-                {include file="views/tabs/components/product_tabs.tpl"}
+                <div class="ty-product-tabs">
+                    {include file="views/tabs/components/product_popup_tabs.tpl"}
+                    {$smarty.capture.popupsbox_content nofilter}
+                    {include file="views/tabs/components/product_tabs.tpl"}
 
-                {if $blocks.$tabs_block_id.properties.wrapper}
-                    {include file=$blocks.$tabs_block_id.properties.wrapper content=$smarty.capture.tabsbox_content title=$blocks.$tabs_block_id.description}
-                {else}
-                    {$smarty.capture.tabsbox_content nofilter}
-                {/if}
+                    {if $blocks.$tabs_block_id.properties.wrapper}
+                        {include file=$blocks.$tabs_block_id.properties.wrapper content=$smarty.capture.tabsbox_content title=$blocks.$tabs_block_id.description}
+                    {else}
+                        {$smarty.capture.tabsbox_content nofilter}
+                    {/if}
+                    {if $product.feature_comparison == "Y"}
+                        <div class="ty-add-to-compare-block-details">
+                        {include file="buttons/add_to_compare_list.tpl" product_id=$product.product_id}
+                        </div>
+                    {/if}
+                </div>
             {/if}
         {/if}
     {/hook}

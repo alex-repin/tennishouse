@@ -105,11 +105,22 @@ function fn_get_discussion($object_id, $object_type, $get_posts = false, $params
 
     if (!empty($cache[$_cache_key]) && !isset($cache[$_cache_key]['posts']) && $get_posts == true) {
         $params['thread_id'] = $cache[$_cache_key]['thread_id'];
-        $params['avail_only'] = (AREA == 'C'); // FIXME
+//         $params['avail_only'] = (AREA == 'C'); // FIXME
 
         $discussion_object_types = fn_get_discussion_objects();
 
-        list($cache[$_cache_key]['posts'], $cache[$_cache_key]['search']) = fn_get_discussion_posts($params, Registry::get('addons.discussion.' . $discussion_object_types[$cache[$_cache_key]['object_type']] . '_posts_per_page'));
+        list($cache[$_cache_key]['all_posts'], $cache[$_cache_key]['search']) = fn_get_discussion_posts($params, Registry::get('addons.discussion.' . $discussion_object_types[$cache[$_cache_key]['object_type']] . '_posts_per_page'));
+        
+        if (AREA == 'C') {
+            $cache[$_cache_key]['posts'] = array();
+            foreach ($cache[$_cache_key]['all_posts'] as $i => $post) {
+                if ($post['status'] == 'A') {
+                    $cache[$_cache_key]['posts'][] = $post;
+                }
+            }
+        } else {
+            $cache[$_cache_key]['posts'] = $cache[$_cache_key]['all_posts'];
+        }
 
         $cache[$_cache_key]['average_rating'] = fn_get_average_rating($cache[$_cache_key]);
     }

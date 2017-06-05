@@ -131,6 +131,12 @@ select {
 }
 .ty-grid-list__item-wrapper {
     position: relative;
+    .ty-stars__icon {
+        font-size: 16px;
+    }
+}
+.ty-discussion__rating-wrapper .ty-stars .ty-stars__icon {
+    margin: 0 2px 0 0;
 }
 .pluso {
     z-index: 1000 !important;
@@ -1703,8 +1709,10 @@ table.ty-cart-content {
 .ty-product-notification__item .ty-image-wrapper {
     float: left;
     margin-right: 10px;
-    padding: 10px;
     
+}
+.ty-pc-product-notification .ty-product-notification__item .ty-image-wrapper {
+    padding: 10px;
 }
 .ty-grid-list__image-product > .ty-image-wrapper, .ty-roundabout-item > .ty-image-wrapper {
     display: inline;
@@ -1721,13 +1729,34 @@ table.ty-cart-content {
 }
 .ty-grid-list__item-additional {
     border: 1px solid #d6d6d6;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
     background: #fff;
     left: -1px;
     line-height: 17px;
     position: absolute;
     right: -1px;
     top: 100%;
+    z-index: 9;
+}
+.ty-grid-list__item-additional-top:after {
+    background: #fff;
+    content:"";
+    display: block;
+    height: 10px;
+    left: 0;
+    position: absolute;
+    bottom: -10px;
+    width: 100%;
+}
+.ty-grid-list__item-additional-top {
+    border: 1px solid #d6d6d6;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+    background: #fff;
+    left: -1px;
+    line-height: 17px;
+    position: absolute;
+    right: -1px;
+    bottom: 100%;
     z-index: 9;
 }
 .ty-grid-list__item-additional-sizes {
@@ -2527,21 +2556,23 @@ table.ty-cart-content {
 }
 .ty-discussion__rating-wrapper {
     display: inline-block;
-    margin-bottom: 0;
-    float: right;
     height: 18px;
+    left: 25%;
+    position: absolute;
+    text-align: center;
+    top: -30px;
+    width: 230px;
 }
 .ty-product-detail__before-title {
     display: inline-block;
     width: 100%;
+    position: relative;
 }
-.ty-stars {
-    margin-right: 0;
-    vertical-align: top;
-}
-.ty-discussion__review-a {
-    font-size: 15px;
+.ty-rate-product {
+    line-height: 21px;
     margin-right: 5px;
+    vertical-align: top;
+    color: lighten(@font, 20%);
 }
 .ty-product-block__price-actual {
     margin: 3px 0;
@@ -2893,10 +2924,8 @@ table.ty-cart-content {
     z-index: 100;
 }
 .grid-list__rating {
-    right: 5px;
-    position: absolute;
-    bottom: 9px;
-    z-index: 100;
+    display: block;
+    text-align: center;
 }
 .ty-category-title {
     margin: 0 -11px;
@@ -3705,6 +3734,13 @@ table.ty-cart-content {
     font-size: 18px;
     margin-bottom: 5px;
 }
+.ty-rating, .ty-stars {
+    color: @menu;
+}
+.ty-discussion__review-a {
+    color: lighten(@font, 20%);
+    font-size: 12px;
+}
 .ty-product-add-review-wrapper {
     display: inline-block;
     width: 450px;
@@ -3759,6 +3795,11 @@ table.ty-cart-content {
             display: block;
         }
     }
+}
+.ty-force-review-wrapper {
+    display: block;
+    margin: 0 20px 20px;
+    width: auto;
 }
 .ty-product-cross-block .ty-tennishouse-body {
     border: none;
@@ -4996,5 +5037,47 @@ input.ty-rf_input-answer{
     }
     .ty-add-to-compare-block {
         width: 45%;
+    }
+}
+.ty-popup-notification-title {
+    background: #fff;
+    border-bottom: 1px solid @base;
+    position: relative;
+    padding: 13px 30px 10px 20px;
+    font-weight: normal;
+    font-size: 18px;
+    white-space: nowrap;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-decoration: @headings_font_decoration;
+    font-style: @headings_font_style;
+    font-family: @headings_font;
+    margin: 0 0 15px;
+    .box-sizing(border-box);
+    .border-radius(0px);
+    span {
+        position: absolute;
+        top: 15px;
+        right: 14px;
+        width: 16px;
+        height: 16px;
+        color: #acacac;
+        text-shadow: none;
+        font: 20px/1 'glyphs';
+        opacity: 1;
+        cursor: pointer;
+        speak: none;
+        -webkit-font-smoothing: antialiased;
+    }
+    span:before {
+        font-family: 'glyphs';
+        content: "\e009";
+        speak: none;
+        -webkit-font-smoothing: antialiased;
+    }
+    span:hover {
+        color: #dfdfdf;
+        opacity: 1;
     }
 }

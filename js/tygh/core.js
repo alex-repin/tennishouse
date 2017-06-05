@@ -1113,7 +1113,9 @@ var Tygh = {
 
             $('.cm-focus', context).focus();
 
-            $('.cm-autocomplete-off', context).prop('autocomplete', 'off');
+            $('.cm-autocomplete-off', context).each(function() {
+                $(this).attr("autocomplete", "off");
+            });
 
             $('.cm-ajax-content-more', context).each(function() {
                 var self = $(this);
@@ -4053,6 +4055,7 @@ var Tygh = {
                             
                             if (collection.hasClass('cm-form-dialog-closer')) {
                                 $.popupStack.last_close();
+                                $.ceNotification('close', form.parents('.cm-notification-content:first'), false);
                             }
 
                             if (collection.hasClass('cm-form-dialog-opener')) {
@@ -4063,7 +4066,7 @@ var Tygh = {
                             }
                         });
                     }
-
+                    
                     return $.ceAjax('submitForm', form, clicked_elm);
                 }
 
@@ -4452,7 +4455,7 @@ var Tygh = {
                     if (attach.length > 0) {
                         title = '';
                     } else {
-                        title = '<h1>' + data.title + '<span class="cm-notification-close close"></span></h1>';
+                        title = '<div class="ty-popup-notification-title">' + data.title + '<span class="cm-notification-close close"></span></div>';
                     }
                     var notification = $('<div class="cm-notification-content cm-notification-content-extended notification-content-extended ' + (data.message_state == "I" ? ' cm-auto-hide' : '') + (attach.length > 0 ? ' cm-notification-content__add-to-cart' : '') + '" data-ca-notification-key="' + key + '">' +
                         title +

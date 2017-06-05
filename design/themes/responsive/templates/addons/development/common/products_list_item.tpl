@@ -8,6 +8,7 @@
     {else}
         {assign var="obj_id" value=$product.product_id}
     {/if}
+    {$rate_not_allowed = true}
     {include file="common/product_data.tpl" product=$product}
 
     {assign var="form_open" value="form_open_`$obj_id`"}
@@ -42,12 +43,6 @@
         </div>
         
         {if $mode == 'R'}
-            {*assign var="rating" value="rating_`$obj_id`"}
-            {if $smarty.capture.$rating}
-                <div class="grid-list__rating">
-                    {$smarty.capture.$rating nofilter}
-                </div>
-            {/if*}
             {if $product.likes > 0}
                 <div class="ty-grid-list__likes">
                     <div class="{if $product.is_liked}ty-grid-list__likes-heart-full{else}ty-grid-list__likes-heart{/if}"></div><span class="ty-grid-list__likes-num">{$product.likes}</span>
@@ -145,6 +140,14 @@
 </a>
 {if $category_grid}
 <div class="ty-grid-list__item-additional-wrapper">
+    <div class="ty-grid-list__item-additional-top">
+        {assign var="rating" value="rating_`$obj_id`"}
+        {if $smarty.capture.$rating}
+            <div class="grid-list__rating">
+                {$smarty.capture.$rating nofilter}
+            </div>
+        {/if}
+    </div>
     <div class="ty-grid-list__item-additional">
         {if $product.sizes}
             <div class="ty-grid-list__item-additional-sizes">

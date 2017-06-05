@@ -1,6 +1,6 @@
 {if $product.extra.configuration}
 <div class="ty-product-notification__item clearfix">
-    {include file="common/image.tpl" image_width="50" image_height="50" images=$product.main_pair no_ids=true class="ty-product-notification__image"}
+    {include file="common/image.tpl" image_width="70" image_height="70" images=$product.main_pair no_ids=true class="ty-product-notification__image"}
     <div class="ty-product-notification__content clearfix">
         <div class="ty-product-notification__content-item">
             <a href="{"products.view?product_id=`$product.product_id`"|fn_url}" class="ty-product-notification__product-name">{$product.product_id|fn_get_product_name nofilter}</a>

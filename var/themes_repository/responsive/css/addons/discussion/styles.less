@@ -110,6 +110,14 @@ Discussion
     -webkit-font-smoothing: antialiased;
     content: "\e004";
 }
+.ty-rating:not(:checked):not(:hover) > .ty-icon-star:before {
+    content: "\e041";
+}
+
+.ty-rating:not(:checked):not(:hover) > .ty-icon-star-half:before {
+    content: "\e042";
+}
+
 .ty-rating:not(:checked) > .ty-rating__label:hover:before,
 .ty-rating:not(:checked) > .ty-rating__label:hover ~ .ty-rating__label:before {
     content: "\e041";
@@ -127,5 +135,17 @@ Discussion
 .ty-template-small__item-description .ty-stars {
     display: block;
 }
-
+.ty-rate-product-form {
+    display: inline-block;
+}
+.ty-stars {
+    margin-right: 0;
+    vertical-align: top;
+}
+.ty-discussion__review-a {
+    font-size: 15px;
+    margin-right: 5px;
+    line-height: 21px;
+    vertical-align: top;
+}
 /* /Discussion */
