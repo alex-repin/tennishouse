@@ -92,6 +92,13 @@
                             <item lang="ru">Отзыв о товаре</item>
                         </translations>
                     </item>
+                    <item id="review_char_amount">
+                        <type>input</type>
+                        <default_value>200</default_value>
+                        <translations>
+                            <item lang="ru">Минимальное количество знаков</item>
+                        </translations>
+                    </item>
                     <item id="product_reviews_time_limit">
                         <type>input</type>
                         <default_value>1</default_value>

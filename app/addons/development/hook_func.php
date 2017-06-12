@@ -67,9 +67,9 @@ function fn_development_add_post_post($post_data, $object)
 {
     $auth = $_SESSION['auth'];
     if (empty($auth['user_id'])) {
-        if (empty($_SESSION['post_ids'][$object['object_type']]) || !in_array($post_data['post_id'], $_SESSION['post_ids'][$object['object_type']])) {
+        if (empty($_SESSION['post_ids'][$object['object_type']]) || !in_array($post_data['post_id'], array_keys($_SESSION['post_ids'][$object['object_type']]))) {
             $_SESSION['post_ids'][$object['object_type']] = empty($_SESSION['post_ids'][$object['object_type']]) ? array() : $_SESSION['post_ids'][$object['object_type']];
-            $_SESSION['post_ids'][$object['object_type']][] = $post_data['post_id'];
+            $_SESSION['post_ids'][$object['object_type']][$post_data['post_id']] = $post_data;
         }
     }
     if (AREA == 'C' && $_REQUEST['force_review'] == 'Y') {

@@ -97,7 +97,7 @@ var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
         obj.addClass('cm-city-change');
     }
     
-    if ($.kladr) {
+//     if ($.kladr) {
         function fn_format_obj(obj, query, is_label)
         {
             if (obj.parents) {
@@ -285,53 +285,53 @@ var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
                 }
             }
         }
-    } else {
-        function fn_init_autocomplete(elm)
-        {
-            var city = $("[data-autocompletetype='city']", elm);
-            var state = $("[data-autocompletetype='state']", elm);
-            var city_id = $("[data-autocompletetype='city_id']", elm);
-
-            if (city.length) {
-                city.autocomplete({
-                    source: function(request, response) {
-                        var type = this.element.attr('name').substr(10,1);
-                        getRusCities(elm, request, response);
-                    },
-                    select: function( event, ui ) {
-                        if (city_id.length) {
-                            city_id.val('');
-                        }
-                        fn_check_city(city, true);
-                        if (state.length) {
-                            $.ceAjax('request', fn_url('development.find_state_data'), {
-                                method: 'post',
-                                data: {city: ui.item.value},
-                                callback: function(data) {
-                                    if (typeof(state.attr('sb')) != 'undefined') {
-                                        $('#' + state.attr('sb') + '_' + data.text.replace(/\"/g, "")).trigger('click.sb');
-                                    } else {
-                                        state.val(data.text.replace(/\"/g, ""));
-                                    }
-                                },
-                            });
-                        }
-                    }
-                });
-            }
-        }
-        function getRusCities(elm, request, response) {
-
-            var check_state = $("[data-autocompletetype='state']", elm).val();
-            var check_country = $("[data-autocompletetype='country']", elm).val();
-
-            $.ceAjax('request', fn_url('city.autocomplete_city?q=' + encodeURIComponent(request.term) + '&check_state=' + check_state + '&check_country=' + check_country), {
-                callback: function(data) {
-                    response(data.autocomplete);
-                }
-            });
-        }
-    }
+//     } else {
+//         function fn_init_autocomplete(elm)
+//         {
+//             var city = $("[data-autocompletetype='city']", elm);
+//             var state = $("[data-autocompletetype='state']", elm);
+//             var city_id = $("[data-autocompletetype='city_id']", elm);
+// 
+//             if (city.length) {
+//                 city.autocomplete({
+//                     source: function(request, response) {
+//                         var type = this.element.attr('name').substr(10,1);
+//                         getRusCities(elm, request, response);
+//                     },
+//                     select: function( event, ui ) {
+//                         if (city_id.length) {
+//                             city_id.val('');
+//                         }
+//                         fn_check_city(city, true);
+//                         if (state.length) {
+//                             $.ceAjax('request', fn_url('development.find_state_data'), {
+//                                 method: 'post',
+//                                 data: {city: ui.item.value},
+//                                 callback: function(data) {
+//                                     if (typeof(state.attr('sb')) != 'undefined') {
+//                                         $('#' + state.attr('sb') + '_' + data.text.replace(/\"/g, "")).trigger('click.sb');
+//                                     } else {
+//                                         state.val(data.text.replace(/\"/g, ""));
+//                                     }
+//                                 },
+//                             });
+//                         }
+//                     }
+//                 });
+//             }
+//         }
+//         function getRusCities(elm, request, response) {
+// 
+//             var check_state = $("[data-autocompletetype='state']", elm).val();
+//             var check_country = $("[data-autocompletetype='country']", elm).val();
+// 
+//             $.ceAjax('request', fn_url('city.autocomplete_city?q=' + encodeURIComponent(request.term) + '&check_state=' + check_state + '&check_country=' + check_country), {
+//                 callback: function(data) {
+//                     response(data.autocomplete);
+//                 }
+//             });
+//         }
+//     }
     
     (function(_, $) {
         $(document).ready(function(){

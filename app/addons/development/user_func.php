@@ -31,7 +31,7 @@ function fn_allow_user_rate($discussion)
                 if (!empty($auth['user_id']) && $post['user_id'] == $auth['user_id']) {
                     return false;
                 }
-                if (empty($auth['user_id']) && !empty($_SESSION['post_ids'][$discussion['object_type']]) && in_array($post['post_id'], $_SESSION['post_ids'][$discussion['object_type']])) {
+                if (empty($auth['user_id']) && !empty($_SESSION['post_ids'][$discussion['object_type']]) && in_array($post['post_id'], array_keys($_SESSION['post_ids'][$discussion['object_type']]))) {
                     return false;
                 }
             }
