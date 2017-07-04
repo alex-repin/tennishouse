@@ -22,6 +22,29 @@ use Tygh\Shippings\Shippings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_get_posts_object_ids($posts, $keep_type = true)
+{
+    $post_ids = $review_ids = array();
+    foreach ($posts as $obj_type => $_post_ids) {
+        if (!empty($keep_type)) {
+            $post_ids[$obj_type] = array_merge((empty($post_ids[$obj_type]) ? array() : $post_ids[$obj_type]), array_keys($_post_ids));
+        } else {
+            $post_ids = array_merge($post_ids, array_keys($_post_ids));
+        }
+        foreach ($_post_ids as $i => $_post) {
+            if (!empty($_post['message'])) {
+                if (!empty($keep_type)) {
+                    $review_ids[$obj_type][] = $_post['post_id'];
+                } else {
+                    $review_ids[] = $_post['post_id'];
+                }
+            }
+        }
+    }
+    
+    return array($post_ids, $review_ids);
+}
+
 function fn_allow_user_rate($discussion)
 {
     $auth = $_SESSION['auth'];
@@ -39,6 +62,55 @@ function fn_allow_user_rate($discussion)
     }
     
     return true;
+}
+
+
+function fn_allow_user_thread_review_reward($thread_id, $object_type, $user_id, $exclude_post_id = 0)
+{
+    $settings = Registry::get('addons.development');
+    $now = getdate(TIME);
+    $time_limit = mktime(0, 0, 0, $now['mon'] - $settings['review_time_limit_' . $object_type], $now['mday'], $now['year']);
+    $count = 0;
+    if (!empty($user_id)) {
+        $posts = db_get_array("SELECT ?:discussion_posts.* FROM ?:discussion_posts LEFT JOIN ?:discussion ON ?:discussion.thread_id = ?:discussion_posts.thread_id WHERE ?:discussion_posts.user_id = ?i AND ?:discussion.object_type = ?s", $user_id, $object_type);
+    } elseif (AREA == 'C') {
+        $posts = $_SESSION['post_ids'][$object_type];
+    }
+    if (!empty($posts)) {
+        foreach ($posts as $i => $post) {
+            if ($post['is_rewarded'] == 'Y') {
+                if ($post['timestamp'] >= $time_limit) {
+                    $count++;
+                }
+                if ($post['thread_id'] == $thread_id && (empty($exclude_post_id) || (!empty($exclude_post_id) && $post['post_id'] != $exclude_post_id))) {
+                    return false;
+                }
+            }
+        }
+    }
+    
+    return ($count < $settings['review_number_limit_' . $object_type]) ? true : false;
+}
+
+function fn_allow_user_review_reward($user_id, $object_type)
+{
+    $settings = Registry::get('addons.development');
+    $now = getdate(TIME);
+    $time_limit = mktime(0, 0, 0, $now['mon'] - $settings['review_time_limit_' . $object_type], $now['mday'], $now['year']);
+    if (empty($user_id)) {
+        $limit = 0;
+        if (!empty($_SESSION['post_ids'][$object_type])) {
+            foreach ($_SESSION['post_ids'][$object_type] as $post_id => $post_data) {
+                if ($post_data['is_rewarded'] == 'Y' && $post_data['timestamp'] >= $time_limit) {
+                    $limit++;
+                }
+            }
+        }
+    } else {
+        $limit = db_get_field("SELECT COUNT(*) FROM ?:discussion_posts WHERE user_id = ?i AND is_rewarded = 'Y' AND timestamp >= ?i", $user_id, $time_limit);
+    }
+    
+    return ($limit < $settings['review_number_limit_' . $object_type]) ? true : false;
 }
 
 function fn_add_img_alt($name, $product_name)
@@ -76,18 +148,6 @@ function fn_check_category_comparison($id_path)
     } else {
         return 'N';
     }
-}
-
-function fn_review_reward_available($user_id)
-{
-    if (empty($user_id)) {
-        return false;
-    }
-    $settings = Registry::get('addons.development');
-    $now = getdate(TIME);
-    $limit = db_get_field("SELECT COUNT(*) FROM ?:discussion_posts WHERE user_id = ?i AND is_rewarded = 'Y' AND timestamp >= ?i", $user_id, mktime(0, 0, 0, $now['mon'] - $settings['product_reviews_time_limit'], $now['mday'], $now['year']));
-    
-    return ($limit < $settings['product_reviews_number_limit']) ? true : false;
 }
 
 function fn_get_big_cities()

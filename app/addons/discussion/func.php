@@ -114,7 +114,7 @@ function fn_get_discussion($object_id, $object_type, $get_posts = false, $params
         if (AREA == 'C') {
             $cache[$_cache_key]['posts'] = array();
             foreach ($cache[$_cache_key]['all_posts'] as $i => $post) {
-                if ($post['status'] == 'A') {
+                if ($post['status'] == 'A' && !empty($post['message'])) {
                     $cache[$_cache_key]['posts'][] = $post;
                 }
             }

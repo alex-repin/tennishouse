@@ -78,35 +78,35 @@
                     <item lang="ru">Отзывы</item>
                 </translations>
                 <items>
-                    <item id="store_review">
+                    <item id="review_reward_E">
                         <type>input</type>
                         <default_value>500</default_value>
                         <translations>
                             <item lang="ru">Отзыв о магазине</item>
                         </translations>
                     </item>
-                    <item id="product_review">
+                    <item id="review_reward_P">
                         <type>input</type>
                         <default_value>500</default_value>
                         <translations>
                             <item lang="ru">Отзыв о товаре</item>
                         </translations>
                     </item>
-                    <item id="review_char_amount">
+                    <item id="review_char_amount_P">
                         <type>input</type>
                         <default_value>200</default_value>
                         <translations>
                             <item lang="ru">Минимальное количество знаков</item>
                         </translations>
                     </item>
-                    <item id="product_reviews_time_limit">
+                    <item id="review_time_limit_P">
                         <type>input</type>
                         <default_value>1</default_value>
                         <translations>
                             <item lang="ru">Период времени(мес.) для лимита отзывов о товаре</item>
                         </translations>
                     </item>
-                    <item id="product_reviews_number_limit">
+                    <item id="review_number_limit_P">
                         <type>input</type>
                         <default_value>1</default_value>
                         <translations>
