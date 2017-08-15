@@ -164,7 +164,7 @@ function fn_reward_points_get_cart_product_data(&$product_id, &$_pdata, &$produc
     }
 }
 
-function fn_reward_points_calculate_cart_taxes_pre(&$cart, &$cart_products, &$shipping_rates, &$calculate_taxes, &$auth)
+function fn_reward_points_calculate_cart_items(&$cart, &$cart_products, &$auth)
 {
     fn_set_hook('reward_points_cart_calculation', $cart_products, $cart, $auth);
 
@@ -271,7 +271,7 @@ function fn_set_point_payment(&$cart, &$cart_products, &$auth)
 
     $per = floatval(Registry::get('addons.reward_points.point_rate'));
     if (defined('ORDER_MANAGEMENT')) {
-        $user_points = fn_get_user_additional_data(POINTS, $auth['user_id']) + (!empty($cart['previous_points_info']['in_use']['points']) ? $cart['previous_points_info']['in_use']['points'] : 0);
+        $user_points = (!empty($cart['user_data']['user_id']) ? fn_get_user_additional_data(POINTS, $cart['user_data']['user_id']) : 0) + (!empty($cart['previous_points_info']['in_use']['points']) ? $cart['previous_points_info']['in_use']['points'] : 0);
     } else {
         if (!empty($auth['user_id'])) {
             $user_points = !empty($user_info) ? $user_info['points'] : 0;
@@ -349,7 +349,7 @@ function fn_set_point_payment(&$cart, &$cart_products, &$auth)
                     $cart['subtotal_discount'] = fn_format_price($cart['subtotal_discount']);
                 }
             } else {
-                fn_set_notification('E', __('error'), __('text_points_cannot_applied_because_subtotal_redeemed'));
+//                 fn_set_notification('E', __('error'), __('text_points_cannot_applied_because_subtotal_redeemed'));
                 unset($cart['points_info']['in_use']);
             }
         } else {

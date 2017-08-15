@@ -57,6 +57,7 @@ function fn_development_set_point_payment(&$user_points, $auth)
 
 function fn_development_add_post_post($post_data, $object)
 {
+// unset($_SESSION['post_ids'], $_SESSION['reward_points']);
     $auth = $_SESSION['auth'];
     if (empty($auth['user_id'])) {
         $_SESSION['post_ids'][$object['object_type']] = empty($_SESSION['post_ids'][$object['object_type']]) ? array() : $_SESSION['post_ids'][$object['object_type']];
@@ -76,8 +77,7 @@ function fn_development_add_post_post($post_data, $object)
     } else {
         fn_set_notification('N', __('notice'), __('thank_you_for_review'), 'F', 'thank_you_for_review');
     }
-
-    if ($object['object_type'] == 'P' && !empty($post_data['message'])) {
+    if (!empty($post_data['message'])) {
         $settings = Registry::get('addons.development');
         if (!empty($allow_reward)) {
             if (!empty($post_data['user_id'])) {
@@ -101,14 +101,17 @@ function fn_development_add_post_post($post_data, $object)
 function fn_development_tools_change_status($params, $result)
 {
     if (!empty($result) && $params['old_status'] != $params['status'] && $params['table'] == 'discussion_posts' && !empty($params['id'])) {
-        $post_data = db_get_row("SELECT ?:discussion_posts.user_id, ?:discussion_posts.is_rewarded, ?:discussion.object_type, ?:discussion.object_id FROM ?:discussion_posts INNER JOIN ?:users ON ?:users.user_id = ?:discussion_posts.user_id LEFT JOIN ?:discussion ON ?:discussion.thread_id = ?:discussion_posts.thread_id WHERE ?:discussion_posts.post_id = ?i", $params['id']);
+        $post_data = db_get_row("SELECT ?:discussion_posts.user_id, ?:discussion_messages.message, ?:discussion_posts.is_rewarded, ?:discussion.object_type, ?:discussion.object_id, ?:discussion.thread_id FROM ?:discussion_posts INNER JOIN ?:users ON ?:users.user_id = ?:discussion_posts.user_id LEFT JOIN ?:discussion ON ?:discussion.thread_id = ?:discussion_posts.thread_id LEFT JOIN ?:discussion_messages ON ?:discussion_messages.post_id = ?:discussion_posts.post_id WHERE ?:discussion_posts.post_id = ?i", $params['id']);
         if (!empty($post_data) && !empty($post_data['user_id']) && !empty($post_data['object_type'])) {
-            $amount = Registry::get('review_reward_' . $post_data['object_type']);
+            $amount = Registry::get('addons.development.review_reward_' . $post_data['object_type']);
             if (!empty($amount)) {
                 if ($params['status'] == 'A' && $post_data['is_rewarded'] == 'N') {
-                    fn_change_user_points($amount, $post_data['user_id'], serialize(array('post_id' => $params['id'], 'object_id' => $post_data['object_id'], 'type' => $post_data['object_type'], 'to' => $params['status'], 'from' => $params['old_status'])), CHANGE_DUE_REVIEW);
-                    db_query("UPDATE ?:discussion_posts SET is_rewarded = 'Y' WHERE post_id = ?i", $params['id']);
-                } elseif ($post_data['is_rewarded'] == 'Y') {
+                    $allow_reward = fn_allow_user_thread_review_reward($post_data['thread_id'], $post_data['object_type'], $post_data['user_id'], $params['id']);
+                    if (!empty($allow_reward)) {
+                        fn_change_user_points($amount, $post_data['user_id'], serialize(array('post_id' => $params['id'], 'object_id' => $post_data['object_id'], 'type' => $post_data['object_type'], 'to' => $params['status'], 'from' => $params['old_status'])), CHANGE_DUE_REVIEW);
+                        db_query("UPDATE ?:discussion_posts SET is_rewarded = 'Y' WHERE post_id = ?i", $params['id']);
+                    }
+                } elseif ($params['status'] == 'D' && $post_data['is_rewarded'] == 'Y') {
                     fn_change_user_points(-$amount, $post_data['user_id'], serialize(array('post_id' => $params['id'], 'object_id' => $post_data['object_id'], 'type' => $post_data['object_type'], 'to' => $params['status'], 'from' => $params['old_status'])), CHANGE_DUE_REVIEW);
                     db_query("UPDATE ?:discussion_posts SET is_rewarded = 'N' WHERE post_id = ?i", $params['id']);
                 }
@@ -1168,7 +1171,7 @@ function fn_development_gather_additional_product_data_post(&$product, $auth, $p
             }
         }
         $global_data = fn_get_product_global_data($product, array('product_pretitle'));
-        if (!empty($global_data['product_pretitle'])) {
+        if (!empty($global_data['product_pretitle']) && !in_array($product['product_id'], array(912))/*Теннисная ракетка браслет*/) {
             $product['product'] = $global_data['product_pretitle'] . ' ' . $product['product'];
         }
     }

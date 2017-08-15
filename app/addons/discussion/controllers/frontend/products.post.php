@@ -20,6 +20,5 @@ if ($mode == 'view' || $mode == 'quick_view') {
 // unset($_SESSION['post_ids']);
     $product = Registry::get('view')->getTemplateVars('product');
     $product['discussion'] = fn_get_discussion($product['product_id'], "P", true, $_REQUEST);
-//     fn_print_die(fn_allow_user_thread_review_reward($product['discussion']['thread_id'], $product['discussion']['object_type'], $_SESSION['auth']['user_id']));
     Registry::get('view')->assign('product', $product);
 }

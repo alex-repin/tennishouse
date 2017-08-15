@@ -20,7 +20,7 @@ fn_register_hooks(
     'buy_together_calculate_cart_post',
     'change_order_status',
     'clone_product',
-    array('calculate_cart_taxes_pre', 300),
+    'calculate_cart_items',
     'get_cart_product_data',
     'gather_additional_product_data_post',
     'get_user_info',

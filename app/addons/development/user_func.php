@@ -45,23 +45,23 @@ function fn_get_posts_object_ids($posts, $keep_type = true)
     return array($post_ids, $review_ids);
 }
 
-function fn_allow_user_rate($discussion)
+function fn_user_rated($discussion)
 {
     $auth = $_SESSION['auth'];
     if (!empty($discussion['all_posts'])) {
         foreach ($discussion['all_posts'] as $i => $post) {
             if (!empty($post['rating_value'])) {
                 if (!empty($auth['user_id']) && $post['user_id'] == $auth['user_id']) {
-                    return false;
+                    return $post;
                 }
                 if (empty($auth['user_id']) && !empty($_SESSION['post_ids'][$discussion['object_type']]) && in_array($post['post_id'], array_keys($_SESSION['post_ids'][$discussion['object_type']]))) {
-                    return false;
+                    return $post;
                 }
             }
         }
     }
     
-    return true;
+    return false;
 }
 
 
@@ -88,7 +88,7 @@ function fn_allow_user_thread_review_reward($thread_id, $object_type, $user_id, 
             }
         }
     }
-    
+//      fn_print_die($posts, $time_limit, $thread_id, $object_type, $user_id, $exclude_post_id);
     return ($count < $settings['review_number_limit_' . $object_type]) ? true : false;
 }
 

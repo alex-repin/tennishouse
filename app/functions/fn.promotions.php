@@ -162,7 +162,6 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
         $_promotion_ids = !empty($data['promotions']) ? array_keys($data['promotions']) : array();
         $data['no_promotions'] = empty($promotions[$zone]);
         $data['promotions'] = array(); // cleanup stored promotions
-        $data['subtotal_discount'] = 0; // reset subtotal discount (FIXME: move to another place)
         $data['has_coupons'] = false;
     }
 

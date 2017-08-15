@@ -75,21 +75,50 @@
             </section>
             <section id="discussion">
                 <translations>
-                    <item lang="ru">Отзывы</item>
+                    <item lang="ru">Бонусы за отзывы</item>
                 </translations>
                 <items>
+                    <item id="header">
+                        <type>header</type>
+                        <name>Отзыв о магазине</name>
+                    </item>
                     <item id="review_reward_E">
                         <type>input</type>
                         <default_value>500</default_value>
                         <translations>
-                            <item lang="ru">Отзыв о магазине</item>
+                            <item lang="ru">Бонусы</item>
                         </translations>
+                    </item>
+                    <item id="review_char_amount_E">
+                        <type>input</type>
+                        <default_value>200</default_value>
+                        <translations>
+                            <item lang="ru">Минимальное количество знаков</item>
+                        </translations>
+                    </item>
+                    <item id="review_time_limit_E">
+                        <type>input</type>
+                        <default_value>1</default_value>
+                        <translations>
+                            <item lang="ru">Период времени(мес.) для лимита</item>
+                        </translations>
+                    </item>
+                    <item id="review_number_limit_E">
+                        <type>input</type>
+                        <default_value>1</default_value>
+                        <translations>
+                            <item lang="ru">Лимит за период времени</item>
+                        </translations>
+                    </item>
+                    <item id="header">
+                        <type>header</type>
+                        <name>Отзыв о товаре</name>
                     </item>
                     <item id="review_reward_P">
                         <type>input</type>
                         <default_value>500</default_value>
                         <translations>
-                            <item lang="ru">Отзыв о товаре</item>
+                            <item lang="ru">Бонусы</item>
                         </translations>
                     </item>
                     <item id="review_char_amount_P">
@@ -103,14 +132,14 @@
                         <type>input</type>
                         <default_value>1</default_value>
                         <translations>
-                            <item lang="ru">Период времени(мес.) для лимита отзывов о товаре</item>
+                            <item lang="ru">Период времени(мес.) для лимита</item>
                         </translations>
                     </item>
                     <item id="review_number_limit_P">
                         <type>input</type>
-                        <default_value>1</default_value>
+                        <default_value>2</default_value>
                         <translations>
-                            <item lang="ru">Лимит отзывов о товаре за период времени</item>
+                            <item lang="ru">Лимит за период времени</item>
                         </translations>
                     </item>
                 </items>
@@ -911,7 +940,7 @@
         <item lang="ru" id="import_inventory">Импортировать остатки</item>
         <item lang="ru" id="product_reviews">Отзывы о товаре</item>
         <item lang="ru" id="product_reviews_title">Отзывы</item>
-        <item lang="ru" id="write_product_review">Опишите Ваши впечатления...</item>
+        <item lang="ru" id="write_product_review">Опишите Ваши впечатления, расскажите о плюсах и минусах...</item>
         <item lang="ru" id="reviewer_name">Имя</item>
         <item lang="ru" id="used_this_product_r">Играли этой ракеткой ?</item>
         <item lang="ru" id="used_this_product_s">Играли в этих кроссовках ?</item>
@@ -931,7 +960,7 @@
         <item lang="ru" id="review_reason_P">Отзыв о товаре</item>
         <item lang="ru" id="product_review_added_reward_text">Спасибо за отзыв ! Вам добавлено [amount] бонусных рублей. Вы можете их использовать в заказе уже сейчас.</item>
         <item lang="ru" id="get_discount_now">Получить скидку сейчас !</item>
-        <item lang="ru" id="get_product_review_reward_points"><![CDATA[<div class="ty-product-review-rp-text"><p>Для того, чтобы получить скидку на заказ нужно:</p><ol><li>Создать профиль: <a href="https://www.tennishouse.ru/profiles-add/" target="_blank">Регистрация</a></li><li>Оставить отзыв на любой товар из категорий: <a href="http://www.tennishouse.ru/tennis-rackets/" target="_blank">Ракетки</a>, <a href="http://www.tennishouse.ru/tennis-balls/" target="_blank">Мячи</a>, <a href="http://www.tennishouse.ru/tennis-strings/" target="_blank">Струны</a>, <a href="http://www.tennishouse.ru/tennis-shoes/" target="_blank">Обувь</a>, <a href="http://www.tennishouse.ru/ball-machines/" target="_blank">Пушки</a>, <a href="http://www.tennishouse.ru/stringing-machines/" target="_blank">Станки</a>, <a href="http://www.tennishouse.ru/overgrips-grips/overgrips/" target="_blank">Овергрипы</a></li><li>Скидка в [amount]руб. будет сразу же автоматически добавлена в заказ.</li></ol><br><p>ВНИМАНИЕ. Отзывы будут приняты только, если они информативны и полезны для других покупателей. Отзывы, которые не соответствуют этому критерию, будут удалены, а скидка в заказе аннулирована.</p></div>]]></item>
+        <item lang="ru" id="get_product_review_reward_points"><![CDATA[<div class="ty-product-review-rp-text"><p>Для того, чтобы получить скидку на заказ нужно:</p><ol><li>Оставить отзыв на любой товар из категорий: <a href="http://www.tennishouse.ru/tennis-rackets/" target="_blank">Ракетки</a>, <a href="http://www.tennishouse.ru/tennis-balls/" target="_blank">Мячи</a>, <a href="http://www.tennishouse.ru/tennis-strings/" target="_blank">Струны</a>, <a href="http://www.tennishouse.ru/tennis-shoes/" target="_blank">Обувь</a>, <a href="http://www.tennishouse.ru/ball-machines/" target="_blank">Пушки</a>, <a href="http://www.tennishouse.ru/stringing-machines/" target="_blank">Станки</a>, <a href="http://www.tennishouse.ru/overgrips-grips/overgrips/" target="_blank">Овергрипы</a></li><li>Скидка в [amount]руб. будет сразу же автоматически добавлена в заказ.</li></ol><br><p>ВНИМАНИЕ. Отзывы будут приняты только, если они информативны и полезны для других покупателей. Отзывы, которые не соответствуют этому критерию, будут удалены, а скидка в заказе аннулирована.</p></div>]]></item>
         <item lang="ru" id="thank_you_for_review">Спасибо за отзыв !</item>
         <item lang="ru" id="has_full_description">Есть полное описание</item>
         <item lang="ru" id="has_short_description">Есть краткое описание</item>
@@ -1008,5 +1037,6 @@
         <item lang="ru" id="thank_you_for_rating">Спасибо за оценку !</item>
         <item lang="ru" id="force_review_reward_text">Напишите отзыв и получите скидку [amount] на заказ.</item>
         <item lang="ru" id="force_review_text">Поделитесь Вашим мнением с другими теннисистами.</item>
+        <item lang="ru" id="force_review_reward_text_note">Скидка будет сразу же автоматически добавлена в заказ как только вы напишете отзыв. Отзыв должен быть информативен и полезен для других покупателей</item>
     </language_variables>
 </addon>
