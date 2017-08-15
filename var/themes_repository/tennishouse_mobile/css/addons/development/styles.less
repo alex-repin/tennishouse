@@ -1958,6 +1958,50 @@ table.ty-cart-content {
 }
 
 @columns: 10;
+
+.ty-ctg-subtabs (@index) when (@index > 0) {
+    .ty-ctg-subtabs(@index - 1);
+    .ty-categorization-subtabs__item@{index} {
+            width: percentage((100 / @index) * 0.01);
+        }
+}
+.ty-ctg-subtabs(0) { }
+.ty-ctg-subtabs(@columns);
+
+@media (max-width: 1200px) {
+.ty-ctg-subtabs(@columns);
+.ty-ctg-subtabs (@index) when (@index > 2) {
+    .ty-ctg-subtabs(@index - 1);
+    .ty-categorization-subtabs__item@{index} {
+         width: percentage((100 / 3) * 0.01); 
+    }
+}
+.ty-ctg-subtabs(0) { }
+}
+
+@media (max-width: 900px) {
+.ty-ctg-subtabs(@columns);
+.ty-ctg-subtabs (@index) when (@index > 1) {
+    .ty-ctg-subtabs(@index - 1);
+    .ty-categorization-subtabs__item@{index} {
+         width: percentage((100 / 2) * 0.01); 
+    }
+}
+.ty-ctg-subtabs(0) { }
+}
+
+@media (max-width: 600px) {
+.ty-ctg-subtabs(@columns);
+.ty-ctg-subtabs (@index) when (@index > 1) {
+    .ty-ctg-subtabs(@index - 1);
+    .ty-categorization-subtabs__item@{index} {
+         width: percentage(100 * 0.01); 
+    }
+}
+.ty-ctg-subtabs(0) { }
+}
+
+@columns: 10;
 .ty-mini-columns (@index) when (@index > 0) {
     .ty-mini-columns(@index - 1);
     .ty-mini-mode .ty-column@{index} {
@@ -2116,6 +2160,10 @@ table.ty-cart-content {
     float: left;
     margin: 0;
     position: relative;
+    margin-right: -1px;
+    margin-bottom: -1px;
+    border-right: 1px solid lighten(@font, 63%);
+    border-bottom: 1px solid lighten(@font, 63%);
 }
 .ty-categorization-subtabs__item:hover {
     background: lighten(@base, 3%);

@@ -63,7 +63,7 @@
     {/if}
     <div class="clearfix">
         <div class="ty-categorization-subtabs" id="subtabs_categorization">
-            {$cst_width = 100 / $stb_feature.variants|count}
+            {$cst_count = $stb_feature.variants|count}
             {foreach from=$stb_feature.variants item=tab key=key}
                 {if !$active_subtab}
                     {assign var="active_subtab" value=$key}
@@ -73,7 +73,7 @@
                 {else}
                     {$img_ht = "35"}
                 {/if}
-                <div class="ty-categorization-subtabs__item {if $key == $active_subtab}ty-categorization-subtabs__item-active{/if}" style="width: {$cst_width}%;">
+                <div class="ty-categorization-subtabs__item ty-categorization-subtabs__item{$cst_count} {if $key == $active_subtab}ty-categorization-subtabs__item-active{/if}">
                     <div class="ty-categorization-subtabs__item-logo">{include file="addons/development/common/brand_logo.tpl" brand=$tab brand_variant_id=$tab.variant_id img_height=$img_ht}</div>
                     <h3>
                     <a class="ty-categorization-subtabs__a text-hide cm-ajax-force cm-ajax cm-ajax-full-render cm-history" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_subtab}href="{$filter_qstring|fn_link_attach:"stc_id=`$key`"|fn_url}"{/if}>
