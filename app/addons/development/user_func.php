@@ -1379,6 +1379,7 @@ function fn_get_category_type($category_id)
         SPORTS_NUTRITION_CATEGORY_ID => 'N',
         STRINGS_CATEGORY_ID => 'ST',
         BALLS_CATEGORY_ID => 'BL',
+        GRIPS_CATEGORY_ID => 'G',
         OVERGRIPS_CATEGORY_ID => 'OG',
         BASEGRIPS_CATEGORY_ID => 'BG',
         DAMPENERS_CATEGORY_ID => 'DP',
@@ -1410,6 +1411,8 @@ function fn_identify_type_category_id($path)
             $type = STRINGS_CATEGORY_ID;
         } elseif (in_array(BALLS_CATEGORY_ID, $cats)) {
             $type = BALLS_CATEGORY_ID;
+        } elseif (in_array(GRIPS_CATEGORY_ID, $cats)) {
+            $type = GRIPS_CATEGORY_ID;
         } elseif (in_array(OVERGRIPS_CATEGORY_ID, $cats)) {
             $type = OVERGRIPS_CATEGORY_ID;
         } elseif (in_array(BASEGRIPS_CATEGORY_ID, $cats)) {

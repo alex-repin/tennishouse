@@ -216,7 +216,7 @@ if ($mode == 'catalog') {
                                 fn_set_store_gender_mode($tb_feature['variants'][$_REQUEST['tc_id']]['variant_code']);
                             }
                         }
-                        if (empty($params['tc_id'])) {
+                        if (empty($params['tc_id']) && empty($category_data['all_items_tab'])) {
                             $fit_gender = array();
                             foreach ($tb_feature['variants'] as $j => $vt_data) {
                                 if (!empty($vt_data['variant_code']) && fn_gender_match($vt_data['variant_code']) && !empty($tabs_categorization[$vt_data['variant_id']])) {
