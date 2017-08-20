@@ -478,6 +478,12 @@
         <item>
             ALTER TABLE `cscart_categories` ADD `product_pretitle` VARCHAR(255) NOT NULL;
         </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `extended_tabs_categorization` CHAR(1) NOT NULL DEFAULT '0' AFTER `tabs_categorization`;
+        </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `all_items_tab` CHAR(1) NOT NULL DEFAULT '0' AFTER `extended_tabs_categorization`;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -714,10 +720,6 @@
         <item lang="ru" id="subtabs_categorization">Категоризирвать на подвкладки (h3)</item>
         <item lang="ru" id="other">Остальное</item>
         <item lang="ru" id="default_text">Текст по умолчанию</item>
-        <item lang="ru" id="tab_groups_st_l_s">12 метров</item>
-        <item lang="ru" id="tab_groups_st_l_r">Бобины</item>
-        <item lang="ru" id="tab_groups_r_t_a">Для взрослых</item>
-        <item lang="ru" id="tab_groups_r_t_k">Для детей</item>
         <item lang="ru" id="option_note">Пометка</item>
         <item lang="ru" id="define_option">Укажите опцию</item>
         <item lang="ru" id="rss_feed_link">Ссылка на RSS feed</item>
@@ -952,7 +954,7 @@
         <item lang="ru" id="rate_product_r">Оцените эту ракетку</item>
         <item lang="ru" id="rate_product_s">Оцените эти кроссовки</item>
         <item lang="ru" id="rate_product_bl">Оцените эти мячи</item>
-        <item lang="ru" id="rate_product_st">Оцените эти струны ?</item>
+        <item lang="ru" id="rate_product_st">Оцените эти струны</item>
         <item lang="ru" id="rate_product_og">Оцените эти обмотки</item>
         <item lang="ru" id="rate_product_bm">Оцените эту пушку</item>
         <item lang="ru" id="rate_product_sm">Оцените этот станок</item>
@@ -990,10 +992,6 @@
         <item lang="ru" id="vkontakte">ВКонтакте</item>
         <item lang="ru" id="google_plus">Google+</item>
         <item lang="ru" id="odnoklassniki">OK</item>
-        <item lang="ru" id="tab_groups_ap_m">Мужская</item>
-        <item lang="ru" id="tab_groups_ap_f">Женская</item>
-        <item lang="ru" id="tab_groups_ap_b">Для мальчиков</item>
-        <item lang="ru" id="tab_groups_ap_g">Для девочек</item>
         <item lang="ru" id="new_item">Новинка</item>
         <item lang="ru" id="available_option_112">Размеры(EUR)</item>
         <item lang="ru" id="available_option_141">Размеры</item>
@@ -1038,5 +1036,25 @@
         <item lang="ru" id="force_review_reward_text">Напишите отзыв и получите скидку [amount] на заказ.</item>
         <item lang="ru" id="force_review_text">Поделитесь Вашим мнением с другими теннисистами.</item>
         <item lang="ru" id="force_review_reward_text_note">Скидка будет сразу же автоматически добавлена в заказ как только вы напишете отзыв. Отзыв должен быть информативен и полезен для других покупателей</item>
+        <item lang="ru" id="extended_tabs_categorization">Расширенные вкладки</item>
+        <item lang="ru" id="all_items_tab">Вкладка "Все товары"</item>
+        <item lang="ru" id="tab_groups_bt_gm_a">Для взрослых</item>
+        <item lang="ru" id="tab_groups_bt_gm_k">Для детей</item>
+        <item lang="ru" id="tab_groups_bs_c">Чехлы</item>
+        <item lang="ru" id="tab_groups_bs_b">Рюкзаки</item>
+        <item lang="ru" id="tab_groups_ap_gm_m">Мужская</item>
+        <item lang="ru" id="tab_groups_ap_gm_f">Женская</item>
+        <item lang="ru" id="tab_groups_ap_gm_b">Для мальчиков</item>
+        <item lang="ru" id="tab_groups_ap_gm_g">Для девочек</item>
+        <item lang="ru" id="tab_groups_st_l_s">12 метров</item>
+        <item lang="ru" id="tab_groups_st_l_r">Бобины</item>
+        <item lang="ru" id="tab_groups_r_t_gm_a">Для взрослых</item>
+        <item lang="ru" id="tab_groups_r_t_gm_k">Для детей</item>
+        <item lang="ru" id="all_items_tab_g">Все обмотки</item>
+        <item lang="ru" id="all_items_tab_b">Все сумки</item>
+        <item lang="ru" id="all_items_tab_bl">Все мячи</item>
+        <item lang="ru" id="all_items_tab_st">Все струны</item>
+        <item lang="ru" id="all_items_tab_bm">Все пушки</item>
+        <item lang="ru" id="all_items_tab_sm">Все станки</item>
     </language_variables>
 </addon>

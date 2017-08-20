@@ -60,8 +60,8 @@ if ($mode == 'view') {
                 $gender = 'womens';
             }
             $product['size_chart'] = $product['product_features'][CLOTHES_GENDER_FEATURE_ID]['variants'][$variant_id]['size_chart'];
-            if (!empty($product['product_features'][CLOTHES_GENDER_FEATURE_ID]['variants'][$variant_id]['variant_code'])) {
-                fn_set_store_gender_mode($product['product_features'][CLOTHES_GENDER_FEATURE_ID]['variants'][$variant_id]['variant_code']);
+            if (!empty($product['product_features'][CLOTHES_GENDER_FEATURE_ID]['variants'][$variant_id]['variant_code']) && strpos($product['product_features'][CLOTHES_GENDER_FEATURE_ID]['variants'][$variant_id]['variant_code'], 'gm_') === 0 && !empty($product['product_features'][CLOTHES_GENDER_FEATURE_ID]['variants'][$variant_id]['variant_code'][3])) {
+                fn_set_store_gender_mode($product['product_features'][CLOTHES_GENDER_FEATURE_ID]['variants'][$variant_id]['variant_code'][3]);
             }
         } elseif (!empty($product['product_features'][SHOES_GENDER_FEATURE_ID])) {
             $variant_id = $product['product_features'][SHOES_GENDER_FEATURE_ID]['variant_id'];
@@ -71,13 +71,13 @@ if ($mode == 'view') {
                 $gender = 'womens';
             }
             $product['size_chart'] = $product['product_features'][SHOES_GENDER_FEATURE_ID]['variants'][$variant_id]['size_chart'];
-            if (!empty($product['product_features'][SHOES_GENDER_FEATURE_ID]['variants'][$variant_id]['variant_code'])) {
-                fn_set_store_gender_mode($product['product_features'][SHOES_GENDER_FEATURE_ID]['variants'][$variant_id]['variant_code']);
+            if (!empty($product['product_features'][SHOES_GENDER_FEATURE_ID]['variants'][$variant_id]['variant_code']) && strpos($product['product_features'][SHOES_GENDER_FEATURE_ID]['variants'][$variant_id]['variant_code'], 'gm_') === 0 && !empty($product['product_features'][SHOES_GENDER_FEATURE_ID]['variants'][$variant_id]['variant_code'][3])) {
+                fn_set_store_gender_mode($product['product_features'][SHOES_GENDER_FEATURE_ID]['variants'][$variant_id]['variant_code'][3]);
             }
         } elseif (!empty($product['product_features'][TYPE_FEATURE_ID])) {
             $variant_id = $product['product_features'][TYPE_FEATURE_ID]['variant_id'];
-            if (!empty($product['product_features'][TYPE_FEATURE_ID]['variants'][$variant_id]['variant_code'])) {
-                fn_set_store_gender_mode($product['product_features'][TYPE_FEATURE_ID]['variants'][$variant_id]['variant_code']);
+            if (!empty($product['product_features'][TYPE_FEATURE_ID]['variants'][$variant_id]['variant_code']) && strpos($product['product_features'][TYPE_FEATURE_ID]['variants'][$variant_id]['variant_code'], 'gm_') === 0 && !empty($product['product_features'][TYPE_FEATURE_ID]['variants'][$variant_id]['variant_code'][3])) {
+                fn_set_store_gender_mode($product['product_features'][TYPE_FEATURE_ID]['variants'][$variant_id]['variant_code'][3]);
             }
         }
         if (!empty($product['header_features'][BRAND_FEATURE_ID])) {

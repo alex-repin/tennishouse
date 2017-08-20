@@ -15,14 +15,18 @@
                     {assign var="filter_qstring" value="products.search"}
                 {/if}
                 <div class="ty-categorization-tabs clearfix">
-                    <ul class="ty-categorization-tabs__list">
+                    <div class="ty-categorization-tabs-bg"></div>
+                    <div class="ty-categorization-tabs__list-wrapper">
+                    <ul class="ty-categorization-tabs__list" {if $tb_feature.variants|count < 4}style="width:{$tb_feature.variants|count * 300}px"{else}style="width:100%"{/if}>
+                    {$tc_width = 100 / $tb_feature.variants|count}
                     {foreach from=$tb_feature.variants item=tab key=key}
                         {if !$active_tab}
                             {assign var="active_tab" value=$key}
                         {/if}
-                        <li class="ty-categorization-tabs__item {if $key == $active_tab} active{/if}"><a class="ty-categorization-tabs__a cm-ajax-force cm-ajax cm-ajax-full-render cm-history" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_tab}href="{$filter_qstring|fn_link_attach:"tc_id=`$key`"|fn_url}"{/if}>{if $key == $active_tab && $key != 'all'}<h2>{else}<span>{/if}{$tab.variant}{if $key == $active_tab && $key != 'all'}</h2>{else}</span>{/if}</a></li>
+                        <li class="ty-categorization-tabs__item {if $key == $active_tab} active{/if}" style="width: {$tc_width}%;"><a class="ty-categorization-tabs__a cm-ajax-force cm-ajax cm-ajax-full-render cm-history" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_tab}href="{$filter_qstring|fn_link_attach:"tc_id=`$key`"|fn_url}"{/if}>{if $key == $active_tab && $key != 'all'}<h2>{else}<span>{/if}{$tab.variant}{if $key == $active_tab && $key != 'all'}</h2>{else}</span>{/if}</a></li>
                     {/foreach}
                     </ul>
+                    </div>
                 </div>
             {/if}
         <!--tabs_categorization--></div>

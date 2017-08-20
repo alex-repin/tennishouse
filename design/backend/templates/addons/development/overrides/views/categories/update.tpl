@@ -121,7 +121,7 @@
         <label class="control-label" for="elm_category_tabs_categorization">{__("tabs_categorization")}:</label>
 
         <div class="controls">
-        <select name="category_data[tabs_categorization]" id="elm_category_tabs_categorization">
+        <select name="category_data[tabs_categorization]" id="elm_category_tabs_categorization" onchange="$('#tabs_options').toggle($(this).val() > 0);">
             <option value="" {if $category_data.tabs_categorization == "0"}selected="selected"{/if}> - {__("none")} - </option>
             {foreach from=$filter_features item=feature}
                 {if $feature.feature_type != 'G'}
@@ -135,9 +135,29 @@
         </select>
         </div>
     </div>
+    <div id="tabs_options" {if !$category_data.tabs_categorization}style="display: none;"{/if}>
+        <div class="control-group">
+            <label class="control-label" for="elm_category_extended_tabs_categorization">{__("extended_tabs_categorization")}:</label>
+            <div class="controls">
+                <label class="checkbox">
+                    <input type="hidden" name="category_data[extended_tabs_categorization]" value="0" />
+                    <input type="checkbox" name="category_data[extended_tabs_categorization]" id="elm_category_extended_tabs_categorization" value="Y" {if $category_data.extended_tabs_categorization == 'Y'} checked="checked"{/if} />
+                </label>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="elm_category_all_items_tab">{__("all_items_tab")}:</label>
+            <div class="controls">
+                <label class="checkbox">
+                    <input type="hidden" name="category_data[all_items_tab]" value="0" />
+                    <input type="checkbox" name="category_data[all_items_tab]" id="elm_category_all_items_tab" value="Y" {if $category_data.all_items_tab == 'Y'} checked="checked"{/if} />
+                </label>
+            </div>
+        </div>
+    </div>
 
     <div class="control-group">
-        <label class="control-label" for="elm_category_tabs_categorization">{__("subtabs_categorization")}:</label>
+        <label class="control-label" for="elm_category_subtabs_categorization">{__("subtabs_categorization")}:</label>
 
         <div class="controls">
         <select name="category_data[subtabs_categorization]" id="elm_category_subtabs_categorization">
