@@ -212,8 +212,8 @@ if ($mode == 'catalog') {
                         if (!empty($_REQUEST['tc_id'])) {
                             $_SESSION['tc_id'][$main_parent_id] = $params['tc_id'] = $_REQUEST['tc_id'];
                             // Store gender mode
-                            if (!empty($tb_feature['variants'][$_REQUEST['tc_id']]['variant_code']) && strpos($tb_feature['variants'][$_REQUEST['tc_id']]['variant_code'], 'gm_') === 0 && !empty($tb_feature['variants'][$_REQUEST['tc_id']]['variant_code'][3])) {
-                                fn_set_store_gender_mode($tb_feature['variants'][$_REQUEST['tc_id']]['variant_code'][3]);
+                            if (!empty($tb_feature['variants'][$_REQUEST['tc_id']]['variant_code'])) {
+                                fn_set_store_gender_mode($tb_feature['variants'][$_REQUEST['tc_id']]['variant_code']);
                             }
                         }
                         if (empty($params['tc_id'])) {
@@ -230,9 +230,7 @@ if ($mode == 'catalog') {
                                     $selected_tab = reset($fit_gender);
                                 }
                                 $_REQUEST['tc_id'] = $params['tc_id'] = $_SESSION['tc_id'][$main_parent_id] = $selected_tab;
-                                if (strpos($selected_tab, 'gm_') === 0 && !empty($selected_tab[3])) {
-                                    fn_set_store_gender_mode($selected_tab[3]);
-                                }
+                                fn_set_store_gender_mode($selected_tab);
                             }
                             if (empty($params['tc_id'])) {
                                 if (!empty($_SESSION['tc_id'][$main_parent_id]) && !empty($tabs_categorization[$_SESSION['tc_id'][$main_parent_id]])) {
@@ -241,8 +239,8 @@ if ($mode == 'catalog') {
                                     $keys = array_keys($tb_feature['variants']);
                                     $_REQUEST['tc_id'] = $params['tc_id'] = $_SESSION['tc_id'][$main_parent_id] = reset($keys);
                                 }
-                                if (!empty($tb_feature['variants'][$params['tc_id']]['variant_code']) && strpos($tb_feature['variants'][$params['tc_id']]['variant_code'], 'gm_') === 0 && !empty($tb_feature['variants'][$params['tc_id']]['variant_code'][3])) {
-                                    fn_set_store_gender_mode($tb_feature['variants'][$params['tc_id']]['variant_code'][3]);
+                                if (!empty($tb_feature['variants'][$params['tc_id']]['variant_code'])) {
+                                    fn_set_store_gender_mode($tb_feature['variants'][$params['tc_id']]['variant_code']);
                                 }
                             }
                         }

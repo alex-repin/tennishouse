@@ -485,6 +485,10 @@ function fn_filter_categroies(&$categories)
 
 function fn_set_store_gender_mode($mode)
 {
+    if (strlen($mode) != 1) {
+        return false;
+    }
+    
     $gender_mode = fn_get_store_gender_mode();
 
     if (empty($gender_mode) || (!(in_array($gender_mode, array('B', 'G')) && $mode == 'K') && !(in_array($gender_mode, array('M', 'F')) && $mode == 'A'))) {
