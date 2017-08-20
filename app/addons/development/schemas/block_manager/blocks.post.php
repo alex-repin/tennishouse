@@ -573,4 +573,9 @@ $schema['menu']['cache'] = array(
     'cache_level' => 'static',
     'no_object' => true
 );
+
+$schema['product_filters']['templates']['addons/development/blocks/product_filters/static.tpl'] = array (
+    'fillings' => array ('manually')
+);
+
 return $schema;
