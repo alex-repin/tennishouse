@@ -394,6 +394,10 @@ var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
     (function(_, $) {
         $(function() {
             $(document).ready(function() {
+                if ($.fn.ceProductImageLoader) {
+                    $('.cm-image-loader').ceProductImageLoader();
+                }
+
                 if ($('#tygh_main_container').hasClass('touch')) {
                     $('.ty-menu__item-link').click(function(e){
                         var submenu = $(this).parents('.ty-menu__item_full').find('.ty-menu__submenu-items');

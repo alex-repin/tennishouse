@@ -18,6 +18,8 @@
     {script src="js/lib/autosize/jquery.autosize.js"}
     {script src="js/tygh/live_editor_mode.js"}
 {/if}
+{script src="js/tygh/product_image_gallery.js"}
+{script src="js/addons/development/product_image_loader.js"}
 
 <script type="text/javascript">
 (function(_, $) {

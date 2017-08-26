@@ -113,17 +113,34 @@ if ($mode == 'catalog') {
             if (isset($search['page']) && ($search['page'] > 1) && empty($products)) {
                 return array(CONTROLLER_STATUS_NO_PAGE);
             }
-            fn_gather_additional_products_data($products, array(
-                'get_icon' => false,
-                'get_detailed' => true,
-                'get_additional' => false,
-                'get_options' => true,
-                'get_discounts' => true,
-                'get_features' => false,
-                'get_title_features' => true,
-                'allow_duplication' => true,
-                'av_ids' => (!empty($search['av_ids'])) ? $search['av_ids'] : array()
-            ));
+            if (Registry::get('settings.General.catalog_image_afterload') == 'Y') {
+                fn_gather_additional_products_data($products, array(
+                    'get_icon' => false,
+                    'get_detailed' => false,
+                    'check_detailed' => true,
+                    'get_additional' => false,
+                    'check_additional' => true,
+                    'get_options' => true,
+                    'get_discounts' => true,
+                    'get_features' => false,
+                    'get_title_features' => true,
+                    'allow_duplication' => true,
+                    'av_ids' => (!empty($search['av_ids'])) ? $search['av_ids'] : array()
+                ));
+            } else {
+                fn_gather_additional_products_data($products, array(
+                    'get_icon' => false,
+                    'get_detailed' => true,
+                    'get_additional' => false,
+                    'check_additional' => true,
+                    'get_options' => true,
+                    'get_discounts' => true,
+                    'get_features' => false,
+                    'get_title_features' => true,
+                    'allow_duplication' => true,
+                    'av_ids' => (!empty($search['av_ids'])) ? $search['av_ids'] : array()
+                ));
+            }
             if (!empty($products)) {
                 if (empty($category_data['brand']) || $category_data['brand']['feature_id'] != $category_data['tabs_categorization']) {
                 

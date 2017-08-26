@@ -49,7 +49,6 @@ if (typeof Object.create !== "function") {
                 }
                 base.logIn();
             }
-
             if (typeof base.options.beforeInit === "function") {
                 base.options.beforeInit.apply(this, [base.$elem]);
             }
@@ -90,6 +89,9 @@ if (typeof Object.create !== "function") {
             base.prevItem = 0;
             base.prevArr = [0];
             base.currentItem = 0;
+            // [tennishouse]
+            $(base.$owlItems[base.currentItem]).addClass('owl-item-active');
+            // [tennishouse]
             base.customEvents();
             base.onStartup();
         },
@@ -408,7 +410,14 @@ if (typeof Object.create !== "function") {
         buildButtons : function () {
             var base = this,
                 buttonsWrapper = $("<div class=\"owl-buttons\"/>");
-            base.owlControls.append(buttonsWrapper);
+                
+            // [tennishouse]
+            if (base.options.gallery_buttons != false && $('#' + base.options.gallery_buttons).length) {
+                $('#' + base.options.gallery_buttons).append(buttonsWrapper);
+            } else {
+                base.owlControls.append(buttonsWrapper);
+            }
+            // [tennishouse]
 
             base.buttonPrev = $("<div/>", {
                 "class" : "owl-prev",
@@ -420,6 +429,13 @@ if (typeof Object.create !== "function") {
                 "html" : base.options.navigationText[1] || ""
             });
 
+            // [tennishouse]
+            if (base.options.obj_id) {
+                base.buttonPrev.attr("id", "prev_" + base.options.obj_id);
+                base.buttonNext.attr("id", "next_" + base.options.obj_id);
+            }
+            // [tennishouse]
+            
             buttonsWrapper
                 .append(base.buttonPrev)
                 .append(base.buttonNext);
@@ -686,6 +702,10 @@ if (typeof Object.create !== "function") {
             base.prevItem = base.owl.prevItem = base.prevArr[base.prevArr.length - 2];
             base.prevArr.shift(0);
 
+            // [tennishouse]
+            $(base.$owlItems[base.currentItem]).addClass('owl-item-active');
+            $(base.$owlItems[base.prevItem]).removeClass('owl-item-active');
+            // [tennishouse]
             if (base.prevItem !== base.currentItem) {
                 base.checkPagination();
                 base.checkNavigation();

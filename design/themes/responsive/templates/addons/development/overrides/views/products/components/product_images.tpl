@@ -97,6 +97,5 @@
 
 
 {include file="common/previewer.tpl"}
-{script src="js/tygh/product_image_gallery.js"}
 
 {hook name="products:product_images"}{/hook}

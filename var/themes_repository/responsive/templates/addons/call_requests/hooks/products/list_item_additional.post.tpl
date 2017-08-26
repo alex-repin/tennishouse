@@ -11,7 +11,7 @@
         {/if}
         <div class="ty-cr-product-info-container">
             <div class="ty-cr-product-info-image">
-                {include file="common/image.tpl" images=$product.main_pair image_width=$settings.Thumbnails.product_cart_thumbnail_width image_height=$settings.Thumbnails.product_cart_thumbnail_height}
+                {include file="addons/development/common/load_image.tpl" el_id="product_cr_main_image_`$obj_id`_`$product.main_pair.pair_id`" pair_id=$product.main_pair.pair_id pair_data=$product.main_pair iw=$settings.Thumbnails.product_cart_thumbnail_width ih=$settings.Thumbnails.product_cart_thumbnail_height}
             </div>
             <div class="ty-cr-product-info-header">
                 <div class="ty-product-block-title">{$product.product}</div>

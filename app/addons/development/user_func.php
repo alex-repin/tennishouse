@@ -22,6 +22,64 @@ use Tygh\Shippings\Shippings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_get_image_by_pair_id($pair_id)
+{
+    $icon_pairs = $detailed_pairs = $pair_data = array();
+
+    $pair_data = db_get_row(
+        "SELECT ?:images_links.*, icon_images.image_path AS icon_image_path, icon_desc.description AS icon_alt, icon_images.image_x AS icon_image_x, icon_images.image_y AS icon_image_y, icon_images.image_id as icon_image_id"
+        . ", detailed_images.image_path AS detailed_image_path, detailed_desc.description AS detailed_alt, detailed_images.image_x AS detailed_image_x, detailed_images.image_y AS detailed_image_y, detailed_images.image_id as detailed_image_id"
+        . " FROM ?:images_links"
+        . " LEFT JOIN ?:images AS icon_images ON ?:images_links.image_id = icon_images.image_id"
+        . " LEFT JOIN ?:common_descriptions AS icon_desc ON icon_desc.object_id = icon_images.image_id AND icon_desc.object_holder = 'images' AND icon_desc.lang_code = ?s"
+        . " LEFT JOIN ?:images AS detailed_images ON ?:images_links.detailed_id = detailed_images.image_id"
+        . " LEFT JOIN ?:common_descriptions AS detailed_desc ON detailed_desc.object_id = detailed_images.image_id AND detailed_desc.object_holder = 'images' AND detailed_desc.lang_code = ?s"
+        . " WHERE ?:images_links.pair_id = ?i",
+        CART_LANGUAGE, CART_LANGUAGE, $pair_id
+    );
+
+    if (!empty($pair_data['icon_image_id'])) { //get icon data if exist
+        $tmp = $pair_data;
+        $tmp['images_image_id'] = $pair_data['icon_image_id'];
+        $tmp['image_path'] = $pair_data['icon_image_path'];
+        $tmp['alt'] = $pair_data['icon_alt'];
+        $tmp['image_x'] = $pair_data['icon_image_x'];
+        $tmp['image_y'] = $pair_data['icon_image_y'];
+        $icon = fn_attach_absolute_image_paths($tmp, $pair_data['object_type']);
+
+        $pair_data['icon'] = array(
+            'image_path' => $icon['image_path'],
+            'alt' => $icon['alt'],
+            'image_x' => $icon['image_x'],
+            'image_y' => $icon['image_y'],
+            'http_image_path' => $icon['http_image_path'],
+            'absolute_path' => $icon['absolute_path'],
+            'relative_path' => $icon['relative_path']
+        );
+    }
+
+    if (!empty($pair_data['detailed_id'])) {
+        $tmp = $pair_data;
+        $tmp['images_image_id'] = $pair_data['detailed_image_id'];
+        $tmp['image_path'] = $pair_data['detailed_image_path'];
+        $tmp['alt'] = $pair_data['detailed_alt'];
+        $tmp['image_x'] = $pair_data['detailed_image_x'];
+        $tmp['image_y'] = $pair_data['detailed_image_y'];
+        $detailed = fn_attach_absolute_image_paths($tmp, 'detailed');
+        $pair_data['detailed'] = array(
+            'image_path' => $detailed['image_path'],
+            'alt' => $detailed['alt'],
+            'image_x' => $detailed['image_x'],
+            'image_y' => $detailed['image_y'],
+            'http_image_path' => $detailed['http_image_path'],
+            'absolute_path' => $detailed['absolute_path'],
+            'relative_path' => $detailed['relative_path']
+        );
+    }
+
+    return $pair_data;
+}
+
 function fn_get_posts_object_ids($posts, $keep_type = true)
 {
     $post_ids = $review_ids = array();

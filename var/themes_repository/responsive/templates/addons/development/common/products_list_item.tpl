@@ -28,9 +28,9 @@
         {/if}
         <div class="ty-grid-list__image-product">
             {if $microdata}
-                {include file="views/products/components/product_icon.tpl" product=$product show_gallery=false itemprop="image"}
+                {include file="views/products/components/product_icon.tpl" product=$product show_gallery=true itemprop="image" gallery_buttons="addition_item_info_`$obj_id`"}
             {else}
-                {include file="views/products/components/product_icon.tpl" product=$product show_gallery=false}
+                {include file="views/products/components/product_icon.tpl" product=$product show_gallery=true gallery_buttons="addition_item_info_`$obj_id`"}
             {/if}
         </div>
 
@@ -139,7 +139,7 @@
 </div>
 </a>
 {if $category_grid}
-<div class="ty-grid-list__item-additional-wrapper">
+<div class="ty-grid-list__item-additional-wrapper" id="addition_item_info_{$obj_id}">
     <div class="ty-grid-list__item-additional-top">
         {assign var="rating" value="rating_`$obj_id`"}
         {if $smarty.capture.$rating}

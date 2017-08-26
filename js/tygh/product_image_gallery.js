@@ -13,7 +13,10 @@
             var container = $(this);
             var params = {
                 items_count: container.data('caItemsCount') ? container.data('caItemsCount') : ITEMS_COUNT_DEFAULT,
-                items_responsive: container.data('caItemsResponsive') ? true : false
+                items_responsive: container.data('caItemsResponsive') ? true : false,
+                hide_navigation_text: container.data('caItemsHideNavigationText') ? true : false,
+                gallery_buttons: container.data('caItemsGalleryButtons') ? container.data('caItemsGalleryButtons') : false,
+                obj_id: container.data('caItemsId') ? container.data('caItemsId') : false
             };
 
             if (container.hasClass('jcarousel-skin') || container.parent().hasClass('jcarousel-skin')) {
@@ -46,11 +49,16 @@
                     singleItem: params.items_count == 1 ? true : false,
                     responsive: params.items_responsive,
                     pagination: false,
+                    gallery_buttons: params.gallery_buttons,
                     navigation: true,
-                    navigationText: params.items_count == 1 ? ['<i class="icon-left-circle ty-icon-left-circle"></i>', '<i class="icon-right-circle ty-icon-right-circle"></i>'] : ['<i class="icon-left-open-thin ty-icon-left-open-thin"></i>', '<i class="icon-right-open-thin ty-icon-right-open-thin"></i>'],
+                    obj_id: params.obj_id,
+                    navigationText: params.hide_navigation_text ? ['<div class="ty-arrow-bg"></div>', '<div class="ty-arrow-bg"></div>'] : (params.items_count == 1 ? ['<i class="icon-left-circle ty-icon-left-circle"></i>', '<i class="icon-right-circle ty-icon-right-circle"></i>'] : ['<i class="icon-left-open-thin ty-icon-left-open-thin"></i>', '<i class="icon-right-open-thin ty-icon-right-open-thin"></i>']),
                     theme: params.items_count == 1 ? 'owl-one-theme' : 'owl-more-theme',
                     afterInit: function(item) {
                         $(item).css({'visibility':'visible', 'position':'relative'});
+                        if ($.fn.ceProductImageLoader) {
+                            $('.cm-carousel-image-loader', container).ceProductImageLoader();
+                        }
                     }
                 });
             } else {

@@ -1528,6 +1528,7 @@ table.ty-cart-content {
         position: relative;
         top: auto;
         width: auto;
+        z-index: auto;
     }
     .ty-product-filters__item-more {
         width: 100%;
@@ -1554,6 +1555,7 @@ table.ty-cart-content {
         border-top: none;
         border-left: none;
         border-right: none;
+        z-index: auto;
     }
 }
 /*Filters*/
@@ -1863,6 +1865,55 @@ table.ty-cart-content {
     .ty-grid-list__item {
         border: none;
     }
+    .owl-prev, .owl-next {
+        top: 30px;
+        width: 32px;
+        height: 150px !important;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-color: transparent;
+        background-position: center;
+        margin: 0 auto;
+        border: none;
+        z-index: 10;
+        cursor: pointer;
+    }
+    .owl-prev {
+        background-image: url("../../../media/images/addons/development/rf-arrow-left.png");
+        left: -15px;
+    }
+    .owl-next {
+        background-image: url("../../../media/images/addons/development/rf-arrow-right.png");
+        right: -15px;
+    }
+    .owl-prev:hover {
+        width: 40px;
+        left: -20px;
+    }
+    .owl-next:hover {
+        width: 40px;
+        right: -20px;
+    }
+    .ty-arrow-bg {
+        display: inline-block;
+        height: 100%;
+        width: 100%;
+        opacity: 0.3;
+    }
+    .ty-arrow-bg:hover {
+        background-color: lighten(@font, 30%);
+    }
+    .ty-carousel-loading-box {
+        display: inline-block;
+        height: 80px;
+        margin-top: 60px;
+        width: 187px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-color: transparent;
+        background-position: center;
+        background-image: url("../../../media/images/icons/loading47.gif");
+    }
     .ty-grid-list__item-wrapper:hover {
         .ty-grid-list__item-additional-wrapper {
             display: block;
@@ -1876,6 +1927,18 @@ table.ty-cart-content {
             height: 197px;
             min-height: 0 !important;
             min-width: 0 !important;
+            .owl-item-active {
+                width: 197px !important;
+                height: 197px !important;
+            }
+            .ty-image-wrapper {
+                width: 197px !important;
+                height: 197px !important;
+            }
+            .ty-carousel-loading-box {
+                width: 197px !important;
+                height: 85px !important;
+            }
         }
         .ty-grid-list__item-icon-features {
             top: 105px;

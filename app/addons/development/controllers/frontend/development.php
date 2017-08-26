@@ -125,3 +125,16 @@ if ($mode == 'switch_dmode') {
 if ($mode == 'redirect') {
     return array(CONTROLLER_STATUS_REDIRECT, !empty($_REQUEST['redirect_url']) ? $_REQUEST['redirect_url'] : (!empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "index.index"));
 }
+if ($mode == 'load_image') {
+    if (!empty($_REQUEST['id']) && !empty($_REQUEST['el_id'])) {
+        $pair_data = fn_get_image_by_pair_id($_REQUEST['id']);
+        if (!empty($pair_data)) {
+            Registry::get('view')->assign('pair_data', $pair_data);
+            Registry::get('view')->assign('iw', Registry::get('settings.Thumbnails.product_lists_thumbnail_width'));
+            Registry::get('view')->assign('ih', Registry::get('settings.Thumbnails.product_lists_thumbnail_height'));
+            Registry::get('view')->assign('el_id', $_REQUEST['el_id']);
+            Registry::get('view')->display('addons/development/common/load_image.tpl');
+        }
+    }
+    exit;
+}

@@ -438,6 +438,8 @@ function fn_gather_additional_products_data(&$products, $params)
         'get_icon' => false,
         'get_detailed' => false,
         'get_additional' => false,
+        'check_detailed' => false,
+        'check_additional' => false,
         'get_options' => true,
         'get_discounts' => true,
         'get_features' => false,
@@ -465,12 +467,12 @@ function fn_gather_additional_products_data(&$products, $params)
         }
     }
 
-    if ($params['get_icon'] || $params['get_detailed']) {
+    if ($params['get_icon'] || $params['get_detailed'] || $params['check_detailed']) {
         $products_images = fn_get_image_pairs($product_ids, 'product', 'M', $params['get_icon'], $params['get_detailed'], CART_LANGUAGE);
     }
 
-    if ($params['get_additional']) {
-        $additional_images = fn_get_image_pairs($product_ids, 'product', 'A', true, true, CART_LANGUAGE);
+    if ($params['get_additional'] || $params['check_additional']) {
+        $additional_images = fn_get_image_pairs($product_ids, 'product', 'A', $params['get_additional'], $params['get_additional'], CART_LANGUAGE);
     }
 
     if ($params['get_options']) {
@@ -515,13 +517,13 @@ function fn_gather_additional_products_data(&$products, $params)
         $product_id = $product['product_id'];
 
         // Get images
-        if ($params['get_icon'] == true || $params['get_detailed'] == true) {
+        if ($params['get_icon'] == true || $params['get_detailed'] == true || $params['check_detailed'] == true) {
             if (empty($product['main_pair']) && !empty($products_images[$product_id])) {
                 $product['main_pair'] = reset($products_images[$product_id]);
             }
         }
 
-        if ($params['get_additional'] == true) {
+        if ($params['get_additional'] == true || $params['check_additional'] == true) {
             if (empty($product['image_pairs']) && !empty($additional_images[$product_id])) {
                 $product['image_pairs'] = $additional_images[$product_id];
             }

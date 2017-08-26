@@ -1,3 +1,4 @@
+{if $images.icon || $images.detailed || ($images.absolute_path && $images.relative_path)}
 {strip}
 
 {if $capture_image}
@@ -51,3 +52,4 @@
 {/if}
 
 {/strip}
+{/if}
