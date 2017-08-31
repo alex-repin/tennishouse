@@ -595,7 +595,7 @@ function fn_product_configurator_get_cart_product_data($product_id, &$_pdata, &$
             $cart['products'][$hash]['price'] += $_cproduct['price'] * $_data['extra']['step'];
             $_pdata['price'] += $_cproduct['price'] * $_data['extra']['step'];
             // TennisHouse
-//            $_pdata['base_price'] += $_cproduct['base_price'] * $_data['extra']['step'];
+            $_pdata['base_price'] += $_cproduct['base_price'] * $_data['extra']['step'];
             $_pdata['original_price'] += $_cproduct['original_price'] * $_data['extra']['step'];
             $_pdata['discount'] += $_cproduct['discount'] * $_data['extra']['step'];
             $_pdata['weight'] += $_cproduct['weight'] * $_data['extra']['step'];
@@ -1431,7 +1431,7 @@ function fn_get_configuration_groups(&$product, $selected_configuration)
     if (!empty($c_price)) {
 //         $product['price'] = $product['base_price'] = $product['original_price'] = $c_price;
         $product['price'] += $c_price;
-//         $product['base_price'] += $c_price;
+        $product['base_price'] += $c_price;
         $product['original_price'] += $c_price;
     }
 

@@ -2775,10 +2775,7 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
             $cart_products[$k] = $_cproduct;
         }
 
-        $cart['subtotal_discount'] = 0;
-        fn_set_hook('calculate_cart_items', $cart, $cart_products, $auth);
-
-        // Apply cart promotions
+        // [tennishouse]  take into account reward points when calculating discounts
         if ($apply_cart_promotions == true && $cart['subtotal'] >= 0) {
             if (!empty($cart['stored_subtotal_discount'])) {
                 $prev_discount = $cart['subtotal_discount'];
@@ -2787,6 +2784,12 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
                 $prev_subtotal = $cart['subtotal'];
                 $cart['subtotal'] -= $cart['subtotal_discount'];
             }
+            $cart['subtotal_discount'] = 0;
+        }
+        fn_set_hook('calculate_cart_items', $cart, $cart_products, $auth);
+
+        // Apply cart promotions
+        if ($apply_cart_promotions == true && $cart['subtotal'] >= 0) {
             $cart['applied_promotions'] = fn_promotion_apply('cart', $cart, $auth, $cart_products);
             if (!empty($cart['stored_subtotal_discount'])) {
                 $cart['subtotal_discount'] = $prev_discount;
@@ -2795,6 +2798,7 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
                 $cart['subtotal'] = $prev_subtotal;
             }
         }
+        // [tennishouse]
         fn_check_promotion_notices();
 
         fn_set_hook('calculate_cart_items_after_promotions', $cart, $cart_products, $auth);
