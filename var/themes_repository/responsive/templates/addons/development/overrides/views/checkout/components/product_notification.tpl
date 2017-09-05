@@ -4,7 +4,7 @@
     </div>
     {if $settings.General.checkout_redirect != "Y"}
         <div class="ty-float-right">
-            {include file="buttons/checkout.tpl" but_href="checkout.checkout"}
+            {include file="buttons/button.tpl" but_text=__("view_cart") but_href="checkout.cart" but_role="action" but_meta="ty-btn__primary"}
         </div>
     {/if}
 {/capture}

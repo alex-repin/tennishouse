@@ -73,6 +73,7 @@ function fn_get_product_data($product_id, &$auth, $lang_code = CART_LANGUAGE, $f
         $field_list .= ", MIN(IF(?:product_prices.percentage_discount = 0, ?:product_prices.price, ?:product_prices.price - (?:product_prices.price * ?:product_prices.percentage_discount)/100)) as price";
         $field_list .= ", GROUP_CONCAT(IF(?:products_categories.link_type = 'M', CONCAT(?:products_categories.category_id, 'M'), ?:products_categories.category_id)) as category_ids";
         $field_list .= ", popularity.total as popularity";
+        $field_list .= ", GROUP_CONCAT(DISTINCT CONCAT_WS('_', warehouse_inventory.warehouse_id, warehouse_inventory.warehouse_hash, warehouse_inventory.amount) SEPARATOR '|') AS wh_inventory";
 
         $price_usergroup = db_quote(" AND ?:product_prices.usergroup_id IN (?n)", ((AREA == 'A' && !defined('ORDER_MANAGEMENT')) ? USERGROUP_ALL : array_merge(array(USERGROUP_ALL), $usergroup_ids)));
 
@@ -119,6 +120,16 @@ function fn_get_product_data($product_id, &$auth, $lang_code = CART_LANGUAGE, $f
 
         $join .= " INNER JOIN ?:products_categories ON ?:products_categories.product_id = ?:products.product_id INNER JOIN ?:categories ON ?:categories.category_id = ?:products_categories.category_id $avail_cond";
         $join .= " LEFT JOIN ?:product_popularity as popularity ON popularity.product_id = ?:products.product_id";
+        $join .= db_quote(" LEFT JOIN ?:product_warehouses_inventory AS warehouse_inventory ON warehouse_inventory.product_id = ?:products.product_id 
+            AND warehouse_inventory.amount > 0 AND (CASE ?:products.tracking
+                WHEN ?s THEN warehouse_inventory.combination_hash != '0'
+                WHEN ?s THEN warehouse_inventory.combination_hash = '0'
+                WHEN ?s THEN 1
+            END)", 
+            ProductTracking::TRACK_WITH_OPTIONS,
+            ProductTracking::TRACK_WITHOUT_OPTIONS,
+            ProductTracking::DO_NOT_TRACK
+        );
 
         /**
          * Change SQL parameters for product data select
@@ -147,14 +158,27 @@ function fn_get_product_data($product_id, &$auth, $lang_code = CART_LANGUAGE, $f
             $product_data['meta_description'] = fn_generate_meta_description($product_data['full_description']);
         }
 
-        // If tracking with options is enabled, check if at least one combination has positive amount
-        if (!empty($product_data['tracking'])) {
-            if ($product_data['tracking'] == ProductTracking::TRACK_WITH_OPTIONS) {
-                $product_data['amount'] = db_get_field("SELECT SUM(amount) FROM ?:product_warehouses_inventory WHERE product_id = ?i AND combination_hash != '0'", $product_id);
-            } elseif ($product_data['tracking'] == ProductTracking::TRACK_WITHOUT_OPTIONS) {
-                $product_data['amount'] = db_get_field("SELECT SUM(amount) FROM ?:product_warehouses_inventory WHERE product_id = ?i AND combination_hash = '0'", $product_id);
+        if (!empty($product_data['wh_inventory'])) {
+            $amounts = explode('|', $product_data['wh_inventory']);
+            $amount = 0;
+            foreach ($amounts as $kk => $amnt) {
+                $tmp = explode('_', $amnt);
+                if (count($tmp) == 3) {
+                    $product_data['wh_amount'][$tmp[0]] += $tmp[2];
+                    $amount += $tmp[2];
+                }
             }
+            $product_data['amount'] = $amount;
         }
+
+        // If tracking with options is enabled, check if at least one combination has positive amount
+//         if (!empty($product_data['tracking'])) {
+//             if ($product_data['tracking'] == ProductTracking::TRACK_WITH_OPTIONS) {
+//                 $product_data['amount'] = db_get_field("SELECT SUM(amount) FROM ?:product_warehouses_inventory WHERE product_id = ?i AND combination_hash != '0'", $product_id);
+//             } elseif ($product_data['tracking'] == ProductTracking::TRACK_WITHOUT_OPTIONS) {
+//                 $product_data['amount'] = db_get_field("SELECT SUM(amount) FROM ?:product_warehouses_inventory WHERE product_id = ?i AND combination_hash = '0'", $product_id);
+//             }
+//         }
 
         $product_data['product_id'] = $product_id;
 
@@ -7034,7 +7058,7 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
 //                 ProductTracking::DO_NOT_TRACK
 //             ),
             'warehouse_inventory.amount',
-            "GROUP_CONCAT(DISTINCT CONCAT_WS('_', warehouse_inventory.warehouse_hash, warehouse_inventory.amount) SEPARATOR '|') AS wh_inventory",
+            "GROUP_CONCAT(DISTINCT CONCAT_WS('_', warehouse_inventory.warehouse_id, warehouse_inventory.warehouse_hash, warehouse_inventory.amount) SEPARATOR '|') AS wh_inventory",
 //             "GROUP_CONCAT(DISTINCT CONCAT_WS('_', warehouse_inventory.warehouse_hash, warehouse_inventory.amount) SEPARATOR '|') AS amount"
         );
     } else {
@@ -7055,7 +7079,7 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
 //                 ProductTracking::DO_NOT_TRACK
 //             ),
             'amount' => 'warehouse_inventory.amount',
-            'wh_inventory' => "GROUP_CONCAT(DISTINCT CONCAT_WS('_', warehouse_inventory.warehouse_hash, warehouse_inventory.amount) SEPARATOR '|') AS wh_inventory",
+            'wh_inventory' => "GROUP_CONCAT(DISTINCT CONCAT_WS('_', warehouse_inventory.warehouse_id, warehouse_inventory.warehouse_hash, warehouse_inventory.amount) SEPARATOR '|') AS wh_inventory",
             'weight' => 'products.weight',
             'tracking' => 'products.tracking',
             'is_edp' => 'products.is_edp',
@@ -7889,8 +7913,9 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
             $amount = 0;
             foreach ($amounts as $kk => $amnt) {
                 $tmp = explode('_', $amnt);
-                if (count($tmp) == 2) {
-                    $amount += $tmp[1];
+                if (count($tmp) == 3) {
+                    $products[$k]['wh_amount'][$tmp[0]] += $tmp[2];
+                    $amount += $tmp[2];
                 }
             }
             $products[$k]['amount'] = $amount;

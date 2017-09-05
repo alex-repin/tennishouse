@@ -34,14 +34,9 @@
         </div>
 
         <div class="cm-cart-buttons ty-cart-content__buttons buttons-container{if $smarty.session.cart.amount} full-cart{else} hidden{/if}">
-            <div class="ty-cart-basket-button">
-                <a href="{"checkout.cart"|fn_url}" rel="nofollow" class="ty-btn ty-btn__secondary">{__("view_cart")}</a>
-            </div>
-            {if $settings.General.checkout_redirect != "Y"}
             <div class="ty-cart-checkout-button">
-                <a href="{"checkout.checkout"|fn_url}" rel="nofollow" class="ty-btn ty-btn__primary">{__("checkout")}</a>
+                <a href="{"checkout.cart"|fn_url}" rel="nofollow" class="ty-btn ty-btn__primary">{__("view_cart")}</a>
             </div>
-            {/if}
         </div>
 </div>
 <!--cart_status_panel--></div>

@@ -72,7 +72,8 @@ function fn_get_cart_product_data($hash, &$product, $skip_promotion, &$cart, &$a
             '?:products.list_qty_count',
             '?:products.max_qty',
             '?:products.min_qty',
-            'warehouse_inventory.amount as in_stock',
+//             'warehouse_inventory.amount as in_stock',
+            "GROUP_CONCAT(DISTINCT CONCAT_WS('_', warehouse_inventory.warehouse_id, warehouse_inventory.warehouse_hash, warehouse_inventory.amount) SEPARATOR '|') AS wh_inventory",
             '?:products.shipping_params',
             '?:products.product_type',
             '?:companies.status as company_status',
@@ -80,15 +81,25 @@ function fn_get_cart_product_data($hash, &$product, $skip_promotion, &$cart, &$a
         );
 
         $join  = db_quote("LEFT JOIN ?:product_descriptions ON ?:product_descriptions.product_id = ?:products.product_id AND ?:product_descriptions.lang_code = ?s", CART_LANGUAGE);
-        $join .= db_quote(" LEFT JOIN (SELECT SUM(?:product_warehouses_inventory.amount) as amount, ?:product_warehouses_inventory.combination_hash, ?:product_warehouses_inventory.product_id FROM ?:product_warehouses_inventory LEFT JOIN ?:products ON ?:products.product_id = ?:product_warehouses_inventory.product_id WHERE 1 AND (CASE ?:products.tracking
-                WHEN ?s THEN ?:product_warehouses_inventory.combination_hash != '0'
-                WHEN ?s THEN ?:product_warehouses_inventory.combination_hash = '0'
+        $join .= db_quote(" LEFT JOIN ?:product_warehouses_inventory AS warehouse_inventory ON warehouse_inventory.product_id = ?:products.product_id 
+            AND warehouse_inventory.amount > 0 AND (CASE ?:products.tracking
+                WHEN ?s THEN warehouse_inventory.combination_hash != '0'
+                WHEN ?s THEN warehouse_inventory.combination_hash = '0'
                 WHEN ?s THEN 1
-            END) GROUP BY product_id) AS warehouse_inventory ON warehouse_inventory.product_id = ?:products.product_id", 
+            END)", 
             ProductTracking::TRACK_WITH_OPTIONS,
             ProductTracking::TRACK_WITHOUT_OPTIONS,
             ProductTracking::DO_NOT_TRACK
         );
+//         $join .= db_quote(" LEFT JOIN (SELECT SUM(?:product_warehouses_inventory.amount) as amount, ?:product_warehouses_inventory.combination_hash, ?:product_warehouses_inventory.product_id FROM ?:product_warehouses_inventory LEFT JOIN ?:products ON ?:products.product_id = ?:product_warehouses_inventory.product_id WHERE 1 AND (CASE ?:products.tracking
+//                 WHEN ?s THEN ?:product_warehouses_inventory.combination_hash != '0'
+//                 WHEN ?s THEN ?:product_warehouses_inventory.combination_hash = '0'
+//                 WHEN ?s THEN 1
+//             END) GROUP BY product_id) AS warehouse_inventory ON warehouse_inventory.product_id = ?:products.product_id", 
+//             ProductTracking::TRACK_WITH_OPTIONS,
+//             ProductTracking::TRACK_WITHOUT_OPTIONS,
+//             ProductTracking::DO_NOT_TRACK
+//         );
 
         $_p_statuses = array('A', 'H');
         $_c_statuses = array('A', 'H');
@@ -109,6 +120,19 @@ function fn_get_cart_product_data($hash, &$product, $skip_promotion, &$cart, &$a
             fn_delete_cart_product($cart, $hash);
 
             return false;
+        }
+        
+        if (!empty($_pdata['wh_inventory'])) {
+            $amounts = explode('|', $_pdata['wh_inventory']);
+            $amount = 0;
+            foreach ($amounts as $kk => $amnt) {
+                $tmp = explode('_', $amnt);
+                if (count($tmp) == 3) {
+                    $_pdata['wh_amount'][$tmp[0]] += $tmp[2];
+                    $amount += $tmp[2];
+                }
+            }
+            $_pdata['in_stock'] = $amount;
         }
 
         if (!empty($_pdata['category_ids'])) {

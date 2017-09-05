@@ -2000,6 +2000,23 @@ function fn_get_product_warehouses($product_id)
     return $warehouses;
 }
 
+function fn_promotions_check_warehouses($promo, $product)
+{
+    $result = array();
+    if (!empty($product['wh_amount'])) {
+        $result = array_keys($product['wh_amount']);
+    }
+
+    return $result;
+}
+
+function fn_get_simple_warehouses()
+{
+    $warehouses = db_get_hash_single_array("SELECT warehouse_id, name FROM ?:warehouses WHERE 1 ORDER BY priority ASC", array('warehouse_id', 'name'));
+    
+    return $warehouses;
+}
+
 function fn_get_warehouses($params)
 {
     $fields = array (
