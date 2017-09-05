@@ -277,7 +277,8 @@ function fn_set_point_payment(&$cart, &$cart_products, &$auth)
             $user_points = !empty($user_info) ? $user_info['points'] : 0;
         } else {
             $settings = Registry::get('addons.development');
-            $user_points = ((count($_SESSION['product_reviews']) <= $settings['review_number_limit_P']) ? count($_SESSION['product_reviews']) : $settings['review_number_limit_P']) * $settings['product_review'];
+            $session_product_reviews_count = empty($_SESSION['product_reviews']) ? 0 : count($_SESSION['product_reviews']);
+            $user_points = (($session_product_reviews_count <= $settings['review_number_limit_P']) ? $session_product_reviews_count : $settings['review_number_limit_P']) * $settings['review_reward_P'];
         }
     }
 

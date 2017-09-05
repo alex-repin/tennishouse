@@ -198,7 +198,7 @@ if ($mode == 'catalog') {
                             if (!empty($tb_feature['variants']['ALL'])) {
                                 $tabs_categorization['ALL'][] = $product;
                             }
-                            if (!empty($product['tabs_categorization'])) {
+                            if (!empty($product['tabs_categorization']) && !empty($tab_ids[$product['tabs_categorization']])) {
                                 foreach ($tab_ids[$product['tabs_categorization']] as $i => $tab_id) {
                                     $tabs_categorization[$tab_id][] = $product;
                                 }

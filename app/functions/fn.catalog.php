@@ -161,10 +161,11 @@ function fn_get_product_data($product_id, &$auth, $lang_code = CART_LANGUAGE, $f
         if (!empty($product_data['wh_inventory'])) {
             $amounts = explode('|', $product_data['wh_inventory']);
             $amount = 0;
+            $product_data['wh_amount'] = array();
             foreach ($amounts as $kk => $amnt) {
                 $tmp = explode('_', $amnt);
                 if (count($tmp) == 3) {
-                    $product_data['wh_amount'][$tmp[0]] += $tmp[2];
+                    $product_data['wh_amount'][$tmp[0]] = empty($product_data['wh_amount'][$tmp[0]]) ? $tmp[2] : $product_data['wh_amount'][$tmp[0]] + $tmp[2];
                     $amount += $tmp[2];
                 }
             }
@@ -7911,10 +7912,11 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
         if (!empty($products[$k]['wh_inventory'])) {
             $amounts = explode('|', $products[$k]['wh_inventory']);
             $amount = 0;
+            $products[$k]['wh_amount'] = array();
             foreach ($amounts as $kk => $amnt) {
                 $tmp = explode('_', $amnt);
                 if (count($tmp) == 3) {
-                    $products[$k]['wh_amount'][$tmp[0]] += $tmp[2];
+                    $products[$k]['wh_amount'][$tmp[0]] = empty($products[$k]['wh_amount'][$tmp[0]]) ? $tmp[2] : $products[$k]['wh_amount'][$tmp[0]] + $tmp[2];
                     $amount += $tmp[2];
                 }
             }

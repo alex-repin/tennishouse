@@ -125,10 +125,11 @@ function fn_get_cart_product_data($hash, &$product, $skip_promotion, &$cart, &$a
         if (!empty($_pdata['wh_inventory'])) {
             $amounts = explode('|', $_pdata['wh_inventory']);
             $amount = 0;
+            $_pdata['wh_amount'] = array();
             foreach ($amounts as $kk => $amnt) {
                 $tmp = explode('_', $amnt);
                 if (count($tmp) == 3) {
-                    $_pdata['wh_amount'][$tmp[0]] += $tmp[2];
+                    $_pdata['wh_amount'][$tmp[0]] = empty($_pdata['wh_amount'][$tmp[0]]) ? $tmp[2] : $_pdata['wh_amount'][$tmp[0]] + $tmp[2];
                     $amount += $tmp[2];
                 }
             }
