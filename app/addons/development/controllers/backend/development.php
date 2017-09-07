@@ -1135,6 +1135,35 @@ if ($mode == 'calculate_balance') {
     
     fn_echo('Done');
     exit;
+} elseif ($mode == 'add_subscribers') {
+    $time = 1492905600; // 23 April
+    $emails = db_get_hash_array("SELECT DISTINCT LOWER(?:orders.email) AS email, ?:orders.timestamp FROM ?:orders LEFT JOIN ?:subscribers ON ?:subscribers.email = ?:orders.email WHERE ?:orders.timestamp < ?i AND ?:subscribers.email IS NULL", 'email', $time);
+//     fn_print_die(count($emails), $emails);
+    if (!empty($emails)) {
+        list($page_mailing_lists) = fn_get_mailing_lists();
+        $confirmed = array();
+        if (!empty($page_mailing_lists)) {
+            foreach ($page_mailing_lists as $i => $m_list) {
+                $confirmed[$m_list['list_id']]['confirmed'] = true;
+            }
+        }
+        $iter = 0;
+        foreach ($emails as $i => $email_data) {
+            $data = array(
+                'email' => $email_data['email'],
+                'timestamp' => $email_data['timestamp'],
+            );
+            $subscriber_id = db_query("INSERT INTO ?:subscribers ?e", $data);
+            if (!empty($page_mailing_lists)) {
+                fn_update_subscriptions($subscriber_id, array_keys($page_mailing_lists), $confirmed);
+            }
+            $iter++;
+        }
+    }
+    fn_echo('Done');
+    exit;
+} elseif ($mode == 'validate_email') {
+    fn_print_die(validateEmail('samurai7@mail.ru'));
 }
 
 function fn_normalize_string($string)
