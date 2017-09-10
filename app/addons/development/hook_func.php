@@ -64,7 +64,7 @@ function fn_development_add_post_post($post_data, $object)
         $_SESSION['post_ids'][$object['object_type']][$post_data['post_id']] = $post_data;
     }
     $allow_reward = fn_allow_user_thread_review_reward($post_data['thread_id'], $object['object_type'], $post_data['user_id'], $post_data['post_id']);
-    if (AREA == 'C' && $_REQUEST['force_review'] == 'Y') {
+    if (AREA == 'C' && !empty($_REQUEST['force_review']) && $_REQUEST['force_review'] == 'Y') {
         $discussion = $object;
         $discussion['post_data'] = $post_data;
         $discussion['thread_id'] = $post_data['thread_id'];
@@ -90,7 +90,7 @@ function fn_development_add_post_post($post_data, $object)
             } elseif (AREA == 'C') {
                 db_query("UPDATE ?:discussion_posts SET is_rewarded = 'Y' WHERE post_id = ?i", $post_data['post_id']);
                 $_SESSION['post_ids'][$object['object_type']][$post_data['post_id']]['is_rewarded'] = 'Y';
-                $_SESSION['reward_points'] += $settings['review_reward_' . $object['object_type']];
+                $_SESSION['reward_points'] = (!empty($_SESSION['reward_points']) ? $_SESSION['reward_points'] : 0) + $settings['review_reward_' . $object['object_type']];
                 fn_delete_notification('thank_you_for_review');
                 fn_set_notification('N', __('notice'), __('product_review_added_reward_text', array('[amount]' => $settings['review_reward_' . $object['object_type']])), 'F');
             }

@@ -266,7 +266,7 @@ if ($mode == 'catalog') {
                             $tab_string = $tb_feature['variants'][$params['tc_id']]['variant'];
                         }
                         Registry::get('view')->assign('tb_feature', $tb_feature);
-                        Registry::get('view')->assign('active_tab', $params['tc_id']);
+                        Registry::get('view')->assign('active_tab', !empty($params['tc_id']) ? $params['tc_id'] : false);
                         //Registry::get('view')->assign('tab_ids', $tab_ids);
                     }
                 }

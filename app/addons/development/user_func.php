@@ -22,46 +22,49 @@ use Tygh\Shippings\Shippings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-function fn_email_exist($email)
+function fn_email_exist($emails)
 {
-    $emailValid = false;
+    $results = array();
 
-    $mailSegments = explode('@', $email);
-    if (!empty($mailSegments[1])) {
-        $domain = $mailSegments[1];
-        if (substr($domain, -1) != '.') {
-            $domain .= '.';
-        }
-        
-        $mxRecordsAvailable = getmxrr($domain, $mxRecords, $mxWeight);
-        if (!empty($mxRecordsAvailable)) {
-            $mxHosts = array_combine($mxRecords,$mxWeight);
-            asort($mxHosts, SORT_NUMERIC);
-            $mxHost = array_keys($mxHosts)[0];
-            if (!empty($mxHost)) {
-            //    echo $mxHost . "<br>";
-                $mxSocket = fsockopen($mxHost, 25, $errno, $errstr, 2);
-                if ($mxSocket) {
-                $response = "";
-                // say HELO to mailserver
-                $response .= fn_send_command($mxSocket, "EHLO mx1.validemail.com");
-                // initialize sending mail
-                $response .= fn_send_command($mxSocket, "MAIL FROM:<info@tennishouse.ru>");
-                // try recipient address, will return 250 when ok..
-                $rcptText = fn_send_command($mxSocket, "RCPT TO:<" . $email . ">");
-                $response .= $rcptText;
-                if (substr($rcptText, 0, 3) == "250") {
-                    $emailValid = true;
-                }
-                // quit mail server connection
-                fn_send_command($mxSocket, "QUIT");
-                fclose($mxSocket);
+    foreach ($emails as $i => $email) {
+        $results[$email] = false;
+        $mailSegments = explode('@', $email);
+        if (!empty($mailSegments[1])) {
+            $domain = $mailSegments[1];
+            if (substr($domain, -1) != '.') {
+                $domain .= '.';
+            }
+            
+            $mxRecordsAvailable = getmxrr($domain, $mxRecords, $mxWeight);
+            if (!empty($mxRecordsAvailable)) {
+                $mxHosts = array_combine($mxRecords,$mxWeight);
+                asort($mxHosts, SORT_NUMERIC);
+                $mxHost = array_keys($mxHosts)[0];
+                if (!empty($mxHost)) {
+                //    echo $mxHost . "<br>";
+                    $mxSocket = fsockopen($mxHost, 25, $errno, $errstr, 2);
+                    if (!empty($mxSocket)) {
+                        $response = "";
+                        // say HELO to mailserver
+                        $response .= fn_send_command($mxSocket, "EHLO mx1.validemail.com");
+                        // initialize sending mail
+                        $response .= fn_send_command($mxSocket, "MAIL FROM:<info@tennishouse.ru>");
+                        // try recipient address, will return 250 when ok..
+                        $rcptText = fn_send_command($mxSocket, "RCPT TO:<" . $email . ">");
+                        $response .= $rcptText;
+                        if (substr($rcptText, 0, 3) == "250") {
+                            $results[$email] = true;
+                        }
+                        // quit mail server connection
+                        fn_send_command($mxSocket, "QUIT");
+                        fclose($mxSocket);
+                    }
                 }
             }
         }
     }
 
-    return $emailValid;
+    return $results;
 }
 function fn_send_command($mxSocket, $command)
 {
@@ -200,7 +203,7 @@ function fn_allow_user_thread_review_reward($thread_id, $object_type, $user_id, 
     }
     if (!empty($posts)) {
         foreach ($posts as $i => $post) {
-            if ($post['is_rewarded'] == 'Y') {
+            if (!empty($post['is_rewarded']) && $post['is_rewarded'] == 'Y') {
                 if ($post['timestamp'] >= $time_limit) {
                     $count++;
                 }

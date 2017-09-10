@@ -544,15 +544,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
         
-        $suffix = ".saving_system";
+        $suffix = "development.saving_system";
     }
     
     if ($mode == 'check_emails') {
         if (!empty($_REQUEST['subscriber_ids'])) {
-            fn_print_die($_REQUEST['subscriber_ids']);
+            $subscribers = db_get_hash_single_array("SELECT email, subscriber_id FROM ?:subscribers WHERE subscriber_id IN (?n)", array('email', 'subscriber_id'), $_REQUEST['subscriber_ids']);
+            foreach ($subscribers as $email => $_id) {
+                $result = fn_email_exist(array($email));
+                if ($result[$email] == true) {
+                    db_query("UPDATE ?:subscribers SET status = 'A' WHERE subscriber_id = ?i", $subscribers[$email]);
+                } else {
+                    db_query("UPDATE ?:subscribers SET status = 'D' WHERE subscriber_id = ?i", $subscribers[$email]);
+                }
+            }
+        }
+        if (!empty($_REQUEST['redirect_url'])) {
+            return array(CONTROLLER_STATUS_REDIRECT, $_REQUEST['redirect_url']);
+        } else {
+            $suffix = "subscribers.manage";
         }
     }
-    return array(CONTROLLER_STATUS_OK, "development$suffix");
+    
+    return array(CONTROLLER_STATUS_OK, $suffix);
 }
 
 if ($mode == 'calculate_balance') {
@@ -1167,7 +1181,52 @@ if ($mode == 'calculate_balance') {
     fn_echo('Done');
     exit;
 } elseif ($mode == 'validate_email') {
-    fn_print_die(fn_email_exist('paul56g5tdreada@gmail.com'));
+    $subscribers = db_get_hash_single_array("SELECT email, subscriber_id FROM ?:subscribers", array('subscriber_id', 'email'));
+    
+    foreach ($subscribers as $_id => $email) {
+        $result = false;
+        $mailSegments = explode('@', $email);
+        if (!empty($mailSegments[1])) {
+            $domain = $mailSegments[1];
+            if (substr($domain, -1) != '.') {
+                $domain .= '.';
+            }
+            
+            $mxRecordsAvailable = getmxrr($domain, $mxRecords, $mxWeight);
+            if (!empty($mxRecordsAvailable)) {
+                $mxHosts = array_combine($mxRecords,$mxWeight);
+                asort($mxHosts, SORT_NUMERIC);
+                $mxHost = array_keys($mxHosts)[0];
+                if (!empty($mxHost)) {
+                //    echo $mxHost . "<br>";
+                    $mxSocket = fsockopen($mxHost, 25, $errno, $errstr, 2);
+                    if (!empty($mxSocket)) {
+                        $response = "";
+                        // say HELO to mailserver
+                        $response .= fn_send_command($mxSocket, "EHLO mx1.validemail.com");
+                        // initialize sending mail
+                        $response .= fn_send_command($mxSocket, "MAIL FROM:<info@tennishouse.ru>");
+                        // try recipient address, will return 250 when ok..
+                        $rcptText = fn_send_command($mxSocket, "RCPT TO:<" . $email . ">");
+                        $response .= $rcptText;
+                        if (substr($rcptText, 0, 3) == "250") {
+                            $result = true;
+                        }
+                        // quit mail server connection
+                        fn_send_command($mxSocket, "QUIT");
+                        fclose($mxSocket);
+                    }
+                }
+            }
+        }
+        if ($result == true) {
+            db_query("UPDATE ?:subscribers SET status = 'A' WHERE subscriber_id = ?i", $_id);
+        } else {
+            db_query("UPDATE ?:subscribers SET status = 'D' WHERE subscriber_id = ?i", $_id);
+        }
+    }
+    fn_echo('Done');
+    exit;
 }
 
 function fn_normalize_string($string)

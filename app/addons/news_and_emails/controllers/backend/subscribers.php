@@ -159,6 +159,10 @@ function fn_get_subscribers($params, $items_per_page = 0, $lang_code = CART_LANG
         $condition .= db_quote(" AND ?:user_mailing_lists.lang_code = ?s", $params['language']);
     }
 
+    if (!empty($params['status'])) {
+        $condition .= db_quote(" AND ?:subscribers.status = ?s", $params['status']);
+    }
+
     if (!empty($params['period']) && $params['period'] != 'A') {
         list($params['time_from'], $params['time_to']) = fn_create_periods($params);
 
