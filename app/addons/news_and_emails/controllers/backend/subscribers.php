@@ -127,10 +127,7 @@ function fn_get_subscribers($params, $items_per_page = 0, $lang_code = CART_LANG
 
     // Define fields that should be retrieved
     $fields = array (
-        '?:subscribers.subscriber_id',
-        '?:subscribers.email',
-        '?:subscribers.timestamp',
-        '?:subscribers.subscriber_id',
+        '?:subscribers.*',
         "GROUP_CONCAT(?:user_mailing_lists.list_id) as list_ids",
     );
 

@@ -35,9 +35,6 @@
     <td>
         {$s.timestamp|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"},&nbsp;{assign var="count" value=$s.mailing_lists|@count}{__("subscribed_to", ["[num]" => $count])}
     </td>
-    <td class="center nowrap">
-        {include file="common/select_popup.tpl" popup_additional_class="dropleft" id=$s.subscriber_id status=$s.status hidden=true object_id_name="subscriber_id" table="subscribers"}
-    </td>
     <td class="nowrap right">
         {capture name="tools_list"}
             <li>{btn type="list" class="cm-confirm" text=__("delete") href="subscribers.delete?subscriber_id=`$s.subscriber_id`"}</li>
@@ -45,6 +42,9 @@
         <div class="hidden-tools">
             {dropdown content=$smarty.capture.tools_list}
         </div>
+    </td>
+    <td class="center nowrap">
+        {include file="common/select_popup.tpl" popup_additional_class="dropleft" id=$s.subscriber_id status=$s.status hidden=true object_id_name="subscriber_id" table="subscribers"}
     </td>
 </tr>
 <tr id="subscribers_{$s.subscriber_id}" class="hidden no-hover row-more">

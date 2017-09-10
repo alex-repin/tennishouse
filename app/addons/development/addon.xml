@@ -485,7 +485,7 @@
             ALTER TABLE `cscart_categories` ADD `all_items_tab` CHAR(1) NOT NULL DEFAULT '0' AFTER `extended_tabs_categorization`;
         </item>
         <item>
-            ALTER TABLE `cscart_subscribers` ADD `status` CHAR(1) NOT NULL DEFAULT 'A';
+            ALTER TABLE `cscart_subscribers` ADD `status` CHAR(1) NOT NULL DEFAULT 'H';
         </item>
     </queries>
     <language_variables>
