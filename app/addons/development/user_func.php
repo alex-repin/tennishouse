@@ -22,64 +22,48 @@ use Tygh\Shippings\Shippings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-function validateEmail($email)
+function fn_email_exist($email)
 {
-  $emailValid = false;
-  $domain = extractFullyQualifiedDomainFromEmail($email);
-  $mxHost = findPreferredMxHostForDomain($domain);
-  
-  if ($mxHost) {
-//    echo $mxHost . "<br>";
-    $mxSocket = fsockopen($mxHost, 25, $errno, $errstr, 2);
-    fn_print_die('ed', $mxSocket);
-    if ($mxSocket) {
-    fn_print_die($domain, $mxHost);
-      $response = "";
-      // say HELO to mailserver
-      $response .= sendCommand($mxSocket, "EHLO mx1.validemail.com");
-      // initialize sending mail
-      $response .= sendCommand($mxSocket, "MAIL FROM:<info@validemail.com>");
-      // try recipient address, will return 250 when ok..
-      $rcptText = sendCommand($mxSocket, "RCPT TO:<" . $email . ">");
-      $response .= $rcptText;
-      if (substr($rcptText, 0, 3) == "250") {
-        $emailValid = true;
-      }
-      // quit mail server connection
-      sendCommand($mxSocket, "QUIT");
-      fclose($mxSocket);
+    $emailValid = false;
+
+    $mailSegments = explode('@', $email);
+    if (!empty($mailSegments[1])) {
+        $domain = $mailSegments[1];
+        if (substr($domain, -1) != '.') {
+            $domain .= '.';
+        }
+        
+        $mxRecordsAvailable = getmxrr($domain, $mxRecords, $mxWeight);
+        if (!empty($mxRecordsAvailable)) {
+            $mxHosts = array_combine($mxRecords,$mxWeight);
+            asort($mxHosts, SORT_NUMERIC);
+            $mxHost = array_keys($mxHosts)[0];
+            if (!empty($mxHost)) {
+            //    echo $mxHost . "<br>";
+                $mxSocket = fsockopen($mxHost, 25, $errno, $errstr, 2);
+                if ($mxSocket) {
+                $response = "";
+                // say HELO to mailserver
+                $response .= fn_send_command($mxSocket, "EHLO mx1.validemail.com");
+                // initialize sending mail
+                $response .= fn_send_command($mxSocket, "MAIL FROM:<info@tennishouse.ru>");
+                // try recipient address, will return 250 when ok..
+                $rcptText = fn_send_command($mxSocket, "RCPT TO:<" . $email . ">");
+                $response .= $rcptText;
+                if (substr($rcptText, 0, 3) == "250") {
+                    $emailValid = true;
+                }
+                // quit mail server connection
+                fn_send_command($mxSocket, "QUIT");
+                fclose($mxSocket);
+                }
+            }
+        }
     }
-  }
-  return $emailValid;
+
+    return $emailValid;
 }
-function extractFullyQualifiedDomainFromEmail($email)
-{
-  $mailSegments = explode("@", $email);
-  $domain = $mailSegments[1];
-  // http://stackoverflow.com/q/14065946/131929
-  // fully qualified domain names should end with a '.', DNS resolution may otherwise take a very long time
-  if (substr($domain, -1) != ".") {
-    return $domain . ".";
-  }
-  return $domain;
-}
-function findPreferredMxHostForDomain($domain)
-{
-  $mxRecordsAvailable = getmxrr($domain, $mxRecords, $mxWeight);
-  if ($mxRecordsAvailable) {
-    // copy mx records and weight into array $mxHosts
-    $mxHosts = array();
-    for ($i = 0; $i < count($mxRecords); $i++) {
-      $mxHosts[$mxRecords[$i]] = $mxWeight[$i];
-    }
-    asort($mxHosts, SORT_NUMERIC);
-    reset($mxHosts);
-    return array_keys($mxHosts)[0];
-  } else {
-    return null;
-  }
-}
-function sendCommand($mxSocket, $command)
+function fn_send_command($mxSocket, $command)
 {
 //  print htmlspecialchars($command) . "<br>";
   fwrite($mxSocket, $command . "\r\n");

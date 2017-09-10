@@ -547,6 +547,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $suffix = ".saving_system";
     }
     
+    if ($mode == 'check_emails') {
+        if (!empty($_REQUEST['subscriber_ids'])) {
+            fn_print_die($_REQUEST['subscriber_ids']);
+        }
+    }
     return array(CONTROLLER_STATUS_OK, "development$suffix");
 }
 
@@ -1138,7 +1143,6 @@ if ($mode == 'calculate_balance') {
 } elseif ($mode == 'add_subscribers') {
     $time = 1492905600; // 23 April
     $emails = db_get_hash_array("SELECT DISTINCT LOWER(?:orders.email) AS email, ?:orders.timestamp FROM ?:orders LEFT JOIN ?:subscribers ON ?:subscribers.email = ?:orders.email WHERE ?:orders.timestamp < ?i AND ?:subscribers.email IS NULL", 'email', $time);
-//     fn_print_die(count($emails), $emails);
     if (!empty($emails)) {
         list($page_mailing_lists) = fn_get_mailing_lists();
         $confirmed = array();
@@ -1163,7 +1167,7 @@ if ($mode == 'calculate_balance') {
     fn_echo('Done');
     exit;
 } elseif ($mode == 'validate_email') {
-    fn_print_die(validateEmail('samurai7@mail.ru'));
+    fn_print_die(fn_email_exist('paul56g5tdreada@gmail.com'));
 }
 
 function fn_normalize_string($string)
