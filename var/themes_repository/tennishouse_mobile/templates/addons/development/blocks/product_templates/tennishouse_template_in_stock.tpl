@@ -87,6 +87,7 @@
                                 </div>
                             {/if*}
                         </div>
+                        <div class="ty-found-cheaper-tooltip">{include file="addons/development/common/tooltip.tpl" tooltip_title=__("found_cheaper") note_text=__("found_cheaper_offer") tooltipclass="ty-category-tooltip"}</div>
                         <div class="ty-product-block__advanced-option">
                             {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
                             {assign var="advanced_options" value="advanced_options_`$obj_id`"}

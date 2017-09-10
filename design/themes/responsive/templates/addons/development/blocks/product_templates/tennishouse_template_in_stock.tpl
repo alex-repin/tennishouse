@@ -112,7 +112,7 @@
 
                             {if $smarty.capture.$price|trim}
                                 <div class="ty-product-block__price-actual">
-                                    {$smarty.capture.$price nofilter}{*if $product.net_currency_code != 'RUB' && $product.auto_price != 'Y'}цена 2015 года! Успейте купить{/if*}
+                                    {$smarty.capture.$price nofilter}
                                     {assign var="qty_discounts" value="qty_discounts_`$obj_id`"}
                                     {if $smarty.capture.$qty_discounts|trim}
                                         <div class="ty-ti-price-wrap">
@@ -131,6 +131,7 @@
                                 </div>
                             {/if}
                         </div>
+                        <div class="ty-found-cheaper-tooltip">{include file="addons/development/common/tooltip.tpl" tooltip_title=__("found_cheaper") note_text=__("found_cheaper_offer") tooltipclass="ty-category-tooltip"}</div>
                         <div class="ty-product-block__advanced-option">
                             {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
                             {assign var="advanced_options" value="advanced_options_`$obj_id`"}

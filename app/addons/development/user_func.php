@@ -299,7 +299,8 @@ function fn_get_approximate_shipping($location)
                 'country' => $location['country'],
                 'state' => $location['state'],
             )
-        )
+        ),
+        'company_id' => 1
     );
     $shippings = array();
     $shippings_group = Shippings::getShippingsList($group);
