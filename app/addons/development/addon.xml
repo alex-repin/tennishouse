@@ -1063,7 +1063,7 @@
         <item lang="ru" id="all_items_tab_sm">Все станки</item>
         <item lang="ru" id="promotion_cond_warehouses">Склад</item>
         <item lang="ru" id="check_selected">Проверить выбранные</item>
-        <item lang="ru" id="found_cheaper">Нашли дешевле ?</item>
+        <item lang="ru" id="found_cheaper">Нашли дешевле ? Снизим цену !</item>
         <item lang="ru" id="found_cheaper_offer"><![CDATA[<p style="font-size: 16px;">Нашли дешевле? Снизим цену!</p><p>Если у конкурента цена ниже &mdash; вернем разницу! Просто добавьте в комментарии к заказу ссылку на магазин с желаемой ценой или позвоните по телефону +7 (499) 393-39-87</p>]]></item>
     </language_variables>
 </addon>
