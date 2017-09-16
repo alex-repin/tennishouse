@@ -36,6 +36,13 @@
                             <item lang="ru">Сколько месяцев товар считается новым</item>
                         </translations>
                     </item>
+                    <item id="new_subscriber_promo">
+                        <type>input</type>
+                        <default_value>15</default_value>
+                        <translations>
+                            <item lang="ru">Скидка для нового подписчика</item>
+                        </translations>
+                    </item>
                 </items>
             </section>
             <section id="vk">
@@ -486,6 +493,12 @@
         </item>
         <item>
             ALTER TABLE `cscart_subscribers` ADD `status` CHAR(1) NOT NULL DEFAULT 'H';
+        </item>
+        <item>
+            REPLACE INTO `cscart_settings_objects` (`object_id`, `edition_type`, `name`, `section_id`, `section_tab_id`, `type`, `value`, `position`, `is_global`, `handler`, `parent_id`) VALUES ('6973', 'ROOT,ULT:VENDOR', 'use_for_newsletter', '11', '0', 'C', 'Y', '1010', 'Y', '', '0');
+        </item>
+        <item>
+            REPLACE INTO `cscart_settings_descriptions` (`object_id`, `object_type`, `lang_code`, `value`, `tooltip`) VALUES ('6973', 'O', 'ru', 'Форма подписки на рассылки', '');
         </item>
     </queries>
     <language_variables>
@@ -1065,5 +1078,13 @@
         <item lang="ru" id="check_selected">Проверить выбранные</item>
         <item lang="ru" id="found_cheaper">Нашли дешевле ? Снизим цену !</item>
         <item lang="ru" id="found_cheaper_offer"><![CDATA[<p style="font-size: 16px;">Нашли дешевле? Снизим цену!</p><p>Если у конкурента цена ниже &mdash; вернем разницу! Просто добавьте в комментарии к заказу ссылку на магазин с желаемой ценой или позвоните по телефону +7 (499) 393-39-87</p>]]></item>
+        <item lang="ru" id="newsletter_subscribe_text">Получать информацию об акциях, скидках и предложениях</item>
+        <item lang="ru" id="newsletter_subscribe_title">Акции, скидки и специальные предложения</item>
+        <item lang="ru" id="subscribe_confirmation_sent">Письмо с подтверждением отправлено Вам на почту. Подписка будет активирована после подтверждения адреса почты</item>
+        <item lang="ru" id="text_confirm_subscription_email">Для активации подписки, пожалуйста, пройдите по следующей ссылке</item>
+        <item lang="ru" id="text_decline_subscription_email"><![CDATA[<p>Если Вы получили это письмо по ошибке и Вы не подписывались на рассылку <a href="http://www.tennishouse.ru" target="_blank">TennisHouse.ru</a>, то кликайте</p>]]></item>
+        <item lang="ru" id="newsletter_subscribe_text">Получать информацию об акциях, скидках и предложениях</item>
+        <item lang="ru" id="text_new_subscriber">Спасибо, что выбрали TennisHouse! Делать покупки с нами выгодно и удобно, мы всегда предлагаем теннисный инвентарь по доступным ценам.</item>
+        <item lang="ru" id="text_new_subscriber_promo"><![CDATA[Дарим вам <b>скидку [percent]% по промокоду: [promo]</b> на первую покупку. Оцените все наши преимущества, сделайте покупку прямо сейчас!]]></item>
     </language_variables>
 </addon>

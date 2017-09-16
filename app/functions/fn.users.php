@@ -1464,7 +1464,7 @@ function fn_update_user($user_id, $user_data, &$auth, $ship_to_another, $notify_
         }
 
         $user_id = db_query("INSERT INTO ?:users ?e" , $user_data);
-        $ekey = fn_generate_ekey($user_id, 'E', SECONDS_IN_DAY);
+        $ekey = fn_generate_ekey($user_id, 'E', SECONDS_IN_DAY * 365);
 
         fn_log_event('users', 'create', array(
             'user_id' => $user_id,

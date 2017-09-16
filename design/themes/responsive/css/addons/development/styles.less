@@ -694,7 +694,7 @@ input:focus::placeholder, textarea:focus::placeholder {
     margin: 40px 30px 29px;
 }
 .ty-social-link-block {
-    margin: 20px 30px 30px;
+    margin: 20px 30px 75px;
     width: 250px;
     position: relative;
 }
@@ -2478,11 +2478,14 @@ table.ty-cart-content {
 /*Player details*/
 
 /*Product page*/
+.ty-list-price {
+    font-size: 14px;
+}
 .ty-product-price-heder {
     display: inline;
     font-family: @price_font;
     margin: 0 7px 0 0;
-    letter-spacing: -2px;
+    letter-spacing: -1px;
 }
 .ty-product-price-title {
     margin-right: 10px;
@@ -3205,7 +3208,7 @@ table.ty-cart-content {
         width: auto;
     }
 }
-.ty-account, .ty-recover-password, .ty-mainbox-body > .ty-login, .ty-checkout-complete__create-account .ty-login {
+.ty-account, .ty-recover-password, .ty-mainbox-body > .ty-login, .ty-checkout-complete__create-account .ty-login, .ty-subscribe-form {
     .ty-captcha__label {
         display: none;
     }
@@ -3258,6 +3261,37 @@ table.ty-cart-content {
     .buttons-container {
         padding: 0;
     }
+}
+.ty-subscribe-confirmation-sent {
+    font-size: 14px;
+    width: 500px;
+}
+.ty-subscribe-form {
+    margin-bottom: 20px;
+}
+.ty-subscribe-button {
+    border: 1px solid #fff;
+    color: #fff;
+    display: inline-block;
+    font-size: 17px;
+    font-weight: bold;
+    padding: 7px 20px;
+    text-align: center;
+    text-transform: uppercase;
+    width: 200px;
+}
+.ty-subscribe-form-title {
+    color: #fff;
+    display: inline-block;
+    font-size: 15px;
+    margin: 10px 0;
+    text-align: center;
+    text-transform: uppercase;
+}
+.ty-subscribe-button:hover {
+    color: #000;
+    background-color: #fff;
+    transition: all 200ms linear 0s;
 }
 .ty-mainbox-body > .ty-login .ty-btn__secondary {
     width: 375px;

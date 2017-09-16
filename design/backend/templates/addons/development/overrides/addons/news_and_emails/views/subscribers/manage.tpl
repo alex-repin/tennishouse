@@ -44,7 +44,7 @@
         </div>
     </td>
     <td class="center nowrap">
-        {include file="common/select_popup.tpl" popup_additional_class="dropleft" id=$s.subscriber_id status=$s.status hidden=true object_id_name="subscriber_id" table="subscribers"}
+        {include file="common/select_popup.tpl" popup_additional_class="dropleft" id=$s.subscriber_id status=$s.status hidden=true object_id_name="subscriber_id" table="subscribers" items_status=""|fn_get_subscriber_statuses}
     </td>
 </tr>
 <tr id="subscribers_{$s.subscriber_id}" class="hidden no-hover row-more">

@@ -22,6 +22,17 @@ use Tygh\Shippings\Shippings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_get_subscriber_statuses($lang_code = CART_LANGUAGE)
+{
+    $statuses = array (
+        'C' => __('confirmed'),
+        'P' => __('pending'),
+        'L' => __('declined'),
+    );
+    
+    return $statuses;
+}
+
 function fn_email_exist($emails)
 {
     $results = array();

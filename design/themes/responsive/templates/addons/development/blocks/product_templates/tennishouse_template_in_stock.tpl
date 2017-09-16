@@ -123,15 +123,15 @@
                                         {if $product.product_type == 'C' && !$product.price|floatval}{__("pc_zero_price_note")}{/if}
                                     <!--pc_note_{$obj_prefix}{$product.product_id}--></span>
                                 </div>
+                                <div class="ty-found-cheaper-tooltip">{include file="addons/development/common/tooltip.tpl" tooltip_title=__("found_cheaper") note_text=__("found_cheaper_offer") tooltipclass="ty-category-tooltip"}</div>
                             {/if}
 
-                            {if $smarty.capture.$old_price|trim || $smarty.capture.$clean_price|trim || $smarty.capture.$list_discount|trim}
+                            {*if $smarty.capture.$old_price|trim || $smarty.capture.$clean_price|trim || $smarty.capture.$list_discount|trim}
                                     {$smarty.capture.$clean_price nofilter}
                                     {$smarty.capture.$list_discount nofilter}
                                 </div>
-                            {/if}
+                            {/if*}
                         </div>
-                        <div class="ty-found-cheaper-tooltip">{include file="addons/development/common/tooltip.tpl" tooltip_title=__("found_cheaper") note_text=__("found_cheaper_offer") tooltipclass="ty-category-tooltip"}</div>
                         <div class="ty-product-block__advanced-option">
                             {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
                             {assign var="advanced_options" value="advanced_options_`$obj_id`"}

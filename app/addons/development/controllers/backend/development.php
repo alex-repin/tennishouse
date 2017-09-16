@@ -553,9 +553,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             foreach ($subscribers as $email => $_id) {
                 $result = fn_email_exist(array($email));
                 if ($result[$email] == true) {
-                    db_query("UPDATE ?:subscribers SET status = 'A' WHERE subscriber_id = ?i", $subscribers[$email]);
+                    db_query("UPDATE ?:subscribers SET status = 'C' WHERE subscriber_id = ?i", $subscribers[$email]);
                 } else {
-                    db_query("UPDATE ?:subscribers SET status = 'D' WHERE subscriber_id = ?i", $subscribers[$email]);
+                    db_query("UPDATE ?:subscribers SET status = 'L' WHERE subscriber_id = ?i", $subscribers[$email]);
                 }
             }
         }
@@ -1220,9 +1220,9 @@ if ($mode == 'calculate_balance') {
             }
         }
         if ($result == true) {
-            db_query("UPDATE ?:subscribers SET status = 'A' WHERE subscriber_id = ?i", $_id);
+            db_query("UPDATE ?:subscribers SET status = 'C' WHERE subscriber_id = ?i", $_id);
         } else {
-            db_query("UPDATE ?:subscribers SET status = 'D' WHERE subscriber_id = ?i", $_id);
+            db_query("UPDATE ?:subscribers SET status = 'L' WHERE subscriber_id = ?i", $_id);
         }
     }
     fn_echo('Done');

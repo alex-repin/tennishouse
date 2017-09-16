@@ -35,9 +35,9 @@
     <label for="status">{__("status")}</label>
     <select name="status" id="status">
         <option value="">--</option>
-        <option value="A" {if $search.status == "A"}selected="selected"{/if}>{__("active")}</option>
-        <option value="H" {if $search.status == "H"}selected="selected"{/if}>{__("hidden")}</option>
-        <option value="D" {if $search.status == "D"}selected="selected"{/if}>{__("disabled")}</option>
+        <option value="C" {if $search.status == "C"}selected="selected"{/if}>{__("confirmed")}</option>
+        <option value="P" {if $search.status == "P"}selected="selected"{/if}>{__("pending")}</option>
+        <option value="L" {if $search.status == "L"}selected="selected"{/if}>{__("declined")}</option>
     </select>
 </div>
 {/capture}
