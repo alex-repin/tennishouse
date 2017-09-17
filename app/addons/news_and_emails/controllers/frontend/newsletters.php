@@ -22,7 +22,7 @@ if ($mode == 'add_subscriber') {
     if (fn_image_verification('use_for_newsletter', $_REQUEST) == false) {
         exit;
     }
-    
+
     if (empty($_REQUEST['subscribe_email']) || fn_validate_email($_REQUEST['subscribe_email']) == false) {
         fn_set_notification('E', __('error'), __('error_invalid_emails', array(
             '[emails]' => $_REQUEST['subscribe_email']
@@ -30,6 +30,7 @@ if ($mode == 'add_subscriber') {
     } else {
         // First check if subscriber's email already in the list
         $subscriber = db_get_row("SELECT * FROM ?:subscribers WHERE email = ?s", $_REQUEST['subscribe_email']);
+
         if (empty($subscriber)) {
             $_data = array(
                 'email' => $_REQUEST['subscribe_email'],
@@ -39,7 +40,10 @@ if ($mode == 'add_subscriber') {
 
             $subscriber_id = db_query("INSERT INTO ?:subscribers ?e", $_data);
             $subscriber = db_get_row("SELECT * FROM ?:subscribers WHERE subscriber_id = ?i", $subscriber_id);
-            
+            fn_print_die($subscriber);
+            if (!empty(Registry::get('addons.development.new_subscriber_promo'))) {
+                
+            }
             // send confirmation email for each mailing list
             $ekey = fn_generate_ekey($subscriber_id, 'S', SECONDS_IN_DAY * 365);
             Mailer::sendMail(array(

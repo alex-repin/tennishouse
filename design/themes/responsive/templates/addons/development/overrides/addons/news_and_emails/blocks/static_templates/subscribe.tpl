@@ -13,14 +13,9 @@
                 <input type="hidden" name="newsletter_format" value="2" />
                 <div class="ty-control-group">
                     <label class="cm-required cm-email ty-control-group__title" for="subscr_email{$block.block_id}">{__("email")}</label>
-                    <input type="text" name="subscribe_email" id="subscr_email{$block.block_id}" size="20" placeholder="{__("enter_email")}" class="ty-input-text-medium" />
+                    <input type="text" name="subscribe_email" id="subscr_email{$block.block_id}" size="20" placeholder="{__("enter_email")}" class="ty-input-text-large" />
                 </div>
-                {include file="common/image_verification.tpl" option="use_for_newsletter" align="left" assign="image_verification"}
-                {if $image_verification}
-                <div class="ty-control-group">
-                    {$image_verification nofilter}
-                </div>
-                {/if}
+                {include file="common/image_verification.tpl" option="use_for_newsletter" align="left"}
                 {include file="buttons/button.tpl" but_text=__("subscribe") but_meta="ty-btn__secondary" but_name="dispatch[newsletters.add_subscriber]"}
             </form>
         {/if}
