@@ -4,8 +4,8 @@
     <div class="ty-footer-form-block__title">{__("newsletter_subscribe_title")}</div>
     {capture name="newsletter_subscription_form"}
     <div class="ty-subscribe-form" id="newsletters_subscribe_form">
-        {if $confirmation_sent}
-            <div class="ty-subscribe-confirmation-sent">{__("subscribe_confirmation_sent")}</div>
+        {if $confirmation_text}
+            <div class="ty-subscribe-confirmation-sent">{$confirmation_text}</div>
         {else}
             <form action="{""|fn_url}" method="get" class="cm-ajax cm-ajax-full-render" name="subscribe_form">
                 <input type="hidden" name="result_ids" value="newsletters_subscribe_form" />

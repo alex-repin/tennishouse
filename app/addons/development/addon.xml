@@ -43,6 +43,13 @@
                             <item lang="ru">Скидка для нового подписчика</item>
                         </translations>
                     </item>
+                    <item id="new_subscriber_days_limit">
+                        <type>input</type>
+                        <default_value>365</default_value>
+                        <translations>
+                            <item lang="ru">Новый подписчки (сколько дней без заказов)</item>
+                        </translations>
+                    </item>
                 </items>
             </section>
             <section id="vk">
@@ -147,6 +154,27 @@
                         <default_value>2</default_value>
                         <translations>
                             <item lang="ru">Лимит за период времени</item>
+                        </translations>
+                    </item>
+                </items>
+            </section>
+            <section id="subscription">
+                <translations>
+                    <item lang="ru">Промо для подписчиков</item>
+                </translations>
+                <items>
+                    <item id="new_subscriber_promo">
+                        <type>input</type>
+                        <default_value>7</default_value>
+                        <translations>
+                            <item lang="ru">Срок действия промо кода (дн.)</item>
+                        </translations>
+                    </item>
+                    <item id="new_subscriber_days_limit">
+                        <type>input</type>
+                        <default_value>365</default_value>
+                        <translations>
+                            <item lang="ru">Новый подписчки (сколько дней без заказов)</item>
                         </translations>
                     </item>
                 </items>
@@ -457,7 +485,7 @@
             ALTER TABLE `cscart_products` ADD `warehouse_ids` TEXT NOT NULL AFTER `likes`;
         </item>
         <item>
-            CREATE TABLE `cscart_warehouse_brands` (
+            CREATE TABLE IF NOT EXISTS `cscart_warehouse_brands` (
                 `pair_id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `warehouse_id` mediumint(8) UNSIGNED NOT NULL,
                 `brand_id` mediumint(8) UNSIGNED NOT NULL,
@@ -493,6 +521,13 @@
         </item>
         <item>
             ALTER TABLE `cscart_subscribers` ADD `status` CHAR(1) NOT NULL DEFAULT 'H';
+        </item>
+        <item>
+            CREATE TABLE IF NOT EXISTS `cscart_promo_codes` (
+                `promo_code` varchar(32) NOT NULL,
+                `expire` int(11) UNSIGNED NOT NULL,
+                UNIQUE KEY `promo_code` (`promo_code`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
         </item>
     </queries>
     <language_variables>
@@ -1074,10 +1109,10 @@
         <item lang="ru" id="found_cheaper_offer"><![CDATA[<p style="font-size: 16px;">Нашли дешевле? Снизим цену!</p><p>Если у конкурента цена ниже &mdash; вернем разницу! Просто добавьте в комментарии к заказу ссылку на магазин с желаемой ценой или позвоните по телефону +7 (499) 393-39-87</p>]]></item>
         <item lang="ru" id="newsletter_subscribe_text">Получать информацию об акциях, скидках и предложениях</item>
         <item lang="ru" id="newsletter_subscribe_title">Акции, скидки и специальные предложения</item>
-        <item lang="ru" id="subscribe_confirmation_sent">Письмо с подтверждением отправлено Вам на почту. Подписка будет активирована после подтверждения адреса почты</item>
+        <item lang="ru" id="subscribe_confirmation_sent">Спасибо за подписку, теперь вы будете в курсе всех выгодных акций ! Письмо с подтверждением отправлено Вам на почту.</item>
+        <item lang="ru" id="subscribe_confirmation">Спасибо за подписку, теперь вы будете в курсе всех выгодных акций !</item>
         <item lang="ru" id="text_confirm_subscription_email">Для активации подписки, пожалуйста, пройдите по следующей ссылке</item>
-        <item lang="ru" id="text_decline_subscription_email"><![CDATA[<p>Если Вы получили это письмо по ошибке и Вы не подписывались на рассылку <a href="http://www.tennishouse.ru" target="_blank">TennisHouse.ru</a>, то кликайте</p>]]></item>
-        <item lang="ru" id="newsletter_subscribe_text">Получать информацию об акциях, скидках и предложениях</item>
+        <item lang="ru" id="text_decline_subscription_email"><![CDATA[Если Вы получили это письмо по ошибке и Вы не подписывались на рассылку <a href="http://www.tennishouse.ru" target="_blank">TennisHouse.ru</a>, то кликайте [link]]]></item>
         <item lang="ru" id="text_new_subscriber">Спасибо, что выбрали TennisHouse! Делать покупки с нами выгодно и удобно, мы всегда предлагаем теннисный инвентарь по доступным ценам.</item>
         <item lang="ru" id="text_new_subscriber_promo"><![CDATA[Дарим вам <b>скидку [percent]% по промокоду: [promo]</b> на первую покупку. Оцените все наши преимущества, сделайте покупку прямо сейчас!]]></item>
     </language_variables>

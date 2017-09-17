@@ -15,6 +15,7 @@
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 Use Tygh\Registry;
+use Tygh\Mailer;
 
 // Add email to maillist
 if ($mode == 'add_subscriber') {
@@ -31,6 +32,7 @@ if ($mode == 'add_subscriber') {
         // First check if subscriber's email already in the list
         $subscriber = db_get_row("SELECT * FROM ?:subscribers WHERE email = ?s", $_REQUEST['subscribe_email']);
 
+        $confirmation_text = '';
         if (empty($subscriber)) {
             $_data = array(
                 'email' => $_REQUEST['subscribe_email'],
@@ -40,22 +42,27 @@ if ($mode == 'add_subscriber') {
 
             $subscriber_id = db_query("INSERT INTO ?:subscribers ?e", $_data);
             $subscriber = db_get_row("SELECT * FROM ?:subscribers WHERE subscriber_id = ?i", $subscriber_id);
-            fn_print_die($subscriber);
+            $confirmation_text = __('subscribe_confirmation');
             if (!empty(Registry::get('addons.development.new_subscriber_promo'))) {
-                
+                $time_limit = TIME - Registry::get('addons.development.new_subscriber_days_limit') * 24 * 60 * 60;
+                $has_orders = db_get_field("SELECT order_id FROM ?:orders WHERE email = ?s AND timestamp >= ?i", strtolower($subscriber['email']), TIME - Registry::get('addons.development.new_subscriber_days_limit') * 24 * 60 * 60);
+                if (empty($has_orders)) {
+                    $promo_code = fn_generate_code('', rand(10, 15));
+                    fn_print_die($promo_code);
+                    // send confirmation email for each mailing list
+                    $ekey = fn_generate_ekey($subscriber_id, 'S', SECONDS_IN_DAY * 365);
+                    Mailer::sendMail(array(
+                        'to' => $subscriber['email'],
+                        'from' => 'company_newsletter_email',
+                        'data' => array(
+                            'ekey' => $ekey
+                        ),
+                        'tpl' => 'addons/news_and_emails/confirm_email.tpl',
+                        'company_id' => $user_data['company_id']
+                    ), 'C', CART_LANGUAGE);
+                    $confirmation_text = __('subscribe_confirmation_sent');
+                }
             }
-            // send confirmation email for each mailing list
-            $ekey = fn_generate_ekey($subscriber_id, 'S', SECONDS_IN_DAY * 365);
-            Mailer::sendMail(array(
-                'to' => $subscriber['email'],
-                'from' => 'company_newsletter_email',
-                'data' => array(
-                    'ekey' => $ekey
-                ),
-                'tpl' => 'addons/news_and_emails/confirm_email.tpl',
-                'company_id' => $user_data['company_id']
-            ), 'C', $lang_code);
-            Registry::get('view')->assign('confirmation_sent', true);
         } else {
             $subscriber_id = $subscriber['subscriber_id'];
         }
@@ -65,8 +72,9 @@ if ($mode == 'add_subscriber') {
         list($lists) = fn_get_mailing_lists();
         fn_update_subscriptions($subscriber_id, array_keys($lists), NULL, fn_get_notification_rules(true));
 
-        fn_set_notification('N', __('congratulations'), __('text_subscriber_added'));
+//         fn_set_notification('N', __('congratulations'), __('text_subscriber_added'));
 
+        Registry::get('view')->assign('confirmation_text', $confirmation_text);
         Registry::get('view')->display('addons/news_and_emails/blocks/static_templates/subscribe.tpl');
         /*} else {
             fn_set_notification('E', __('error'), __('error_email_already_subscribed'));
