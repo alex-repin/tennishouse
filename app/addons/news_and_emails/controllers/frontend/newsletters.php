@@ -43,19 +43,23 @@ if ($mode == 'add_subscriber') {
             $subscriber_id = db_query("INSERT INTO ?:subscribers ?e", $_data);
             $subscriber = db_get_row("SELECT * FROM ?:subscribers WHERE subscriber_id = ?i", $subscriber_id);
             $confirmation_text = __('subscribe_confirmation');
-            if (!empty(Registry::get('addons.development.new_subscriber_promo'))) {
-                $time_limit = TIME - Registry::get('addons.development.new_subscriber_days_limit') * 24 * 60 * 60;
-                $has_orders = db_get_field("SELECT order_id FROM ?:orders WHERE email = ?s AND timestamp >= ?i", strtolower($subscriber['email']), TIME - Registry::get('addons.development.new_subscriber_days_limit') * 24 * 60 * 60);
+            if (Registry::get('addons.development.promo_expiration') > 0) {
+                $has_orders = db_get_field("SELECT order_id FROM ?:orders WHERE email = ?s AND timestamp >= ?i", strtolower($subscriber['email']), TIME - Registry::get('addons.development.new_subscriber_days_limit') * SECONDS_IN_DAY);
                 if (empty($has_orders)) {
-                    $promo_code = fn_generate_code('', rand(10, 15));
-                    fn_print_die($promo_code);
+                    $promo = array(
+                        'promo_code' => fn_generate_code('', rand(10, 15)),
+                        'expire' => TIME + Registry::get('addons.development.promo_expiration') * SECONDS_IN_DAY
+                    );
+                    db_query("REPLACE INTO ?:promo_codes ?e", $promo);
+                    
                     // send confirmation email for each mailing list
                     $ekey = fn_generate_ekey($subscriber_id, 'S', SECONDS_IN_DAY * 365);
                     Mailer::sendMail(array(
                         'to' => $subscriber['email'],
                         'from' => 'company_newsletter_email',
                         'data' => array(
-                            'ekey' => $ekey
+                            'ekey' => $ekey,
+                            'promo' => $promo
                         ),
                         'tpl' => 'addons/news_and_emails/confirm_email.tpl',
                         'company_id' => $user_data['company_id']

@@ -163,7 +163,14 @@
                     <item lang="ru">Промо для подписчиков</item>
                 </translations>
                 <items>
-                    <item id="new_subscriber_promo">
+                    <item id="promo_id">
+                        <type>input</type>
+                        <default_value>39</default_value>
+                        <translations>
+                            <item lang="ru">ID промо</item>
+                        </translations>
+                    </item>
+                    <item id="promo_expiration">
                         <type>input</type>
                         <default_value>7</default_value>
                         <translations>
@@ -1115,5 +1122,6 @@
         <item lang="ru" id="text_decline_subscription_email"><![CDATA[Если Вы получили это письмо по ошибке и Вы не подписывались на рассылку <a href="http://www.tennishouse.ru" target="_blank">TennisHouse.ru</a>, то кликайте [link]]]></item>
         <item lang="ru" id="text_new_subscriber">Спасибо, что выбрали TennisHouse! Делать покупки с нами выгодно и удобно, мы всегда предлагаем теннисный инвентарь по доступным ценам.</item>
         <item lang="ru" id="text_new_subscriber_promo"><![CDATA[Дарим вам <b>скидку [percent]% по промокоду: [promo]</b> на первую покупку. Оцените все наши преимущества, сделайте покупку прямо сейчас!]]></item>
+        <item lang="ru" id="choose_and_buy">Выбрать и купить</item>
     </language_variables>
 </addon>
