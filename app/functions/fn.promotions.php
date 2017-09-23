@@ -88,10 +88,12 @@ function fn_get_promotions($params, $items_per_page = 0, $lang_code = CART_LANGU
     }
 
     if (!empty($params['coupon_code'])) {
+        $join .= db_quote(" LEFT JOIN ?:promo_codes ON ?:promo_codes.promotion_id = ?:promotions.promotion_id");
         $condition .= db_quote(
-            " AND (CONCAT(LOWER(?:promotions.conditions_hash), ';') LIKE ?l OR CONCAT(LOWER(?:promotions.conditions_hash), ';') LIKE ?l)",
+            " AND (CONCAT(LOWER(?:promotions.conditions_hash), ';') LIKE ?l OR CONCAT(LOWER(?:promotions.conditions_hash), ';') LIKE ?l OR ?:promo_codes.promo_code = ?s)",
             "%coupon_code={$params['coupon_code']};%",
-            "%auto_coupons={$params['coupon_code']};%"
+            "%auto_coupons={$params['coupon_code']};%",
+            $params['coupon_code']
         );
     }
 
@@ -557,7 +559,9 @@ function fn_promotion_check($promotion_id, $condition, &$data, &$auth, &$cart_pr
     // if this is the conditions group, check each condition in cycle
     if (!empty($condition['conditions'])) {
         foreach ($condition['conditions'] as $cond) {
-            if (!empty($cond['condition']) && ($cond['condition'] == 'coupon_code' || $cond['condition'] == 'auto_coupons')) {
+            // [tennishouse]
+            if (!empty($cond['condition']) && ($cond['condition'] == 'coupon_code' || $cond['condition'] == 'auto_coupons' || $cond['condition'] == 'promo_codes')) {
+            // [tennishouse]
                 $data['has_coupons'] = true;
             }
 
@@ -658,6 +662,10 @@ function fn_promotion_validate($promotion_id, $promotion, &$data, &$auth, &$cart
                 }
 
                 $value = $data[$schema[$promotion['condition']]['field']];
+                // Take into account reward points etc
+                if ($schema[$promotion['condition']]['field'] == 'subtotal') {
+                    $value -= $data['subtotal_discount'];
+                }
 
                 if (!empty($data['parent_order_id']) && !empty($parent_orders[$data['parent_order_id']][$schema[$promotion['condition']]['field']])) {
                     $parent_order_value = $parent_orders[$data['parent_order_id']][$schema[$promotion['condition']]['field']];
@@ -1026,6 +1034,9 @@ function fn_promotion_post_processing($status_to, $status_from, $order_info, $fo
         // Post processing
         if (fn_status_is_positive($order_statuses[$status_to], true)) {
             db_query("UPDATE ?:promotions SET number_of_usages = number_of_usages + 1 WHERE promotion_id IN (?n)", array_keys($order_info['promotions']));
+            if (!empty($order_info['coupons'])) {
+                db_query("DELETE FROM ?:promo_codes WHERE promo_code IN (?a)", array_keys($order_info['coupons']));
+            }
         } else {
             db_query("UPDATE ?:promotions SET number_of_usages = number_of_usages - 1 WHERE promotion_id IN (?n)", array_keys($order_info['promotions']));
         }

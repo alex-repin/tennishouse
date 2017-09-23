@@ -78,6 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }
         }
+        fn_set_notification('N', __('notice'), __('done'));;
         exit;
     }
     
@@ -1170,8 +1171,9 @@ if ($mode == 'calculate_balance') {
             $data = array(
                 'email' => $email_data['email'],
                 'timestamp' => $email_data['timestamp'],
+                'status' => 'C'
             );
-            $subscriber_id = db_query("INSERT INTO ?:subscribers ?e", $data);
+            $subscriber_id = db_query("REPLACE INTO ?:subscribers ?e", $data);
             if (!empty($page_mailing_lists)) {
                 fn_update_subscriptions($subscriber_id, array_keys($page_mailing_lists), $confirmed);
             }
@@ -1180,8 +1182,35 @@ if ($mode == 'calculate_balance') {
     }
     fn_echo('Done');
     exit;
+} elseif ($mode == 'status_subscribers') {
+    $ordered = db_get_fields("SELECT ?:subscribers.subscriber_id FROM ?:subscribers INNER JOIN ?:orders ON ?:orders.email = ?:subscribers.email AND ?:orders.email != ''");
+    db_query("UPDATE ?:subscribers SET status = 'C' WHERE subscriber_id IN (?n)", $ordered);
+    
+    $subs_ids = db_get_fields("SELECT ?:subscribers.subscriber_id FROM ?:subscribers WHERE email IN ('','noemail@tennishouse.ru')");
+    db_query("DELETE FROM ?:subscribers WHERE subscriber_id IN (?n)", $subs_ids);
+    db_query("DELETE FROM ?:user_mailing_lists WHERE subscriber_id IN (?n)", $subs_ids);
+    
+    fn_echo('Done');
+    exit;
+} elseif ($mode == 'check_pending') {
+    $emails = db_get_hash_single_array("SELECT email, subscriber_id FROM ?:subscribers WHERE status = 'C'", array('subscriber_id', 'email'));
+    $result = $result1 = array();
+    foreach ($emails as $id => $email) {
+        $mailSegments = explode('@', $email);
+        $result1[$mailSegments[1]][] = $email;
+//         $res = checkdnsrr($mailSegments[1]);
+//         if ($res) {
+//             $result['C'][] = $id;
+//         } else {
+//             $result['L'][] = $id;
+//         }
+    }
+    fn_print_die($result1);
+    db_query("UPDATE ?:subscribers SET status = 'L' WHERE subscriber_id IN (?a)", $result['L']);
+    fn_echo('Done');
+    exit;
 } elseif ($mode == 'validate_email') {
-    $subscribers = db_get_hash_single_array("SELECT email, subscriber_id FROM ?:subscribers", array('subscriber_id', 'email'));
+    $subscribers = db_get_hash_single_array("SELECT email, subscriber_id FROM ?:subscribers WHERE status = 'P'", array('subscriber_id', 'email'));
     
     foreach ($subscribers as $_id => $email) {
         $result = false;

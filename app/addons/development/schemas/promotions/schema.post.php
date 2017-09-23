@@ -19,5 +19,15 @@ $scheme['conditions']['warehouses'] = array(
     'field_function' => array('fn_promotions_check_warehouses', '#this', '@product'),
     'zones' => array('catalog')
 );
+$scheme['conditions']['promo_codes'] = array(
+    'type' => 'list',
+    'field_function' => array('fn_promotion_validate_promo_code', '#this', '@cart', '#id'),
+    'zones' => array('cart'),
+    'applicability' => array( // applicable for "positive" groups only
+        'group' => array(
+            'set_value' => true
+        ),
+    ),
+);
 
 return $scheme;

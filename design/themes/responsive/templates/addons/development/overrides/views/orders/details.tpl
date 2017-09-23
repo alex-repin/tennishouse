@@ -214,7 +214,7 @@
                                 {foreach from=$order_info.coupons item="coupon" key="key"}
                                     <tr class="ty-orders-summary__row">
                                         <td class="ty-nowrap">{__("coupon")}:</td>
-                                        <td data-ct-orders-summary="summary-coupons">{$key}</td>
+                                        <td data-ct-orders-summary="summary-coupons">{$key|strtoupper}</td>
                                     </tr>
                                 {/foreach}
                             {/if}

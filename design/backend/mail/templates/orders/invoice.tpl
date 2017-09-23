@@ -275,7 +275,7 @@
                 {foreach from=$order_info.coupons item="coupon" key="key"}
                 <tr>
                     <td style="text-align: right; white-space: nowrap; font-size: 12px; font-family: Arial;"><b>{__("coupon")}:</b>&nbsp;</td>
-                    <td style="text-align: right; white-space: nowrap; font-size: 12px; font-family: Arial;">{$key}</td>
+                    <td style="text-align: right; white-space: nowrap; font-size: 12px; font-family: Arial;">{$key|strtoupper}</td>
                 </tr>
                 {/foreach}
                 {/if}

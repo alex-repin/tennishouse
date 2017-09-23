@@ -186,6 +186,27 @@
                     </item>
                 </items>
             </section>
+            <section id="recaptcha">
+                <translations>
+                    <item lang="ru">reCAPTCHA</item>
+                </translations>
+                <items>
+                    <item id="site_key">
+                        <type>input</type>
+                        <default_value>6LfQITEUAAAAAMiWeKBs9ww7olumiD_ukqoZWLb6</default_value>
+                        <translations>
+                            <item lang="ru">Site key</item>
+                        </translations>
+                    </item>
+                    <item id="secret_key">
+                        <type>input</type>
+                        <default_value>6LfQITEUAAAAAOxsFpP0tA8u_rtdxO3US1qVFYah</default_value>
+                        <translations>
+                            <item lang="ru">Secret key</item>
+                        </translations>
+                    </item>
+                </items>
+            </section>
         </sections>
     </settings>
     <compatibility>
@@ -533,6 +554,7 @@
             CREATE TABLE IF NOT EXISTS `cscart_promo_codes` (
                 `promo_code` varchar(32) NOT NULL,
                 `expire` int(11) UNSIGNED NOT NULL,
+                `promotion_id` MEDIUMINT(8) UNSIGNED NOT NULL,
                 UNIQUE KEY `promo_code` (`promo_code`)
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
         </item>
@@ -1119,9 +1141,12 @@
         <item lang="ru" id="subscribe_confirmation_sent">Спасибо за подписку, теперь вы будете в курсе всех выгодных акций ! Письмо с подтверждением отправлено Вам на почту.</item>
         <item lang="ru" id="subscribe_confirmation">Спасибо за подписку, теперь вы будете в курсе всех выгодных акций !</item>
         <item lang="ru" id="text_confirm_subscription_email">Для активации подписки, пожалуйста, пройдите по следующей ссылке</item>
-        <item lang="ru" id="text_decline_subscription_email"><![CDATA[Если Вы получили это письмо по ошибке и Вы не подписывались на рассылку <a href="http://www.tennishouse.ru" target="_blank">TennisHouse.ru</a>, то кликайте [link]]]></item>
+        <item lang="ru" id="text_decline_subscription_email">Если Вы получили это письмо по ошибке и Вы не подписывались на нашу рассылку, то кликайте [link].</item>
         <item lang="ru" id="text_new_subscriber">Спасибо, что выбрали TennisHouse! Делать покупки с нами выгодно и удобно, мы всегда предлагаем теннисный инвентарь по доступным ценам.</item>
-        <item lang="ru" id="text_new_subscriber_promo"><![CDATA[Дарим вам <b>скидку [percent]% по промокоду: [promo]</b> на первую покупку. Оцените все наши преимущества, сделайте покупку прямо сейчас!]]></item>
+        <item lang="ru" id="text_new_subscriber_promo"><![CDATA[<p>Дарим вам <strong>скидку [percent]% по промокоду: [promo]</strong> на первую покупку. Оцените все наши преимущества, сделайте покупку прямо сейчас!</p><p>Промокод действителен в течение [days] дней с момента получения этого письма.</p>]]></item>
         <item lang="ru" id="choose_and_buy">Выбрать и купить</item>
+        <item lang="ru" id="subscription_your_present">Ваш подарок на первую покупку !</item>
+        <item lang="ru" id="promotion_cond_promo_codes">Промокод</item>
+        <item lang="ru" id="newsletter_welcome_discount">Добро пожаловать на TennisHouse + СКИДКА [percent]% в подарок !</item>
     </language_variables>
 </addon>

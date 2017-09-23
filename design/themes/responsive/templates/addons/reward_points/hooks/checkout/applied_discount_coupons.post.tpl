@@ -1,11 +1,11 @@
-{if $cart.points_info.reward}
+{*if $cart.points_info.reward}
     <div class="ty-reward-points__info clearfix">
         <span>{__("points")}</span>
         <span class="ty-float-right">{include file="common/price.tpl" value=$cart.points_info.reward}</span>
     </div>
 {/if}
 
-{*if $runtime.mode == "checkout" && $cart_products && $cart.points_info.total_price && $user_info.points > 0}
+{if $runtime.mode == "checkout" && $cart_products && $cart.points_info.total_price && $user_info.points > 0}
     <form class="cm-ajax cm-ajax-full-render" name="point_payment_form" action="{""|fn_url}" method="post">
         <input type="hidden" name="redirect_mode" value="{$location}" />
         <input type="hidden" name="result_ids" value="checkout*,cart_status*" />

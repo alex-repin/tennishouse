@@ -133,7 +133,7 @@
                     {foreach from=$order_info.coupons key="coupon" item="_c"}
                         <tr>
                             <td>{__("discount_coupon")}:</td>
-                            <td data-ct-totals="discount_coupon">{$coupon}</td>
+                            <td data-ct-totals="discount_coupon">{$coupon|strtoupper}</td>
                         </tr>
                     {/foreach}
                 {/if}

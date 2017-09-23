@@ -157,7 +157,7 @@ function fn_get_product_data($product_id, &$auth, $lang_code = CART_LANGUAGE, $f
         if (!empty($product_data['full_description']) && empty($product_data['meta_description']) && defined('AUTO_META_DESCRIPTION') && AREA != 'A') {
             $product_data['meta_description'] = fn_generate_meta_description($product_data['full_description']);
         }
-
+        
         if (!empty($product_data['wh_inventory'])) {
             $amounts = explode('|', $product_data['wh_inventory']);
             $amount = 0;
@@ -170,8 +170,10 @@ function fn_get_product_data($product_id, &$auth, $lang_code = CART_LANGUAGE, $f
                 }
             }
             $product_data['amount'] = $amount;
+        } else {
+            $product_data['amount'] = 0;
         }
-
+        
         // If tracking with options is enabled, check if at least one combination has positive amount
 //         if (!empty($product_data['tracking'])) {
 //             if ($product_data['tracking'] == ProductTracking::TRACK_WITH_OPTIONS) {
@@ -7921,6 +7923,8 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
                 }
             }
             $products[$k]['amount'] = $amount;
+        } else {
+            $products[$k]['amount'] = 0;
         }
     }
     

@@ -2805,10 +2805,10 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
             if (!empty($cart['stored_subtotal_discount'])) {
                 $prev_discount = $cart['subtotal_discount'];
             }
-            if (!empty($cart['subtotal_discount'])) {
-                $prev_subtotal = $cart['subtotal'];
-                $cart['subtotal'] -= $cart['subtotal_discount'];
-            }
+//             if (!empty($cart['subtotal_discount'])) {
+//                 $prev_subtotal = $cart['subtotal'];
+//                 $cart['subtotal'] -= $cart['subtotal_discount'];
+//             }
             $cart['subtotal_discount'] = 0;
         }
         fn_set_hook('calculate_cart_items', $cart, $cart_products, $auth);
@@ -2819,9 +2819,9 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
             if (!empty($cart['stored_subtotal_discount'])) {
                 $cart['subtotal_discount'] = $prev_discount;
             }
-            if (!empty($cart['subtotal_discount'])) {
-                $cart['subtotal'] = $prev_subtotal;
-            }
+//             if (!empty($cart['subtotal_discount'])) {
+//                 $cart['subtotal'] = $prev_subtotal;
+//             }
         }
         // [tennishouse]
         fn_check_promotion_notices();

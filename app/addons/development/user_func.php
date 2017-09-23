@@ -22,6 +22,38 @@ use Tygh\Shippings\Shippings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_promotion_validate_promo_code(&$promotion, &$cart, $promotion_id = 0)
+{
+    // Check already applied coupons
+    if (!empty($cart['coupons'])) {
+        db_query("DELETE FROM ?:promo_codes WHERE expire < ?i", TIME);
+        $avail_codes = db_get_fields("SELECT promo_code FROM ?:promo_codes");
+        $codes = array();
+        if (!empty($avail_codes)) {
+            $coupons = array_keys($cart['coupons']);
+            foreach ($avail_codes as $expected_coupon_code) {
+                if (in_array(strtolower($expected_coupon_code), $coupons)) {
+                    $codes[] = $expected_coupon_code;
+                }
+            }
+        }
+
+        if (!empty($codes) && !empty($promotion_id)) {
+            $promotion['value'] .= (empty($promotion['value']) ? '' : ',') . implode(',', $codes);
+            foreach ($codes as $_code) {
+                $_code = strtolower($_code);
+                if (is_array($cart['coupons'][$_code]) && !in_array($promotion_id, $cart['coupons'][$_code])) {
+                    $cart['coupons'][$_code][] = $promotion_id;
+                }
+            }
+        }
+
+        return $codes;
+    }
+
+    return false;
+}
+
 function fn_get_subscriber_statuses($lang_code = CART_LANGUAGE)
 {
     $statuses = array (
