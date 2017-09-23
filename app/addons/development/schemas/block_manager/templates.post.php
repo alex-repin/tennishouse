@@ -175,10 +175,10 @@ $schema['addons/development/blocks/static_templates/catalog.tpl']['cache'] = arr
     'cache_level' => 'static',
     'no_object' => true
 );
-$schema['addons/news_and_emails/blocks/static_templates/subscribe.tpl']['cache'] = array(
-    'cache_level' => 'static',
-    'no_object' => true
-);
+// $schema['addons/news_and_emails/blocks/static_templates/subscribe.tpl']['cache'] = array(
+//     'cache_level' => 'static',
+//     'no_object' => true
+// );
 $schema['blocks/smarty_block.tpl']['cache'] = array(
     'cache_level' => 'static',
     'no_object' => true

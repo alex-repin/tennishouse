@@ -191,18 +191,75 @@
                     <item lang="ru">reCAPTCHA</item>
                 </translations>
                 <items>
-                    <item id="site_key">
+                    <item id="recaptcha_site_key">
                         <type>input</type>
                         <default_value>6LfQITEUAAAAAMiWeKBs9ww7olumiD_ukqoZWLb6</default_value>
                         <translations>
                             <item lang="ru">Site key</item>
                         </translations>
                     </item>
-                    <item id="secret_key">
+                    <item id="recaptcha_secret">
                         <type>input</type>
                         <default_value>6LfQITEUAAAAAOxsFpP0tA8u_rtdxO3US1qVFYah</default_value>
                         <translations>
                             <item lang="ru">Secret key</item>
+                        </translations>
+                    </item>
+                    <item id="recaptcha_theme">
+                        <type>selectbox</type>
+                        <default_value>light</default_value>
+                        <variants>
+                            <item id="light">
+                                <translations>
+                                    <item lang="ru">Светлая</item>
+                                </translations>
+                            </item>
+                            <item id="dark">
+                                <translations>
+                                    <item lang="ru">Темная</item>
+                                </translations>
+                            </item>
+                        </variants>
+                        <translations>
+                            <item lang="ru">Тема</item>
+                        </translations>
+                    </item>
+                    <item id="recaptcha_size">
+                        <type>selectbox</type>
+                        <default_value>normal</default_value>
+                        <variants>
+                            <item id="normal">
+                                <translations>
+                                    <item lang="ru">Обычный</item>
+                                </translations>
+                            </item>
+                            <item id="compact">
+                                <translations>
+                                    <item lang="ru">Компактный</item>
+                                </translations>
+                            </item>
+                        </variants>
+                        <translations>
+                            <item lang="ru">Размер</item>
+                        </translations>
+                    </item>
+                    <item id="recaptcha_type">
+                        <type>selectbox</type>
+                        <default_value>image</default_value>
+                        <variants>
+                            <item id="image">
+                                <translations>
+                                    <item lang="ru">Картинка</item>
+                                </translations>
+                            </item>
+                            <item id="audio">
+                                <translations>
+                                    <item lang="ru">Аудио</item>
+                                </translations>
+                            </item>
+                        </variants>
+                        <translations>
+                            <item lang="ru">Тип</item>
                         </translations>
                     </item>
                 </items>
