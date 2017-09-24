@@ -18,6 +18,11 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_social_buttons_settings_variants_image_verification_use_for(&$objects)
+{
+    $objects['email_share'] = __('use_for_email_share');
+}
+
 function fn_get_sb_provider_settings($params)
 {
     $view = Registry::get('view');

@@ -12,37 +12,28 @@
 * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
 ****************************************************************************/
 
-if (!defined('BOOTSTRAP')) { die('Access denied'); }
+use Tygh\Registry;
 
-// types
-define('NEWSLETTER_TYPE_NEWSLETTER', 'N');
-define('NEWSLETTER_TYPE_TEMPLATE', 'T');
-define('NEWSLETTER_TYPE_AUTORESPONDER', 'A');
-
-fn_register_hooks(
-    'is_accessible_discussion',
-    'get_discussion_object_data',
-    'get_discussion_objects',
-    'get_block_locations',
-    'localization_objects',
-    'save_log',
-    'sitemap_link_object',
-    'customer_search_objects',
-    'generate_rss_feed',
-    'get_predefined_statuses',
-    'delete_company',
-    'settings_variants_image_verification_use_for',
-
-    array('get_news_data', '', 'seo'),
-    array('get_news_data_post', '', 'seo'),
-    array('get_news', '', 'seo'),
-    array('get_news_post', '', 'seo'),
-    array('update_news', '', 'seo'),
-    array('delete_news', '', 'seo')
-);
-
-if (fn_allowed_for('ULTIMATE')) {
-    fn_register_hooks(
-        'ult_check_store_permission'
+/**
+ * Gets settings variants for the option 'Image verification: Use for'
+ *
+ * @return array Available objects
+ */
+function fn_settings_variants_image_verification_use_for()
+{
+    $objects = array(
+        'login' => __('use_for_login'),
+        'register' => __('use_for_register'),
+        'checkout' => __('use_for_checkout'),
+        'track_orders' => __('use_for_track_orders'),
     );
+
+    /**
+     * Add objects that should use 'Image verification'
+     *
+     * @param array $objects Available objects
+     */
+    fn_set_hook('settings_variants_image_verification_use_for', $objects);
+
+    return $objects;
 }

@@ -86,6 +86,7 @@ if (!db_initiate(Registry::get('config.db_host'), Registry::get('config.db_user'
     throw new DatabaseException('Cannot connect to the database server');
 }
 $application->register(new \Tygh\Providers\SessionProvider());
+$application->register(new Tygh\Providers\CommonProvider());
 
 register_shutdown_function(array('\\Tygh\\Registry', 'save'));
 

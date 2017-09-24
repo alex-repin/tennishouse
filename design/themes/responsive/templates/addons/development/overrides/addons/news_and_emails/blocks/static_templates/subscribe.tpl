@@ -15,7 +15,7 @@
                     <label class="cm-required cm-email ty-control-group__title" for="subscr_email{$block.block_id}">{__("email")}</label>
                     <input type="text" name="subscribe_email" id="subscr_email{$block.block_id}" size="20" placeholder="{__("enter_email")}" class="ty-input-text-large" />
                 </div>
-                {include file="common/image_verification.tpl" option="use_for_newsletter" align="left"}
+                {include file="common/image_verification.tpl" option="newsletter" align="left"}
                 {include file="buttons/button.tpl" but_text=__("subscribe") but_meta="ty-btn__secondary" but_name="dispatch[newsletters.add_subscriber]"}
             </form>
         {/if}

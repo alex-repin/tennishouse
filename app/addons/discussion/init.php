@@ -38,5 +38,6 @@ fn_register_hooks(
     'init_secure_controllers',
     'update_company',
     'get_status_params_definition',
-    'get_order_info'
+    'get_order_info',
+    'settings_variants_image_verification_use_for'
 );

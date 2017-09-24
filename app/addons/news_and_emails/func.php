@@ -18,6 +18,11 @@ use Tygh\BlockManager\Block;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_news_and_emails_settings_variants_image_verification_use_for(&$objects)
+{
+    $objects['newsletter'] = __('use_for_newsletters');
+}
+
 //
 // Get all news data
 //

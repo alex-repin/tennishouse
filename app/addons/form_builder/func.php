@@ -16,6 +16,11 @@ use Tygh\Mailer;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_form_builder_settings_variants_image_verification_use_for(&$objects)
+{
+    $objects['form_builder'] = __('use_for_form_builder');
+}
+
 function fn_form_builder_demo_install()
 {
     // Get admin account information and update "Email to" field in the "Contact us" page

@@ -19,6 +19,11 @@ use Tygh\Navigation\LastView;
 use Tygh\BlockManager\Block;
 use Tygh\Mailer;
 
+function fn_call_requests_settings_variants_image_verification_use_for(&$objects)
+{
+    $objects['call_request'] = __('call_requests.use_for_call_requests');
+}
+
 function fn_call_requests_info()
 {
     return Registry::get('view')->fetch('addons/call_requests/settings/info.tpl');

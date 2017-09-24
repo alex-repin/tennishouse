@@ -615,6 +615,12 @@
                 UNIQUE KEY `promo_code` (`promo_code`)
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
         </item>
+        <item>
+            INSERT INTO `cscart_settings_objects` (`object_id`, `edition_type`, `name`, `section_id`, `section_tab_id`, `type`, `value`, `position`, `is_global`, `handler`, `parent_id`) VALUES ('7023', 'ROOT', 'use_for', '11', '0', 'N', '#M#register=Y&form_builder=Y&email_share=Y&discussion=Y&checkout=Y&polls=Y&newsletter=Y', '5', 'Y', '', '0');
+        </item>
+        <item>
+            INSERT INTO `cscart_settings_descriptions` (`object_id`, `object_type`, `lang_code`, `value`, `tooltip`) VALUES ('7023', 'O', 'ru', 'Использовать для', '');
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -1205,5 +1211,12 @@
         <item lang="ru" id="subscription_your_present">Ваш подарок на первую покупку !</item>
         <item lang="ru" id="promotion_cond_promo_codes">Промокод</item>
         <item lang="ru" id="newsletter_welcome_discount">Добро пожаловать на TennisHouse + СКИДКА [percent]% в подарок !</item>
+        <item lang="ru" id="use_for_register">Форма создания и редактирования профиля</item>
+        <item lang="ru" id="use_for_checkout">Форма оформления заказа (информация о пользователе)</item>
+        <item lang="ru" id="use_for_track_orders">Форма отслеживания заказа</item>
+        <item lang="ru" id="use_for_form_builder">Пользовательские формы</item>
+        <item lang="ru" id="call_requests.use_for_call_requests">Форм обратного звонка и покупки в 1 клик</item>
+        <item lang="ru" id="use_for_newsletters">Форма подписки</item>
+        <item lang="ru" id="use_for_discussion">Формы «Отзывы и комментарии»</item>
     </language_variables>
 </addon>

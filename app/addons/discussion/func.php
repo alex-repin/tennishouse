@@ -17,6 +17,11 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_discussion_settings_variants_image_verification_use_for(&$objects)
+{
+    $objects['discussion'] = __('use_for_discussion');
+}
+
 function fn_discussion_get_order_info(&$order, $additional_data)
 {
     $prod_ids = $prod_names = array();

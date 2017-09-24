@@ -19,8 +19,32 @@ use Tygh\Http;
 use Tygh\FeaturesCache;
 use Tygh\Menu;
 use Tygh\Shippings\Shippings;
+use Tygh\Settings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
+
+function fn_recaptcha_image_verification_settings_proxy()
+{
+    $view = Registry::get('view');
+    $settings = Settings::instance();
+    $proxied_section = $settings->getSectionByName('Image_verification');
+    $proxied_setting_objects = $settings->getList($proxied_section['section_id'], 0);
+
+    $output = '';
+    foreach ($proxied_setting_objects as $subsection_name => $setting_objects) {
+        foreach ($setting_objects as $setting_object) {
+            $view->assign('item', $setting_object);
+            $view->assign('section', $proxied_section['section_id']);
+            $view->assign('html_name', "addon_data[options][{$setting_object['object_id']}]");
+            $view->assign('class', 'setting-wide');
+            $view->assign('html_id', "addon_option_recaptcha_{$setting_object['name']}");
+
+            $output .= $view->fetch('common/settings_fields.tpl');
+        }
+    }
+
+    return $output;
+}
 
 function fn_promotion_validate_promo_code(&$promotion, &$cart, $promotion_id = 0)
 {

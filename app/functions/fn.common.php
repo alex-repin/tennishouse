@@ -1924,42 +1924,34 @@ function fn_unicode_to_utf8($str)
     return $str;
 }
 
-function fn_image_verification($condition, $req)
+/**
+ * @deprecated 4.5.1 All user request validation routines were moved to the "recaptcha" add-on.
+ *                   This function will only work as intended when that add-on is installed, enabled and configured properly.
+ */
+function fn_image_verification($scenario, $http_request_data)
 {
-    if (fn_needs_image_verification($condition) == false) {
-        return true;
-    }
+    /** @var Antibot $antibot */
+    $antibot = Tygh::$app['antibot'];
 
-    $verification_id = !empty($req['verification_id']) ? $req['verification_id'] : '';
-    $verification_answer = !empty($req['verification_answer']) ? $req['verification_answer'] : '';
+    $validation_result = $antibot->validateHttpRequestByScenario((string) $scenario, (array) $http_request_data);
 
-    if (PhpCaptcha::Validate($verification_id, $verification_answer) == false) {
+    if (!$validation_result) {
         fn_set_notification('E', __('error'), __('error_confirmation_code_invalid'));
-
-        return false;
     }
 
-    // Do no use verification after first correct validation
-    if (Registry::get('settings.Image_verification.hide_after_validation') == 'Y') {
-        $_SESSION['image_verification_ok'] = true;
-    }
-
-    return true;
+    return $validation_result;
 }
 
-function fn_needs_image_verification($condition)
+/**
+ * @deprecated 4.5.1 All user request validation routines were moved to the "recaptcha" add-on.
+ *                   This function will only work as intended when that add-on is installed, enabled and configured properly.
+ */
+function fn_needs_image_verification($scenario)
 {
-    $auth = & $_SESSION['auth'];
+    /** @var Antibot $antibot */
+    $antibot = Tygh::$app['antibot'];
 
-    return
-        !(
-            Registry::get('settings.Image_verification.' . $condition) != 'Y' ||
-            Registry::get('config.tweaks.disable_captcha') == true ||
-            (Registry::get('settings.Image_verification.hide_if_logged') == "Y" && $auth['user_id']) ||
-            !empty($_SESSION['image_verification_ok']) ||
-            (Registry::get('settings.Image_verification.hide_if_has_js') == "Y" && !empty($_SESSION['image_verification_js']))// for future
-        );
-
+    return $antibot->isValidationRequiredForSession() && $antibot->isValidationRequiredForScenario($scenario);
 }
 
 function fn_array_key_intersect(&$a, &$b)
