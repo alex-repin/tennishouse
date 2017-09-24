@@ -1,6 +1,3 @@
-{script src="js/addons/development/jquery.mobile-1.4.5.min.js"}
-{script src="js/addons/development/jquery.kladr.min.js"}
-
 {if $app.antibot->getDriver()|get_class == "Tygh\Addons\Recaptcha\RecaptchaDriver"}
 <script type="text/javascript">
     (function (_, $) {
@@ -26,6 +23,9 @@
 {script src="js/addons/development/recaptcha.js"}
 <script src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoaded&render=explicit"></script>
 {/if}
+
+{script src="js/addons/development/jquery.mobile-1.4.5.min.js"}
+{script src="js/addons/development/jquery.kladr.min.js"}
 
 <script type="text/javascript">
 var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';

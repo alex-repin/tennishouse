@@ -30,7 +30,8 @@
                     {include file="buttons/login.tpl" but_name="dispatch[auth.login]" but_role="submit"}
                 </div>
                 <div class="ty-login__remember-me">
-                    <label for="remember_me_{$id}" class="ty-login__remember-me-label"><input class="checkbox" type="checkbox" name="remember_me" id="remember_me_{$id}" value="Y" />{__("remember_me")}</label>
+                    <input class="checkbox" type="checkbox" name="remember_me" id="remember_me_{$id}" value="Y" />
+                    <label for="remember_me_{$id}" class="ty-login__remember-me-label">{__("remember_me")}</label>
                 </div>
             </div>
         {/hook}

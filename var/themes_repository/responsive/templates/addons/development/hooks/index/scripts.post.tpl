@@ -1,14 +1,4 @@
-{script src="js/addons/development/jquery.selectbox-0.2.js"}
-{script src="js/addons/development/jquery.mCustomScrollbar.concat.min.js"}
-
-{script src="js/addons/development/jquery.kladr.min.js"}
-{*script src="js/addons/development/core.js"}
-{script src="js/addons/development/kladr.js"}
-{script src="js/addons/development/kladr_zip.js"*}
-
-{script src="js/addons/development/jquery.roundabout.min.js"}
-{script src="js/addons/development/jquery.roundabout-shapes.min.js"}
-
+{if $app.antibot->getDriver()|get_class == "Tygh\Addons\Recaptcha\RecaptchaDriver"}
 <script type="text/javascript">
     (function (_, $) {
         _.tr({
@@ -32,7 +22,19 @@
 </script>
 {script src="js/addons/development/recaptcha.js"}
 <script src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoaded&render=explicit"></script>
-    
+{/if}
+
+{script src="js/addons/development/jquery.selectbox-0.2.js"}
+{script src="js/addons/development/jquery.mCustomScrollbar.concat.min.js"}
+
+{script src="js/addons/development/jquery.kladr.min.js"}
+{*script src="js/addons/development/core.js"}
+{script src="js/addons/development/kladr.js"}
+{script src="js/addons/development/kladr_zip.js"*}
+
+{script src="js/addons/development/jquery.roundabout.min.js"}
+{script src="js/addons/development/jquery.roundabout-shapes.min.js"}
+
 <script type="text/javascript">
 var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
 
