@@ -1,6 +1,32 @@
 {script src="js/addons/development/jquery.mobile-1.4.5.min.js"}
 {script src="js/addons/development/jquery.kladr.min.js"}
 
+{if $app.antibot->getDriver()|get_class == "Tygh\Addons\Recaptcha\RecaptchaDriver"}
+<script type="text/javascript">
+    (function (_, $) {
+        _.tr({
+            error_validator_recaptcha: '{__("error_validator_recaptcha")|escape:"javascript"}'
+        });
+
+        $.extend(_, {
+            recaptcha_settings: {
+                site_key: '{$addons.development.recaptcha_site_key|escape:javascript nofilter}',
+                theme: '{$addons.development.recaptcha_theme|escape:javascript nofilter}',
+                type: '{$addons.development.recaptcha_type|escape:javascript nofilter}',
+                size: '{$addons.development.recaptcha_size|escape:javascript nofilter}'
+            }
+        });
+    }(Tygh, Tygh.$));
+
+    // Proxies event handler to class method
+    window.onRecaptchaLoaded = function () {
+        Tygh.onRecaptchaLoaded();
+    };
+</script>
+{script src="js/addons/development/recaptcha.js"}
+<script src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoaded&render=explicit"></script>
+{/if}
+
 <script type="text/javascript">
 var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
 

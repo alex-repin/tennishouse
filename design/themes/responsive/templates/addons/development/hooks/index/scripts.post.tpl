@@ -9,6 +9,7 @@
 {script src="js/addons/development/jquery.roundabout.min.js"}
 {script src="js/addons/development/jquery.roundabout-shapes.min.js"}
 
+{if $app.antibot->getDriver()|get_class == "Tygh\Addons\Recaptcha\RecaptchaDriver"}
 <script type="text/javascript">
     (function (_, $) {
         _.tr({
@@ -32,6 +33,7 @@
 </script>
 {script src="js/addons/development/recaptcha.js"}
 <script src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoaded&render=explicit"></script>
+{/if}
     
 <script type="text/javascript">
 var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
