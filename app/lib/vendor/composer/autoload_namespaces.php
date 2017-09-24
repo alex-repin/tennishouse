@@ -8,11 +8,10 @@ $baseDir = dirname($vendorDir);
 return array(
     'Text' => array($baseDir . '/pear'),
     'Pimple' => array($vendorDir . '/pimple/pimple/src'),
-    'Psr\\Log\\' => array($vendorDir . '/psr/log'),
     'PEAR' => array($baseDir . '/pear'),
     'Net' => array($baseDir . '/pear'),
-    'Detection' => array($vendorDir . '/mobiledetect/mobiledetectlib/namespaced'),
     'JShrink' => array($vendorDir . '/tedivm/jshrink/src'),
+    'Detection' => array($vendorDir . '/mobiledetect/mobiledetectlib/namespaced'),
     'Crypt' => array($baseDir . '/pear'),
     'Archive' => array($baseDir . '/pear'),
 );

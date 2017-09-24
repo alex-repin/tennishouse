@@ -11,6 +11,7 @@
         "pimple/pimple": "3.0.*",
         "monolog/monolog": "dev-master",
         "tedivm/jshrink": "~1.0",
+        "google/recaptcha": "~1.1",
         "mobiledetect/mobiledetectlib": "^2.8"
     },
     "autoload": {
