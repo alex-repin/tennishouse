@@ -262,6 +262,10 @@
                             <item lang="ru">Тип</item>
                         </translations>
                     </item>
+                    <item id="settings_proxy">
+                        <type>info</type>
+                        <handler>fn_recaptcha_image_verification_settings_proxy</handler>
+                    </item>
                 </items>
             </section>
         </sections>
@@ -615,11 +619,143 @@
                 UNIQUE KEY `promo_code` (`promo_code`)
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
         </item>
+        <item><![CDATA[
+            REPLACE INTO `cscart_settings_objects` (`object_id`, `edition_type`, `name`, `section_id`, `section_tab_id`, `type`, `value`, `position`, `is_global`, `handler`, `parent_id`) VALUES ('7023', 'ROOT', 'use_for', '11', '0', 'N', '#M#register=Y&checkout=Y&email_share=Y&newsletter=Y&form_builder=Y&polls=Y', '5', 'Y', '', '0');
+        ]]></item>
         <item>
-            INSERT INTO `cscart_settings_objects` (`object_id`, `edition_type`, `name`, `section_id`, `section_tab_id`, `type`, `value`, `position`, `is_global`, `handler`, `parent_id`) VALUES ('7023', 'ROOT', 'use_for', '11', '0', 'N', '#M#register=Y&form_builder=Y&email_share=Y&discussion=Y&checkout=Y&polls=Y&newsletter=Y', '5', 'Y', '', '0');
+            REPLACE INTO `cscart_settings_descriptions` (`object_id`, `object_type`, `lang_code`, `value`, `tooltip`) VALUES ('7023', 'O', 'ru', 'Использовать для', '');
         </item>
         <item>
-            INSERT INTO `cscart_settings_descriptions` (`object_id`, `object_type`, `lang_code`, `value`, `tooltip`) VALUES ('7023', 'O', 'ru', 'Использовать для', '');
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 6973;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 6627;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 215;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 136;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 135;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 133;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 132;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 131;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 130;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 129;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 128;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 127;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 126;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 125;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 124;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 123;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 122;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 121;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 120;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 119;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 118;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_objects` WHERE `cscart_settings_objects`.`object_id` = 117;
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 117 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 118 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 119 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 120 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 121 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 122 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 123 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 124 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 125 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 126 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 127 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 128 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 129 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 130 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 131 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 132 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 133 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 135 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 136 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 215 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 6627 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';
+        </item>
+        <item>
+DELETE FROM `cscart_settings_descriptions` WHERE `cscart_settings_descriptions`.`object_id` = 6973 AND `cscart_settings_descriptions`.`object_type` = 'O' AND `cscart_settings_descriptions`.`lang_code` = 'ru';    
         </item>
     </queries>
     <language_variables>
@@ -1218,5 +1354,7 @@
         <item lang="ru" id="call_requests.use_for_call_requests">Форм обратного звонка и покупки в 1 клик</item>
         <item lang="ru" id="use_for_newsletters">Форма подписки</item>
         <item lang="ru" id="use_for_discussion">Формы «Отзывы и комментарии»</item>
+        <item lang="ru" id="use_for_email_share">Формы "Посоветовать другу"</item>
+        <item lang="ru" id="error_validator_recaptcha">Пожалуйста, подтвердите, что вы не робот.</item>
     </language_variables>
 </addon>

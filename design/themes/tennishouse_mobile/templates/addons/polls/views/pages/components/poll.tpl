@@ -77,7 +77,7 @@
 
         {if $poll.footer}<div class="ty-polls__footer">{$poll.footer nofilter}</div>{/if}
 
-        {include file="common/image_verification.tpl" option="use_for_polls"}
+        {include file="common/image_verification.tpl" option="polls"}
 
         <div class="ty-polls__buttons buttons-container">
             {if $poll.show_results == "E"}

@@ -81,7 +81,7 @@
     </div>
     {$button_text = __("send")}
 {/if}
-{include file="common/image_verification.tpl" option="use_for_call_request" align="left"}
+{include file="common/image_verification.tpl" option="call_request" align="left"}
 
 <div class="buttons-container">
     {include file="buttons/button.tpl" but_name="dispatch[call_requests.request]" but_text=$button_text but_role="submit" but_meta="ty-btn__primary ty-btn__big ty-btn cm-dialog-closer" but_onclick="fn_send_call_request(`$product.product_id`);"}

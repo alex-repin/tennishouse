@@ -9,7 +9,7 @@
         
             {hook name="checkout:checkout_steps"}{/hook}
 
-            {include file="common/image_verification.tpl" option="use_for_register" align="left" assign="image_verification"}
+            {include file="common/image_verification.tpl" option="register" align="left" assign="image_verification"}
             {if $image_verification}
             <div class="ty-control-group">
                 {$image_verification nofilter}
@@ -61,7 +61,7 @@
                     {hook name="profiles:account_update"}
                     {/hook}
     
-                    {include file="common/image_verification.tpl" option="use_for_register" align="center"}
+                    {include file="common/image_verification.tpl" option="register" align="center"}
             
                 {/capture}
                 {$smarty.capture.group nofilter}

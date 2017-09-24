@@ -28,7 +28,7 @@
                     </a>
                 </li>
                 {if $page.show_in_popup}
-                    <div id="page_tl_{$page.page_id}" class="hidden" title="{$page.page}" data-ca-keep-in-place="true"></div>
+                    <li class="hidden"><div id="page_tl_{$page.page_id}" title="{$page.page}" data-ca-keep-in-place="true"></div></li>
                 {/if}
             {/foreach}
         </ul>

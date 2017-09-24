@@ -16,7 +16,7 @@
             <input type="password" id="psw_{$id}" name="password" size="30" value="{$config.demo_password}" class="ty-login__input" maxlength="32" />
         </div>
 
-        {include file="common/image_verification.tpl" option="use_for_register" align="left" assign="image_verification"}
+        {include file="common/image_verification.tpl" option="register" align="left" assign="image_verification"}
         {if $image_verification}
             <div class="ty-control-group">
                 {$image_verification nofilter}

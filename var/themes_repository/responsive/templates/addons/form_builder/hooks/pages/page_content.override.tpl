@@ -12,7 +12,7 @@
     {else}
 
     {if $page.description}
-        <div class="ty-form-builder__description">{$page.description|fn_check_vars|fn_render_page_blocks:$smarty.capture nofilter}</div>
+        <div class="ty-form-builder__description">{$page.description nofilter}</div>
     {/if}
 
 <div class="ty-form-builder">
@@ -121,7 +121,7 @@
     {/if}
     {/foreach}
 
-    {include file="common/image_verification.tpl" option="use_for_form_builder"}
+    {include file="common/image_verification.tpl" option="form_builder"}
 
     <div class="ty-form-builder__buttons buttons-container">
         {assign var="form_submit_button_const" value=$smarty.const.FORM_SUBMIT_BUTTON}

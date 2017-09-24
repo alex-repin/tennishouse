@@ -93,7 +93,7 @@
         <input type="text" id="dsc_city_{$obj_prefix}{$obj_id}" name="post_data[city]" value="{if $user_info.s_city}{$user_info.s_city}{elseif $discussion.post_data.city}{$discussion.post_data.city}{/if}" size="15" class="ty-input-text" />
     </div>
 {/if}
-{include file="common/image_verification.tpl" option="use_for_discussion"}
+{include file="common/image_verification.tpl" option="discussion"}
 
 <!--new_post_{$obj_prefix}{$obj_id}--></div>
 

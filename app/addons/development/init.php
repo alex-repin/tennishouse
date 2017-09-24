@@ -14,6 +14,21 @@
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+use Tygh\Addons\Recaptcha\RecaptchaDriver;
+use Tygh\Application;
+use Tygh\Registry;
+use Tygh\Web\Antibot;
+
+Tygh::$app->extend('antibot', function(Antibot $antibot, Application $app) {
+    $recaptcha_antibot_driver = new RecaptchaDriver(Registry::get('addons.development'));
+
+    if ($recaptcha_antibot_driver->isSetUp()) {
+        $antibot->setDriver($recaptcha_antibot_driver);
+    }
+
+    return $antibot;
+});
+
 define('MAIN_THEME_NAME', 'responsive');
 define('MOBILE_THEME_NAME', 'tennishouse_mobile');
 

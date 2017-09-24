@@ -1,5 +1,5 @@
 {** block-description:size_chart **}
 
-<div {*class="mCustomScrollbar" data-mcs-axis="x" data-mcs-theme="dark"*}>
+<div>
 {$product.size_chart nofilter}
 </div>

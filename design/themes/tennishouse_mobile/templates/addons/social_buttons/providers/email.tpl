@@ -38,7 +38,7 @@
     {/strip}</textarea>
 </div>
 
-{include file="common/image_verification.tpl" option="use_for_email_share" align="left"}
+{include file="common/image_verification.tpl" option="email_share" align="left"}
 
 <div class="buttons-container">
     {include file="buttons/button.tpl" but_text=__("send") but_name="dispatch[share_by_email.send]" but_role="submit"}

@@ -61,7 +61,7 @@
                 
                             {hook name="checkout:checkout_steps"}{/hook}
                             
-                            {include file="common/image_verification.tpl" option="use_for_register"}
+                            {include file="common/image_verification.tpl" option="register"}
                             
                             <div class="clearfix"></div>
                         </div>

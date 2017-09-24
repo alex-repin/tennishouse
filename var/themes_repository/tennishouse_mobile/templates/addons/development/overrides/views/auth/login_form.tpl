@@ -18,7 +18,7 @@
             <input type="password" id="psw_{$id}" name="password" size="30" value="{$config.demo_password}" placeholder="{__("password")}" class="ty-login__input" maxlength="32" />
         </div>
 
-        {include file="common/image_verification.tpl" option="use_for_login" align="left"}
+        {include file="common/image_verification.tpl" option="login" align="left"}
 
         {if $style == "checkout"}
             </div>

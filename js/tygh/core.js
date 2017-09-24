@@ -3786,7 +3786,7 @@ var Tygh = {
                 if (validators) {
                     for (var i = 0; i < validators.length; i++) {
                         if (lbl.hasClass(validators[i].class_name)) {
-                            result = validators[i].func(elm_id);
+                            result = validators[i].func(elm_id, elm, lbl);
                             if (result != true) {
                                 _formMessage(validators[i].message, lbl);
                                 set_mark = true;

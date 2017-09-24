@@ -45,7 +45,7 @@
 {include file="common/group.tpl" content=$smarty.capture.group}
 
 {if !$cart.user_data.email}
-    {include file="common/image_verification.tpl" option="use_for_checkout" align="center"}
+    {include file="common/image_verification.tpl" option="checkout" align="center"}
 {/if}
 
 <div class="buttons-container ty-right">

@@ -144,6 +144,7 @@ function fn_init_templater($area = AREA)
         $view->assign('demo_theme', Registry::get('demo_theme'));
     }
 
+    $view->assignByRef('app', Tygh::$app);
     Registry::set('view', $view);
 
     /**

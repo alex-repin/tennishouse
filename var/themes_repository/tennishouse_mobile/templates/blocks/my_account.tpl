@@ -54,7 +54,7 @@
                     <label for="track_order_item{$snapping_id}" class="cm-required hidden">{__("track_my_order")}</label>
                     <input type="text" size="20" class="ty-input-text cm-hint" id="track_order_item{$snapping_id}" name="track_data" value="{__("order_id")}{if !$auth.user_id}/{__("email")}{/if}" />
                     {include file="buttons/go.tpl" but_name="orders.track_request" alt=__("go")}
-                    {include file="common/image_verification.tpl" option="use_for_track_orders" align="left" sidebox=true}
+                    {include file="common/image_verification.tpl" option="track_orders" align="left" sidebox=true}
                 </div>
             </form>
         <!--track_orders_block_{$snapping_id}--></div>

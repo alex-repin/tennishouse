@@ -1,12 +1,12 @@
 {scripts}
 
 {script src="js/lib/jquery/jquery.min.js"}
+{script src="js/lib/jqueryui/jquery-ui.min.js"}
 
 {script src="js/tygh/core.js"}
 {script src="js/tygh/ajax.js"}
 {script src="js/tygh/history.js"}
 {script src="js/lib/autonumeric/autoNumeric.js"}
-{script src="js/lib/jqueryui/jquery-ui.min.js"}
 {script src="js/lib/appear/jquery.appear-1.1.1.js"}
 {if !$runtime.customization_mode.live_editor}
     {script src="js/lib/tools/tooltip.min.js"}

@@ -61,7 +61,7 @@
     <input data-autocompletetype="street-address" id="call_data_{$id}_address" placeholder="{__("address")}" class="ty-input-text-full" size="50" type="text" name="call_data[address]" value="{$smarty.session.auth.user_data.s_address}" />
 </div>
 
-{include file="common/image_verification.tpl" option="use_for_call_request" align="left"}
+{include file="common/image_verification.tpl" option="call_request" align="left"}
 
 <div class="buttons-container">
     {include file="buttons/button.tpl" but_name="dispatch[call_requests.request]" but_onclick="fn_send_call_request(`$product.product_id`);" but_text=__("buy_now_cr") but_role="submit" but_meta="ty-btn__primary ty-btn__big ty-btn cm-dialog-closer"}

@@ -41,7 +41,7 @@
                 </div>
             </div>
 
-            {include file="common/image_verification.tpl" option="use_for_discussion"}
+            {include file="common/image_verification.tpl" option="discussion"}
 
             <!--new_post_{$obj_prefix}{$obj_id}--></div>
 

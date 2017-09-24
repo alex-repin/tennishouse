@@ -151,7 +151,7 @@
                 <input type="text" name="company_data[zipcode]" id="company_address_zipcode" size="32" value="{$company_data.zipcode}" class="ty-input-text" />
             </div>
 
-            {include file="common/image_verification.tpl" option="use_for_apply_for_vendor_account" align="left"}
+            {include file="common/image_verification.tpl" option="apply_for_vendor_account" align="left"}
 
             <div class="buttons-container">
                 {include file="buttons/button.tpl" but_text=__("submit") but_name="dispatch[companies.apply_for_vendor]" but_id="but_apply_for_vendor" but_meta="ty-btn__primary"}

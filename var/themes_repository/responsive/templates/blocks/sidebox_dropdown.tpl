@@ -4,7 +4,7 @@
 {foreach from=$items item="item" name=$foreach_name}
 {hook name="blocks:sidebox_dropdown_element"}
 
-    <li class="ty-menu__item cm-menu-item-responsive {if $item.$childs}dropdown-vertical__dir{/if}{if $item.active || $item|fn_check_is_active_menu_item:$block.type} ty-menu__item-active{/if} menu-level-{$level}">
+    <li class="ty-menu__item cm-menu-item-responsive {if $item.$childs}dropdown-vertical__dir{/if} menu-level-{$level}">
         {if $item.$childs}
             <div class="ty-menu__item-toggle visible-tablet visible-phone cm-responsive-menu-toggle">
                 <i class="ty-icon-down-open"></i>
