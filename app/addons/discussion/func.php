@@ -17,6 +17,15 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_is_store_review($data)
+{
+    if (empty($data['post_data']['thread_id']) || $data['post_data']['thread_id'] != REVIEWS_THREAD_ID) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
 function fn_discussion_settings_variants_image_verification_use_for(&$objects)
 {
     $objects['discussion'] = __('use_for_discussion');

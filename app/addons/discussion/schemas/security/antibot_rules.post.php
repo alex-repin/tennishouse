@@ -18,6 +18,7 @@ $schema['discussion']['add'] = array(
     'save_post_data' => array(
         'post_data',
     ),
+    'condition' => 'fn_is_store_review',
     'rewrite_controller_status' => array(
         CONTROLLER_STATUS_REDIRECT,
         function () {

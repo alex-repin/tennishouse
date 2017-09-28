@@ -3197,10 +3197,16 @@ table.ty-cart-content {
 #step_one_login .ty-control-group__title {
     display: none;
 }
+.ty-captcha__label {
+    display: none;
+}
+.captcha {
+    margin-top: 20px;
+}
 #step_one_register {
-    .ty-control-group__title, .ty-captcha__label {
+/*    .ty-control-group__title, .ty-captcha__label {
         display: none;
-    }
+    }*/
     .ty-control-group {
         margin: 0 0 12px;
     }
@@ -3209,9 +3215,9 @@ table.ty-cart-content {
     }
 }
 .ty-account, .ty-recover-password, .ty-mainbox-body > .ty-login, .ty-checkout-complete__create-account .ty-login, .ty-subscribe-form {
-    .ty-captcha__label {
+/*    .ty-captcha__label {
         display: none;
-    }
+    }*/
     a.ty-password-forgot__a {
         padding: 2px 0;
     }
@@ -3237,6 +3243,9 @@ table.ty-cart-content {
     .ty-control-group {
         margin-bottom: 10px;
         position: relative;
+    }
+    .captcha {
+        margin-top: 0;
     }
     .ty-control-group__title {
         display: none;
