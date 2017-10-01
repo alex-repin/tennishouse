@@ -179,10 +179,6 @@ if ($mode == 'invoice') {
 //
 } elseif ($mode == 'track_request') {
 
-    if (fn_image_verification('use_for_track_orders', $_REQUEST) == false) {
-        exit;
-    }
-
     $condition = fn_get_company_condition('?:orders.company_id');
 
     if (!empty($auth['user_id'])) {

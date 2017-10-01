@@ -18,6 +18,68 @@ use Tygh\BlockManager\Block;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_add_subscriber($email, $status = 'C', $add_promo = false)
+{
+    // First check if subscriber's email already in the list
+    $subscriber = db_get_row("SELECT * FROM ?:subscribers WHERE email = ?s", $email);
+
+    $confirmation_text = __('subscribe_confirmation');
+    if (empty($subscriber)) {
+        $_data = array(
+            'email' => $email,
+            'timestamp' => TIME,
+            'status' => $status
+        );
+
+        $subscriber_id = db_query("INSERT INTO ?:subscribers ?e", $_data);
+        $subscriber = db_get_row("SELECT * FROM ?:subscribers WHERE subscriber_id = ?i", $subscriber_id);
+        if (!empty($add_promo) && Registry::get('addons.development.promo_expiration') > 0 && !empty(Registry::get('addons.development.promo_id'))) {
+            $has_orders = db_get_field("SELECT order_id FROM ?:orders WHERE email = ?s AND timestamp >= ?i", strtolower($subscriber['email']), TIME - Registry::get('addons.development.new_subscriber_days_limit') * SECONDS_IN_DAY);
+            if (empty($has_orders)) {
+                $promotion_data = fn_get_promotion_data(Registry::get('addons.development.promo_id'));
+                if (!empty($promotion_data) && !empty($promotion_data['bonuses'])) {
+                    $bonus = reset($promotion_data['bonuses']);
+                    if (!empty($bonus['discount_value'])) {
+                        $promo = array(
+                            'promo_code' => fn_generate_code('', rand(10, 15)),
+                            'expire' => TIME + Registry::get('addons.development.promo_expiration') * SECONDS_IN_DAY,
+                            'promotion_id' => Registry::get('addons.development.promo_id'),
+                            'discount' => $bonus['discount_value'],
+                            'promo_expiration' => Registry::get('addons.development.promo_expiration')
+                        );
+                        db_query("REPLACE INTO ?:promo_codes ?e", $promo);
+                        
+                        $ekey = fn_generate_ekey($subscriber_id, 'S', SECONDS_IN_DAY * 365);
+                        Mailer::sendMail(array(
+                            'to' => $subscriber['email'],
+                            'from' => 'company_newsletter_email',
+                            'data' => array(
+                                'ekey' => $ekey,
+                                'promo' => $promo,
+                                'subject' => __('newsletter_welcome_discount', array('[percent]' => $promo['discount']))
+                            ),
+                            'tpl' => 'addons/news_and_emails/confirm_email.tpl',
+                            'company_id' => $user_data['company_id']
+                        ), 'C', CART_LANGUAGE);
+                        $confirmation_text = __('subscribe_confirmation_sent');
+                    }
+                }
+            }
+        }
+    } else {
+        $subscriber_id = $subscriber['subscriber_id'];
+    }
+
+    // update subscription data. If there is no any registration autoresponders, we set confirmed=1
+    // so user doesn't need to activate subscription
+    list($lists) = fn_get_mailing_lists();
+    if (!empty($lists)) {
+        fn_update_subscriptions($subscriber_id, array_keys($lists), NULL, fn_get_notification_rules(true));
+    }
+    
+    return $confirmation_text;
+}
+
 function fn_news_and_emails_settings_variants_image_verification_use_for(&$objects)
 {
     $objects['newsletters'] = __('use_for_newsletters');
@@ -504,7 +566,7 @@ function fn_get_mailing_lists($params = array(), $items_per_page = 0, $lang_code
 
     $params = array_merge($default_params, $params);
 
-    $condition = '1';
+    $condition = $join = '';
     if ($params['checkout']) {
         $condition .= db_quote(" AND ?:mailing_lists.show_on_checkout = ?i", 1);
     }
@@ -517,13 +579,23 @@ function fn_get_mailing_lists($params = array(), $items_per_page = 0, $lang_code
         $condition .= db_quote(" AND ?:mailing_lists.status = ?s", 'A');
     }
 
+    if (!empty($params['subscribed'])) {
+        $join .= db_quote(" LEFT JOIN ?:user_mailing_lists ON ?:mailing_lists.list_id = ?:user_mailing_lists.list_id AND ?:user_mailing_lists.subscriber_id = ?i", $params['subscribed']);
+        $condition .= " AND ?:user_mailing_lists.list_id IS NOT NULL";
+    }
+
+    if (!empty($params['not_subscribed'])) {
+        $join .= db_quote(" LEFT JOIN ?:user_mailing_lists ON ?:mailing_lists.list_id = ?:user_mailing_lists.list_id AND ?:user_mailing_lists.subscriber_id = ?i", $params['not_subscribed']);
+        $condition .= " AND ?:user_mailing_lists.list_id IS NULL";
+    }
+
     $limit = '';
     if (!empty($params['items_per_page'])) {
-        $params['total_items'] = db_get_hash_array("SELECT COUNT(*) FROM ?:mailing_lists WHERE ?p", 'list_id', $condition);
+        $params['total_items'] = db_get_hash_array("SELECT COUNT(*) FROM ?:mailing_lists $join WHERE 1 ?p", 'list_id', $condition);
         $limit = db_paginate($params['page'], $params['items_per_page']);
     }
 
-    $mailing_lists = db_get_hash_array("SELECT * FROM ?:mailing_lists LEFT JOIN ?:common_descriptions ON ?:common_descriptions.object_id = ?:mailing_lists.list_id AND ?:common_descriptions.object_holder = 'mailing_lists' AND ?:common_descriptions.lang_code = ?s WHERE ?p $limit", 'list_id', $lang_code, $condition);
+    $mailing_lists = db_get_hash_array("SELECT ?:mailing_lists.*, ?:common_descriptions.* FROM ?:mailing_lists LEFT JOIN ?:common_descriptions ON ?:common_descriptions.object_id = ?:mailing_lists.list_id AND ?:common_descriptions.object_holder = 'mailing_lists' AND ?:common_descriptions.lang_code = ?s $join WHERE 1 ?p $limit", 'list_id', $lang_code, $condition);
 
     return array($mailing_lists, $params);
 }

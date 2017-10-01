@@ -20,12 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($mode == 'send_form') {
 
         $suffix = '';
-        if (fn_image_verification('use_for_form_builder', $_REQUEST) == false) {
-            fn_save_post_data('form_values');
-
-            return array(CONTROLLER_STATUS_REDIRECT, "pages.view?page_id=$_REQUEST[page_id]");
-        }
-
         if (fn_send_form($_REQUEST['page_id'], empty($_REQUEST['form_values']) ? array() : $_REQUEST['form_values'])) {
             $suffix = '&sent=Y';
         }

@@ -249,12 +249,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($mode == 'add_profile') {
 
-        if (fn_image_verification('use_for_register', $_REQUEST) == false) {
-            fn_save_post_data('user_data');
-
-            return array(CONTROLLER_STATUS_REDIRECT, "checkout.checkout?login_type=register");
-        }
-
         if (list($user_id, $profile_id) = fn_update_user(0, $_REQUEST['user_data'], $auth, false, true)) {
             $profile_fields = fn_get_profile_fields('O');
 
@@ -282,7 +276,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_action = '.' . Registry::get('runtime.action');
         }
 
-        if (Registry::get('settings.General.disable_anonymous_checkout') == 'Y' && empty($cart['user_data']['email']) && fn_image_verification('use_for_checkout', $_REQUEST) == false) {
+        if (Registry::get('settings.General.disable_anonymous_checkout') == 'Y' && empty($cart['user_data']['email'])) {
             fn_save_post_data('user_data');
 
             return array(CONTROLLER_STATUS_REDIRECT, "checkout.checkout?login_type=guest");

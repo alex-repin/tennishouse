@@ -20,12 +20,6 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($mode == 'send') {
-        if (fn_image_verification('use_for_email_share', $_REQUEST) == false) {
-            fn_save_post_data('send_data');
-
-            return array(CONTROLLER_STATUS_REDIRECT);
-        }
-
         if (!empty($_REQUEST['send_data']['to_email'])) {
 
             $lnk = fn_url(Registry::get('config.current_url'));

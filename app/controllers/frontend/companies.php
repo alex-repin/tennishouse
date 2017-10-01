@@ -25,12 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             return array(CONTROLLER_STATUS_NO_PAGE);
         }
 
-        if (fn_image_verification('use_for_apply_for_vendor_account', $_REQUEST) == false) {
-            fn_save_post_data('user_data', 'company_data');
-
-            return array(CONTROLLER_STATUS_REDIRECT, "companies.apply_for_vendor");
-        }
-
         $data = $_REQUEST['company_data'];
 
         $data['timestamp'] = TIME;

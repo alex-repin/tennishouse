@@ -24,12 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Create/Update user
     //
     if ($mode == 'update') {
-        if (fn_image_verification('use_for_register', $_REQUEST) == false) {
-            fn_save_post_data('user_data');
-
-            return array(CONTROLLER_STATUS_REDIRECT, 'profiles.add');
-        }
-
         $is_update = !empty($auth['user_id']);
 
         if (!$is_update) {

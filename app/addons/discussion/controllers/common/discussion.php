@@ -25,13 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $suffix = '';
     if ($mode == 'add') {
         $suffix = '&selected_section=discussion';
-        if (AREA == 'C') {
-            if (fn_image_verification('use_for_discussion', $_REQUEST) == false) {
-                fn_save_post_data('post_data');
-
-                return array(CONTROLLER_STATUS_REDIRECT, $_REQUEST['redirect_url'] . $suffix);
-            }
-        }
 
         $post_data = $_REQUEST['post_data'];
 

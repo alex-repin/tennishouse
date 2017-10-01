@@ -36,10 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $prefix = isset($_REQUEST['obj_prefix']) ? $_REQUEST['obj_prefix'] : '';
 
-        if (fn_image_verification('use_for_polls', $_REQUEST) == false) {
-            return array(CONTROLLER_STATUS_REDIRECT);
-        }
-
         if (!empty($_REQUEST['answer'])) {
             $answer = $_REQUEST['answer'];
         } else {

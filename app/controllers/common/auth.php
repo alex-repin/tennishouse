@@ -28,14 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $redirect_url = '';
 
-        if (AREA != 'A') {
-            if (fn_image_verification('use_for_login', $_REQUEST) == false) {
-                fn_save_post_data('user_login');
-
-                return array(CONTROLLER_STATUS_REDIRECT);
-            }
-        }
-
         fn_restore_processed_user_password($_REQUEST, $_POST);
 
         list($status, $user_data, $user_login, $password, $salt) = fn_auth_routines($_REQUEST, $auth);
