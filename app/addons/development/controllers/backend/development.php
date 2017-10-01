@@ -1155,7 +1155,7 @@ if ($mode == 'calculate_balance') {
     
     fn_echo('Done');
     exit;
-} elseif ($mode == 'add_subscribers') {
+} elseif ($mode == 'add_order_subscribers') {
     $time = 1492905600; // 23 April
     $emails = db_get_hash_array("SELECT DISTINCT LOWER(?:orders.email) AS email, ?:orders.timestamp FROM ?:orders LEFT JOIN ?:subscribers ON ?:subscribers.email = ?:orders.email WHERE ?:orders.timestamp < ?i AND ?:subscribers.email IS NULL", 'email', $time);
     if (!empty($emails)) {
@@ -1182,7 +1182,7 @@ if ($mode == 'calculate_balance') {
     }
     fn_echo('Done');
     exit;
-} elseif ($mode == 'status_subscribers') {
+} elseif ($mode == 'status_order_subscribers') {
     $ordered = db_get_fields("SELECT ?:subscribers.subscriber_id FROM ?:subscribers INNER JOIN ?:orders ON ?:orders.email = ?:subscribers.email AND ?:orders.email != ''");
     db_query("UPDATE ?:subscribers SET status = 'C' WHERE subscriber_id IN (?n)", $ordered);
     
@@ -1190,6 +1190,32 @@ if ($mode == 'calculate_balance') {
     db_query("DELETE FROM ?:subscribers WHERE subscriber_id IN (?n)", $subs_ids);
     db_query("DELETE FROM ?:user_mailing_lists WHERE subscriber_id IN (?n)", $subs_ids);
     
+    fn_echo('Done');
+    exit;
+} elseif ($mode == 'add_user_subscribers') {
+    $emails = db_get_hash_array("SELECT DISTINCT LOWER(?:users.email) AS email, ?:users.timestamp, ?:users.firstname, ?:users.lastname FROM ?:users LEFT JOIN ?:orders ON ?:users.email = ?:orders.email WHERE ?:orders.order_id IS NULL", 'email');
+    if (!empty($emails)) {
+        list($page_mailing_lists) = fn_get_mailing_lists();
+        $confirmed = array();
+        if (!empty($page_mailing_lists)) {
+            foreach ($page_mailing_lists as $i => $m_list) {
+                $confirmed[$m_list['list_id']]['confirmed'] = true;
+            }
+        }
+        $iter = 0;
+        foreach ($emails as $i => $email_data) {
+            $data = array(
+                'email' => $email_data['email'],
+                'timestamp' => $email_data['timestamp'],
+                'status' => (!empty($email_data['firstname']) || !empty($email_data['lastname'])) ? 'C' : 'P'
+            );
+            $subscriber_id = db_query("REPLACE INTO ?:subscribers ?e", $data);
+            if (!empty($page_mailing_lists)) {
+                fn_update_subscriptions($subscriber_id, array_keys($page_mailing_lists), $confirmed);
+            }
+            $iter++;
+        }
+    }
     fn_echo('Done');
     exit;
 } elseif ($mode == 'check_pending') {

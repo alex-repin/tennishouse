@@ -45,54 +45,6 @@ if ($mode == 'delete_image') {
     }
     exit;
 
-} elseif ($mode == 'captcha') {
-
-    $verification_id = $_REQUEST['verification_id'];
-    if (empty($verification_id)) {
-        $verification_id = 'common';
-    }
-
-    $verification_settings = Settings::instance()->getValues('Image_verification');
-    $fonts = array(Registry::get('config.dir.lib') . 'other/captcha/verdana.ttf');
-
-    $c = new PhpCaptcha($verification_id, $fonts, $verification_settings['width'], $verification_settings['height']);
-
-    // Set string length
-    $c->SetNumChars($verification_settings['string_length']);
-
-    // Set number of distortion lines
-    $c->SetNumLines($verification_settings['lines_number']);
-
-    // Set minimal font size
-    $c->SetMinFontSize($verification_settings['min_font_size']);
-
-    // Set maximal font size
-    $c->SetMaxFontSize($verification_settings['max_font_size']);
-
-    $c->SetGridColour($verification_settings['grid_color']);
-
-    if ($verification_settings['char_shadow'] == 'Y') {
-        $c->DisplayShadow(true);
-    }
-
-    if ($verification_settings['colour'] == 'Y') {
-        $c->UseColour(true);
-    }
-
-    if ($verification_settings['string_type'] == 'digits') {
-        $c->SetCharSet(array(2,3,4,5,6,8,9));
-    } elseif ($verification_settings['string_type'] == 'letters') {
-        $c->SetCharSet(range('A','F'));
-    } else {
-        $c->SetCharSet(fn_array_merge(range('A','F'), array(2,3,4,5,6,8,9), false));
-    }
-
-    if (!empty($verification_settings['background_image'])) {
-        $c->SetBackgroundImages(Registry::get('config.dir.root') . '/' . $verification_settings['background_image']);
-    }
-
-    $c->Create();
-    exit;
 } elseif ($mode == 'custom_image') {
     if (empty($_REQUEST['image'])) {
         exit();
