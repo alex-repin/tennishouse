@@ -116,9 +116,14 @@
         {capture name="variant_images"}
             {if !$po.disabled && !$disabled}
                 {foreach from=$po.variants item="var"}
-                    {if $var.image_pair.image_id}
-                        {if $var.variant_id == $selected_variant}{assign var="_class" value="is-selected"}{else}{assign var="_class" value="ty-product-variant-image-unselected"}{/if}
-                        {include file="common/image.tpl" class="ty-hand $_class ty-product-options__image" images=$var.image_pair image_width="20" image_height="20" obj_id="variant_image_`$obj_prefix``$id`_`$po.option_id`_`$var.variant_id`" image_onclick="fn_set_option_value('`$obj_prefix``$id`', '`$po.option_id`', '`$var.variant_id`'); void(0);"}
+                    {if $var.variant_id == $selected_variant}{assign var="_class" value="is-selected"}{else}{assign var="_class" value="ty-product-variant-image-unselected"}{/if}
+                    {if $var.images}
+                        {include file="common/image.tpl" class="ty-hand $_class ty-product-options__image" images=$var.images|reset image_width="40" image_height="40" obj_id="variant_image_`$obj_prefix``$id`_`$po.option_id`_`$var.variant_id`" image_onclick="fn_set_option_value('`$obj_prefix``$id`', '`$po.option_id`', '`$var.variant_id`'); void(0);"}
+                    {elseif $po.has_variant_additional || ($var.image_pair.image_id && $po.variants|count == 1)}
+                        {$main_pair = $product.org_main_pair|default:$product.main_pair}
+                        {include file="common/image.tpl" class="ty-hand $_class ty-product-options__image" images=$main_pair image_width="40" image_height="40" obj_id="variant_image_`$obj_prefix``$id`_`$po.option_id`_`$var.variant_id`" image_onclick="fn_set_option_value('`$obj_prefix``$id`', '`$po.option_id`', '`$var.variant_id`'); void(0);"}
+                    {elseif $var.image_pair.image_id}
+                        {include file="common/image.tpl" class="ty-hand $_class ty-product-options__image ty-product-options__image-plain" images=$var.image_pair image_width="20" image_height="20" obj_id="variant_image_`$obj_prefix``$id`_`$po.option_id`_`$var.variant_id`" image_onclick="fn_set_option_value('`$obj_prefix``$id`', '`$po.option_id`', '`$var.variant_id`'); void(0);"}
                     {/if}
                 {/foreach}
             {/if}

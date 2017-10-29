@@ -311,7 +311,7 @@ function fn_get_image_pairs($object_ids, $object_type, $pair_type, $get_icon = t
             $only_first_detailed[$pair['object_id']] = 1;
         }// -foreach detailed_pairs
     } else {
-        $pairs_data = db_get_hash_multi_array("SELECT pair_id, image_id, detailed_id, object_id FROM ?:images_links WHERE object_type = ?s AND type = ?s $cond", array('object_id', 'pair_id'), $object_type, $pair_type);
+        $pairs_data = db_get_hash_multi_array("SELECT pair_id, image_id, detailed_id, object_id FROM ?:images_links WHERE object_type = ?s AND type = ?s $cond ORDER BY pair_id", array('object_id', 'pair_id'), $object_type, $pair_type);
     }
 
     if (is_array($object_ids)) {

@@ -580,9 +580,24 @@ input:focus::placeholder, textarea:focus::placeholder {
     position: relative;
     text-transform: none;
 }
-.ty-found-cheaper-tooltip {
-    display: block;
+.ty-price-options {
+    display: inline-block;
     margin: -5px 0 10px 0;
+    width: 100%;
+}
+.ty-get-discount-tooltip {
+    display: inline-block;
+    border-right: 1px solid @font;
+    padding-right: 10px;
+    a {
+        font-size: 13px;
+        border-bottom: 1px dotted @font;
+        color: @font;
+    }
+}
+.ty-found-cheaper-tooltip {
+    display: inline-block;
+    padding-left: 10px;
     a {
         font-size: 13px;
         border-bottom: 1px dotted @font;
@@ -2267,15 +2282,19 @@ table.ty-cart-content {
     top: 0;
 }
 .ty-list-options_box {
-    margin: 2px; 
+    margin: 1px; 
     border: 1px solid darken(@base, 10%);
-    height: 16px;
-    width: 16px;
+    height: 30px;
+    width: 30px;
+}
+.ty-color_option_images {
     padding: 1px;
+    height: 15px;
+    width: 15px;
 }
 .ty-list-options_box img {
-    height: 16px;
-    width: 16px;
+/*    height: 31px;
+    width: 31px;*/
     vertical-align: unset;
 }
 .ty-grid-list__image {
@@ -2483,7 +2502,7 @@ table.ty-cart-content {
 }
 .ty-product-price-heder {
     display: inline;
-    font-family: @price_font;
+/*     font-family: @price_font; */
     margin: 0 7px 0 0;
     letter-spacing: -1px;
 }
@@ -2495,7 +2514,7 @@ table.ty-cart-content {
 }
 .ty-prices-container-left {
     display: inline-block;
-    width: 325px;
+/*     width: 325px; */
 }
 .ty-consultation {
     display: inline-block;
@@ -2795,7 +2814,7 @@ table.ty-cart-content {
     display: inline-block;
     padding: 0;
 }
-.ty-product-options__image {
+.ty-product-options__image-plain {
     padding: 1px;
 }
 .is-selected.ty-product-options__image {
@@ -2852,6 +2871,9 @@ table.ty-cart-content {
 }
 .ty-other-pay {
     margin: 0;
+}
+.ty-bank-details-textarea {
+    width: 100%;
 }
 .ty-payments-list {
     float: none;

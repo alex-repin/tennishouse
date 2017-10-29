@@ -16,12 +16,18 @@
         <div class="ty-grid-list__match">{__("match")} {$product.match_p}%</div>
     {/if}
     <div class="ty-grid-list__image">
-        {if $product.option_images && ($mode == 'R' || $mode  == 'S') && !$product.hide_icons}
+        {if $product.option_images && ($mode == 'R' || $mode  == 'S') && !$product.hide_icons && $product.option_images|count > 1}
             <div class="ty-list-options">
             {foreach from=$product.option_images item="opt_icon"}
-                <div class="ty-list-options_box">
-                    {if $opt_icon.icon}{include file="common/image.tpl" show_detailed_link=false images=$opt_icon.icon no_ids=true image_height="15"}{/if}
-                </div>
+                {if $product.full_option_images}
+                    <div class="ty-list-options_box">
+                        {if $opt_icon.detailed}{include file="common/image.tpl" show_detailed_link=false images=$opt_icon.detailed no_ids=true image_height="30"}{else}{include file="common/image.tpl" show_detailed_link=false images=$product.main_pair.detailed no_ids=true image_height="30"}{/if}
+                    </div>
+                {else}
+                    <div class="ty-list-options_box ty-color_option_images">
+                        {if $opt_icon.icon}{include file="common/image.tpl" show_detailed_link=false images=$opt_icon.icon no_ids=true image_height="15"}{/if}
+                    </div>
+                {/if}
             {/foreach}
             </div>
         {/if}
@@ -82,7 +88,7 @@
             {/if}
             <div {if $microdata} itemprop="name"{/if} class="ty-grid-list__item-title">
                 {assign var="name" value="name_`$obj_id`"}
-                {*if $category_grid}<h5 class="ty-grid-list__item-title-header">{/if*}{$smarty.capture.$name nofilter}{*if $category_grid}</h5>{/if*}
+                {*if $category_grid*}<h5 class="ty-grid-list__item-title-header">{*/if*}{$smarty.capture.$name nofilter}{*if $category_grid*}</h5>{*/if*}
             </div>
         </div>
         {if $extended}

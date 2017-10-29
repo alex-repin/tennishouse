@@ -110,8 +110,13 @@
         {*capture name="variant_images"}
             {if !$po.disabled && !$disabled}
                 {foreach from=$po.variants item="var"}
-                    {if $var.image_pair.image_id}
-                        {if $var.variant_id == $selected_variant}{assign var="_class" value="is-selected"}{else}{assign var="_class" value="ty-product-variant-image-unselected"}{/if}
+                    {if $var.variant_id == $selected_variant}{assign var="_class" value="is-selected"}{else}{assign var="_class" value="ty-product-variant-image-unselected"}{/if}
+                    {if $var.images}
+                        {include file="common/image.tpl" class="ty-hand $_class ty-product-options__image" images=$var.images|reset image_width="50" image_height="50" obj_id="variant_image_`$obj_prefix``$id`_`$po.option_id`_`$var.variant_id`" image_onclick="fn_set_option_value('`$obj_prefix``$id`', '`$po.option_id`', '`$var.variant_id`'); void(0);"}
+                    {elseif $po.has_variant_additional}
+                        {$main_pair = $product.org_main_pair|default:$product.main_pair}
+                        {include file="common/image.tpl" class="ty-hand $_class ty-product-options__image" images=$main_pair image_width="50" image_height="50" obj_id="variant_image_`$obj_prefix``$id`_`$po.option_id`_`$var.variant_id`" image_onclick="fn_set_option_value('`$obj_prefix``$id`', '`$po.option_id`', '`$var.variant_id`'); void(0);"}
+                    {elseif $var.image_pair.image_id}
                         {include file="common/image.tpl" class="ty-hand $_class ty-product-options__image" images=$var.image_pair image_width="20" image_height="20" obj_id="variant_image_`$obj_prefix``$id`_`$po.option_id`_`$var.variant_id`" image_onclick="fn_set_option_value('`$obj_prefix``$id`', '`$po.option_id`', '`$var.variant_id`'); void(0);"}
                     {/if}
                 {/foreach}
@@ -122,6 +127,7 @@
             <script type="text/javascript">
             (function(_, $) {
                 $('#option_{$obj_prefix}{$id}_{$po.option_id}').css('display', 'none');
+                $('#option_{$obj_prefix}{$id}_{$po.option_id}').attr('data-role', 'none');
             }(Tygh, Tygh.$));
             </script>
             <div class="ty-product-variant-image">{$smarty.capture.variant_images nofilter}</div>

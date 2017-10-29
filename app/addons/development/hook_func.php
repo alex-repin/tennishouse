@@ -832,6 +832,7 @@ function fn_development_get_product_options_post($product_ids, $lang_code, $only
                     foreach ($_option['variants'] as $variant_id => $variant) {
                         if (!empty($image_pairs[$variant_id])) {
                             $options[$product_id][$option_id]['variants'][$variant_id]['images'] = $image_pairs[$variant_id];
+                            $options[$product_id][$option_id]['has_variant_additional'] = true;
                         }
                     }
                 }
@@ -980,6 +981,7 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
         if (!empty($params['get_options']) && !(Registry::get('settings.Appearance.catalog_options_mode') == 'Y' && !empty($params['allow_duplication']))) {
             if (!empty($color_ids)) {
                 $color_image_pairs = fn_get_image_pairs($color_ids, 'variant_image', 'V', true, false, CART_LANGUAGE);
+                $color_image_pairs_add = fn_get_image_pairs($color_ids, 'variant_additional', 'Z', false, true, CART_LANGUAGE, true);
             }
         }
 
@@ -990,7 +992,10 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                     foreach ($product['product_options'] as $j => $opt_data) {
                         if (!empty($opt_data['parent_option_id']) && $opt_data['parent_option_id'] == GLOBAL_COLOR_OPT_ID && !empty($opt_data['variants'])) {
                             foreach ($opt_data['variants'] as $k => $v_data) {
-                                if (!empty($color_image_pairs[$v_data['variant_id']])) {
+                                if (!empty($color_image_pairs_add[$v_data['variant_id']])) {
+                                    $product['full_option_images'] = true;
+                                    $product['option_images'][$v_data['variant_id']] = reset($color_image_pairs_add[$v_data['variant_id']]);
+                                } else if (!empty($color_image_pairs[$v_data['variant_id']])) {
                                     $product['option_images'][$v_data['variant_id']] = reset($color_image_pairs[$v_data['variant_id']]);
                                 }
                             }
@@ -1050,6 +1055,7 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
         if (!empty($params['get_options'])) {
             if (!empty($color_ids)) {
                 $color_prod_image_pairs = fn_get_image_pairs($color_ids, 'variant_additional', 'Z', false, true, CART_LANGUAGE, true);
+                $color_prod_image_pairs_add = fn_get_image_pairs($color_ids, 'variant_additional', 'Z', false, false, CART_LANGUAGE);
             }
 
             foreach ($products as $i => &$product) {
@@ -1080,6 +1086,10 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                                         if (!empty($image_pair) && $image_pair['pair_id'] != $product['main_pair']['pair_id']) {
                                             $new_product = $product;
                                             $new_product['main_pair'] = reset($color_prod_image_pairs[$v_data['variant_id']]);
+                                            if (!empty($color_prod_image_pairs_add[$v_data['variant_id']])) {
+                                                array_shift($color_prod_image_pairs_add[$v_data['variant_id']]);
+                                                $new_product['image_pairs'] = $color_prod_image_pairs_add[$v_data['variant_id']];
+                                            }
                                         } elseif (empty($image_pair)) {
                                             $new_product = $product;
                                         }
@@ -1162,6 +1172,7 @@ function fn_development_gather_additional_product_data_post(&$product, $auth, $p
                 foreach ($product['selected_options'] as $option_id => $variant_id) {
                     if (!empty($product['product_options'][$option_id]['variants'][$variant_id]['images'])) {
                         $tmp = $product['product_options'][$option_id]['variants'][$variant_id]['images'];
+                        $product['org_main_pair'] = $product['main_pair'];
                         $product['main_pair'] = reset($tmp);
                         unset($tmp[key($tmp)]);
                         $product['image_pairs'] = $tmp;
