@@ -17,9 +17,9 @@
                             {assign var="print_pdf_order" value=__("print_pdf_order_details")}
                         {/if}
 
-                        {include file="buttons/button.tpl" but_role="text" but_text=$print_order but_href="orders.print_invoice?order_id=`$order_info.order_id`" but_meta="cm-new-window ty-btn__text" but_icon="ty-icon-print orders-print__icon"}
+                        {include file="buttons/button.tpl" but_role="text" but_text=$print_order but_href="orders.print_invoice?order_id=`$order_info.order_number`" but_meta="cm-new-window ty-btn__text" but_icon="ty-icon-print orders-print__icon"}
 
-                        {include file="buttons/button.tpl" but_role="text" but_meta="orders-print__pdf ty-btn__text cm-no-ajax" but_text=$print_pdf_order but_href="orders.print_invoice?order_id=`$order_info.order_id`&format=pdf" but_icon="ty-icon-doc-text orders-print__icon"}
+                        {*include file="buttons/button.tpl" but_role="text" but_meta="orders-print__pdf ty-btn__text cm-no-ajax" but_text=$print_pdf_order but_href="orders.print_invoice?order_id=`$order_info.order_number`&format=pdf" but_icon="ty-icon-doc-text orders-print__icon"*}
                     {/hook}
                     
                     <div class="ty-orders__actions-right">
@@ -28,7 +28,7 @@
                             {/hook}
                         {/if}
                         
-                        {include file="buttons/button.tpl" but_meta="ty-btn__text" but_role="text" but_text=__("re_order") but_href="orders.reorder?order_id=`$order_info.order_id`" but_icon="ty-orders__actions-icon ty-icon-cw"}
+                        {include file="buttons/button.tpl" but_meta="ty-btn__text" but_role="text" but_text=__("re_order") but_href="orders.reorder?order_id=`$order_info.order_number`" but_icon="ty-orders__actions-icon ty-icon-cw"}
                     </div>
 
                 </div>
@@ -79,7 +79,7 @@
                                     {if $product.is_accessible}</a>{/if}
 
                                     {if $product.extra.is_edp == "Y"}
-                                        <div class="ty-right"><a href="{"orders.order_downloads?order_id=`$order_info.order_id`"|fn_url}">[{__("download")}]</a></div>
+                                        <div class="ty-right"><a href="{"orders.order_downloads?order_id=`$order_info.order_number`"|fn_url}">[{__("download")}]</a></div>
                                     {/if}
                                     {if $product.product_code}
                                         <div class="ty-orders-detail__table-code">{__("sku")}:&nbsp;{$product.product_code}</div>
@@ -305,7 +305,7 @@
                                 <tr style="vertical-align: top;">
                                     <td>{if $product.is_accessible}<a href="{"products.view?product_id=`$product.product_id`"|fn_url}" class="product-title">{/if}{$product.product nofilter}{if $product.is_accessible}</a>{/if}
                                         {if $product.extra.is_edp == "Y"}
-                                        <div class="ty-right"><a href="{"orders.order_downloads?order_id=`$order_info.order_id`"|fn_url}">[{__("download")}]</a></div>
+                                        <div class="ty-right"><a href="{"orders.order_downloads?order_id=`$order_info.order_number`"|fn_url}">[{__("download")}]</a></div>
                                         {/if}
                                         {if $product.product_code}
                                         <p>{__("sku")}: {$product.product_code}</p>
@@ -360,7 +360,7 @@
 {/hook}
 
 {capture name="mainbox_title"}
-    {__("order")}&nbsp;#{$order_info.order_id}
+    {__("order")}&nbsp;№{$order_info.order_number}
     <em class="ty-date">({$order_info.timestamp|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"})</em>
     <em class="ty-status">{__("status")}: {include file="common/status.tpl" status=$order_info.status display="view" name="update_order[status]"}</em>
     <div class="ty-delivery-time">

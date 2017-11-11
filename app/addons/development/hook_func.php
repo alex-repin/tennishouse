@@ -153,7 +153,7 @@ function fn_development_order_notification($order_info, $order_statuses, $force_
         $phone = preg_replace('/[^0-9]/', '', $order_info['phone']);
         if (!empty($order_status['sms_text']) && strlen($phone) == 11 && $phone[0] == '7') {
             if (strpos($order_status['sms_text'], '[order_id]')) {
-                $order_status['sms_text'] = str_replace('[order_id]', $order_info['order_id'], $order_status['sms_text']);
+                $order_status['sms_text'] = str_replace('[order_id]', (!empty($order_info['order_number']) ? $order_info['order_number'] : $order_info['order_id']), $order_status['sms_text']);
             }
             if (strpos($order_status['sms_text'], '[amount]')) {
                 $order_status['sms_text'] = str_replace('[amount]', $order_info['total'], $order_status['sms_text']);
@@ -289,6 +289,18 @@ function fn_development_change_order_status_post($status_to, $status_from, $orde
     }
 }
 
+function fn_development_create_order(&$order)
+{
+    $now = getdate($order['timestamp']);
+    $date = fn_date_format($order['timestamp'], '%y%m%d');
+    $time_from = mktime(0, 0, 0, $now['mon'], $now['mday'], $now['year']);
+    $time_to = mktime(23, 59, 59, $now['mon'], $now['mday'], $now['year']);
+
+    $ord_numbs = db_get_fields("SELECT order_number FROM ?:orders WHERE timestamp >= ?i AND timestamp <= ?i", $time_from, $time_to);
+
+    while (in_array($order['order_number'] = $date . '-' . fn_generate_rand(), $ord_numbs)) {}
+}
+
 function fn_development_pre_place_order($cart, &$allow, $product_groups)
 {
     if (!$allow && !empty($cart['is_call_request'])) {
@@ -308,11 +320,19 @@ function fn_development_get_product_feature_data_before_select(&$fields, $join, 
     $fields[] = '?:product_features.note_text';
 }
 
+function fn_development_get_orders($params, $fields, $sortings, &$condition, $join, $group)
+{
+    if (!empty($params['order_number'])) {
+        $condition .= db_quote(" AND ?:orders.order_number LIKE ?l", "%" . trim($params['order_number']) . "%");
+    }
+}
+
 function fn_development_pre_get_orders($params, &$fields, $sortings, $get_totals, $lang_code)
 {
     $fields[] = "?:orders.net_total";
     $fields[] = "?:orders.s_country";
     $fields[] = "?:orders.s_city";
+    $fields[] = "?:orders.order_number";
 }
 
 function fn_development_get_order_info(&$order, $additional_data)
@@ -333,6 +353,7 @@ function fn_development_get_order_info(&$order, $additional_data)
             }
         }
     }
+    $order['order_number'] = !empty($order['order_number']) ? $order['order_number'] : $order['order_id'];
 }
 
 function fn_development_get_cart_product_data_post($hash, $product, $skip_promotion, &$cart, $auth, $promotion_amount, &$_pdata)

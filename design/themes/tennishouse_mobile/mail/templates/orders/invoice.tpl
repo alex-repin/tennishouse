@@ -24,7 +24,7 @@
             </tr>
             </table>
 
-            <h2 style="font: bold 17px Tahoma; margin: 0px;">{if $doc_id_text}{$doc_id_text} <br />{/if}{__("order")}&nbsp;#{$order_info.order_id}</h2>
+            <h2 style="font: bold 17px Tahoma; margin: 0px;">{if $doc_id_text}{$doc_id_text} <br />{/if}{__("order")}&nbsp;№{$order_info.order_number}</h2>
             <table cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr valign="top">
                 {hook name="orders:invoice_company_info"}

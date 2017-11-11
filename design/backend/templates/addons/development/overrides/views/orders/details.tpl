@@ -456,7 +456,7 @@
 
 {/capture}
 {capture name="mainbox_title"}
-    {__("order")} #{$order_info.order_id} <span class="f-middle">{__("total")}: <span>{include file="common/price.tpl" value=$order_info.total}</span>{if $order_info.company_id} / {$order_info.company_id|fn_get_company_name}{/if}</span>
+    {__("order")} №{$order_info.order_number} #{$order_info.order_id} <span class="f-middle">{__("total")}: <span>{include file="common/price.tpl" value=$order_info.total}</span>{if $order_info.company_id} / {$order_info.company_id|fn_get_company_name}{/if}</span>
 
     <span class="f-small">
     {if $status_settings.appearance_type == "I" && $order_info.doc_ids[$status_settings.appearance_type]}

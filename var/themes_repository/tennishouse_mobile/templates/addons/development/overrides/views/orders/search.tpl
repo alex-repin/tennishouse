@@ -31,7 +31,7 @@
     </thead>
     {foreach from=$orders item="o"}
         <tr>
-            <td class="ty-orders-search__item"><a href="{"orders.details?order_id=`$o.order_id`"|fn_url}"><strong>#{$o.order_id}</strong></a></td>
+            <td class="ty-orders-search__item"><a href="{"orders.details?order_id=`$o.order_number|default:$o.order_id`"|fn_url}"><strong>№&nbsp;{$o.order_number|default:$o.order_id}</strong></a></td>
             <td class="ty-orders-search__item">{include file="common/status.tpl" status=$o.status display="view"}</td>
             <td class="ty-orders-search__item">
                 <ul class="ty-orders-search__user-info">
@@ -39,7 +39,7 @@
                     <li  class="ty-orders-search__user-mail"><a href="mailto:{$o.email|escape:url}">{$o.email}</a></li>
                 </ul>
             </td>
-            <td class="ty-orders-search__item"><a href="{"orders.details?order_id=`$o.order_id`"|fn_url}">{$o.timestamp|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"}</a></td>
+            <td class="ty-orders-search__item"><a href="{"orders.details?order_id=`$o.order_number`"|fn_url}">{$o.timestamp|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"}</a></td>
 
             {hook name="orders:manage_data"}{/hook}
 

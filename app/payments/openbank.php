@@ -73,7 +73,7 @@ if (defined('PAYMENT_NOTIFICATION')) {
     $post_data = array(
         'userName' => $processor_data['processor_params']['login'],
         'password' => $processor_data['processor_params']['password'],
-        'orderNumber' => $_order_id,
+        'orderNumber' => $order_info['order_number'] . '_' . TIME,
         'amount' => $order_info['total'] * 100,
         'currency' => '810',
         'returnUrl' => fn_url("payment_notification.return?payment=openbank&order_id=$_order_id", AREA),

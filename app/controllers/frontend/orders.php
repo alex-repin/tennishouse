@@ -265,23 +265,23 @@ if ($mode == 'invoice') {
         fn_prepare_repay_data(empty($_REQUEST['payment_id']) ? 0 : $_REQUEST['payment_id'], $order_info, $auth);
     }
 
+    list($shipments) = fn_get_shipments_info(array('order_id' => $order_info['order_id'], 'advanced_info' => true));
+    $use_shipments = !fn_one_full_shipped($shipments);
+
     $navigation_tabs = array(
         'general' => array(
             'title' => __('general'),
             'js' => true,
-            'href' => 'orders.details?order_id=' . $_REQUEST['order_id'] . '&selected_section=general'
+            'href' => 'orders.details?order_id=' . $order_info['order_number'] . '&selected_section=general'
         ),
     );
-
-    list($shipments) = fn_get_shipments_info(array('order_id' => $order_info['order_id'], 'advanced_info' => true));
-    $use_shipments = !fn_one_full_shipped($shipments);
 
     if (!fn_allowed_for('ULTIMATE:FREE')) {
         if (Registry::get('settings.General.use_shipments') == 'Y' || $use_shipments) {
             $navigation_tabs['shipment_info'] = array(
                 'title' => __('shipment_info'),
                 'js' => true,
-                'href' => 'orders.details?order_id=' . $_REQUEST['order_id'] . '&selected_section=shipment_info'
+                'href' => 'orders.details?order_id=' . $order_info['order_number'] . '&selected_section=shipment_info'
             );
             $use_shipments = true;
         }

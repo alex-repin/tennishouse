@@ -4470,7 +4470,7 @@ function fn_order_placement_routines($action = '', $order_id = 0, $force_notific
         if ($area == 'A') {
             fn_redirect("orders.details?order_id=$order_id");
         } else {
-            fn_redirect($action == 'repay' ? "orders.details?order_id=$order_id" : ('checkout.' . ($_error == true ? (Registry::get('settings.General.checkout_style') != 'multi_page' ? 'checkout' : 'summary') : "complete?order_id=$order_id")));
+            fn_redirect($action == 'repay' ? "orders.details?order_id=$order_info[order_number]" : ('checkout.' . ($_error == true ? (Registry::get('settings.General.checkout_style') != 'multi_page' ? 'checkout' : 'summary') : "complete?order_id=$order_info[order_number]")));
         }
     } elseif ($action == 'index_redirect') {
         fn_redirect(fn_url('', 'C', 'http'));
@@ -6720,10 +6720,10 @@ function fn_print_order_invoices($order_ids, $pdf = false, $area = AREA, $lang_c
     if (!is_array($order_ids)) {
         $order_ids = array($order_ids);
     }
-
+    $order_numbers = array();
     foreach ($order_ids as $order_id) {
         $order_info = fn_get_order_info($order_id, false, true, false, true);
-
+        $order_numbers[] = $order_info['order_number'];
         if (empty($order_info)) {
             continue;
         }
@@ -6756,7 +6756,7 @@ function fn_print_order_invoices($order_ids, $pdf = false, $area = AREA, $lang_c
     }
 
     if ($pdf == true) {
-        Pdf::render($html, __('invoices') . '-' . implode('-', $order_ids));
+        Pdf::render($html, __('invoices') . '-' . implode('-', $order_numbers));
     }
 
     return true;

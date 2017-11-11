@@ -12,22 +12,8 @@
 * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
 ****************************************************************************/
 
-use Tygh\Registry;
-
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
-
-$cart = & $_SESSION['cart'];
 
 if (strpos($_REQUEST['order_id'], '-') !== false) {
     $_REQUEST['order_id'] = db_get_field("SELECT order_id FROM ?:orders WHERE order_number = ?s", $_REQUEST['order_id']);
-}
-if ($mode == 'checkout') {
-    $total = Registry::get('settings.General.min_order_amount_type') == 'products_with_shippings' ? $cart['total'] : $cart['subtotal'];
-    fn_set_hook('allow_place_order', $total, $cart);
-
-    $cart['amount_failed'] = (Registry::get('settings.General.min_order_amount') > $total && floatval($total));
-    if (!empty($cart['amount_failed'])) {
-        fn_set_notification('W', __('attention'), __('text_min_order_amount_required', array('[order_limit]' => fn_format_price_by_currency(Registry::get('settings.General.min_order_amount')))));
-//         return array(CONTROLLER_STATUS_REDIRECT, !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "checkout.cart");
-    }
 }

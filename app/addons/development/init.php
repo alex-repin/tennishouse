@@ -87,6 +87,7 @@ fn_register_hooks(
     'get_cart_product_data_post',
     'get_order_info',
     'pre_get_orders',
+    'get_orders',
     'get_product_feature_data_before_select',
     'get_product_features',
     'delete_feature_post',
@@ -107,5 +108,6 @@ fn_register_hooks(
     'add_post_post',
     'delete_post_pre',
     'update_profile',
-    'set_point_payment'
+    'set_point_payment',
+    'create_order'
 );

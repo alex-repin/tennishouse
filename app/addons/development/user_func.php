@@ -23,6 +23,23 @@ use Tygh\Settings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_short_order_number($order_number)
+{
+    return substr($order_number, strlen($order_number) - 6, 6);
+}
+
+function fn_generate_rand($length = 6)
+{
+    $result = '';
+    $chars = implode(range('0', '9'));
+
+    for ($i = 0; $i < $length; $i++) {
+        $result .= $chars[rand(0, strlen($chars) - 1)];
+    }
+
+    return $result;
+}
+
 function fn_recaptcha_image_verification_settings_proxy()
 {
     $view = Registry::get('view');

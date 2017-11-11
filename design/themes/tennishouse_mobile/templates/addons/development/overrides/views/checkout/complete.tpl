@@ -13,7 +13,7 @@
         {if $order_info.child_ids}
             <a href="{"orders.search?period=A&order_id=`$order_info.child_ids`"|fn_url}">{__("order_details")}</a>.
         {else}
-            <a href="{"orders.details?order_id=`$order_info.order_id`"|fn_url}">{__("order_details")}</a>.
+            <a href="{"orders.details?order_id=`$order_info.order_number`"|fn_url}">{__("order_details")}</a>.
         {/if}
     {/if*}
 </div>
@@ -80,7 +80,7 @@
                     {if $order_info.child_ids}
                         {include file="buttons/button.tpl" but_meta="ty-btn__secondary" but_text=__("order_details") but_href="orders.search?period=A&order_id=`$order_info.child_ids`"}
                     {else}
-                        {include file="buttons/button.tpl" but_text=__("order_details") but_meta="ty-btn__secondary" but_href="orders.details?order_id=`$order_info.order_id`"}
+                        {include file="buttons/button.tpl" but_text=__("order_details") but_meta="ty-btn__secondary" but_href="orders.details?order_id=`$order_info.order_number`"}
                     {/if}
                 {/if}
                 &nbsp;{include file="buttons/button.tpl" but_meta="ty-btn__secondary" but_text=__("view_orders") but_href="orders.search"}
