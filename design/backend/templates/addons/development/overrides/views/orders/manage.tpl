@@ -58,7 +58,7 @@
     <td class="left">
         <input type="checkbox" name="order_ids[]" value="{$o.order_id}" class="cm-item cm-item-status-{$o.status|lower}" /></td>
     <td>
-        <a href="{"orders.details?order_id=`$o.order_id`"|fn_url}" class="underlined">#{$o.order_id}</br>№{$o.order_number|fn_short_order_number}</a>
+        <a href="{"orders.details?order_id=`$o.order_id`"|fn_url}" class="underlined">#{$o.order_id}</a>{if $o.order_number}</br>№{$o.order_number|fn_short_order_number}{/if}
         {if $order_statuses_data[$o.status].params.appearance_type == "I" && $o.invoice_id}
             <p class="small-note">{__("invoice")} #{$o.invoice_id}</p>
         {elseif $order_statuses_data[$o.status].params.appearance_type == "C" && $o.credit_memo_id}
