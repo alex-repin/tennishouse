@@ -317,6 +317,7 @@ function fn_get_newsletter_data($newsletter_id, $lang_code = CART_LANGUAGE)
 
     if (!empty($newsletter)) {
         $newsletter['mailing_lists'] = explode(',', $newsletter['mailing_lists']);
+        $newsletter['post_newsletters'] = explode(',', $newsletter['post_newsletters']);
     }
 
     return $newsletter;

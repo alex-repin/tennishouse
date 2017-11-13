@@ -89,6 +89,20 @@
     </div>
 {/if}
 
+<div class="control-group">
+    <label class="control-label">{__("post_newsletters")}</label>
+    <div class="controls">
+    {foreach from=$newsletters item="letter"}
+        {if ($newsletter.newsletter_id && $letter.newsletter_id != $newsletter.newsletter_id) || !$newsletter.newsletter_id}
+        <label class="checkbox">
+            <input type="checkbox" value="{$letter.newsletter_id}" name="newsletter_data[post_newsletters][]" {if $letter.newsletter_id|in_array:$newsletter.post_newsletters}checked="checked"{/if} />
+                {$letter.newsletter}
+        </label>
+        {/if}
+    {/foreach}
+    </div>
+</div>
+
 {include file="common/select_status.tpl" input_name="newsletter_data[status]" id="elm_newsletter_status" obj=$newsletter items_status="news"|fn_get_predefined_statuses}
 
 {if $newsletter_type == $smarty.const.NEWSLETTER_TYPE_NEWSLETTER}

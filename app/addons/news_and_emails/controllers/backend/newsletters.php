@@ -336,6 +336,8 @@ if ($mode == 'batch_send' && !empty($_REQUEST['key'])) {
 
     Registry::get('view')->assign('newsletter', $newsletter_data);
 
+    list($newsletters, $search) = fn_get_newsletters(array('type' => NEWSLETTER_TYPE_NEWSLETTER, 'only_available' => true), 0, DESCR_SL);
+    Registry::get('view')->assign('newsletters', $newsletters);
     list($newsletter_templates) = fn_get_newsletters(array('type' => NEWSLETTER_TYPE_TEMPLATE, 'only_available' => false), 0, DESCR_SL);
     Registry::get('view')->assign('newsletter_templates', $newsletter_templates);
     Registry::get('view')->assign('newsletter_type', $newsletter_data['type']);
@@ -357,6 +359,8 @@ if ($mode == 'batch_send' && !empty($_REQUEST['key'])) {
     $campaigns = db_get_array("SELECT * FROM ?:newsletter_campaigns AS n INNER JOIN ?:common_descriptions AS d ON n.campaign_id = d.object_id AND d.lang_code = ?s WHERE d.object_holder='newsletter_campaigns'", DESCR_SL);
     Registry::get('view')->assign('newsletter_campaigns', $campaigns);
 
+    list($newsletters, $search) = fn_get_newsletters(array('type' => NEWSLETTER_TYPE_NEWSLETTER, 'only_available' => true), 0, DESCR_SL);
+    Registry::get('view')->assign('newsletters', $newsletters);
     list($newsletter_templates) = fn_get_newsletters(array('type' => NEWSLETTER_TYPE_TEMPLATE, 'only_available' => false), 0, DESCR_SL);
     Registry::get('view')->assign('newsletter_templates', $newsletter_templates);
     Registry::get('view')->assign('newsletter_type', $newsletter_type);
@@ -486,6 +490,7 @@ function fn_update_newsletter($newsletter_data, $newsletter_id = 0, $lang_code =
 
         $_data = $newsletter_data;
         $_data['mailing_lists'] = implode(',', $_data['mailing_lists']);
+        $_data['post_newsletters'] = implode(',', $_data['post_newsletters']);
 
         $newsletter_id = db_query("INSERT INTO ?:newsletters ?e", $_data);
 
@@ -514,6 +519,7 @@ function fn_update_newsletter($newsletter_data, $newsletter_id = 0, $lang_code =
 
         $_data = $newsletter_data;
         $_data['mailing_lists'] = implode(',', $_data['mailing_lists']);
+        $_data['post_newsletters'] = implode(',', $_data['post_newsletters']);
 
         db_query("UPDATE ?:newsletters SET ?u WHERE newsletter_id = ?i", $_data, $newsletter_id);
 

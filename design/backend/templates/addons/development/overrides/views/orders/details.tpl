@@ -309,6 +309,20 @@
                                     {$shipping.shipping}
                                 </div>
                         </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label" for="elm_delivery_time">{__("delivery_time")} ({__("days")}) :</label>
+                            <div class="controls">
+                                <input type="text" name="update_order[delivery_time]" id="elm_list_price" size="10" value="{$order_info.delivery_time}" class="input-small" />
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="elm_delivery_time">{__("tracking_number")} :</label>
+                            <div class="controls">
+                                <input type="text" name="update_order[tracking_number]" id="elm_list_price" size="10" value="{$order_info.tracking_number}" class="input-small" />
+                            </div>
+                        </div>
 
                         {if $use_shipments}
                             <div class="clearfix">

@@ -197,6 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     if (!empty($result['number'])) {
                         db_query('UPDATE ?:shipments SET tracking_number = ?s WHERE shipment_id = ?i', $result['number'], $shipment_id);
+                        db_query('UPDATE ?:orders SET tracking_number = ?s WHERE order_id = ?i', $result['number'], $params['order_id']);
                     }
 
                     if ($sdek_info['Order']['TariffTypeCode'] != SDEK_STOCKROOM && $sdek_info['Order']['TariffTypeCode'] != SDEK_EXPR_STOCKROOM) {

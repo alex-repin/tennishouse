@@ -161,9 +161,16 @@ function fn_development_order_notification($order_info, $order_statuses, $force_
             if (strpos($order_status['sms_text'], '[delivery_time]')) {
                 $delivery_time = '';
                 if (!empty($order_info['s_city']) && !empty($order_info['delivery_time'])) {
-                    $delivery_time = ' ' . __("destination_delivery_time", array('[city]' => $order_info['s_city'])) . ': ' . $order_info['delivery_time'] . __("workdays");
+                    $delivery_time = ' ' . __("destination_delivery_time", array('[city]' => $order_info['s_city'])) . ': ' . $order_info['delivery_time'] . __("days");
                 }
                 $order_status['sms_text'] = str_replace('[delivery_time]', $delivery_time, $order_status['sms_text']);
+            }
+            if (strpos($order_status['sms_text'], '[tracking]')) {
+                $tracking = '';
+                if (!empty($order_info['tracking_number'])) {
+                    $tracking .= ' №' . $order_info['tracking_number'];
+                }
+                $order_status['sms_text'] = str_replace('[tracking]', $tracking, $order_status['sms_text']);
             }
             if (strpos($order_status['sms_text'], '[office_info]')) {
                 $office_info = '';

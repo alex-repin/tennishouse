@@ -622,6 +622,12 @@
         <item>
             ALTER TABLE `cscart_orders` ADD `order_number` VARCHAR(32) NOT NULL;
         </item>
+        <item>
+            ALTER TABLE `cscart_newsletters` ADD `post_newsletters` VARCHAR(255) NOT NULL;
+        </item>
+        <item>
+            ALTER TABLE `cscart_orders` ADD `tracking_number` VARCHAR(255) NOT NULL;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -1224,5 +1230,6 @@
         <item lang="ru" id="error_validator_recaptcha">Пожалуйста, подтвердите, что вы не робот.</item>
         <item lang="ru" id="use_for_login">Форм авторизации</item>
         <item lang="ru" id="order_number">Код заказа</item>
+        <item lang="ru" id="post_newsletters">Напомнить про</item>
     </language_variables>
 </addon>
