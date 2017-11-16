@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         fn_set_notification('N', __('notice'), __('done'));;
         exit;
     }
-    
+
     if ($mode == 'update_warehouse_stocks') {
         if (!empty($_REQUEST['calculate'])) {
             $file = fn_filter_uploaded_data('csv_file');
@@ -1354,37 +1354,37 @@ function fn_get_babolat_csv($file, $options)
                     continue;
                 }
                 $row = Bootstrap::stripSlashes($data);
-                if (empty($current_product_code) && empty($row[0])) {
+                
+                if (empty($row[0])) {
                     $trash_lines[] = array(
                         'line' => $line_it,
                         'data' => $row
                     );
                     continue;
                 } elseif (!empty($row[0]) && preg_match("/^[a-zA-Z0-9]{4,8}$/", $row[0], $matches)) {
-                    if (in_array($matches[0], $result)) {
-                        fn_set_notification('W', __('warning'), __('error_duplicate_product_code', array(
-                            '[line1]' => $result[$matches[0]]['line'],
-                            '[line2]' => $line_it,
-                            '[product_code]' => $matches[0]
-                        )));
-                        return false;
-                    }
                     $current_product_code = $matches[0];
-                    $result[$current_product_code] = array(
-                        'line' => $line_it,
-                        'product' => $row[1],
-                        'data' => array()
-                    );
-                } elseif (!empty($current_product_code) && empty($row[1])/* && !empty($previous_row) && $row[2] == $previous_row[2] && $row[3] == $previous_row[3]*/) {
+                    if (empty($result[$current_product_code])) {
+                        $result[$current_product_code] = array(
+                            'line' => $line_it,
+                            'product' => $row[1],
+                            'no_options' => true,
+                            'data' => array()
+                        );
+                    }
+                    if (!empty($row[2]) && !empty($result[$current_product_code]['no_options'])) {
+                        unset($result[$current_product_code]['data']);
+                        $result[$current_product_code]['no_options'] = false;
+                    }
                     $item = array(
-                        'name' => $row[0],
+                        'name' => $row[2],
                         'amount' => $row[count($row) - 1]
                     );
-                    if (count($row) == 4) {
-                        $item['price'] = str_replace(',', '.', $row[2]);
-                    } elseif (count($row) == 5) {
-                        $item['price'] = !empty($row[3]) ? str_replace(',', '.', $row[3]) : str_replace(',', '.', $row[2]);
-                    }
+                        
+//                     if (count($row) == 4) {
+//                         $item['price'] = str_replace(',', '.', $row[2]);
+//                     } elseif (count($row) == 5) {
+//                         $item['price'] = !empty($row[3]) ? str_replace(',', '.', $row[3]) : str_replace(',', '.', $row[2]);
+//                     }
                     $result[$current_product_code]['data'][] = $item;
                 } else {
                     $current_product_code = '';
