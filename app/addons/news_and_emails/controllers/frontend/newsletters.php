@@ -34,26 +34,54 @@ if ($mode == 'add_subscriber') {
     
     exit;
 } elseif ($mode == 'unsubscribe') {
-    if (!empty($_REQUEST['key']) && !empty($_REQUEST['list_id']) && !empty($_REQUEST['s_id'])) {
-        if (!empty($_REQUEST['list_id'])) {
-            $num = db_get_field("SELECT COUNT(*) FROM ?:user_mailing_lists WHERE unsubscribe_key = ?s AND list_id = ?i AND subscriber_id = ?i", $_REQUEST['key'], $_REQUEST['list_id'], $_REQUEST['s_id']);
+    
+    if (!empty($_REQUEST['subscribe_data']) && !empty($_REQUEST['subscribe_data']['list_id']) && !empty($_REQUEST['subscribe_data']['s_id'])) {
+        fn_update_subscriptions($_REQUEST['subscribe_data']['s_id'], array($_REQUEST['subscribe_data']['list_id']), NULL, fn_get_notification_rules(true));
 
-            if (!empty($num)) {
-                db_query("DELETE FROM ?:user_mailing_lists WHERE unsubscribe_key = ?s AND list_id = ?i AND subscriber_id = ?i", $_REQUEST['key'], $_REQUEST['list_id'], $_REQUEST['s_id']);
+        Registry::get('view')->assign('subscribed', true);
+        Registry::get('view')->display('addons/news_and_emails/views/newsletters/unsubscribe.tpl');
+    
+        exit;
+    } elseif (!empty($_REQUEST['unsubscribe_data']) && !empty($_REQUEST['unsubscribe_data']['key']) && !empty($_REQUEST['unsubscribe_data']['list_id']) && !empty($_REQUEST['unsubscribe_data']['s_id'])) {
+        $email = db_get_field("SELECT email FROM ?:subscribers WHERE subscriber_id = ?i", $_REQUEST['unsubscribe_data']['s_id']);
+        Registry::get('view')->assign('email', $email);
+        $num = db_get_field("SELECT COUNT(*) FROM ?:user_mailing_lists WHERE unsubscribe_key = ?s AND list_id = ?i AND subscriber_id = ?i", $_REQUEST['unsubscribe_data']['key'], $_REQUEST['unsubscribe_data']['list_id'], $_REQUEST['unsubscribe_data']['s_id']);
 
-                // if this subscription was the only one, we delete the subscriber as each subscruber
-                // must have at least one subscription
-                $left = db_get_field("SELECT COUNT(*) FROM ?:user_mailing_lists WHERE subscriber_id = ?i", $_REQUEST['s_id']);
-                if (empty($left)) {
-                    db_query("DELETE FROM ?:subscribers WHERE subscriber_id = ?i", $_REQUEST['s_id']);
-                }
-
-                fn_set_notification('N', __('notice'), __('text_subscriber_removed'));
+        if (!empty($num)) {
+            db_query("DELETE FROM ?:user_mailing_lists WHERE unsubscribe_key = ?s AND list_id = ?i AND subscriber_id = ?i", $_REQUEST['unsubscribe_data']['key'], $_REQUEST['unsubscribe_data']['list_id'], $_REQUEST['unsubscribe_data']['s_id']);
+            if (!empty($_REQUEST['unsubscribe_data']['notes'])) {
+                db_query("UPDATE ?:subscribers SET notes = ?s WHERE subscriber_id = ?i", $_REQUEST['unsubscribe_data']['notes'], $_REQUEST['unsubscribe_data']['s_id']);
             }
+            
+//             // if this subscription was the only one, we delete the subscriber as each subscruber
+//             // must have at least one subscription
+//             $left = db_get_field("SELECT COUNT(*) FROM ?:user_mailing_lists WHERE subscriber_id = ?i", $_REQUEST['s_id']);
+//             if (empty($left)) {
+//                 db_query("DELETE FROM ?:subscribers WHERE subscriber_id = ?i", $_REQUEST['s_id']);
+//             }
+// 
+//             fn_set_notification('N', __('notice'), __('text_subscriber_removed'));
+            Registry::get('view')->assign('unsubscribed', true);
+            Registry::get('view')->assign('list_id', $_REQUEST['unsubscribe_data']['list_id']);
+            Registry::get('view')->assign('s_id', $_REQUEST['unsubscribe_data']['s_id']);
+        }
+        Registry::get('view')->display('addons/news_and_emails/views/newsletters/unsubscribe.tpl');
+    
+        exit;
+    } elseif (!empty($_REQUEST['key']) && !empty($_REQUEST['list_id']) && !empty($_REQUEST['s_id'])) {
+        $email = db_get_field("SELECT email FROM ?:subscribers WHERE subscriber_id = ?i", $_REQUEST['s_id']);
+        Registry::get('view')->assign('email', $email);
+        $num = db_get_field("SELECT COUNT(*) FROM ?:user_mailing_lists WHERE unsubscribe_key = ?s AND list_id = ?i AND subscriber_id = ?i", $_REQUEST['key'], $_REQUEST['list_id'], $_REQUEST['s_id']);
+
+        if (!empty($num)) {
+            Registry::get('view')->assign('subscriber_found', true);
+            Registry::get('view')->assign('key',  $_REQUEST['key']);
+            Registry::get('view')->assign('list_id', $_REQUEST['list_id']);
+            Registry::get('view')->assign('s_id', $_REQUEST['s_id']);
         }
     }
 
-    return array(CONTROLLER_STATUS_REDIRECT, fn_url());
+//     return array(CONTROLLER_STATUS_REDIRECT, fn_url());
 
 } elseif ($mode == 'activate') {
     if (!empty($_REQUEST['key']) && !empty($_REQUEST['list_id']) && !empty($_REQUEST['s_id'])) {

@@ -167,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD']	== 'POST') {
             $first_newsletter = fn_render_newsletter($newsletter['body_html'], $user);
 
             if (!empty($first_newsletter)) {
-                $result = fn_send_newsletter($test_email, array(), $newsletter['newsletter'], $first_newsletter, array(), DESCR_SL, '', true);
+                $result = fn_send_newsletter($test_email, array(), $newsletter['newsletter'], $first_newsletter, array(), DESCR_SL, '', true, $newsletter);
             }
 
             if ((!empty($first_newsletter) && $result)) {
@@ -270,7 +270,19 @@ if ($mode == 'batch_send' && !empty($_REQUEST['key'])) {
 
         foreach (array_splice($data['recipients'], 0, Registry::get('addons.news_and_emails.newsletters_per_pass')) as $subscriber) {
             foreach ($newsletter_data as $newsletter) {
-                $body = fn_render_newsletter($newsletter[$subscriber['lang_code']]['body_html'], $subscriber);
+                $body = array();
+                $body[] = fn_render_newsletter($newsletter[$subscriber['lang_code']]['body_html'], $subscriber);
+                if (!empty($newsletter[$subscriber['lang_code']]['post_newsletters'])) {
+                    foreach ($newsletter[$subscriber['lang_code']]['post_newsletters'] as $nsl_id) {
+                        $n = array();
+                        foreach (fn_get_translation_languages() as $lang_code => $v) {
+                            $n[$lang_code] = fn_get_newsletter_data($nsl_id, $lang_code);
+                            $n[$lang_code]['body_html'] = fn_rewrite_links($n[$lang_code]['body_html'], $nsl_id, $n[$lang_code]['campaign_id']);
+                        }
+
+                        $body[] = $n[$lang_code]['body_html'];
+                    }
+                }
 
                 fn_echo(__('sending_email_to', array(
                     '[email]' => $subscriber['email']
@@ -280,7 +292,7 @@ if ($mode == 'batch_send' && !empty($_REQUEST['key'])) {
                     $subjects = explode("\n", $newsletter[$subscriber['lang_code']]['newsletter_multiple']);
                     $newsletter[$subscriber['lang_code']]['newsletter'] = trim($subjects[rand(0, count($subjects) - 1)]);
                 }
-                fn_send_newsletter($subscriber['email'], $subscriber, $newsletter[$subscriber['lang_code']]['newsletter'], $body, array(), $subscriber['lang_code'], $subscriber['reply_to']);
+                fn_send_newsletter($subscriber['email'], $subscriber, $newsletter[$subscriber['lang_code']]['newsletter'], $body, array(), $subscriber['lang_code'], $subscriber['reply_to'], $newsletter, $subscriber);
             }
         }
 

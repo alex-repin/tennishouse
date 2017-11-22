@@ -628,6 +628,9 @@
         <item>
             ALTER TABLE `cscart_orders` ADD `tracking_number` VARCHAR(255) NOT NULL;
         </item>
+        <item>
+            ALTER TABLE `cscart_subscribers` ADD `notes` TEXT NOT NULL;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -1231,5 +1234,21 @@
         <item lang="ru" id="use_for_login">Форм авторизации</item>
         <item lang="ru" id="order_number">Код заказа</item>
         <item lang="ru" id="post_newsletters">Напомнить про</item>
+        <item lang="ru" id="newsletter_footer_text"><![CDATA[Чтобы не пропустить наши новости и акции, добавьте <a href="mailto:[newsletter_email]">[newsletter_email]</a> в свою адресную книгу.]]></item>
+        <item lang="ru" id="newsletter_footer_text_unsubscribe"><![CDATA[Вы получили это письмо, потому что подписаны на рассылку интернет-магазина TennisHouse. Если Вы не хотите получать рассылку, перейдите по ссылке: <a href="[unsubscribe]" target="_blank">отписаться</a>]]></item>
+        <item lang="ru" id="rackets">Ракетки</item>
+        <item lang="ru" id="balls_short">Мячи</item>
+        <item lang="ru" id="bags">Сумки</item>
+        <item lang="ru" id="apparel">Одежда</item>
+        <item lang="ru" id="shoes">Обувь</item>
+        <item lang="ru" id="ball_machines">Пушки</item>
+        <item lang="ru" id="str_machines">Станки</item>
+        <item lang="ru" id="subscriber_removed_text">Адрес [email] успешно отписан от email-рассылок TennisHouse.</item>
+        <item lang="ru" id="post_newsletter_text">Другие акции</item>
+        <item lang="ru" id="unsubscribe_reason_text">Расскажите нам, почему Вы отписываетесь ?</item>
+        <item lang="ru" id="unsubscribe_email_text">Отписать [email] от email-рассылки TennisHouse</item>
+        <item lang="ru" id="subscribe_again">Подписаться снова</item>
+        <item lang="ru" id="subscription_confirmed">Подписка успешно оформлена !</item>
+        <item lang="ru" id="subscription_not_found">Подписака не найдена</item>
     </language_variables>
 </addon>

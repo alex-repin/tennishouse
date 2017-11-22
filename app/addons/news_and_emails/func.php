@@ -489,7 +489,7 @@ function fn_register_link($url, $newsletter_id, $campaign_id)
     }
 }
 
-function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $lang_code = CART_LANGUAGE, $reply_to = '')
+function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $lang_code = CART_LANGUAGE, $reply_to = '', $newsletter = array(), $subscriber = array())
 {
     $reply_to = !empty($reply_to) ? $reply_to : 'default_company_newsletter_email';
     $_from = array(
@@ -497,13 +497,16 @@ function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $l
         'name' => !empty($from['from_name']) ? $from['from_name'] : (empty($from['from_email']) ? 'default_company_name' : '')
     );
 
+    $unsubscribe_link = (!empty($subscriber['list_id']) && !empty($subscriber['subscriber_id'])) ? fn_generate_unsubscribe_link($subscriber['list_id'], $subscriber['subscriber_id']) : false;
     return Mailer::sendMail(array(
         'to' => $to,
         'from' => $_from,
         'reply_to' => $reply_to,
         'data' => array(
             'body' => $body,
-            'subject' => $subj
+            'subject' => $subj,
+            'unsubscribe_link' => $unsubscribe_link,
+            'from_email' => $_from['email']
         ),
         'attachments' => $attachments,
         'mailer_settings' => Registry::get('addons.news_and_emails'),
@@ -671,18 +674,18 @@ function fn_update_subscriptions($subscriber_id, $user_list_ids = array(), $conf
             db_query("DELETE FROM ?:user_mailing_lists WHERE subscriber_id = ?i AND list_id IN (?n)", $subscriber_id, $lists_to_delete);
 
             // Delete subscriber in the frontend if all lists are unchecked
-            if (AREA == 'C') {
-                $c = db_get_field("SELECT COUNT(*) FROM ?:user_mailing_lists WHERE subscriber_id = ?i", $subscriber_id);
-
-                if (empty($c)) {
-                    db_query("DELETE FROM ?:subscribers WHERE subscriber_id = ?i", $subscriber_id);
-                }
-            }
+//             if (AREA == 'C') {
+//                 $c = db_get_field("SELECT COUNT(*) FROM ?:user_mailing_lists WHERE subscriber_id = ?i", $subscriber_id);
+// 
+//                 if (empty($c)) {
+//                     db_query("DELETE FROM ?:subscribers WHERE subscriber_id = ?i", $subscriber_id);
+//                 }
+//             }
         }
 
     // Delete subscriber in the frontend area if all lists are unchecked
     } else {
-        fn_delete_subscribers(array($subscriber_id), (AREA == 'C'));
+//         fn_delete_subscribers(array($subscriber_id), (AREA == 'C'));
     }
 }
 

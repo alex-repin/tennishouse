@@ -162,6 +162,8 @@ define('LETS_PLAY_PAGE_ID', 75);
 define('LOYALITY_PROGRAM_PAGE_ID', 77);
 define('SAVING_PROGRAM_PAGE_ID', 77);
 define('ABOUT_US_PAGE_ID', 2);
+define('SHIPPING_PAGE_ID', 5);
+define('PAYMENT_PAGE_ID', 73);
 /* Pages*/
 
 /* Global options */
