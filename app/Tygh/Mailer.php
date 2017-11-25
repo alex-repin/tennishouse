@@ -124,6 +124,10 @@ class Mailer extends \phpmailer
         if (empty($to) || empty($from['email'])) {
             return false;
         }
+        
+        if (!empty($params['unsubscribe_link'])) {
+            $mailer->AddCustomHeader("List-Unsubscribe: <" . $params['unsubscribe_link'] . ">");
+        }
 
         $mailer->SetFrom($from['email'], $from['name']);
         $mailer->IsHTML(isset($params['is_html']) ? $params['is_html'] : true);
@@ -149,6 +153,15 @@ class Mailer extends \phpmailer
         } else {
             $subject = $params['subj'];
             $body = $params['body'];
+        }
+
+        if (!empty($params['tpl_txt']) && !empty($params['data']['body']['txt'])) {
+        
+            // Get template name for subject and render it
+            $tpl_ext = fn_get_file_ext($params['tpl']);
+
+            // Render template for body
+            $mailer->AltBody = Registry::get('view')->displayMail($params['tpl_txt'], false, $area, $company_id, $lang_code);
         }
 
 //         $mailer->Body = $mailer->attachImages($body);

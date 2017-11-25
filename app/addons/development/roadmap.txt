@@ -1,6 +1,7 @@
 convert xls to csv - ssconvert -O 'quoting-mode=always' Остатки\ по\ складу\ 08.04.15.xls остатки1.txt
 
 
+не отсылать pure aero pidanovo
 Скидки:
 
 - сообщить о снижении цены

@@ -631,6 +631,9 @@
         <item>
             ALTER TABLE `cscart_subscribers` ADD `notes` TEXT NOT NULL;
         </item>
+        <item>
+            ALTER TABLE `cscart_newsletter_descriptions` ADD `body_txt` MEDIUMTEXT NOT NULL;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -1234,8 +1237,8 @@
         <item lang="ru" id="use_for_login">Форм авторизации</item>
         <item lang="ru" id="order_number">Код заказа</item>
         <item lang="ru" id="post_newsletters">Напомнить про</item>
-        <item lang="ru" id="newsletter_footer_text"><![CDATA[Чтобы не пропустить наши новости и акции, добавьте <a href="mailto:[newsletter_email]">[newsletter_email]</a> в свою адресную книгу.]]></item>
-        <item lang="ru" id="newsletter_footer_text_unsubscribe"><![CDATA[Вы получили это письмо, потому что подписаны на рассылку интернет-магазина TennisHouse. Если Вы не хотите получать рассылку, перейдите по ссылке: <a href="[unsubscribe]" target="_blank">отписаться</a>]]></item>
+        <item lang="ru" id="newsletter_footer_text"><![CDATA[Чтобы не пропустить наши новости и акции, добавьте <span style="text-decoration:underline">[newsletter_email]</span> в свою адресную книгу.]]></item>
+        <item lang="ru" id="newsletter_footer_text_unsubscribe"><![CDATA[Вы получили это письмо, потому что подписаны на рассылку интернет-магазина TennisHouse. Если Вы не хотите получать рассылку, нажмите <a href="[unsubscribe]" target="_blank">сюда</a>]]></item>
         <item lang="ru" id="rackets">Ракетки</item>
         <item lang="ru" id="balls_short">Мячи</item>
         <item lang="ru" id="bags">Сумки</item>
@@ -1250,5 +1253,8 @@
         <item lang="ru" id="subscribe_again">Подписаться снова</item>
         <item lang="ru" id="subscription_confirmed">Подписка успешно оформлена !</item>
         <item lang="ru" id="subscription_not_found">Подписака не найдена</item>
+        <item lang="ru" id="body_txt">Текст письма (TXT)</item>
+        <item lang="ru" id="newsletter_footer_text_txt">Чтобы не пропустить наши новости и акции, добавьте [newsletter_email] в свою адресную книгу.</item>
+        <item lang="ru" id="newsletter_footer_text_unsubscribe_txt">Вы получили это письмо, потому что подписаны на рассылку интернет-магазина TennisHouse. Если Вы не хотите получать рассылку, перейдите по ссылке: [unsubscribe]</item>
     </language_variables>
 </addon>

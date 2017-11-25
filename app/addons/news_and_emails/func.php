@@ -497,7 +497,14 @@ function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $l
         'name' => !empty($from['from_name']) ? $from['from_name'] : (empty($from['from_email']) ? 'default_company_name' : '')
     );
 
+    $mailSegments = explode('@', $to);
+    $is_modest = true;
+    if (in_array($mailSegments[1], array('mail.ru', 'list.ru', 'inbox.ru', 'bk.ru'))) {
+        $is_modest = false;
+    }
+    
     $unsubscribe_link = (!empty($subscriber['list_id']) && !empty($subscriber['subscriber_id'])) ? fn_generate_unsubscribe_link($subscriber['list_id'], $subscriber['subscriber_id']) : false;
+    $unsubscribe_link_step = (!empty($subscriber['list_id']) && !empty($subscriber['subscriber_id'])) ? fn_generate_unsubscribe_link($subscriber['list_id'], $subscriber['subscriber_id'], true) : false;
     return Mailer::sendMail(array(
         'to' => $to,
         'from' => $_from,
@@ -506,11 +513,16 @@ function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $l
             'body' => $body,
             'subject' => $subj,
             'unsubscribe_link' => $unsubscribe_link,
-            'from_email' => $_from['email']
+            'from_email' => $_from['email'],
+            'firstname' => !empty($from['firstname']) ? $from['firstname'] : (!empty($from['order_firstname']) ? $from['order_firstname'] : ''),
+            'is_modest' => $is_modest,
+            'title' => $subj
         ),
+        'unsubscribe_link' => $unsubscribe_link_step,
         'attachments' => $attachments,
         'mailer_settings' => Registry::get('addons.news_and_emails'),
         'tpl' => 'addons/news_and_emails/newsletter.tpl',
+        'tpl_txt' => 'addons/news_and_emails/newsletter_txt.tpl',
     ), 'C', $lang_code);
 }
 
@@ -521,7 +533,7 @@ function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $l
 * @param int $subscriber_id
 * @return string unsubscribe_link
 */
-function fn_generate_unsubscribe_link($list_id, $subscriber_id)
+function fn_generate_unsubscribe_link($list_id, $subscriber_id, $one_step = false)
 {
     if ($list_id && $subscriber_id) {
         $unsubscribe_key = db_get_field("SELECT unsubscribe_key FROM ?:user_mailing_lists WHERE subscriber_id = ?i AND list_id = ?i", $subscriber_id, $list_id);
@@ -529,7 +541,11 @@ function fn_generate_unsubscribe_link($list_id, $subscriber_id)
         $unsubscribe_key = '0';
     }
 
-    return fn_url("newsletters.unsubscribe?list_id=$list_id&s_id=$subscriber_id&key=$unsubscribe_key", 'C', 'http');
+    if (!empty($one_step)) {
+        return fn_url("newsletters.unsubscribe?list_id=$list_id&s_id=$subscriber_id&key=$unsubscribe_key&one_step=true", 'C', 'http');
+    } else {
+        return fn_url("newsletters.unsubscribe?list_id=$list_id&s_id=$subscriber_id&key=$unsubscribe_key", 'C', 'http');
+    }
 }
 
 /**
@@ -668,8 +684,8 @@ function fn_update_subscriptions($subscriber_id, $user_list_ids = array(), $conf
     }
 
     // Delete unchecked mailing lists
-    if (!empty($user_list_ids)) {
-        $lists_to_delete = db_get_field("SELECT list_id FROM ?:user_mailing_lists WHERE subscriber_id = ?i AND list_id NOT IN (?n)", $subscriber_id, $user_list_ids);
+//     if (isset($user_list_ids)) {
+        $lists_to_delete = db_get_fields("SELECT list_id FROM ?:user_mailing_lists WHERE subscriber_id = ?i AND list_id NOT IN (?n)", $subscriber_id, $user_list_ids);
         if (!empty($lists_to_delete)) {
             db_query("DELETE FROM ?:user_mailing_lists WHERE subscriber_id = ?i AND list_id IN (?n)", $subscriber_id, $lists_to_delete);
 
@@ -684,9 +700,9 @@ function fn_update_subscriptions($subscriber_id, $user_list_ids = array(), $conf
         }
 
     // Delete subscriber in the frontend area if all lists are unchecked
-    } else {
+//     } else {
 //         fn_delete_subscribers(array($subscriber_id), (AREA == 'C'));
-    }
+//     }
 }
 
 /**

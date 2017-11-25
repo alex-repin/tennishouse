@@ -74,10 +74,15 @@ if ($mode == 'add_subscriber') {
         $num = db_get_field("SELECT COUNT(*) FROM ?:user_mailing_lists WHERE unsubscribe_key = ?s AND list_id = ?i AND subscriber_id = ?i", $_REQUEST['key'], $_REQUEST['list_id'], $_REQUEST['s_id']);
 
         if (!empty($num)) {
-            Registry::get('view')->assign('subscriber_found', true);
-            Registry::get('view')->assign('key',  $_REQUEST['key']);
-            Registry::get('view')->assign('list_id', $_REQUEST['list_id']);
-            Registry::get('view')->assign('s_id', $_REQUEST['s_id']);
+            if (!empty($_REQUEST['one_step'])) {
+                db_query("DELETE FROM ?:user_mailing_lists WHERE unsubscribe_key = ?s AND list_id = ?i AND subscriber_id = ?i", $_REQUEST['key'], $_REQUEST['list_id'], $_REQUEST['s_id']);
+                exit;
+            } else {
+                Registry::get('view')->assign('subscriber_found', true);
+                Registry::get('view')->assign('key',  $_REQUEST['key']);
+                Registry::get('view')->assign('list_id', $_REQUEST['list_id']);
+                Registry::get('view')->assign('s_id', $_REQUEST['s_id']);
+            }
         }
     }
 

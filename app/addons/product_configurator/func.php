@@ -1432,7 +1432,9 @@ function fn_get_configuration_groups(&$product, $selected_configuration)
 //         $product['price'] = $product['base_price'] = $product['original_price'] = $c_price;
         $product['price'] += $c_price;
         $product['base_price'] += $c_price;
-        $product['original_price'] += $c_price;
+        if (isset($product['original_price'])) {
+            $product['original_price'] += $c_price;
+        }
     }
 
     if (!empty($product_configurator_groups)) {

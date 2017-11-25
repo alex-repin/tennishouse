@@ -62,6 +62,13 @@
 </div>
 
 <div class="control-group">
+    <label class="control-label" for="elm_newsletter_descr_txt">{__("body_txt")}</label>
+    <div class="controls">
+        <textarea id="elm_newsletter_descr_txt" name="newsletter_data[body_txt]" cols="35" rows="8" class="input-large">{$newsletter.body_txt}</textarea>
+    </div>
+</div>
+
+<div class="control-group">
     <label class="control-label" for="elm_newsletter_template">{__("template")}</label>
     <div class="controls">
     <select name="newsletter_data[template]" id="elm_newsletter_template">

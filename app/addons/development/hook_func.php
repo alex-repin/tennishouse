@@ -1210,7 +1210,7 @@ function fn_development_gather_additional_product_data_post(&$product, $auth, $p
             }
         }
         $global_data = fn_get_product_global_data($product, array('product_pretitle'));
-        if (!empty($global_data['product_pretitle']) && !in_array($product['product_id'], array(912))/*Теннисная ракетка браслет*/) {
+        if (!empty($global_data['product_pretitle']) && !in_array($product['product_id'], array(912, 778, 779, 780, 781, 782, 831, 1307))/*Теннисная ракетка браслет*/) {
             $product['product'] = $global_data['product_pretitle'] . ' ' . $product['product'];
         }
     }
