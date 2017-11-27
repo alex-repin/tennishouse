@@ -55,7 +55,7 @@
                     <td><table style="border-collapse: collapse;background:#fafafa;border-spacing: 0;width: 100%;" cellspacing="0" cellpadding="0" border="0" align="center">
                     <tbody><tr>
                         <td style="height:37px;border-bottom: 1px solid #eeeeee;padding: 0;vertical-align: middle;text-align: left;font-size: 0;" height="37">
-                            <div style="display: inline-block;vertical-align: middle;text-align: center;padding: 0;width: 100%;max-width: 80px;">
+                            <div style="display: inline-block;vertical-align: middle;text-align: center;padding: 0;width: 12.5%;max-width: 80px;">
                                 <table style="height:37px;border-collapse: collapse;border-spacing: 0;width: 100%;" cellspacing="0" cellpadding="0" align="center">
                                     <tbody><tr>
                                         <td style="padding: 0;vertical-align: middle;text-align: center;font: 15px Play,sans-serif;line-height: 15px;font-weight: normal;color: #777777;">
@@ -66,7 +66,7 @@
                                     </tr>
                                 </tbody></table>
                             </div>
-                            <div style="display: inline-block;vertical-align: middle;text-align: center;padding: 0;width: 100%;max-width: 80px;">
+                            <div style="display: inline-block;vertical-align: middle;text-align: center;padding: 0;width: 12.5%;max-width: 80px;">
                                 <table style="height:37px;border-collapse: collapse;border-spacing: 0;width: 100%;" cellspacing="0" cellpadding="0" align="center">
                                     <tbody><tr>
                                         <td style="padding: 0;vertical-align: middle;text-align: center;font: 15px Play,sans-serif;line-height: 15px;font-weight: normal;color: #777777;">
@@ -77,7 +77,7 @@
                                     </tr>
                                 </tbody></table>
                             </div>
-                            <div style="display: inline-block;vertical-align: middle;text-align: center;padding: 0;width: 100%;max-width: 80px;">
+                            <div style="display: inline-block;vertical-align: middle;text-align: center;padding: 0;width: 12.5%;max-width: 80px;">
                                 <table style="height:37px;border-collapse: collapse;border-spacing: 0;width: 100%;" cellspacing="0" cellpadding="0" align="center">
                                     <tbody><tr>
                                         <td style="padding: 0;vertical-align: middle;text-align: center;font: 15px Play,sans-serif;line-height: 15px;font-weight: normal;color: #777777;">
@@ -88,7 +88,7 @@
                                     </tr>
                                 </tbody></table>
                             </div>
-                            <div style="display: inline-block;vertical-align: middle;text-align: center;padding: 0;width: 100%;max-width: 80px;">
+                            <div style="display: inline-block;vertical-align: middle;text-align: center;padding: 0;width: 12.5%;max-width: 80px;">
                                 <table style="height:37px;border-collapse: collapse;border-spacing: 0;width: 100%;" cellspacing="0" cellpadding="0" align="center">
                                     <tbody><tr>
                                         <td style="padding: 0;vertical-align: middle;text-align: center;font: 15px Play,sans-serif;line-height: 15px;font-weight: normal;color: #777777;">
@@ -99,7 +99,7 @@
                                     </tr>
                                 </tbody></table>
                             </div>
-                            <div style="display: inline-block;vertical-align: middle;text-align: center;padding: 0;width: 100%;max-width: 80px;">
+                            <div style="display: inline-block;vertical-align: middle;text-align: center;padding: 0;width: 12.5%;max-width: 80px;">
                                 <table style="height:37px;border-collapse: collapse;border-spacing: 0;width: 100%;" cellspacing="0" cellpadding="0" align="center">
                                     <tbody><tr>
                                         <td style="padding: 0;vertical-align: middle;text-align: center;font: 15px Play,sans-serif;line-height: 15px;font-weight: normal;color: #777777;">
@@ -110,7 +110,7 @@
                                     </tr>
                                 </tbody></table>
                             </div>
-                            <div style="display: inline-block;vertical-align: middle;text-align: center;padding: 0;width: 100%;max-width: 81px;">
+                            <div style="display: inline-block;vertical-align: middle;text-align: center;padding: 0;width: 12.5%;max-width: 81px;">
                                 <table style="height:37px;border-collapse: collapse;border-spacing: 0;width: 100%;" cellspacing="0" cellpadding="0" align="center">
                                     <tbody><tr>
                                         <td style="padding: 0;vertical-align: middle;text-align: center;font: 15px Play,sans-serif;line-height: 15px;font-weight: normal;color: #777777;">
@@ -121,7 +121,7 @@
                                     </tr>
                                 </tbody></table>
                             </div>
-                            <div style="display: inline-block;vertical-align: middle;text-align: center;padding: 0;width: 100%;max-width: 81px;">
+                            <div style="display: inline-block;vertical-align: middle;text-align: center;padding: 0;width: 12.5%;max-width: 81px;">
                                 <table style="height:37px;border-collapse: collapse;border-spacing: 0;width: 100%;" cellspacing="0" cellpadding="0" align="center">
                                     <tbody><tr>
                                         <td style="padding: 0;vertical-align: middle;text-align: center;font: 15px Play,sans-serif;line-height: 15px;font-weight: normal;color: #777777;">
@@ -132,7 +132,7 @@
                                     </tr>
                                 </tbody></table>
                             </div>
-                            <div style="display: inline-block;vertical-align: middle;text-align: center;padding: 0;width: 100%;max-width: 81px;">
+                            <div style="display: inline-block;vertical-align: middle;text-align: center;padding: 0;width: 12.5%;max-width: 81px;">
                                 <table style="height:37px;border-collapse: collapse;border-spacing: 0;width: 100%;" cellspacing="0" cellpadding="0" align="center">
                                     <tbody><tr>
                                         <td style="padding: 0;vertical-align: middle;text-align: center;font: 15px Play,sans-serif;line-height: 15px;font-weight: normal;color: #777777;">
