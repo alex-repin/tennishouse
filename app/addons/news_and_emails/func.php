@@ -503,8 +503,9 @@ function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $l
         $is_modest = false;
     }
     
-    $unsubscribe_link = (!empty($subscriber['list_id']) && !empty($subscriber['subscriber_id'])) ? fn_generate_unsubscribe_link($subscriber['list_id'], $subscriber['subscriber_id']) : false;
-    $unsubscribe_link_step = (!empty($subscriber['list_id']) && !empty($subscriber['subscriber_id'])) ? fn_generate_unsubscribe_link($subscriber['list_id'], $subscriber['subscriber_id'], true) : false;
+    $unsubscribe_link = (!empty($subscriber['list_id']) && !empty($subscriber['subscriber_id'])) ? fn_generate_unsubscribe_link($subscriber['list_id'], $subscriber['subscriber_id'], $subscriber['unsubscribe_key']) : false;
+    $unsubscribe_link_step = (!empty($subscriber['list_id']) && !empty($subscriber['subscriber_id'])) ? fn_generate_unsubscribe_link($subscriber['list_id'], $subscriber['subscriber_id'], $subscriber['unsubscribe_key'], true) : false;
+
     return Mailer::sendMail(array(
         'to' => $to,
         'from' => $_from,
@@ -533,12 +534,14 @@ function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $l
 * @param int $subscriber_id
 * @return string unsubscribe_link
 */
-function fn_generate_unsubscribe_link($list_id, $subscriber_id, $one_step = false)
+function fn_generate_unsubscribe_link($list_id, $subscriber_id, $unsubscribe_key = false, $one_step = false)
 {
-    if ($list_id && $subscriber_id) {
-        $unsubscribe_key = db_get_field("SELECT unsubscribe_key FROM ?:user_mailing_lists WHERE subscriber_id = ?i AND list_id = ?i", $subscriber_id, $list_id);
-    } else {
-        $unsubscribe_key = '0';
+    if (empty($unsubscribe_key)) {
+        if (!empty($list_id) && !empty($subscriber_id)) {
+            $unsubscribe_key = db_get_field("SELECT unsubscribe_key FROM ?:user_mailing_lists WHERE subscriber_id = ?i AND list_id = ?i", $subscriber_id, $list_id);
+        } else {
+            $unsubscribe_key = '0';
+        }
     }
 
     if (!empty($one_step)) {
@@ -555,12 +558,14 @@ function fn_generate_unsubscribe_link($list_id, $subscriber_id, $one_step = fals
 * @param int $subscriber_id
 * @return string unsubscribe_link
 */
-function fn_generate_activation_link($list_id, $subscriber_id)
+function fn_generate_activation_link($list_id, $subscriber_id, $activation_key = false)
 {
-    if ($list_id && $subscriber_id) {
-        $activation_key = db_get_field("SELECT activation_key FROM ?:user_mailing_lists WHERE list_id=?i AND subscriber_id=?i", $list_id, $subscriber_id);
-    } else {
-        $activation_key = '0';
+    if (empty($activation_key)) {
+        if (!empty($list_id) && !empty($subscriber_id)) {
+            $activation_key = db_get_field("SELECT activation_key FROM ?:user_mailing_lists WHERE list_id=?i AND subscriber_id=?i", $list_id, $subscriber_id);
+        } else {
+            $activation_key = '0';
+        }
     }
 
     return fn_url("newsletters.activate?list_id=$list_id&key=$activation_key&s_id=$subscriber_id", 'C', 'http');
@@ -754,8 +759,8 @@ function fn_render_newsletter($body, $subscriber)
 {
     // prepare placeholder values
     if (!empty($subscriber['list_id']) && !empty($subscriber['subscriber_id'])) {
-        $values['%UNSUBSCRIBE_LINK'] = fn_generate_unsubscribe_link($subscriber['list_id'], $subscriber['subscriber_id']);
-        $values['%ACTIVATION_LINK'] = fn_generate_activation_link($subscriber['list_id'], $subscriber['subscriber_id']);
+        $values['%UNSUBSCRIBE_LINK'] = fn_generate_unsubscribe_link($subscriber['list_id'], $subscriber['subscriber_id'], $subscriber['unsubscribe_key']);
+        $values['%ACTIVATION_LINK'] = fn_generate_activation_link($subscriber['list_id'], $subscriber['subscriber_id'], $subscriber['activation_key']);
     } else {
         $values['%UNSUBSCRIBE_LINK'] = $values['%ACTIVATION_LINK'] = empty($subscriber['user_id']) ? ('[' . __('link_message_for_test_letter') . ']') : '';
     }

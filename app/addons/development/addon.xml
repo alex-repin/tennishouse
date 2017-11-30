@@ -993,7 +993,7 @@
         <item lang="ru" id="order_process_time">Время сборки заказа</item>
         <item lang="ru" id="destination_delivery_time">Время доставки до города [city]</item>
         <item lang="ru" id="worktime">Рабочее время</item>
-        <item lang="ru" id="destination_point">Пункт выдачи заказа</item>
+        <item lang="ru" id="destination_point">ПВЗ</item>
         <item lang="ru" id="text_order_placed_successfully_question">Если у Вас имеются вопросы, обращайтесь по телефону +7 (499) 393-39-87</item>
         <item lang="ru" id="sms_text">Текст смс</item>
         <item lang="ru" id="notify_customer_sms">Информировать покупателя по смс</item>

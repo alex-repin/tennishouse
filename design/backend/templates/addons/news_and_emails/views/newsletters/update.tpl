@@ -119,8 +119,8 @@
         <label class="control-label">{__("mailing_lists")}</label>
         <div class="controls">
         {foreach from=$mailing_lists item="list"}
-            <label class="checkbox">
-                <input type="checkbox" value="{$list.list_id}" name="newsletter_data[mailing_lists][]" {if $list.list_id|in_array:$newsletter.mailing_lists}checked="checked"{/if} />
+            <label class="radio">
+                <input type="radio" name="newsletter_data[mailing_lists][]" value="{$list.list_id}" {if $list.list_id|in_array:$newsletter.mailing_lists}checked="checked"{/if}>
                     {$list.object}
                     {if "ULTIMATE"|fn_allowed_for}
                     {assign var="companies" value="\n"|implode:$list.shared_for_companies}
@@ -130,7 +130,7 @@
         {/foreach}
         </div>
     </div>
-
+{*
     <div class="control-group">
         <label class="control-label">{__("users")}</label>
         <div class="controls">
@@ -155,6 +155,7 @@
         {__("days_old")}
         </div>
     </div>
+    *}
 </div>
 {/if}
 

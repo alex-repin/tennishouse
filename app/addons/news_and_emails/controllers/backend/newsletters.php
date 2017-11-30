@@ -78,49 +78,49 @@ if ($_SERVER['REQUEST_METHOD']	== 'POST') {
         if (!empty($_REQUEST['newsletter_data']['mailing_lists']) || !empty($_REQUEST['newsletter_data']['users']) || !empty($_REQUEST['newsletter_data']['abandoned_days'])) {
             $list_recipients = array();
             if (!empty($_REQUEST['newsletter_data']['mailing_lists'])) {
-                $list_recipients = db_get_array("SELECT s.*, u.*, m.*, ?:users.firstname, ?:orders.firstname AS order_firstname FROM ?:subscribers AS s LEFT JOIN ?:user_mailing_lists AS u ON s.subscriber_id=u.subscriber_id LEFT JOIN ?:mailing_lists AS m ON u.list_id = m.list_id LEFT JOIN ?:users ON ?:users.email = s.email LEFT JOIN ?:orders ON ?:orders.email = s.email WHERE u.list_id IN(?n) AND u.confirmed='1' GROUP BY s.subscriber_id", $_REQUEST['newsletter_data']['mailing_lists']);
+                $list_recipients = db_get_hash_array("SELECT s.*, s.status AS subscriber_status, u.*, m.*, ?:users.firstname, ?:orders.firstname AS order_firstname FROM ?:subscribers AS s LEFT JOIN ?:user_mailing_lists AS u ON s.subscriber_id=u.subscriber_id LEFT JOIN ?:mailing_lists AS m ON u.list_id = m.list_id LEFT JOIN ?:users ON ?:users.email = s.email LEFT JOIN ?:orders ON ?:orders.email = s.email WHERE u.list_id IN(?n) AND u.confirmed='1' AND s.status = 'C'", 'subscriber_id', $_REQUEST['newsletter_data']['mailing_lists']);
             }
+            
+//             $user_recipients = array();
+//             if (!empty($_REQUEST['newsletter_data']['users'])) {
+//                 $users = fn_explode(',', $_REQUEST['newsletter_data']['users']);
+//                 $user_recipients = db_get_array("SELECT user_id, email, lang_code FROM ?:users WHERE user_id IN (?n)", $users);
+//                 foreach ($user_recipients as $k => $v) {
+//                     // populate user array with sensible defaults
+//                     $user_recipients[$k]['from_name'] = '';
+//                     $user_recipients[$k]['reply_to'] = '';
+//                     $user_recipients[$k]['users_list'] = 'Y';
+//                 }
+//             }
+// 
+//             $abandoned_recipients = array();
+//             if (!empty($_REQUEST['newsletter_data']['abandoned_days'])) {
+//                 $time = time() - (intval($_REQUEST['newsletter_data']['abandoned_days']) * 24 * 60 * 60); // X days * 24 hours * 60 mins * 60 secs;
+//                 $condition = db_quote("AND ?:user_session_products.timestamp <= ?i", $time);
+//                 if ($_REQUEST['newsletter_data']['abandoned_type'] == 'cart') {
+//                     $condition .= db_quote(' AND ?:user_session_products.type = ?s', 'C');
+//                 } elseif ($_REQUEST['newsletter_data']['abandoned_type'] == 'wishlist') {
+//                     $condition .= db_quote(' AND ?:user_session_products.type = ?s', 'W');
+//                 }
+// 
+//                 if (fn_allowed_for("ULTIMATE")) {
+//                     if (!empty($_REQUEST['newsletter_data']['abandoned_company_id'])) {
+//                         $condition .= db_quote(" AND ?:user_session_products.company_id = ?i", $_REQUEST['newsletter_data']['abandoned_company_id']);
+//                     }
+//                 }
+// 
+//                 $abandoned_recipients = db_get_array("SELECT ?:users.user_id, ?:users.email, ?:users.lang_code FROM ?:users LEFT JOIN ?:user_session_products ON (?:users.user_id = ?:user_session_products.user_id) WHERE 1 $condition  GROUP BY ?:users.user_id");
+//                 if (!empty($abandoned_recipients)) {
+//                     foreach ($abandoned_recipients as $k => $v) {
+//                         // populate user array with sensible defaults
+//                         $abandoned_recipients[$k]['from_name'] = '';
+//                         $abandoned_recipients[$k]['reply_to'] = '';
+//                         $abandoned_recipients[$k]['users_list'] = 'Y';
+//                     }
+//                 }
+//             }
 
-            $user_recipients = array();
-            if (!empty($_REQUEST['newsletter_data']['users'])) {
-                $users = fn_explode(',', $_REQUEST['newsletter_data']['users']);
-                $user_recipients = db_get_array("SELECT user_id, email, lang_code FROM ?:users WHERE user_id IN (?n)", $users);
-                foreach ($user_recipients as $k => $v) {
-                    // populate user array with sensible defaults
-                    $user_recipients[$k]['from_name'] = '';
-                    $user_recipients[$k]['reply_to'] = '';
-                    $user_recipients[$k]['users_list'] = 'Y';
-                }
-            }
-
-            $abandoned_recipients = array();
-            if (!empty($_REQUEST['newsletter_data']['abandoned_days'])) {
-                $time = time() - (intval($_REQUEST['newsletter_data']['abandoned_days']) * 24 * 60 * 60); // X days * 24 hours * 60 mins * 60 secs;
-                $condition = db_quote("AND ?:user_session_products.timestamp <= ?i", $time);
-                if ($_REQUEST['newsletter_data']['abandoned_type'] == 'cart') {
-                    $condition .= db_quote(' AND ?:user_session_products.type = ?s', 'C');
-                } elseif ($_REQUEST['newsletter_data']['abandoned_type'] == 'wishlist') {
-                    $condition .= db_quote(' AND ?:user_session_products.type = ?s', 'W');
-                }
-
-                if (fn_allowed_for("ULTIMATE")) {
-                    if (!empty($_REQUEST['newsletter_data']['abandoned_company_id'])) {
-                        $condition .= db_quote(" AND ?:user_session_products.company_id = ?i", $_REQUEST['newsletter_data']['abandoned_company_id']);
-                    }
-                }
-
-                $abandoned_recipients = db_get_array("SELECT ?:users.user_id, ?:users.email, ?:users.lang_code FROM ?:users LEFT JOIN ?:user_session_products ON (?:users.user_id = ?:user_session_products.user_id) WHERE 1 $condition  GROUP BY ?:users.user_id");
-                if (!empty($abandoned_recipients)) {
-                    foreach ($abandoned_recipients as $k => $v) {
-                        // populate user array with sensible defaults
-                        $abandoned_recipients[$k]['from_name'] = '';
-                        $abandoned_recipients[$k]['reply_to'] = '';
-                        $abandoned_recipients[$k]['users_list'] = 'Y';
-                    }
-                }
-            }
-
-            $recipients = array_merge($list_recipients, $user_recipients, $abandoned_recipients);
+            $recipients = /*array_merge($list_recipients, $user_recipients, $abandoned_recipients)*/$list_recipients;
 
             if (!empty($recipients)) {
                 // Set status to 'sent'
@@ -131,7 +131,10 @@ if ($_SERVER['REQUEST_METHOD']	== 'POST') {
 
                 $data = array(
                     'send_ids' => $send_ids,
-                    'recipients' => $recipients,
+                    'recipients' => array(
+                        'pending' => $recipients,
+                        'sent' => array()
+                    )
                 );
 
                 $key = md5(uniqid(rand()));
@@ -293,39 +296,42 @@ if ($mode == 'batch_send' && !empty($_REQUEST['key'])) {
             $newsletter_data[] = $n;
         }
 
-        foreach (array_splice($data['recipients'], 0, Registry::get('addons.news_and_emails.newsletters_per_pass')) as $subscriber) {
-            foreach ($newsletter_data as $newsletter) {
-                $body = array(
-                    'html' => array()
-                );
-                $body['html'][] = fn_render_newsletter($newsletter[$subscriber['lang_code']]['body_html'], $subscriber);
-                if (!empty($newsletter[$subscriber['lang_code']]['body_txt'])) {
-                    $body['txt'] = fn_render_newsletter($newsletter[$subscriber['lang_code']]['body_txt'], $subscriber);
-                }
-                
-                if (!empty($newsletter[$subscriber['lang_code']]['post_newsletters'])) {
-                    foreach ($newsletter[$subscriber['lang_code']]['post_newsletters'] as $nsl_id) {
-                        if (!empty($nsl_id)) {
-                            $n = array();
-                            foreach (fn_get_translation_languages() as $lang_code => $v) {
-                                $n[$lang_code] = fn_get_newsletter_data($nsl_id, $lang_code);
-                                $n[$lang_code]['body_html'] = fn_rewrite_links($n[$lang_code]['body_html'], $nsl_id, $n[$lang_code]['campaign_id']);
-                            }
+        foreach ($newsletter_data as $newsletter_vrs) {
+            foreach ($newsletter_vrs as $lang_var => $newsletter) {
+                foreach (array_splice($data['recipients']['pending'], 0, Registry::get('addons.news_and_emails.newsletters_per_pass')) as $subscriber) {
+                    $body = array(
+                        'html' => array()
+                    );
+                    $body['html'][] = fn_render_newsletter($newsletter[$subscriber['lang_code']]['body_html'], $subscriber);
+                    if (!empty($newsletter[$subscriber['lang_code']]['body_txt'])) {
+                        $body['txt'] = fn_render_newsletter($newsletter[$subscriber['lang_code']]['body_txt'], $subscriber);
+                    }
+                    
+                    if (!empty($newsletter[$subscriber['lang_code']]['post_newsletters'])) {
+                        foreach ($newsletter[$subscriber['lang_code']]['post_newsletters'] as $nsl_id) {
+                            if (!empty($nsl_id)) {
+                                $n = array();
+                                foreach (fn_get_translation_languages() as $lang_code => $v) {
+                                    $n[$lang_code] = fn_get_newsletter_data($nsl_id, $lang_code);
+                                    $n[$lang_code]['body_html'] = fn_rewrite_links($n[$lang_code]['body_html'], $nsl_id, $n[$lang_code]['campaign_id']);
+                                }
 
-                            $body['html'][] = $n[$lang_code]['body_html'];
+                                $body['html'][] = $n[$lang_code]['body_html'];
+                            }
                         }
                     }
-                }
 
-                fn_echo(__('sending_email_to', array(
-                    '[email]' => $subscriber['email']
-                )) . '<br />');
+                    fn_echo(__('sending_email_to', array(
+                        '[email]' => $subscriber['email']
+                    )) . '<br />');
 
-                if (!empty($newsletter[$subscriber['lang_code']]['newsletter_multiple'])) {
-                    $subjects = explode("\n", $newsletter[$subscriber['lang_code']]['newsletter_multiple']);
-                    $newsletter[$subscriber['lang_code']]['newsletter'] = trim($subjects[rand(0, count($subjects) - 1)]);
+                    if (!empty($newsletter[$subscriber['lang_code']]['newsletter_multiple'])) {
+                        $subjects = explode("\n", $newsletter[$subscriber['lang_code']]['newsletter_multiple']);
+                        $newsletter[$subscriber['lang_code']]['newsletter'] = trim($subjects[rand(0, count($subjects) - 1)]);
+                    }
+                    fn_send_newsletter($subscriber['email'], $subscriber, $newsletter[$subscriber['lang_code']]['newsletter'], $body, array(), $subscriber['lang_code'], $subscriber['reply_to'], $newsletter, $subscriber);
+                    $data['recipients']['sent'][$subscriber['subscriber_id']] = $subscriber;
                 }
-                fn_send_newsletter($subscriber['email'], $subscriber, $newsletter[$subscriber['lang_code']]['newsletter'], $body, array(), $subscriber['lang_code'], $subscriber['reply_to'], $newsletter, $subscriber);
             }
         }
 
