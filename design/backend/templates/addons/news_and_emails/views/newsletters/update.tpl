@@ -25,7 +25,7 @@
 
 {capture name="mainbox"}
 
-<form action="{""|fn_url}" method="post" name="newsletters_form" class="form-horizontal form-edit ">
+<form action="{""|fn_url}" method="post" name="newsletters_form" class="form-horizontal form-edit cm-ajax">
 <input type="hidden" name="fake" value="1" />
 <input type="hidden" name="newsletter_id" value="{$id}" />
 <input type="hidden" name="newsletter_data[type]" value="{$newsletter_type}" />
@@ -197,7 +197,7 @@
 
 {capture name="buttons"}
 {if $newsletter_type == $smarty.const.NEWSLETTER_TYPE_NEWSLETTER}
-    {include file="buttons/button.tpl" but_text=__("save_and_send") but_name="dispatch[newsletters.send]" but_role="submit-link" but_target_form="newsletters_form" allow_href=true}
+    {include file="buttons/button.tpl" but_text=__("save_and_send") but_name="dispatch[newsletters.send]" but_role="submit-link" but_target_form="newsletters_form" but_meta="cm-comet"}
 {/if}
 {include file="buttons/save.tpl" but_name="dispatch[newsletters.update]" but_role="submit-link" but_target_form="newsletters_form"}
 {/capture}

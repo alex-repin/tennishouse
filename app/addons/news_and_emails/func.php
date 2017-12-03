@@ -506,7 +506,7 @@ function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $l
     $unsubscribe_link = (!empty($subscriber['list_id']) && !empty($subscriber['subscriber_id'])) ? fn_generate_unsubscribe_link($subscriber['list_id'], $subscriber['subscriber_id'], $subscriber['unsubscribe_key']) : false;
     $unsubscribe_link_step = (!empty($subscriber['list_id']) && !empty($subscriber['subscriber_id'])) ? fn_generate_unsubscribe_link($subscriber['list_id'], $subscriber['subscriber_id'], $subscriber['unsubscribe_key'], true) : false;
 
-    return /*Mailer::sendMail(array(
+    return Mailer::sendMail(array(
         'to' => $to,
         'from' => $_from,
         'reply_to' => $reply_to,
@@ -524,7 +524,7 @@ function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $l
         'mailer_settings' => Registry::get('addons.news_and_emails'),
         'tpl' => 'addons/news_and_emails/newsletter.tpl',
         'tpl_txt' => 'addons/news_and_emails/newsletter_txt.tpl',
-    ), 'C', $lang_code)*/;
+    ), 'C', $lang_code);
 }
 
 /**
