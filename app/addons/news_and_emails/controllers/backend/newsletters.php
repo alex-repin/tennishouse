@@ -296,42 +296,41 @@ if ($mode == 'batch_send' && !empty($_REQUEST['key'])) {
             $newsletter_data[] = $n;
         }
 
-        foreach ($newsletter_data as $newsletter_vrs) {
-            foreach ($newsletter_vrs as $lang_var => $newsletter) {
-                foreach (array_splice($data['recipients']['pending'], 0, Registry::get('addons.news_and_emails.newsletters_per_pass')) as $subscriber) {
-                    $body = array(
-                        'html' => array()
-                    );
-                    $body['html'][] = fn_render_newsletter($newsletter[$subscriber['lang_code']]['body_html'], $subscriber);
-                    if (!empty($newsletter[$subscriber['lang_code']]['body_txt'])) {
-                        $body['txt'] = fn_render_newsletter($newsletter[$subscriber['lang_code']]['body_txt'], $subscriber);
-                    }
-                    
-                    if (!empty($newsletter[$subscriber['lang_code']]['post_newsletters'])) {
-                        foreach ($newsletter[$subscriber['lang_code']]['post_newsletters'] as $nsl_id) {
-                            if (!empty($nsl_id)) {
-                                $n = array();
-                                foreach (fn_get_translation_languages() as $lang_code => $v) {
-                                    $n[$lang_code] = fn_get_newsletter_data($nsl_id, $lang_code);
-                                    $n[$lang_code]['body_html'] = fn_rewrite_links($n[$lang_code]['body_html'], $nsl_id, $n[$lang_code]['campaign_id']);
-                                }
-
-                                $body['html'][] = $n[$lang_code]['body_html'];
+        foreach ($newsletter_data as $newsletter) {
+            foreach (array_splice($data['recipients']['pending'], 0, Registry::get('addons.news_and_emails.newsletters_per_pass')) as $subscriber) {
+                $body = array(
+                    'html' => array()
+                );
+                $body['html'][] = fn_render_newsletter($newsletter[$subscriber['lang_code']]['body_html'], $subscriber);
+                if (!empty($newsletter[$subscriber['lang_code']]['body_txt'])) {
+                    $body['txt'] = fn_render_newsletter($newsletter[$subscriber['lang_code']]['body_txt'], $subscriber);
+                }
+                
+                if (!empty($newsletter[$subscriber['lang_code']]['post_newsletters'])) {
+                    foreach ($newsletter[$subscriber['lang_code']]['post_newsletters'] as $nsl_id) {
+                        if (!empty($nsl_id)) {
+                            $n = array();
+                            foreach (fn_get_translation_languages() as $lang_code => $v) {
+                                $n[$lang_code] = fn_get_newsletter_data($nsl_id, $lang_code);
+                                $n[$lang_code]['body_html'] = fn_rewrite_links($n[$lang_code]['body_html'], $nsl_id, $n[$lang_code]['campaign_id']);
                             }
+
+                            $body['html'][] = $n[$lang_code]['body_html'];
                         }
                     }
-
-                    fn_echo(__('sending_email_to', array(
-                        '[email]' => $subscriber['email']
-                    )) . '<br />');
-
-                    if (!empty($newsletter[$subscriber['lang_code']]['newsletter_multiple'])) {
-                        $subjects = explode("\n", $newsletter[$subscriber['lang_code']]['newsletter_multiple']);
-                        $newsletter[$subscriber['lang_code']]['newsletter'] = trim($subjects[rand(0, count($subjects) - 1)]);
-                    }
-                    fn_send_newsletter($subscriber['email'], $subscriber, $newsletter[$subscriber['lang_code']]['newsletter'], $body, array(), $subscriber['lang_code'], $subscriber['reply_to'], $newsletter, $subscriber);
-                    $data['recipients']['sent'][$subscriber['subscriber_id']] = $subscriber;
                 }
+
+                fn_echo(__('sending_email_to', array(
+                    '[email]' => $subscriber['email']
+                )) . '<br />');
+
+                if (!empty($newsletter[$subscriber['lang_code']]['newsletter_multiple'])) {
+                    $subjects = explode("\n", $newsletter[$subscriber['lang_code']]['newsletter_multiple']);
+                    $newsletter[$subscriber['lang_code']]['newsletter'] = trim($subjects[rand(0, count($subjects) - 1)]);
+                }
+                sleep(1);
+//                 fn_send_newsletter($subscriber['email'], $subscriber, $newsletter[$subscriber['lang_code']]['newsletter'], $body, array(), $subscriber['lang_code'], $subscriber['reply_to'], $newsletter, $subscriber);
+                $data['recipients']['sent'][$subscriber['subscriber_id']] = $subscriber;
             }
         }
 
