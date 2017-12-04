@@ -44,6 +44,13 @@
     </div>
 </div>
 
+<div class="control-group">
+    <label class="control-label" for="elm_newsletter_pretitle">{__("pretitle")}</label>
+    <div class="controls">
+        <input type="text" name="newsletter_data[pretitle]" id="elm_newsletter_pretitle" value="{$newsletter.pretitle}" size="40" class="input-large" />
+    </div>
+</div>
+
 {if $newsletter_type == $smarty.const.NEWSLETTER_TYPE_NEWSLETTER}
 <div class="control-group">
     <label class="control-label" for="elm_newsletter_subject_multiple">{__("more_subjects")}</label>

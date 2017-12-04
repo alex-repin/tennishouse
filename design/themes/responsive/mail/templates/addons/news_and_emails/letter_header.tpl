@@ -25,9 +25,17 @@
 </style>
 </head>
 <body>
-
 <table width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#f7f7f7;">
 <tbody>
+    {if $body.pretitle}<tr>
+        <td style="padding: 0;vertical-align: middle;text-alin: center;font-size: 0;">
+            <table style="border-collapse: collapse;border-spacing: 0;vertical-align: middle;" cellspacing="0" cellpadding="0" border="0" align="center">
+                <tbody><tr>
+                    <td style="width: 100%;max-width: 648px;padding-bottom: 5px;padding-top: 5px;padding-left: 5px;vertical-align: middle;text-align: left;color: #777777;font-size: 11px;line-height: 15px;">{$body.pretitle}</td>
+                </tr></tbody>
+            </table>
+        </td>
+    </tr>{/if}
     <tr>
         <td>
             {if $is_modest}<a target="_blank" style="text-decoration: none;" href="{""|fn_url:'C':'http'}">{/if}
@@ -59,7 +67,7 @@
                                 <table style="height:37px;border-collapse: collapse;border-spacing: 0;width: 100%;" cellspacing="0" cellpadding="0" align="center">
                                     <tbody><tr>
                                         <td style="padding: 0;vertical-align: middle;text-align: center;font: 15px Play,sans-serif;line-height: 15px;font-weight: normal;color: #777777;">
-                                            {if !$is_modest}<a target="_blank" href="{"categories.view?category_id=`$smarty.const.RACKETS_CATEGORY_ID`"|fn_url:'C':'http'}" style="text-decoration:none;display:block;color:#777777;" rel=" noopener noreferrer" data-title="{__('rackets')}">{/if}
+                                            {if !$is_modest}<a target="_blank" href="{"categories.view?category_id=`$smarty.const.RACKETS_CATEGORY_ID`"|fn_url:'C':'http'}" style="text-decoration:none;display:block;color:#777777;"  data-title="{__('rackets')}">{/if}
                                                 <span style="color:#777777;">{__("rackets")}</span>
                                             {if !$is_modest}</a>{/if}
                                         </td>
@@ -70,7 +78,7 @@
                                 <table style="height:37px;border-collapse: collapse;border-spacing: 0;width: 100%;" cellspacing="0" cellpadding="0" align="center">
                                     <tbody><tr>
                                         <td style="padding: 0;vertical-align: middle;text-align: center;font: 15px Play,sans-serif;line-height: 15px;font-weight: normal;color: #777777;">
-                                            {if !$is_modest}<a target="_blank" href="{"categories.view?category_id=`$smarty.const.BALLS_CATEGORY_ID`"|fn_url:'C':'http'}" style="text-decoration:none;display:block;color:#777777;" rel=" noopener noreferrer" data-title="{__('balls_short')}">{/if}
+                                            {if !$is_modest}<a target="_blank" href="{"categories.view?category_id=`$smarty.const.BALLS_CATEGORY_ID`"|fn_url:'C':'http'}" style="text-decoration:none;display:block;color:#777777;"  data-title="{__('balls_short')}">{/if}
                                                 <span style="color:#777777;">{__("balls_short")}</span>
                                             {if !$is_modest}</a>{/if}
                                         </td>
@@ -81,7 +89,7 @@
                                 <table style="height:37px;border-collapse: collapse;border-spacing: 0;width: 100%;" cellspacing="0" cellpadding="0" align="center">
                                     <tbody><tr>
                                         <td style="padding: 0;vertical-align: middle;text-align: center;font: 15px Play,sans-serif;line-height: 15px;font-weight: normal;color: #777777;">
-                                            {if !$is_modest}<a target="_blank" href="{"categories.view?category_id=`$smarty.const.BAGS_CATEGORY_ID`"|fn_url:'C':'http'}" style="text-decoration:none;display:block;color:#777777;" rel=" noopener noreferrer" data-title="{__('bags')}">{/if}
+                                            {if !$is_modest}<a target="_blank" href="{"categories.view?category_id=`$smarty.const.BAGS_CATEGORY_ID`"|fn_url:'C':'http'}" style="text-decoration:none;display:block;color:#777777;"  data-title="{__('bags')}">{/if}
                                                 <span style="color:#777777;">{__("bags")}</span>
                                             {if !$is_modest}</a>{/if}
                                         </td>
@@ -92,7 +100,7 @@
                                 <table style="height:37px;border-collapse: collapse;border-spacing: 0;width: 100%;" cellspacing="0" cellpadding="0" align="center">
                                     <tbody><tr>
                                         <td style="padding: 0;vertical-align: middle;text-align: center;font: 15px Play,sans-serif;line-height: 15px;font-weight: normal;color: #777777;">
-                                            {if !$is_modest}<a target="_blank" href="{"categories.view?category_id=`$smarty.const.APPAREL_CATEGORY_ID`"|fn_url:'C':'http'}" style="text-decoration:none;display:block;color:#777777;" rel=" noopener noreferrer" data-title="{__('apparel')}">{/if}
+                                            {if !$is_modest}<a target="_blank" href="{"categories.view?category_id=`$smarty.const.APPAREL_CATEGORY_ID`"|fn_url:'C':'http'}" style="text-decoration:none;display:block;color:#777777;"  data-title="{__('apparel')}">{/if}
                                                 <span style="color:#777777;">{__("apparel")}</span>
                                             {if !$is_modest}</a>{/if}
                                         </td>
@@ -103,7 +111,7 @@
                                 <table style="height:37px;border-collapse: collapse;border-spacing: 0;width: 100%;" cellspacing="0" cellpadding="0" align="center">
                                     <tbody><tr>
                                         <td style="padding: 0;vertical-align: middle;text-align: center;font: 15px Play,sans-serif;line-height: 15px;font-weight: normal;color: #777777;">
-                                            {if !$is_modest}<a target="_blank" href="{"categories.view?category_id=`$smarty.const.SHOES_CATEGORY_ID`"|fn_url:'C':'http'}" style="text-decoration:none;display:block;color:#777777;" rel=" noopener noreferrer" data-title="{__('shoes')}">{/if}
+                                            {if !$is_modest}<a target="_blank" href="{"categories.view?category_id=`$smarty.const.SHOES_CATEGORY_ID`"|fn_url:'C':'http'}" style="text-decoration:none;display:block;color:#777777;"  data-title="{__('shoes')}">{/if}
                                                 <span style="color:#777777;">{__("shoes")}</span>
                                             {if !$is_modest}</a>{/if}
                                         </td>
@@ -114,7 +122,7 @@
                                 <table style="height:37px;border-collapse: collapse;border-spacing: 0;width: 100%;" cellspacing="0" cellpadding="0" align="center">
                                     <tbody><tr>
                                         <td style="padding: 0;vertical-align: middle;text-align: center;font: 15px Play,sans-serif;line-height: 15px;font-weight: normal;color: #777777;">
-                                            {if !$is_modest}<a target="_blank" href="{"categories.view?category_id=`$smarty.const.STRINGS_CATEGORY_ID`"|fn_url:'C':'http'}" style="text-decoration:none;display:block;color:#777777;" rel=" noopener noreferrer" data-title="{__('strings')}">{/if}
+                                            {if !$is_modest}<a target="_blank" href="{"categories.view?category_id=`$smarty.const.STRINGS_CATEGORY_ID`"|fn_url:'C':'http'}" style="text-decoration:none;display:block;color:#777777;"  data-title="{__('strings')}">{/if}
                                                 <span style="color:#777777;">{__("strings")}</span>
                                             {if !$is_modest}</a>{/if}
                                         </td>
@@ -125,7 +133,7 @@
                                 <table style="height:37px;border-collapse: collapse;border-spacing: 0;width: 100%;" cellspacing="0" cellpadding="0" align="center">
                                     <tbody><tr>
                                         <td style="padding: 0;vertical-align: middle;text-align: center;font: 15px Play,sans-serif;line-height: 15px;font-weight: normal;color: #777777;">
-                                            {if !$is_modest}<a target="_blank" href="{"categories.view?category_id=`$smarty.const.BALL_MACHINE_CATEGORY_ID`"|fn_url:'C':'http'}" style="text-decoration:none;display:block;color:#777777;" rel=" noopener noreferrer" data-title="{__('ball_machines')}">{/if}
+                                            {if !$is_modest}<a target="_blank" href="{"categories.view?category_id=`$smarty.const.BALL_MACHINE_CATEGORY_ID`"|fn_url:'C':'http'}" style="text-decoration:none;display:block;color:#777777;"  data-title="{__('ball_machines')}">{/if}
                                                 <span style="color:#777777;">{__("ball_machines")}</span>
                                             {if !$is_modest}</a>{/if}
                                         </td>
@@ -136,7 +144,7 @@
                                 <table style="height:37px;border-collapse: collapse;border-spacing: 0;width: 100%;" cellspacing="0" cellpadding="0" align="center">
                                     <tbody><tr>
                                         <td style="padding: 0;vertical-align: middle;text-align: center;font: 15px Play,sans-serif;line-height: 15px;font-weight: normal;color: #777777;">
-                                            {if !$is_modest}<a target="_blank" href="{"categories.view?category_id=`$smarty.const.STR_MACHINE_CATEGORY_ID`"|fn_url:'C':'http'}" style="text-decoration:none;display:block;color:#777777;" rel=" noopener noreferrer" data-title="{__('str_machines')}">{/if}
+                                            {if !$is_modest}<a target="_blank" href="{"categories.view?category_id=`$smarty.const.STR_MACHINE_CATEGORY_ID`"|fn_url:'C':'http'}" style="text-decoration:none;display:block;color:#777777;"  data-title="{__('str_machines')}">{/if}
                                                 <span style="color:#777777;">{__("str_machines")}</span>
                                             {if !$is_modest}</a>{/if}
                                         </td>

@@ -634,6 +634,9 @@
         <item>
             ALTER TABLE `cscart_newsletter_descriptions` ADD `body_txt` MEDIUMTEXT NOT NULL;
         </item>
+        <item>
+            ALTER TABLE `cscart_newsletter_descriptions` ADD `pretitle` VARCHAR(255) NOT NULL AFTER `newsletter`;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -1256,5 +1259,6 @@
         <item lang="ru" id="body_txt">Текст письма (TXT)</item>
         <item lang="ru" id="newsletter_footer_text_txt">Чтобы не пропустить наши новости и акции, добавьте [newsletter_email] в свою адресную книгу.</item>
         <item lang="ru" id="newsletter_footer_text_unsubscribe_txt">Вы получили это письмо, потому что подписаны на рассылку интернет-магазина TennisHouse. Если Вы не хотите получать рассылку, перейдите по ссылке: [unsubscribe]</item>
+        <item lang="ru" id="pretitle">Предзаголовок</item>
     </language_variables>
 </addon>
