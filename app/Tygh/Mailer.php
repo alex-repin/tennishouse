@@ -67,6 +67,7 @@ class Mailer extends \phpmailer
         $mailer->ClearReplyTos();
         $mailer->ClearCCs();
         $mailer->ClearAttachments();
+        $mailer->ClearCustomHeaders();
         $mailer->Sender = '';
 
         $params['company_id'] = !empty($params['company_id']) ? $params['company_id'] : 0;

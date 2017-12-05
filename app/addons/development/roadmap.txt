@@ -4,6 +4,11 @@ convert xls to csv - ssconvert -O 'quoting-mode=always' Остатки\ по\ с
 не отсылать pure aero pidanovo
 Скидки:
 
+
+if ($_REQUEST['category_id'] == '254' && $_REQUEST['item_ids'] == '1312') {
+        return array(CONTROLLER_STATUS_REDIRECT, "categories.view?category_id=254&item_ids=1312,1313,1314,1315,1316,1317,1318,1319");
+    }
+    
 - сообщить о снижении цены
 - пофиксить стрелки картинок
 - если завис на странице - скидка 10% на

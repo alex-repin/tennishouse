@@ -31,6 +31,9 @@ if ($mode == 'catalog') {
 
 } elseif ($mode == 'view') {
 
+    if ($_REQUEST['category_id'] == '254' && $_REQUEST['item_ids'] == '1312') {
+        return array(CONTROLLER_STATUS_REDIRECT, "categories.view?category_id=254&item_ids=1312,1313,1314,1315,1316,1317,1318,1319");
+    }
     $_statuses = array('A', 'H');
     $_condition = fn_get_localizations_condition('localization', true);
     $preview = fn_is_preview_action($auth, $_REQUEST);
