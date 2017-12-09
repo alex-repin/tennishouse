@@ -76,6 +76,8 @@
                 <option value="137" {if ($shipping.service_params.tariffid) == 137}selected="selected"{/if}>{__("sdek_tariff_137")}</option>
                 <option value="138" {if ($shipping.service_params.tariffid) == 138}selected="selected"{/if}>{__("sdek_tariff_138")}</option>
                 <option value="139" {if ($shipping.service_params.tariffid) == 139}selected="selected"{/if}>{__("sdek_tariff_139")}</option>
+                <option value="233" {if ($shipping.service_params.tariffid) == 233}selected="selected"{/if}>{__("sdek_tariff_233")}</option>
+                <option value="234" {if ($shipping.service_params.tariffid) == 234}selected="selected"{/if}>{__("sdek_tariff_234")}</option>
             </optgroup>
             <optgroup label="{__("sdek_regular_services")}">
                 <option value="1" {if ($shipping.service_params.tariffid) == 1}selected="selected"{/if}>{__("sdek_tariff_1")}</option>

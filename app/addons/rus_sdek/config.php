@@ -16,6 +16,4 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 use Tygh\Registry;
 
-define('SDEK_STOCKROOM', 136);
-define('SDEK_EXPR_STOCKROOM', 10);
-define('SDEK_DOOR', 137);
+define('SDEK_OFFICE_SERVICES', serialize(array(5, 10, 12, 15, 17, 62, 63, 136, 138, 234, 291, 295, 301, 302)));

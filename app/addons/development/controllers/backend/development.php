@@ -209,14 +209,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     if (!empty($opt_data['variants'])) {
                                                         foreach ($opt_data['variants'] as $kk => $vr_data) {
                                                             $var_name = fn_format_variant_name($vr_data['variant_name']);
-                                                            if (strlen($var_name) > 1 && strpos($variant_name, $var_name) !== false) {
+                                                            if (strlen($var_name) > 0 && strpos($variant_name, $var_name) !== false) {
                                                                 $prc = round(strlen($var_name)/strlen($variant_name), 2) * 100;
                                                                 $var_id_tmp[$j][$opt_data['option_id']][$prc] = $vr_data['variant_id'];
                                                                 if ($prc > $max[$j]) {
                                                                     $max[$j] = $prc;
                                                                 }
                                                             }
-                                                            if (strlen($variant_name) > 1 && strpos($var_name, $variant_name) !== false) {
+                                                            if (strlen($variant_name) > 0 && strpos($var_name, $variant_name) !== false) {
                                                                 $prc = round(strlen($variant_name)/strlen($var_name), 2) * 100;
                                                                 $var_id_tmp[$j][$opt_data['option_id']][round(strlen($variant_name)/strlen($var_name), 2) * 100] = $vr_data['variant_id'];
                                                                 if ($prc > $max[$j]) {
@@ -297,7 +297,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 //                                                 fn_print_r('generate', $combination_hash, $product_id, array('product_options' => $option_data[$product_id]));
                                             }
                                             $is_combination = true;
-                                            break;
+//                                             break;
                                         }
                                         if (empty($combination_hash)) {
                                             $broken_options_products[$product_code] = $data;
@@ -344,7 +344,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         }
                                     }
                                     if ($ttl_updated != count($data['data'])) {
-                                        $broken_options_products[$product_code] = $data;
+//                                         $broken_options_products[$product_code] = $data;
                                     }
                                 }
                             }

@@ -292,7 +292,8 @@ class Sdek implements IService
 
             $rec_city_code = $this->city_id;
             $tarif_id = $this->_shipping_info['service_params']['tariffid'];
-            if (!empty($rec_city_code) && ($tarif_id == SDEK_STOCKROOM || $tarif_id == SDEK_EXPR_STOCKROOM) && $tarif_id == $response['result']['tariffId']) {
+            $office_services = unserialize(SDEK_OFFICE_SERVICES);
+            if (!empty($rec_city_code) && in_array($tarif_id, $office_services) && $tarif_id == $response['result']['tariffId']) {
                 $params = array(
                     'cityid' => $rec_city_code
                 );

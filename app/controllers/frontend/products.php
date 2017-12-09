@@ -71,6 +71,9 @@ if ($mode == 'search') {
 
     $_REQUEST['product_id'] = empty($_REQUEST['product_id']) ? 0 : $_REQUEST['product_id'];
 
+    if ($_REQUEST['product_id'] == '1307') {
+        return array(CONTROLLER_STATUS_REDIRECT, "categories.view?category_id=254&item_ids=1312,1313,1314,1315,1316,1317,1318,1319");
+    }
     if (!empty($_REQUEST['product_id']) && empty($auth['user_id'])) {
 
         $uids = explode(',', db_get_field("SElECT usergroup_ids FROM ?:products WHERE product_id = ?i", $_REQUEST['product_id']));

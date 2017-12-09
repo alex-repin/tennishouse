@@ -31,7 +31,7 @@ if ($mode == 'catalog') {
 
 } elseif ($mode == 'view') {
 
-    if ($_REQUEST['category_id'] == '254' && $_REQUEST['item_ids'] == '1312') {
+    if (!empty($_REQUEST['item_ids']) && $_REQUEST['category_id'] == '254' && $_REQUEST['item_ids'] == '1312') {
         return array(CONTROLLER_STATUS_REDIRECT, "categories.view?category_id=254&item_ids=1312,1313,1314,1315,1316,1317,1318,1319");
     }
     $_statuses = array('A', 'H');

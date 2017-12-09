@@ -1041,9 +1041,12 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                     if ($product['type'] == 'R') {
                         $product['subtitle'] = /*__("type") .  ' - ' .  */$products_features[$product['product_id']][TYPE_FEATURE_ID]['variants'];
                         $product['description_features'] = array();
-                        foreach ($products_features[$product['product_id']] as $f_id => $ft) {
-                            if (in_array($f_id, array(R_HEADSIZE_FEATURE_ID, R_WEIGHT_FEATURE_ID, TYPE_FEATURE_ID))) {
-                                $product['description_features'][] = $ft;
+                        $exceptions = unserialize(EXC_PRODUCT_ITEMS);
+                        if (!in_array($product['product_id'], $exceptions)) {
+                            foreach ($products_features[$product['product_id']] as $f_id => $ft) {
+                                if (in_array($f_id, array(R_HEADSIZE_FEATURE_ID, R_WEIGHT_FEATURE_ID, TYPE_FEATURE_ID))) {
+                                    $product['description_features'][] = $ft;
+                                }
                             }
                         }
 //                         if (!empty($variants)) {
@@ -1210,7 +1213,8 @@ function fn_development_gather_additional_product_data_post(&$product, $auth, $p
             }
         }
         $global_data = fn_get_product_global_data($product, array('product_pretitle'));
-        if (!empty($global_data['product_pretitle']) && !in_array($product['product_id'], array(912, 778, 779, 780, 781, 782, 831, 1307, 1312, 1313, 1314, 1315, 1316, 1317, 1318, 1319))/*Теннисная ракетка браслет*/) {
+        $exceptions = unserialize(EXC_PRODUCT_ITEMS);
+        if (!empty($global_data['product_pretitle']) && !in_array($product['product_id'], $exceptions)/*Теннисная ракетка браслет*/) {
             $product['product'] = $global_data['product_pretitle'] . ' ' . $product['product'];
         }
     }
