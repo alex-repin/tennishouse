@@ -909,6 +909,8 @@
         <item lang="ru" id="sdek_tariff_137">Посылка склад-дверь</item>
         <item lang="ru" id="sdek_tariff_138">Посылка дверь-склад</item>
         <item lang="ru" id="sdek_tariff_139">Посылка дверь-дверь</item>
+        <item lang="ru" id="sdek_tariff_233">Экономичная посылка склад-дверь</item>
+        <item lang="ru" id="sdek_tariff_234">Экономичная посылка склад-склад</item>
         <item lang="ru" id="sdek_tariff_1">Экспресс лайт дверь-дверь</item>
         <item lang="ru" id="sdek_tariff_3">Супер-экспресс до 18</item>
         <item lang="ru" id="sdek_tariff_5">Экономичный экспресс склад-склад</item>

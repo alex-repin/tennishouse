@@ -25,6 +25,11 @@ class Http
     const PUT = 'PUT';
     const DELETE = 'DELETE';
 
+    const STATUS_OK = 200;
+    const STATUS_FORBIDDEN = 403;
+    const STATUS_NOT_FOUND = 404;
+    const STATUS_SERVICE_UNAVAILABLE = 503;
+
     public static $logging = true;
     private static $_curl_ssl_support = false;
     private static $_curl_followlocation_support = false;
@@ -160,6 +165,20 @@ class Http
         return self::$_headers;
     }
 
+    /**
+     * Gets response status
+     * @return integer status on success of false if status can't be retrieved
+     */
+    public static function getStatus()
+    {
+        $headers = self::getHeaders();
+        if (preg_match("/HTTP\/\d\.\d (\d+)/", $headers, $m)) {
+            return intval($m[1]);
+        }
+
+        return false;
+    }
+    
     /**
      * Get response error
      * @return string error message

@@ -40,6 +40,27 @@ var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
 
 {literal}
 
+    function fn_rf_slide_in()
+    {
+        $('#rf_block').animate({width:'toggle'}, 350);
+        $('#rf_slide_in').hide();
+        $('#rf_slide_out').show();
+        Tygh.$.ceAjax('request', fn_url('racket_finder.show_add'), {
+            method: 'get',
+            hidden: true
+        });
+    }
+    function fn_rf_slide_out()
+    {
+        $('#rf_block').animate({width:'toggle'}, 350);
+        $('#rf_slide_out').hide();
+        $('#rf_slide_in').show();
+        Tygh.$.ceAjax('request', fn_url('racket_finder.hide_add'), {
+            method: 'get',
+            hidden: true
+        });
+    }
+    
     function fn_check_city(obj, show_error)
     {
         lbl = $("label[for='" + obj.attr('id') + "']");
@@ -382,6 +403,7 @@ var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
             var element_offset = sticky.parent().offset();
             if (!sticky.hasClass('sticky') && $(window).scrollTop() + top_margin >= sticky.offset().top && sticky.outerHeight(true) < footer.offset().top - sticky.offset().top - 50) {
                 sticky.data('init_position', sticky.offset().top)
+                sticky.parent().css('right', '0');
                 sticky.addClass('sticky');
             }
             if (sticky.hasClass('sticky')) {

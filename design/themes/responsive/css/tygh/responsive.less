@@ -16,10 +16,10 @@ Windows Phone 8 and Device-Width
 Responsive: Large desktop and up 1200px
 ========================================================================== */
 
-@media (min-width: 1224px) {
+@media (min-width: 1360px) {
 
     // Fixed grid
-    #grid > .core(@gridColumnWidth, @gridGutterWidth);
+    #grid > .core(@gridColumnWidthWide, @gridGutterWidthWide);
     .ty-footer-grid {
         #grid > .core(@gridColumnWidth1200, @gridGutterWidth1200);
     }
@@ -31,14 +31,14 @@ Responsive: Large desktop and up 1200px
 /* Footer
    ========================================================================== */
     .ty-footer-grid__full-width > .row {
-        width: 1200px;
+        width: 1250px;
         margin: 0 auto;
     }
-    .ty-footer-grid__full-width > .row-fluid {
+/*    .ty-footer-grid__full-width > .row-fluid {
         max-width: @fluidContainerMaxWidth;
         min-width: @fluidContainerMinWidth;
         margin: 0 auto;
-    }
+    }*/
     .ty-footer-menu__items {
         display: block !important;
     }
