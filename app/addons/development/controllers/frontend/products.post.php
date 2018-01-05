@@ -154,4 +154,39 @@ if ($mode == 'view') {
         }
     }
     Registry::get('view')->assign('block_tabs', $block_tabs);
+    
+} elseif ($mode == 'sale') {
+
+    $params = $_REQUEST;
+    $params['subcats'] = 'Y';
+    list($products, $search) = fn_get_discounted_products($params, Registry::get('settings.Appearance.products_per_page'));
+
+    $category_ids = $categories = array();
+    if (!empty($products)) {
+        foreach ($products as $i => $prod) {
+            $category_ids[] = $prod['type_id'];
+            if (!empty($search['cd']) && $search['cd'] != $prod['type_id']) {
+                unset($products[$i]);
+            }
+        }
+        if (!empty($category_ids)) {
+            $categories = db_get_array("SELECT a.category_id, b.category FROM ?:categories AS a LEFT JOIN ?:category_descriptions AS b ON b.category_id = a.category_id AND b.lang_code = ?s WHERE a.category_id IN (?n) ORDER BY a.position ASC", CART_LANGUAGE, array_unique($category_ids));
+        }
+    }
+
+    $search['items_per_page'] = Registry::get('settings.Appearance.products_per_page');
+    $search['total_items'] = count($products);
+    $page = intval($search['page']);
+    if (empty($page)) {
+        $page  = 1;
+    }
+    $products = array_slice($products, $search['items_per_page'] * ($page - 1), $search['items_per_page']);
+    
+    $selected_layout = fn_get_products_layout($search);
+
+    fn_add_breadcrumb(__("sale_products"));
+    Registry::get('view')->assign('categories', $categories);
+    Registry::get('view')->assign('products', $products);
+    Registry::get('view')->assign('search', $search);
+    Registry::get('view')->assign('selected_layout', $selected_layout);
 }

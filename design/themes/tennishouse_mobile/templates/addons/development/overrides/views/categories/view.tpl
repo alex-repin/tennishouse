@@ -96,7 +96,7 @@
 
 {if $layouts.$selected_layout.template}
     <div itemscope itemtype="http://schema.org/ItemList">
-        {include file="`$layouts.$selected_layout.template`" columns=$product_columns microdata=true category_grid=true}
+        {include file="`$layouts.$selected_layout.template`" columns=$product_columns microdata=true category_grid=true ajax_pagination=$category_data.ajax_pagination}
     </div>
 {/if}
 

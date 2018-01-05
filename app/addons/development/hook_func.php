@@ -747,7 +747,7 @@ function fn_development_get_category_data_post($category_id, $field_list, $get_m
     if (!empty($category_data['cross_categories'])) {
         $category_data['cross_categories'] = unserialize($category_data['cross_categories']);
     }
-    $category_data['type'] = fn_identify_category_type($category_data['id_path']);
+    list($category_data['type_id'], $category_data['type']) = fn_identify_category_type($category_data['id_path']);
 }
 
 function fn_development_get_product_feature_variants(&$fields, $join, &$condition, $group_by, $sorting, $lang_code, $limit)
@@ -1310,6 +1310,8 @@ function fn_development_update_category_pre(&$category_data, $category_id, $lang
 {
     if (!empty($category_data['sections_categorization'])) {
         $category_data['sections_categorization'] = serialize($category_data['sections_categorization']);
+    } else {
+        $category_data['sections_categorization'] = '';
     }
     if (!empty($category_data['cross_categories'])) {
         $category_data['cross_categories'] = serialize($category_data['cross_categories']);
@@ -1318,6 +1320,9 @@ function fn_development_update_category_pre(&$category_data, $category_id, $lang
 
 function fn_development_get_products(&$params, &$fields, &$sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
 {
+    if (!empty($params['not_product_codes'])) {
+        $condition .= db_quote(" AND products.product_code NOT IN (?a)", $params['not_product_codes']);
+    }
     if (!empty($params['has_description'])) {
         $condition .= db_quote(" AND IF(?s = 'Y', descr1.full_description != '', descr1.full_description = '')", $params['has_description']);
     }
@@ -1328,6 +1333,7 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
         $condition .= db_quote(" AND (products.warehouse_ids LIKE ?l OR products.warehouse_ids LIKE ?l OR products.warehouse_ids LIKE ?l OR products.warehouse_ids LIKE ?l)", $params['warehouse_id'], $params['warehouse_id'] . ',%', '%,' . $params['warehouse_id'], '%,' . $params['warehouse_id'] . ',%');
     }
     if (!empty($params['tabs_categorization']) || !empty($params['subtabs_categorization']) || !empty($params['sections_categorization'])) {
+        $params['post_items_per_page'] = $params['items_per_page'];
         $params['items_per_page'] = 0;
         if (!empty($params['tabs_categorization'])) {
             $join .= db_quote(" LEFT JOIN ?:product_features_values AS tabs_categorization ON tabs_categorization.product_id = products.product_id AND tabs_categorization.feature_id = ?i", $params['tabs_categorization']);
@@ -1845,15 +1851,15 @@ function fn_development_get_product_data_post(&$product_data, $auth, $preview, $
     }
     $types_ids = fn_get_categories_types($product_data['main_category']);
     $product_data['id_path'] = db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $product_data['main_category']);
-    $product_data['type'] = fn_identify_category_type($product_data['id_path']);
-    $product_data['category_type'] = ($product_data['product_type'] == 'C') ? 'PC' : fn_get_category_type($types_ids[$product_data['main_category']]);
+    list($product_data['type_id'], $product_data['type']) = fn_identify_category_type($product_data['id_path']);
+    list($product_data['category_type_id'], $product_data['category_type']) = ($product_data['product_type'] == 'C') ? array('', 'PC') : fn_get_category_type($types_ids[$product_data['main_category']]);
     if (!in_array($product_data['category_type'], array('A', 'S'))) {
         $product_data['offer_help'] = true;
     }
     $product_data['category_main_id'] = $types_ids[$product_data['main_category']];
 }
 
-function fn_development_get_products_post(&$products, $params, $lang_code)
+function fn_development_get_products_post(&$products, &$params, $lang_code)
 {
     if (!empty($products)) {
         $main_ids = array();
@@ -1869,7 +1875,7 @@ function fn_development_get_products_post(&$products, $params, $lang_code)
             foreach ($product['category_ids'] as $j => $cat_id) {
                 $products[$i]['all_path'][$cat_id] = $id_paths[$cat_id];
             }
-            $products[$i]['type'] = fn_identify_category_type($products[$i]['id_path']);
+            list($products[$i]['type_id'], $products[$i]['type']) = fn_identify_category_type($products[$i]['id_path']);
             if (!empty($product['timestamp']) && $product['timestamp'] > $time_limit) {
                 $products[$i]['tags']['new'] = 1;
             }
@@ -1936,7 +1942,7 @@ function fn_development_render_block_register_cache($block, &$cache_name, &$bloc
             . $block['block_id'] . '_' . $block['snapping_id'] . '_' . $block['type']
             . '_' . $grid_id;
     }
-    if ($_REQUEST['dispatch'] == 'categories.view' && $block['type'] == 'main') {
+    if (in_array($_REQUEST['dispatch'], array('categories.view', 'products.sale')) && $block['type'] == 'main') {
         $block_scheme['cache'] = array();
         $params = $_REQUEST;
         unset($params['dispatch']);

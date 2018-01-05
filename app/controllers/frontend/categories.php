@@ -85,8 +85,10 @@ if ($mode == 'catalog') {
                 $_SESSION['items_per_page'] = $_REQUEST['items_per_page'];
             } elseif (!empty($_SESSION['items_per_page'])) {
                 $params['items_per_page'] = $_SESSION['items_per_page'];
+            } elseif (!empty($category_data['products_per_page'])) {
+                $params['items_per_page'] = $category_data['products_per_page'];
             }
-
+            
             $params['cid'] = $_REQUEST['category_id'];
             $params['extend'] = array('categories', 'description');
             $params['subcats'] = '';
@@ -318,6 +320,18 @@ if ($mode == 'catalog') {
                         Registry::get('view')->assign('active_subtab', $params['stc_id']);
                     }
                 }
+            }
+            if (!empty($search['post_items_per_page'])) {
+                $search['items_per_page'] = $search['post_items_per_page'];
+                $search['total_items'] = count($products);
+                $page = intval($search['page']);
+                if (empty($page)) {
+                    $page  = 1;
+                }
+                $items_per_page = intval($search['post_items_per_page']);
+                $products = array_slice($products, $items_per_page * ($page - 1), $items_per_page);
+            }
+            if (!empty($products)) {
                 if (!empty($category_data['sections_categorization'])) {
                     $sections_categorization = $other = array();
                     foreach ($products as $i => $product) {

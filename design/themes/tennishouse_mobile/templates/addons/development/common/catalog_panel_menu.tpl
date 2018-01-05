@@ -2,7 +2,7 @@
     <li class="ty-menu__item {if $item.subitems}dropdown-vertical__dir{/if} menu-level-{$level}">
         {assign var="item_url" value=$item|fn_form_dropdown_object_link:"menu"}
         <div class="ty-menu__submenu-item-header">
-            <a{if $item_url} href="{$item_url}"{/if} {if $item.new_window}target="_blank"{/if} class="ty-menu__item-link">
+            <a{if $item_url} href="{$item_url}"{/if} {if $item.new_window}target="_blank"{/if} class="ty-menu__item-link {if $item.object_id === 'sale'}ty-sale-products{/if}">
                 <div class="ty-menu-icon {if $type == 'C'}ty-category-icon-{$item.object_id}{elseif $type == 'A'}ty-menu-icon-{$item.param_id}{/if}"></div>
                 <div class="ty-menu__submenu-item-header-text" {if $type == 'C' && $item.object_id == $smarty.const.STR_MACHINE_CATEGORY_ID}style="margin-right: -20px;"{/if}>{$item.item}</div>
             </a>

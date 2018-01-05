@@ -526,7 +526,8 @@ $schema['products']['content']['items']['fillings']['cross_sales'] = array(
 $schema['products']['content']['items']['fillings']['discounted_products'] = array(
     'params' => array (
         'items_function' => 'fn_get_discounted_products',
-        'subcats' => 'Y'
+        'subcats' => 'Y',
+        'skip_bulk_modifier' => true
     )
 );
 $schema['products']['content']['items']['fillings']['product_cross_sales'] = array(
@@ -553,6 +554,10 @@ $schema['news'] = array (
                         'rss_feed_link' => array (
                             'type' => 'input_long',
                             'default_value' => 'http://www.championat.com/xml/rss_tennis-article.xml'
+                        ),
+                        'number_of_news' => array (
+                            'type' => 'input',
+                            'default_value' => '15'
                         )
                     )
                 ),

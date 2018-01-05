@@ -637,6 +637,15 @@
         <item>
             ALTER TABLE `cscart_newsletter_descriptions` ADD `pretitle` VARCHAR(255) NOT NULL AFTER `newsletter`;
         </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `pagination_type` CHAR(1) NOT NULL DEFAULT 'R';
+        </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `products_per_page` SMALLINT(5) NOT NULL;
+        </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `ajax_pagination` CHAR(1) NOT NULL DEFAULT 'Y';
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -841,6 +850,7 @@
         <item lang="ru" id="update_stock_broken_net_cost">Проблемы с ценой</item>
         <item lang="ru" id="update_stock_trash">Мусор</item>
         <item lang="ru" id="add_selected_to_ignore_list">Добавить выбранные в черный список</item>
+        <item lang="ru" id="add_selected_to_promotion">Добавить выбранные в промо</item>
         <item lang="ru" id="products_added_to_ignore_list">Товары добавлены в черный список</item>
         <item lang="ru" id="updated_ignore_list">Черный список обновлен</item>
         <item lang="ru" id="delete_selected_from_ignore_list">Удалить выбранные из черного списка</item>
@@ -876,6 +886,7 @@
         <item lang="ru" id="option_note">Пометка</item>
         <item lang="ru" id="define_option">Укажите опцию</item>
         <item lang="ru" id="rss_feed_link">Ссылка на RSS feed</item>
+        <item lang="ru" id="number_of_news">Количество новостей</item>
         <item lang="ru" id="available_payments">Доступные способы оплаты</item>
         <item lang="ru" id="payment_po">Оплата на сайте</item>
         <item lang="ru" id="payment_pod">Оплата при получении</item>
@@ -1081,6 +1092,7 @@
         <item lang="ru" id="news_feed">Лента новостей</item>
         <item lang="ru" id="player_news_feed">Лента новостей игрока</item>
         <item lang="ru" id="news_list">Список новостей</item>
+        <item lang="ru" id="news_table">Список новостей</item>
         <item lang="ru" id="news_scroller">Скроллер с новостями</item>
         <item lang="ru" id="delete_absolete_promotions">Удаляй ненужные акции, тк они замедляют сайт</item>
         <item lang="ru" id="warehouse">Склад</item>
@@ -1104,6 +1116,7 @@
         <item lang="ru" id="used_this_product_bl">Играли этими мячами ?</item>
         <item lang="ru" id="used_this_product_st">Играли этими струнами ?</item>
         <item lang="ru" id="used_this_product_og">Играли этими обмотками ?</item>
+        <item lang="ru" id="used_this_product_g">Играли этими обмотками ?</item>
         <item lang="ru" id="used_this_product_bm">Пользовались этой пушкой ?</item>
         <item lang="ru" id="used_this_product_sm">Пользовались этим станком ?</item>
         <item lang="ru" id="rate_product_r">Оцените эту ракетку</item>
@@ -1111,6 +1124,7 @@
         <item lang="ru" id="rate_product_bl">Оцените эти мячи</item>
         <item lang="ru" id="rate_product_st">Оцените эти струны</item>
         <item lang="ru" id="rate_product_og">Оцените эти обмотки</item>
+        <item lang="ru" id="rate_product_g">Оцените эти обмотки</item>
         <item lang="ru" id="rate_product_bm">Оцените эту пушку</item>
         <item lang="ru" id="rate_product_sm">Оцените этот станок</item>
         <item lang="ru" id="review_reason_E">Отзыв о магазине</item>
@@ -1262,5 +1276,12 @@
         <item lang="ru" id="newsletter_footer_text_txt">Чтобы не пропустить наши новости и акции, добавьте [newsletter_email] в свою адресную книгу.</item>
         <item lang="ru" id="newsletter_footer_text_unsubscribe_txt">Вы получили это письмо, потому что подписаны на рассылку интернет-магазина TennisHouse. Если Вы не хотите получать рассылку, перейдите по ссылке: [unsubscribe]</item>
         <item lang="ru" id="pretitle">Предзаголовок</item>
+        <item lang="ru" id="racket_finder_block_title">Пройти ТЕСТ и подобрать ракетку</item>
+        <item lang="ru" id="how_to_choose_racket">Как выбрать теннисную ракетку</item>
+        <item lang="ru" id="regular_pagination">Обычная паджинация</item>
+        <item lang="ru" id="products_per_page">Товаров на страницу</item>
+        <item lang="ru" id="prev_page">Назад</item>
+        <item lang="ru" id="ajax_pagination">Ajax-паджинация</item>
+        <item lang="ru" id="sale_products">Распродажа</item>
     </language_variables>
 </addon>

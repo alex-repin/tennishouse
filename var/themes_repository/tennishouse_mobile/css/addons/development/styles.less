@@ -925,6 +925,11 @@ input:focus::placeholder, textarea:focus::placeholder {
     width: 30px;
     height: 30px;
 }
+.ty-category-icon-sale {
+    background-image: url("../../../media/images/addons/development/percentage.png");
+    width: 23px;
+    height: 23px;
+}
 .ty-login-icon {
     background-image: url("../../../media/images/addons/development/login.png");
     width: 30px;
@@ -2657,11 +2662,14 @@ table.ty-cart-content {
     margin: 0;
 }
 .ty-product-thumbnails {
-    height: 40px;
+    display: inline-block;
 }
-.ty-product-block .ty-product-thumbnails img {
+/*.ty-product-block .ty-product-thumbnails img {
     width: 35px;
     height: 35px;
+}*/
+.ty-product-thumbnails__item {
+    width: auto;
 }
 .ty-product-description-info {
     margin-top: 20px;
@@ -2970,11 +2978,15 @@ table.ty-cart-content {
 .grid-list .ty-column4, .grid-list .ty-column2, .grid-list .ty-column3 {
     margin: 0;
 }
+.ty-pagination__bottom {
+    border: none;
+}
 .ty-pagination-sorting, .ty-pagination__bottom {
-    background: @base;
+/*     background: @base; */
     display: inline-block;
     width: 100%;
-    margin: 5px 0 10px;
+    margin: 15px 0 20px;
+    text-align: center;
 }
 .ty-sort-container {
     background: none;
@@ -2994,12 +3006,18 @@ table.ty-cart-content {
     background-color: lighten(@links, 50%);
 }
 .ty-pagination__item, .ty-pagination__selected, .ty-pagination__item:hover {
-    padding: 6px 7px 5px;
+    color: lighten(@font, 20%);
+    font-size: 17px;
+    padding: 12px 17px 11px;
     margin: 0;
     border-radius: 0;
+    border: 1px solid lighten(@font, 63%);
 }
 .ty-pagination__item:hover {
-    background: darken(@base, 3%);
+    background: lighten(@base, 3%);
+}
+.ty-pagination__btn {
+    width: 100px;
 }
 .ty-sort-dropdown__wrapper {
     color: darken(@base, 35%);
@@ -3011,7 +3029,8 @@ table.ty-cart-content {
     background: darken(@base, 3%);
 }
 .ty-pagination__selected {
-    background: darken(@base, 45%);
+/*     color: #fff; */
+    background: @base;
 }
 .ty-grid-list__brand-image {
     left: 5px;
@@ -3747,6 +3766,29 @@ a.ty-password-forgot__a {
 .ty-text-links__item a {
     padding: 5px 15px;
     display: block;
+}
+.ty-sale-products {
+    background-color: #ffd400;
+}
+.ty-sale-categories {
+    border: 1px solid lighten(@font, 63%);
+    .ty-text-links__item {
+        border-bottom: 1px solid lighten(@font, 63%);
+    }
+    .ty-text-links__item:last-child {
+        border: none;
+    }
+    .ty-text-links__item a {
+        color: lighten(@font, 20%);
+        padding: 10px 20px;
+    }
+    .ty-text-links__item:hover a {
+        background: lighten(@base, 3%);
+        color: lighten(@font, 20%);
+    }
+    .ty-text-links__item-active a {
+        font-weight: bold;
+    }
 }
 .ty-text-links__item:hover a {
     background-color: darken(@category_menu, 5%);

@@ -1,4 +1,4 @@
-{assign var="th_size" value="35"}
+{assign var="th_size" value="100"}
 
 {if $product.main_pair.icon || $product.main_pair.detailed}
     {assign var="image_pair_var" value=$product.main_pair}

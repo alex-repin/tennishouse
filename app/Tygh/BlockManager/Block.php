@@ -789,7 +789,7 @@ class Block extends CompanySingleton
         }
 
         // If in template issets bulk modifer set it
-        if (isset($block_scheme['templates'][$block['properties']['template']]['bulk_modifier'])) {
+        if (isset($block_scheme['templates'][$block['properties']['template']]['bulk_modifier']) && empty($params['skip_bulk_modifier'])) {
             $bulk_modifier = $block_scheme['templates'][$block['properties']['template']]['bulk_modifier'];
         }
         

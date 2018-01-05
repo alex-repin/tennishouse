@@ -631,8 +631,8 @@ function fn_run_controller($path, $controller, $mode, $action, $dispatch_extra)
     $auth = & $_SESSION['auth'];
 
     //TODO Remove in 3.2.1
-    $ajax = new Tygh\SmartyEngine\ViewDeprecated('ajax');
-    $view = new Tygh\SmartyEngine\ViewDeprecated('view');
+//     $ajax = new Tygh\SmartyEngine\ViewDeprecated('ajax');
+//     $view = new Tygh\SmartyEngine\ViewDeprecated('view');
 
     if (!empty($check_included[$path])) {
         $code = fn_get_contents($path);

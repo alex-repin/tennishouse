@@ -11,7 +11,7 @@
                 </a>
             </li>
 
-        {$item_width = 100 / $items|count}
+        {$items_count = $items|count}
         {foreach from=$items item="item1" name="item1"}
             {if $item1.type == 'C'}
                 {include file="addons/development/common/catalog_top_menu.tpl"}
@@ -20,9 +20,9 @@
                 {assign var="unique_elm_id" value=$item1_url|md5}
                 {assign var="unique_elm_id" value="topmenu_`$block.block_id`_`$unique_elm_id`"}
 
-                <li class="ty-menu__item {if !$item1.$childs} ty-menu__item-nodrop{else} ty-menu__item-parent cm-menu-item-responsive{/if}" style="width: {$item_width}%;">
+                <li class="ty-menu__item ty-menu__item{$items_count}{if !$item1.$childs} ty-menu__item-nodrop{else} ty-menu__item-parent cm-menu-item-responsive{/if}">
                     <div class="ty-menu__item_full">
-                    <a {if $item1_url} href="{$item1_url}"{/if} class="ty-menu__item-link">
+                    <a {if $item1_url} href="{$item1_url}"{/if} class="ty-menu__item-link {if $item1.href == 'products.sale'}ty-menu__item-link-sale{/if}">
                         {if $item1.href == 'index.php'}<div class="ty-menu__homepage-link">{/if}{if $item1.href != 'index.php'}{$item1.$name}{else}{/if}{if $item1.href == 'index.php'}</div>{/if}
                     </a>
                     {if $item1.$childs}

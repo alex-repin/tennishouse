@@ -1,4 +1,4 @@
-<form name="call_requests_form" id="form_{$id}" action="{""|fn_url}" method="post" class="ty-call-request cm-ajax cm-autocomplete-form">
+<form id="form_{$id}" action="{""|fn_url}" method="post" class="ty-call-request cm-ajax cm-autocomplete-form">
 <input type="hidden" name="redirect_url" value="{$config.current_url}" />
 <div id="product_data_block"></div>
 

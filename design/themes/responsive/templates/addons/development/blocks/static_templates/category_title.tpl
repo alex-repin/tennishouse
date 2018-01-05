@@ -17,7 +17,7 @@
                 <div class="ty-categorization-tabs clearfix">
                     <div class="ty-categorization-tabs-bg"></div>
                     <div class="ty-categorization-tabs__list-wrapper">
-                    <ul class="ty-categorization-tabs__list" {if $tb_feature.variants|count < 4}style="width:{$tb_feature.variants|count * 300}px"{else}style="width:100%"{/if}>
+                    <ul class="ty-categorization-tabs__list" {if $tb_feature.variants|count < 4}style="width:{$tb_feature.variants|count * 325.5}px"{else}style="width:100%"{/if}>
                     {$tc_width = 100 / $tb_feature.variants|count}
                     {foreach from=$tb_feature.variants item=tab key=key}
                         {if !$active_tab}

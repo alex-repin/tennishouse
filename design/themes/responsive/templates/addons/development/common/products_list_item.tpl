@@ -34,10 +34,15 @@
             </div>
         {/if}
         <div class="ty-grid-list__image-product">
-            {if $microdata}
-                {include file="views/products/components/product_icon.tpl" product=$product show_gallery=true itemprop="image" gallery_buttons="addition_item_info_`$obj_id`"}
+            {if $mode == 'R'}
+                {$show_gallery = true}
             {else}
-                {include file="views/products/components/product_icon.tpl" product=$product show_gallery=true gallery_buttons="addition_item_info_`$obj_id`"}
+                {$show_gallery = false}
+            {/if}
+            {if $microdata}
+                {include file="views/products/components/product_icon.tpl" product=$product show_gallery=$show_gallery itemprop="image" gallery_buttons="addition_item_info_`$obj_id`"}
+            {else}
+                {include file="views/products/components/product_icon.tpl" product=$product show_gallery=$show_gallery gallery_buttons="addition_item_info_`$obj_id`"}
             {/if}
         </div>
 

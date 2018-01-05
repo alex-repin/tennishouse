@@ -12,6 +12,14 @@
 * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
 ****************************************************************************/
 
+$schema['addons/development/blocks/news_feed/news_table.tpl'] = array (
+    'settings' => array(
+        'number_of_columns' => array (
+            'type' => 'input',
+            'default_value' => '3'
+        ),
+    )
+);
 $schema['addons/development/blocks/products/th_products_block.tpl'] = array (
     'settings' => array(
         'is_capture' => array (

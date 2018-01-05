@@ -530,6 +530,12 @@ var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
             $('.cm-autocomplete-form').each(function(){
                 fn_init_autocomplete($(this));
             });
+            $('.cm-banner').each(function(){
+                $(this).click(function(){
+                    $(this).find('.cm-banner-link').click();
+                    return false;
+                });
+            });
         });
     }(Tygh, Tygh.$));
 {/literal}

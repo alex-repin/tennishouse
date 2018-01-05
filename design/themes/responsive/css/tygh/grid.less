@@ -25,6 +25,10 @@ Grid system
 @gridGutterWidthWide:     21px;
 @gridRowWidthWide:       (@gridColumns * @gridColumnWidthWide) + (@gridGutterWidthWide * (@gridColumns - 1));
 
+@gridColumnWidthHomepage:     80px;
+@gridGutterWidthHomepage:     10px;
+@gridRowWidthHomepage:       (@gridColumns * @gridColumnWidthHomepage) + (@gridGutterWidthHomepage * (@gridColumns - 1));
+
 // Fluid grid
 // -------------------------
 @fluidGridColumnWidth:    percentage(@gridColumnWidth/@gridRowWidth);
@@ -38,6 +42,10 @@ Grid system
 @fluidGridColumnWidth768:      percentage(@gridColumnWidth768/@gridRowWidth768);
 @fluidGridGutterWidth768:      percentage(@gridGutterWidth768/@gridRowWidth768);
 
+// 768px-979px
+@fluidGridColumnWidthHomepage:      percentage(@gridColumnWidthHomepage/@gridRowWidthHomepage);
+@fluidGridGutterWidthHomepage:      percentage(@gridGutterWidthHomepage/@gridRowWidthHomepage);
+
 // Fixed (940px)
 #grid > .core(@gridColumnWidth, @gridGutterWidth);
 .ty-footer-grid {
@@ -47,6 +55,9 @@ Grid system
 // Fluid (940px)
 #grid > .fluid(@fluidGridColumnWidth, @fluidGridGutterWidth);
 
+.homepage-grid {
+    #grid > .fluid(@fluidGridColumnWidthHomepage, @fluidGridGutterWidthHomepage);
+}
 // Reset utility classes due to specificity
 [class*="span"].hide,
 .row-fluid [class*="span"].hide {

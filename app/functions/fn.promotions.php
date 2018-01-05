@@ -24,6 +24,100 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 fn_define('COUPON_CODE_LENGTH', 8);
 fn_define('PROMOTION_MIN_MATCHES', 5);
 
+
+function fn_update_promotion($data, $promotion_id, $lang_code = DESCR_SL)
+{
+    if (!empty($data['conditions']['conditions'])) {
+        $data['conditions_hash'] = fn_promotion_serialize($data['conditions']['conditions']);
+        $data['users_conditions_hash'] = fn_promotion_serialize_users_conditions($data['conditions']['conditions']);
+    } else {
+        $data['conditions_hash'] = $data['users_conditions_hash'] = '';
+    }
+
+    $data['conditions'] = empty($data['conditions']) ? array() : $data['conditions'];
+    $data['bonuses'] = empty($data['bonuses']) ? array() : $data['bonuses'];
+
+    fn_promotions_check_group_conditions($data['conditions']);
+
+    if ($data['bonuses']) {
+        foreach ($data['bonuses'] as $k => $v) {
+            if (empty($v['bonus'])) {
+                unset($data['bonuses'][$k]);
+            }
+        }
+    }
+
+    $data['conditions'] = serialize($data['conditions']);
+    $data['bonuses'] = serialize($data['bonuses']);
+
+    $from_date = $data['from_date'];
+    $to_date = $data['to_date'];
+
+    $data['from_date'] = !empty($from_date) ? fn_parse_date($from_date) : 0;
+    $data['to_date'] = !empty($to_date) ? fn_parse_date($to_date, true) : 0;
+
+    if (!empty($data['to_date']) && $data['to_date'] < $data['from_date']) { // protection from incorrect date range (special for isergi :))
+        $data['from_date'] = fn_parse_date($to_date);
+        $data['to_date'] = fn_parse_date($from_date, true);
+    }
+
+    if (!empty($promotion_id)) {
+        db_query("UPDATE ?:promotions SET ?u WHERE promotion_id = ?i", $data, $promotion_id);
+        db_query('UPDATE ?:promotion_descriptions SET ?u WHERE promotion_id = ?i AND lang_code = ?s', $data, $promotion_id, $lang_code);
+    } else {
+        $promotion_id = $data['promotion_id'] = db_query("REPLACE INTO ?:promotions ?e", $data);
+
+        foreach (fn_get_translation_languages() as $data['lang_code'] => $_v) {
+            db_query("REPLACE INTO ?:promotion_descriptions ?e", $data);
+        }
+    }
+
+    return $promotion_id;
+}
+
+function fn_promotions_check_group_conditions(&$conditions, $parents = array())
+{
+    static $schema = array();
+
+    if (empty($schema)) {
+        $schema = fn_promotion_get_schema();
+    }
+
+    if (!empty($conditions['set'])) {
+        if (!empty($conditions['conditions'])) {
+            $parents[] = array(
+                'set_value' => $conditions['set_value'],
+                'set' => $conditions['set']
+            );
+
+            fn_promotions_check_group_conditions($conditions['conditions'], $parents);
+        }
+    } else {
+        foreach ($conditions as $k => $c) {
+            if (!empty($c['conditions'])) {
+                fn_promotions_check_group_conditions($conditions[$k]['conditions'], fn_array_merge($parents, array('set_value' => $c['set_value'], 'set' => $c['set']), false));
+
+                if (!$c['conditions']) {
+                    unset($c['conditions']);
+                }
+            } elseif (empty($c['condition']) || !isset($c['value'])) {
+                unset($conditions[$k]);
+            } elseif (!empty($schema['conditions'][$c['condition']]['applicability']['group'])) {
+                foreach ($parents as $_c) {
+                    if ($_c['set_value'] != $schema['conditions'][$c['condition']]['applicability']['group']['set_value']) {
+
+                        fn_set_notification('W', __('warning'), __('warning_promotions_incorrect_condition', array(
+                            '[condition]' => __('promotion_cond_' . $c['condition']),
+                            '[set_value]' => __($schema['conditions'][$c['condition']]['applicability']['group']['set_value'] == true ? 'true': 'false')
+                        )));
+                        unset($conditions[$k]);
+                    }
+                }
+            }
+        }
+    }
+}
+
 /**
  * Get promotions
  *

@@ -158,6 +158,7 @@ define('RACKETS_QTY_DSC_PRC', 5);
 /* Pages*/
 define('LEARNING_CENTER_PAGE_ID', 53);
 define('LC_RACKETS_PAGE_ID', 55);
+define('LC_RACKET_TYPES_PAGE_ID', 52);
 define('LETS_PLAY_PAGE_ID', 75);
 define('LOYALITY_PROGRAM_PAGE_ID', 77);
 define('SAVING_PROGRAM_PAGE_ID', 77);

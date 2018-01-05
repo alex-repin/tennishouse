@@ -480,6 +480,11 @@ function fn_get_catalog_panel_categoies()
         'param_3' => 'C:0:N'
     );
     $menu = fn_top_menu_form(array($params));
+    $menu[0]['subitems'][] = array(
+        'item' => __("sale_products"),
+        'href' => 'products.sale',
+        'object_id' => 'sale'
+    );
     $menu_items = $menu[0]['subitems'];
     fn_format_submenu($menu_items);
     return $menu_items;
@@ -505,7 +510,10 @@ function fn_get_catalog_panel_pages()
     $block['content']['menu'] = 2;
     $menu_items = fn_get_menu_items_th(true, $block, true);
     foreach ($menu_items as $i => $m_item) {
-        if (in_array($m_item['id_path'], array(152, 153))) {
+//         if ($m_item['id_path'] == 163) {
+//             fn_print_r($menu_items[$i]);
+//         }
+        if (in_array($m_item['id_path'], array(152, 153, 163))) {
             unset($menu_items[$i]);
         }
         if ($m_item['id_path'] == 158) {
@@ -530,30 +538,33 @@ function fn_process_php_errors($errno, $errstr, $errfile, $errline, $errcontext)
     }
 }
 
-function fn_get_discounted_products($params)
+function fn_get_discounted_products($params, $items_per_page = 0)
 {
     list($products, $search) = fn_get_products($params);
     fn_gather_additional_products_data($products, array(
         'get_icon' => false,
         'get_detailed' => false,
+        'check_detailed' => true,
         'get_additional' => false,
-        'get_options' => false,
+        'check_additional' => true,
+        'get_options' => true,
         'get_discounts' => true,
         'get_features' => false,
-        'get_title_features' => false,
-        'allow_duplication' => false
+        'get_title_features' => true,
+        'allow_duplication' => true
     ));
-    $result = array();
+    $_result = $result = array();
     foreach ($products as $i => $product) {
-        if ($product['base_price'] > $product['price']) {
-            $result[] = $product;
-        }
-        if (count($result) >= $params['products_limit']) {
-            break;
+        if ($product['base_price'] > $product['price'] || $product['list_price'] > $product['price']) {
+            $_result[] = $product;
         }
     }
+    shuffle($_result);
+    if (!empty($params['products_limit'])) {
+        $_result = array_slice($_result, 0, $params['products_limit']);
+    }
     
-    return array($result, $params);
+    return array($_result, $params);
 }
 
 function fn_get_menu_items_th($value, $block, $block_scheme)
@@ -616,12 +627,12 @@ function fn_get_news_feed($params)
 {
     $news = array();
     if (!empty($params['player_id'])) {
-        $feed_link = db_get_field("SELECT rss_link FROM ?:players WHERE player_id = ?i", $params['player_id']);
-        if (!empty($feed_link)) {
-            $news = fn_get_rss_news(array('rss_feed_link' => $feed_link));
+        $params['rss_feed_link'] = db_get_field("SELECT rss_link FROM ?:players WHERE player_id = ?i", $params['player_id']);
+        if (!empty($params['rss_feed_link'])) {
+            $news = fn_get_rss_news($params);
         }
     } elseif (!empty($params['rss_feed_link'])) {
-        $news = fn_get_rss_news(array('rss_feed_link' => $params['rss_feed_link']));
+        $news = fn_get_rss_news($params);
     }
     
     return array($news, $params);
@@ -656,7 +667,7 @@ function fn_get_rss_news($params)
                         $news['yesterday'] = true;
                     }
                     $news_feed[] = $news;
-                    if (count($news_feed) >= 10) {
+                    if (count($news_feed) >= $params['number_of_news']) {
                         break;
                     }
                 }
@@ -1599,7 +1610,7 @@ function fn_get_category_type($category_id)
         BALL_MACHINE_ACC_CATEGORY_ID => 'BA',
     );
     
-    return !empty($types[$category_id]) ? $types[$category_id] : '';
+    return !empty($types[$category_id]) ? array($category_id, $types[$category_id]) : array('', '');
 }
 
 function fn_identify_type_category_id($path)

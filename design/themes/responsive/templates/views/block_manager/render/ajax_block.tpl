@@ -1,5 +1,5 @@
 <div id="ajax_block_content_{$block.block_id}">
-    <form name="ajax_block_form_{$block.block_id}" action="{""|fn_url}" method="post" class="hidden" id="ajax_block_{$block.block_id}">
+    <form action="{""|fn_url}" method="post" class="hidden" id="ajax_block_{$block.block_id}">
         <input type="hidden" name="result_ids" value="ajax_block_content_{$block.block_id}" />
         <input type="hidden" name="b_id" value="{$block.block_id}" />
         <input type="hidden" name="s_id" value="{$block.snapping_id}" />
