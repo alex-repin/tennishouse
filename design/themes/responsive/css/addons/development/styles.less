@@ -828,6 +828,26 @@ input:focus::placeholder, textarea:focus::placeholder {
     border-bottom: 1px solid #eeeeee;
     display: inline-block;
     width: 100%;
+    position: relative;
+}
+.ty-search-results {
+    position: absolute;
+    left: 0;
+    top: 33px;
+    width: 100%;
+    background-color: #fff;
+    z-index: 10;
+    border: 1px solid darken(@base, 15%);
+}
+.ty-search-results-item {
+    text-align: left;
+    padding: 6px 0 6px 10px;
+}
+.ty-search-results-item-title {
+    padding-left: 10px;
+}
+.ty-search-results-item:hover {
+    background-color: lighten(@base, 3%);
 }
 .ty-top-block__search {
     display: inline-block;

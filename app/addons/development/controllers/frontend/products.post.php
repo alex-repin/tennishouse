@@ -19,6 +19,36 @@ use Tygh\BlockManager\SchemesManager;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    if ($mode == 'ajax_search') {
+        $params = array(
+            'match' => 'all',
+            'subcats' => 'Y',
+            'pname' => 'Y',
+            'q' => $_REQUEST['q']
+        );
+        list($products,) = fn_get_products($params);
+        fn_gather_additional_products_data($products, array(
+            'get_icon' => false,
+            'get_detailed' => true,
+            'get_additional' => false,
+            'get_options' => false,
+            'get_discounts' => false,
+            'get_features' => false,
+            'get_title_features' => false,
+            'allow_duplication' => false
+        ));
+        
+        Registry::get('view')->assign('results_count', count($products));
+        $products = array_slice($products, 0, Registry::get('addons.development.ajax_search_results_number'));
+        Registry::get('view')->assign('results', $products);
+        Registry::get('view')->display('common/search.tpl');
+        exit;
+    }
+}
+
 if ($mode == 'view') {
 
     $product = Registry::get('view')->gettemplatevars('product');

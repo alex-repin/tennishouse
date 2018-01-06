@@ -29,6 +29,13 @@
                             <item lang="ru">Бесплатная доставка</item>
                         </translations>
                     </item>
+                    <item id="ajax_search_results_number">
+                        <type>input</type>
+                        <default_value>6</default_value>
+                        <translations>
+                            <item lang="ru">Количество товаров в результатах AJAX поиска</item>
+                        </translations>
+                    </item>
                     <item id="new">
                         <type>input</type>
                         <default_value>3</default_value>
@@ -644,7 +651,7 @@
             ALTER TABLE `cscart_categories` ADD `products_per_page` SMALLINT(5) NOT NULL;
         </item>
         <item>
-            ALTER TABLE `cscart_categories` ADD `ajax_pagination` CHAR(1) NOT NULL DEFAULT 'Y';
+            ALTER TABLE `cscart_categories` ADD `ajax_pagination` CHAR(1) NOT NULL DEFAULT 'N';
         </item>
     </queries>
     <language_variables>
@@ -1283,5 +1290,6 @@
         <item lang="ru" id="prev_page">Назад</item>
         <item lang="ru" id="ajax_pagination">Ajax-паджинация</item>
         <item lang="ru" id="sale_products">Распродажа</item>
+        <item lang="ru" id="pagination_type">Тип паджинации</item>
     </language_variables>
 </addon>

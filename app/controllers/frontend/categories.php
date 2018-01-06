@@ -321,7 +321,7 @@ if ($mode == 'catalog') {
                     }
                 }
             }
-            if (!empty($search['post_items_per_page'])) {
+            if ($category_data['pagination_type'] == 'R' && !empty($search['post_items_per_page'])) {
                 $search['items_per_page'] = $search['post_items_per_page'];
                 $search['total_items'] = count($products);
                 $page = intval($search['page']);

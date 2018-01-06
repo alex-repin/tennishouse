@@ -733,7 +733,7 @@ function fn_development_get_category_data_post($category_id, $field_list, $get_m
             fn_format_categorization($category_data, $categorization_data, 'subtabs_categorization');
             fn_format_categorization($category_data, $categorization_data, 'sections_categorization');
         }
-        $data_array = array('note_url', 'note_text', 'products_sorting', 'canonical', 'default_layout', 'selected_layouts', 'product_columns', 'all_items_tab', 'extended_tabs_categorization');
+        $data_array = array('note_url', 'note_text', 'products_sorting', 'canonical', 'default_layout', 'selected_layouts', 'product_columns', 'all_items_tab', 'extended_tabs_categorization', 'products_per_page');
         $data = fn_get_category_global_data($category_data, $data_array);
         foreach ($data_array as $i => $f_name) {
             if (empty($category_data[$f_name]) && !empty($data[$f_name])) {

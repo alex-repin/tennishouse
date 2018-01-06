@@ -48,7 +48,7 @@
                     {if !$active_tab}
                         {assign var="active_tab" value=$key}
                     {/if}
-                    <div class="ty-categorization-tabs__item ty-categorization-tabs__item{$columns} {if $key == $active_tab}ty-categorization-tabs__item-active{/if}"><a class="ty-categorization-tabs__a cm-ajax-force cm-ajax cm-ajax-full-render cm-history" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_tab}href="{$filter_qstring|fn_link_attach:"tc_id=`$key`"|fn_url}"{/if}>{if $key == $active_tab && $key != 'all'}<h2>{else}<span>{/if}{$tab.variant}{if $key == $active_tab && $key != 'all'}</h2>{else}</span>{/if}</a></div>
+                    <div class="ty-categorization-tabs__item ty-categorization-tabs__item{$columns} {if $key == $active_tab}ty-categorization-tabs__item-active{/if}"><a class="ty-categorization-tabs__a {if $category_data.ajax_pagination == 'Y'}cm-ajax-force cm-ajax cm-ajax-full-render cm-history{/if}" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_tab}href="{$filter_qstring|fn_link_attach:"tc_id=`$key`"|fn_url}"{/if}>{if $key == $active_tab && $key != 'all'}<h2>{else}<span>{/if}{$tab.variant}{if $key == $active_tab && $key != 'all'}</h2>{else}</span>{/if}</a></div>
                 {/foreach}
             </div>
         {/if}
@@ -76,7 +76,7 @@
                 <div class="ty-categorization-subtabs__item ty-categorization-subtabs__item{$cst_count} {if $key == $active_subtab}ty-categorization-subtabs__item-active{/if}">
                     <div class="ty-categorization-subtabs__item-logo">{include file="addons/development/common/brand_logo.tpl" brand=$tab brand_variant_id=$tab.variant_id img_height=$img_ht}</div>
                     <h3>
-                    <a class="ty-categorization-subtabs__a text-hide cm-ajax-force cm-ajax cm-ajax-full-render cm-history" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_subtab}href="{$filter_qstring|fn_link_attach:"stc_id=`$key`"|fn_url}"{/if}>
+                    <a class="ty-categorization-subtabs__a text-hide {if $category_data.ajax_pagination == 'Y'}cm-ajax-force cm-ajax cm-ajax-full-render cm-history{/if}" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_subtab}href="{$filter_qstring|fn_link_attach:"stc_id=`$key`"|fn_url}"{/if}>
                         {$tab.variant}
                     </a>
                     </h3>

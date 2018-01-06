@@ -188,6 +188,15 @@
     </div>
     
     <div class="control-group">
+        <label class="control-label" for="elm_category_ajax_pagination">{__("ajax_pagination")}:</label>
+        <div class="controls">
+            <label class="checkbox">
+                <input type="hidden" name="category_data[ajax_pagination]" value="N" />
+                <input type="checkbox" name="category_data[ajax_pagination]" id="elm_category_ajax_pagination" value="Y" {if $category_data.ajax_pagination == 'Y'} checked="checked"{/if} />
+            </label>
+        </div>
+    </div>
+    <div class="control-group">
         <label class="control-label" for="elm_category_pagination_type">{__("pagination_type")}:</label>
 
         <div class="controls">
@@ -204,15 +213,6 @@
 
             <div class="controls">
                 <input type="text" name="category_data[products_per_page]" id="elm_category_products_per_page" size="55" value="{$category_data.products_per_page}" class="input-text-short" />
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="elm_category_ajax_pagination">{__("ajax_pagination")}:</label>
-            <div class="controls">
-                <label class="checkbox">
-                    <input type="hidden" name="category_data[ajax_pagination]" value="N" />
-                    <input type="checkbox" name="category_data[ajax_pagination]" id="elm_category_ajax_pagination" value="Y" {if $category_data.ajax_pagination == 'Y'} checked="checked"{/if} />
-                </label>
             </div>
         </div>
     </div>
