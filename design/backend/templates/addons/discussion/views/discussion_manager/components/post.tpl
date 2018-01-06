@@ -33,7 +33,7 @@
 
     {hook name="discussion:update_post"}
         {if $type == "C" || $type == "B"}
-            <textarea name="posts[{$post.post_id}][message]" cols="80" rows="5" class="input-hidden">{$post.message}</textarea>
+            <textarea name="posts[{$post.post_id}][message]" cols="80" rows="5" class="input-hidden cm-wysiwyg">{$post.message}</textarea>
         {/if}
     {/hook}
     {if $discussion.object_type == 'P' || $discussion_object_type == 'P'}

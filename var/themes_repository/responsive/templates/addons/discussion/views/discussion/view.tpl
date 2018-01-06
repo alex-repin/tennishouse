@@ -63,7 +63,7 @@
                             {/if}
 
                             {if $discussion.type == "C" || $discussion.type == "B"}
-                                <div class="ty-discussion-post__message">{$post.message|escape|nl2br nofilter}</div>
+                                <div class="ty-discussion-post__message">{$post.message|nl2br nofilter}</div>
                             {/if}
                     
                             {if $post.play_level || $post.surface || $post.configuration}

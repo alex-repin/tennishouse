@@ -21,6 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $discussion_settings = Registry::get('addons.discussion');
     $discussion_object_types = fn_get_discussion_objects();
+    
+    fn_trusted_vars('posts');
 
     $suffix = '';
     if ($mode == 'add') {
