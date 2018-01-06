@@ -1291,5 +1291,6 @@
         <item lang="ru" id="ajax_pagination">Ajax-паджинация</item>
         <item lang="ru" id="sale_products">Распродажа</item>
         <item lang="ru" id="pagination_type">Тип паджинации</item>
+        <item lang="ru" id="view_all_result">Посмотреть все [results_count] товаров</item>
     </language_variables>
 </addon>

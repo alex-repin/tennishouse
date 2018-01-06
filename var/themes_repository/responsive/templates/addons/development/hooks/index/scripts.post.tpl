@@ -536,6 +536,36 @@ var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
                     return false;
                 });
             });
+            $('.cm-ajax-search-block').hover(function(){
+                $(this).addClass('is-hover');
+            }, function(){
+                $(this).removeClass('is-hover');
+            });
+            $('.cm-ajax-search').each(function(){
+                $(this).focus(function(){
+                    $('#top_search').removeClass('hidden');
+                }).blur(function(){
+                    if (!$(this).parents('.cm-ajax-search-block').hasClass('is-hover')) {
+                        $('#top_search').addClass('hidden');
+                    }
+                }).keyup(function(){
+                    if ($(this).val().length > 2) {
+                        function fn_ajax_search(obj, val)
+                        {
+                            if (val == obj.val()) {
+                                $.ceAjax('request', fn_url('products.ajax_search'), {
+                                    method: 'post',
+                                    hidden: true,
+                                    result_ids: 'top_search',
+                                    data: {q: obj.val()}
+                                });
+                            }
+                        }
+                        var val = $(this).val();
+                        setTimeout(fn_ajax_search, 500, $(this), val);
+                    }
+                });
+            });
         });
     }(Tygh, Tygh.$));
 {/literal}

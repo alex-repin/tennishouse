@@ -27,6 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'match' => 'all',
             'subcats' => 'Y',
             'pname' => 'Y',
+            'pfull' => 'Y',
+            'sort_by' => 'popularity',
+            'sort_order' => 'desc',
             'q' => $_REQUEST['q']
         );
         list($products,) = fn_get_products($params);
@@ -40,7 +43,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'get_title_features' => false,
             'allow_duplication' => false
         ));
-        
+        if (!empty($products)) {
+            $pieces = fn_explode(' ', trim($_REQUEST['q']));
+            foreach ($products as $i => $product) {
+                foreach ($pieces as $piece) {
+                    if (strlen($piece) == 0) {
+                        continue;
+                    }
+                    $products[$i]['product'] = preg_replace('/' . $piece . '/iu', "<b>$0</b>", $products[$i]['product'])/*str_ireplace($piece, '<b>' . $piece . '</b>', $products[$i]['product'])*/;
+                }
+            }
+        }
         Registry::get('view')->assign('results_count', count($products));
         $products = array_slice($products, 0, Registry::get('addons.development.ajax_search_results_number'));
         Registry::get('view')->assign('results', $products);

@@ -751,6 +751,38 @@ input:focus::placeholder, textarea:focus::placeholder {
     .reset-filter();
     background: linear-gradient(lighten(@top_menu_background, 12%), @top_menu_background) repeat scroll 0 0 rgba(0, 0, 0, 0);
 }
+.ty-ajax-search-view-all {
+    display: inline-block;
+    width: 100%;
+    background-color: @base;
+    border-top: 1px solid darken(@base, 15%);
+    color: @font;
+    height: 40px;
+    font-weight: bold;
+}
+.ty-ajax-search-view-all:hover {
+    color: @font;
+    background-color: lighten(@base, 3%);    
+}
+.ty-search-results {
+    position: absolute;
+    left: 0;
+    top: 33px;
+    width: 100%;
+    background-color: #fff;
+    z-index: 10;
+    border: 1px solid darken(@base, 15%);
+}
+.ty-search-results-item {
+    text-align: left;
+    padding: 6px 0 6px 10px;
+}
+.ty-search-results-item-title {
+    padding-left: 10px;
+}
+.ty-search-results-item:hover {
+    background-color: lighten(@base, 3%);
+}
 .top-menu .ty-menu__item {
     text-align: left;
 }
@@ -776,6 +808,7 @@ input:focus::placeholder, textarea:focus::placeholder {
     display: inline-block;
     vertical-align: middle;
     width: 100%;
+    position: relative;
 }
 .ty-cart-items__list-item-tools {
     display: block;
