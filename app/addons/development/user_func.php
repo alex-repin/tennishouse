@@ -459,8 +459,8 @@ function fn_format_submenu(&$menu_items, $display_subheaders = true)
             }
         }
         foreach ($menu_items as $j => $item) {
-            $display_subheaders = ($item['level'] == 1) ? fn_display_subheaders($item['object_id']) : $display_subheaders;
-            if ($item['level'] == 2 && !$display_subheaders && !empty($item['subitems'])) {
+            $display_subheaders = (!empty($item['level']) && $item['level'] == 1) ? fn_display_subheaders($item['object_id']) : $display_subheaders;
+            if (!empty($item['level']) && $item['level'] == 2 && !$display_subheaders && !empty($item['subitems'])) {
                 unset($menu_items[$j]['subitems']);
             }
             if (!empty($item['subitems'])) {
