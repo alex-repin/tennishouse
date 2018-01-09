@@ -212,7 +212,7 @@ if ($mode == 'catalog') {
                                     $tabs_categorization['other'][] = $product;
                                 }
                             }
-                            if ($product['base_price'] > $product['price']) {
+                            if ($product['base_price'] > $product['price'] || $product['list_price'] > $product['price']) {
                                 $discounts[] = $product;
                             }
                         }
