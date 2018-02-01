@@ -17,6 +17,9 @@ use Tygh\Registry;
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 $_REQUEST['variant_id'] = empty($_REQUEST['variant_id']) ? 0 : $_REQUEST['variant_id'];
+$_SESSION['comparison_list'] = isset($_SESSION['comparison_list']) ? $_SESSION['comparison_list'] : array('products' => array());
+$comparison_list = & $_SESSION['comparison_list'];
+$auth = & $_SESSION['auth'];
 
 if (empty($action)) {
     $action = 'show_all';
@@ -46,32 +49,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Add product to comparison list
 if ($mode == 'add_product') {
-    if (empty($_SESSION['comparison_list'])) {
-        $_SESSION['comparison_list'] = array();
+
+    if (empty($_REQUEST['product_id'])) {
+        exit;
     }
-
-    $p_id = $_REQUEST['product_id'];
-
-    if (!in_array($p_id, $_SESSION['comparison_list'])) {
-        array_unshift($_SESSION['comparison_list'], $p_id);
-        $added_products = array();
-        $added_products[$p_id]['product_id'] = $p_id;
-        $added_products[$p_id]['display_price'] = fn_get_product_price($p_id, 1, $_SESSION['auth']);
-        $added_products[$p_id]['amount'] = 1;
-        $added_products[$p_id]['main_pair'] = fn_get_cart_product_icon($p_id);
-        Registry::get('view')->assign('added_products', $added_products);
-
-        $title = __('product_added_to_cl');
-        $msg = Registry::get('view')->fetch('views/product_features/components/product_notification.tpl');
-        fn_set_notification('I', $title, $msg, 'I');
-    } else {
-        fn_set_notification('W', __('notice'), __('product_in_compare_list'));
+    $key = fn_find_cart_id($_REQUEST['product_id'], $comparison_list);
+    if (empty($key)) {
+        $product_data = array(
+            $_REQUEST['product_id'] => array(
+                'product_id' => $_REQUEST['product_id'],
+                'amount' => 1
+            )
+        );
+        $product_ids = fn_add_product_to_cart($product_data, $comparison_list, $auth);
     }
-
-    return array(CONTROLLER_STATUS_REDIRECT);
+    $compare_list_content = array('snapping_id' => 'compare_list_content', 'properties' => array('products_links_type' => 'thumb', 'display_delete_icons' => 'Y', 'display_bottom_buttons' => 'Y'));
+    Registry::get('view')->assign('block', $compare_list_content);
+    Registry::get('view')->assign('highlight', true);
+    Registry::get('view')->display('blocks/compare_list_content.tpl');
+    
+    exit;
 
 } elseif ($mode == 'clear_list') {
-    unset($_SESSION['comparison_list']);
+    unset($comparison_list);
     unset($_SESSION['excluded_features']);
 
     if (defined('AJAX_REQUEST')) {
@@ -82,11 +82,26 @@ if ($mode == 'add_product') {
 
     return array(CONTROLLER_STATUS_REDIRECT);
 
-} elseif ($mode == 'delete_product' && !empty($_REQUEST['product_id'])) {
-    $key = array_search ($_REQUEST['product_id'], $_SESSION['comparison_list']);
-    unset($_SESSION['comparison_list'][$key]);
+} elseif ($mode == 'delete_product') {
 
-    return array(CONTROLLER_STATUS_REDIRECT);
+    $pid = !empty($_REQUEST['product_id']) ? $_REQUEST['product_id'] : (!empty($_REQUEST['pid']) ? $_REQUEST['pid'] : false);
+    if (empty($pid)) {
+        exit;
+    }
+    
+    $key = fn_find_cart_id($pid, $comparison_list);
+    unset($comparison_list['products'][$key]);
+    if (defined('AJAX_REQUEST')) {
+        $compare_list_content = array('snapping_id' => 'compare_list_content', 'properties' => array('products_links_type' => 'thumb', 'display_delete_icons' => 'Y', 'display_bottom_buttons' => 'Y'));
+        Registry::get('view')->assign('block', $compare_list_content);
+        if (!empty($_REQUEST['pid'])) {
+            Registry::get('view')->assign('is_open', true);
+        }
+        Registry::get('view')->display('blocks/compare_list_content.tpl');
+        exit;
+    } else {
+        return array(CONTROLLER_STATUS_REDIRECT);
+    }
 
 } elseif ($mode == 'delete_feature') {
     $_SESSION['excluded_features'][] = $_REQUEST['feature_id'];
@@ -95,9 +110,9 @@ if ($mode == 'add_product') {
 
 } elseif ($mode == 'compare') {
     fn_add_breadcrumb(__('feature_comparison'));
-    if (!empty($_SESSION['comparison_list'])) {
-        Registry::get('view')->assign('comparison_data', fn_get_product_data_for_compare($_SESSION['comparison_list'], $action));
-        Registry::get('view')->assign('total_products', count($_SESSION['comparison_list']));
+    if (!empty($comparison_list['products'])) {
+        Registry::get('view')->assign('comparison_data', fn_get_product_data_for_compare($comparison_list['products'], $action));
+        Registry::get('view')->assign('total_products', count($comparison_list));
     }
     Registry::get('view')->assign('list', $list);
     Registry::get('view')->assign('action', $action);
@@ -187,7 +202,7 @@ if ($mode == 'view_all') {
     Registry::get('view')->assign('selected_layout', $selected_layout);
 }
 
-function fn_get_product_data_for_compare($product_ids, $action)
+function fn_get_product_data_for_compare($products, $action)
 {
     $auth = & $_SESSION['auth'];
 
@@ -195,8 +210,8 @@ function fn_get_product_data_for_compare($product_ids, $action)
         'product_features' => array(0 => array())
     );
     $tmp = array();
-    foreach ($product_ids as $product_id) {
-        $product_data = fn_get_product_data($product_id, $auth, CART_LANGUAGE, '', false, true, false, false);
+    foreach ($products as $product) {
+        $product_data = fn_get_product_data($product['product_id'], $auth, CART_LANGUAGE, '', false, true, false, false);
 
         fn_gather_additional_product_data($product_data, false, false, false, true, false);
 

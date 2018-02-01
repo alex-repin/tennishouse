@@ -4,6 +4,6 @@
 {if $product.discussion.posts}
 <div class="ty-product-reviews-block">
     <h2 class="ty-product-reviews-title">{__("product_reviews_title")}</h2>
-    <div class="">{include file="addons/discussion/views/discussion/view.tpl" object_id=$product.product_id object_type="P" title=__("discussion_title_product") quicklink="disussion_link" container_id="content_discussion_block" hide_scrollbar=true hide_new_post=true discussion=$product.discussion}
+    {include file="addons/discussion/views/discussion/view.tpl" object_id=$product.product_id object_type="P" title=__("discussion_title_product") quicklink="disussion_link" container_id="content_discussion_block" hide_scrollbar=true hide_new_post=true discussion=$product.discussion}
 </div>
 {/if}

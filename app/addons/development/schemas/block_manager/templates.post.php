@@ -207,7 +207,7 @@ $schema['addons/development/blocks/static_templates/top_block.tpl']['cache'] = a
     'cache_level' => 'static',
     'no_object' => true,
     'auth_handlers' => array('user_id'),
-    'session_handlers' => array('cart')
+    'session_handlers' => array('cart', 'wishlist', 'comparison_list')
 );
 $schema['addons/development/blocks/static_templates/tennis_bags.tpl']['cache'] = array(
     'update_handlers' => array ('categories', 'category_descriptions'),

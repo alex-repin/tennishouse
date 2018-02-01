@@ -170,7 +170,7 @@
         {hook name="products:list_item_additional"}{/hook}
         {if $product.feature_comparison}
             <div class="ty-add-to-compare-block">
-            {include file="addons/development/common/form_link.tpl" form_class="ty-wishlist-form cm-ajax cm-ajax-full-render" form_method="get" hidden_input=["product_id" => "{$product.product_id}"] link_text=__("compare") link_meta="ty-add-to-compare" link_name="dispatch[product_features.add_product]" link_id="add_to_compare_`$obj_id`" link_role=""}
+            {include file="addons/development/common/form_link.tpl" form_class="ty-wishlist-form cm-ajax cm-ajax-full-render" form_method="get" hidden_input=["product_id" => "{$product.product_id}", "result_ids" => "compare_list_status*"] link_text=__("compare") link_meta="ty-add-to-compare" link_name="dispatch[product_features.add_product]" link_id="add_to_compare_`$obj_id`" link_role=""}
             </div>
         {/if}
     </div>

@@ -495,11 +495,19 @@ function fn_gather_additional_products_data(&$products, $params)
     }
 
     if ($params['get_icon'] || $params['get_detailed'] || $params['check_detailed']) {
-        $products_images = fn_get_image_pairs($product_ids, 'product', 'M', $params['get_icon'], $params['get_detailed'], CART_LANGUAGE);
+        if (!empty($params['check_detailed']) && defined('AJAX_REQUEST')) {
+            $products_images = fn_get_image_pairs($product_ids, 'product', 'M', false, true, CART_LANGUAGE);
+        } else {
+            $products_images = fn_get_image_pairs($product_ids, 'product', 'M', $params['get_icon'], $params['get_detailed'], CART_LANGUAGE);
+        }
     }
 
     if ($params['get_additional'] || $params['check_additional']) {
-        $additional_images = fn_get_image_pairs($product_ids, 'product', 'A', $params['get_additional'], $params['get_additional'], CART_LANGUAGE);
+        if (!empty($params['check_detailed']) && defined('AJAX_REQUEST')) {
+            $additional_images = fn_get_image_pairs($product_ids, 'product', 'A', false, true, CART_LANGUAGE);
+        } else {
+            $additional_images = fn_get_image_pairs($product_ids, 'product', 'A', $params['get_additional'], $params['get_additional'], CART_LANGUAGE);
+        }
     }
 
     if ($params['get_options']) {
@@ -9700,11 +9708,14 @@ function fn_get_comparison_products()
 {
     $compared_products = array();
 
-    if (!empty($_SESSION['comparison_list'])) {
-        $_products = db_get_hash_array("SELECT product_id, product FROM ?:product_descriptions WHERE product_id IN (?n) AND lang_code = ?s", 'product_id', $_SESSION['comparison_list'], CART_LANGUAGE);
+    if (!empty($_SESSION['comparison_list']['products'])) {
 
+        $ids = array();
+        foreach ($_SESSION['comparison_list']['products'] as $prod) {
+            $ids[] = $prod['product_id'];
+        }
         $params = array(
-            'pid' => $_SESSION['comparison_list'],
+            'pid' => $ids,
         );
 
         list($products, $search) = fn_get_products($params);

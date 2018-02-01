@@ -4710,6 +4710,8 @@ function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false, 
                     continue;
                 }
 
+                $id_path = db_get_field("SELECT cs.id_path FROM ?:categories AS cs LEFT JOIN ?:products_categories AS pc ON cs.category_id = pc.category_id WHERE pc.link_type = 'M' AND pc.product_id = ?i", $product_id);
+                $cart['products'][$_id]['category_name'] = fn_get_category_name(fn_identify_type_category_id($id_path));
                 $cart['products'][$_id]['product_id'] = $product_id;
                 $cart['products'][$_id]['product_code'] = fn_get_product_code($product_id, $data['product_options']);
                 $cart['products'][$_id]['product'] = fn_get_product_name($product_id);

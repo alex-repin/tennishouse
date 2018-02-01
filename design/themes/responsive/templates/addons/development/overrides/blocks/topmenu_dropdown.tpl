@@ -21,7 +21,7 @@
                 {assign var="unique_elm_id" value="topmenu_`$block.block_id`_`$unique_elm_id`"}
 
                 <li class="ty-menu__item ty-menu__item{$items_count}{if !$item1.$childs} ty-menu__item-nodrop{else} ty-menu__item-parent cm-menu-item-responsive{/if}">
-                    <div class="ty-menu__item_full">
+                    <div class="ty-menu__item_full  cm-hover-dropdown" data-bg-shadow="true">
                     <a {if $item1_url} href="{$item1_url}"{/if} class="ty-menu__item-link {if $item1.href == 'products.sale'}ty-menu__item-link-sale{/if}">
                         {if $item1.href == 'index.php'}<div class="ty-menu__homepage-link">{/if}{if $item1.href != 'index.php'}{$item1.$name}{else}{/if}{if $item1.href == 'index.php'}</div>{/if}
                     </a>
@@ -30,7 +30,7 @@
                         {if !$item1.$childs|fn_check_second_level_child_array:$childs}
                         {* Only two levels. Vertical output *}
                             <div class="ty-menu__submenu">
-                                <ul class="ty-menu__submenu-items ty-menu__submenu-items-simple cm-responsive-menu-submenu">
+                                <ul class="ty-menu__submenu-items ty-menu__submenu-items-simple cm-responsive-menu-submenu cm-hover-dropdown-submenu">
                                     {hook name="blocks:topmenu_dropdown_2levels_elements"}
 
                                     {foreach from=$item1.$childs item="item2" name="item2"}
@@ -54,7 +54,7 @@
                                 {hook name="blocks:topmenu_dropdown_3levels_cols"}
                                     {$submenu_width = 250 * $item1.$childs|count}
                                     {$col_with = 99 / $item1.$childs|count}
-                                    <ul class="ty-menu__submenu-items cm-responsive-menu-submenu ty-menu__page-items" style="display: none;width: {$submenu_width}px;">
+                                    <ul class="ty-menu__submenu-items cm-responsive-menu-submenu ty-menu__page-items cm-hover-dropdown-submenu" style="display: none;width: {$submenu_width}px;">
                                         {foreach from=$item1.$childs item="item2" name="item2"}
                                             <li class="ty-top-mine__submenu-col" style="width: {$col_with}%;">
                                                 {assign var="item2_url" value=$item2|fn_form_dropdown_object_link:$block.type}

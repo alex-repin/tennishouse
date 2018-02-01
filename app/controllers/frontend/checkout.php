@@ -123,6 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     }
                 }
                 Registry::get('view')->assign('cross_sales', $cross_sales);
+                Registry::get('view')->assign('highlight', true);
                 $msg = Registry::get('view')->fetch('views/checkout/components/product_notification.tpl');
                 fn_set_notification('I', __($product_cnt > 1 ? 'products_added_to_cart' : 'product_added_to_cart'), $msg);
                 $cart['recalculate'] = true;
@@ -1075,9 +1076,14 @@ if ($mode == 'cart') {
     }
 
 // Delete product from the cart
-} elseif ($mode == 'delete' && isset($_REQUEST['cart_id'])) {
+} elseif ($mode == 'delete') {
 
-    fn_delete_cart_product($cart, $_REQUEST['cart_id']);
+    $cid = !empty($_REQUEST['cart_id']) ? $_REQUEST['cart_id'] : (!empty($_REQUEST['cid']) ? $_REQUEST['cid'] : false);
+    if (empty($cid)) {
+        exit;
+    }
+    
+    fn_delete_cart_product($cart, $cid);
 
     if (fn_cart_is_empty($cart) == true) {
         fn_clear_cart($cart);
@@ -1096,6 +1102,9 @@ if ($mode == 'cart') {
             $cart_content = array('snapping_id' => 'cart_content', 'properties' => array('products_links_type' => 'thumb', 'display_delete_icons' => 'Y', 'display_bottom_buttons' => 'Y'));
             Registry::get('view')->assign('force_items_deletion', true);
             Registry::get('view')->assign('block', $cart_content);
+            if (!empty($_REQUEST['cid'])) {
+                Registry::get('view')->assign('is_open', true);
+            }
             Registry::get('view')->display('blocks/cart_content.tpl');
 //         fn_set_notification('N', __('notice'), __('text_product_has_been_deleted'));
         }

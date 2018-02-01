@@ -1463,7 +1463,7 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
 function fn_development_get_products_pre(&$params, $items_per_page, $lang_code)
 {
     if (!empty($params['q'])) {
-        $params['q'] = preg_replace("/теннис[\w]*/u", '', $params['q']);
+        $params['q'] = preg_replace("/теннис[\w]*/iu", '', $params['q']);
     }
     if (!empty($params['shoes_surface'])) {
         $params['cid'] = SHOES_CATEGORY_ID;

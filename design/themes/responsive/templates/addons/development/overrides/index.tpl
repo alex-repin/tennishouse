@@ -77,6 +77,7 @@ window.onerror = function(errorMessage) {
         {hook name="index:content"}
             {render_location}
         {/hook}
+        <div class="ty-nav-shadow" id="navigation_shadow"></div>
     <!--tygh_main_container--></div>
 
 

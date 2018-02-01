@@ -23,6 +23,19 @@ use Tygh\Settings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_find_cart_id($product_id, $list)
+{
+    if (!empty($list['products'])) {
+        foreach ($list['products'] as $id => $data) {
+            if ($data['product_id'] == $product_id) {
+                return $id;
+            }
+        }
+    }
+    
+    return false;
+}
+
 function fn_short_order_number($order_number)
 {
     return substr($order_number, strlen($order_number) - 6, 6);

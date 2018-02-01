@@ -1292,5 +1292,9 @@
         <item lang="ru" id="sale_products">Распродажа</item>
         <item lang="ru" id="pagination_type">Тип паджинации</item>
         <item lang="ru" id="view_all_result">Посмотреть все [results_count] товаров</item>
+        <item lang="ru" id="go_to_cart">Перейти в корзину</item>
+        <item lang="ru" id="go_to_compare_list">Перейти к списку сравнения</item>
+        <item lang="ru" id="wishlist_is_empty">Отмечайте товары для будущих покупок, нажав на "сердечко" на детальной странице понравившегося товара.</item>
+        <item lang="ru" id="compare_list_is_empty">Сравните товары по характеристикам. Начните свой выбор с каталога товаров или воспользуйтесь поиском, если ищете что-то конкретное.</item>
     </language_variables>
 </addon>

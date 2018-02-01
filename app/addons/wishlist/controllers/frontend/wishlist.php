@@ -18,7 +18,7 @@ use Tygh\Storage;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-$_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
+$_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array('products' => array());
 $wishlist = & $_SESSION['wishlist'];
 $_SESSION['continue_url'] = isset($_SESSION['continue_url']) ? $_SESSION['continue_url'] : '';
 $auth = & $_SESSION['auth'];
@@ -92,12 +92,6 @@ if ($mode == 'like') {
     if (empty($_REQUEST['product_id'])) {
         exit;
     }
-    // wishlist is empty, create it
-    if (empty($wishlist)) {
-        $wishlist = array(
-            'products' => array()
-        );
-    }
 
     $product_data = array(
         $_REQUEST['product_id'] => array(
@@ -109,23 +103,37 @@ if ($mode == 'like') {
     if (!empty($product_ids)) {
         fn_save_cart_content($wishlist, $auth['user_id'], 'W');
         fn_like_product($_REQUEST['product_id']);
+        $wishlist_content = array('snapping_id' => 'wishlist_content', 'properties' => array('products_links_type' => 'thumb', 'display_delete_icons' => 'Y', 'display_bottom_buttons' => 'Y'));
+        Registry::get('view')->assign('block', $wishlist_content);
+        Registry::get('view')->assign('highlight', true);
+        Registry::get('view')->display('blocks/wishlist_content.tpl');
     }
     
     exit;
 
 } elseif ($mode == 'unlike') {
 
-    if (empty($_REQUEST['product_id'])) {
+    $pid = !empty($_REQUEST['product_id']) ? $_REQUEST['product_id'] : (!empty($_REQUEST['pid']) ? $_REQUEST['pid'] : false);
+    if (empty($pid)) {
         exit;
     }
 
-    $cart_id = fn_check_wishlist($_REQUEST['product_id']);
+    $cart_id = fn_check_wishlist($pid);
     if (empty($cart_id)) {
         exit;
     }
     
-    fn_delete_wishlist_product($wishlist, $cart_id);
+    $likes = fn_delete_wishlist_product($wishlist, $cart_id);
     fn_save_cart_content($wishlist, $auth['user_id'], 'W');
+    $wishlist_content = array('snapping_id' => 'wishlist_content', 'properties' => array('products_links_type' => 'thumb', 'display_delete_icons' => 'Y', 'display_bottom_buttons' => 'Y'));
+    Registry::get('view')->assign('block', $wishlist_content);
+    if (!empty($_REQUEST['pid'])) {
+        Registry::get('view')->assign('product_id', $pid);
+        Registry::get('view')->assign('likes', $likes);
+        Registry::get('view')->assign('is_open', true);
+        Registry::get('view')->display('addons/wishlist/views/wishlist/components/add_to_wishlist.tpl');
+    }
+    Registry::get('view')->display('blocks/wishlist_content.tpl');
     
     exit;
 
@@ -322,11 +330,11 @@ function fn_add_product_to_wishlist($product_data, &$wishlist, &$auth)
 function fn_delete_wishlist_product(&$wishlist, $wishlist_id)
 {
     fn_set_hook('delete_wishlist_product', $wishlist, $wishlist_id);
-    fn_like_product($wishlist['products'][$wishlist_id]['product_id'], false);
+    $likes = fn_like_product($wishlist['products'][$wishlist_id]['product_id'], false);
 
     if (!empty($wishlist_id)) {
         unset($wishlist['products'][$wishlist_id]);
     }
 
-    return true;
+    return $likes;
 }

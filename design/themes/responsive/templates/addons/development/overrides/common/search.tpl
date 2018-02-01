@@ -1,11 +1,11 @@
-<form action="{""|fn_url}" name="search_form" method="get" class="">
-    <input type="hidden" name="result_ids" value="top_search" />
-    <input type="hidden" name="match" value="all" />
-    <input type="hidden" name="subcats" value="Y" />
-    <input type="hidden" name="pname" value="Y" />
-    <input type="hidden" name="pfull" value="Y" />
-    <input type="hidden" name="search_performed" value="Y" />
-    <div class="cm-ajax-search-block">
+<div class="ty-top-block__cell-content">
+    <form action="{""|fn_url}" name="search_form" method="get" class="">
+        <input type="hidden" name="result_ids" value="top_search" />
+        <input type="hidden" name="match" value="all" />
+        <input type="hidden" name="subcats" value="Y" />
+        <input type="hidden" name="pname" value="Y" />
+        <input type="hidden" name="pfull" value="Y" />
+        <input type="hidden" name="search_performed" value="Y" />
         <div class="ty-search-block">
             {hook name="search:additional_fields"}{/hook}
 
@@ -28,8 +28,7 @@
                 {$search_input_id}
             {/capture}
         </div>
-        <div id="top_search">
-            <div class="ty-search-results {if !$results}hidden{/if}">
+        <div class="ty-search-results" id="top_search">
             {if $results}
                 {foreach from=$results item="product"}
                     <a href="{"products.view?product_id=`$product.product_id`{if $product.ohash}&`$product.ohash`{/if}"|fn_url}"><div class="ty-search-results-item">
@@ -41,7 +40,6 @@
                     {include file="buttons/button.tpl" but_name="dispatch[products.search]" but_meta="ty-ajax-search-view-all" but_text=__("view_all_result", ["[results_count]" => $results_count])}
                 {/if}
             {/if}
-            </div>
         <!--top_search--></div>
-    </div>
-</form>
+    </form>
+</div>

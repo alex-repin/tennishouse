@@ -119,9 +119,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             unset($_REQUEST['redirect_url']);
 
-            if (AREA == 'C') {
-                fn_set_notification('N', __('notice'), __('successful_login'));
-            }
+//             if (AREA == 'C') {
+//                 fn_set_notification('N', __('notice'), __('successful_login'));
+//             }
 
             if (AREA == 'A' && Registry::get('runtime.unsupported_browser')) {
                 $redirect_url = "upgrade_center.ie7notify";

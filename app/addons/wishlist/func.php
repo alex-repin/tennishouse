@@ -29,19 +29,13 @@ function fn_like_product($product_id, $is_like = true)
     } else {
         db_query('UPDATE ?:products SET likes = likes - 1 WHERE product_id = ?i', $product_id);
     }
+    
+    return db_get_field("SELECT likes FROM ?:products WHERE product_id = ?i", $product_id);
 }
 
 function fn_check_wishlist($product_id)
 {
-    if (!empty($_SESSION['wishlist']['products'])) {
-        foreach ($_SESSION['wishlist']['products'] as $id => $data) {
-            if ($data['product_id'] == $product_id) {
-                return $id;
-            }
-        }
-    }
-    
-    return false;
+    return fn_find_cart_id($product_id, $_SESSION['wishlist']);
 }
 
 function fn_wishlist_fill_user_fields(&$exclude)
