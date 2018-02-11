@@ -35,6 +35,8 @@ function fn_like_product($product_id, $is_like = true)
 
 function fn_check_wishlist($product_id)
 {
+    $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array('products' => array());
+    
     return fn_find_cart_id($product_id, $_SESSION['wishlist']);
 }
 
