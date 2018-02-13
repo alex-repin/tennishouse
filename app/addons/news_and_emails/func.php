@@ -271,7 +271,7 @@ function fn_get_newsletters($params = array(), $items_per_page = 0, $lang_code =
     $_conditions = array();
 
     if ($params['only_available']) {
-        $_conditions[] = "?:newsletters.status = 'A'";
+        $_conditions[] = "?:newsletters.status != 'D'";
     }
 
     if ($params['type']) {
@@ -458,7 +458,7 @@ function fn_update_news($news_id, $news_data, $lang_code = CART_LANGUAGE)
 // returns newsletter bodies with rewritten links
 function fn_rewrite_links($body_html, $newsletter_id, $campaign_id)
 {
-    $regex = "/href=('|\")((?:http|ftp|https):\/\/[\w-\.]+[?]?[-\w:\+?\/?\.\=%&;~\[\]]+)/ie";
+    $regex = "/href=('|\")((?:http|ftp|https):\/\/[\w-\.]+[?]?[,-\w:\+?\/?\.\=%&;~\[\]]+)/ie";
     $url = fn_url('newsletters.track', 'C', 'http');
     $replace_regex = '"href=\\1$url&link=" . fn_register_link("\\2", $newsletter_id, $campaign_id) . "-" . $newsletter_id . "-" . $campaign_id';
     $matches = array();

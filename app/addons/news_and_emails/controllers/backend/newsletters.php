@@ -509,7 +509,7 @@ function fn_update_newsletter($newsletter_data, $newsletter_id = 0, $lang_code =
 
         $_data = $newsletter_data;
         $_data['mailing_lists'] = implode(',', $_data['mailing_lists']);
-        $_data['post_newsletters'] = implode(',', $_data['post_newsletters']);
+        $_data['post_newsletters'] = !empty($_data['post_newsletters']) ? implode(',', $_data['post_newsletters']) : '';
 
         $newsletter_id = db_query("INSERT INTO ?:newsletters ?e", $_data);
 
@@ -538,7 +538,7 @@ function fn_update_newsletter($newsletter_data, $newsletter_id = 0, $lang_code =
 
         $_data = $newsletter_data;
         $_data['mailing_lists'] = implode(',', $_data['mailing_lists']);
-        $_data['post_newsletters'] = implode(',', $_data['post_newsletters']);
+        $_data['post_newsletters'] = !empty($_data['post_newsletters']) ? implode(',', $_data['post_newsletters']) : '';
 
         db_query("UPDATE ?:newsletters SET ?u WHERE newsletter_id = ?i", $_data, $newsletter_id);
 
