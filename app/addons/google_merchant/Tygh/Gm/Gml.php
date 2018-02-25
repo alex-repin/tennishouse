@@ -52,7 +52,7 @@ class Gml implements IGml
 
     public function getFileName()
     {
-        $path = sprintf('%sgoogle_merchant/%s_google_merchant.yml',
+        $path = sprintf('%sgoogle_merchant/%s_google_merchant.xml',
             fn_get_cache_path(false, 'C', $this->company_id),
             $this->company_id
         );
@@ -118,8 +118,6 @@ class Gml implements IGml
 
     protected function body($file)
     {
-        $offered = array();
-
         if ($this->options['hide_disabled_categories'] == "Y") {
             $visible_categories = $this->getVisibleCategories();
         }
@@ -160,12 +158,12 @@ class Gml implements IGml
                 $new_product['g:title'] = $this->escape($product['product']);
                 $new_product['g:description'] = !empty($product['full_description']) ? $this->escape($product['full_description']) : (!empty($product['short_description']) ? $this->escape($product['short_description']) : '');
                 $new_product['g:link'] = fn_url('products.view?product_id=' . $product['product_id']);
-                $new_product['g:image_​​link'] = $product['main_pair']['detailed']['http_image_path'];
+                $new_product['g:image_link'] = $product['main_pair']['detailed']['http_image_path'];
                 if (!empty($product['image_pairs'])) {
                     $additional = array_slice($product['image_pairs'], 0, 10);
                     foreach ($additional as $i => $pair)  {
                         if (!empty($pair['detailed']['http_image_path'])) {
-                            $new_product['g:additional_​​​image_​​​link'] = $pair['detailed']['http_image_path'];
+                            $new_product['g:additional_image_link'] = $pair['detailed']['http_image_path'];
                         }
                     }
                 }
@@ -199,7 +197,7 @@ class Gml implements IGml
                 $new_product['g:brand'] = $product['product_features'][BRAND_FEATURE_ID]['variant'];
 //                 $new_product['g:gtin'] = '';
 //                 $new_product['g:mpn'] = '';
-                $new_product['g:identifier_​exists'] = 'no';
+                $new_product['g:identifier_exists'] = 'no';
                 
 //              Detailed product description
                 $new_product['g:condition'] = 'new';
@@ -249,7 +247,6 @@ class Gml implements IGml
                 }
 //                 $new_product['g:pattern'] = '';
 //                 $new_product['g:size_type'] = '';
-                $new_product['g:size_type'] = 'EU';
                 $new_product['g:item_group_id'] = $product['product_code'];
 //                 $new_product['g:pattern'] = '';
 //                 $new_product['g:pattern'] = '';
@@ -268,7 +265,7 @@ class Gml implements IGml
                     $new_product['g:shipping'] = $this->formatPrice(0);
                 }
 //                 $new_product['g:shipping_​​label'] = '';
-                $new_product['g:shipping_​​weight'] = $product['weight'] . ' kg';
+                $new_product['g:shipping_weight'] = $product['weight'] . ' kg';
 //                 $new_product['g:shipping_​​length'] = '';
 //                 $new_product['g:shipping_​​width'] = '';
 //                 $new_product['g:shipping_​​height'] = '';
@@ -279,7 +276,7 @@ class Gml implements IGml
 //                 $new_product['g:tax'] = '';
 //                 $new_product['g:tax_category'] = '';
 
-                if (empty($new_product['g:id']) || empty($new_product['g:title']) || empty($new_product['g:description']) || empty($new_product['g:link']) || empty($new_product['g:image_​​link']) || empty($new_product['g:availability']) || empty($new_product['g:price']) || empty($new_product['g:google_product_category']) || empty($new_product['g:brand']) || empty($new_product['g:condition']) || empty($new_product['g:adult']) || in_array($product['main_category'], $this->disabled_category_ids) || ($this->options['hide_disabled_categories'] == 'Y' && !in_array($product['main_category'], $visible_categories)) || ($this->options['in_stock_only'] == 'Y' && $product['amount'] <= 0)) {
+                if (empty($new_product['g:id']) || empty($new_product['g:title']) || empty($new_product['g:description']) || empty($new_product['g:link']) || empty($new_product['g:image_link']) || empty($new_product['g:availability']) || empty($new_product['g:price']) || empty($new_product['g:google_product_category']) || empty($new_product['g:brand']) || empty($new_product['g:condition']) || empty($new_product['g:adult']) || in_array($product['main_category'], $this->disabled_category_ids) || ($this->options['hide_disabled_categories'] == 'Y' && !in_array($product['main_category'], $visible_categories)) || ($this->options['in_stock_only'] == 'Y' && $product['amount'] <= 0)) {
                     continue;
                 }
 
@@ -301,6 +298,7 @@ class Gml implements IGml
                                 }
                                 if ($option_type[$opt_id] == 'S') {
                                     $item_groups[$iteration]['g:size'] = $product['product_options'][$opt_id]['variants'][$vr_id]['variant_name'];
+                                    $item_groups[$iteration]['g:size_type'] = 'regular';
                                 } elseif ($option_type[$opt_id] == 'C') {
                                     $item_groups[$iteration]['g:color'] = $product['product_options'][$opt_id]['variants'][$vr_id]['variant_name'];
                                 }
@@ -316,7 +314,7 @@ class Gml implements IGml
                 } else {
 //                     $new_product['g:color'] = '';
 //                     $new_product['g:size'] = '';
-                    $slice_result .= fn_array_to_xml($new_product);
+                    $slice_result .= fn_array_to_xml(array('item' => $new_product));
                 }
             }
             fwrite($file, $slice_result);

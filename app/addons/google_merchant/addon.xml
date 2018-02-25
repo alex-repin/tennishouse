@@ -93,6 +93,7 @@
         <item lang="ru" id="gm_available_in_customer"><![CDATA[<p>Прайс-лист доступен по следующей ссылке (для доступа используйте email и пароль от панели администратора): <a target="_blank" href="[gm_url]">[gm_url]</a></p><p>Если включен модуль SEO, прайс-лист также может быть доступен по ссылке <a target="_blank" href="[http_location]/google_merchant.txt">[http_location]/google_merchant.txt</a></p>]]></item>
         <item lang="ru" id="gm_clear_cache_info"><![CDATA[<p>Если были добавлены или изменены товары или категории, пожалуйста, <a target="_blank" href="[clear_cache_url]">очистите кэш</a>, чтобы заново сгенерировать прайс-лист для Google Merchant.</p><p>[gm_available_in_customer]</p>]]></item>
         <item lang="ru" id="google_merchant">Google Merchant</item>
+        <item lang="ru" id="google_product_category">Google product category</item>
         <item lang="ru" id="gml_market_category_link">Список категорий</item>
         <item lang="ru" id="gml_disable_category">Исключить товары категории из экспорта в Google Merchant</item>
         <item lang="ru" id="gml_disable_product">Исключить товар из экспорта в Google Merchant</item>
