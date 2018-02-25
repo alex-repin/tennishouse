@@ -43,11 +43,23 @@
                     </item>
                     <item id="export_encoding">
                         <type>selectbox</type>
+                        <name>Кодировка экспортируемого файла</name>
                         <variants>
-                            <item id="utf-8" />
-                            <item id="windows-1251" />
+                            <item id="utf-8">
+                                <translations>
+                                    <item lang="ru">UTF-8</item>
+                                </translations>
+                            </item>
+                            <item id="windows-1251">
+                                <translations>
+                                    <item lang="ru">Windows-1251</item>
+                                </translations>
+                            </item>
                         </variants>
                         <default_value>utf-8</default_value>
+                        <translations>
+                            <item lang="ru">Экспортировать только товары, которые есть в наличии</item>
+                        </translations>
                     </item>
                     <item id="in_stock_only">
                         <type>checkbox</type>
