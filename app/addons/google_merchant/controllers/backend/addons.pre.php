@@ -12,14 +12,16 @@
 * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
 ****************************************************************************/
 
+use Tygh\Gm\Gml;
+
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-fn_register_hooks(
-    'get_products',
-    'get_rewrite_rules',
-    'tools_change_status',
-    'update_product_post',
-    'delete_product_post',
-    'update_category_post',
-    'delete_category_post'
-);
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    return;
+}
+
+if ($mode == 'update_status') {
+
+    Gml::clearCaches();
+
+}

@@ -15,6 +15,47 @@
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 use Tygh\Registry;
+use Tygh\Gm\Gml;
+
+function fn_google_merchant_update_product_post(&$product_data, &$product_id, &$lang_code, &$create)
+{
+    Gml::clearCaches();
+}
+
+function fn_google_merchant_delete_product_post(&$product_id, &$product_deleted)
+{
+    if (!empty($product_deleted)) {
+        Gml::clearCaches();
+    }
+}
+
+function fn_google_merchant_update_category_post(&$category_data, &$category_id, &$lang_code)
+{
+    $company_id = isset($category_data['company_id']) ? $category_data['company_id'] : 0;
+    Gml::clearCaches($company_id);
+}
+
+function fn_google_merchant_delete_category_post(&$category_id, &$recurse, &$category_ids)
+{
+    Gml::clearCaches();
+}
+
+function fn_google_merchant_tools_change_status(&$params, &$result)
+{
+    if (
+        !empty($params['table'])
+        && in_array($params['table'], array('products', 'categories'))
+        && $result
+    ) {
+        Gml::clearCaches();
+    }
+}
+
+function fn_google_merchant_get_rewrite_rules(&$rewrite_rules, &$prefix, &$extension)
+{
+    $rewrite_rules['!^\/google_merchant([0-9]*)\.xml$!'] = '$customer_index?dispatch=google_merchant.view&page=$matches[1]';
+    $rewrite_rules['!^' . $prefix . '\/google_merchant([0-9]*)\.xml$!'] = '$customer_index?dispatch=google_merchant.view&page=$matches[2]';
+}
 
 function fn_google_merchant_get_products($params, &$fields, $sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
 {
