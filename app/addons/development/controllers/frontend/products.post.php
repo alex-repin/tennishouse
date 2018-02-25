@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     if (strlen($piece) == 0) {
                         continue;
                     }
-                    $products[$i]['product'] = preg_replace('/' . $piece . '/iu', "<b>$0</b>", $products[$i]['product']);
+                    $products[$i]['product'] = preg_replace('/' . preg_quote($piece) . '/iu', "<b>$0</b>", $products[$i]['product']);
                 }
             }
         }

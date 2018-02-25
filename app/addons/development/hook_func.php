@@ -936,6 +936,9 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
             if (!empty($params['get_options'])) {
                 // Для иконок цветов в списке товаров и размеров
                 if ($product['tracking'] == 'O' && !empty($product['product_options'])) {
+                    if (!empty($params['get_inventory']) && !empty($avail_combinations[$product['product_id']])) {
+                        $products[$i]['inventory'] = $avail_combinations[$product['product_id']];
+                    }
                     $show_opt_id = $size_id = false;
                     foreach ($product['product_options'] as $ii => $opt_data) {
                         if (!empty($opt_data['parent_option_id']) && $opt_data['parent_option_id'] == GLOBAL_COLOR_OPT_ID && !empty($opt_data['variants'])) {

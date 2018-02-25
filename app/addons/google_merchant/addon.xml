@@ -41,18 +41,19 @@
                         <type>header</type>
                         <name>Основное</name>
                     </item>
+                    <item id="export_encoding">
+                        <type>selectbox</type>
+                        <variants>
+                            <item id="utf-8" />
+                            <item id="windows-1251" />
+                        </variants>
+                        <default_value>utf-8</default_value>
+                    </item>
                     <item id="in_stock_only">
                         <type>checkbox</type>
                         <default_value>Y</default_value>
                         <translations>
                             <item lang="ru">Экспортировать только товары, которые есть в наличии</item>
-                        </translations>
-                    </item>
-                    <item id="google_product_category">
-                        <type>checkbox</type>
-                        <default_value>Y</default_value>
-                        <translations>
-                            <item lang="ru">Использовать поле «google_product_category»</item>
                         </translations>
                     </item>
                     <item id="hide_disabled_categories">
@@ -68,12 +69,12 @@
     </settings>
     <queries>
         <item>
-            ALTER TABLE `cscart_categories` ADD `gml_disable_cat` CHAR(1) NOT NULL DEFAULT 'N',
-            ADD `gml_product_category` MEDIUMINT(8) UNSIGNED NOT NULL ;
+            ALTER TABLE `cscart_categories` ADD `gml_disable_cat` CHAR(1) NOT NULL DEFAULT 'Y',
+            ADD `gml_product_category` VARCHAR(128) NOT NULL ;
         </item>
         <item>
             ALTER TABLE `cscart_products` ADD `gml_disable_product` CHAR(1) NOT NULL DEFAULT 'N',
-            ADD `gml_product_category` MEDIUMINT(8) UNSIGNED NOT NULL ;
+            ADD `gml_product_category` VARCHAR(128) NOT NULL ;
         </item>
     </queries>
     <language_variables>
@@ -81,7 +82,6 @@
         <item lang="ru" id="gm_clear_cache_info"><![CDATA[<p>Если были добавлены или изменены товары или категории, пожалуйста, <a target="_blank" href="[clear_cache_url]">очистите кэш</a>, чтобы заново сгенерировать прайс-лист для Google Merchant.</p><p>[gm_available_in_customer]</p>]]></item>
         <item lang="ru" id="google_merchant">Google Merchant</item>
         <item lang="ru" id="gml_market_category_link">Список категорий</item>
-        <item lang="ru" id="google_product_category">Значение поля "google_product_category"</item>
         <item lang="ru" id="gml_disable_category">Исключить товары категории из экспорта в Google Merchant</item>
         <item lang="ru" id="gml_disable_product">Исключить товар из экспорта в Google Merchant</item>
         <item lang="ru" id="gml_market_category_list_text"><![CDATA[<p>Для товарного предложения рекомендуется указывать категорию, в которой оно должно быть размещено в Google Merchant. Категория передается с помощью элемента в описании товарного предложения. В этом элементе допустимо указывать названия категорий только из дерева категорий Google Merchant.</p><p>Больше информации и список категорий вы найдете на сайте Google <a href="https://support.google.com/merchants/answer/6324436" target="_blank">Категория товарного предложения</a></p><p>Выберите категорию из списка</p>]]></item>

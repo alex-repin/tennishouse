@@ -14,10 +14,18 @@
 {$image_data=$images|fn_image_to_display:$image_retina_width:$image_retina_height:$keep_transparent}
 {$generate_image=$image_data.generate_image && !$external}
 {if !$image_width}
-    {$image_width = $image_data.width * $image_height / $image_data.height}
+    {if $image_data.width && $image_data.height}
+        {$image_width = $image_data.width * $image_height / $image_data.height}
+    {else}
+        {$image_width = $image_height}
+    {/if}
 {/if}
 {if !$image_height}
-    {$image_height = $image_data.height * $image_width / $image_data.width}
+    {if $image_data.width && $image_data.height}
+        {$image_height = $image_data.height * $image_width / $image_data.width}
+    {else}
+        {$image_height = $image_width}
+    {/if}
 {/if}
 {if $image_width && $image_width != $image_data.width && $image_height && $image_height != $image_data.height}
     <div class="ty-image-wrapper" style="width: {$image_width}px; height: {$image_height}px;">

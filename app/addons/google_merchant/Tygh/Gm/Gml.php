@@ -114,7 +114,6 @@ class Gml implements IGml
         
         fwrite($file, implode(PHP_EOL, $gml_header) . PHP_EOL);
         fwrite($file, fn_array_to_xml($gml_data));
-        fwrite($file, '<offers>' . PHP_EOL);
     }
 
     protected function body($file)
@@ -125,6 +124,7 @@ class Gml implements IGml
             $visible_categories = $this->getVisibleCategories();
         }
 
+        $cat_data = db_get_hash_array("SELECT category_id, id_path, gml_product_category FROM ?:categories", 'category_id');
         $params = array(
             'gml_disable_product' => 'N'
         );
@@ -134,29 +134,28 @@ class Gml implements IGml
             'get_icon' => false,
             'get_detailed' => true,
             'get_additional' => true,
-            'get_options'=> false,
+            'get_options'=> true,
+            'get_inventory' => true,
             'get_discounts' => true,
             'get_features' => true,
+            'features_display_on' => 'A',
             'get_title_features' => false,
             'allow_duplication' => false
         ));
         $brands = fn_get_product_feature_data(BRAND_FEATURE_ID, true, true);
-// fn_print_die($products);
+
         $offset = 0;
+        $option_type = array();
         while ($prods_slice = array_slice($products, $offset, self::ITERATION_ITEMS)) {
             $offset += self::ITERATION_ITEMS;
 
+            $slice_result = '';
             foreach ($prods_slice as $k => &$product) {
                 $new_product = array();
-                $is_broken = false;
 
-                $google_product_category = !empty($product['gml_product_category']) ? $product['gml_product_category'] : fn_get_product_global_data($product, array('gml_product_category'));
                 $brand = $product['product_features'][BRAND_FEATURE_ID]['variant'];
-                if (empty($product['price']) || in_array($product['main_category'], $this->disabled_category_ids) || ($this->options['hide_disabled_categories'] == 'Y' && !in_array($product['main_category'], $visible_categories)) || ($this->options['in_stock_only'] == 'Y' && $product['amount'] <= 0) || empty($google_product_category) || empty($product['main_pair']['detailed']['http_image_path']) || empty($brand)) {
-                    $is_broken = true;
-                }
-
-                // Basic product data
+                
+//              Basic product data
                 $new_product['g:id'] = $product['product_id'];
                 $new_product['g:title'] = $this->escape($product['product']);
                 $new_product['g:description'] = !empty($product['full_description']) ? $this->escape($product['full_description']) : (!empty($product['short_description']) ? $this->escape($product['short_description']) : '');
@@ -170,54 +169,164 @@ class Gml implements IGml
                         }
                     }
                 }
+//                 $new_product['g:mobile_link'] = '';
                 
-                // Price & availability
+//              Price & availability
                 $new_product['g:availability'] = $product['amount'] > 0 ? 'in stock' : 'out of stock';
+//                 $new_product['g:availability_date'] = '';
+//                 $new_product['g:expiration_date'] = '';
                 if (!empty($product['discount'])) {
                     $new_product['g:price'] = $this->formatPrice($product['base_price']);
-                    $new_product['g:sale_price'] = $this->formatPrice($product['price']);
+                    $new_product['g:sale_price'] = $price = $this->formatPrice($product['price']);
                 } elseif (!empty($product['list_discount'])) {
                     $new_product['g:price'] = $this->formatPrice($product['list_price']);
-                    $new_product['g:sale_price'] = $this->formatPrice($product['price']);
+                    $new_product['g:sale_price'] = $price = $this->formatPrice($product['price']);
                 } else {
-                    $new_product['g:price'] = $this->formatPrice($product['price']);
+                    $new_product['g:price'] = $price = $this->formatPrice($product['price']);
                 }
+//                 $new_product['g:sale_price_effective_date'] = '';
+//                 $new_product['g:unit_pricing_measure'] = '';
+//                 $new_product['g:unit_pricing_base_measure'] = '';
+//                 $new_product['g:installment'] = '';
+//                 $new_product['g:loyalty_points'] = '';
 
-                // Product category
-                $new_product['g:google_product_category'] = $google_product_category;
+//              Product category
+                $global = fn_get_product_global_data($product, array('gml_product_category'), $cat_data);
+                $new_product['g:google_product_category'] = !empty($product['gml_product_category']) ? $product['gml_product_category'] : (!empty($global['gml_product_category']) ? $global['gml_product_category'] : false);
+//                 $new_product['g:product_type'] = '';
                 
-                // Product identifiers
-                $new_product['g:google_product_category'] = $product['product_id'];
-                $new_product['g:brand'] = $brand;
+//              Product identifiers
+                $new_product['g:brand'] = $product['product_features'][BRAND_FEATURE_ID]['variant'];
+//                 $new_product['g:gtin'] = '';
+//                 $new_product['g:mpn'] = '';
                 $new_product['g:identifier_​exists'] = 'no';
                 
-                // Detailed product description
+//              Detailed product description
                 $new_product['g:condition'] = 'new';
                 $new_product['g:adult'] = 'no';
+//                 $new_product['g:multipack'] = '';
+//                 $new_product['g:is_bundle'] = '';
+//                 $new_product['g:energy_efficiency_class'] = '';
+//                 $new_product['g:min_energy_efficiency_class'] = '';
+//                 $new_product['g:max_energy_efficiency_class'] = '';
                 
-                fn_print_die(fn_array_to_xml($new_product));
+                if (!empty($product['product_features'][CLOTHES_GENDER_FEATURE_ID])) {
+                    if (in_array($product['product_features'][CLOTHES_GENDER_FEATURE_ID]['variant_id'], array(C_GENDER_M_FV_ID, C_GENDER_W_FV_ID, C_GENDER_U_FV_ID))) {
+                        $new_product['g:age_group'] = 'adult';
+                    } elseif (in_array($product['product_features'][CLOTHES_GENDER_FEATURE_ID]['variant_id'], array(C_GENDER_B_FV_ID, C_GENDER_G_FV_ID))) {
+                        $new_product['g:age_group'] = 'kids';
+                    }
+                    if (in_array($product['product_features'][CLOTHES_GENDER_FEATURE_ID]['variant_id'], array(C_GENDER_M_FV_ID, C_GENDER_B_FV_ID))) {
+                        $new_product['g:gender'] = 'male';
+                    } elseif (in_array($product['product_features'][CLOTHES_GENDER_FEATURE_ID]['variant_id'], array(C_GENDER_W_FV_ID, C_GENDER_G_FV_ID))) {
+                        $new_product['g:gender'] = 'female';
+                    } elseif (in_array($product['product_features'][CLOTHES_GENDER_FEATURE_ID]['variant_id'], array(C_GENDER_U_FV_ID))) {
+                        $new_product['g:gender'] = 'unisex';
+                    }
+                }
+                if (!empty($product['product_features'][SHOES_GENDER_FEATURE_ID])) {
+                    if (in_array($product['product_features'][SHOES_GENDER_FEATURE_ID]['variant_id'], array(S_GENDER_M_FV_ID, S_GENDER_W_FV_ID, S_GENDER_U_FV_ID))) {
+                        $new_product['g:age_group'] = 'adult';
+                    } elseif (in_array($product['product_features'][SHOES_GENDER_FEATURE_ID]['variant_id'], array(S_GENDER_K_FV_ID))) {
+                        $new_product['g:age_group'] = 'kids';
+                    }
+                    if (in_array($product['product_features'][SHOES_GENDER_FEATURE_ID]['variant_id'], array(S_GENDER_M_FV_ID))) {
+                        $new_product['g:gender'] = 'male';
+                    } elseif (in_array($product['product_features'][SHOES_GENDER_FEATURE_ID]['variant_id'], array(S_GENDER_W_FV_ID))) {
+                        $new_product['g:gender'] = 'female';
+                    } elseif (in_array($product['product_features'][SHOES_GENDER_FEATURE_ID]['variant_id'], array(S_GENDER_U_FV_ID, S_GENDER_K_FV_ID))) {
+                        $new_product['g:gender'] = 'unisex';
+                    }
+                }
+                if (!empty($product['product_features'][BG_TYPE_FEATURE_ID])) {
+                    $new_product['g:material'] = $product['product_features'][BG_TYPE_FEATURE_ID]['variant'];
+                } elseif (!empty($product['product_features'][S_MATERIAL_FEATURE_ID])) {
+                    $new_product['g:material'] = $product['product_features'][S_MATERIAL_FEATURE_ID]['variant'];
+                } elseif (!empty($product['product_features'][CLOTHES_MATERIAL_FEATURE_ID])) {
+                    $new_product['g:material'] = $product['product_features'][CLOTHES_MATERIAL_FEATURE_ID]['variant'];
+                } elseif (!empty($product['product_features'][R_MATERIAL_FEATURE_ID])) {
+                    $new_product['g:material'] = $product['product_features'][R_MATERIAL_FEATURE_ID]['variant'];
+                }
+//                 $new_product['g:pattern'] = '';
+//                 $new_product['g:size_type'] = '';
+                $new_product['g:size_type'] = 'EU';
+                $new_product['g:item_group_id'] = $product['product_code'];
+//                 $new_product['g:pattern'] = '';
+//                 $new_product['g:pattern'] = '';
 
-                if ($is_broken) {
-                    unset($prods_slice[$k]);
+
+//                 Shopping campaigns and other configurations
+//                 $new_product['g:adwords_redirect'] = '';
+//                 $new_product['g:excluded_​​destination'] = '';
+//                 $new_product['g:included_​​destination'] = '';
+//                 $new_product['g:custom_​​label_​​0'] = '';
+//                 $new_product['g:promotion_​​id'] = '';
+
+
+//              Shipping
+                if ($price <= Registry::get('addons.development.free_shipping_cost')) {
+                    $new_product['g:shipping'] = $this->formatPrice(0);
+                }
+//                 $new_product['g:shipping_​​label'] = '';
+                $new_product['g:shipping_​​weight'] = $product['weight'] . ' kg';
+//                 $new_product['g:shipping_​​length'] = '';
+//                 $new_product['g:shipping_​​width'] = '';
+//                 $new_product['g:shipping_​​height'] = '';
+//                 $new_product['g:max_handling_time'] = '';
+//                 $new_product['g:min_handling_time'] = '';
+
+//              Tax
+//                 $new_product['g:tax'] = '';
+//                 $new_product['g:tax_category'] = '';
+
+                if (empty($new_product['g:id']) || empty($new_product['g:title']) || empty($new_product['g:description']) || empty($new_product['g:link']) || empty($new_product['g:image_​​link']) || empty($new_product['g:availability']) || empty($new_product['g:price']) || empty($new_product['g:google_product_category']) || empty($new_product['g:brand']) || empty($new_product['g:condition']) || empty($new_product['g:adult']) || in_array($product['main_category'], $this->disabled_category_ids) || ($this->options['hide_disabled_categories'] == 'Y' && !in_array($product['main_category'], $visible_categories)) || ($this->options['in_stock_only'] == 'Y' && $product['amount'] <= 0)) {
                     continue;
                 }
 
-                list($key, $value) = $this->item($product);
-                $offered[$key] = $value;
+                if (!empty($product['inventory'])) {
+                    $iteration = 0;
+                    $item_groups = array();
+                    foreach ($product['inventory'] as $combination) {
+                        $options = fn_get_product_options_by_combination($combination['combination']);
+                        foreach ($options as $opt_id => $vr_id) {
+                            if (!empty($product['product_options'][$opt_id]) && !empty($product['product_options'][$opt_id]['variants'][$vr_id]['variant_name'])) {
+                                if (!array_key_exists($opt_id, $option_type)) {
+                                    if (preg_match('/(размер|толщина|ручка)/iu', $product['product_options'][$opt_id]['option_name'], $match)) {
+                                        $option_type[$opt_id] = 'S';
+                                    } elseif (preg_match('/(цвет)/iu', $product['product_options'][$opt_id]['option_name'], $match)) {
+                                        $option_type[$opt_id] = 'C';
+                                    } else {
+                                        $option_type[$opt_id] = 'N';
+                                    }
+                                }
+                                if ($option_type[$opt_id] == 'S') {
+                                    $item_groups[$iteration]['g:size'] = $product['product_options'][$opt_id]['variants'][$vr_id]['variant_name'];
+                                } elseif ($option_type[$opt_id] == 'C') {
+                                    $item_groups[$iteration]['g:color'] = $product['product_options'][$opt_id]['variants'][$vr_id]['variant_name'];
+                                }
+                            }
+                        }
+                        $iteration++;
+                    }
+                    if (!empty($item_groups)) {
+                        foreach ($item_groups as $group) {
+                            $slice_result .= fn_array_to_xml(array('item' => array_merge($new_product, $group)));
+                        }
+                    }
+                } else {
+//                     $new_product['g:color'] = '';
+//                     $new_product['g:size'] = '';
+                    $slice_result .= fn_array_to_xml($new_product);
+                }
             }
-
-            fwrite($file, fn_array_to_xml($offered));
-            unset($offered);
-
+            fwrite($file, $slice_result);
         }
-        fn_print_die($products);
     }
 
     protected function bottom($file)
     {
-        fwrite($file, '</offers>' . PHP_EOL);
-        fwrite($file, '</shop>' . PHP_EOL);
-        fwrite($file, '</yml_catalog>' . PHP_EOL);
+        fwrite($file, '</channel>' . PHP_EOL);
+        fwrite($file, '</rss>' . PHP_EOL);
     }
 
     protected function sendResult($filename)
@@ -256,129 +365,6 @@ class Gml implements IGml
         return $this->disabled_category_ids;
     }
 
-    /**
-     * Export product features
-     */
-    protected function getProductFeatures($product)
-    {
-        static $features;
-
-        $lang_code = $this->lang_code;
-
-        if (!isset($features[$lang_code])) {
-            list($features[$lang_code]) = fn_get_product_features(array('plain' => true), 0, $lang_code);
-        }
-
-        $product = array(
-            'product_id' => $product['product_id'],
-            'main_category' => $product['main_category']
-        );
-
-        $product_features = fn_get_product_features_list($product, 'A', $lang_code);
-
-        $result = array();
-
-        if (!empty($product_features)) {
-            foreach ($product_features as $f) {
-                $display_on_catalog = $features[$lang_code][$f['feature_id']]['display_on_catalog'];
-                $display_on_product = $features[$lang_code][$f['feature_id']]['display_on_product'];
-
-                if ($display_on_catalog == "Y" || $display_on_product == "Y") {
-                    if ($f['feature_type'] == "C") {
-                        $result[] = array(
-                            'description' => $f['description'],
-                            'feature_id' => $f['feature_id'],
-                            'value' => ($f['value'] == "Y") ? __("yes") : __("no")
-                        );
-                    } elseif ($f['feature_type'] == "S" && !empty($f['variant'])) {
-                        $result[] = array(
-                            'description' => $f['description'],
-                            'feature_id' => $f['feature_id'],
-                            'value' => $f['variant']
-                        );
-                    } elseif ($f['feature_type'] == "T" && !empty($f['value'])) {
-                        $result[] = array(
-                            'description' => $f['description'],
-                            'feature_id' => $f['feature_id'],
-                            'value' => $f['value']
-                        );
-                    } elseif ($f['feature_type'] == "M") {
-                        if (!empty($f['variants'])) {
-                            $_value = '';
-                            $counter = count($f['variants']);
-                            foreach ($f['variants'] as $_variant) {
-                                if ($counter > 1) {
-                                    $_value .= $_variant['variant'] . ', ';
-                                } else {
-                                    $_value = $_variant['variant'];
-                                }
-                            }
-                            $_value = ($counter > 1) ? substr($_value, 0, -2) : $_value;
-                            $result[] = array(
-                                'description' => $f['description'],
-                                'feature_id' => $f['feature_id'],
-                                'value' => $_value
-                            );
-                        }
-                    } elseif ($f['feature_type'] == "N") {
-                        $result[] = array(
-                            'description' => $f['description'],
-                            'feature_id' => $f['feature_id'],
-                            'value' => $f['variant']
-                        );
-                    } elseif ($f['feature_type'] == "O") {
-                        $result[] = array(
-                            'description' => $f['description'],
-                            'feature_id' => $f['feature_id'],
-                            'value' => $f['value_int']
-                        );
-                    } elseif ($f['feature_type'] == "E") {
-                        $result[] = array(
-                            'description' => $f['description'],
-                            'feature_id' => $f['feature_id'],
-                            'value' => $f['variant']
-                        );
-                    }
-                }
-            }
-        }
-
-        return !empty($result) ? $result : '';
-    }
-
-    protected function getImageUrl($image_pair)
-    {
-        $url = '';
-
-        if ($this->options['image_type'] == 'detailed') {
-            $url = $image_pair['detailed']['image_path'];
-        } else {
-            $image_data = fn_image_to_display(
-                $image_pair,
-                $this->options['thumbnail_width'],
-                $this->options['thumbnail_height']
-            );
-
-            if (!empty($image_data) && strpos($image_data['image_path'], '.php')) {
-                $image_data['image_path'] = fn_generate_thumbnail(
-                    $image_data['detailed_image_path'],
-                    $image_data['width'],
-                    $image_data['height']
-                );
-            }
-
-            if (!empty($image_data['image_path'])) {
-                $url = $image_data['image_path'];
-            }
-        }
-
-        $url = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
-
-        $url = fn_yandex_market_c_encode($url);
-
-        return str_replace('–', urlencode('–'), $url);
-    }
-
     protected function getVisibleCategories()
     {
         $visible_categories = null;
@@ -403,204 +389,6 @@ class Gml implements IGml
         }
 
         return $visible_categories;
-    }
-
-    protected function getMarketCategories()
-    {
-        static $market_categories = null;
-
-        if (!isset($market_categories)) {
-            $market_categories = array();
-
-            if ($this->options['market_category'] == "Y" && $this->options['market_category_object'] == "category") {
-                $market_categories = db_get_hash_single_array(
-                    "SELECT category_id, yml_market_category FROM ?:categories WHERE yml_market_category != ?s",
-                    array('category_id', 'yml_market_category'), ''
-                );
-            }
-        }
-
-        return $market_categories;
-    }
-
-    protected function getBrand($product)
-    {
-        $brand = '';
-
-        if (!empty($product['yml_brand'])) {
-            $brand = $product['yml_brand'];
-
-        } elseif (!empty($product['product_features'])) {
-
-            $feature_for_brand = $this->options['feature_for_brand'];
-            $brands = array();
-
-            if (!empty($feature_for_brand)) {
-
-                foreach ($feature_for_brand as $brand_name => $check) {
-                    if ($check == 'Y') {
-                        $brands[] = $brand_name;
-                    }
-                }
-                $brands = array_unique($brands);
-            }
-
-            foreach ($product['product_features'] as $feature) {
-                if (in_array($feature['feature_id'], $brands)) {
-                    $brand = $feature['value'];
-                    break;
-                }
-            }
-        }
-
-        return $brand;
-    }
-
-    protected function item($product)
-    {
-        $gml_data = array();
-        $offer_attrs = '';
-
-        if (!empty($product['yml_bid'])) {
-            $offer_attrs .= '@bid=' . $product['yml_bid'];
-        }
-
-        if (!empty($product['yml_cbid'])) {
-            $offer_attrs .= '@cbid=' . $product['yml_cbid'];
-        }
-
-        $price_fields = array('price', 'yml_cost', 'list_price');
-
-        if (CART_PRIMARY_CURRENCY != "RUB") {
-            $currencies = Registry::get('currencies');
-            if (isset($currencies['RUB'])) {
-                $currency = $currencies['RUB'];
-                foreach ($price_fields as $field) {
-                    $product[$field] = fn_format_rate_value(
-                        $product[$field],
-                        'F',
-                        $currency['decimals'],
-                        $currency['decimals_separator'],
-                        $currency['thousands_separator'],
-                        $currency['coefficient']
-                    );
-                }
-            }
-        }
-
-        foreach ($price_fields as $field) {
-            $product[$field] = floatval($product[$field]) ? $product[$field] : fn_parse_price($product[$field]);
-        }
-
-        $yml_data['url'] = $product['product_url'];
-
-        $yml_data['price'] = $product['price'];
-        if (!empty($product['list_price']) && $product['price'] < $product['list_price']) {
-            $yml_data['oldprice'] = $product['list_price'];
-        }
-        $yml_data['currencyId'] = "RUB";
-        $yml_data['categoryId@type=Own'] = $product['main_category'];
-
-        if ($this->options['market_category'] == "Y" && !empty($product['yml_market_category'])) {
-            $yml_data['market_category'] = $product['yml_market_category'];
-        }
-
-        // Images
-        $picture_index = 0;
-        while ($image = array_shift($product['images'])) {
-            $key = 'picture';
-            if ($picture_index) {
-                $key .= '+' . $picture_index;
-            }
-            $yml_data[$key] = $this->getImageUrl($image);
-
-            $picture_index ++;
-        }
-
-        $yml_data['store'] = ($product['yml_store'] == 'Y' ? 'true' : 'false');
-        $yml_data['pickup'] = ($product['yml_pickup'] == 'Y' ? 'true' : 'false');
-        $yml_data['delivery'] = ($product['yml_delivery'] == 'Y' ? 'true' : 'false');
-        if ($this->options['local_delivery_cost'] == "Y") {
-            $yml_data['local_delivery_cost'] = $product['yml_cost'];
-        }
-
-        $type = '';
-        if ($this->options['export_type'] == 'vendor_model') {
-
-            $type = '@type=vendor.model';
-
-            if ($this->options['type_prefix'] == "Y") {
-                if (!empty($product['yml_type_prefix'])) {
-                    $yml_data['typePrefix'] = $product['yml_type_prefix'];
-
-                } else {
-                    $yml_data['typePrefix'] = $product['category'];
-                }
-            }
-
-            $yml_data['vendor'] = $product['brand'];
-            if ($this->options['export_vendor_code'] == 'Y' && !empty($product['product_code'])) {
-                $yml_data['vendorCode'] = $product['product_code'];
-            }
-            $yml_data['model'] = !empty($product['yml_model']) ? $product['yml_model'] : '';
-
-        } elseif ($this->options['export_type'] == 'simple') {
-            $yml_data['name'] = $product['product'];
-
-            if (!empty($product['brand'])) {
-                $yml_data['vendor'] = $product['brand'];
-            }
-
-            if ($this->options['export_vendor_code'] == 'Y' && !empty($product['product_code'])) {
-                $yml_data['vendorCode'] = $product['product_code'];
-            }
-        }
-
-        if (!empty($product['full_description'])) {
-            $yml_data['description'] = $product['full_description'];
-        }
-
-        if (!empty($product['yml_sales_notes'])) {
-            $yml_data['sales_notes'] = $product['yml_sales_notes'];
-        }
-
-        if (!empty($product['yml_origin_country']) && fn_yandex_market_check_country($product['yml_origin_country'])) {
-            $yml_data['country_of_origin'] = $product['yml_origin_country'];
-        }
-
-        if (!empty($product['yml_manufacturer_warranty'])) {
-            $yml_data['manufacturer_warranty'] = $product['yml_manufacturer_warranty'];
-        }
-
-        if (!empty($product['yml_seller_warranty'])) {
-            $yml_data['seller_warranty'] = $product['yml_seller_warranty'];
-        }
-
-        if (!empty($product['product_features'])) {
-            foreach ($product['product_features'] as $feature) {
-                $yml_data['param@name=' . $this->escape($feature['description'])] = $feature['value'];
-            }
-        }
-
-        $avail = 'true';
-
-        return array(
-            'offer@id=' . $product['product_id'] . $type . '@available=' . $avail . $offer_attrs,
-            $yml_data
-        );
-    }
-
-    protected function getVendorCode($product)
-    {
-        if (!empty($product['product_features'])) {
-            foreach ($product['product_features'] as $feature) {
-                if ($feature['description'] == $this->options['feature_for_vendor_code']) {
-                    return $feature['value'];
-                }
-            }
-        }
-
-        return '';
     }
 
     protected function escape($data)

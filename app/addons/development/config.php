@@ -82,9 +82,15 @@ define('BAG_SIZE_FEATURE_ID', 58);
 define('STRING_TYPE_FEATURE_ID', 60);
 define('BALLS_TYPE_FEATURE_ID', 64);
 define('OG_TYPE_FEATURE_ID', 66);
-define('BG_TYPE_FEATURE_ID', 72);
 
 define('BRAND_FEATURE_TYPE', 'V');
+
+/*Material features*/
+define('BG_TYPE_FEATURE_ID', 72);
+define('S_MATERIAL_FEATURE_ID', 77);
+define('CLOTHES_MATERIAL_FEATURE_ID', 75);
+define('R_MATERIAL_FEATURE_ID', 28);
+/*Material features*/
 /*Features*/
 
 /*Profile fields*/
@@ -101,10 +107,15 @@ define('BABOLAT_FV_ID', 143);
 /*Apparel*/
 define('C_GENDER_M_FV_ID', 324);
 define('C_GENDER_W_FV_ID', 388);
+define('C_GENDER_U_FV_ID', 325);
+define('C_GENDER_B_FV_ID', 732);
+define('C_GENDER_G_FV_ID', 733);
 /*Apparel*/
 /*Shoes*/
 define('S_GENDER_M_FV_ID', 326);
 define('S_GENDER_W_FV_ID', 387);
+define('S_GENDER_K_FV_ID', 615);
+define('S_GENDER_U_FV_ID', 783);
 define('ALLCOURT_SURFACE_FV_ID', 359);
 define('CLAY_SURFACE_FV_ID', 360);
 define('GRASS_SURFACE_FV_ID', 361);

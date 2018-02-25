@@ -11,8 +11,5 @@
         </div>
     </div>
     
-    {if $addons.google_merchant.google_product_category == "Y"}
-        {include file="addons/google_merchant/common/gm_categories_selector.tpl" name="product_data[gml_product_category]" value=$product_data.gml_product_category}            
-    {/if}
-
+    {include file="addons/google_merchant/common/gm_categories_selector.tpl" name="product_data[gml_product_category]" value=$product_data.gml_product_category}            
 </div>

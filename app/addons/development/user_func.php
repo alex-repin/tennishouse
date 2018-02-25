@@ -1422,29 +1422,39 @@ function fn_render_captured_blocks($description, $smarty_capture)
     return $description;
 }
 
-function fn_get_product_global_data($product_data, $data_names)
+function fn_get_product_global_data($product_data, $data_names, $categories_data = array())
 {
     if (empty($product_data['category_ids']) && !empty($product_data['product_id'])) {
         $product_data['category_ids'] = db_get_fields("SELECT category_id FROM ?:products_categories WHERE product_id = ?i ORDER BY link_type DESC", $product_data['product_id']);
     }
     $result = array();
     if (!empty($product_data['category_ids'])) {
-        $paths = db_get_hash_single_array("SELECT category_id, id_path FROM ?:categories WHERE category_id IN (?n)", array('category_id', 'id_path'), $product_data['category_ids']);
+        if (empty($categories_data)) {
+            $paths = db_get_hash_array("SELECT category_id, id_path FROM ?:categories WHERE category_id IN (?n)", 'category_id', $product_data['category_ids']);
+        } else {
+            $paths = $categories_data;
+        }
         $all_ids = array();
         $use_order = array();
         if (!empty($paths)) {
-            foreach ($paths as $cat_id => $path) {
-                $ids = explode('/', $path);
-                foreach(array_reverse($ids) as $j => $cat_id) {
-                    if (empty($use_order[$j]) || !in_array($cat_id, $use_order[$j])) {
-                        $use_order[$j][] = $cat_id;
+            foreach ($product_data['category_ids'] as $cat_id) {
+                if (!empty($paths[$cat_id]['id_path'])) {
+                    $ids = explode('/', $paths[$cat_id]['id_path']);
+                    foreach(array_reverse($ids) as $j => $cat_id) {
+                        if (empty($use_order[$j]) || !in_array($cat_id, $use_order[$j])) {
+                            $use_order[$j][] = $cat_id;
+                        }
                     }
+                    $all_ids = array_merge($all_ids, $ids);
                 }
-                $all_ids = array_merge($all_ids, $ids);
             }
         }
         $fields = implode(', ', $data_names);
-        $data = db_get_hash_array("SELECT category_id, $fields FROM ?:categories WHERE category_id IN (?n)", 'category_id', array_unique($all_ids));
+        if (empty($categories_data)) {
+            $data = db_get_hash_array("SELECT category_id, $fields FROM ?:categories WHERE category_id IN (?n)", 'category_id', array_unique($all_ids));
+        } else {
+            $data = $categories_data;
+        }
         $types = db_get_hash_single_array("SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '?:categories'", array('COLUMN_NAME', 'DATA_TYPE'));
         if (!empty($use_order)) {
             foreach ($data_names as $j => $dt_name) {
