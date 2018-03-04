@@ -275,10 +275,6 @@ function fn_set_point_payment(&$cart, &$cart_products, &$auth)
     } else {
         if (!empty($auth['user_id'])) {
             $user_points = !empty($user_info) ? $user_info['points'] : 0;
-        } else {
-            $settings = Registry::get('addons.development');
-            $session_product_reviews_count = empty($_SESSION['product_reviews']) ? 0 : count($_SESSION['product_reviews']);
-            $user_points = (($session_product_reviews_count <= $settings['review_number_limit_P']) ? $session_product_reviews_count : $settings['review_number_limit_P']) * $settings['review_reward_P'];
         }
     }
 
@@ -356,15 +352,15 @@ function fn_set_point_payment(&$cart, &$cart_products, &$auth)
         } else {
             unset($cart['points_info']['in_use']);
         }
-    }/* else {
-        if (floatval($cart['subtotal']) == 0) {
-            fn_set_notification('E', __('error'), __('text_cannot_apply_points_to_this_order_because_total'));
-        }
-        if ($user_points <= 0) {
-            fn_set_notification('E', __('error'), __('text_cannot_apply_points_to_this_order_because_user'));
-        }
+    } else {
+//         if (floatval($cart['subtotal']) == 0) {
+//             fn_set_notification('E', __('error'), __('text_cannot_apply_points_to_this_order_because_total'));
+//         }
+//         if ($user_points <= 0) {
+//             fn_set_notification('E', __('error'), __('text_cannot_apply_points_to_this_order_because_user'));
+//         }
         unset($cart['points_info']['in_use']);
-    }*/
+    }
 
     Registry::set('user_info', $user_info);
 }

@@ -109,5 +109,6 @@ fn_register_hooks(
     'delete_post_pre',
     'update_profile',
     'set_point_payment',
-    'create_order'
+    'create_order',
+    'login_user_post'
 );

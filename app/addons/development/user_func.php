@@ -23,6 +23,24 @@ use Tygh\Settings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_remove_condition(&$condition, $condition_name)
+{
+    if (!empty($condition['conditions'])) {
+        if (!empty($condition['conditions']['conditions'])) {
+            fn_remove_condition($condition['conditions'], $condition_name);
+        } elseif (is_array($condition['conditions'])) {
+            foreach ($condition['conditions'] as $key => $_condition) {
+                if (!empty($_condition['condition']) && $_condition['condition'] == $condition_name) {
+                    unset($condition['conditions'][$key]);
+                }
+            }
+        }
+    }
+    
+    return false;
+}
+
+
 function fn_find_cart_id($product_id, $list)
 {
     if (!empty($list['products'])) {
@@ -106,6 +124,75 @@ function fn_promotion_validate_promo_code(&$promotion, &$cart, $promotion_id = 0
     }
 
     return false;
+}
+
+function fn_assign_user_posts($user_id)
+{
+    if (!empty($_SESSION['post_ids'])) {
+        $settings = Registry::get('addons.development');
+        
+        list($post_ids, $review_ids) = fn_get_posts_object_ids($_SESSION['post_ids'], false);
+        db_query("UPDATE ?:discussion_posts SET user_id = ?i WHERE post_id IN (?n)", $user_id, array_unique($post_ids));
+        unset($_SESSION['post_ids']);
+
+        if (!empty($review_ids)) {
+            $exists = db_get_array("SELECT ?:discussion_posts.post_id, ?:discussion.object_id, ?:discussion.object_type FROM ?:discussion_posts LEFT JOIN ?:discussion ON ?:discussion.thread_id = ?:discussion_posts.thread_id WHERE ?:discussion_posts.post_id IN (?n) AND ?:discussion_posts.is_rewarded = 'Y'", array_unique($review_ids));
+            
+            if (!empty($exists)) {
+                foreach ($exists as $i => $post_data) {
+                    fn_change_user_points($settings['review_reward_' . $post_data['object_type']], $user_id, serialize(array('post_id' => $post_data['post_id'], 'object_id' => $post_data['object_id'], 'type' => $post_data['object_type'])), CHANGE_DUE_REVIEW);
+                }
+            }
+        }
+    }
+}
+
+function fn_count_new_reviews($user_id, $object_type)
+{
+    $reviews = 0;
+    if (!empty($user_id)) {
+        $condition = '';
+        $last_order = db_get_field("SELECT ?:orders.timestamp FROM ?:orders LEFT JOIN ?:status_data ON ?:status_data.status = ?:orders.status AND ?:status_data.type = 'O' WHERE ?:orders.user_id = ?i AND ?:status_data.param = 'inventory' AND ?:status_data.value = 'D' ORDER BY ?:orders.timestamp DESC", $user_id);
+        if (!empty($last_order)) {
+            $condition .= db_quote("AND ?:discussion_posts.timestamp > ?i", $last_order);
+        }
+        
+        $reviews = db_get_field("SELECT COUNT(?:discussion_posts.post_id) FROM ?:discussion_posts LEFT JOIN ?:discussion ON ?:discussion.thread_id = ?:discussion_posts.thread_id LEFT JOIN ?:discussion_messages ON ?:discussion_messages.post_id = ?:discussion_posts.post_id WHERE ?:discussion_posts.user_id = ?i AND ?:discussion.object_type = ?s AND ?:discussion_messages.message != '' $condition ", $user_id, $object_type);
+        
+    } elseif (!empty($_SESSION['post_ids'][$object_type])) {
+        $settings = Registry::get('addons.development');
+        
+        if (!empty($_SESSION['auth']['order_ids'])) {
+            $lst_order = db_get_field("SELECT ?:orders.timestamp FROM ?:orders LEFT JOIN ?:status_data ON ?:status_data.status = ?:orders.status AND ?:status_data.type = 'O' WHERE ?:orders.order_id IN (?n) AND ?:status_data.param = 'inventory' AND ?:status_data.value = 'D' ORDER BY ?:orders.timestamp DESC", $_SESSION['auth']['order_ids']);
+        }
+        $reviews = 0;
+        foreach ($_SESSION['post_ids'][$object_type] as $i => $post) {
+            if (!empty($post['message']) && (empty($lst_order) || $lst_order < $post['timestamp'])) {
+                $reviews++;
+            }
+        }
+    }
+
+    return $reviews;
+}
+
+function fn_promotion_validate_no_list_discount(&$promotion, $product, $promotion_id = 0)
+{
+    if (!empty($product['list_price']) && $product['list_price'] > $product['price']) {
+        return 'N';
+    } else {
+        return 'Y';
+    }
+}
+
+function fn_promotion_validate_store_review(&$promotion, $auth, $promotion_id = 0)
+{
+    return fn_count_new_reviews($auth['user_id'], 'E');
+}
+
+function fn_promotion_validate_product_review(&$promotion, $auth, $promotion_id = 0)
+{
+    return fn_count_new_reviews($auth['user_id'], 'P');
 }
 
 function fn_get_subscriber_statuses($lang_code = CART_LANGUAGE)

@@ -29,5 +29,37 @@ $scheme['conditions']['promo_codes'] = array(
         ),
     ),
 );
+$scheme['conditions']['product_review'] = array(
+    'operators' => array ('eq', 'neq', 'lte', 'gte', 'lt', 'gt'),
+    'type' => 'input',
+    'field_function' => array('fn_promotion_validate_product_review', '#this', '@auth', '#id'),
+    'zones' => array('cart', 'catalog'),
+    'applicability' => array( // applicable for "positive" groups only
+        'group' => array(
+            'set_value' => true
+        ),
+    ),
+);
+$scheme['conditions']['store_review'] = array(
+    'operators' => array ('eq', 'neq', 'lte', 'gte', 'lt', 'gt'),
+    'type' => 'input',
+    'field_function' => array('fn_promotion_validate_store_review', '#this', '@auth', '#id'),
+    'zones' => array('cart', 'catalog'),
+    'applicability' => array( // applicable for "positive" groups only
+        'group' => array(
+            'set_value' => true
+        ),
+    ),
+);
+$scheme['conditions']['no_list_discount'] = array(
+    'type' => 'statement',
+    'field_function' => array('fn_promotion_validate_no_list_discount', '#this', '@product', '#id'),
+    'zones' => array('cart', 'catalog'),
+    'applicability' => array( // applicable for "positive" groups only
+        'group' => array(
+            'set_value' => true
+        ),
+    ),
+);
 
 return $scheme;

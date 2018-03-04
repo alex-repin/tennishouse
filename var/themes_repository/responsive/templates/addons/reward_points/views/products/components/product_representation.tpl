@@ -5,6 +5,18 @@
     </div>
 {/if*}
 <div class="ty-control-group product-list-field product-list-field-rp{if !$product.points_info.reward.amount} hidden{/if}">
-    <label class="ty-control-group__label">{__("reward_points")}{include file="addons/development/common/tooltip.tpl" note_text=__("reward_points_note", ["[amount]" => $product.points_info.reward.amount]) tooltipclass="ty-reward-tooltip"}:</label>
+    <label class="ty-control-group__label">
+        {__("reward_points")}
+        {$reward_options = ''}
+        {if $addons.development.review_reward_P > 0}
+            {$rwd_text = __('reward_points_note_P', ['[product_amount]' => $addons.development.review_reward_P])}
+            {$reward_options = "`$reward_options``$rwd_text`"}
+        {/if}
+        {if $addons.development.review_reward_E > 0}
+            {$rwd_text = __('reward_points_note_E', ['[store_amount]' => $addons.development.review_reward_E])}
+            {$reward_options = "`$reward_options``$rwd_text`"}
+        {/if}
+        {include file="addons/development/common/tooltip.tpl" note_text=__("reward_points_note", ["[amount]" => $product.points_info.reward.amount, "[reward_options]" => $reward_options]) tooltipclass="ty-reward-tooltip"}:
+    </label>
     <span class="ty-control-group__item" id="reward_points_{$obj_prefix}{$obj_id}">{*if !$auth.user_id}{__("from_lower")} {/if*}{include file="common/price.tpl" value=$product.points_info.reward.amount}</span>
 </div>

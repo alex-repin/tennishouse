@@ -684,7 +684,7 @@ function fn_gather_additional_products_data(&$products, $params)
                 }
             }
 
-            if (empty($product['discount']) && !empty($product['list_price']) && !empty($product['price']) && floatval($product['price']) && $product['list_price'] > $product['price']) {
+            if (/*empty($product['discount']) && */!empty($product['list_price']) && !empty($product['price']) && floatval($product['price']) && $product['list_price'] > $product['price']) {
                 $product['list_discount'] = fn_format_price($product['list_price'] - $product['price']);
                 $product['list_discount_prc'] = sprintf('%d', round($product['list_discount'] * 100 / $product['list_price']));
             }

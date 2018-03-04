@@ -20,23 +20,14 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 function fn_development_update_profile($action, $user_data, $current_user_data)
 {
     if ($action == 'add') {
-        $settings = Registry::get('addons.development');
-        if (!empty($_SESSION['post_ids'])) {
-            list($post_ids, $review_ids) = fn_get_posts_object_ids($_SESSION['post_ids'], false);
-            db_query("UPDATE ?:discussion_posts SET user_id = ?i WHERE post_id IN (?n)", $user_data['user_id'], array_unique($post_ids));
-            unset($_SESSION['post_ids']);
-        }
-        
-        if (!empty($review_ids)) {
-            $exists = db_get_array("SELECT ?:discussion_posts.post_id, ?:discussion.object_id, ?:discussion.object_type FROM ?:discussion_posts LEFT JOIN ?:discussion ON ?:discussion.thread_id = ?:discussion_posts.thread_id WHERE ?:discussion_posts.post_id IN (?n) AND ?:discussion_posts.is_rewarded = 'Y'", array_unique($review_ids));
-            
-            if (!empty($exists)) {
-                foreach ($exists as $i => $post_data) {
-                    fn_change_user_points($settings['review_reward_' . $post_data['object_type']], $user_data['user_id'], serialize(array('post_id' => $post_data['post_id'], 'object_id' => $post_data['object_id'], 'type' => $post_data['object_type'])), CHANGE_DUE_REVIEW);
-                }
-            }
-        }
-        unset($_SESSION['reward_points']);
+        fn_assign_user_posts($user_data['user_id']);
+    }
+}
+
+function fn_development_login_user_post($user_id, $cu_id, $udata, $auth, $condition, $result)
+{
+    if ($result == LOGIN_STATUS_OK) {
+        fn_assign_user_posts($user_id);
     }
 }
 
@@ -50,14 +41,25 @@ function fn_development_delete_post_pre($post_id)
 
 function fn_development_set_point_payment(&$user_points, $auth)
 {
-    if (empty($auth['user_id']) && !empty($_SESSION['reward_points'])) {
-        $user_points = $_SESSION['reward_points'];
+    if (empty($auth['user_id']) && !empty($_SESSION['post_ids'])) {
+        $settings = Registry::get('addons.development');
+
+        foreach ($_SESSION['post_ids'] as $type => $posts) {
+            if (!empty($settings['review_reward_' . $type])) {
+                $count = 0;
+                foreach ($posts as $p_id => $post) {
+                    if (!empty($post['is_rewarded']) && $post['is_rewarded'] == 'Y') {
+                        $count++;
+                    }
+                }
+                $user_points += $count < $settings['review_number_limit_' . $type] ? $count * $settings['review_reward_' . $type] : $settings['review_number_limit_' . $type] * $settings['review_reward_' . $type];
+            }
+        }
     }
 }
 
 function fn_development_add_post_post($post_data, $object)
 {
-// unset($_SESSION['post_ids'], $_SESSION['reward_points']);
     $auth = $_SESSION['auth'];
     if (empty($auth['user_id'])) {
         $_SESSION['post_ids'][$object['object_type']] = empty($_SESSION['post_ids'][$object['object_type']]) ? array() : $_SESSION['post_ids'][$object['object_type']];
@@ -90,7 +92,6 @@ function fn_development_add_post_post($post_data, $object)
             } elseif (AREA == 'C') {
                 db_query("UPDATE ?:discussion_posts SET is_rewarded = 'Y' WHERE post_id = ?i", $post_data['post_id']);
                 $_SESSION['post_ids'][$object['object_type']][$post_data['post_id']]['is_rewarded'] = 'Y';
-                $_SESSION['reward_points'] = (!empty($_SESSION['reward_points']) ? $_SESSION['reward_points'] : 0) + $settings['review_reward_' . $object['object_type']];
                 fn_delete_notification('thank_you_for_review');
                 fn_set_notification('N', __('notice'), __('product_review_added_reward_text', array('[amount]' => $settings['review_reward_' . $object['object_type']])), 'F');
             }
@@ -1945,12 +1946,12 @@ function fn_development_render_block_register_cache($block, &$cache_name, &$bloc
             . $block['block_id'] . '_' . $block['snapping_id'] . '_' . $block['type']
             . '_' . $grid_id;
     }
-    if (in_array($_REQUEST['dispatch'], array('categories.view', 'products.sale')) && $block['type'] == 'main') {
-        $block_scheme['cache'] = array();
-        $params = $_REQUEST;
-        unset($params['dispatch']);
-        unset($params['save_view_results']);
-        $block_scheme['cache']['request_handlers'] = array_keys($params);
-        $block_scheme['cache']['update_handlers'] = array ('products', 'product_descriptions', 'product_prices', 'products_categories', 'categories', 'category_descriptions', 'product_warehouses_inventory');
-    }
+//     if (in_array($_REQUEST['dispatch'], array('categories.view', 'products.sale')) && $block['type'] == 'main') {
+//         $block_scheme['cache'] = array();
+//         $params = $_REQUEST;
+//         unset($params['dispatch']);
+//         unset($params['save_view_results']);
+//         $block_scheme['cache']['request_handlers'] = array_keys($params);
+//         $block_scheme['cache']['update_handlers'] = array ('products', 'product_descriptions', 'product_prices', 'products_categories', 'categories', 'category_descriptions', 'product_warehouses_inventory');
+//     }
 }

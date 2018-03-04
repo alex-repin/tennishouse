@@ -124,7 +124,18 @@
                                     <!--pc_note_{$obj_prefix}{$product.product_id}--></span>
                                 </div>
                                 <div class="ty-price-options">
-                                    <div class="ty-get-discount-tooltip">{include file="addons/development/common/tooltip.tpl" note_text=__("get_product_review_reward_points", ["[amount]" => $addons.development.review_reward_P, "[limit]" => $addons.development.review_number_limit_P, "[limit_month]" => $addons.development.review_time_limit_P]) tooltip_title=__("get_discount_now") tooltipclass="ty-category-tooltip"}</div><div class="ty-found-cheaper-tooltip">{include file="addons/development/common/tooltip.tpl" tooltip_title=__("found_cheaper") note_text=__("found_cheaper_offer") tooltipclass="ty-category-tooltip"}</div>
+                                    {if $product.review_discount || $addons.development.review_reward_P > 0}
+                                    <div class="ty-get-discount-tooltip">
+                                        {if $product.review_discount}
+                                            {include file="addons/development/common/tooltip.tpl" note_text=__("get_review_discount_description", ["[percent]" => $product.review_discount]) tooltip_title=__("get_review_discount_text", ["[percent]" => $product.review_discount]) tooltipclass="ty-category-tooltip"}
+                                        {elseif $addons.development.review_reward_P > 0}
+                                            {include file="addons/development/common/tooltip.tpl" note_text=__("get_product_review_reward_points", ["[amount]" => $addons.development.review_reward_P, "[limit]" => $addons.development.review_number_limit_P, "[limit_month]" => $addons.development.review_time_limit_P]) tooltip_title=__("get_discount_now") tooltipclass="ty-category-tooltip"}
+                                        {/if}
+                                    </div>
+                                    {/if}
+                                    <div class="ty-found-cheaper-tooltip">
+                                        {include file="addons/development/common/tooltip.tpl" tooltip_title=__("found_cheaper") note_text=__("found_cheaper_offer") tooltipclass="ty-category-tooltip"}
+                                    </div>
                                 </div>
                             {/if}
 

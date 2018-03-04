@@ -15,6 +15,9 @@
             <th class="ty-cart-content__title ty-left">{__("product")}</th>
             <th class="ty-cart-content__title ty-left">&nbsp;</th>
             <th class="ty-cart-content__title ty-right">{__("unit_price")}</th>
+            {if $cart.discount|floatval}
+                <th class="ty-cart-content__title ty-right">{__("discount")}</th>
+            {/if}
             <th class="ty-cart-content__title quantity-cell">{__("quantity")}</th>
             <th class="ty-cart-content__title ty-right">{__("total_price")}</th>
         </tr>
@@ -62,26 +65,19 @@
                                 {hook name="checkout:product_info"}
                                     {if $product.exclude_from_calculate}
                                         <strong><span class="price">{__("free")}</span></strong>
-                                    {elseif $product.discount|floatval || ($product.taxes && $settings.General.tax_calculation != "subtotal")}
-                                        {if $product.discount|floatval}
-                                            {assign var="price_info_title" value=__("discount")}
-                                        {else}
-                                            {assign var="price_info_title" value=__("taxes")}
-                                        {/if}
+                                    {elseif $product.taxes && $settings.General.tax_calculation != "subtotal"}
                                         <div class="ty-product-extra-info">
-                                            <a id="sw_product_discounts_{$key}" class="cm-combination ty-product-extra-info-link detailed-link">{$price_info_title}</a>
+                                            <a id="sw_product_discounts_{$key}" class="cm-combination ty-product-extra-info-link detailed-link">{__("taxes")}</a>
                                             <div id="product_discounts_{$key}" class="ty-product-extra-info-block hidden">
                                                 <table class="ty-cart-content__more-info ty-table">
                                                     <tr>
                                                         <th class="ty-cart-content__more-info-title">{__("price")}</th>
-                                                        {if $product.discount|floatval}<th class="ty-cart-content__more-info-title">{__("discount")}</th>{/if}
                                                         {if $product.taxes && $settings.General.tax_calculation != "subtotal"}<th>{__("tax")}</th>{/if}
                                                         <th class="ty-cart-content__more-info-title">{__("quantity")}</th>
                                                         <th class="ty-cart-content__more-info-title">{__("subtotal")}</th>
                                                     </tr>
                                                     <tr>
                                                         <td>{include file="common/price.tpl" value=$product.original_price span_id="original_price_`$key`" class="none"}</td>
-                                                        {if $product.discount|floatval}<td>{include file="common/price.tpl" value=$product.discount span_id="discount_subtotal_`$key`" class="none"}</td>{/if}
                                                         {if $product.taxes && $settings.General.tax_calculation != "subtotal"}<td>{include file="common/price.tpl" value=$product.tax_summary.total span_id="tax_subtotal_`$key`" class="none"}</td>{/if}
                                                         <td class="ty-center">{$product.amount}</td>
                                                         <td>{include file="common/price.tpl" span_id="product_subtotal_2_`$key`" value=$product.display_subtotal class="none"}</td>
@@ -113,9 +109,17 @@
                         </td>
 
                         <td class="ty-cart-content__product-elem ty-cart-content__price cm-reload-{$obj_id}" id="price_display_update_{$obj_id}">
-                        {include file="common/price.tpl" value=$product.display_price span_id="product_price_`$key`" class="ty-sub-price"}
+                        {include file="common/price.tpl" value=$product.original_price span_id="product_price_`$key`" class="ty-sub-price"}
                         <!--price_display_update_{$obj_id}--></td>
 
+                        {if $cart.discount|floatval}
+                            <td class="ty-cart-content__product-elem ty-cart-content__price">
+                                {if $product.discount|floatval}
+                                    {include file="common/price.tpl" value=$product.discount span_id="discount_subtotal_`$key`" class="none"}
+                                {/if}
+                            </td>
+                        {/if}
+                        
                         <td class="ty-cart-content__product-elem ty-cart-content__qty {if $product.is_edp == "Y" || $product.exclude_from_calculate} quantity-disabled{/if}">
                             {if $use_ajax == true && $cart.amount != 1}
                                 {assign var="ajax_class" value="cm-ajax"}

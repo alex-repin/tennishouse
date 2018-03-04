@@ -984,7 +984,9 @@
         <item lang="ru" id="expiration_date">Дата сгорания</item>
         <item lang="ru" id="reward_points_expire_reason">Обнуление неиспользованных рублей от [date]</item>
         <item lang="ru" id="discount_level">Уровень Вашей бонусной программы</item>
-        <item lang="ru" id="reward_points_note"><![CDATA[<p>[amount] бонусных рублей Вы получите при покупке этого товара. Рубли можно будет использовать во время следующего заказа и получить скидку до 30%. Кроме этого бонусные рубли можно получить за:</p><ul><li>Отзыв о магазине - 500 рублей</li><li>Отзыв о товаре - 500 рублей</li></ul>]]></item>
+        <item lang="ru" id="reward_points_note"><![CDATA[<p>[amount] бонусных рублей Вы получите при покупке этого товара. Рубли можно будет использовать во время следующего заказа и получить скидку до 30%. Кроме этого бонусные рубли можно получить за:</p><ul>[reward_options]</ul>]]></item>
+        <item lang="ru" id="reward_points_note_P"><![CDATA[<li>Отзыв о товаре - [product_amount] рублей</li>]]></item>
+        <item lang="ru" id="reward_points_note_E"><![CDATA[<li>Отзыв о магазине - [store_amount] рублей</li>]]></item>
         <item lang="ru" id="cross_categories">Кросс-категории</item>
         <item lang="ru" id="cross_recomendation_text">Рекомендуем приобрести</item>
         <item lang="ru" id="what_for">Для чего они нужны ?</item>
@@ -1138,8 +1140,7 @@
         <item lang="ru" id="review_reason_P">Отзыв о товаре</item>
         <item lang="ru" id="product_review_added_reward_text">Спасибо за отзыв ! Вам добавлено [amount] бонусных рублей. Вы можете их использовать в заказе уже сейчас.</item>
         <item lang="ru" id="get_discount_now">Как получить скидку ?</item>
-        <item lang="ru" id="get_product_review_reward_points"><![CDATA[<div class="ty-product-review-rp-text"><ol><li>Вы можете получить скидку в [amount]руб. за каждый отзыв о товарах из категорий: <a href="http://www.tennishouse.ru/tennis-rackets/" target="_blank">Ракетки</a>, <a href="http://www.tennishouse.ru/tennis-balls/" target="_blank">Мячи</a>, <a href="http://www.tennishouse.ru/tennis-strings/" target="_blank">Струны</a>, <a href="http://www.tennishouse.ru/tennis-shoes/" target="_blank">Обувь</a>, <a href="http://www.tennishouse.ru/ball-machines/" target="_blank">Пушки</a>, <a href="http://www.tennishouse.ru/stringing-machines/" target="_blank">Станки</a>, <a href="http://www.tennishouse.ru/overgrips-grips/overgrips/" target="_blank">Овергрипы</a>. Скидка будет сразу же автоматически добавлена в заказ после написания отзыва. ВНИМАНИЕ. Отзывы должны быть информативны и полезны для других покупателей. Отзывы, которые не соответствуют этому критерию, будут удалены, а скидка в заказе аннулирована.</li><li>Если Вы уже делали покупки в нашем магазине, то накопленные бонусные рубли будут автоматически применены в корзине после авторизации.</li>
-                <li>Вы можете получать информацию обо всех акциях, скидках и специальных предложениях подписавшись на нашу почтовую рассылку (форма подписки находится внизу страницы)</li></ol></div>]]></item>
+        <item lang="ru" id="get_product_review_reward_points"><![CDATA[<div class="ty-product-review-rp-text"><p style="font-size: 16px;">Получить скидку в [amount]руб. прямо сейчас !</p><p>Скидка будет автоматически добавлена после написания отзыва на любой товар из категорий: <a href="http://www.tennishouse.ru/tennis-rackets/" target="_blank">Ракетки</a>, <a href="http://www.tennishouse.ru/tennis-balls/" target="_blank">Мячи</a>, <a href="http://www.tennishouse.ru/tennis-strings/" target="_blank">Струны</a>, <a href="http://www.tennishouse.ru/tennis-shoes/" target="_blank">Обувь</a>, <a href="http://www.tennishouse.ru/ball-machines/" target="_blank">Пушки</a>, <a href="http://www.tennishouse.ru/stringing-machines/" target="_blank">Станки</a>.</p><p>ВНИМАНИЕ. Отзывы должны быть информативны и полезны для других покупателей. Отзывы, которые не соответствуют этому критерию, будут удалены, а скидка в заказе аннулирована.</p></div>]]></item>
         <item lang="ru" id="thank_you_for_review">Спасибо за отзыв !</item>
         <item lang="ru" id="has_full_description">Есть полное описание</item>
         <item lang="ru" id="has_short_description">Есть краткое описание</item>
@@ -1238,7 +1239,7 @@
         <item lang="ru" id="promotion_cond_warehouses">Склад</item>
         <item lang="ru" id="check_selected">Проверить выбранные</item>
         <item lang="ru" id="found_cheaper">Нашли дешевле ? Снизим цену !</item>
-        <item lang="ru" id="found_cheaper_offer"><![CDATA[<p style="font-size: 16px;">Нашли дешевле? Снизим цену!</p><p>Если у конкурента цена ниже &mdash; вернем разницу! Просто добавьте в комментарии к заказу ссылку на магазин с желаемой ценой или позвоните по телефону +7 (499) 393-39-87</p>]]></item>
+        <item lang="ru" id="found_cheaper_offer"><![CDATA[<div class="ty-product-review-rp-text"><p style="font-size: 16px;">Нашли дешевле? Снизим цену!</p><p>Если у конкурента цена ниже &mdash; вернем разницу! Просто добавьте в комментарии к заказу ссылку на магазин с желаемой ценой или позвоните по телефону +7 (499) 393-39-87</p></div>]]></item>
         <item lang="ru" id="newsletter_subscribe_text">Получать информацию об акциях, скидках и предложениях</item>
         <item lang="ru" id="newsletter_subscribe_title">Акции, скидки и специальные предложения</item>
         <item lang="ru" id="subscribe_confirmation_sent">Спасибо за подписку, теперь вы будете в курсе всех выгодных акций ! Письмо с подтверждением отправлено Вам на почту.</item>
@@ -1296,5 +1297,9 @@
         <item lang="ru" id="go_to_compare_list">Перейти к списку сравнения</item>
         <item lang="ru" id="wishlist_is_empty">Отмечайте товары для будущих покупок, нажав на "сердечко" на детальной странице понравившегося товара.</item>
         <item lang="ru" id="compare_list_is_empty">Сравните товары по характеристикам. Начните свой выбор с каталога товаров или воспользуйтесь поиском, если ищете что-то конкретное.</item>
+        <item lang="ru" id="promotion_cond_product_review">Новые отзывы товары</item>
+        <item lang="ru" id="promotion_cond_no_list_discount">Нет товарной(list) скидки</item>
+        <item lang="ru" id="get_review_discount_text">Получить скидку [percent]%</item>
+        <item lang="ru" id="get_review_discount_description"><![CDATA[<div class="ty-product-review-rp-text"><p style="font-size: 16px;">Получить скидку [percent]% прямо сейчас !</p><p>Скидка будет автоматически добавлена после написания отзыва на любой товар из категорий: <a href="http://www.tennishouse.ru/tennis-rackets/" target="_blank">Ракетки</a>, <a href="http://www.tennishouse.ru/tennis-balls/" target="_blank">Мячи</a>, <a href="http://www.tennishouse.ru/tennis-strings/" target="_blank">Струны</a>, <a href="http://www.tennishouse.ru/tennis-shoes/" target="_blank">Обувь</a>, <a href="http://www.tennishouse.ru/ball-machines/" target="_blank">Пушки</a>, <a href="http://www.tennishouse.ru/stringing-machines/" target="_blank">Станки</a>.</p><p>ВНИМАНИЕ. Отзыв должен быть информативен и полезен для других покупателей. Если отзыв не будет соответствовать этому критерию, то скидка в заказе будет аннулирована.</p></div>]]></item>
     </language_variables>
 </addon>

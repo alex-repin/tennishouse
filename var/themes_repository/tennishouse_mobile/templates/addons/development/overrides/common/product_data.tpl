@@ -250,10 +250,12 @@
     {if $show_price_values && $show_old_price}
         <span class="cm-reload-{$obj_prefix}{$obj_id}" id="old_price_update_{$obj_prefix}{$obj_id}">
             {hook name="products:old_price"}
-            {if $product.discount}
-                <span class="ty-list-price ty-nowrap {if $details_page}ty-product-price-heder{/if}" id="line_old_price_{$obj_prefix}{$obj_id}">{*if $details_page}{__("old_price")}: {/if*}<span class="ty-strike">{include file="common/price.tpl" value=$product.original_price|default:$product.base_price span_id="old_price_`$obj_prefix``$obj_id`" class="ty-nowrap"}</span></span>
-            {elseif $product.list_discount}
-                <span class="ty-list-price ty-nowrap {if $details_page}ty-product-price-heder{/if}" id="line_list_price_{$obj_prefix}{$obj_id}">{*if $details_page}<span class="list-price-label">{__("list_price")}:</span> {/if*}<span class="ty-strike">{include file="common/price.tpl" value=$product.list_price span_id="list_price_`$obj_prefix``$obj_id`" class="ty-nowrap"}</span></span>
+            {if $product.discount || $product.list_discount}
+                {$orig_price = $product.original_price|default:$product.base_price}
+                {if $product.list_price > 0 && $product.list_price > $orig_price}
+                    {$orig_price = $product.list_price}
+                {/if}
+                <span class="ty-list-price ty-nowrap {if $details_page}ty-product-price-heder{/if}" id="line_old_price_{$obj_prefix}{$obj_id}">{*if $details_page}<span class="ty-product-price-title">{__("old_price")}</span>{/if*}<span class="ty-strike">{include file="common/price.tpl" value=$orig_price span_id="old_price_`$obj_prefix``$obj_id`" class="ty-nowrap"}</span></span>
             {/if}
             {/hook}
         <!--old_price_update_{$obj_prefix}{$obj_id}--></span>
@@ -340,7 +342,7 @@
 {capture name="discount_label_`$obj_prefix``$obj_id`"}
     {if $show_discount_label && ($product.discount_prc || $product.list_discount_prc) && $show_price_values}
         <div class="ty-discount-label cm-reload-{$obj_prefix}{$obj_id}" id="discount_label_update_{$obj_prefix}{$obj_id}">
-            <div class="ty-discount-label__item" id="line_prc_discount_value_{$obj_prefix}{$obj_id}"><span class="ty-discount-label__value" id="prc_discount_value_label_{$obj_prefix}{$obj_id}">{if $product.discount}{$product.discount_prc}{else}{$product.list_discount_prc}{/if}%</span></div>
+            <div class="ty-discount-label__item" id="line_prc_discount_value_{$obj_prefix}{$obj_id}"><span class="ty-discount-label__value" id="prc_discount_value_label_{$obj_prefix}{$obj_id}">{if $product.list_discount_prc > $product.discount}{$product.list_discount_prc}{elseif $product.discount}{$product.discount_prc}{/if}%</span></div>
         <!--discount_label_update_{$obj_prefix}{$obj_id}--></div>
     {/if}
 {/capture}

@@ -29,6 +29,13 @@
             {assign var="reason" value=$ul.reason|unserialize}
             {assign var="order_exist" value=$reason.order_id|fn_get_order_name}
             {__("order")} {if $order_exist}<a href="{"orders.details?order_id=`$reason.order_id`"|fn_url}" class="underlined">{/if}<strong>#{$reason.order_id}</strong>{if $order_exist}</a>{/if}: {__("placed")}
+        {elseif $ul.action == $smarty.const.CHANGE_DUE_REVIEW}
+            {assign var="reason" value=$ul.reason|unserialize}
+            {__("review_reason_`$reason.type`")}
+            {if $reason.type == 'P'}
+                {assign var="product_exist" value=$reason.object_id|fn_get_product_name}
+                {if $product_exist} <a href="{"products.view?product_id=`$reason.object_id`"|fn_url}" class="underlined"><strong>{$product_exist}</strong></a>{/if}
+            {/if}
         {else}
             {hook name="reward_points:userlog"}
             {$ul.reason}

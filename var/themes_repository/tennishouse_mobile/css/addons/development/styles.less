@@ -440,6 +440,9 @@ input:focus::placeholder, textarea:focus::placeholder {
         a {
             text-decoration: underline;
         }
+        p {
+            margin-bottom: 10px;
+        }
     }
 }
 .tooltip-arrow {
@@ -510,15 +513,16 @@ input:focus::placeholder, textarea:focus::placeholder {
     display: inline-block;
     border-right: 1px solid @font;
     padding-right: 10px;
+    margin-right: 10px;
     a {
         font-size: 13px;
         border-bottom: 1px dotted @font;
-        color: @font;
+        color: darken(#ed1c24, 20%);
+        font-weight: bold;
     }
 }
 .ty-found-cheaper-tooltip {
     display: inline-block;
-    padding-left: 10px;
     a {
         font-size: 13px;
         border-bottom: 1px dotted @font;

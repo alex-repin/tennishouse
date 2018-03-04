@@ -270,6 +270,7 @@ function fn_product_configurator_gather_additional_product_data_post(&$product, 
             if (!empty($c_price)) {
                 $product['price'] += $c_price;
                 $product['original_price'] += $c_price;
+                $product['list_price'] += $c_price;
             }
         } else {
             $product['has_strings'] = true;
@@ -278,11 +279,13 @@ function fn_product_configurator_gather_additional_product_data_post(&$product, 
         if (!empty($c_dp_price)) {
             $product['price'] += $c_dp_price;
             $product['original_price'] += $c_dp_price;
+            $product['list_price'] += $c_dp_price;
         }
         list($overgrip_options, $c_og_price) = fn_get_overgrip_options($product, $selected_configuration);
         if (!empty($c_og_price)) {
             $product['price'] += $c_og_price;
             $product['original_price'] += $c_og_price;
+            $product['list_price'] += $c_og_price;
         }
     }
     if (AREA == 'A' && !empty($product['extra']['configuration'])) {
