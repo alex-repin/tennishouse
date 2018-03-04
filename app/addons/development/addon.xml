@@ -1211,7 +1211,7 @@
         <item lang="ru" id="call_requests_order_call_back">Оставьте свой телефон, и мы перезвоним Вами в самое ближайшее время ([working_hours]).</item>
         <item lang="ru" id="rate_product">Оцените товар</item>
         <item lang="ru" id="thank_you_for_rating">Спасибо за оценку !</item>
-        <item lang="ru" id="force_review_reward_text">Напишите отзыв и получите скидку [amount] на заказ.</item>
+        <item lang="ru" id="force_review_reward_text">Напишите отзыв и получите скидку [amount] на [object].</item>
         <item lang="ru" id="force_review_text">Поделитесь Вашим мнением с другими теннисистами.</item>
         <item lang="ru" id="force_review_reward_text_note">Скидка будет сразу же автоматически добавлена в заказ как только вы напишете отзыв. Отзыв должен быть информативен и полезен для других покупателей</item>
         <item lang="ru" id="extended_tabs_categorization">Расширенные вкладки</item>

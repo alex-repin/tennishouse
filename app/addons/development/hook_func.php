@@ -66,12 +66,21 @@ function fn_development_add_post_post($post_data, $object)
         $_SESSION['post_ids'][$object['object_type']][$post_data['post_id']] = $post_data;
     }
     $allow_reward = fn_allow_user_thread_review_reward($post_data['thread_id'], $object['object_type'], $post_data['user_id'], $post_data['post_id']);
+    if (AREA == 'C' && $object['object_type'] == 'P') {
+        $product = fn_get_product_data($object['object_id'], $auth, CART_LANGUAGE, '', true, true, true, true, fn_is_preview_action($auth, $_REQUEST));
+        fn_gather_additional_product_data($product, true, true);
+        fn_get_product_review_discount($product);
+        Registry::get('view')->assign('review_discount', $product['review_discount']);
+        Registry::get('view')->assign('product', $product);
+    }
+        
     if (AREA == 'C' && !empty($_REQUEST['force_review']) && $_REQUEST['force_review'] == 'Y') {
         $discussion = $object;
         $discussion['post_data'] = $post_data;
         $discussion['thread_id'] = $post_data['thread_id'];
-        Registry::get('view')->assign('allow_reward', $allow_reward);
         Registry::get('view')->assign('discussion', $discussion);
+        Registry::get('view')->assign('allow_reward', $allow_reward);
+        
         Registry::get('view')->assign('obj_id', $object['object_id']);
         $msg = Registry::get('view')->fetch('addons/discussion/views/discussion/components/force_review.tpl');
         fn_delete_notification('thank_you_for_review');
@@ -95,6 +104,9 @@ function fn_development_add_post_post($post_data, $object)
                 fn_delete_notification('thank_you_for_review');
                 fn_set_notification('N', __('notice'), __('product_review_added_reward_text', array('[amount]' => $settings['review_reward_' . $object['object_type']])), 'F');
             }
+        }
+        if (!empty($product['promotions'][REVIEW_PROMO_ID]) && defined('AJAX_REQUEST')) {
+            Registry::get('view')->display('views/products/view.tpl');
         }
     }
 }

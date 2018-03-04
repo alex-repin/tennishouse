@@ -104,7 +104,7 @@
 
                 <div class="ty-prices-container-wrap">
                     <div class="ty-prices-container-left">
-                        <div class="{if $smarty.capture.$old_price|trim || $smarty.capture.$clean_price|trim || $smarty.capture.$list_discount|trim}prices-container {/if}">
+                        <div class="{if $smarty.capture.$old_price|trim || $smarty.capture.$clean_price|trim || $smarty.capture.$list_discount|trim}prices-container {/if}" id="prices_update_{$obj_prefix}{$obj_id}">
                             {if $smarty.capture.$old_price|trim || $smarty.capture.$clean_price|trim || $smarty.capture.$list_discount|trim}
                                 <div class="ty-product-prices">
                                     {if $smarty.capture.$old_price|trim}{$smarty.capture.$old_price nofilter}{/if}
@@ -144,7 +144,7 @@
                                     {$smarty.capture.$list_discount nofilter*}
                                 </div>
                             {/if}
-                        </div>
+                        <!--prices_update_{$obj_prefix}{$obj_id}--></div>
                         <div class="ty-product-block__advanced-option">
                             {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
                             {assign var="advanced_options" value="advanced_options_`$obj_id`"}

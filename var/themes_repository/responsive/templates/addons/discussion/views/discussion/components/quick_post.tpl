@@ -1,5 +1,5 @@
 <form action="{""|fn_url}" method="post" class="{if !$post_redirect_url}cm-ajax cm-form-dialog-closer{/if} posts-form" name="add_post_form" id="add_post_form_{$obj_prefix}{$obj_id}">
-    <input type="hidden" name="result_ids" value="posts_list,new_post_*,average_rating*">
+    <input type="hidden" name="result_ids" value="posts_list,new_post_*,average_rating*,prices_update_*">
     <input type ="hidden" name="post_data[thread_id]" value="{$discussion.thread_id}" />
     <input type ="hidden" name="redirect_url" value="{$post_redirect_url|default:$config.current_url}" />
     <input type="hidden" name="selected_section" value="" />
