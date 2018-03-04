@@ -137,7 +137,7 @@
                     </item>
                     <item id="review_reward_P">
                         <type>input</type>
-                        <default_value>500</default_value>
+                        <default_value>0</default_value>
                         <translations>
                             <item lang="ru">Бонусы</item>
                         </translations>
