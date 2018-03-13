@@ -28,7 +28,7 @@
     {/if}
 
     <div id="step_two_body" class="ty-step__body{if $edit}-active{/if}{if !$edit} hidden{/if} cm-skip-save-fields">
-            <form name="step_two_billing_address" class="{$ajax_form} cm-ajax-full-render" action="{""|fn_url}" method="{if !$edit}get{else}post{/if}">
+            <form name="step_two_billing_address" class="{$ajax_form} cm-ajax-full-render cm-auto-submit" data-auto-submit-dispatch="checkout.auto_save_user" action="{""|fn_url}" method="{if !$edit}get{else}post{/if}">
             <input type="hidden" name="update_step" value="step_two" />
             <input type="hidden" name="next_step" value="{if $smarty.request.from_step && $smarty.request.from_step != "step_two" && $smarty.request.from_step != "step_one"}{$smarty.request.from_step}{else}step_three{/if}" />
             <input type="hidden" name="result_ids" value="checkout*,account*" />

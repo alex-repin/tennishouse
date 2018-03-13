@@ -6,14 +6,31 @@
 
 <h1 class="ty-mainbox-title">{__("cart_contents")}</h1>
 
+<div class="buttons-container ty-cart-content__top-buttons clearfix">
+    {*<div class="ty-float-left ty-cart-content__left-buttons">
+        {include file="buttons/continue_shopping.tpl" but_href=$continue_url|fn_url }
+        {include file="buttons/clear_cart.tpl" but_href="checkout.clear" but_role="text" but_meta="cm-confirm ty-cart-content__clear-button"}
+    </div>*}
+    <div class="ty-float-right ty-cart-content__right-buttons">
+        {include file="buttons/update_cart.tpl" but_id="button_cart" but_meta="hidden" but_name="dispatch[checkout.update]"}
+        {if $payment_methods}
+            {assign var="m_name" value="checkout"}
+            {assign var="link_href" value="checkout.checkout"}
+            {include file="buttons/proceed_to_checkout.tpl" but_href=$link_href but_meta=""}
+        {/if}
+    </div>
+</div>
+
 {include file="views/checkout/components/cart_items.tpl" disable_ids="button_cart"}
-        {include file="buttons/update_cart.tpl" but_id="button_cart" but_name="dispatch[checkout.update]" but_meta="hidden"}
 
 </form>
 
 {include file="views/checkout/components/checkout_totals.tpl" location="cart"}
 
 <div class="buttons-container ty-cart-content__bottom-buttons clearfix">
+    {*<div class="ty-float-left ty-cart-content__left-buttons">
+        {include file="buttons/continue_shopping.tpl" but_href=$continue_url|fn_url}
+    </div>*}
     <div class="ty-float-right ty-cart-content__right-buttons">
         {*include file="buttons/update_cart.tpl" but_external_click_id="button_cart" but_meta="cm-external-click"*}
         {if $payment_methods}

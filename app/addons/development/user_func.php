@@ -373,28 +373,41 @@ function fn_user_rated($discussion)
     return false;
 }
 
-function fn_get_product_review_discount(&$product)
+function fn_get_product_review_discount(&$products)
 {
-    if (empty($product['promotions'][REVIEW_PROMO_ID])) {
-        $params = array(
-            'active' => true,
-            'expand' => true,
-            'promotion_id' => REVIEW_PROMO_ID,
-        );
+    $result = false;
+    $params = array(
+        'active' => true,
+        'expand' => true,
+        'promotion_id' => REVIEW_PROMO_ID,
+    );
 
-        list($promotions,) = fn_get_promotions($params);
-        if (!empty($promotions[REVIEW_PROMO_ID]['conditions'])) {
-            fn_remove_condition($promotions[REVIEW_PROMO_ID], 'product_review');
-            $cart_products = array();
-            if (fn_promotion_check(REVIEW_PROMO_ID, $promotions[REVIEW_PROMO_ID]['conditions'], $product, $_SESSION['auth'], $cart_products) && !empty($promotions[REVIEW_PROMO_ID]['bonuses'])) {
-                foreach ($promotions[REVIEW_PROMO_ID]['bonuses'] as $bonus) {
-                    if ($bonus['bonus'] == 'product_discount') {
-                        $product['review_discount'] = $bonus['discount_value'];
+    list($promotions,) = fn_get_promotions($params);
+
+    $one_product = !is_array(reset($products));
+    if (!empty($one_product)) {
+        $products = array($products);
+    }
+    if (!empty($promotions[REVIEW_PROMO_ID]['conditions'])) {
+        fn_remove_condition($promotions[REVIEW_PROMO_ID], 'product_review');
+        foreach ($products as $i => &$product) {
+            if (empty($product['promotions'][REVIEW_PROMO_ID])) {
+                $cart_products = array();
+                if (fn_promotion_check(REVIEW_PROMO_ID, $promotions[REVIEW_PROMO_ID]['conditions'], $product, $_SESSION['auth'], $cart_products) && !empty($promotions[REVIEW_PROMO_ID]['bonuses'])) {
+                    foreach ($promotions[REVIEW_PROMO_ID]['bonuses'] as $bonus) {
+                        if ($bonus['bonus'] == 'product_discount') {
+                            $product['review_discount'] = $result = $bonus['discount_value'];
+                        }
                     }
                 }
             }
         }
     }
+    if (!empty($one_product)) {
+        $products = array_shift($products);
+    }
+    
+    return $result;
 }
 
 function fn_allow_user_thread_review_reward($thread_id, $object_type, $user_id, $exclude_post_id = 0)

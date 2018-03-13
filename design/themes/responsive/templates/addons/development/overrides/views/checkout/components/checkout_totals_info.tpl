@@ -33,9 +33,20 @@
     
     {/if}
 
-    {if $cart.subtotal_discount || (!$cart.subtotal_discount && $cart.points_info.max_allowed > 0 && $cart.points_info.total_price > 0 && (!$user_info || ($user_info && $user_info.points == 0)) && $addons.development.review_reward_P > 0)}
+    {if $cart.subtotal_discount || (!$cart.subtotal_discount && $cart.points_info.max_allowed > 0 && $cart.points_info.total_price > 0 && (!$user_info || ($user_info && $user_info.points == 0)) && $addons.development.review_reward_P > 0) || $cart.review_discount}
     <li class="ty-cart-statistic__item ty-statistic-list-subtotal-discount">
-        <span class="ty-cart-statistic__title">{__("order_discount")}{if !$cart.subtotal_discount && $cart.points_info.max_allowed > 0 && $cart.points_info.total_price > 0 && (!$user_info || ($user_info && $user_info.points == 0)) && $addons.development.review_reward_P > 0}<div>{include file="addons/development/common/tooltip.tpl" note_text=__("get_product_review_reward_points", ["[amount]" => $addons.development.review_reward_P, "[limit]" => $addons.development.review_number_limit_P, "[limit_month]" => $addons.development.review_time_limit_P]) tooltip_title=__("get_discount_now") tooltipclass="ty-category-tooltip"}</div>{/if}</span>
+        <span class="ty-cart-statistic__title">
+            {__("order_discount")}
+            {if $cart.review_discount}
+                <div>
+                    {include file="addons/development/common/tooltip.tpl" note_text=__("get_review_discount_description", ["[percent]" => $cart.review_discount]) tooltip_title=__("get_review_discount_text", ["[percent]" => $cart.review_discount]) tooltipclass="ty-category-tooltip"}
+                </div>
+            {elseif !$cart.subtotal_discount && $cart.points_info.max_allowed > 0 && $cart.points_info.total_price > 0 && (!$user_info || ($user_info && $user_info.points == 0)) && $addons.development.review_reward_P > 0}
+                <div>
+                    {include file="addons/development/common/tooltip.tpl" note_text=__("get_product_review_reward_points", ["[amount]" => $addons.development.review_reward_P, "[limit]" => $addons.development.review_number_limit_P, "[limit_month]" => $addons.development.review_time_limit_P]) tooltip_title=__("get_discount_now") tooltipclass="ty-category-tooltip"}
+                </div>
+            {/if}
+        </span>
         <span class="ty-cart-statistic__value discount-price">-{include file="common/price.tpl" value=$cart.subtotal_discount}</span>
     </li>
     {/if}

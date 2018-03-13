@@ -1,8 +1,8 @@
-{if $settings.General.checkout_style != "multi_page"}
+{*if $settings.General.checkout_style != "multi_page"*}
     {assign var="ajax_form" value="cm-ajax"}
-{else}
+{*else}
     {assign var="ajax_form" value=""}
-{/if}
+{/if*}
 
 {include file="views/profiles/components/profiles_scripts.tpl"}
 

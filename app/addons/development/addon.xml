@@ -653,6 +653,9 @@
         <item>
             ALTER TABLE `cscart_categories` ADD `ajax_pagination` CHAR(1) NOT NULL DEFAULT 'N';
         </item>
+        <item>
+            ALTER TABLE `cscart_user_session_products` ADD `user_data` TEXT NOT NULL;
+        </div>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -1301,5 +1304,7 @@
         <item lang="ru" id="promotion_cond_no_list_discount">Нет товарной(list) скидки</item>
         <item lang="ru" id="get_review_discount_text">Получить скидку [percent]%</item>
         <item lang="ru" id="get_review_discount_description"><![CDATA[<div class="ty-product-review-rp-text"><p style="font-size: 16px;">Получить скидку [percent]% прямо сейчас !</p><p>Скидка будет автоматически добавлена после написания отзыва на любой товар из категорий: <a href="http://www.tennishouse.ru/tennis-rackets/" target="_blank">Ракетки</a>, <a href="http://www.tennishouse.ru/tennis-balls/" target="_blank">Мячи</a>, <a href="http://www.tennishouse.ru/tennis-strings/" target="_blank">Струны</a>, <a href="http://www.tennishouse.ru/tennis-shoes/" target="_blank">Обувь</a>, <a href="http://www.tennishouse.ru/ball-machines/" target="_blank">Пушки</a>, <a href="http://www.tennishouse.ru/stringing-machines/" target="_blank">Станки</a>.</p><p>ВНИМАНИЕ. Отзыв должен быть информативен и полезен для других покупателей. Если отзыв не будет соответствовать этому критерию, то скидка в заказе будет аннулирована.</p></div>]]></item>
+        <item lang="ru" id="create_order">Создать заказ</item>
+        <item lang="ru" id="lkey">LKEY</item>
     </language_variables>
 </addon>

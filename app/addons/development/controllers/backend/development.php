@@ -1349,6 +1349,11 @@ if ($mode == 'calculate_balance') {
 } elseif ($mode == 'update_rrp') {
     Registry::get('view')->assign('step', 'one');
     Registry::get('view')->assign('brands', fn_development_get_brands());
+} elseif ($mode == 'generate_user_lkey' && !empty($_REQUEST['user_id'])) {
+
+    fn_generate_ekey($_REQUEST['user_id'], 'L', SECONDS_IN_DAY * 90);
+    
+    return array(CONTROLLER_STATUS_REDIRECT, "profiles.update?user_id=" . $_REQUEST['user_id']);
 }
 
 function fn_normalize_string($string)

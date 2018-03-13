@@ -127,7 +127,7 @@
                     <dt>{__("last_name")}</dt>
                     <dd>{$user_data.lastname}</dd>
                 </dl>
-
+{*
                 <h4>{__("billing_address")}</h4>
                 <dl>
                     <dt>{__("first_name")}</dt>
@@ -147,7 +147,7 @@
                     <dt>{__("zip_postal_code")}</dt>
                     <dd>{$user_data.b_zipcode}</dd>
                 </dl>
-
+*}
                 <h4>{__("shipping_address")}</h4>
                 <dl>
                     <dt>{__("first_name")}</dt>
@@ -156,8 +156,8 @@
                     <dd>{$user_data.s_lastname}</dd>
                     <dt>{__("address")}</dt>
                     <dd>{$user_data.s_address}</dd>
-                    <dt>{__("address_2")}</dt>
-                    <dd>{$user_data.s_address_2}</dd>
+                    <dt>{__("phone")}</dt>
+                    <dd>{$user_data.phone}</dd>
                     <dt>{__("city")}</dt>
                     <dd>{$user_data.s_city}</dd>
                     <dt>{__("state")}</dt>

@@ -45,7 +45,19 @@
             <span alt="{__("collapse_sublist_of_items")}" title="{__("collapse_sublist_of_items")}" id="off_user_{$customer.user_id}" class="hidden cm-combination-carts"><span class="exicon-collapse"></span></span>
         {/if}
 
-        {if $customer.user_data.email}<a href="{"profiles.update?user_id=`$customer.user_id`"|fn_url}" class="underlined">{if $customer.firstname || $customer.lastname}{$customer.lastname} {$customer.firstname}{else}{$customer.user_data.email}{/if}</a>{else}{__("unregistered_customer")}{/if}
+        {if $customer.user_data.email && !$customer.pending_user}
+            <a href="{"profiles.update?user_id=`$customer.user_id`"|fn_url}" class="underlined">
+        {/if}
+        {if $customer.user_data.firstname || $customer.user_data.lastname}
+            {$customer.user_data.lastname} {$customer.user_data.firstname}
+        {elseif $customer.user_data.email}
+            {$customer.user_data.email}
+        {else}
+            {__("unregistered_customer")}
+        {/if}
+        {if $customer.user_data.email && !$customer.pending_user}
+            </a>
+        {/if}
         {include file="views/companies/components/company_name.tpl" object=$customer}
     </td>
     <td>
@@ -74,6 +86,7 @@
             {assign var="products" value=$cart_products}
             {assign var="show_price" value=true}
             {if $cart_products}
+            <a href="{"cart.create_order?user_id=`$customer.user_id`"|fn_url}">{__("create_order")}</a>
             <table class="table table-condensed">
             <thead>
             <tr class="no-hover">
@@ -129,7 +142,7 @@
                     <dt>{__("last_name")}</dt>
                     <dd>{$user_data.lastname}</dd>
                 </dl>
-
+{*
                 <h4>{__("billing_address")}</h4>
                 <dl>
                     <dt>{__("first_name")}</dt>
@@ -149,7 +162,7 @@
                     <dt>{__("zip_postal_code")}</dt>
                     <dd>{$user_data.b_zipcode}</dd>
                 </dl>
-
+*}
                 <h4>{__("shipping_address")}</h4>
                 <dl>
                     <dt>{__("first_name")}</dt>
@@ -158,8 +171,8 @@
                     <dd>{$user_data.s_lastname}</dd>
                     <dt>{__("address")}</dt>
                     <dd>{$user_data.s_address}</dd>
-                    <dt>{__("address_2")}</dt>
-                    <dd>{$user_data.s_address_2}</dd>
+                    <dt>{__("phone")}</dt>
+                    <dd>{$user_data.phone}</dd>
                     <dt>{__("city")}</dt>
                     <dd>{$user_data.s_city}</dd>
                     <dt>{__("state")}</dt>

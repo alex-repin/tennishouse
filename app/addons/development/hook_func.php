@@ -17,6 +17,15 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_get_user_info_before($condition, $user_id, &$user_fields, &$join)
+{
+    if (AREA == 'A') {
+        $user_fields[] = '?:ekeys.ekey';
+        $user_fields[] = '?:ekeys.ttl';
+        $join .= " LEFT JOIN ?:ekeys ON ?:ekeys.object_id = ?:users.user_id AND ?:ekeys.object_type = 'L'";
+    }
+}
+
 function fn_development_update_profile($action, $user_data, $current_user_data)
 {
     if ($action == 'add') {
@@ -70,7 +79,7 @@ function fn_development_add_post_post($post_data, $object)
         $product = fn_get_product_data($object['object_id'], $auth, CART_LANGUAGE, '', true, true, true, true, fn_is_preview_action($auth, $_REQUEST));
         fn_gather_additional_product_data($product, true, true);
         fn_get_product_review_discount($product);
-        Registry::get('view')->assign('review_discount', $product['review_discount']);
+        Registry::get('view')->assign('review_discount', !empty($product['review_discount']) ? $product['review_discount'] : false);
         Registry::get('view')->assign('product', $product);
     }
         
@@ -392,6 +401,7 @@ function fn_development_get_cart_product_data_post($hash, $product, $skip_promot
 
 function fn_development_calculate_cart_post(&$cart, $auth, $calculate_shipping, $calculate_taxes, $options_style, $apply_cart_promotions, $cart_products, $product_groups)
 {
+    $cart['review_discount'] = fn_get_product_review_discount($cart_products);
     $cart['net_total'] = $cart['net_subtotal'];
     if (!empty($cart['org_payment_surcharge'])) {
         $cart['net_total'] += $cart['org_payment_surcharge'];
@@ -959,7 +969,7 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                             break;
                         }
                     }
-                    if (!empty($size_ids[$product['type']])) {
+                    if (!empty($product['type']) && !empty($size_ids[$product['type']])) {
                         if (!is_array($size_ids[$product['type']]) && !empty($product['product_options'][$size_ids[$product['type']]])) {
                             $size_id = $size_ids[$product['type']];
                         } elseif (is_array($size_ids[$product['type']])) {

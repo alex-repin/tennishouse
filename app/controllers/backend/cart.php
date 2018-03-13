@@ -93,7 +93,17 @@ if ($mode == 'cart_list') {
                     $carts_list[$key]['cart_products'] = $all_cart_products[$key]['count'];
                     $carts_list[$key]['cart_all_products'] = $all_cart_products[$key]['sum'];
                     $carts_list[$key]['total'] = $all_cart_products[$key]['total'];
-                    $carts_list[$key]['user_data'] = fn_get_user_info($cart_data['user_id'], true);
+                    if (!empty($cart_data['user_data'])) {
+                        $carts_list[$key]['user_data'] =  unserialize($cart_data['user_data']);
+                        
+                        $is_exist = fn_get_user_info($cart_data['user_id']);
+                        if (empty($is_exist)) {
+                            $carts_list[$key]['pending_user'] =  true;
+                        }
+                        fn_add_user_data_descriptions($carts_list[$key]['user_data']);
+                    } else {
+                        $carts_list[$key]['user_data'] = array();
+                    }
                     $carts_list[$key]['ip_address'] = $all_cart_products[$key]['ip_address'];
                 }
                 $_SESSION['abandoned_carts'][$cart_data['company_id']][] = $cart_data['user_id'];
@@ -150,6 +160,7 @@ function fn_get_carts($params, $items_per_page = 0)
     // Define fields that should be retrieved
     $fields = array (
         '?:user_session_products.user_id',
+        '?:user_session_products.user_data',
         '?:users.firstname',
         '?:users.lastname',
         '?:user_session_products.timestamp AS date',

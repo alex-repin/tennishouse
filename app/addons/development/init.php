@@ -110,5 +110,6 @@ fn_register_hooks(
     'update_profile',
     'set_point_payment',
     'create_order',
-    'login_user_post'
+    'login_user_post',
+    'get_user_info_before'
 );

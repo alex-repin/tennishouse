@@ -67,23 +67,30 @@ var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
         $('#' + obj.attr('id') + '_error_message').remove();
         
         if ($("[data-autocompletetype='city_id']").length && obj.val() != '') {
-            if ($("[data-autocompletetype='city_id']").val() == '' && obj.hasClass('cm-city-change')) {
-                if (show_error) {
-                    lbl.parent().addClass('error');
-                    obj.addClass('cm-failed-field');
-                    lbl.addClass('cm-failed-label');
+            if (obj.data('kladr_ok')) {
+                if ($("[data-autocompletetype='city_id']").val() == '' && obj.hasClass('cm-city-change')) {
+                    if (show_error) {
+                        lbl.parent().addClass('error');
+                        obj.addClass('cm-failed-field');
+                        lbl.addClass('cm-failed-label');
 
-                    if (!obj.hasClass('cm-no-failed-msg')) {
-                        obj.after('<span id="' + obj.attr('id') + '_error_message" class="help-inline"><p>' + error_validator_city + '</p></span>');
+                        if (!obj.hasClass('cm-no-failed-msg')) {
+                            obj.after('<span id="' + obj.attr('id') + '_error_message" class="help-inline"><p>' + error_validator_city + '</p></span>');
+                        }
+                    }
+                    
+                    return false;
+                } else {
+                    if (show_error) {
+                        lbl.parent().removeClass('error');
+                        obj.removeClass('cm-failed-field');
+                        lbl.removeClass('cm-failed-label');
                     }
                 }
-                
-                return false;
-            } else {
-                if (show_error) {
-                    lbl.parent().removeClass('error');
-                    obj.removeClass('cm-failed-field');
-                    lbl.removeClass('cm-failed-label');
+            } else if (obj.hasClass('cm-city-change') && $("[data-autocompletetype='state']").length) {
+                $("[data-autocompletetype='state']").parent('.ty-control-group').show();
+                if ($("[data-autocompletetype='postal-code']").length) {
+                    $("[data-autocompletetype='postal-code']").parent('.ty-control-group').show();
                 }
             }
         }
@@ -213,6 +220,9 @@ var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
                 city.kladr({
                     type: $.kladr.type.city,
                     withParents: true,
+                    receive: function(smth) {
+                        city.data('kladr_ok', true);
+                    },
                     labelFormat: function (obj, query) {
                         var label = '';
 
@@ -579,6 +589,24 @@ var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
                 $(this).click(function(){
                     location.href = $(this).data('href');
                 });
+            });
+            $('.cm-auto-submit').each(function(){
+                if (typeof($(this).data('autoSubmitDispatch')) != 'undefined') {
+                    var auto_form = $(this);
+
+                    $(auto_form, ":input").on('keydown change', function() {
+                        auto_form.data('changed', true);
+                    });
+                    setInterval(function() {
+                        if (auto_form.data('changed')) {
+                            $.ceAjax('request', fn_url(auto_form.data('autoSubmitDispatch') + '?' + auto_form.serialize().replace(/&dispatch=([^&]+)/, '')), {
+                                method: 'get',
+                                hidden: true,
+                            });
+                            auto_form.data('changed', false);
+                        }
+                    }, 1000);
+                }
             });
             $('.cm-ajax-search').each(function(){
                 $(this).focus(function(){

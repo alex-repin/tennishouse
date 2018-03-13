@@ -1396,6 +1396,10 @@ function fn_save_cart_content(&$cart, $user_id, $type = 'C', $user_type = 'R')
                 $_cart_prods[$_item_id]['extra'] = serialize($_prod);
                 $_cart_prods[$_item_id]['amount'] = empty($_cart_prods[$_item_id]['amount']) ? 1 : $_cart_prods[$_item_id]['amount'];
                 $_cart_prods[$_item_id]['session_id'] = Session::getId();
+                // TennisHouse
+                $_cart_prods[$_item_id]['user_data'] = serialize($cart['user_data']);
+                // TennisHouse
+
                 $ip = fn_get_ip();
                 $_cart_prods[$_item_id]['ip_address'] = $ip['host'];
 

@@ -172,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         unset($cart['product_groups']);
 
-        fn_set_notification('N', __('notice'), __('text_products_updated_successfully'));
+//         fn_set_notification('N', __('notice'), __('text_products_updated_successfully'));
 
         // Recalculate cart when updating the products
         if (!empty($cart['chosen_shipping'])) {
@@ -566,6 +566,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (empty($_REQUEST['ship_to_another']) && $_REQUEST['update_step'] == 'step_two') {
                 $profile_fields = fn_get_profile_fields('O');
                 fn_fill_address($cart['user_data'] , $profile_fields);
+            }
+            if ($_REQUEST['update_step'] == 'step_two') {
+                fn_save_cart_content($cart, $auth['user_id']);
             }
         }
 

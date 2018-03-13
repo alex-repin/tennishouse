@@ -1,4 +1,4 @@
-{if $product.item_type == "P" && $product.extra.extra.configuration}
+{if $product.item_type == "P" && $product.extra.configuration}
     <tr>
         <td>
             <a href="{"products.update?product_id=`$product.product_id`"|fn_url}">{$product.product nofilter}</a>
@@ -10,15 +10,15 @@
     </tr>
     <tr><td {if $show_price}colspan="3"{/if}>
         <table cellpadding="0" cellspacing="0" border="0" width="90%" class="table margin-bottom" align="center">
-        <tr>
+        {*<tr>
             <th width="100%">{__("product")}</th>
             {if $show_price}
                 <th class="center">{__("quantity")}</th>
                 <th class="right">{__("price")}</th>
             {/if}
-        </tr>
-        {foreach from=$products item="_product"}
-            {if $_product.extra.extra.parent.configuration && $_product.extra.extra.parent.configuration == $product.item_id}
+        </tr>*}
+        {foreach from=$product.extra.configuration item="_product"}
+            {if $_product.extra.parent.configuration && $_product.extra.parent.configuration == $product.item_id}
             <tr>
                 <td>
                     <a href="{"products.update?product_id=`$_product.product_id`"|fn_url}">{$_product.product nofilter}</a>
