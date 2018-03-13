@@ -137,7 +137,7 @@
                                         <div class="ty-center ty-value-changer cm-value-changer">
                                         <div class="ty-value-changer-decrease"><a class="cm-decrease ty-value-changer__decrease">&minus;</a></div>
                                     {/if}
-                                    <div class="ty-value-changer-input"><input type="text" size="3" id="amount_{$key}" name="cart_products[{$key}][amount]" value="{$product.amount}" class="ty-value-changer__input cm-amount"{if $product.qty_step > 1} data-ca-step="{$product.qty_step}"{/if} /></div>
+                                    <div class="ty-value-changer-input"><input type="text" size="3" id="amount_{$key}" name="cart_products[{$key}][amount]" value="{$product.amount}" onchange="$('#{$disable_ids}').click();" class="ty-value-changer__input cm-amount"{if $product.qty_step > 1} data-ca-step="{$product.qty_step}"{/if} /></div>
                                     {if $settings.Appearance.quantity_changer == "Y"}
                                         <div class="ty-value-changer-increase"><a class="cm-increase ty-value-changer__increase">&#43;</a></div>
                                         </div>

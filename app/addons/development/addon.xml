@@ -394,9 +394,9 @@
         <item>
             ALTER TABLE `cscart_product_option_variants` ADD `feature_variant_id` MEDIUMINT( 8 ) UNSIGNED NOT NULL ;
         </item>
-        <div>
+        <item>
             ALTER TABLE `cscart_shippings` ADD `payment_ids` TEXT NOT NULL ;
-        </div>
+        </item>
         <item>
             ALTER TABLE `cscart_shippings` ADD `website` VARCHAR( 128 ) NOT NULL ;
         </item>
@@ -655,7 +655,7 @@
         </item>
         <item>
             ALTER TABLE `cscart_user_session_products` ADD `user_data` TEXT NOT NULL;
-        </div>
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
