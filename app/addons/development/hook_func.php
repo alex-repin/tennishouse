@@ -388,12 +388,12 @@ function fn_development_get_order_info(&$order, $additional_data)
 function fn_development_get_cart_product_data_post($hash, $product, $skip_promotion, &$cart, $auth, $promotion_amount, &$_pdata)
 {
     $net_cost_rub = 0;
-    if (!empty($_pdata['configuration'])) {
-        foreach ($_pdata['configuration'] as $i => $pc) {
-            $nc = (!empty($pc['net_cost']) && !empty($pc['net_currency_code'])) ? $pc['net_cost'] * Registry::get('currencies.' . $pc['net_currency_code'] . '.coefficient') : $pc['price'];
-            $net_cost_rub += $nc * $pc['step'];
-        }
-    }
+//     if (!empty($_pdata['configuration'])) {
+//         foreach ($_pdata['configuration'] as $i => $pc) {
+//             $nc = (!empty($pc['net_cost']) && !empty($pc['net_currency_code'])) ? $pc['net_cost'] * Registry::get('currencies.' . $pc['net_currency_code'] . '.coefficient') : $pc['price'];
+//             $net_cost_rub += $nc * $pc['step'];
+//         }
+//     }
     $net_cost = (!empty($_pdata['net_cost']) && !empty($_pdata['net_currency_code'])) ? $_pdata['net_cost'] * Registry::get('currencies.' . $_pdata['net_currency_code'] . '.coefficient') : $_pdata['price'];
     $_pdata['net_cost_rub'] = ($net_cost + $net_cost_rub) * $product['amount'];
     $cart['net_subtotal'] += $_pdata['net_cost_rub'];
@@ -766,6 +766,9 @@ function fn_development_get_category_data_post($category_id, $field_list, $get_m
     }
     if (!empty($category_data['sections_categorization'])) {
         $category_data['sections_categorization'] = unserialize($category_data['sections_categorization']);
+    }
+    if (!empty($category_data['qty_discounts'])) {
+        $category_data['prices'] = unserialize($category_data['qty_discounts']);
     }
     if (!empty($category_data['cross_categories'])) {
         $category_data['cross_categories'] = unserialize($category_data['cross_categories']);
@@ -1339,6 +1342,56 @@ function fn_development_update_category_pre(&$category_data, $category_id, $lang
     } else {
         $category_data['sections_categorization'] = '';
     }
+    if (!empty($category_data['prices'])) {
+        foreach ($category_data['prices'] as $i => $v) {
+            if (empty($v['lower_limit']) || $v['lower_limit'] == 1) {
+                unset($category_data['prices'][$i]);
+                continue;
+            }
+        }
+        if (!empty($category_data['apply_qty_discounts']) && $category_data['apply_qty_discounts'] == 'Y') {
+            $products = array();
+            $_params = array (
+                'cid' => $category_id,
+                'subcats' => 'Y',
+                'product_type' => 'P'
+            );
+            list($prods,) = fn_get_products($_params);
+            if (!empty($prods)) {
+                foreach ($prods as $i => $prod) {
+                    if ($prod['price'] > 0) {
+                        $products[] = $prod['product_id'];
+                    }
+                }
+            }
+            if (!empty($products)) {
+
+                db_query("DELETE FROM ?:product_prices WHERE product_id IN (?n) AND lower_limit > 1", $products);
+
+                if (!empty($category_data['prices'])) {
+                    $result = array();
+                    foreach ($prods as $i => $prod) {
+                        if ($prod['price'] > 0) {
+                            foreach ($category_data['prices'] as $v) {
+                                $v['type'] = !empty($v['type']) ? $v['type'] : 'A';
+                                $v['usergroup_id'] = !empty($v['usergroup_id']) ? $v['usergroup_id'] : 0;
+                                $v['product_id'] = $prod['product_id'];
+                                $v['percentage_discount'] = ($v['price'] > 100) ? 100 : $v['price'];
+                                $v['price'] = $prod['price'];
+                                unset($v['type']);
+
+                                $result[] = $v;
+                            }
+                        }
+                    }
+                    db_query("REPLACE INTO ?:product_prices ?m", $result);
+                }
+            }
+        }
+        $category_data['qty_discounts'] = serialize($category_data['prices']);
+    } else {
+        $category_data['qty_discounts'] = '';
+    }
     if (!empty($category_data['cross_categories'])) {
         $category_data['cross_categories'] = serialize($category_data['cross_categories']);
     }
@@ -1346,6 +1399,9 @@ function fn_development_update_category_pre(&$category_data, $category_id, $lang
 
 function fn_development_get_products(&$params, &$fields, &$sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
 {
+    if (!empty($params['product_type'])) {
+        $condition .= db_quote(" AND products.product_type = ?s", $params['product_type']);
+    }
     if (!empty($params['not_product_codes'])) {
         $condition .= db_quote(" AND products.product_code NOT IN (?a)", $params['not_product_codes']);
     }

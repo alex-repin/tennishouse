@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     }
 }
 
-if ($mode == 'checkout' || $mode == 'customer_info') {
+if (($mode == 'checkout' || $mode == 'customer_info') && !empty($_SESSION['cart']['user_data']['email'])) {
 
     $subscriber = db_get_row("SELECT * FROM ?:subscribers WHERE email = ?s", $_SESSION['cart']['user_data']['email']);
     $params = array(

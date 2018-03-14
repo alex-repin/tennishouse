@@ -57,5 +57,9 @@ if ($mode == 'update' || $mode == 'add') {
         'js' => true
     );
     $tabs = fn_insert_before_key($tabs, 'addons', 'cross_categories', $cross_tab);
+    $tabs['qty_discounts'] = array (
+        'title' => __('qty_discounts'),
+        'js' => true
+    );
     Registry::set('navigation.tabs', $tabs);
 }

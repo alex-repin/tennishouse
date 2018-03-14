@@ -199,7 +199,7 @@ function fn_reward_points_calculate_cart_items(&$cart, &$cart_products, &$auth)
                 $cart['products'][$k]['extra']['points_info']['raw_price'] = $product_price;
                 $cart['products'][$k]['extra']['points_info']['display_price'] = $cart['products'][$k]['extra']['points_info']['price'] = round($product_price);
                 $cart['points_info']['total_price'] = (isset($cart['points_info']['total_price']) ?  $cart['points_info']['total_price'] : 0) + $product_price;
-                $cart['points_info']['max_allowed'] = (isset($cart['points_info']['max_allowed']) ?  $cart['points_info']['max_allowed'] : 0) + $cart_products[$k]['points_info']['max_allowed'];
+                $cart['points_info']['max_allowed'] = (isset($cart['points_info']['max_allowed']) ?  $cart['points_info']['max_allowed'] : 0) + (!empty($cart_products[$k]['points_info']['max_allowed']) ? $cart_products[$k]['points_info']['max_allowed'] : 0);
             }
         }
     }

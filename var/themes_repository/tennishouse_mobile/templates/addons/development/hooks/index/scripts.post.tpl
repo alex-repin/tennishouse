@@ -293,10 +293,10 @@ var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
                                             state.selectmenu('refresh');
                                         }
                                     }
+                                    state.trigger('change');
                                 },
                             });
                         }
-                        city.trigger('change');
                     }
                 });
                 

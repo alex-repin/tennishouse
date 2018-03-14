@@ -656,6 +656,9 @@
         <item>
             ALTER TABLE `cscart_user_session_products` ADD `user_data` TEXT NOT NULL;
         </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `qty_discounts` TEXT NOT NULL;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -724,7 +727,7 @@
         <item lang="ru" id="series">Серия</item>
         <item lang="ru" id="how_to_know_your_game_level">Как определить свой уровень игры</item>
         <item lang="ru" id="rackets_alt">ракеток</item>
-        <item lang="ru" id="ti_discount_text">при покупке [items]+ [product]</item>
+        <item lang="ru" id="ti_discount_text">при заказе от [items]шт</item>
         <item lang="ru" id="net_cost">Себестоимость</item>
         <item lang="ru" id="additional_information">Дополнительная информация</item>
         <item lang="ru" id="our_advantages_text">Наши преимущества</item>
@@ -1306,5 +1309,6 @@
         <item lang="ru" id="get_review_discount_description"><![CDATA[<div class="ty-product-review-rp-text"><p style="font-size: 16px;">Получить скидку [percent]% прямо сейчас !</p><p>Скидка будет автоматически добавлена после написания отзыва на любой товар из категорий: <a href="http://www.tennishouse.ru/tennis-rackets/" target="_blank">Ракетки</a>, <a href="http://www.tennishouse.ru/tennis-balls/" target="_blank">Мячи</a>, <a href="http://www.tennishouse.ru/tennis-strings/" target="_blank">Струны</a>, <a href="http://www.tennishouse.ru/tennis-shoes/" target="_blank">Обувь</a>, <a href="http://www.tennishouse.ru/ball-machines/" target="_blank">Пушки</a>, <a href="http://www.tennishouse.ru/stringing-machines/" target="_blank">Станки</a>.</p><p>ВНИМАНИЕ. Отзыв должен быть информативен и полезен для других покупателей. Если отзыв не будет соответствовать этому критерию, то скидка в заказе будет аннулирована.</p></div>]]></item>
         <item lang="ru" id="create_order">Создать заказ</item>
         <item lang="ru" id="lkey">LKEY</item>
+        <item lang="ru" id="apply_qty_discounts">Применить оптовые скидки</item>
     </language_variables>
 </addon>

@@ -2924,7 +2924,7 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
                     $g_key = $rate['keys']['group_key'];
                     $sh_id = $rate['keys']['shipping_id'];
 
-                    $product_groups[$g_key]['shippings'][$sh_id]['available_payments'] = array_merge($product_groups[$g_key]['shippings'][$sh_id]['available_payments'], $rate['available_payments']);
+                    $product_groups[$g_key]['shippings'][$sh_id]['available_payments'] = array_merge((!empty($product_groups[$g_key]['shippings'][$sh_id]['available_payments']) ? $product_groups[$g_key]['shippings'][$sh_id]['available_payments'] : array()), (!empty($rate['available_payments']) ? $rate['available_payments'] : array()));
                     $rates[$k]['module'] = $product_groups[$g_key]['shippings'][$sh_id]['module'];
                     if (!empty($product_groups[$g_key]['shippings'][$sh_id]['free_shipping']) && $rate['price'] !== false) {
                         $rate['price'] += !empty($product_groups[$g_key]['package_info']['shipping_freight']) ? $product_groups[$g_key]['package_info']['shipping_freight'] : 0;

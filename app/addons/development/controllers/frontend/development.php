@@ -53,6 +53,7 @@ if ($mode == 'product_shipping_estimation') {
                 $approx_shipping['city'] = $profile_data['s_city'];
                 $approx_shipping['state'] = $profile_data['s_state'];
                 $approx_shipping['country'] = $profile_data['s_country'];
+                $approx_shipping['zipcode'] = $profile_data['s_zipcode'];
             } elseif (!empty($_SERVER['REMOTE_ADDR'])) {
                 $ip = $_SERVER['REMOTE_ADDR'] == '127.0.0.1' ? '79.132.124.103' : $_SERVER['REMOTE_ADDR'];
                 $response = Http::get('http://ipgeobase.ru:7020/geo',

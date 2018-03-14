@@ -119,9 +119,11 @@
                                             {$smarty.capture.$qty_discounts nofilter}
                                         </div>
                                     {/if}
-                                    <span class="cm-reload-{$obj_prefix}{$product.product_id} ty-pc-zero-price-note" id="pc_note_{$obj_prefix}{$product.product_id}">
-                                        {if $product.product_type == 'C' && !$product.price|floatval}{__("pc_zero_price_note")}{/if}
-                                    <!--pc_note_{$obj_prefix}{$product.product_id}--></span>
+                                    {if $product.product_type == 'C' && !$product.price|floatval}
+                                        <span class="cm-reload-{$obj_prefix}{$product.product_id} ty-pc-zero-price-note" id="pc_note_{$obj_prefix}{$product.product_id}">
+                                            {__("pc_zero_price_note")}
+                                        <!--pc_note_{$obj_prefix}{$product.product_id}--></span>
+                                    {/if}
                                 </div>
                                 <div class="ty-price-options">
                                     {if $product.review_discount || $addons.development.review_reward_P > 0}

@@ -632,23 +632,25 @@ function fn_product_configurator_pre_add_to_cart(&$product_data, &$cart, $auth, 
                 if (!empty($value['product_options'])) {
                     $product_data[$key]['extra']['product_options'] = $value['product_options'];
                 }
-                foreach ($cart['products'][$key]['configuration'] as $k => $v) {
-                    $product_data[$k] = array(
-                        'product_id' => $v['product_id'],
-                        'amount' => $v['extra']['step'] * $value['amount'],
-                        'extra' => array(
-                            'parent' => array(
-                                'configuration' => $cart['products'][$key]['extra']['configuration_id'],
-                                'id' => $key
+                if (!empty($cart['products'][$key]['configuration'])) {
+                    foreach ($cart['products'][$key]['configuration'] as $k => $v) {
+                        $product_data[$k] = array(
+                            'product_id' => $v['product_id'],
+                            'amount' => $v['extra']['step'] * $value['amount'],
+                            'extra' => array(
+                                'parent' => array(
+                                    'configuration' => $cart['products'][$key]['extra']['configuration_id'],
+                                    'id' => $key
+                                ),
+                                'step' => $v['extra']['step'],
+                                // TennisHouse
+                                'is_separate' => $v['extra']['is_separate'],
+                                'group_id' => $v['extra']['group_id'],
                             ),
-                            'step' => $v['extra']['step'],
-                            // TennisHouse
-                            'is_separate' => $v['extra']['is_separate'],
-                            'group_id' => $v['extra']['group_id'],
-                        ),
-                    );
-                    if (!empty($v['product_options'])) {
-                        $product_data[$k]['product_options'] = $v['product_options'];
+                        );
+                        if (!empty($v['product_options'])) {
+                            $product_data[$k]['product_options'] = $v['product_options'];
+                        }
                     }
                 }
 
