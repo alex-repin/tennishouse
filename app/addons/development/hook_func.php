@@ -17,6 +17,13 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_get_promotions($params, $fields, $sortings, &$condition, $join)
+{
+    if (!empty($params['show_on_site'])) {
+        $condition .= db_quote(" AND ?:promotions.show_on_site = ?s", $params['show_on_site']);
+    }
+}
+
 function fn_development_get_user_info_before($condition, $user_id, &$user_fields, &$join)
 {
     if (AREA == 'A') {

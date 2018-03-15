@@ -2620,9 +2620,7 @@ table.ty-cart-content {
 }
 .ty-pc-zero-price-note {
     color: lighten(@font, 35%);
-    display: inline-block;
-    vertical-align: top;
-    margin: 3px 0 3px 3px;
+    display: block;
 }
 .ty-pc-group__products .price {
     padding: 6px 0;
@@ -5392,4 +5390,36 @@ input.ty-rf_input-answer{
 }
 .ty-remove__txt {
     font-size: 20px;
+}
+// Promotions
+.ty-promotion_list {
+    margin-top: 30px;
+}
+.ty-promotion_list_item {
+    display: block;
+/*     margin-bottom: 20px; */
+    padding: 20px 0;
+    border-bottom: 1px solid darken(@base, 20%);
+}
+.ty-promotion_list_item:last-child {
+    border: none;
+}
+.ty-promotion_list_item-image {
+    display: inline-block;
+    width: 55%;
+}
+.ty-promotion_list_item-descr {
+    display: inline-block;
+    vertical-align: top;
+    width: 40%;
+    padding-left: 4%;
+}
+.ty-promotion_list_item-descr-header {
+    font-size: 25px;
+}
+.ty-promotion_list_item-description p {
+    font-size: 18px;
+}
+.ty-promotion-image-title {
+    margin: 0 -11px 50px -11px;
 }

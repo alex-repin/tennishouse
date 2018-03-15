@@ -59,7 +59,14 @@ fn_register_hooks(
     'get_player_data_post',
     'delete_player',
     'get_players',
-    'get_players_post'
+    'get_players_post',
+    
+    'update_promotion_post',
+    'get_promotion_data',
+    'get_promotion_data_post',
+    'delete_promotions',
+    'get_promotions',
+    'get_promotions_post'
     // [tennishouse]
 );
 

@@ -204,6 +204,33 @@ $schema = array(
             'players.list' => array()
         )
     ), // player  (plain)
+    'm' => array(
+        'table' => '?:promotion_descriptions',
+        'description' => 'name',
+        'dispatch' => 'promotions.view',
+        'item' => 'promotion_id',
+        'condition' => '',
+        'skip_lang_condition' => true,
+
+        'name' => 'promotion',
+
+        'html_options' => array('file', 'promotions'),
+        'option' => 'seo_promotions_type',
+
+        'tree' => true,
+        'tree_options' => array('promotions_nohtml'),
+        'path_function' => function($object_id) {
+            return '00';
+        },
+        'parent_type' => 'h',
+        
+        'indexed_pages' => array(
+            'promotions.view' => array(
+                'index' => array('promotion_id'),
+            ),
+            'promotions.list' => array()
+        )
+    ), // promotion  (plain)
     // [tennishouse]
 );
 

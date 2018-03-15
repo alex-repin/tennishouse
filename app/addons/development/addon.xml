@@ -659,6 +659,9 @@
         <item>
             ALTER TABLE `cscart_categories` ADD `qty_discounts` TEXT NOT NULL;
         </item>
+        <item>
+            ALTER TABLE `cscart_promotions` ADD `show_on_site` CHAR(1) NOT NULL DEFAULT 'N' AFTER `users_conditions_hash`;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -1310,5 +1313,6 @@
         <item lang="ru" id="create_order">Создать заказ</item>
         <item lang="ru" id="lkey">LKEY</item>
         <item lang="ru" id="apply_qty_discounts">Применить оптовые скидки</item>
+        <item lang="ru" id="show_on_site">Показывать в разделе "Акции"</item>
     </language_variables>
 </addon>

@@ -40,6 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $promotion_id = fn_update_promotion($_REQUEST['promotion_data'], $_REQUEST['promotion_id'], DESCR_SL);
 
+        if (!empty($promotion_id)) {
+            fn_attach_image_pairs('promotion_main', 'promotion', $promotion_id);
+        }
         $suffix = ".update?promotion_id=$promotion_id";
     }
 
@@ -77,6 +80,10 @@ if ($mode == 'update') {
         'bonuses' => array (
             'title' => __('bonuses'),
             'href' => "promotions.update?promotion_id=$_REQUEST[promotion_id]&selected_section=bonuses",
+            'js' => true
+        ),
+        'addons' => array (
+            'title' => __('addons'),
             'js' => true
         ),
     ));
@@ -119,6 +126,10 @@ if ($mode == 'update') {
         'bonuses' => array (
             'title' => __('bonuses'),
             'href' => "promotions.add?selected_section=bonuses",
+            'js' => true
+        ),
+        'addons' => array (
+            'title' => __('addons'),
             'js' => true
         ),
     ));

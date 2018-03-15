@@ -22,11 +22,59 @@ if ($mode == 'list') {
 
     $params = array (
         'active' => true,
-        /*'zone' => 'catalog',*/
         'get_hidden' => false,
+        'show_on_site' => 'Y',
+        'plain' => false
     );
 
     list($promotions) = fn_get_promotions($params);
 
     Registry::get('view')->assign('promotions', $promotions);
+}
+if ($mode == 'view') {
+    $promotion_data = fn_get_promotion_data($_REQUEST['promotion_id']);
+    
+    if (empty($promotion_data)) {
+        return array(CONTROLLER_STATUS_NO_PAGE);
+    }
+    
+    fn_add_breadcrumb(__('promotions'), 'promotions.list');
+    fn_add_breadcrumb($promotion_data['name']);
+    
+    $product_ids = fn_get_promotion_products($promotion_data);
+    if (!empty($product_ids)) {
+        $_params = array(
+            'item_ids' => implode(',', $product_ids)
+        );
+        list($products,) = fn_get_products($_params);
+        if (Registry::get('settings.General.catalog_image_afterload') == 'Y') {
+            fn_gather_additional_products_data($products, array(
+                'get_icon' => false,
+                'get_detailed' => false,
+                'check_detailed' => true,
+                'get_additional' => false,
+                'check_additional' => true,
+                'get_options' => true,
+                'get_discounts' => true,
+                'get_features' => false,
+                'get_title_features' => true,
+                'allow_duplication' => true,
+            ));
+        } else {
+            fn_gather_additional_products_data($products, array(
+                'get_icon' => false,
+                'get_detailed' => true,
+                'get_additional' => false,
+                'check_additional' => true,
+                'get_options' => true,
+                'get_discounts' => true,
+                'get_features' => false,
+                'get_title_features' => true,
+                'allow_duplication' => true,
+            ));
+        }
+        Registry::get('view')->assign('products', $products);
+    }
+//     fn_print_die($promotion_data);
+    Registry::get('view')->assign('promotion_data', $promotion_data);
 }

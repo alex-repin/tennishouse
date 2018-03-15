@@ -72,6 +72,8 @@ function fn_update_promotion($data, $promotion_id, $lang_code = DESCR_SL)
         }
     }
 
+    fn_set_hook('update_promotion_post', $data, $promotion_id);
+    
     return $promotion_id;
 }
 
@@ -135,7 +137,8 @@ function fn_get_promotions($params, $items_per_page = 0, $lang_code = CART_LANGU
     $default_params = array (
         'page' => 1,
         'items_per_page' => $items_per_page,
-        'get_hidden' => true
+        'get_hidden' => true,
+        'plain' => true,
     );
 
     $params = array_merge($default_params, $params);
@@ -203,7 +206,7 @@ function fn_get_promotions($params, $items_per_page = 0, $lang_code = CART_LANGU
 
     fn_set_hook('get_promotions', $params, $fields, $sortings, $condition, $join);
 
-    $sorting = db_sort($params, $sortings, 'name', 'desc');
+    $sorting = db_sort($params, $sortings, 'priority', 'asc');
 
     $limit = '';
     if (!empty($params['items_per_page'])) {
@@ -217,13 +220,24 @@ function fn_get_promotions($params, $items_per_page = 0, $lang_code = CART_LANGU
         $promotions = db_get_hash_array('SELECT ' . implode(', ', $fields) . " FROM ?:promotions $join WHERE 1 $condition $group $sorting $limit", 'promotion_id');
     }
 
-    if (!empty($params['expand'])) {
+    if (!empty($params['expand']) || empty($params['plain'])) {
+        if (empty($params['plain'])) {
+            $promo_images = fn_get_image_pairs(array_keys($promotions), 'promotion', 'M', false, true);
+        }
+
         foreach ($promotions as $k => $v) {
-            $promotions[$k]['conditions'] = !empty($v['conditions']) ? unserialize($v['conditions']) : array();
-            $promotions[$k]['bonuses'] = !empty($v['bonuses']) ? unserialize($v['bonuses']) : array();
+            if (!empty($params['expand'])) {
+                $promotions[$k]['conditions'] = !empty($v['conditions']) ? unserialize($v['conditions']) : array();
+                $promotions[$k]['bonuses'] = !empty($v['bonuses']) ? unserialize($v['bonuses']) : array();
+            }
+            if (!empty($promo_images[$k])) {
+                $promotions[$k]['main_pair'] = reset($promo_images[$k]);
+            }
         }
     }
 
+    fn_set_hook('get_promotions_post', $promotions, $params);
+    
     return array($promotions, $params);
 }
 
@@ -1598,11 +1612,17 @@ function fn_get_promotion_data($promotion_id, $lang_code = DESCR_SL)
         $extra_condition = Database::quote(' AND p.zone = ?s', 'catalog');
     }
 
-    $promotion_data = db_get_row("SELECT * FROM ?:promotions as p LEFT JOIN ?:promotion_descriptions as d ON p.promotion_id = d.promotion_id AND d.lang_code = ?s WHERE p.promotion_id = ?i ?p", $lang_code, $promotion_id, $extra_condition);
+    $field_list = "p.*, d.*";
+    $join = '';
+
+    fn_set_hook('get_promotion_data', $promotion_id, $field_list, $join, $extra_condition);
+    
+    $promotion_data = db_get_row("SELECT $field_list FROM ?:promotions as p LEFT JOIN ?:promotion_descriptions as d ON p.promotion_id = d.promotion_id AND d.lang_code = ?s ?p WHERE p.promotion_id = ?i ?p", $lang_code, $join, $promotion_id, $extra_condition);
 
     if (!empty($promotion_data)) {
         $promotion_data['conditions'] = !empty($promotion_data['conditions']) ? unserialize($promotion_data['conditions']) : array();
         $promotion_data['bonuses'] = !empty($promotion_data['bonuses']) ? unserialize($promotion_data['bonuses']) : array();
+        $promotion_data['main_pair'] = fn_get_image_pairs($promotion_id, 'promotion', 'M', false, true);
 
         if (!empty($promotion_data['conditions']['conditions'])) {
             foreach ($promotion_data['conditions']['conditions'] as $key => $condition) {
@@ -1613,6 +1633,8 @@ function fn_get_promotion_data($promotion_id, $lang_code = DESCR_SL)
             }
         }
     }
+
+    fn_set_hook('get_promotion_data_post', $promotion_data);
 
     return $promotion_data;
 }
@@ -1903,6 +1925,9 @@ function fn_delete_promotions($promotion_ids)
         db_query("DELETE FROM ?:promotions WHERE promotion_id = ?i", $pr_id);
         db_query("DELETE FROM ?:promotion_descriptions WHERE promotion_id = ?i", $pr_id);
     }
+    
+    fn_set_hook('delete_promotions', $promotion_ids);
+    
 }
 
 

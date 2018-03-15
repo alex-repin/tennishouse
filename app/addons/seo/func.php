@@ -2079,6 +2079,75 @@ function fn_seo_get_players_post(&$players, &$params)
 }
 /* Player hooks */
 
+/* Promotion hooks*/
+function fn_seo_update_promotion_post(&$data, $promotion_id)
+{
+    if (Registry::get('runtime.company_id')) {
+        $data['company_id'] = Registry::get('runtime.company_id');
+    }
+
+    fn_seo_update_object($data, $promotion_id, 'm', CART_LANGUAGE);
+}
+
+function fn_seo_get_promotion_data($promotion_id, &$field_list, &$join)
+{
+    $field_list .= ', ?:seo_names.name as seo_name, ?:seo_names.path as seo_path';
+
+    if (fn_allowed_for('ULTIMATE')) {
+        $company_join = 'AND ?:seo_names.company_id = ' . Registry::get('runtime.company_id');
+    } else {
+        $company_join = '';
+    }
+
+    $join .= db_quote(
+        " LEFT JOIN ?:seo_names ON ?:seo_names.object_id = ?i AND ?:seo_names.type = 'm' "
+        . "AND ?:seo_names.dispatch = '' AND ?:seo_names.lang_code = ?s $company_join",
+        $promotion_id, fn_get_corrected_seo_lang_code(CART_LANGUAGE)
+    );
+
+    return true;
+}
+
+function fn_seo_get_promotion_data_post(&$promotion_data)
+{
+    if (empty($promotion_data['seo_name']) && !empty($promotion_data['promotion_id'])) {
+        $promotion_data['seo_name'] = fn_seo_get_name('m', $promotion_data['promotion_id'], '', null, CART_LANGUAGE);
+    }
+
+    return true;
+}
+
+function fn_seo_delete_promotions(&$promotion_ids)
+{
+    foreach ($promotion_ids as $promotion_id) {
+        fn_delete_seo_name($promotion_id, 'm');
+    }
+    
+    return true;
+}
+
+function fn_seo_get_promotions($params, &$fields, $sortings, $condition, &$join)
+{
+    $lang_condition = db_quote(' AND ?:seo_names.lang_code = ?s', CART_LANGUAGE);
+    $fields[] = '?:seo_names.name as seo_name';
+    $fields[] = '?:seo_names.path as seo_path';
+
+    $join .= db_quote(
+        " LEFT JOIN ?:seo_names ON ?:seo_names.object_id = ?:promotions.promotion_id AND ?:seo_names.type = 'm' AND ?:seo_names.dispatch = '' ?p",
+        $lang_condition . fn_get_seo_company_condition('?:seo_names.company_id')
+    );
+}
+
+function fn_seo_get_promotions_post(&$promotions, &$params)
+{
+    if (AREA == 'C' && !empty($promotions)) {
+        foreach ($promotions as $k => $promotion) {
+            SeoCache::set('m', $promotion['promotion_id'], $promotion,  '', CART_LANGUAGE);
+        }
+    }
+
+    return true;
+}
 /* Deprecated */
 function fn_seo_parced_query_unset(&$parts_array, $keys = array())
 {

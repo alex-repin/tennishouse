@@ -65,6 +65,15 @@
                         </variants>
                     </item>
 
+                    <item id="seo_promotions_type">
+                        <type>selectbox</type>
+                        <default_value>promotions_nohtml</default_value>
+                        <variants>
+                            <item id="promotions_nohtml">
+                            </item>
+                        </variants>
+                    </item>
+
                     <item id="seo_other_type">
                         <type>selectbox</type>
                         <default_value>directory</default_value>

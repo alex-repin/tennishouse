@@ -23,6 +23,47 @@ use Tygh\Settings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_get_promotion_products($promotion)
+{
+    $result = array();
+    if (!empty($promotion['conditions'])) {
+        if (!empty($promotion['conditions']['conditions'])) {
+            $result = fn_array_merge($result, fn_get_promotion_products($promotion['conditions']));
+        } elseif (is_array($promotion['conditions'])) {
+            foreach ($promotion['conditions'] as $c) {
+                if (!empty($c['conditions'])) {
+                    $result = fn_array_merge($result, fn_get_promotion_products($c['conditions']));
+                } elseif ($c['condition'] == 'products' && $c['operator'] == 'in' && !empty($c['value'])) {
+                    foreach ($c['value'] as $v) {
+                        $result[] = $v['product_id'];
+                    }
+                }
+            }
+        }
+    }
+    if (!empty($promotion['bonuses'])) {
+        foreach ($promotion['bonuses'] as $b) {
+            if ($b['bonus'] == 'discount_on_products' && !empty($b['value'])) {
+                $result = array_merge($result, explode(',', $b['value']));
+            }
+            if ($b['bonus'] == 'discount_on_categories' && !empty($b['value'])) {
+                $_params = array(
+                    'cid' => explode(',', $b['value']),
+                    'subcats' => 'Y',
+                );
+                list($prods,) = fn_get_products($_params);
+                if (!empty($prods)) {
+                    foreach ($prods as $prod) {
+                        $result[] = $prod['product_id'];
+                    }
+                }
+            }
+        }
+    }
+
+    return $result;
+}
+
 function fn_remove_condition(&$condition, $condition_name)
 {
     if (!empty($condition['conditions'])) {
@@ -680,18 +721,32 @@ function fn_process_php_errors($errno, $errstr, $errfile, $errline, $errcontext)
 function fn_get_discounted_products($params, $items_per_page = 0)
 {
     list($products, $search) = fn_get_products($params);
-    fn_gather_additional_products_data($products, array(
-        'get_icon' => false,
-        'get_detailed' => false,
-        'check_detailed' => true,
-        'get_additional' => false,
-        'check_additional' => true,
-        'get_options' => true,
-        'get_discounts' => true,
-        'get_features' => false,
-        'get_title_features' => true,
-        'allow_duplication' => true
-    ));
+    if (Registry::get('settings.General.catalog_image_afterload') == 'Y') {
+        fn_gather_additional_products_data($products, array(
+            'get_icon' => false,
+            'get_detailed' => false,
+            'check_detailed' => true,
+            'get_additional' => false,
+            'check_additional' => true,
+            'get_options' => true,
+            'get_discounts' => true,
+            'get_features' => false,
+            'get_title_features' => true,
+            'allow_duplication' => true,
+        ));
+    } else {
+        fn_gather_additional_products_data($products, array(
+            'get_icon' => false,
+            'get_detailed' => true,
+            'get_additional' => false,
+            'check_additional' => true,
+            'get_options' => true,
+            'get_discounts' => true,
+            'get_features' => false,
+            'get_title_features' => true,
+            'allow_duplication' => true,
+        ));
+    }
     $_result = $result = array();
     foreach ($products as $i => $product) {
         if ($product['base_price'] > $product['price'] || $product['list_price'] > $product['price']) {
@@ -1834,7 +1889,8 @@ function fn_insert_before_key($originalArray, $originalKey, $insertKey, $insertV
 function fn_get_player_data($player_id)
 {
     $field_list = "?:players.*";
-
+    $join = '';
+    
     fn_set_hook('get_player_data', $player_id, $field_list, $join, $condition);
     
     $player_data = db_get_row("SELECT $field_list FROM ?:players LEFT JOIN ?:players_gear ON ?:players.player_id = ?:players_gear.player_id ?p WHERE ?:players.player_id = ?i  ?p", $join, $player_id, $condition);

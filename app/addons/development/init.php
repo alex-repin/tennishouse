@@ -111,5 +111,6 @@ fn_register_hooks(
     'set_point_payment',
     'create_order',
     'login_user_post',
-    'get_user_info_before'
+    'get_user_info_before',
+    'get_promotions'
 );

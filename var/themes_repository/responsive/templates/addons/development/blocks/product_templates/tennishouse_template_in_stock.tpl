@@ -119,9 +119,11 @@
                                             {$smarty.capture.$qty_discounts nofilter}
                                         </div>
                                     {/if}
-                                    {if $product.product_type == 'C' && !$product.price|floatval}
+                                    {if $product.product_type == 'C'}
                                         <span class="cm-reload-{$obj_prefix}{$product.product_id} ty-pc-zero-price-note" id="pc_note_{$obj_prefix}{$product.product_id}">
-                                            {__("pc_zero_price_note")}
+                                            {if !$product.price|floatval}
+                                                {__("pc_zero_price_note")}
+                                            {/if}
                                         <!--pc_note_{$obj_prefix}{$product.product_id}--></span>
                                     {/if}
                                 </div>
