@@ -662,6 +662,16 @@
         <item>
             ALTER TABLE `cscart_promotions` ADD `show_on_site` CHAR(1) NOT NULL DEFAULT 'N' AFTER `users_conditions_hash`;
         </item>
+        <item>
+            REPLACE INTO `cscart_seo_names` (`name`, `object_id`, `company_id`, `type`, `dispatch`, `path`, `lang_code`) VALUES ('promotions', '0', '0', 'x', '', '', 'ru');
+        </item>
+        <item>
+            REPLACE INTO `cscart_seo_names` (`name`, `object_id`, `company_id`, `type`, `dispatch`, `path`, `lang_code`) VALUES ('players', '0', '0', 'h', '', '', 'ru');
+        </item>
+        <item>
+            ALTER TABLE `cscart_promotion_descriptions` ADD `meta_description` VARCHAR(255) NOT NULL ,
+            ADD `page_title` VARCHAR(255) NOT NULL;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>

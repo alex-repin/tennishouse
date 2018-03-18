@@ -503,6 +503,13 @@ function fn_development_validate_sef_object($path, $seo, $vars, &$result, $objec
             $result = false;
         }
     }
+    if ($seo['type'] == 'm') {
+        if ($path == '/promotions' && !empty($seo['object_id'])) {
+            $result = true;
+        } else {
+            $result = false;
+        }
+    }
 }
 
 function fn_development_clone_product($from_product_id, $to_product_id)

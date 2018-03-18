@@ -75,6 +75,8 @@ if ($mode == 'view') {
         }
         Registry::get('view')->assign('products', $products);
     }
+    Registry::get('view')->assign('page_title', $promotion_data['page_title']);
+    Registry::get('view')->assign('meta_description', $promotion_data['meta_description']);
 //     fn_print_die($promotion_data);
     Registry::get('view')->assign('promotion_data', $promotion_data);
 }

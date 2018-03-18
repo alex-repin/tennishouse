@@ -321,8 +321,34 @@ function fn_promotion_rebuild_mixed_data(items, value, id, element_id, condition
 {/hook}
 </div>
 
+{include file="common/subheader.tpl" title=__("seo_meta_data") target="#acc_seo_meta"}
+<div id="acc_seo_meta" class="collapse in">
+    <div class="control-group">
+        <label class="control-label" for="elm_promotion_page_title">{__("page_title")}:</label>
+        <div class="controls">
+            <input type="text" name="promotion_data[page_title]" id="elm_promotion_page_title" size="55" value="{$promotion_data.page_title}" class="input-large" />
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="elm_promotion_meta_descr">{__("meta_description")}:</label>
+        <div class="controls">
+            <textarea name="promotion_data[meta_description]" id="elm_promotion_meta_descr" cols="55" rows="2" class="input-large">{$promotion_data.meta_description}</textarea>
+        </div>
+    </div>
+</div>
+
 {capture name="buttons"}
 
+{if $id}
+    {$view_uri = "promotions.view?promotion_id=`$id`"|fn_get_preview_url:$promotion_data:$auth.user_id}
+
+    {capture name="tools_list"}
+        <li>{btn type="list" target="_blank" text=__("preview") href=$view_uri}</li>
+    {/capture}
+    {dropdown content=$smarty.capture.tools_list}
+{/if}
+    
 {if "ULTIMATE"|fn_allowed_for && !$allow_save}
     {assign var="hide_first_button" value=true}
     {assign var="hide_second_button" value=true}

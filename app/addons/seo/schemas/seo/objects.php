@@ -222,7 +222,7 @@ $schema = array(
         'path_function' => function($object_id) {
             return '00';
         },
-        'parent_type' => 'h',
+        'parent_type' => 'x',
         
         'indexed_pages' => array(
             'promotions.view' => array(

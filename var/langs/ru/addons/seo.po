@@ -133,6 +133,10 @@ msgctxt "SettingsOptions::seo::seo_players_type"
 msgid "Players SEO URL format"
 msgstr "Формат SEO URL игроков"
 
+msgctxt "SettingsOptions::seo::seo_promotions_type"
+msgid "Promotions SEO URL format"
+msgstr "Формат SEO URL акций"
+
 msgctxt "SettingsOptions::seo::seo_language"
 msgid "Show language in the URL"
 msgstr "Отображать язык в URL"
@@ -188,6 +192,10 @@ msgstr "/page/"
 msgctxt "SettingsVariants::seo::seo_players_type::players_nohtml"
 msgid "/players/player-name"
 msgstr "/players/player-name"
+
+msgctxt "SettingsVariants::seo::seo_promotions_type::promotions_nohtml"
+msgid "/promotions/promotion-name"
+msgstr "/promotions/promotion-name"
 
 msgctxt "SettingsVariants::seo::seo_other_type::directory"
 msgid "/item"

@@ -107,9 +107,8 @@
         </sections>
     </settings>
     <queries>
-        <item>DROP TABLE IF EXISTS ?:seo_names;</item>
         <item>
-            CREATE TABLE `?:seo_names` (
+            CREATE TABLE IF NOT EXISTS `?:seo_names` (
                 `name` varchar(250) NOT NULL default '',
                 `object_id` mediumint(8) unsigned NOT NULL default '0',
                 `company_id` int(11) unsigned NOT NULL default '0',
@@ -123,9 +122,8 @@
                 KEY (dispatch)
             ) Engine=MyISAM DEFAULT CHARSET UTF8;
         </item>
-        <item>DROP TABLE IF EXISTS ?:seo_redirects;</item>
         <item>
-            CREATE TABLE `?:seo_redirects` (
+            CREATE TABLE IF NOT EXISTS `?:seo_redirects` (
                 `redirect_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
                 `src` varchar(255) not null default '',
                 `dest` varchar(255) not null default '',
@@ -140,13 +138,5 @@
 
         <item editions="MULTIVENDOR,ULTIMATE">REPLACE INTO ?:privileges (privilege, is_default, section_id) VALUES ('manage_seo_rules', 'Y', 'addons');</item>
         <item editions="MULTIVENDOR,ULTIMATE">REPLACE INTO  ?:privileges (privilege, is_default, section_id) VALUES ('view_seo_rules', 'Y', 'addons');</item>
-        <item for="uninstall" editions="MULTIVENDOR,ULTIMATE">DELETE FROM ?:privileges WHERE privilege LIKE 'view_seo_rules' OR privilege LIKE 'manage_seo_rules'</item>
-        <item for="uninstall">DROP TABLE IF EXISTS ?:seo_names;</item>
-        <item for="uninstall">DROP TABLE IF EXISTS ?:seo_redirects;</item>
-        <item for="install" type="file">database/demo.sql</item>
-        <item for="install" type="file" editions="ULTIMATE">database/demo_ultimate.sql</item>
     </queries>
-    <functions>
-        <item for="install">fn_seo_install</item>
-    </functions>
 </addon>
