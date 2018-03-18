@@ -34,8 +34,12 @@ function fn_get_promotion_products($promotion)
                 if (!empty($c['conditions'])) {
                     $result = fn_array_merge($result, fn_get_promotion_products($c['conditions']));
                 } elseif ($c['condition'] == 'products' && $c['operator'] == 'in' && !empty($c['value'])) {
-                    foreach ($c['value'] as $v) {
-                        $result[] = $v['product_id'];
+                    if (is_array($c['value'])) {
+                        foreach ($c['value'] as $v) {
+                            $result[] = $v['product_id'];
+                        }
+                    } else {
+                        $result = array_merge($result, explode(',', $c['value']));
                     }
                 }
             }
