@@ -45,7 +45,6 @@
                 {include file="views/products/components/product_icon.tpl" product=$product show_gallery=$show_gallery gallery_buttons="addition_item_info_`$obj_id`"}
             {/if}
         </div>
-
         <div class="ty-grid-list__brand-image">
             {if $microdata}
                 {include file="addons/development/common/brand_logo.tpl"  brand=$product.brand brand_variant_id=$product.brand.variant_id itemprop="brand"}
@@ -148,6 +147,10 @@
     
     {assign var="form_close" value="form_close_`$obj_id`"}
     {$smarty.capture.$form_close nofilter}
+    
+    {if $mode == 'R' && $smarty.const.PROMOTION_TAG|in_array:$product.tags}
+        <div class="ty-grid-list__image-promo-tag"></div>
+    {/if}
 </div>
 </a>
 {if $category_grid}

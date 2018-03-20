@@ -41,10 +41,9 @@ if ($mode == 'view') {
     fn_add_breadcrumb(__('promotions'), 'promotions.list');
     fn_add_breadcrumb($promotion_data['name']);
     
-    $product_ids = fn_get_promotion_products($promotion_data);
-    if (!empty($product_ids)) {
+    if (!empty($promotion_data['tagged_products'])) {
         $_params = array(
-            'item_ids' => implode(',', $product_ids)
+            'item_ids' => implode(',', $promotion_data['tagged_products'])
         );
         list($products,) = fn_get_products($_params);
         if (Registry::get('settings.General.catalog_image_afterload') == 'Y') {

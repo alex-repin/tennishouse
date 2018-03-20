@@ -6,8 +6,8 @@
  * -------------------------- */
 @font-face {
   font-family: 'FontAwesome';
-  src: url('../../../../../../../../design/themes/responsive/css/addons/development/fonts/font-awesome/fontawesome-webfont.eot?v=4.7.0');
-  src: url('../../../../../../../../design/themes/responsive/css/addons/development/fonts/font-awesome/fontawesome-webfont.eot?#iefix&v=4.7.0') format('embedded-opentype'), url('../../../../../../../../design/themes/responsive/css/addons/development/fonts/font-awesome/fontawesome-webfont.woff2?v=4.7.0') format('woff2'), url('../../../../../../../../design/themes/responsive/css/addons/development/fonts/font-awesome/fontawesome-webfont.woff?v=4.7.0') format('woff'), url('../../../../../../../../design/themes/responsive/css/addons/development/fonts/font-awesome/fontawesome-webfont.ttf?v=4.7.0') format('truetype'), url('../../../../../../../../design/themes/responsive/css/addons/development/fonts/font-awesome/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular') format('svg');
+    src: url("../css/addons/development/fonts/font-awesome/fontawesome-webfont?") format('eot');
+    src: url("../css/addons/development/fonts/font-awesome/fontawesome-webfont?#iefix") format("embedded-opentype"),url("../css/addons/development/fonts/font-awesome/fontawesome-webfont.woff") format("woff"),url("../css/addons/development/fonts/font-awesome/fontawesome-webfont.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }

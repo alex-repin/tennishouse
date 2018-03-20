@@ -82,6 +82,10 @@ if ($mode == 'update') {
             'href' => "promotions.update?promotion_id=$_REQUEST[promotion_id]&selected_section=bonuses",
             'js' => true
         ),
+        'tagged_products' => array (
+            'title' => __('tagged_products'),
+            'js' => true
+        ),
         'addons' => array (
             'title' => __('addons'),
             'js' => true
@@ -126,6 +130,10 @@ if ($mode == 'update') {
         'bonuses' => array (
             'title' => __('bonuses'),
             'href' => "promotions.add?selected_section=bonuses",
+            'js' => true
+        ),
+        'tagged_products' => array (
+            'title' => __('tagged_products'),
             'js' => true
         ),
         'addons' => array (

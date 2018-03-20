@@ -1554,6 +1554,8 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
         $join .= db_quote(" LEFT JOIN ?:players_gear AS p_gear ON p_gear.product_id = products.product_id");
         $condition .= db_quote(' AND p_gear.player_id = ?i', $params['player_id']);
     }
+    $join .= db_quote(" LEFT JOIN ?:product_tags ON ?:product_tags.product_id = products.product_id");
+    $fields[] = 'GROUP_CONCAT(DISTINCT(?:product_tags.tag)) AS tags';
 }
 
 function fn_development_get_products_pre(&$params, $items_per_page, $lang_code)
@@ -1926,6 +1928,12 @@ function fn_development_update_category_post($category_data, $category_id, $lang
     }
 }
 
+function fn_development_get_product_data($product_id, &$field_list, &$join, $auth, $lang_code, $condition)
+{
+    $join .= db_quote(" LEFT JOIN ?:product_tags ON ?:product_tags.product_id = ?:products.product_id");
+    $field_list .= ", GROUP_CONCAT(DISTINCT CONCAT_WS('_', ?:product_tags.promotion_id, ?:product_tags.tag) SEPARATOR ',') AS tags";
+}
+
 function fn_development_get_product_data_post(&$product_data, $auth, $preview, $lang_code)
 {
     if (AREA == 'A') {
@@ -1953,6 +1961,30 @@ function fn_development_get_product_data_post(&$product_data, $auth, $preview, $
         $product_data['offer_help'] = true;
     }
     $product_data['category_main_id'] = $types_ids[$product_data['main_category']];
+    if (!empty($product_data['tags'])) {
+        $tags = explode(',', $product_data['tags']);
+        $product_data['tags'] = array();
+        $promo_ids = array();
+        foreach ($tags as $tag) {
+            $pair = explode('_', $tag);
+            $product_data['tags'][$pair[0]] = $pair[1];
+            if ($pair[1] == PROMOTION_TAG) {
+                $promo_ids[] = $pair[0];
+            }
+        }
+        if (!empty($promo_ids)) {
+            $params = array (
+                'active' => true,
+                'get_hidden' => false,
+                'show_on_site' => 'Y',
+                'plain' => false,
+                'promotion_id' => $promo_ids
+            );
+
+            list($product_data['promotions']) = fn_get_promotions($params);
+        }
+    }
+
 }
 
 function fn_development_get_products_post(&$products, &$params, $lang_code)
@@ -1967,6 +1999,7 @@ function fn_development_get_products_post(&$products, &$params, $lang_code)
         $now = getdate(TIME);
         $time_limit = mktime($now['hours'], $now['minutes'], $now['seconds'], $now['mon'] - $new_period, $now['mday'], $now['year']);
         foreach ($products as $i => $product) {
+            $products[$i]['tags'] = !empty($product['tags']) ? explode(',', $product['tags']) : array();
             $products[$i]['id_path'] = $id_paths[$product['main_category']];
             foreach ($product['category_ids'] as $j => $cat_id) {
                 $products[$i]['all_path'][$cat_id] = $id_paths[$cat_id];

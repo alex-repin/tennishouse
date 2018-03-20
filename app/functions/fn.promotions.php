@@ -72,6 +72,21 @@ function fn_update_promotion($data, $promotion_id, $lang_code = DESCR_SL)
         }
     }
 
+    $data['tagged_products'] = (empty($data['tagged_products'])) ? array() : explode(',', $data['tagged_products']);
+    db_query("DELETE FROM ?:product_tags WHERE promotion_id = ?i", $promotion_id);
+    
+    if (!empty($data['tagged_products'])) {
+        $_data = array();
+        foreach ($data['tagged_products'] as $pr_id) {
+            $_data[] = array(
+                'promotion_id' => $promotion_id,
+                'product_id' => $pr_id,
+                'tag' => !empty($data['promotion_tag']) ? $data['promotion_tag'] : PROMOTION_TAG
+            );
+        }
+        db_query("REPLACE INTO ?:product_tags ?m", $_data);
+    }
+    
     fn_set_hook('update_promotion_post', $data, $promotion_id);
     
     return $promotion_id;
@@ -1612,16 +1627,17 @@ function fn_get_promotion_data($promotion_id, $lang_code = DESCR_SL)
         $extra_condition = Database::quote(' AND p.zone = ?s', 'catalog');
     }
 
-    $field_list = "p.*, d.*";
+    $field_list = "p.*, d.*, GROUP_CONCAT(t.product_id SEPARATOR ',') AS tagged_products";
     $join = '';
 
     fn_set_hook('get_promotion_data', $promotion_id, $field_list, $join, $extra_condition);
     
-    $promotion_data = db_get_row("SELECT $field_list FROM ?:promotions as p LEFT JOIN ?:promotion_descriptions as d ON p.promotion_id = d.promotion_id AND d.lang_code = ?s ?p WHERE p.promotion_id = ?i ?p", $lang_code, $join, $promotion_id, $extra_condition);
+    $promotion_data = db_get_row("SELECT $field_list FROM ?:promotions as p LEFT JOIN ?:promotion_descriptions as d ON p.promotion_id = d.promotion_id AND d.lang_code = ?s LEFT JOIN ?:product_tags AS t ON t.promotion_id = p.promotion_id ?p WHERE p.promotion_id = ?i ?p GROUP BY p.promotion_id", $lang_code, $join, $promotion_id, $extra_condition);
 
     if (!empty($promotion_data)) {
         $promotion_data['conditions'] = !empty($promotion_data['conditions']) ? unserialize($promotion_data['conditions']) : array();
         $promotion_data['bonuses'] = !empty($promotion_data['bonuses']) ? unserialize($promotion_data['bonuses']) : array();
+        $promotion_data['tagged_products'] = !empty($promotion_data['tagged_products']) ? explode(',', $promotion_data['tagged_products']) : array();
         $promotion_data['main_pair'] = fn_get_image_pairs($promotion_id, 'promotion', 'M', false, true);
 
         if (!empty($promotion_data['conditions']['conditions'])) {

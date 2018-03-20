@@ -138,21 +138,13 @@ if ($mode == 'view') {
             }
         }
     }
+    $_tabs = Registry::get('navigation.tabs');
     if (!empty($product['size_chart'])) {
-        Registry::get('view')->assign('product', $product);
         if ($brand_size_chart) {
-            $_tabs = Registry::get('navigation.tabs');
             $_tabs['size_chart']['title'] .= ' ' . $title;
-            Registry::set('navigation.tabs', $_tabs);
         }
-    } else {
-        $tabs = Registry::get('view')->gettemplatevars('tabs');
-        $_tabs = Registry::get('navigation.tabs');
-        unset($tabs[SIZE_CHART_TAB_ID]);
-        unset($_tabs['size_chart']);
-        Registry::set('navigation.tabs', $_tabs);
-        Registry::get('view')->assign('tabs', $tabs);
     }
+    Registry::set('navigation.tabs', $_tabs);
     if (!empty($product['header_features'])) {
         foreach ($product['header_features'] as $i => $f_data) {
             if (!empty($f_data['variant_id'])) {

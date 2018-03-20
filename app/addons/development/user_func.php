@@ -23,51 +23,6 @@ use Tygh\Settings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-function fn_get_promotion_products($promotion)
-{
-    $result = array();
-    if (!empty($promotion['conditions'])) {
-        if (!empty($promotion['conditions']['conditions'])) {
-            $result = fn_array_merge($result, fn_get_promotion_products($promotion['conditions']));
-        } elseif (is_array($promotion['conditions'])) {
-            foreach ($promotion['conditions'] as $c) {
-                if (!empty($c['conditions'])) {
-                    $result = fn_array_merge($result, fn_get_promotion_products($c['conditions']));
-                } elseif ($c['condition'] == 'products' && $c['operator'] == 'in' && !empty($c['value'])) {
-                    if (is_array($c['value'])) {
-                        foreach ($c['value'] as $v) {
-                            $result[] = $v['product_id'];
-                        }
-                    } else {
-                        $result = array_merge($result, explode(',', $c['value']));
-                    }
-                }
-            }
-        }
-    }
-    if (!empty($promotion['bonuses'])) {
-        foreach ($promotion['bonuses'] as $b) {
-            if ($b['bonus'] == 'discount_on_products' && !empty($b['value'])) {
-                $result = array_merge($result, explode(',', $b['value']));
-            }
-            if ($b['bonus'] == 'discount_on_categories' && !empty($b['value'])) {
-                $_params = array(
-                    'cid' => explode(',', $b['value']),
-                    'subcats' => 'Y',
-                );
-                list($prods,) = fn_get_products($_params);
-                if (!empty($prods)) {
-                    foreach ($prods as $prod) {
-                        $result[] = $prod['product_id'];
-                    }
-                }
-            }
-        }
-    }
-
-    return $result;
-}
-
 function fn_remove_condition(&$condition, $condition_name)
 {
     if (!empty($condition['conditions'])) {

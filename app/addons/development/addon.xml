@@ -672,6 +672,28 @@
             ALTER TABLE `cscart_promotion_descriptions` ADD `meta_description` VARCHAR(255) NOT NULL ,
             ADD `page_title` VARCHAR(255) NOT NULL;
         </item>
+        <item>
+            CREATE TABLE IF NOT EXISTS `cscart_product_tags` (
+                `product_id` mediumint(8) UNSIGNED NOT NULL,
+                `promotion_id` mediumint(8) UNSIGNED NOT NULL,
+                `tag` char(1) NOT NULL,
+                UNIQUE KEY `product_id` (`product_id`,`promotion_id`),
+                KEY `product_id_2` (`product_id`),
+                KEY `promotion_id` (`promotion_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </item>
+        <item>
+            REPLACE INTO `cscart_product_tabs` (`tab_id`, `tab_type`, `block_id`, `template`, `addon`, `position`, `status`, `is_primary`, `product_ids`, `company_id`, `show_in_popup`) VALUES 
+            (9, 'T', 0, 'addons/development/blocks/product_tabs/technologies.tpl', 'development', 22, 'A', 'Y', '', 1, 'N'),
+            (10, 'T', 0, 'addons/development/blocks/product_tabs/size_chart.tpl', 'development', 21, 'A', 'Y', '', 1, 'N'),
+            (11, 'T', 0, 'addons/development/blocks/product_tabs/promotion.tpl', 'development', 23, 'A', 'Y', '', 1, 'N');
+        </item>
+        <item>
+            REPLACE INTO `cscart_product_tabs_descriptions` (`tab_id`, `lang_code`, `name`) VALUES
+            (9, 'ru', 'Технологии'),
+            (10, 'ru', 'Таблица размеров'),
+            (11, 'ru', 'Акция');
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -1324,5 +1346,8 @@
         <item lang="ru" id="lkey">LKEY</item>
         <item lang="ru" id="apply_qty_discounts">Применить оптовые скидки</item>
         <item lang="ru" id="show_on_site">Показывать в разделе "Акции"</item>
+        <item lang="ru" id="tagged_products">Отметить товары</item>
+        <item lang="ru" id="promotion_products">Товары, участвующие в акции</item>
+        <item lang="ru" id="read_about_promo">Подробнее об акциии</item>
     </language_variables>
 </addon>

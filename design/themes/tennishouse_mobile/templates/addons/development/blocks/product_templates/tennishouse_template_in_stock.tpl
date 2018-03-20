@@ -34,6 +34,9 @@
                                     <div class="ty-new-item-tag"></div>
                                 {/if}
                             </div>
+                            {if $smarty.const.PROMOTION_TAG|in_array:$product.tags}
+                                <div class="ty-grid-list__image-promo-tag-detailed"></div>
+                            {/if}
                             
                             {include file="views/products/components/product_images.tpl" product=$product show_detailed_link="Y" image_width=$settings.Thumbnails.product_details_thumbnail_width image_height=$settings.Thumbnails.product_details_thumbnail_height}
                         <!--product_images_{$product.product_id}_update--></div>

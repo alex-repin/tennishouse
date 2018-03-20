@@ -1,3 +1,31 @@
+@font-face {
+    font-family: "Play";
+    src: url("../css/addons/development/fonts/PlayRegular/PlayRegular.eot?") format('eot');
+    src: url("../css/addons/development/fonts/PlayRegular/PlayRegular.eot?#iefix") format("embedded-opentype"),url("../css/addons/development/fonts/PlayRegular/PlayRegular.woff") format("woff"),url("../css/addons/development/fonts/PlayRegular/PlayRegular.ttf") format("truetype");
+    font-style: normal;
+    font-weight: normal;
+}
+@font-face {
+    font-family: 'THFLite';
+    font-weight: 400;
+    font-style: normal;
+    src: url("../css/addons/development/fonts/THFLite/THFLite.eot?") format('eot');
+    src: url("../css/addons/development/fonts/THFLite/THFLite.eot?#iefix") format("embedded-opentype"),url("../css/addons/development/fonts/THFLite/THFLite.woff") format("woff"),url("../css/addons/development/fonts/THFLite/THFLite.ttf") format("truetype");
+}
+@font-face {
+    font-family: 'THF400';
+    font-weight: 400;
+    font-style: normal;
+    src: url("../css/addons/development/fonts/THF400/THF400.eot?") format('eot');
+    src: url("../css/addons/development/fonts/THF400/THF400.eot?#iefix") format("embedded-opentype"),url("../css/addons/development/fonts/THF400/THF400.woff") format("woff"),url("../css/addons/development/fonts/THF400/THF400.ttf") format("truetype");
+}
+@font-face {
+    font-family: 'THF700';
+    font-weight: 400;
+    font-style: normal;
+    src: url("../css/addons/development/fonts/THF700/THF700.eot?") format('eot');
+    src: url("../css/addons/development/fonts/THF700/THF700.eot?#iefix") format("embedded-opentype"),url("../css/addons/development/fonts/THF700/THF700.woff") format("woff"),url("../css/addons/development/fonts/THF700/THF700.ttf") format("truetype");
+}
 .checkbox, input[type="checkbox"] {
   vertical-align: top;
   margin: 0 3px 0 0;
@@ -90,15 +118,6 @@
 }
 .radio:checked + label:after {
   opacity: 1;
-}
-@font-face {
-    font-family: "Play";
-    src: url("../../../../../../../../design/themes/responsive/css/addons/development/fonts/PlayRegular/PlayRegular.eot");
-    src: url("../../../../../../../../design/themes/responsive/css/addons/development/fonts/PlayRegular/PlayRegular.eot?#iefix")format("embedded-opentype"),
-    url("../../../../../../../../design/themes/responsive/css/addons/development/fonts/PlayRegular/PlayRegular.woff") format("woff"),
-    url("../../../../../../../../design/themes/responsive/css/addons/development/fonts/PlayRegular/PlayRegular.ttf") format("truetype");
-    font-style: normal;
-    font-weight: normal;
 }
 .ty-tygh {
 /*     background: url("../../../media/images/addons/development/bg_clean.jpg") repeat-y scroll center top; */
@@ -3515,6 +3534,33 @@ input.ty-search-block__input:focus {
     bottom: 0;
     z-index: 100;
 }
+.ty-grid-list__image-promo-tag {
+    background-color: transparent;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image:  url("../../../media/images/addons/development/promo_tag700.png");
+    height: 60px;
+    width: 60px;
+    text-align: right;
+    float: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.ty-grid-list__image-promo-tag-detailed {
+    background-color: transparent;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image:  url("../../../media/images/addons/development/promo_tag700.png");
+    height: 100px;
+    width: 100px;
+    text-align: right;
+    float: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
 .grid-list__rating {
     display: block;
     text-align: center;
@@ -5855,5 +5901,26 @@ input.ty-rf_input-answer{
     font-size: 18px;
 }
 .ty-promotion-image-title {
-    margin: 0 -11px 50px -11px;
+    margin: 0 0 50px 0;
+    text-align: center;
+}
+.ty-promotion-products-title {
+    font-size: 30px;
+    margin: 10px 0 30px;
+}
+.ty-promotion-title {
+    font-size: 30px;
+    margin: 0 0 30px;
+}
+a.ty-promo-descr-link{
+    color: @links;
+}
+#promotion.ty-tabs__item {
+    background-color: lighten(#734fa0, 10%);
+    a {
+        color: #fff;
+    }
+}
+#promotion.ty-tabs__item.active {
+    background-color: #734fa0;
 }

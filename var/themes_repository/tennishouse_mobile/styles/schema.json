@@ -88,7 +88,11 @@
             "Times New Roman,Times,serif": "Times New Roman",
             "Trebuchet MS,Helvetica,sans-serif": "Trebuchet MS",
             "Verdana,Geneva,sans-serif": "Verdana",
-            "Gill Sans,Geneva,sans-serif": "Gill Sans"
+            "Gill Sans,Geneva,sans-serif": "Gill Sans",
+            "THFLite": "THFLite",
+            "THF400": "THF400",
+            "THF700": "THF700",
+            "OpenSans,Helvetica,Arial,sans-serif": "TennisHouse Base"
         },
         "fields": {
             "body_font": {

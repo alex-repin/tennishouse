@@ -159,6 +159,10 @@
     
     {assign var="form_close" value="form_close_`$obj_id`"}
     {$smarty.capture.$form_close nofilter}
+    
+    {if $mode == 'R' && $smarty.const.PROMOTION_TAG|in_array:$product.tags}
+        <div class="ty-grid-list__image-promo-tag"></div>
+    {/if}
 </div>
 </a>
 </div>

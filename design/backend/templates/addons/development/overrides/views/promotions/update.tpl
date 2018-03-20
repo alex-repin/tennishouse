@@ -317,25 +317,28 @@ function fn_promotion_rebuild_mixed_data(items, value, id, element_id, condition
 {include file="common/tabsbox.tpl" content=$smarty.capture.tabsbox active_tab=$smarty.request.selected_section track=true}
 
 <div id="content_addons">
-{hook name="promotions:detailed_content"}
-{/hook}
+    {hook name="promotions:detailed_content"}
+    {/hook}
+    {include file="common/subheader.tpl" title=__("seo_meta_data") target="#acc_seo_meta"}
+    <div id="acc_seo_meta" class="collapse in">
+        <div class="control-group">
+            <label class="control-label" for="elm_promotion_page_title">{__("page_title")}:</label>
+            <div class="controls">
+                <input type="text" name="promotion_data[page_title]" id="elm_promotion_page_title" size="55" value="{$promotion_data.page_title}" class="input-large" />
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="elm_promotion_meta_descr">{__("meta_description")}:</label>
+            <div class="controls">
+                <textarea name="promotion_data[meta_description]" id="elm_promotion_meta_descr" cols="55" rows="2" class="input-large">{$promotion_data.meta_description}</textarea>
+            </div>
+        </div>
+    </div>
 </div>
 
-{include file="common/subheader.tpl" title=__("seo_meta_data") target="#acc_seo_meta"}
-<div id="acc_seo_meta" class="collapse in">
-    <div class="control-group">
-        <label class="control-label" for="elm_promotion_page_title">{__("page_title")}:</label>
-        <div class="controls">
-            <input type="text" name="promotion_data[page_title]" id="elm_promotion_page_title" size="55" value="{$promotion_data.page_title}" class="input-large" />
-        </div>
-    </div>
-
-    <div class="control-group">
-        <label class="control-label" for="elm_promotion_meta_descr">{__("meta_description")}:</label>
-        <div class="controls">
-            <textarea name="promotion_data[meta_description]" id="elm_promotion_meta_descr" cols="55" rows="2" class="input-large">{$promotion_data.meta_description}</textarea>
-        </div>
-    </div>
+<div id="content_tagged_products">
+    {include file="pickers/products/picker.tpl" data_id="tagged_products" input_name="promotion_data[tagged_products]" no_item_text=__("text_no_items_defined", ["[items]" => __("products")]) type="links" placement="right" item_ids=$promotion_data.tagged_products}
 </div>
 
 {capture name="buttons"}

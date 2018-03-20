@@ -7,6 +7,7 @@
     {/hook}
 </div>
 {if $products}
+<div class="ty-promotion-products-title">{__("promotion_products")}</div>
 <div class="ty-promotion-products">
     {include file="blocks/list_templates/grid_list.tpl"
     products=$products
@@ -25,11 +26,12 @@
     show_list_discount=true
     show_add_to_cart=false
     but_role="action"
-    show_discount_label=true}
+    show_discount_label=true
+    category_grid=true}
 </div>
 {/if}
 
-{capture name="mainbox_title"}{if !$image_title_text}<span {live_edit name="page:page:{$page.page_id}"}>{$promotion_data.name}</span>{/if}{/capture}
+{capture name="mainbox_title"}{if !$image_title_text}<span class="ty-promotion-title" {live_edit name="page:page:{$page.page_id}"}>{$promotion_data.name}</span>{/if}{/capture}
     
 {hook name="pages:page_extra"}
 {/hook}

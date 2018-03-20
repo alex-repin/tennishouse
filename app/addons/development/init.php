@@ -51,6 +51,7 @@ fn_register_hooks(
     'update_product_filter',
     'get_product_features_list_post',
     'update_product_post',
+    'get_product_data',
     'get_product_data_post',
     'delete_product_post',
     'get_categories_post',
