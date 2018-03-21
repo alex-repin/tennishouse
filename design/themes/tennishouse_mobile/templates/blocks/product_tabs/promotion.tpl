@@ -1,7 +1,7 @@
 {** block-description:promotion **}
 
-{if $product.promotions}
-    {foreach from=$product.promotions item="promo"}
+{if $product.available_promotions}
+    {foreach from=$product.available_promotions item="promo"}
         <div>
             <div class="ty-promotion-image-title">{include file="common/image.tpl" obj_id=$obj_id_prefix images=$promo.main_pair}</div>
             <div class="ty-wysiwyg-content">

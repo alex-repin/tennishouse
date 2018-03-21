@@ -1981,7 +1981,7 @@ function fn_development_get_product_data_post(&$product_data, $auth, $preview, $
                 'promotion_id' => $promo_ids
             );
 
-            list($product_data['promotions']) = fn_get_promotions($params);
+            list($product_data['available_promotions']) = fn_get_promotions($params);
         }
     }
 
