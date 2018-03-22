@@ -109,7 +109,7 @@ class Database
     public static function getArray($query)
     {
         $_query = self::process($query, array_slice(func_get_args(), 1), true);
-        $hash = Memcache::instance()->call('validateSql',  $_query );
+        $hash = Memcache::instance()->call('validateSql',  'getArray' . $_query );
         $res = Memcache::instance()->call('get', $hash, 'D');
         if ( !empty($hash) && $res !== false) {
             $result = $res;
@@ -148,7 +148,7 @@ class Database
         array_unshift($args, $query);
 
         $_query = self::process($query, array_slice($args, 1), true);
-        $hash = Memcache::instance()->call('validateSql', $_query);
+        $hash = Memcache::instance()->call('validateSql', 'getHash' . $_query);
         $res = Memcache::instance()->call('get', $hash, 'D');
         if ( !empty($hash) && $res !== false) {
             $result = $res;
@@ -184,7 +184,7 @@ class Database
     public static function getRow($query)
     {
         $_query = self::process($query, array_slice(func_get_args(), 1), true);
-        $hash = Memcache::instance()->call('validateSql', $_query);
+        $hash = Memcache::instance()->call('validateSql', 'getRow' . $_query);
         $res = Memcache::instance()->call('get', $hash, 'D');
         if ( !empty($hash) && $res !== false) {
             $result = $res;
@@ -218,7 +218,7 @@ class Database
     public static function getField($query)
     {
         $_query = self::process($query, array_slice(func_get_args(), 1), true);
-        $hash = Memcache::instance()->call('validateSql', $_query . 'indexed');
+        $hash = Memcache::instance()->call('validateSql', 'getField' . $_query . 'indexed');
         $res = Memcache::instance()->call('get', $hash, 'D');
         if ( !empty($hash) && $res !== false) {
             $result = $res;
@@ -254,7 +254,7 @@ class Database
         $result = array();
 
         $_query = self::process($query, array_slice(func_get_args(), 1), true);
-        $hash = Memcache::instance()->call('validateSql', $_query . 'indexed');
+        $hash = Memcache::instance()->call('validateSql', 'getColumn' . $_query . 'indexed');
         $res = Memcache::instance()->call('get', $hash, 'D');
         if ( !empty($hash) && $res !== false) {
             $result = $res;
@@ -298,7 +298,7 @@ class Database
         array_unshift($args, $query);
 
         $_query = self::process($query, array_slice($args, 1), true);
-        $hash = Memcache::instance()->call('validateSql', $_query);
+        $hash = Memcache::instance()->call('validateSql', 'getMultiHash' . $_query);
         $res = Memcache::instance()->call('get', $hash, 'D');
         if ( !empty($hash) && $res !== false) {
             $result = $res;
@@ -343,7 +343,7 @@ class Database
         array_unshift($args, $query);
 
         $_query = self::process($query, array_slice($args, 1), true);
-        $hash = Memcache::instance()->call('validateSql', $_query);
+        $hash = Memcache::instance()->call('validateSql', 'getSingleHash' . $_query);
         $res = Memcache::instance()->call('get', $hash, 'D');
         if ( !empty($hash) && $res !== false) {
             $result = $res;

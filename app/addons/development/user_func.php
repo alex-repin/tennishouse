@@ -1569,8 +1569,10 @@ function fn_get_product_global_data($product_data, $data_names, $categories_data
     }
     $result = array();
     if (!empty($product_data['category_ids'])) {
-        if (empty($categories_data)) {
-            $paths = db_get_hash_array("SELECT category_id, id_path FROM ?:categories WHERE category_id IN (?n)", 'category_id', $product_data['category_ids']);
+        if (!empty($product_data['id_paths'])) {
+            $paths = $product_data['id_paths'];
+        } elseif (empty($categories_data)) {
+            $paths = db_get_hash_single_array("SELECT category_id, id_path FROM ?:categories WHERE category_id IN (?n)", array('category_id', 'id_path'), $product_data['category_ids']);
         } else {
             $paths = $categories_data;
         }
@@ -1578,8 +1580,8 @@ function fn_get_product_global_data($product_data, $data_names, $categories_data
         $use_order = array();
         if (!empty($paths)) {
             foreach ($product_data['category_ids'] as $cat_id) {
-                if (!empty($paths[$cat_id]['id_path'])) {
-                    $ids = explode('/', $paths[$cat_id]['id_path']);
+                if (!empty($paths[$cat_id])) {
+                    $ids = explode('/', $paths[$cat_id]);
                     foreach(array_reverse($ids) as $j => $cat_id) {
                         if (empty($use_order[$j]) || !in_array($cat_id, $use_order[$j])) {
                             $use_order[$j][] = $cat_id;
