@@ -108,6 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         'weight' => $amount * $product_weight,
                         'order_id' => $params['order_id'],
                         'shipment_id' => $shipment_id,
+                        'link' => fn_url("products.view&product_id=" . $data_product['product_id'], 'C')
                     );
                     $weight = $weight + ($amount * $product_weight);
                     
@@ -124,18 +125,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $sdek_products[] = $sdek_product;
                 }
 
-                $order_for_sdek['SellerName'] = Registry::get('runtime.company_data.company');
-
                 $data_auth['Number'] = $params['order_id'] . '_' . $shipment_id;
 
                 $data_auth['OrderCount'] = "1";
+                if ($order_info['s_country'] != 'RU') {
+                    $data_auth['ForeignDelivery'] = "1";
+                    if (!empty($order_info['s_currency'])) {
+                        $data_auth['Currency'] = $order_info['s_currency'];
+                    }
+                }
 
                 $xml = '            ' . RusSdek::arraySimpleXml('DeliveryRequest', $data_auth, 'open');
 
+                $order_for_sdek['SellerName'] = Registry::get('settings.Company.company_name');
                 $order_for_sdek['Number'] = $params['order_id'] . '_' . $shipment_id;
                 $order_for_sdek['DateInvoice'] = date("Y-m-d", $shipment['shipment_timestamp']);
                 $order_for_sdek['RecipientEmail'] = $order_info['email'];
-                $order_for_sdek['DeliveryRecipientCost'] = ($order_info['status'] == 'P') ? 0 : $order_for_sdek['DeliveryRecipientCost'];
+                if ($order_info['s_country'] != 'RU') {
+                    $order_for_sdek['ShipperName'] = Registry::get('settings.Company.company_name');
+                    $order_for_sdek['SellerAddress'] = Registry::get('settings.Company.company_address');
+                    $order_for_sdek['ShipperAddress'] = Registry::get('settings.Company.company_address');
+                    if (!empty($order_info['s_currency'])) {
+                        $order_for_sdek['DeliveryRecipientCost'] = ($order_info['status'] == 'P') ? 0 : fn_format_price_by_currency($order_for_sdek['DeliveryRecipientCost'], $order_info['s_currency']);
+//                         $order_for_sdek['RecipientCurrency'] = $order_info['s_currency'];
+//                         $order_for_sdek['ItemsCurrency'] = $order_info['s_currency'];
+                    }
+                } else {
+                    $order_for_sdek['DeliveryRecipientCost'] = ($order_info['status'] == 'P') ? 0 : $order_for_sdek['DeliveryRecipientCost'];
+                }
 
                 $xml .= '            ' . RusSdek::arraySimpleXml('Order', $order_for_sdek, 'open');
 
@@ -158,11 +175,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         'WareKey' => $product['ware_key'],
                         'Cost' => $product['price'],
                         'Payment' => $product['total'],
-                        'Weight' => $product['weight'],
+                        'Weight' => $product['weight'] * 1000,
                         'Amount' => $product['amount'],
                         'Comment' => $product['product'],
                     );
-
+                    
+                    if (!empty($order_info['s_currency'])) {
+                        $product_for_xml['CostEx'] = fn_format_price_by_currency($product['price'], $order_info['s_currency']);
+                        $product_for_xml['PaymentEx'] = fn_format_price_by_currency($product['price'], $order_info['s_currency']);
+                        $product_for_xml['WeightBrutto'] = $product['weight'] * 1000;
+                        $product_for_xml['CommentEx'] = preg_replace('/[а-яА-Я]/ui', '', $product['product']);
+                        $product_for_xml['Link'] = $product['link'];
+                    }
+                    
                     $xml .= '            ' . RusSdek::arraySimpleXml('Item', $product_for_xml);
                 }
 
@@ -175,7 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $xml .= '            ' . '</DeliveryRequest>';
 
                 $response = RusSdek::SdekXmlRequest('http://gw.edostavka.ru/new_orders.php', $xml, $data_auth);
-                
+
                 $result = RusSdek::resultXml($response);
 
                 if (empty($result['error'])) {

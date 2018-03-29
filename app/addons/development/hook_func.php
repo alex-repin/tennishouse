@@ -376,6 +376,9 @@ function fn_development_get_order_info(&$order, $additional_data)
     if (fn_strtolower($order['s_city']) == fn_strtolower(Registry::get('settings.Company.company_city'))) {
         unset($order['delivery_time']);
     }
+    if ($order['s_country'] != 'RU') {
+        $order['s_currency'] = db_get_field("SELECT currency_code FROM ?:countries WHERE code = ?s", $order['s_country']);
+    }
     $order['income'] = $order['total'] - $order['net_total'];
     foreach ($order['products'] as $i => $prod) {
         if (!empty($prod['extra']['warehouses'])) {

@@ -40,6 +40,7 @@ function fn_get_countries($params, $items_per_page = 0, $lang_code = CART_LANGUA
         'a.code_N3',
         'a.status',
         'a.region',
+        'a.currency_code',
         'b.country'
     );
 

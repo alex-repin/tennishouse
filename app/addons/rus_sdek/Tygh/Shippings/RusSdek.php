@@ -165,7 +165,7 @@ class RusSdek
                         $_result = $city['id'];
                     } elseif (count($result['geonames']) > 1) {
                         foreach ($result['geonames'] as $i => $c_data) {
-                            if ($c_data['countryCode'] != $location['country']) {
+                            if ($c_data['countryIso'] != $location['country']) {
                                 unset($result['geonames'][$i]);
                             }
                         }
@@ -259,6 +259,7 @@ class RusSdek
             'request_timeout' => 2,
             'timeout' => 1
         );
+
         $response = Http::post($url, $xml_request, $extra);
 
         return $response;

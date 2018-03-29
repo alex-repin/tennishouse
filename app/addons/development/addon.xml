@@ -694,6 +694,12 @@
             (10, 'ru', 'Таблица размеров'),
             (11, 'ru', 'Акция');
         </item>
+        <item>
+            ALTER TABLE `cscart_currencies` CHANGE `symbol` `symbol` VARCHAR(40) NOT NULL DEFAULT '';
+        </item>
+        <item>
+            ALTER TABLE `cscart_countries` ADD `currency_code` VARCHAR(10) NOT NULL AFTER `status`;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -1204,7 +1210,7 @@
         <item lang="ru" id="product_page_title_A">купить одежду для тенниса в интернет-магазине в Москве – TennisHouse</item>
         <item lang="ru" id="product_page_title_B">купить теннисную сумку в интернет-магазине в Москве – TennisHouse</item>
         <item lang="ru" id="product_page_title_BL">купить мячи для большого тенниса в интернет-магазине в Москве – TennisHouse</item>
-        <item lang="ru" id="product_page_title_ST">купить теннисную струну в интернет-магазине в Москве – TennisHouse</item>
+        <item lang="ru" id="product_page_title_ST">купить в интернет-магазине в Москве – TennisHouse</item>
         <item lang="ru" id="product_page_title_S">купить обувь для тенниса в интернет-магазине в Москве – TennisHouse</item>
         <item lang="ru" id="tennis_player">Теннисист</item>
         <item lang="ru" id="twitter">Twitter</item>
@@ -1349,5 +1355,6 @@
         <item lang="ru" id="tagged_products">Отметить товары</item>
         <item lang="ru" id="promotion_products">Товары, участвующие в акции</item>
         <item lang="ru" id="read_about_promo">Подробнее об акциии</item>
+        <item lang="ru" id="reward_points_label"><![CDATA[Cкидка <b>[amount]</b> на следующий заказ]]></item>
     </language_variables>
 </addon>
