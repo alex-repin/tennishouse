@@ -1,5 +1,6 @@
 {** block-description:description **}
 
+<div class="ty-title-heading ty-product-tabs__description-title">{$product.product}</div>
 {if $product.full_description}
     <div itemprop="description" {live_edit name="product:full_description:{$product.product_id}"} class="ty-product-description" {if $product.prices}style="margin-bottom: 30px;"{/if}>
         {$product.full_description nofilter}

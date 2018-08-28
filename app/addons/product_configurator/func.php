@@ -244,50 +244,50 @@ function fn_product_configurator_gather_additional_product_data_before_options(&
 
 function fn_product_configurator_gather_additional_product_data_post(&$product, $auth, $params)
 {
-    if (AREA == 'C' && !empty($params['get_for_one_product']) && isset($product['product_features'][R_WEIGHT_FEATURE_ID]) && $product['amount'] > 0) {
-        $product['configuration_mode'] = true;
-        $selected_configuration = array();
-        if (!empty($product['cart_id'])) {
-            $product['edit_configuration'] = $product['cart_id'];
-        } elseif (!empty($_REQUEST['cart_id'])) {
-            $product['edit_configuration'] = $_REQUEST['cart_id'];
-        }
-        if (!empty($_REQUEST['cart_id'])) {
-            $cart = & $_SESSION['cart'];
-            if (isset($cart['products'][$product['edit_configuration']]['extra'])) {
-                $product['extra'] = $cart['products'][$product['edit_configuration']]['extra'];
-                $product['selected_amount'] = $cart['products'][$product['edit_configuration']]['amount'];
-            }
-
-            if (!empty($cart['products'][$_REQUEST['cart_id']]['extra']['configuration'])) {
-                $selected_configuration = $cart['products'][$_REQUEST['cart_id']]['extra']['configuration'];
-            }
-        } elseif (!empty($product['selected_configuration'])) {
-            $selected_configuration = $product['selected_configuration'];
-        }
-        if (isset($product['product_features'][R_STRINGS_FEATURE_ID]) && $product['product_features'][R_STRINGS_FEATURE_ID]['value'] == 'N') {
-            list($strining_options, $c_price) = fn_get_stringing_options($product, $selected_configuration, !empty($selected_configuration[STRINGING_GROUP_ID]['product_ids']) && !empty(reset($selected_configuration[STRINGING_GROUP_ID]['product_ids'])) && !in_array('UNSTRUNG', $selected_configuration[STRINGING_GROUP_ID]['product_ids']));
-            if (!empty($c_price)) {
-                $product['price'] += $c_price;
-                $product['original_price'] += $c_price;
-                $product['list_price'] += $c_price;
-            }
-        } else {
-            $product['has_strings'] = true;
-        }
-        list($dampener_options, $c_dp_price) = fn_get_dampener_options($product, $selected_configuration);
-        if (!empty($c_dp_price)) {
-            $product['price'] += $c_dp_price;
-            $product['original_price'] += $c_dp_price;
-            $product['list_price'] += $c_dp_price;
-        }
-        list($overgrip_options, $c_og_price) = fn_get_overgrip_options($product, $selected_configuration);
-        if (!empty($c_og_price)) {
-            $product['price'] += $c_og_price;
-            $product['original_price'] += $c_og_price;
-            $product['list_price'] += $c_og_price;
-        }
-    }
+//     if (AREA == 'C' && !empty($params['get_for_one_product']) && isset($product['product_features'][R_WEIGHT_FEATURE_ID]) && $product['amount'] > 0) {
+//         $product['configuration_mode'] = true;
+//         $selected_configuration = array();
+//         if (!empty($product['cart_id'])) {
+//             $product['edit_configuration'] = $product['cart_id'];
+//         } elseif (!empty($_REQUEST['cart_id'])) {
+//             $product['edit_configuration'] = $_REQUEST['cart_id'];
+//         }
+//         if (!empty($_REQUEST['cart_id'])) {
+//             $cart = & $_SESSION['cart'];
+//             if (isset($cart['products'][$product['edit_configuration']]['extra'])) {
+//                 $product['extra'] = $cart['products'][$product['edit_configuration']]['extra'];
+//                 $product['selected_amount'] = $cart['products'][$product['edit_configuration']]['amount'];
+//             }
+// 
+//             if (!empty($cart['products'][$_REQUEST['cart_id']]['extra']['configuration'])) {
+//                 $selected_configuration = $cart['products'][$_REQUEST['cart_id']]['extra']['configuration'];
+//             }
+//         } elseif (!empty($product['selected_configuration'])) {
+//             $selected_configuration = $product['selected_configuration'];
+//         }
+//         if (isset($product['product_features'][R_STRINGS_FEATURE_ID]) && $product['product_features'][R_STRINGS_FEATURE_ID]['value'] == 'N') {
+//             list($strining_options, $c_price) = fn_get_stringing_options($product, $selected_configuration, !empty($selected_configuration[STRINGING_GROUP_ID]['product_ids']) && !empty(reset($selected_configuration[STRINGING_GROUP_ID]['product_ids'])) && !in_array('UNSTRUNG', $selected_configuration[STRINGING_GROUP_ID]['product_ids']));
+//             if (!empty($c_price)) {
+//                 $product['price'] += $c_price;
+//                 $product['original_price'] += $c_price;
+//                 $product['list_price'] += $c_price;
+//             }
+//         } else {
+//             $product['has_strings'] = true;
+//         }
+//         list($dampener_options, $c_dp_price) = fn_get_dampener_options($product, $selected_configuration);
+//         if (!empty($c_dp_price)) {
+//             $product['price'] += $c_dp_price;
+//             $product['original_price'] += $c_dp_price;
+//             $product['list_price'] += $c_dp_price;
+//         }
+//         list($overgrip_options, $c_og_price) = fn_get_overgrip_options($product, $selected_configuration);
+//         if (!empty($c_og_price)) {
+//             $product['price'] += $c_og_price;
+//             $product['original_price'] += $c_og_price;
+//             $product['list_price'] += $c_og_price;
+//         }
+//     }
     if (AREA == 'A' && !empty($product['extra']['configuration'])) {
         $product['configuration_mode'] = true;
         $selected_configuration = $product['extra']['configuration'];

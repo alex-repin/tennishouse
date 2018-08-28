@@ -1,3 +1,4 @@
+<div class="ty-orders-search-page">
 {capture name="section"}
     {include file="views/orders/components/orders_search_form.tpl"}
 {/capture}
@@ -55,3 +56,4 @@
 {include file="common/pagination.tpl"}
 
 {capture name="mainbox_title"}{__("orders")}{/capture}
+</div>

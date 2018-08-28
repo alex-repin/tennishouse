@@ -1,18 +1,16 @@
 {script src="js/lib/owlcarousel/owl.carousel.min.js"}
 <script type="text/javascript">
 (function(_, $) {
-    var elm = $('#scroll_list_{$id}');
-
-    if (elm.length) {
-        elm.owlCarousel({
+    if ($('#scroll_list_{$id}').length) {
+        $('#scroll_list_{$id}').owlCarousel({
             items: {$items_count|default:1},
-            autoPlay: false,
-            slideSpeed: 400,
-            stopOnHover: true,
-            navigation: true,
-            navigationText: ['', ''],
-            pagination: false,
-            margin: 10
+            autoplay: false,
+            autoplaySpeed: 400,
+            autoplayHoverPause: true,
+//             navigation: true,
+//             navigationText: ['', ''],
+            dots: false,
+//             margin: 10
         });
     }
 }(Tygh, Tygh.$));

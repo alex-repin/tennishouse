@@ -85,9 +85,9 @@
                 {/if}
                 &nbsp;{include file="buttons/button.tpl" but_meta="ty-btn__secondary" but_text=__("view_orders") but_href="orders.search"}
             </div>
-            <div class="ty-checkout-complete__buttons-right">
+            {*<div class="ty-checkout-complete__buttons-right">
                 {include file="buttons/continue_shopping.tpl" but_role="text" but_meta="ty-checkout-complete__button-vmid" but_href=$continue_url|fn_url}
-            </div>
+            </div>*}
         {/hook}
     </div>
 

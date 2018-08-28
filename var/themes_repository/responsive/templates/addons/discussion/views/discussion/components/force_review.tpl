@@ -13,9 +13,9 @@
                     {$setting_name = "review_reward_`$discussion.object_type`"}
                     {include file="common/price.tpl" value=$addons.development.$setting_name}
                 {/capture}
-                {$object = __("order")}
+                {$object = __("order")|lower}
             {/if}
-            {__("force_review_reward_text", ["[amount]" => $smarty.capture.reward_amount, "[object]" => $object|lower])}
+            {__("force_review_reward_text", ["[amount]" => $smarty.capture.reward_amount, "[object]" => $object])}
         {else}
             {__("force_review_text")}
         {/if}

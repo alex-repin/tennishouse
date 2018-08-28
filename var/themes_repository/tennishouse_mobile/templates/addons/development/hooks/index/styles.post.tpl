@@ -4,3 +4,6 @@
 {style src="addons/development/magnific-popup.css"}
 {style src="addons/development/animations.css"}
 {style src="addons/development/jquery.mobile-1.4.5.css"}
+{style src="addons/development/owl.carousel.css"}
+{style src="addons/development/owl.theme.default.css"}
+{style src="addons/development/animate.css"}

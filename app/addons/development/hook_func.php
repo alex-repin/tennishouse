@@ -252,7 +252,7 @@ function fn_development_update_user_pre($user_id, &$user_data, $auth, $ship_to_a
         'кишлак',
         'пс',
         'поселковый совет',
-        'сс',
+//         'сс',
         'сельсовет',
         'смн',
         'сомон',
@@ -1263,6 +1263,76 @@ function fn_development_gather_additional_product_data_post(&$product, $auth, $p
         if (!empty($global_data['product_pretitle']) && !in_array($product['product_id'], $exceptions)/*Теннисная ракетка браслет*/) {
             $product['product'] = $global_data['product_pretitle'] . ' ' . $product['product'];
         }
+        if (!empty($product['variation_ids'])) {
+            $params = array(
+                'item_ids' => $product['variation_ids']
+            );
+            list($products,) = fn_get_products($params);
+            $products_images = fn_get_image_pairs(explode(',', $product['variation_ids']), 'product', 'M', false, true, CART_LANGUAGE);
+            if (!empty($products_images)) {
+                foreach ($products as $key => $prod) {
+                    if (!empty($products_images[$prod['product_id']])) {
+                        $products[$key]['main_pair'] = reset($products_images[$prod['product_id']]);
+                    }
+                }
+            }
+            $product['variations'] = $products;
+        }
+        if (!empty($product['combination_hash'])) {
+            $product['product_hash'] = $product['combination_hash'];
+        } else {
+            $product['product_hash'] = fn_generate_cart_id($product['product_id'], array('product_options' => $product['product_options']), true);
+        }
+        if (in_array($product['product_hash'], array_keys($_SESSION['cart']['products']))) {
+            $product['in_cart'] = true;
+        } else {
+            $product['in_cart'] = false;
+        }
+        
+        if (!empty($product['product_features'])) {
+            $gender = '';
+            if (!empty($product['product_features'][CLOTHES_GENDER_FEATURE_ID])) {
+                $variant_id = $product['product_features'][CLOTHES_GENDER_FEATURE_ID]['variant_id'];
+                if ($variant_id == C_GENDER_M_FV_ID) {
+                    $gender = 'mens';
+                } elseif ($variant_id == C_GENDER_W_FV_ID) {
+                    $gender = 'womens';
+                }
+                $product['size_chart'] = $product['product_features'][CLOTHES_GENDER_FEATURE_ID]['variants'][$variant_id]['size_chart'];
+            } elseif (!empty($product['product_features'][SHOES_GENDER_FEATURE_ID])) {
+                $variant_id = $product['product_features'][SHOES_GENDER_FEATURE_ID]['variant_id'];
+                if ($variant_id == S_GENDER_M_FV_ID) {
+                    $gender = 'mens';
+                } elseif ($variant_id == S_GENDER_W_FV_ID) {
+                    $gender = 'womens';
+                }
+                $product['size_chart'] = $product['product_features'][SHOES_GENDER_FEATURE_ID]['variants'][$variant_id]['size_chart'];
+            }
+            if (!empty($product['header_features'][BRAND_FEATURE_ID])) {
+                $cat_type = '';
+                $brand_id = $product['header_features'][BRAND_FEATURE_ID]['variant_id'];
+                if ($product['category_type'] == 'A') {
+                    $cat_type = 'clothes';
+                } elseif ($product['category_type'] == 'S') {
+                    $cat_type = 'shoes';
+                }
+                if (!empty($product['header_features'][BRAND_FEATURE_ID]['variants'][$brand_id][$gender . '_' . $cat_type . '_size_chart'])) {
+                    $product['size_chart'] = $product['header_features'][BRAND_FEATURE_ID]['variants'][$brand_id][$gender . '_' . $cat_type . '_size_chart'];
+                }
+            }
+        }
+        if (!empty($product['size_chart']) && !empty($product['product_options'])) {
+            if (!empty($product['product_options'][SHOE_SIZE_OPT_ID])) {
+                $product['product_options'][SHOE_SIZE_OPT_ID]['popup_content'] = $product['size_chart'];
+                $product['product_options'][SHOE_SIZE_OPT_ID]['popup_title'] = __('sizing_table');
+            } elseif (!empty($product['product_options'][APPAREL_SIZE_OPT_ID])) {
+                $product['product_options'][APPAREL_SIZE_OPT_ID]['popup_content'] = $product['size_chart'];
+                $product['product_options'][APPAREL_SIZE_OPT_ID]['popup_title'] = __('sizing_table');
+            } elseif (!empty($product['product_options'][APPAREL_KIDS_SIZE_OPT_ID])) {
+                $product['product_options'][APPAREL_KIDS_SIZE_OPT_ID]['popup_content'] = $product['size_chart'];
+                $product['product_options'][APPAREL_KIDS_SIZE_OPT_ID]['popup_title'] = __('sizing_table');
+            }
+        }
     }
     if (AREA == 'C') {
         $product['is_liked'] = fn_check_wishlist($product['product_id']);
@@ -1889,6 +1959,33 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
         if (!empty($product_data['warehouse_ids'])) {
             $product_data['warehouse_ids'] = implode(',', $product_data['warehouse_ids']);
         }
+        $variations = db_get_fields("SELECT product_id FROM ?:products WHERE product_code = ?s", $product_data['product_code']);
+        $new_variations = !empty($product_data['variation_ids']) ? explode(',', $product_data['variation_ids']) : array();
+        if (!empty($variations)) {
+            $new_variations = array_merge($new_variations, array_diff($variations, $new_variations));
+        }
+        $key = array_search($product_id, $new_variations);
+        if ($key !== false) {
+            unset($new_variations[$key]);
+        }
+        $product_data['variation_ids'] = implode(',', $new_variations);
+        
+        $old_variations = db_get_field("SELECT variation_ids FROM ?:products WHERE product_id = ?i", $product_id);
+        if (!empty($old_variations)) {
+            $old_variations = explode(',', $old_variations);
+            $diff = array_diff($old_variations, $new_variations);
+            if (!empty($diff)) {
+                db_query("UPDATE ?:products SET variation_ids = '' WHERE product_id IN (?n)", $diff);
+            }
+        }
+        if (!empty($new_variations)) {
+            foreach ($new_variations as $i => $pr_id) {
+                $nvrs = $new_variations;
+                unset($nvrs[$i]);
+                $nvrs[] = $product_id;
+                db_query("UPDATE ?:products SET variation_ids = ?s WHERE product_id = ?i", implode(',', $nvrs), $pr_id);
+            }
+        }
     }
 }
 
@@ -2028,7 +2125,10 @@ function fn_development_render_blocks($grid, &$block, $object, $content)
     if (!empty($block['properties']['capture_content']) && $block['properties']['capture_content'] == 'Y' && $block['object_type'] == 'products' && !empty($block['object_id'])) {
         $product = Registry::get('view')->getTemplateVars('product');
         if (!empty($product) && ($product['product_type'] != 'C' && $product['amount'] <= 0) || ($product['product_type'] == 'C' && empty($product['hide_stock_info']))) {
-            $block['extra_properties']['columns_number'] = 2;
+            $dmode = fn_get_session_data('dmode');
+            if ($dmode != 'M') {
+                $block['extra_properties']['columns_number'] = 2;
+            }
             if ($block['content']['items']['filling'] == 'similar_products') {
                 $block['extra_properties']['name'] = 'Похожие товары в наличии';
             }

@@ -1,3 +1,4 @@
+<div id="my_account_block">
 {hook name="profiles:my_account_menu"}
 {if !$auth.user_id}
     {assign var="return_current_url" value=$config.current_url|escape:url}
@@ -35,6 +36,14 @@
         </div>
     </li>
 {/if}
+<li class="ty-menu__item">
+    <div class="ty-menu__submenu-item-header">
+        <a href="{"product_features.compare"|fn_url}" rel="nofollow" class="ty-menu__item-link">
+            <div class="ty-menu-icon ty-compare-icon"></div>
+            <div class="ty-menu__submenu-item-header-text">{__("comparison_list")}{if $smarty.session.comparison_list.products|count > 0} ({$smarty.session.comparison_list.products|count}){/if}</div>
+        </a>
+    </div>
+</li>
 {/hook}
 {if $auth.user_id}
     <li class="ty-menu__item">
@@ -70,3 +79,4 @@
         </div>
     </li>
 {/if}
+<!--my_account_block--></div>

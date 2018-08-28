@@ -820,7 +820,7 @@ function fn_get_rss_news($params)
                         $news['yesterday'] = true;
                     }
                     $news_feed[] = $news;
-                    if (count($news_feed) >= $params['number_of_news']) {
+                    if (!empty($params['number_of_news']) && count($news_feed) >= $params['number_of_news']) {
                         break;
                     }
                 }

@@ -4,12 +4,18 @@
     </div>
     <div class="ty-logo-container">
         <a href="{""|fn_url}" title="{$logos.theme.image.alt}">
-            <img src="{$logos.theme.image.image_path}" width="{$logos.theme.image.image_x}" height="{$logos.theme.image.image_y}" alt="{$logos.theme.image.alt}" class="ty-logo-container__image" />
+            <div class="ty-store-logo"></div>
         </a>
     </div>
-    <div class="ty-cart-container">
-        <a href="{""|fn_url}" data-iconpos="notext" data-shadow="false" data-iconshadow="false" title="{$logos.theme.image.alt}" onclick="$( '#right-panel' ).panel( 'open' );return false;"><div class="ty-cart-container__icon"></div></a>
-    </div>
+    <div class="ty-cart-container" id="cart_status_top">
+        <a href="{""|fn_url}" data-iconpos="notext" data-shadow="false" data-iconshadow="false" title="{$logos.theme.image.alt}" onclick="$( '#right-panel' ).panel( 'open' );return false;">
+            <div class="ty-cart-container__icon">
+                {if $smarty.session.cart.amount}
+                    <div class="ty-minicart__icon-counter">{$smarty.session.cart.amount}</div>
+                {/if}
+            </div>
+        </a>
+    <!--cart_status_top--></div>
 </div>
 <div class="ty-top-block__search">
     {include file="common/search.tpl"}

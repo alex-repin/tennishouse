@@ -17,6 +17,7 @@
                     <h3 class="tab-list-title">{$tab.name}</h3>
                 {/if}
                 {$html_id = $tab.html_id}
+                {$active_tabs[] = $navigation.tabs.$html_id}
                 {$navigation.tabs.$html_id.display = true}
                 <div id="content_{$tab.html_id}" class="ty-wysiwyg-content content-{$tab.html_id}">
                     {$smarty.capture.$tab_content_capture nofilter}

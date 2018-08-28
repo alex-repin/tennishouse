@@ -63,10 +63,23 @@ if ($mode == 'add_product') {
         );
         $product_ids = fn_add_product_to_cart($product_data, $comparison_list, $auth);
     }
-    $compare_list_content = array('snapping_id' => 'compare_list_content', 'properties' => array('products_links_type' => 'thumb', 'display_delete_icons' => 'Y', 'display_bottom_buttons' => 'Y'));
-    Registry::get('view')->assign('block', $compare_list_content);
-    Registry::get('view')->assign('highlight', true);
-    Registry::get('view')->display('blocks/compare_list_content.tpl');
+    
+    $dmode = fn_get_session_data('dmode');
+    if ($dmode == 'M') {
+        $added_products[$p_id]['product_id'] = $_REQUEST['product_id'];
+        $added_products[$p_id]['main_pair'] = fn_get_cart_product_icon($_REQUEST['product_id']);
+        Registry::get('view')->assign('hide_amount', true);
+        Registry::get('view')->assign('added_products', $added_products);
+        $title = __('product_added_to_cl');
+        $msg = Registry::get('view')->fetch('views/product_features/components/product_notification.tpl');
+        fn_set_notification('I', $title, $msg, 'I');
+        Registry::get('view')->display('addons/development/common/my_account.tpl');
+    } else {
+        $compare_list_content = array('snapping_id' => 'compare_list_content', 'properties' => array('products_links_type' => 'thumb', 'display_delete_icons' => 'Y', 'display_bottom_buttons' => 'Y'));
+        Registry::get('view')->assign('block', $compare_list_content);
+        Registry::get('view')->assign('highlight', true);
+        Registry::get('view')->display('blocks/compare_list_content.tpl');
+    }
     
     exit;
 

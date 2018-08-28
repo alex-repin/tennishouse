@@ -25,7 +25,7 @@ Base styles
 body {
     background: @general_bg_color;
 }
-body, p, div, li {
+html, body, p, div, li {
     color: @font;
     font-family: @body_font, sans-serif;
     font-size: @body_font_size;
@@ -323,6 +323,7 @@ Helper Classes
 
 /* Form */
 input[type="text"],
+input[type="tel"],
 input[type="password"],
 textarea,
 select {
@@ -337,6 +338,7 @@ select {
     .rounded_corners(4px);
 }
 input[type="text"],
+input[type="tel"],
 input[type="password"] {
     height: 32px;
     -webkit-appearance: none;
@@ -3252,10 +3254,6 @@ Layout
     min-height: 0;
     min-width: 0;
 }
-
-// Default value for fluid
-@fluidContainerMaxWidth:      960px;
-@fluidContainerMinWidth:      760px;
 
 .container-fluid {
     max-width: @fluidContainerMaxWidth;
@@ -6497,7 +6495,6 @@ Carousel
     padding: 3px 10px;
     font-size: 12px;
     .border-radius(30px);
-    background: darken(@base, 18%);
     filter: alpha(opacity=70);/*ie7 fix*/
     opacity: 0.7;
 }

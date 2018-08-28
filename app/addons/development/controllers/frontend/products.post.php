@@ -102,7 +102,6 @@ if ($mode == 'view') {
             } elseif ($variant_id == C_GENDER_W_FV_ID) {
                 $gender = 'womens';
             }
-            $product['size_chart'] = $product['product_features'][CLOTHES_GENDER_FEATURE_ID]['variants'][$variant_id]['size_chart'];
             if (!empty($product['product_features'][CLOTHES_GENDER_FEATURE_ID]['variants'][$variant_id]['variant_code'])) {
                 fn_set_store_gender_mode($product['product_features'][CLOTHES_GENDER_FEATURE_ID]['variants'][$variant_id]['variant_code']);
             }
@@ -113,7 +112,6 @@ if ($mode == 'view') {
             } elseif ($variant_id == S_GENDER_W_FV_ID) {
                 $gender = 'womens';
             }
-            $product['size_chart'] = $product['product_features'][SHOES_GENDER_FEATURE_ID]['variants'][$variant_id]['size_chart'];
             if (!empty($product['product_features'][SHOES_GENDER_FEATURE_ID]['variants'][$variant_id]['variant_code'])) {
                 fn_set_store_gender_mode($product['product_features'][SHOES_GENDER_FEATURE_ID]['variants'][$variant_id]['variant_code']);
             }
@@ -123,28 +121,27 @@ if ($mode == 'view') {
                 fn_set_store_gender_mode($product['product_features'][TYPE_FEATURE_ID]['variants'][$variant_id]['variant_code']);
             }
         }
-        if (!empty($product['header_features'][BRAND_FEATURE_ID])) {
-            $cat_type = '';
-            $_SESSION['product_brand'] = $brand_id = $product['header_features'][BRAND_FEATURE_ID]['variant_id'];
-            if ($product['category_type'] == 'A') {
-                $cat_type = 'clothes';
-            } elseif ($product['category_type'] == 'S') {
-                $cat_type = 'shoes';
-            }
-            if (!empty($product['header_features'][BRAND_FEATURE_ID]['variants'][$brand_id][$gender . '_' . $cat_type . '_size_chart'])) {
-                $brand_size_chart = true;
-                $title = $product['header_features'][BRAND_FEATURE_ID]['variants'][$brand_id]['variant'];
-                $product['size_chart'] = $product['header_features'][BRAND_FEATURE_ID]['variants'][$brand_id][$gender . '_' . $cat_type . '_size_chart'];
-            }
-        }
+//         if (!empty($product['header_features'][BRAND_FEATURE_ID])) {
+//             $cat_type = '';
+//             $_SESSION['product_brand'] = $brand_id = $product['header_features'][BRAND_FEATURE_ID]['variant_id'];
+//             if ($product['category_type'] == 'A') {
+//                 $cat_type = 'clothes';
+//             } elseif ($product['category_type'] == 'S') {
+//                 $cat_type = 'shoes';
+//             }
+//             if (!empty($product['header_features'][BRAND_FEATURE_ID]['variants'][$brand_id][$gender . '_' . $cat_type . '_size_chart'])) {
+//                 $brand_size_chart = true;
+//                 $title = $product['header_features'][BRAND_FEATURE_ID]['variants'][$brand_id]['variant'];
+//             }
+//         }
     }
-    $_tabs = Registry::get('navigation.tabs');
-    if (!empty($product['size_chart'])) {
-        if ($brand_size_chart) {
-            $_tabs['size_chart']['title'] .= ' ' . $title;
-        }
-    }
-    Registry::set('navigation.tabs', $_tabs);
+//     $_tabs = Registry::get('navigation.tabs');
+//     if (!empty($product['size_chart'])) {
+//         if ($brand_size_chart) {
+//             $_tabs['size_chart']['title'] .= ' ' . $title;
+//         }
+//     }
+//     Registry::set('navigation.tabs', $_tabs);
     if (!empty($product['header_features'])) {
         foreach ($product['header_features'] as $i => $f_data) {
             if (!empty($f_data['variant_id'])) {

@@ -6,7 +6,7 @@ function fn_change_options(obj_id, id, option_id)
     
     var params = [];
     var update_ids = [];
-    var cache_query = true;
+    var cache_query = false;
     var defaultValues = {};
     
     var parents = $('.cm-reload-' + obj_id);

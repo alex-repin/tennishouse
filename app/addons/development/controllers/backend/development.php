@@ -470,7 +470,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             foreach ($out_of_stock as $os_i => $pr_id) {
                                 if (!empty($all_combinations[$pr_id])) {
                                     foreach ($all_combinations[$pr_id] as $t => $comb_dt) {
-                                        if ($other_inventories[$pr_id][$comb_dt['combination_hash']]['amount'] < 1) {
+                                        if (empty($other_inventories[$pr_id]) || $other_inventories[$pr_id][$comb_dt['combination_hash']]['amount'] < 1) {
                                             $options_array = fn_get_product_options_by_combination($comb_dt['combination']);
                                             $option_exceptions[] = array(
                                                 'product_id' => $pr_id,
@@ -1354,6 +1354,42 @@ if ($mode == 'calculate_balance') {
     fn_generate_ekey($_REQUEST['user_id'], 'L', SECONDS_IN_DAY * 90);
     
     return array(CONTROLLER_STATUS_REDIRECT, "profiles.update?user_id=" . $_REQUEST['user_id']);
+} elseif ($mode == 'get_ppl') {
+
+    $houses = array(14, 22, 27, 32, 73, 44, 111, 67, 94, 205, 123, 207, 155, 259, 380, 474, 285, 680, 510, 1087, 900, 1380, 1330, 1040, 2120, 1150, 1810, 1400, 2800);
+    rsort($houses);
+    fn_print_die($houses);
+    $top = 807;
+    
+    fn_subset_sums($houses, $top);
+    
+    exit;
+}
+
+function fn_subset_sums($houses, $top, $sum = 0)
+{
+    foreach ($houses as $i => $house) {
+        if ($house > $top) {
+            unset($houses[$i]);
+        }
+        
+    }
+
+    foreach ($houses as $i => $house) {
+        
+    }
+    // Print current subset
+    if ($l > $r || $sum >= $top)
+    {
+        fn_print_r($sum , " ");
+        return;
+    }
+
+    // Subset including arr[l]
+    subsetSums($houses, $l + 1, $r, $top, $sum + $houses[$l]);
+
+    // Subset excluding arr[l]
+    subsetSums($houses, $l + 1, $r, $top, $sum);
 }
 
 function fn_normalize_string($string)

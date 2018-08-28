@@ -1,3 +1,4 @@
+<div class="ty-reward-points-userlog-page">
 {assign var="c_url" value=$config.current_url|fn_query_remove:"sort_by":"sort_order"}
 
 <table class="ty-reward-points-userlog ty-table">
@@ -59,3 +60,4 @@
         </div>
     </div>
 {/capture}
+</div>

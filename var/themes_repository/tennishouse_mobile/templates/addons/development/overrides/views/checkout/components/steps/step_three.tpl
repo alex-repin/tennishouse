@@ -1,8 +1,8 @@
 <div class="ty-step__container{if $edit}-active{/if} ty-step-three" data-ct-checkout="shipping_options" id="step_three">
     {if $settings.General.checkout_style != "multi_page"}
         <h3 class="ty-step__title{if $edit}-active{/if}{if $complete && !$edit}-complete{/if} clearfix">
-            <span class="ty-step__title-left">{if !$complete || $edit}{if $profile_fields.B || $profile_fields.S}2{else}1{/if}{/if}{if $complete && !$edit}<i class="ty-step__title-icon ty-icon-ok"></i>{/if}</span>
-            <i class="ty-step__title-arrow ty-icon-down-micro"></i>
+            <span class="ty-step__title-left">2{*if $profile_fields.B || $profile_fields.S}2{else}1{/if}{if $complete && !$edit}<i class="ty-step__title-icon ty-icon-ok"></i>{/if*}</span>
+            {*<i class="ty-step__title-arrow ty-icon-down-micro"></i>*}
 
             {if $complete && !$edit}
                 {hook name="checkout:edit_link"}

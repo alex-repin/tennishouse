@@ -322,7 +322,7 @@ class Registry
             try {
                 self::$_cache = new $_cache_class(self::get('config'));
             } catch (\Exception $e) {
-                if ($cache_class != 'file') {
+                if ($_cache_class != 'file') {
                     $_cache_class = '\\Tygh\\Backend\\Cache\\' . ucfirst('file');
 
                     self::$_cache = new $_cache_class(self::get('config'));

@@ -9,8 +9,12 @@
 }
 
 .ty-rub {
-    font-family: 'ALSRubl-Arial', Arial, sans-serif;
-    font-size: inherit;
+    font-size: 95%;
+/*    font-family: @price_font;
+    -webkit-font-variant-ligatures: common-ligatures;
+    font-variant-ligatures: common-ligatures;
+    -webkit-font-feature-settings: "clig";
+    font-feature-settings: "clig";*/
 }
 
 /* /rus_ruble */

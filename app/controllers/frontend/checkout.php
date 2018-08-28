@@ -145,12 +145,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (defined('AJAX_REQUEST')) {
             $dmode = fn_get_session_data('dmode');
             if ($dmode == 'M') {
+                Registry::get('view')->display('addons/development/blocks/static_templates/top_block.tpl');
                 Registry::get('view')->display('addons/development/common/cart_panel.tpl');
             } else {
                 $cart_content = array('snapping_id' => 'cart_content', 'properties' => array('products_links_type' => 'thumb', 'display_delete_icons' => 'Y', 'display_bottom_buttons' => 'Y'));
                 Registry::get('view')->assign('block', $cart_content);
                 Registry::get('view')->assign('force_items_deletion', true);
                 Registry::get('view')->display('blocks/cart_content.tpl');
+            }
+            // Update the "add to cart" button on product details
+            if (!empty($added_products)) {
+                foreach ($added_products as $item_id => $item_data) {
+                    Registry::get('view')->assign('product', array('product_hash' => $item_id, 'in_cart' => true));
+                    Registry::get('view')->assign('but_id', 'button_checkout_' . $item_data['product_id']);
+                    Registry::get('view')->display('buttons/add_to_cart.tpl');
+                }
             }
             exit;
         }
@@ -720,6 +729,19 @@ if ($mode == 'cart') {
         }
     }
 
+    if (defined('AJAX_REQUEST')) {
+        $dmode = fn_get_session_data('dmode');
+        if ($dmode == 'M') {
+            Registry::get('view')->display('addons/development/common/cart_panel.tpl');
+            Registry::get('view')->display('addons/development/blocks/static_templates/top_block.tpl');
+        } else {
+            $cart_content = array('snapping_id' => 'cart_content', 'properties' => array('products_links_type' => 'thumb', 'display_delete_icons' => 'Y', 'display_bottom_buttons' => 'Y'));
+            Registry::get('view')->assign('force_items_deletion', true);
+            Registry::get('view')->assign('block', $cart_content);
+            Registry::get('view')->display('blocks/cart_content.tpl');
+//         fn_set_notification('N', __('notice'), __('text_product_has_been_deleted'));
+        }
+    }
 // Step 1/2: Customer information
 } elseif ($mode == 'customer_info') {
 
@@ -1085,7 +1107,7 @@ if ($mode == 'cart') {
     if (empty($cid)) {
         exit;
     }
-    
+    $deleted_product_id = $cart['products'][$cid]['product_id'];
     fn_delete_cart_product($cart, $cid);
 
     if (fn_cart_is_empty($cart) == true) {
@@ -1100,6 +1122,7 @@ if ($mode == 'cart') {
     if (defined('AJAX_REQUEST')) {
         $dmode = fn_get_session_data('dmode');
         if ($dmode == 'M') {
+            Registry::get('view')->display('addons/development/blocks/static_templates/top_block.tpl');
             Registry::get('view')->display('addons/development/common/cart_panel.tpl');
         } else {
             $cart_content = array('snapping_id' => 'cart_content', 'properties' => array('products_links_type' => 'thumb', 'display_delete_icons' => 'Y', 'display_bottom_buttons' => 'Y'));
@@ -1111,6 +1134,12 @@ if ($mode == 'cart') {
             Registry::get('view')->display('blocks/cart_content.tpl');
 //         fn_set_notification('N', __('notice'), __('text_product_has_been_deleted'));
         }
+        // Update the "add to cart" button on product details
+        Registry::get('view')->assign('but_role', 'big');
+        Registry::get('view')->assign('but_id', "button_cart_$deleted_product_id");
+        Registry::get('view')->assign('but_name', "dispatch[checkout.add..$deleted_product_id]");
+        Registry::get('view')->assign('product', array('product_hash' => $cid));
+        Registry::get('view')->display('buttons/add_to_cart.tpl');
         exit;
     }
 

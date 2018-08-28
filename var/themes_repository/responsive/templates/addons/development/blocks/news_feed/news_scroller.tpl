@@ -27,14 +27,16 @@
                     if (elm.length) {
                         elm.owlCarousel({
                             items: 1,
-                            scrollPerPage: false,
-                            autoPlay: '15000',
-                            slideSpeed: '400',
-                            stopOnHover: true,
-                            navigation: true,
-                            navigationText: ['', ''],
-                            pagination: false,
-                            responsive: false
+                            autoplay: true,
+                            rewind: true,
+                            autoplayTimeout: '15000',
+                            autoplaySpeed: '400',
+                            autoplayHoverPause: true,
+                            dots: false,
+                            nav: true,
+                            animateOut: 'fadeOut',
+                            animateIn: 'fadeIn',
+                            navText: ['<div class="ty-arrow-bg"></div>', '<div class="ty-arrow-bg"></div>'],
                         });
                     }
                 });

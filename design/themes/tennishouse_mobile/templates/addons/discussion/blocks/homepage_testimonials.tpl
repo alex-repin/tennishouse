@@ -19,7 +19,7 @@
             </a>
         {/foreach}
         <div class="ty-check-all__block-link">
-            <a href="{"discussion.view?thread_id=`$discussion.thread_id`"|fn_url}">{__("check_all_items")|upper}</a>
+            {include file="addons/development/common/form_link.tpl" form_method="post" hidden_input=["redirect_url" => "discussion.view?thread_id=`$discussion.thread_id`"] link_text=__("check_all_items")|upper link_meta="ty-button-link ty-view-all-link" link_name="dispatch[development.redirect]" link_role=""}
         </div>
     </div>
 {/if}

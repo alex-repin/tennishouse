@@ -20,7 +20,7 @@
                                     </div>
                                     <div class="ty-cart-items__list-item-tools cm-cart-item-delete">
                                         {if !$p.extra.exclude_from_calculate}
-                                            {include file="buttons/button.tpl" but_href="checkout.delete.from_status?cart_id=`$key`&redirect_url=`$r_url`" but_meta="cm-ajax cm-ajax-full-render" but_target_id="cart_status*" but_role="delete" but_name="delete_cart_item"}
+                                            {include file="buttons/button.tpl" but_href="checkout.delete.from_status?cart_id=`$key`&redirect_url=`$r_url`" but_meta="cm-ajax cm-ajax-full-render" but_target_id="cart_status*,cart_status_top,add_to_cart_button*" but_role="delete" but_name="delete_cart_item"}
                                         {/if}
                                     </div>
                                 </li>

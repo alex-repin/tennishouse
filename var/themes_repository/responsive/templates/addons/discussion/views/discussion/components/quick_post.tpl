@@ -18,11 +18,10 @@
         </div>
     {/if}
     <div class="ty-flicker-input">
-        <div class="ty-control-group ty-inline-block" style="width: 49%;margin-right: 1px;">
+        <div class="ty-control-group ty-inline-block" style="width: 49%;margin-right: 1%;">
             <label for="dsc_name_{$obj_prefix}{$obj_id}" class="ty-control-group__title cm-required">{__("reviewer_name")}</label>
             <input type="text" id="dsc_name_{$obj_prefix}{$obj_id}" name="post_data[name]" value="{if $auth.user_id}{$user_info.firstname} {$user_info.lastname}{elseif $discussion.post_data.name}{$discussion.post_data.name}{/if}" size="25" class="ty-input-text" placeholder="{__("reviewer_name")}" autocomplete="off" />
-        </div>
-        <div class="ty-control-group ty-inline-block" style="width: 50%;">
+        </div><div class="ty-control-group ty-inline-block" style="width: 50%;">
             <label for="dsc_city_{$obj_prefix}{$obj_id}" class="ty-control-group__title" style="padding-bottom: 7px;">{__("city")}</label>
             <input type="text" id="dsc_city_{$obj_prefix}{$obj_id}" name="post_data[city]" value="{if $user_info.s_city}{$user_info.s_city}{elseif $discussion.post_data.city}{$discussion.post_data.city}{/if}" size="25" class="ty-input-text" placeholder="{__("city")}" autocomplete="off" />
         </div>

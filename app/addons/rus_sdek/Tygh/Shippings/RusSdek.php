@@ -148,45 +148,8 @@ class RusSdek
         
         if (!empty($location['country']) && !empty($location['city'])) {
         // [tennishouse]
-            if ($location['country'] != 'RU') {
+            if ($location['country'] == 'RU') {
             
-                $data = array(
-                    'q' => $location['city'],
-                    'limit' => 10
-                );
-                $extra = array(
-                    'request_timeout' => 2,
-                    'timeout' => 1
-                );
-                $result = json_decode(Http::get('http://api.cdek.ru/city/getListByTerm/json.php', $data, $extra), true);
-                if (!empty($result['geonames'])) {
-                    if (count($result['geonames']) == 1) {
-                        $city = reset($result['geonames']);
-                        $_result = $city['id'];
-                    } elseif (count($result['geonames']) > 1) {
-                        foreach ($result['geonames'] as $i => $c_data) {
-                            if ($c_data['countryIso'] != $location['country']) {
-                                unset($result['geonames'][$i]);
-                            }
-                        }
-                        if (count($result['geonames']) == 1) {
-                            $city = reset($result['geonames']);
-                            $_result = $city['id'];
-                        } elseif (count($result['geonames']) > 1) {
-                            $max_match = $city_id = 0;
-                            foreach ($result['geonames'] as $c_code => $c_data) {
-                                $prc = round(strlen($location['city'])/strlen($c_data['cityName']), 2) * 100;
-                                if ($prc > $max_match) {
-                                    $max_match = $prc;
-                                    $city_id = $c_data['id'];
-                                }
-                            }
-                            $_result = $city_id;
-                        }
-                    }
-                }
-                //fn_set_notification('E', __('notice'), __('shippings.sdek.country_error'));
-            } else {
                 if (preg_match('/^[a-zA-Z]+$/',$location['city'])) {
                     $lang_code = 'en';
                 } else {
@@ -234,9 +197,60 @@ class RusSdek
                         $_result = $city_id;
                     }
                 }
-                
-                if (empty($_result)) {
+            }
+            if ($location['country'] != 'RU' || empty($_result)) {
 //                     fn_set_notification('E', __('notice'), __('shippings.sdek.city_error'));
+                $data = array(
+                    'q' => $location['city'],
+                    'limit' => 10
+                );
+                $extra = array(
+                    'request_timeout' => 2,
+                    'timeout' => 1
+                );
+                $result = json_decode(Http::get('http://api.cdek.ru/city/getListByTerm/json.php', $data, $extra), true);
+                if (!empty($result['geonames'])) {
+                    if (count($result['geonames']) == 1) {
+                        $city = reset($result['geonames']);
+                        $_result = $city['id'];
+                    } elseif (count($result['geonames']) > 1) {
+                        foreach ($result['geonames'] as $i => $c_data) {
+                            if ($c_data['countryIso'] != $location['country']) {
+                                unset($result['geonames'][$i]);
+                            }
+                        }
+                        if (count($result['geonames']) == 1) {
+                            $city = reset($result['geonames']);
+                            $_result = $city['id'];
+                        } elseif (count($result['geonames']) > 1) {
+                            $max_match = $city_id = 0;
+                            foreach ($result['geonames'] as $c_code => $c_data) {
+                                $prc = round(strlen($location['city'])/strlen($c_data['cityName']), 2) * 100;
+                                if ($prc > $max_match) {
+                                    $max_match = $prc;
+                                    $city_id = $c_data['id'];
+                                }
+                            }
+                            $_result = $city_id;
+                        }
+                    }
+                }
+                if (!empty($_result) && !empty($location['country']) && !empty($location['state']) && !empty($location['city'])) {
+                    $_data = array(
+                        'country_code' => $location['country'],
+                        'state_code' => $location['state'],
+                        'city_code' => $_result,
+                        'state' => 'A'
+                    );
+                    $_city_id = db_query("REPLACE INTO ?:rus_cities_sdek ?e", $_data);
+                    if (!empty($_city_id)) {
+                        $_data = array(
+                            'city_id' => $_city_id,
+                            'lang_code' => $lang_code,
+                            'city' => $location['city']
+                        );
+                        db_query("REPLACE INTO ?:rus_city_sdek_descriptions ?e", $_data);
+                    }
                 }
             }
         }

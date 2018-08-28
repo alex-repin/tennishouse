@@ -103,10 +103,15 @@ if ($mode == 'like') {
     if (!empty($product_ids)) {
         fn_save_cart_content($wishlist, $auth['user_id'], 'W');
         fn_like_product($_REQUEST['product_id']);
-        $wishlist_content = array('snapping_id' => 'wishlist_content', 'properties' => array('products_links_type' => 'thumb', 'display_delete_icons' => 'Y', 'display_bottom_buttons' => 'Y'));
-        Registry::get('view')->assign('block', $wishlist_content);
-        Registry::get('view')->assign('highlight', true);
-        Registry::get('view')->display('blocks/wishlist_content.tpl');
+        $dmode = fn_get_session_data('dmode');
+        if ($dmode == 'M') {
+            Registry::get('view')->display('addons/development/common/my_account.tpl');
+        } else {
+            $wishlist_content = array('snapping_id' => 'wishlist_content', 'properties' => array('products_links_type' => 'thumb', 'display_delete_icons' => 'Y', 'display_bottom_buttons' => 'Y'));
+            Registry::get('view')->assign('block', $wishlist_content);
+            Registry::get('view')->assign('highlight', true);
+            Registry::get('view')->display('blocks/wishlist_content.tpl');
+        }
     }
     
     exit;
@@ -125,15 +130,20 @@ if ($mode == 'like') {
     
     $likes = fn_delete_wishlist_product($wishlist, $cart_id);
     fn_save_cart_content($wishlist, $auth['user_id'], 'W');
-    $wishlist_content = array('snapping_id' => 'wishlist_content', 'properties' => array('products_links_type' => 'thumb', 'display_delete_icons' => 'Y', 'display_bottom_buttons' => 'Y'));
-    Registry::get('view')->assign('block', $wishlist_content);
+    $dmode = fn_get_session_data('dmode');
+    if ($dmode == 'M') {
+        Registry::get('view')->display('addons/development/common/my_account.tpl');
+    } else {
+        $wishlist_content = array('snapping_id' => 'wishlist_content', 'properties' => array('products_links_type' => 'thumb', 'display_delete_icons' => 'Y', 'display_bottom_buttons' => 'Y'));
+        Registry::get('view')->assign('block', $wishlist_content);
+        Registry::get('view')->display('blocks/wishlist_content.tpl');
+    }
     if (!empty($_REQUEST['pid'])) {
         Registry::get('view')->assign('product_id', $pid);
         Registry::get('view')->assign('likes', $likes);
         Registry::get('view')->assign('is_open', true);
         Registry::get('view')->display('addons/wishlist/views/wishlist/components/add_to_wishlist.tpl');
     }
-    Registry::get('view')->display('blocks/wishlist_content.tpl');
     
     exit;
 

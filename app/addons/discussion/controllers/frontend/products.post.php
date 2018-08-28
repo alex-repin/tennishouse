@@ -17,8 +17,12 @@ use Tygh\Registry;
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 if ($mode == 'view' || $mode == 'quick_view') {
-// unset($_SESSION['post_ids']);
     $product = Registry::get('view')->getTemplateVars('product');
     $product['discussion'] = fn_get_discussion($product['product_id'], "P", true, $_REQUEST);
     Registry::get('view')->assign('product', $product);
+    if (!empty($product['discussion']['posts'])) {
+        $_tabs = Registry::get('navigation.tabs');
+        $_tabs['discussion']['title'] .= ' (' . count($product['discussion']['posts']) . ')';
+        Registry::set('navigation.tabs', $_tabs);
+    }
 }

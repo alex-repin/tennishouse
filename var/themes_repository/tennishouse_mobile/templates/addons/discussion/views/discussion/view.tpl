@@ -17,19 +17,11 @@
             <h4>{$subheader}</h4>
         {/if}
 
-        {if "CRB"|strpos:$discussion.type !== false && !$discussion.disable_adding && !$hide_new_post}
-            {include file="addons/discussion/views/discussion/components/new_post.tpl" new_post_title=$new_post_title}
-        {/if}
         {if $discussion.object_type == 'E'}
             {if $discussion.thread_id = $smarty.const.REVIEWS_THREAD_ID}
             <div class="ty-rate-us-ym-reviews">
                 <a href="http://clck.yandex.ru/redir/dtype=stred/pid=47/cid=2508/*http://market.yandex.ru/shop/292708/reviews" target="_blank"><img src="https://clck.yandex.ru/redir/dtype=stred/pid=47/cid=2507/*https://grade.market.yandex.ru/?id=292708&action=image&size=2" border="0" width="150" height="101" alt="Читайте отзывы покупателей и оценивайте качество магазина на Яндекс.Маркете" /></a>
             </div>
-            {/if}
-            {if "CRB"|strpos:$discussion.type !== false && !$discussion.disable_adding && !$hide_new_post}
-                <div class="ty-discussion-post__buttons buttons-container">
-                    {include file="buttons/button.tpl" but_id="opener_new_post_top" but_text=$new_post_title but_role="submit" but_target_id="new_post_dialog_`$obj_id`" but_meta="cm-dialog-opener cm-dialog-auto-size ty-btn__primary" but_rel="nofollow"}
-                </div>
             {/if}
         {/if}
         <div id="posts_list">
@@ -86,7 +78,7 @@
 
                 {*include file="common/pagination.tpl" id="pagination_contents_comments_`$object_id`" extra_url="&selected_section=discussion" search=$discussion.search*}
             {else}
-                <p class="ty-no-items">{__("no_posts_found")}</p>
+                {*<p class="ty-no-items">{__("no_posts_found")}</p>*}
             {/if}
         <!--posts_list--></div>
 
@@ -97,9 +89,36 @@
             {capture name="mainbox_title"}{$title}{/capture}
         {/if}
         {if "CRB"|strpos:$discussion.type !== false && !$discussion.disable_adding && !$hide_new_post}
-            <div class="ty-discussion-post__buttons buttons-container">
-                {include file="buttons/button.tpl" but_id="opener_new_post" but_text=$new_post_title but_role="submit" but_target_id="new_post_dialog_`$obj_id`" but_meta="cm-dialog-opener cm-dialog-auto-size ty-btn__primary" but_rel="nofollow"}
+            <div class="ty-product-add-review-wrapper" id="product_review_block">
+                <div class="ty-product-add-review">
+                    <div class="ty-product-review-title">{__("used_this_product_`$product.category_type`")}</div>
+                    {include file="addons/discussion/views/discussion/components/quick_post.tpl"}
+                </div>
             </div>
+            <script type="text/javascript">
+            (function(_, $) {
+                function fn_hide_form(event) {
+                    if (event.target.id != "product_review_block" && !$(event.target).parents("#product_review_block").size()) { 
+                        $('#product_review_block div').removeClass('ty-product-add-review-is-focus');
+                        $('#dsc_message_{$obj_prefix}{$obj_id}').focus(function(e){
+                            fn_show_form(e);
+                        });
+                        $(this).unbind( event )
+                    }
+                }
+                function fn_show_form(event)
+                {
+                    $('#product_review_block div').addClass('ty-product-add-review-is-focus');
+                    $("body").click(function(e) {
+                        fn_hide_form(e);
+                    });
+                    $(this).unbind( event )
+                }
+                $('#dsc_message_{$obj_prefix}{$obj_id}').focus(function(e){
+                    fn_show_form(e);
+                });
+            }(Tygh, Tygh.$));
+            </script>
         {/if}
     </div>
 {/if}

@@ -291,16 +291,25 @@
                     'min-height': $(window).height()
                 });
 
+                // TennisHouse
                 $(dlg).css({
                     'position':'absolute',
                     'width': $(window).width() - 20,
-                    'left': '10px',
-                    'top':'10px',
+                    'left': '0',
+                    'top':'0',
                     'max-height': 'none',
                     'height': 'auto',
                     'margin-bottom': '10px'
                 });
 
+                if (typeof($(dlg).parent().offset()) !== 'undefined') {
+                    left_padding = $(dlg).parent().offset().left - 10;
+                    $(dlg).css({
+                        'left': '-' + left_padding + 'px',
+                    });
+                }
+                // TennisHouse
+                
                 // calculate title width
                 $(dlg).find('.ui-dialog-title').css({
                     'width': $(window).width() - 80
@@ -331,7 +340,7 @@
                 $.ceEvent('on', 'ce.dialogshow', function() {
                     if(self.winWidth() <= 767) {
                         self.resizeDialog();
-                        $('body,html').scrollTop(0);
+//                         $('body,html').scrollTop(0);
                     }
                 });
             }

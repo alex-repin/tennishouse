@@ -11,13 +11,15 @@
 {script src="js/tygh/tabs.js"}
 <div class="ty-tabs cm-j-tabs{if $track} cm-track{/if} clearfix">
     <ul class="ty-tabs__list" {if $tabs_section}id="tabs_{$tabs_section}"{/if}>
+    {$wdth = 100 / $active_tabs|count}
+    {$tab_width = "`$wdth`%"}
     {foreach from=$navigation.tabs item=tab key=key name=tabs}
         {if ((!$tabs_section && !$tab.section) || ($tabs_section == $tab.section)) && !$key|in_array:$empty_tab_ids && $tab.display}
         {if !$active_tab && ($key != 'description' || ($key == 'description' && (($product.full_description || $product.short_description) || ($product.product_features && (!$product.prices || !($product.full_description || $product.short_description))))))}
             {assign var="active_tab" value=$key}
         {/if}
         {assign var="_tabs" value=true}
-        <li id="{$key}" class="ty-tabs__item{if $tab.js} cm-js{elseif $tab.ajax} cm-js cm-ajax{/if}{if $key == $active_tab} active{/if}"><h2><a class="ty-tabs__a" {if $tab.href} href="{$tab.href|fn_url}"{/if}>{$tab.title}</a></h2></li>
+        <li id="{$key}" class="ty-tabs__item{if $tab.js} cm-js{elseif $tab.ajax} cm-js cm-ajax{/if}{if $key == $active_tab} active{/if}" style="width: {$tab_width}"><h2><a class="ty-tabs__a" {if $tab.href} href="{$tab.href|fn_url}"{/if}>{$tab.title}</a></h2></li>
         {/if}
     {/foreach}
     </ul>

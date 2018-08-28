@@ -43,6 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST' && $mode == 'update') {
         'js' => true
     );
     $tabs = fn_insert_before_key($tabs, 'seo', 'technologies', $technologies_tab);
+    $variations_tab = array (
+        'title' => __('variations'),
+        'js' => true
+    );
+    $tabs = fn_insert_before_key($tabs, 'seo', 'variations', $variations_tab);
 //     $warehouses_tab = array (
 //         'title' => __('warehouses'),
 //         'js' => true

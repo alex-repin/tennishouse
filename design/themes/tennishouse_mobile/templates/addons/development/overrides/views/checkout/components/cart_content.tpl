@@ -1,13 +1,13 @@
 {assign var="result_ids" value="cart_items,checkout_totals,checkout_steps,cart_status*,checkout_cart"}
 
-<form name="checkout_form" class="cm-ajax cm-check-changes" action="{""|fn_url}" method="post" enctype="multipart/form-data">
+<form name="checkout_form" class="cm-ajax cm-check-changes cm-ajax-force" action="{""|fn_url}" method="post" enctype="multipart/form-data">
 <input type="hidden" name="redirect_mode" value="cart" />
 <input type="hidden" name="result_ids" value="{$result_ids}" />
 
 <h1 class="ty-mainbox-title">{__("cart_contents")}</h1>
 
+{include file="buttons/update_cart.tpl" but_id="button_cart" but_meta="hidden" but_name="dispatch[checkout.update]"}
 {include file="views/checkout/components/cart_items.tpl" disable_ids="button_cart"}
-        {include file="buttons/update_cart.tpl" but_id="button_cart" but_name="dispatch[checkout.update]" but_meta="hidden"}
 
 </form>
 

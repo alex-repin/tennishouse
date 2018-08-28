@@ -316,7 +316,7 @@ class Ems implements IService
             }
         }
 
-        $url = 'http://www.emspost.ru/api/rest';
+//         $url = 'http://www.emspost.ru/api/rest';
         $data = array();
 
         if (!empty($destination_point) && !empty($origination_point)) {
@@ -348,7 +348,7 @@ class Ems implements IService
         $data = $this->getRequestData();
         $key = md5(json_encode($data['data']));
         $ems_data = fn_get_session_data($key);
-        if (empty($ems_data)) {
+        if (true) {
             $extra = array(
                 'request_timeout' => 1,
                 'timeout' => 1

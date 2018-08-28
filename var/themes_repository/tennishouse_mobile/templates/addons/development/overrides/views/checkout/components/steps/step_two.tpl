@@ -5,8 +5,8 @@
 <div class="ty-step__container{if $edit}-active{/if} ty-step-two" data-ct-checkout="billing_shipping_address" id="step_two">
     {if $settings.General.checkout_style != "multi_page"}
         <h3 class="ty-step__title{if $edit}-active{/if}{if $complete && !$edit}-complete{/if} clearfix">
-            <span class="ty-step__title-left">{if !$complete || $edit}1{/if}{if $complete && !$edit}<i class="ty-step__title-icon ty-icon-ok"></i>{/if}</span>
-            <i class="ty-step__title-arrow ty-icon-down-micro"></i>
+            <span class="ty-step__title-left">1{*if !$complete || $edit}1{/if}{if $complete && !$edit}<i class="ty-step__title-icon ty-icon-ok"></i>{/if*}</span>
+            {*<i class="ty-step__title-arrow ty-icon-down-micro"></i>*}
 
             
             {if $complete && !$edit}

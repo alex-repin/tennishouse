@@ -92,7 +92,7 @@
             "THFLite": "THFLite",
             "THF400": "THF400",
             "THF700": "THF700",
-            "OpenSans,Helvetica,Arial,sans-serif": "TennisHouse Base"
+            "OpenSans,Open Sans,sans-serif": "TennisHouse Base"
         },
         "fields": {
             "body_font": {

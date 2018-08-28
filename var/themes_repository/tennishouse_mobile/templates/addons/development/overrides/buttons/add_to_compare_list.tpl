@@ -3,5 +3,5 @@
 {/if}
 
 {if  !$hide_compare_list_button}
-    {include file="addons/development/common/form_link.tpl" form_class="ty-wishlist-form $ajax_class" form_method="get" hidden_input=["product_id" => "{$product_id}"] link_text=__("compare") link_meta="ty-add-to-compare" link_name="dispatch[product_features.add_product]" link_id="add_to_compare_`$obj_id`" link_role=""}
+    {include file="addons/development/common/form_link.tpl" form_class="ty-wishlist-form $ajax_class" form_method="get" hidden_input=["product_id" => "{$product_id}", "result_ids" => "my_account_block"] link_text=__("compare") link_meta="ty-add-to-compare" link_name="dispatch[product_features.add_product]" link_id="add_to_compare_`$obj_id`" link_role=""}
 {/if}

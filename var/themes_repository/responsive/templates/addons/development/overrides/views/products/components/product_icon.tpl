@@ -1,16 +1,5 @@
-{if $mode == 'R'}
     {$iw = $settings.Thumbnails.product_lists_thumbnail_width}
     {$ih = $settings.Thumbnails.product_lists_thumbnail_height}
-{elseif $mode == 'S'}
-    {$iw = 130}
-    {$ih = 130}
-{elseif $mode == 'N'}
-    {$iw = 103}
-    {$ih = 103}
-{elseif $mode == 'M'}
-    {$iw = 70}
-    {$ih = 70}
-{/if}
 {capture name="main_icon"}
     {if !$hide_links}<a href="{"products.view?product_id=`$product.product_id`{if $product.ohash}&`$product.ohash`{/if}"|fn_url}">{/if}
         {include file="addons/development/common/load_image.tpl" el_id="product_main_image_`$obj_id`_`$product.main_pair.pair_id`" pair_id=$product.main_pair.pair_id pair_data=$product.main_pair}

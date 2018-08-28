@@ -46,15 +46,16 @@
             if (scroller_type == 'owlcarousel') {
                 container.owlCarousel({
                     items: params.items_count,
-                    singleItem: params.items_count == 1 ? true : false,
+                    rewind: true,
                     responsive: params.items_responsive,
-                    pagination: false,
-                    gallery_buttons: params.gallery_buttons,
-                    navigation: true,
+                    dots: false,
+                    nav: true,
+                    margin: 10,
                     obj_id: params.obj_id,
-                    navigationText: params.hide_navigation_text ? ['<div class="ty-arrow-bg"></div>', '<div class="ty-arrow-bg"></div>'] : (params.items_count == 1 ? ['<i class="icon-left-circle ty-icon-left-circle"></i>', '<i class="icon-right-circle ty-icon-right-circle"></i>'] : ['<i class="icon-left-open-thin ty-icon-left-open-thin"></i>', '<i class="icon-right-open-thin ty-icon-right-open-thin"></i>']),
+                    gallery_buttons: params.gallery_buttons,
+                    navText: params.hide_navigation_text ? ['<div class="ty-arrow-bg"></div>', '<div class="ty-arrow-bg"></div>'] : (params.items_count == 1 ? ['<i class="icon-left-circle ty-icon-left-circle"></i>', '<i class="icon-right-circle ty-icon-right-circle"></i>'] : ['<i class="icon-left-open-thin ty-icon-left-open-thin"></i>', '<i class="icon-right-open-thin ty-icon-right-open-thin"></i>']),
                     theme: params.items_count == 1 ? 'owl-one-theme' : 'owl-more-theme',
-                    afterInit: function(item) {
+                    onInitialized : function(item) {
                         $(item).css({'visibility':'visible', 'position':'relative'});
                         if ($.fn.ceProductImageLoader) {
                             $('.cm-carousel-image-loader', container).ceProductImageLoader();

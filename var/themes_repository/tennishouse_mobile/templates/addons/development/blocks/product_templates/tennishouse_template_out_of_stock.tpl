@@ -1,4 +1,4 @@
-<div class="ty-product-block">
+<div class="ty-product-block ty-product-block_oos">
     <div itemscope itemtype="http://schema.org/Product" class="ty-product-block__wrapper clearfix">
     {hook name="products:view_main_info"}
         {if $product}
@@ -17,9 +17,11 @@
                 </div>
             {/if}
             {if !$hide_title}
-                <h1 itemprop="name" class="ty-product-block-title" {live_edit name="product:product:{$product.product_id}"}>
-                    {$product.product nofilter}
-                </h1>
+                <div class="ty-product-block-title-wrapper">
+                    <h1 itemprop="name" class="ty-product-block-title" {live_edit name="product:product:{$product.product_id}"}>
+                        {$product.product nofilter}
+                    </h1>
+                </div>
             {/if}
             <div class="ty-product-block__img-wrapper">
                 {hook name="products:image_wrap"}
@@ -68,12 +70,12 @@
                             {if $smarty.capture.$price|trim}
                                 <div class="ty-product-block__price-actual">
                                     {$smarty.capture.$price nofilter}
-                                    {assign var="qty_discounts" value="qty_discounts_`$obj_id`"}
+                                    {*assign var="qty_discounts" value="qty_discounts_`$obj_id`"}
                                     {if $smarty.capture.$qty_discounts|trim}
                                         <div class="ty-ti-price-wrap">
                                             {$smarty.capture.$qty_discounts nofilter}
                                         </div>
-                                    {/if}
+                                    {/if*}
                                 </div>
                             {/if}
 
@@ -89,6 +91,17 @@
                             {$smarty.capture.$advanced_options nofilter}
                             {if $capture_options_vs_qty}{/capture}{/if}
                         </div>
+                        {if $capture_buttons}{capture name="buttons"}{/if}
+                        <div class="ty-product-block__button">
+                            {assign var="follow" value="follow_`$obj_id`"}
+                            {$smarty.capture.$follow nofilter}
+                            
+                            {if $show_details_button}
+                                {include file="buttons/button.tpl" but_href="products.view?product_id=`$product.product_id`" but_text=__("view_details") but_role="submit"}
+                            {/if}
+
+                        </div>
+                        {if $capture_buttons}{/capture}{/if}
                     </div>
                 </div>
 
@@ -136,9 +149,63 @@
                 {/hook}
                 </div>
             </div>
+            <div class="ty-product-subsection">
+                {if $product.variations}
+                <div class="ty-product-variations">
+                    <div class="ty-product-detail__info-title">{__("product_variations_in_stock")}</div>
+                    <div class="ty-product-variations__items">
+                        {foreach from=$product.variations item="variation"}
+                            <div class="ty-product-variations__items-image">
+                                <a href="{"products.view?product_id=`$variation.product_id`"|fn_url}">{include file="common/image.tpl" images=$variation.main_pair image_width="170" image_height="170" show_detailed_link=false obj_id="variation_`$variation.product_id`"}</a>
+                            </div>
+                        {/foreach}
+                    </div>
+                </div>
+                {/if}
+                <div class="ty-consultation">
+                    <div class="ty-consultation_column">
+                        <span class="ty-product-detail__info-title">{__("check_for_availability")}</span>
+                    </div>
+                    <div class="ty-consultation_column">
+                        <div class="ty-consultation-phone">{$settings.Company.company_phone}</div>
+                        <div class="ty-consultation-email">{$settings.Company.company_support_department}</div>
+                    </div>
+                </div>
+            </div>
             [-similar_products-]
+            <div class="ty-product-subsection">
+                {if $product.players}
+                    {if "RASBST"|strpos:$product.category_type !== false}
+                        {$type = $product.category_type}
+                    {else}
+                        {$type = 'C'}
+                    {/if}
+                    {if $product.players|count == '1'}
+                        {$title = __("`$product.category_type`_played_by_single")}
+                    {else}
+                        {$title = __("`$product.category_type`_played_by")}
+                    {/if}
+                    <div class="ty-product-block__players">
+                        <div class="ty-product-detail__info-title">
+                            {$title}
+                        </div>
+                        <div class="ty-product-block__players-block">
+                            {foreach from=$product.players item="player" name="plrs"}
+                                {if $smarty.foreach.plrs.iteration < 5}
+                                    <div class="ty-product-list__player_image">
+                                        <a href="{"players.view?player_id=`$player.player_id`"|fn_url}">
+                                            {include file="common/image.tpl" obj_id=$obj_id_prefix images=$player.main_pair image_width="90" image_height="90"}
+                                        </a>
+                                        <div>{$player.player}</div>
+                                    </div>
+                                {/if}
+                            {/foreach}
+                        </div>
+                    </div>
+                {/if}
+            </div>
             {if $show_product_tabs}
-                <div class="ty-product-tabs-oos">
+                <div class="ty-product-tabs">
                 {include file="views/tabs/components/product_popup_tabs.tpl"}
                 {$smarty.capture.popupsbox_content nofilter}
                 {include file="views/tabs/components/product_tabs.tpl"}
@@ -176,5 +243,6 @@
     {include file="addons/development/common/tabsbox.tpl" content=$smarty.capture.block_tabsbox navigation=$_block_tabs}
     </div>
 {/if}
+{include file="addons/development/common/share_buttons.tpl" short=true title=$product.product description=$product.full_description|strip_tags|truncate:160 image=$product.main_pair.detailed.image_path}
 
 {capture name="mainbox_title"}{assign var="details_page" value=true}{/capture}

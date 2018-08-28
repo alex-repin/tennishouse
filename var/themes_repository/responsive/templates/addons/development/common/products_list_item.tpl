@@ -33,7 +33,7 @@
             {/foreach}
             </div>
         {/if}
-        <div class="ty-grid-list__image-product">
+        <div class="ty-grid-list__image-product" {if $mode == 'R'}style="width: {$settings.Thumbnails.product_lists_thumbnail_width}px;height: {$settings.Thumbnails.product_lists_thumbnail_height}px;--width: {$settings.Thumbnails.product_lists_thumbnail_width}px;--height: {$settings.Thumbnails.product_lists_thumbnail_height}px;"{/if}>
             {if $mode == 'R'}
                 {$show_gallery = true}
             {else}
@@ -77,6 +77,9 @@
                     {/if}
                 {/foreach}
             </div>
+            {if $smarty.const.PROMOTION_TAG|in_array:$product.tags}
+                <div class="ty-grid-list__image-promo-tag"></div>
+            {/if}
         {/if}
     </div>
     
@@ -147,10 +150,6 @@
     
     {assign var="form_close" value="form_close_`$obj_id`"}
     {$smarty.capture.$form_close nofilter}
-    
-    {if $mode == 'R' && $smarty.const.PROMOTION_TAG|in_array:$product.tags}
-        <div class="ty-grid-list__image-promo-tag"></div>
-    {/if}
 </div>
 </a>
 {if $category_grid}

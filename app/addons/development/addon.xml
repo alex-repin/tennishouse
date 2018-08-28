@@ -700,6 +700,9 @@
         <item>
             ALTER TABLE `cscart_countries` ADD `currency_code` VARCHAR(10) NOT NULL AFTER `status`;
         </item>
+        <item>
+            ALTER TABLE `cscart_products` ADD `variation_ids` TEXT NOT NULL;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -1356,5 +1359,20 @@
         <item lang="ru" id="promotion_products">Товары, участвующие в акции</item>
         <item lang="ru" id="read_about_promo">Подробнее об акциии</item>
         <item lang="ru" id="reward_points_label"><![CDATA[Cкидка <b>[amount]</b> на следующий заказ]]></item>
+        <item lang="ru" id="variations">Разновидности</item>
+        <item lang="ru" id="check_for_availability">Узнать о поступлении</item>
+        <item lang="ru" id="product_variations">Разновидности этого товара</item>
+        <item lang="ru" id="product_variations_in_stock">Разновидности этого товара в наличии</item>
+        <item lang="ru" id="left_in_stock">Осталось в наличии</item>
+        <item lang="ru" id="in_cart">В корзине</item>
+        <item lang="ru" id="advantage_air_delivery_title">Быстрая доставка</item>
+        <item lang="ru" id="advantage_air_delivery_text">В любую точку мира в кратчайшие сроки. Бесплатная доставка на заказы от {free_shipping_cost} рублей по России</item>
+        <item lang="ru" id="advantage_payment_on_delivery_title">Удобные способы оплаты</item>
+        <item lang="ru" id="advantage_payment_on_delivery_text">Оплата наличными при получении по России и Казахстану. А также оплата картами онлайн, по безналичному расчету и бонусными рублями</item>
+        <item lang="ru" id="advantage_refund_title">Обмен и возврат</item>
+        <item lang="ru" id="advantage_refund_text">В случае если товар не подошел, его можно сразу вернуть курьеру при доставке по Москве или отправить обратно при доставке в регионы</item>
+        <item lang="ru" id="advantage_fitting_title">Бесплатная примерка</item>
+        <item lang="ru" id="advantage_fitting_text">Вы можете примерить товар на месте и, если он не подошел, вернуть курьеру или отправить посылку обратно</item>
+        <item lang="ru" id="sizing_table">Таблица размеров</item>
     </language_variables>
 </addon>

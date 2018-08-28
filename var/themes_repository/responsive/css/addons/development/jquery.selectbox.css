@@ -9,7 +9,7 @@
     border-radius: 2px;
     cursor: pointer;
     vertical-align: top;
-    width: 250px;
+    width: 345px;
 }
 .ty-sb-popup-large.sbHolder, .ty-shipping-state .sbHolder, .ty-billing-state .sbHolder {
     width: 345px;
@@ -31,14 +31,20 @@
     float: right;
     border-radius: 2px;
 }
-.sbSelector{
+.sbSelector {
     display: inline-block;
     height: 30px;
     line-height: 30px;
     padding-left: 15px;
     vertical-align: top;
-    width: 205px;
+    width: 300px;
     overflow: hidden;
+}
+.ty-pc-group__products-item-options .sbHolder {
+    width: 250px;
+}
+.ty-pc-group__products-item-options .sbSelector {
+    width: 205px;
 }
 .sbHolder:focus .sbSelector{
 }

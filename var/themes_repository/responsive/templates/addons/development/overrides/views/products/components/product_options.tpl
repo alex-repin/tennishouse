@@ -34,22 +34,32 @@
     
     {assign var="selected_variant" value=""}
     <div class="ty-control-group ty-product-options__item{if !$capture_options_vs_qty} product-list-field{/if} clearfix" id="opt_{$obj_prefix}{$id}_{$po.option_id}">
+        {capture name="variant_images"}
+            {if !$po.disabled && !$disabled}
+                {foreach from=$po.variants item="var"}
+                    {if $var.variant_id == $po.value}{assign var="_class" value="is-selected"}{else}{assign var="_class" value="ty-product-variant-image-unselected"}{/if}
+                    {if $var.images}
+                        {include file="common/image.tpl" class="ty-hand $_class ty-product-options__image" images=$var.images|reset image_width="65" image_height="65" obj_id="variant_image_`$obj_prefix``$id`_`$po.option_id`_`$var.variant_id`" image_onclick="fn_set_option_value('`$obj_prefix``$id`', '`$po.option_id`', '`$var.variant_id`'); void(0);"}
+                    {elseif $po.has_variant_additional || ($var.image_pair.image_id && $po.variants|count == 1)}
+                        {$main_pair = $product.org_main_pair|default:$product.main_pair}
+                        {include file="common/image.tpl" class="ty-hand $_class ty-product-options__image" images=$main_pair image_width="65" image_height="65" obj_id="variant_image_`$obj_prefix``$id`_`$po.option_id`_`$var.variant_id`" image_onclick="fn_set_option_value('`$obj_prefix``$id`', '`$po.option_id`', '`$var.variant_id`'); void(0);"}
+                    {elseif $var.image_pair.image_id}
+                        {include file="common/image.tpl" class="ty-hand $_class ty-product-options__image ty-product-options__image-plain" images=$var.image_pair image_width="20" image_height="20" obj_id="variant_image_`$obj_prefix``$id`_`$po.option_id`_`$var.variant_id`" image_onclick="fn_set_option_value('`$obj_prefix``$id`', '`$po.option_id`', '`$var.variant_id`'); void(0);"}
+                    {/if}
+                {/foreach}
+            {/if}
+        {/capture}
+        <div class="{if $smarty.capture.variant_images|trim} hidden{/if}">
         {if !("SRC"|strpos:$po.option_type !== false && !$po.variants && $po.missing_variants_handling == "H")}
-            <label {if $po.option_type !== "R" && $po.option_type !== "F"}for="option_{$obj_prefix}{$id}_{$po.option_id}"{/if} class="ty-control-group__label ty-product-options__item-label{if $po.required == "Y"} cm-required cm-requirement-popup{/if}{if $po.regexp} cm-regexp{/if}" {if $po.regexp}data-ca-regexp="{$po.regexp}" data-ca-message="{$po.incorrect_message}"{/if}>
+            <label {if $po.option_type !== "R" && $po.option_type !== "F"}for="option_{$obj_prefix}{$id}_{$po.option_id}"{/if} class="ty-control-group__label ty-product-options__item-label{if $po.required == "Y"} cm-required cm-requirement-popup{/if}{if $po.regexp} cm-regexp{/if} {if $po.option_type == 'S' || $po.option_type == "I"}hidden{/if}" {if $po.regexp}data-ca-regexp="{$po.regexp}" data-ca-message="{$po.incorrect_message}"{/if}>
                 {$po.option_name}
-                {if $po.note_text}
-                    {include file="addons/development/common/tooltip.tpl" note_text=$po.note_text note_url=$po.note_url tooltipclass="ty-option-tooltip"}
-                {/if}
             </label>
-            {*if $po.note_text}
-                <div style="display: none;">{if $po.note_url}<a class="cm-notification-note" href="{"`$po.note_url`"|fn_url}" target="_blank">{/if}{$po.note_text}{if $po.note_url}</a>{/if}</div>
-            {/if*}
             {if $po.option_type == "S"} {*Selectbox*}
                 {if ($po.disabled || $disabled) && !$po.not_required}<input type="hidden" value="{$po.value}" name="{$name}[{$id}][product_options][{$po.option_id}]" id="option_{$obj_prefix}{$id}_{$po.option_id}" />{/if}
                 <select name="{$name}[{$id}][product_options][{$po.option_id}]" {if !$po.disabled && !$disabled}id="option_{$obj_prefix}{$id}_{$po.option_id}"{/if} onchange="{if $product.options_update}fn_change_options('{$obj_prefix}{$id}', '{$id}', '{$po.option_id}');{else} fn_change_variant_image('{$obj_prefix}{$id}', '{$po.option_id}');{/if}" class="cm-dropdown {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}disabled{/if}{if $product.options_update} cm-options-update{/if}" {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled || !$po.variants}disabled="disabled"{/if}>
                     {if $product.options_type == "S"}
                         {if !$runtime.checkout || $po.disabled || $disabled || ($runtime.checkout && !$po.value)}
-                            <option value="">{if $po.disabled || $disabled}{__("select_option_above")}{elseif $po.default_text} - {$po.default_text} - {else}{__("please_select_one")}{/if}</option>
+                            <option value="">{if $po.disabled || $disabled}{if $po.default_text} - {$po.default_text} - {else}{__("select_option_above")}{/if}{elseif $po.default_text} - {$po.default_text} - {else}{__("please_select_one")}{/if}</option>
                         {/if}
                     {/if}
                     {foreach from=$po.variants item="vr" name=vars}
@@ -75,7 +85,7 @@
                             {$po.variants[$po.value].variant_name}
                         {/if}
                     </ul>
-                    {if !$po.value && $product.options_type == "S" && !($po.disabled || $disabled)}<p class="ty-product-options__description ty-clear-both">{__("please_select_one")}</p>{elseif !$po.value && $product.options_type == "S" && ($po.disabled || $disabled)}<p class="ty-product-options__description ty-clear-both">{__("select_option_above")}</p>{/if}
+                    {if !$po.value && $product.options_type == "S" && !($po.disabled || $disabled)}<p class="ty-product-options__description ty-clear-both">{__("please_select_one")}</p>{elseif !$po.value && $product.options_type == "S" && ($po.disabled || $disabled)}<p class="ty-product-options__description ty-clear-both">{if $po.default_text} - {$po.default_text} - {else}{__("select_option_above")}{/if}</p>{/if}
                 {else}
                     <input type="hidden" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$po.value}" id="option_{$obj_prefix}{$id}_{$po.option_id}" />
                     <span>{__("na")}</span>
@@ -99,7 +109,7 @@
                 {/foreach}
 
             {elseif $po.option_type == "I"} {*Input*}
-                <input id="option_{$obj_prefix}{$id}_{$po.option_id}" type="text" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$po.value|default:$po.inner_hint}" {if $product.exclude_from_calculate && !$product.aoc}disabled="disabled"{/if} class="ty-valign ty-input-text{if $po.inner_hint} cm-hint{/if}{if $product.exclude_from_calculate && !$product.aoc} disabled{/if}" {if $po.inner_hint}title="{$po.inner_hint}"{/if} {if $disabled}disabled="disabled"{/if}/>
+                <input id="option_{$obj_prefix}{$id}_{$po.option_id}" placeholder="{$po.option_name}" type="text" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$po.value|default:$po.inner_hint}" {if $product.exclude_from_calculate && !$product.aoc}disabled="disabled"{/if} class="ty-valign ty-input-text{if $po.inner_hint} cm-hint{/if}{if $product.exclude_from_calculate && !$product.aoc} disabled{/if}" {if $po.inner_hint}title="{$po.inner_hint}"{/if} {if $disabled}disabled="disabled"{/if} />
             {elseif $po.option_type == "T"} {*Textarea*}
                 <textarea id="option_{$obj_prefix}{$id}_{$po.option_id}" class="ty-product-options__textarea{if $po.inner_hint} cm-hint{/if}{if $product.exclude_from_calculate && !$product.aoc} disabled{/if}" rows="3" name="{$name}[{$id}][product_options][{$po.option_id}]" {if $product.exclude_from_calculate && !$product.aoc}disabled="disabled"{/if} {if $po.inner_hint}title="{$po.inner_hint}"{/if} >{$po.value|default:$po.inner_hint}</textarea>
             {elseif $po.option_type == "F"} {*File*}
@@ -107,32 +117,28 @@
                     {include file="common/fileuploader.tpl" images=$product.extra.custom_files[$po.option_id] var_name="`$name`[`$po.option_id``$id`]" multiupload=$po.multiupload hidden_name="`$name`[custom_files][`$po.option_id``$id`]" hidden_value="`$id`_`$po.option_id`" label_id="option_`$obj_prefix``$id`_`$po.option_id`" prefix=$obj_prefix}
                 </div>
             {/if}
+            {if $po.note_text}
+                {include file="addons/development/common/tooltip.tpl" note_text=$po.note_text note_url=$po.note_url tooltipclass="ty-option-tooltip"}
+            {elseif $po.popup_content}
+                <div class="ty-sizing-table">
+                    {include file="common/popupbox.tpl"
+                    content=$po.popup_content
+                    link_text=$po.popup_title
+                    text=$po.popup_title
+                    id="sizing_table_`$product.product_id`"
+                    link_meta=$link_meta}
+                </div>
+            {/if}
         {/if}
+        </div>
 
         {if $po.comment}
             <div class="ty-product-options__description">{$po.comment}</div>
         {/if}
 
-        {capture name="variant_images"}
-            {if !$po.disabled && !$disabled}
-                {foreach from=$po.variants item="var"}
-                    {if $var.variant_id == $selected_variant}{assign var="_class" value="is-selected"}{else}{assign var="_class" value="ty-product-variant-image-unselected"}{/if}
-                    {if $var.images}
-                        {include file="common/image.tpl" class="ty-hand $_class ty-product-options__image" images=$var.images|reset image_width="40" image_height="40" obj_id="variant_image_`$obj_prefix``$id`_`$po.option_id`_`$var.variant_id`" image_onclick="fn_set_option_value('`$obj_prefix``$id`', '`$po.option_id`', '`$var.variant_id`'); void(0);"}
-                    {elseif $po.has_variant_additional || ($var.image_pair.image_id && $po.variants|count == 1)}
-                        {$main_pair = $product.org_main_pair|default:$product.main_pair}
-                        {include file="common/image.tpl" class="ty-hand $_class ty-product-options__image" images=$main_pair image_width="40" image_height="40" obj_id="variant_image_`$obj_prefix``$id`_`$po.option_id`_`$var.variant_id`" image_onclick="fn_set_option_value('`$obj_prefix``$id`', '`$po.option_id`', '`$var.variant_id`'); void(0);"}
-                    {elseif $var.image_pair.image_id}
-                        {include file="common/image.tpl" class="ty-hand $_class ty-product-options__image ty-product-options__image-plain" images=$var.image_pair image_width="20" image_height="20" obj_id="variant_image_`$obj_prefix``$id`_`$po.option_id`_`$var.variant_id`" image_onclick="fn_set_option_value('`$obj_prefix``$id`', '`$po.option_id`', '`$var.variant_id`'); void(0);"}
-                    {/if}
-                {/foreach}
-            {/if}
-        {/capture}
-
         {if $smarty.capture.variant_images|trim}
             <script type="text/javascript">
             (function(_, $) {
-                $('#option_{$obj_prefix}{$id}_{$po.option_id}').css('display', 'none');
                 $('#option_{$obj_prefix}{$id}_{$po.option_id}').removeClass('cm-dropdown');
             }(Tygh, Tygh.$));
             </script>

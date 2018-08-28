@@ -76,7 +76,7 @@ var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
         lbl = $("label[for='" + obj.attr('id') + "']");
         $('#' + obj.attr('id') + '_error_message').remove();
         
-        if ($("[data-autocompletetype='city_id']").length && obj.val() != '') {
+        if ($("[data-autocompletetype='city_id']").length && obj.val() != '' && $("[data-autocompletetype='country']").val() == 'RU') {
             if (obj.data('kladr_ok')) {
                 if ($("[data-autocompletetype='city_id']").val() == '' && obj.hasClass('cm-city-change')) {
                     if (show_error) {

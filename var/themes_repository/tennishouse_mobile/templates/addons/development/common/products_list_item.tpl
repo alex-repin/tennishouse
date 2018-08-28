@@ -31,11 +31,16 @@
             {/foreach}
             </div>
         {/if}
-        <div class="ty-grid-list__image-product">
-            {if $microdata}
-                {include file="views/products/components/product_icon.tpl" product=$product show_gallery=false itemprop="image"}
+        <div class="ty-grid-list__image-product" {if $mode == 'R'}style="max-width: {$settings.Thumbnails.product_lists_thumbnail_width}px;max-height: {$settings.Thumbnails.product_lists_thumbnail_height}px;"{/if}>
+            {if $mode == 'R'}
+                {$show_gallery = true}
             {else}
-                {include file="views/products/components/product_icon.tpl" product=$product show_gallery=false}
+                {$show_gallery = false}
+            {/if}
+            {if $microdata}
+                {include file="views/products/components/product_icon.tpl" product=$product show_gallery=$show_gallery itemprop="image"}
+            {else}
+                {include file="views/products/components/product_icon.tpl" product=$product show_gallery=$show_gallery}
             {/if}
         </div>
 
@@ -77,6 +82,9 @@
                     {/if}
                 {/foreach}
             </div>
+            {if $smarty.const.PROMOTION_TAG|in_array:$product.tags}
+                <div class="ty-grid-list__image-promo-tag"></div>
+            {/if}
         {/if}
     </div>
     
@@ -160,9 +168,6 @@
     {assign var="form_close" value="form_close_`$obj_id`"}
     {$smarty.capture.$form_close nofilter}
     
-    {if $mode == 'R' && $smarty.const.PROMOTION_TAG|in_array:$product.tags}
-        <div class="ty-grid-list__image-promo-tag"></div>
-    {/if}
 </div>
 </a>
 </div>

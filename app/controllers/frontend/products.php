@@ -217,12 +217,12 @@ if ($mode == 'search') {
 
 } elseif ($mode == 'options') {
 
-    if (!defined('AJAX_REQUEST') && !empty($_REQUEST['product_data'])) {
-        list($product_id, $_data) = each($_REQUEST['product_data']);
-        $product_id = isset($_data['product_id']) ? $_data['product_id'] : $product_id;
-
-        return array(CONTROLLER_STATUS_REDIRECT, 'products.view?product_id=' . $product_id);
-    }
+//     if (!defined('AJAX_REQUEST') && !empty($_REQUEST['product_data'])) {
+//         list($product_id, $_data) = each($_REQUEST['product_data']);
+//         $product_id = isset($_data['product_id']) ? $_data['product_id'] : $product_id;
+// 
+//         return array(CONTROLLER_STATUS_REDIRECT, 'products.view?product_id=' . $product_id);
+//     }
 } elseif ($mode == 'product_notifications') {
     fn_update_product_notifications(array(
         'product_id' => $_REQUEST['product_id'],

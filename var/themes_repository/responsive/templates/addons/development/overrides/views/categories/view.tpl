@@ -45,9 +45,10 @@
         {assign var="filter_qstring" value="products.search"}
     {/if}
     <div class="clearfix">
-        <div class="ty-categorization-subtabs__title">{$stb_feature.description}:</div>
+        {*<div class="ty-categorization-subtabs__title">{$stb_feature.description}:</div>*}
         <div class="ty-categorization-subtabs" id="subtabs_categorization">
             {$cst_width = 100 / $stb_feature.variants|count}
+            {strip}
             {foreach from=$stb_feature.variants item=tab key=key}
                 {if !$active_subtab}
                     {assign var="active_subtab" value=$key}
@@ -66,6 +67,7 @@
                     </h3>
                 </div>
             {/foreach}
+            {/strip}
         <!--subtabs_categorization--></div>
     </div>
 {/if}

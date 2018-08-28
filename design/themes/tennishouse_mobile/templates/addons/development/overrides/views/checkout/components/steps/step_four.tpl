@@ -3,8 +3,8 @@
 <div class="ty-step__container{if $edit}-active{/if} ty-step-four" data-ct-checkout="billing_options" id="step_four">
     {if $settings.General.checkout_style != "multi_page"}
         <h3 class="ty-step__title{if $edit}-active{/if} clearfix">
-            <span class="ty-step__title-left">{if $profile_fields.B || $profile_fields.S}3{else}2{/if}</span>
-            <i class="ty-step__title-arrow ty-icon-down-micro"></i>
+            <span class="ty-step__title-left">3{*if $profile_fields.B || $profile_fields.S}3{else}2{/if*}</span>
+            {*<i class="ty-step__title-arrow ty-icon-down-micro"></i>*}
             
             {hook name="checkout:edit_link_title"}
             {if $complete && !$edit}

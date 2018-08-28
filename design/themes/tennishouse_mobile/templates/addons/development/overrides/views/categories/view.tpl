@@ -64,6 +64,7 @@
     <div class="clearfix">
         <div class="ty-categorization-subtabs" id="subtabs_categorization">
             {$cst_count = $stb_feature.variants|count}
+            {strip}
             {foreach from=$stb_feature.variants item=tab key=key}
                 {if !$active_subtab}
                     {assign var="active_subtab" value=$key}
@@ -82,6 +83,7 @@
                     </h3>
                 </div>
             {/foreach}
+            {/strip}
         <!--subtabs_categorization--></div>
     </div>
 {/if}
