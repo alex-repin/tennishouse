@@ -152,7 +152,7 @@ define('SESS_VALIDATE_UA', true); // link session ID with user-agent
 
 define('BILLING_ADDRESS_PREFIX', 'b');
 define('SHIPPING_ADDRESS_PREFIX', 's');
-define('DEBUGGING_IP', '95.28.62.143');
+define('DEBUGGING_IP', '31.173.80.214');
 
 /*
  * Dynamic options
@@ -249,7 +249,7 @@ $config['current_host'] = (defined('HTTPS')) ? $config['https_host'] : $config['
 $config['allowed_pack_exts'] = array('tgz', 'gz', 'zip');
 
 //[tennishouse]
-define('USE_DB_MEMCACHED', false);
+define('USE_DB_MEMCACHED', true);
 define('USE_FEATURE_CACHE', true);
 define('USE_SQL_CACHE', true);
 define('DB_MEMCACHE_DURATION', time() + 60 * 60 * 24);
