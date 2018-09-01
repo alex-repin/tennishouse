@@ -207,8 +207,8 @@
                             <span class="ty-product-detail__info-title">{__("expert_consultation")}</span>
                         </div>
                         <div class="ty-consultation_column">
-                            <div class="ty-consultation-phone">{$settings.Company.company_phone}</div>
-                            <div class="ty-consultation-email">{$settings.Company.company_support_department}</div>
+                            <div class="ty-consultation-phone"><a href="tel:{$company_phone}">{$settings.Company.company_phone}</a></div>
+                            <div class="ty-consultation-email"><a href="mailto:{$settings.Company.company_users_department}">{$settings.Company.company_support_department}</a></div>
                         </div>
                     </div>
                 {/if}

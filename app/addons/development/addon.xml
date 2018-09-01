@@ -685,7 +685,7 @@
         <item>
             REPLACE INTO `cscart_product_tabs` (`tab_id`, `tab_type`, `block_id`, `template`, `addon`, `position`, `status`, `is_primary`, `product_ids`, `company_id`, `show_in_popup`) VALUES 
             (9, 'T', 0, 'blocks/product_tabs/technologies.tpl', '', 22, 'A', 'Y', '', 1, 'N'),
-            (10, 'T', 0, 'blocks/product_tabs/size_chart.tpl', '', 21, 'A', 'Y', '', 1, 'N'),
+            (10, 'T', 0, 'blocks/product_tabs/size_chart.tpl', '', 21, 'D', 'Y', '', 1, 'N'),
             (11, 'T', 0, 'blocks/product_tabs/promotion.tpl', '', 23, 'A', 'Y', '', 1, 'N');
         </item>
         <item>

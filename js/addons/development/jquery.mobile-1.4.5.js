@@ -7939,7 +7939,7 @@ $.widget( "mobile.checkboxradio", $.extend( {
 
 		this._cacheVals();
 
-		input.prop( "checked", this.inputtype === "radio" && true || !input.prop( "checked" ) );
+// 		input.prop( "checked", this.inputtype === "radio" && true || !input.prop( "checked" ) );
 
 		// trigger click handler's bound directly to the input as a substitute for
 		// how label clicks behave normally in the browsers

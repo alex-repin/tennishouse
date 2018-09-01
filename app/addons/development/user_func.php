@@ -505,7 +505,7 @@ function fn_get_big_cities()
 
 function fn_get_approximate_shipping($location)
 {
-    $priority = array(COURIER_SH_ID, SDEK_STOCK_SH_ID, SDEK_DOOR_SH_ID, RU_POST_SH_ID, EMS_SH_ID);
+    $priority = array(COURIER_SH_ID, SDEK_STOCK_SH_ID, SDEK_DOOR_SH_ID, RU_POST_SH_ID);
     $shipping_time = 0;
     $group = array(
         'package_info' => array(
