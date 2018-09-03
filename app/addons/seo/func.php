@@ -356,16 +356,16 @@ function fn_seo_get_route(&$req, &$result, &$area, &$is_allowed_url)
 
                         $object_type = db_get_field("SELECT type FROM ?:seo_names WHERE name = ?s ?p", $objects['object_name'], fn_get_seo_company_condition('?:seo_names.company_id'));
 
-                        $_seo = db_get_array("SELECT * FROM ?:seo_names WHERE name = ?s ?p ?p", $objects['object_name'], fn_get_seo_company_condition('?:seo_names.company_id', $object_type), $lang_cond);
+                        $_seo = db_get_array("SELECT * FROM ?:seo_names WHERE name = ?s ?p ?p ORDER BY dispatch DESC", $objects['object_name'], fn_get_seo_company_condition('?:seo_names.company_id', $object_type), $lang_cond);
 
                         if (empty($_seo)) {
-                            $_seo = db_get_array("SELECT * FROM ?:seo_names WHERE name = ?s ?p", $objects['object_name'], fn_get_seo_company_condition('?:seo_names.company_id'));
+                            $_seo = db_get_array("SELECT * FROM ?:seo_names WHERE name = ?s ?p ORDER BY dispatch DESC", $objects['object_name'], fn_get_seo_company_condition('?:seo_names.company_id'));
                         }
 
                         if (empty($_seo) && !empty($objects['extension'])) {
-                            $_seo = db_get_array("SELECT * FROM ?:seo_names WHERE name = ?s ?p ?p", $objects['object_name'] . '.' . $objects['extension'], fn_get_seo_company_condition('?:seo_names.company_id'), $lang_cond);
+                            $_seo = db_get_array("SELECT * FROM ?:seo_names WHERE name = ?s ?p ?p ORDER BY dispatch DESC", $objects['object_name'] . '.' . $objects['extension'], fn_get_seo_company_condition('?:seo_names.company_id'), $lang_cond);
                             if (empty($_seo)) {
-                                $_seo = db_get_array("SELECT * FROM ?:seo_names WHERE name = ?s ?p", $objects['object_name'] . '.' . $objects['extension'], fn_get_seo_company_condition('?:seo_names.company_id', $object_type));
+                                $_seo = db_get_array("SELECT * FROM ?:seo_names WHERE name = ?s ?p ORDER BY dispatch DESC", $objects['object_name'] . '.' . $objects['extension'], fn_get_seo_company_condition('?:seo_names.company_id', $object_type));
                             }
                         }
 

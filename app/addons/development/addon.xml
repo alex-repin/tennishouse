@@ -1374,5 +1374,6 @@
         <item lang="ru" id="advantage_fitting_title">Бесплатная примерка</item>
         <item lang="ru" id="advantage_fitting_text">Вы можете примерить товар на месте и, если он не подошел, вернуть курьеру или отправить посылку обратно</item>
         <item lang="ru" id="sizing_table">Таблица размеров</item>
+        <item lang="ru" id="q_used_our_service">Уже делали у нас заказы ?</item>
     </language_variables>
 </addon>

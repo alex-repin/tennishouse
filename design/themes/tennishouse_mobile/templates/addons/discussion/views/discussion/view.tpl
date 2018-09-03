@@ -91,7 +91,7 @@
         {if "CRB"|strpos:$discussion.type !== false && !$discussion.disable_adding && !$hide_new_post}
             <div class="ty-product-add-review-wrapper" id="product_review_block">
                 <div class="ty-product-add-review">
-                    <div class="ty-product-review-title">{__("used_this_product_`$product.category_type`")}</div>
+                    <div class="ty-product-review-title">{if $discussion.object_type == 'P'}{__("used_this_product_`$product.category_type`")}{else}{__("q_used_our_service")}{/if}</div>
                     {include file="addons/discussion/views/discussion/components/quick_post.tpl"}
                 </div>
             </div>
