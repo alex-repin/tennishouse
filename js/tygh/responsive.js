@@ -285,7 +285,7 @@
 
             resizeDialog: function() {
                 var self = this;
-                var dlg = $('.ui-dialog');
+                var dlg = $('.ui-dialog:visible');
 
                 $('.ui-widget-overlay').css({
                     'min-height': $(window).height()
@@ -295,17 +295,24 @@
                 $(dlg).css({
                     'position':'absolute',
                     'width': $(window).width() - 20,
-                    'left': '0',
-                    'top':'0',
                     'max-height': 'none',
                     'height': 'auto',
                     'margin-bottom': '10px'
                 });
 
-                if (typeof($(dlg).parent().offset()) !== 'undefined') {
-                    left_padding = $(dlg).parent().offset().left - 10;
+                var params = typeof($(dlg).find('.ui-dialog-content').data('params')) !== 'undefined' ? $(dlg).find('.ui-dialog-content').data('params') : {};
+
+                if (!params.keepInPlace) {
+                    $(dlg).css({
+                        'left': '10px',
+                        'top': '10px'
+                    });
+                    $('body,html').scrollTop(0);
+                } else {
+                    left_padding = $('#' + params.parentId).offset().left - 10;
                     $(dlg).css({
                         'left': '-' + left_padding + 'px',
+                        'top': '0'
                     });
                 }
                 // TennisHouse
@@ -340,7 +347,6 @@
                 $.ceEvent('on', 'ce.dialogshow', function() {
                     if(self.winWidth() <= 767) {
                         self.resizeDialog();
-//                         $('body,html').scrollTop(0);
                     }
                 });
             }

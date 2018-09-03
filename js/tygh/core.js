@@ -2508,6 +2508,7 @@ var Tygh = {
                 }
 
                 var ws = $.getWindowSizes();
+                
                 var container_parent = container.parent();
 
                 if (!container.find('form').length && !container.parents('.object-container').length && !container.data('caKeepInPlace')) {
@@ -2533,7 +2534,7 @@ var Tygh = {
                     }
                     params.width = container.outerWidth() + 10;
                 }
-
+                container.data('params', params);
                 container.dialog({
                     title: params.title || null,
                     autoOpen: false,
@@ -2748,7 +2749,8 @@ var Tygh = {
                 var dialog_params = {
                     keepInPlace: params.hasClass('cm-dialog-keep-in-place'),
                     nonClosable: params.hasClass('cm-dialog-non-closable'),
-                    scroll: params.data('caScroll') ? params.data('caScroll') : ''
+                    scroll: params.data('caScroll') ? params.data('caScroll') : '',
+                    parentId: params.attr('id')
                 };
 
                 if (params.prop('href')) {

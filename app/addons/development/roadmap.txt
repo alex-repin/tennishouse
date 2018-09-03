@@ -8,10 +8,7 @@ if ($_REQUEST['category_id'] == '254' && $_REQUEST['item_ids'] == '1312') {
         return array(CONTROLLER_STATUS_REDIRECT, "categories.view?category_id=254&item_ids=1312,1313,1314,1315,1316,1317,1318,1319");
     }
 
-    проверить опции, notify back in stock в мобильной
-    поменять шрифты, цвет ссылок
-    отключить вкладку таблицу раазмеров
-    ty-reviews-page
+    тултип у разновидностей
 
 - получи скидку в мобильной версии (дропдаун секция)
 - параметр в урл для айди склада 
