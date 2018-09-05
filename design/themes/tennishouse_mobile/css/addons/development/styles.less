@@ -3152,6 +3152,10 @@ table.ty-cart-content {
 .ty-product-switcher {
     top: 10px;
 }
+.ty-store-discussion-top {
+    display: block;
+    border-bottom: 1px solid @border_color;
+}
 .ty-discussion__rating-wrapper {
     display: block;
     margin-bottom: 0;
@@ -3768,7 +3772,7 @@ a.ty-password-forgot__a {
 }
 .ty-control-group {
     position: relative;
-    input[type="text"], input[type="tel"], input[type="number"], input[type="password"] {
+    input[type="text"], textarea, input[type="tel"], input[type="number"], input[type="password"] {
         border-radius: 0;
         height: 40px;
         font-size: 16px;
@@ -4581,7 +4585,6 @@ a.ty-password-forgot__a {
         }
     }
     .ty-product-review-rate {
-        width: 40%;
         padding-top: 5px;
         text-align: center;
     }
@@ -4611,12 +4614,12 @@ a.ty-password-forgot__a {
     }
     .ty-product-add-review {
         margin: 25px 0;
-        .ty-flicker-input {
+        .ty-flicker-input, .captcha {
             display: none;
         }
     }
     .ty-product-add-review-is-focus {
-        .ty-flicker-input {
+        .ty-flicker-input, .captcha {
             display: block;
         }
     }

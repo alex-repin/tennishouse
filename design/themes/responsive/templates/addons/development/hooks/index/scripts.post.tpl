@@ -480,6 +480,24 @@ var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
         });
     }
     
+    function fn_hide_form(e, event) {
+        if (!$(e.target).hasClass('ty-product-add-review-wrapper') && !$(e.target).parents(".ty-product-add-review-wrapper").size()) { 
+            $(event.target).parents(".ty-product-add-review").removeClass('ty-product-add-review-is-focus');
+            $('.cm-show-form').focus(function(e){
+                fn_show_form(e);
+            });
+            $(this).unbind( e )
+        }
+    }
+    function fn_show_form(event)
+    {
+        $(event.target).parents(".ty-product-add-review").addClass('ty-product-add-review-is-focus');
+        $("body").click(function(e) {
+            fn_hide_form(e, event);
+        });
+        $(this).unbind( event )
+    }
+    
     (function(_, $) {
         $(function() {
             $(document).ready(function() {
@@ -632,6 +650,9 @@ var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
                         setTimeout(fn_ajax_search, 500, $(this), val);
                     }
                 });
+            });
+            $('.cm-show-form').focus(function(e){
+                fn_show_form(e);
             });
         });
     }(Tygh, Tygh.$));

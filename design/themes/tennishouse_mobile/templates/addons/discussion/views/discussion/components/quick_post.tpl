@@ -14,7 +14,7 @@
     {if $discussion.type == "C" || $discussion.type == "B"}
         <div class="ty-control-group">
             <label for="dsc_message_{$obj_prefix}{$obj_id}" class="ty-control-group__title cm-required">{__("your_message")}</label>
-            <textarea id="dsc_message_{$obj_prefix}{$obj_id}" name="post_data[message]" class="ty-input-textarea" placeholder="{__("write_product_review")}" autocomplete="off">{$discussion.post_data.message}</textarea>
+            <textarea id="dsc_message_{$obj_prefix}{$obj_id}" name="post_data[message]" class="ty-input-textarea cm-show-form" placeholder="{__("write_product_review")}" autocomplete="off">{$discussion.post_data.message}</textarea>
         </div>
     {/if}
     <div class="ty-flicker-input">
@@ -26,6 +26,9 @@
             <input type="text" id="dsc_city_{$obj_prefix}{$obj_id}" name="post_data[city]" value="{if $user_info.s_city}{$user_info.s_city}{elseif $discussion.post_data.city}{$discussion.post_data.city}{/if}" size="25" class="ty-input-text" placeholder="{__("city")}" autocomplete="off" />
         </div>
     </div>
+    {if $discussion.thread_id == $smarty.const.REVIEWS_THREAD_ID}
+        {include file="common/image_verification.tpl" option="discussion"}
+    {/if}
     <div class="ty-flicker-input">
         {if $discussion.type == "R" || $discussion.type == "B"}
             <div class="ty-control-group ty-inline-block ty-product-review-rate">
@@ -38,8 +41,6 @@
             {include file="buttons/button.tpl" but_text=__("submit") but_meta="ty-btn__review-product" but_role="submit" but_name="dispatch[discussion.add]"}
         </div>
     </div>
-
-    {*include file="common/image_verification.tpl" option="discussion"*}
 
     <!--new_post_{$obj_prefix}{$obj_id}--></div>
 

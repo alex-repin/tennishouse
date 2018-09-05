@@ -179,8 +179,17 @@ select {
         display: none;
     }
 }
-.ty-discussion__rating-wrapper .ty-stars .ty-stars__icon {
-    margin: 0 2px 0 0;
+.ty-store-discussion-top {
+    display: block;
+    border-bottom: 1px solid @border_color;
+    .ty-product-add-review-wrapper {
+        width: 80%;
+    }
+    .ty-rate-us-ym-reviews {
+        width: 20%;
+        display: inline-block;
+        vertical-align: top;
+    }
 }
 .pluso {
     z-index: 1000 !important;
@@ -3599,6 +3608,9 @@ input.ty-search-block__input:focus {
     text-align: center;
     margin: 0 1rem 0 0;
     float: right;
+    .ty-stars .ty-stars__icon {
+        margin: 0 2px 0 0;
+    }
 }
 .ty-product-detail__before-title {
     display: block;
@@ -5051,12 +5063,12 @@ input.ty-search-block__input:focus {
     }
     .ty-product-add-review {
         margin: 25px 0;
-        .ty-flicker-input {
+        .ty-flicker-input, .captcha {
             display: none;
         }
     }
     .ty-product-add-review-is-focus {
-        .ty-flicker-input {
+        .ty-flicker-input, .captcha {
             display: block;
         }
     }

@@ -18,10 +18,20 @@
         {/if}
 
         {if $discussion.object_type == 'E'}
-            {if $discussion.thread_id = $smarty.const.REVIEWS_THREAD_ID}
-            <div class="ty-rate-us-ym-reviews">
-                <a href="http://clck.yandex.ru/redir/dtype=stred/pid=47/cid=2508/*http://market.yandex.ru/shop/292708/reviews" target="_blank"><img src="https://clck.yandex.ru/redir/dtype=stred/pid=47/cid=2507/*https://grade.market.yandex.ru/?id=292708&action=image&size=2" border="0" width="150" height="101" alt="Читайте отзывы покупателей и оценивайте качество магазина на Яндекс.Маркете" /></a>
+            {if $discussion.thread_id == $smarty.const.REVIEWS_THREAD_ID}
+            {strip}
+            <div class="ty-store-discussion-top">
+                <div class="ty-rate-us-ym-reviews">
+                    <a href="http://clck.yandex.ru/redir/dtype=stred/pid=47/cid=2508/*http://market.yandex.ru/shop/292708/reviews" target="_blank"><img src="https://clck.yandex.ru/redir/dtype=stred/pid=47/cid=2507/*https://grade.market.yandex.ru/?id=292708&action=image&size=2" border="0" width="150" height="101" alt="Читайте отзывы покупателей и оценивайте качество магазина на Яндекс.Маркете" /></a>
+                </div>
+                <div class="ty-product-add-review-wrapper">
+                    <div class="ty-product-add-review">
+                        <div class="ty-product-review-title">{__("q_used_our_service")}</div>
+                        {include file="addons/discussion/views/discussion/components/quick_post.tpl" obj_prefix='top_' obj_id=$discussion.thread_id}
+                    </div>
+                </div>
             </div>
+            {/strip}
             {/if}
         {/if}
         <div id="posts_list">
@@ -89,36 +99,12 @@
             {capture name="mainbox_title"}{$title}{/capture}
         {/if}
         {if "CRB"|strpos:$discussion.type !== false && !$discussion.disable_adding && !$hide_new_post}
-            <div class="ty-product-add-review-wrapper" id="product_review_block">
+            <div class="ty-product-add-review-wrapper">
                 <div class="ty-product-add-review">
-                    <div class="ty-product-review-title">{if $discussion.object_type == 'P'}{__("used_this_product_`$product.category_type`")}{else}{__("q_used_our_service")}{/if}</div>
-                    {include file="addons/discussion/views/discussion/components/quick_post.tpl"}
+                    <div class="ty-product-review-title">{if $discussion.object_type == 'P'}{__("used_this_product_`$product.category_type`")}{elseif $discussion.thread_id == $smarty.const.REVIEWS_THREAD_ID}{__("q_used_our_service")}{/if}</div>
+                    {include file="addons/discussion/views/discussion/components/quick_post.tpl" obj_prefix='bottom_' obj_id=$discussion.thread_id}
                 </div>
             </div>
-            <script type="text/javascript">
-            (function(_, $) {
-                function fn_hide_form(event) {
-                    if (event.target.id != "product_review_block" && !$(event.target).parents("#product_review_block").size()) { 
-                        $('#product_review_block div').removeClass('ty-product-add-review-is-focus');
-                        $('#dsc_message_{$obj_prefix}{$obj_id}').focus(function(e){
-                            fn_show_form(e);
-                        });
-                        $(this).unbind( event )
-                    }
-                }
-                function fn_show_form(event)
-                {
-                    $('#product_review_block div').addClass('ty-product-add-review-is-focus');
-                    $("body").click(function(e) {
-                        fn_hide_form(e);
-                    });
-                    $(this).unbind( event )
-                }
-                $('#dsc_message_{$obj_prefix}{$obj_id}').focus(function(e){
-                    fn_show_form(e);
-                });
-            }(Tygh, Tygh.$));
-            </script>
         {/if}
     </div>
 {/if}
