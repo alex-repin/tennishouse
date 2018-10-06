@@ -465,8 +465,9 @@ function fn_add_img_alt($name, $product_name)
 {
     if (!empty($_REQUEST[$name . '_image_data'])) {
         foreach ($_REQUEST[$name . '_image_data'] as $i => $pair) {
-            $_REQUEST[$name . '_image_data'][$i]['image_alt'] = empty($_REQUEST[$name . '_image_data'][$i]['image_alt']) ? $product_name : $_REQUEST[$name . '_image_data'][$i]['image_alt'];
-            $_REQUEST[$name . '_image_data'][$i]['detailed_alt'] = empty($_REQUEST[$name . '_image_data'][$i]['detailed_alt']) ? $product_name : $_REQUEST[$name . '_image_data'][$i]['detailed_alt'];
+//             $_REQUEST[$name . '_image_data'][$i]['image_alt'] = empty($_REQUEST[$name . '_image_data'][$i]['image_alt']) ? $product_name : $_REQUEST[$name . '_image_data'][$i]['image_alt'];
+//             $_REQUEST[$name . '_image_data'][$i]['detailed_alt'] = empty($_REQUEST[$name . '_image_data'][$i]['detailed_alt']) ? $product_name : $_REQUEST[$name . '_image_data'][$i]['detailed_alt'];
+            $_REQUEST[$name . '_image_data'][$i]['new_alt'] = $product_name;
         }
     }
 }

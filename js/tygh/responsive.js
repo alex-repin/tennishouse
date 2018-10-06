@@ -287,73 +287,74 @@
                 var self = this;
                 var dlg = $('.ui-dialog:visible');
 
-                $('.ui-widget-overlay').css({
-                    'min-height': $(window).height()
-                });
+                if ($(dlg).length) {
+                    $('.ui-widget-overlay').css({
+                        'min-height': $(window).height()
+                    });
 
-                // TennisHouse
-                $(dlg).css({
-                    'position':'absolute',
-                    'width': $(window).width() - 20,
-                    'max-height': 'none',
-                    'height': 'auto',
-                    'margin-bottom': '10px'
-                });
+                    // TennisHouse
+                    $(dlg).css({
+                        'position':'absolute',
+                        'width': $(window).width() - 20,
+                        'max-height': 'none',
+                        'height': 'auto',
+                        'margin-bottom': '10px'
+                    });
 
-                var params = typeof($(dlg).find('.ui-dialog-content').data('params')) !== 'undefined' ? $(dlg).find('.ui-dialog-content').data('params') : {};
+                    var params = typeof($(dlg).find('.ui-dialog-content').data('params')) !== 'undefined' ? $(dlg).find('.ui-dialog-content').data('params') : {};
 
-                if (!params.keepInPlace) {
-                    if (typeof(params.parentId) !== 'undefined' && typeof($('#' + params.parentId).offset()) !== 'unefined') {
-                        $(dlg).css({
-                            'left': '10px',
-                            'top': $('#' + params.parentId).offset().top + 'px'
-                        });
+                    if (!params.keepInPlace) {
+                        if (typeof(params.parentId) !== 'undefined' && typeof($('#' + params.parentId).offset()) !== 'unefined') {
+                            $(dlg).css({
+                                'left': '10px',
+                                'top': $('#' + params.parentId).offset().top + 'px'
+                            });
+                        } else {
+                            $(dlg).css({
+                                'left': '10px',
+                                'top': '10px'
+                            });
+                        }
                     } else {
-                        $(dlg).css({
-                            'left': '10px',
-                            'top': '10px'
-                        });
+                        if (typeof(params.parentId) !== 'undefined' && typeof($('#' + params.parentId).offset()) !== 'unefined') {
+                            left_padding = $('#' + params.parentId).offset().left - 10;
+                            $(dlg).css({
+                                'left': '-' + left_padding + 'px',
+                                'top': '10px'
+                            });
+                        } else {
+                            $(dlg).css({
+                                'left': '0',
+                                'top': '0'
+                            });
+                        }
                     }
-                } else {
-                    if (typeof(params.parentId) !== 'undefined' && typeof($('#' + params.parentId).offset()) !== 'unefined') {
-                        left_padding = $('#' + params.parentId).offset().left - 10;
-                        $(dlg).css({
-                            'left': '-' + left_padding + 'px',
-                            'top': '10px'
-                        });
-                    } else {
-                        $(dlg).css({
-                            'left': '0',
-                            'top': '0'
-                        });
-                    }
+                    $('body,html').scrollTop($(dlg).offset().top - 10);
+                    // TennisHouse
+                    
+                    // calculate title width
+                    $(dlg).find('.ui-dialog-title').css({
+                        'width': $(window).width() - 80
+                    });
+
+                    $(dlg).find('.ui-dialog-content').css({
+                        'height': 'auto',
+                        'max-height': 'none'
+                    });
+                    
+                    $(dlg).find('.object-container').css({
+                        'height': 'auto'
+                    });
+
+                    $(dlg).find('.buttons-container').css({
+                        'position':'relative',
+                        'top': 'auto',
+                        'left': '0px',
+                        'right': '0px',
+                        'bottom': '0px',
+                        'width': 'auto'
+                    });
                 }
-                $('body,html').scrollTop($(dlg).offset().top - 10);
-                // TennisHouse
-                
-                // calculate title width
-                $(dlg).find('.ui-dialog-title').css({
-                    'width': $(window).width() - 80
-                });
-
-                $(dlg).find('.ui-dialog-content').css({
-                    'height': 'auto',
-                    'max-height': 'none'
-                });
-                
-                $(dlg).find('.object-container').css({
-                    'height': 'auto'
-                });
-
-                $(dlg).find('.buttons-container').css({
-                    'position':'relative',
-                    'top': 'auto',
-                    'left': '0px',
-                    'right': '0px',
-                    'bottom': '0px',
-                    'width': 'auto'
-                });
-
             },
 
             responsiveDialog: function() {

@@ -1364,6 +1364,70 @@ if ($mode == 'calculate_balance') {
     fn_subset_sums($houses, $top);
     
     exit;
+} elseif ($mode == 'fix_alt') {
+    $params['extend'] = array('categories', 'description');
+    list($products, $search) = fn_get_products($params);
+    Registry::set('runtime.controller', 'products');
+    fn_gather_additional_products_data($products, array(
+        'get_icon' => true,
+        'get_detailed' => true,
+        'get_additional' => true,
+        'get_options' => true,
+        'get_discounts' => false,
+        'get_features' => false
+    ));
+    Registry::set('runtime.controller', 'development');
+    if (!empty($products)) {
+        $images_alts = array();
+        foreach ($products as $i => $product) {
+            $name = $product['product'];
+            if (!empty($product['main_pair']) && !empty($product['main_pair']['detailed_id'])) {
+                fn_fill_image_common_description($images_alts, $product['main_pair']['detailed_id'], $name . (!empty($product['product_code']) ? ' ' . $product['product_code'] : ''));
+            }
+            if (!empty($product['image_pairs'])) {
+                foreach ($product['image_pairs'] as $l => $i_pair) {
+                    if (!empty($i_pair['detailed_id'])) {
+                        fn_fill_image_common_description($images_alts, $i_pair['detailed_id'], $name . (!empty($product['product_code']) ? ' ' . $product['product_code'] : ''));
+                    }
+                }
+            }
+            if (!empty($product['product_options'])) {
+                foreach ($product['product_options'] as $o_id => $o_data) {
+                    if (!empty($o_data['variants'])) {
+                        $_name = $name . ' ' . $o_data['option_name'];
+                        foreach ($o_data['variants'] as $v_id => $v_data) {
+                            if (!empty($v_data['images'])) {
+                                $__name = $_name . ' ' . $v_data['variant_name'];
+                                foreach ($v_data['images'] as $k => $img) {
+                                    if (!empty($img['detailed_id'])) {
+                                        fn_fill_image_common_description($images_alts, $i_pair['detailed_id'], $__name . (!empty($product['product_code']) ? ' ' . $product['product_code'] : '') . (!empty($v_data['code_suffix']) ? $v_data['code_suffix'] : ''));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!empty($images_alts)) {
+            db_query("REPLACE INTO ?:common_descriptions ?m", $images_alts);
+        }
+    }
+    fn_echo('Done');
+    exit;
+}
+
+function fn_fill_image_common_description(&$images_alts, $detailed_id, $name)
+{
+    $images_alts[] = array(
+        'object_id' => $detailed_id,
+        'object_type' => '',
+        'description' => $name,
+        'lang_code' => 'ru',
+        'object' => '',
+        'object_holder' => 'images'
+    );
 }
 
 function fn_subset_sums($houses, $top, $sum = 0)

@@ -384,8 +384,9 @@ function fn_update_image_pairs($icons, $detailed, $pairs_data, $object_id = 0, $
                 foreach ($fields as $field) {
                     if (!empty($image_ids[$field . '_id']) && isset($p_data[$field . '_alt'])) {
                         if (!is_array($p_data[$field . '_alt'])) {
+                            // TennisHouse
                             $_data = array (
-                                'description' => empty($p_data[$field . '_alt']) ? '' : trim($p_data[$field . '_alt']),
+                                'description' => (!empty($data[$field . '_id']) && !empty($p_data['new_alt'])) ? trim($p_data['new_alt']) : (empty($p_data[$field . '_alt']) ? '' : trim($p_data[$field . '_alt'])),
                                 'object_holder' => 'images'
                             );
 
@@ -398,9 +399,10 @@ function fn_update_image_pairs($icons, $detailed, $pairs_data, $object_id = 0, $
                             }
                         } else {
                             foreach ($p_data[$field . '_alt'] as $lc => $_v) {
+                                // TennisHouse
                                 $_data = array (
                                     'object_id' => $image_ids[$field . '_id'],
-                                    'description' => empty($_v) ? '' : trim($_v),
+                                    'description' => (!empty($data[$field . '_id']) && !empty($p_data['new_alt'])) ? trim($p_data['new_alt']) : (empty($_v) ? '' : trim($_v)),
                                     'lang_code' => $lc,
                                     'object_holder' => 'images'
                                 );

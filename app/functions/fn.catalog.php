@@ -6883,6 +6883,7 @@ function fn_clone_options_inventory($from_product_id, $to_product_id, $options, 
         if (!empty($warehouse_inventory[$value['combination_hash']])) {
             foreach ($warehouse_inventory[$value['combination_hash']] as $i => $wh_data) {
                 $wh_data['product_id'] = $to_product_id;
+                $wh_data['amount'] = 0;
                 $wh_data['warehouse_hash'] = fn_generate_cart_id($to_product_id, array('product_options' => $new_variants, 'warehouse_id' => $wh_data['warehouse_id']));
                 $wh_data['combination_hash'] = $_data['combination_hash'];
                 db_query("INSERT INTO ?:product_warehouses_inventory ?e", $wh_data);

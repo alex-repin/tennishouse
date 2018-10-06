@@ -205,7 +205,7 @@
                         {if $capture_options_vs_qty}{/capture}{/if}
                     </div>
                     
-                    {if $product.offer_help}
+                    {*if $product.offer_help*}
                         <div class="ty-consultation">
                             <div class="ty-consultation_column">
                                 <span class="ty-product-detail__info-title">{__("expert_consultation")}</span>
@@ -215,7 +215,7 @@
                                 <div class="ty-consultation-email">{$settings.Company.company_support_department}</div>
                             </div>
                         </div>
-                    {/if}
+                    {*/if*}
                     {if $product.players}
                         {if "RASBST"|strpos:$product.category_type !== false}
                             {$type = $product.category_type}
