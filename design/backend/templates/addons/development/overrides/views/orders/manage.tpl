@@ -80,7 +80,7 @@
         {if $o.email}<a href="mailto:{$o.email|escape:url}">@</a> {/if}
         {if $o.user_id}<a href="{"profiles.update?user_id=`$o.user_id`"|fn_url}">{/if}{$o.lastname} {$o.firstname}{if $o.user_id}</a>{/if}
     </td>
-    <td>{$o.phone}</td>
+    <td><a href="tel:{$o.phone}">{$o.phone}</a></td>
     <td>{if $o.s_city}{$o.s_city}{else} - {/if}{if $o.s_country}{if $o.s_city}, {/if}{$o.s_country|fn_get_country_name}{else} - {/if}</td>
 
     {hook name="orders:manage_data"}{/hook}

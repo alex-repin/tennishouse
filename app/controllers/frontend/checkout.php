@@ -497,18 +497,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $errors = false;
 
             // Update contact information
-            if (($_REQUEST['update_step'] == 'step_one' || $_REQUEST['update_step'] == 'step_two') && !empty($user_data['email'])) {
-                // Check email
-                $email_exists = fn_is_user_exists($auth['user_id'], $user_data);
-
-                if (!empty($email_exists)) {
-                    fn_set_notification('E', __('error'), __('error_user_exists'));
-                    $_suffix .= '?edit_step=' . $_REQUEST['update_step'];
-
-                    $errors = true;
-                    $_REQUEST['next_step'] = $_REQUEST['update_step'];
-                }
-            }
+//             if (($_REQUEST['update_step'] == 'step_one' || $_REQUEST['update_step'] == 'step_two') && !empty($user_data['email'])) {
+//                 // Check email
+//                 $email_exists = fn_is_user_exists($auth['user_id'], $user_data);
+// 
+//                 if (!empty($email_exists)) {
+//                     $points = fn_get_user_additional_data(POINTS, $auth['user_id']);
+//                     if (!empty($points)) {
+//                         fn_set_notification('E', __('error'), __('error_user_exists'));
+//                         $_suffix .= '?edit_step=' . $_REQUEST['update_step'];
+//                         $errors = true;
+//                         $_REQUEST['next_step'] = $_REQUEST['update_step'];
+//                     }
+//                 }
+//             }
 
             // Update billing/shipping information
             if ($_REQUEST['update_step'] == 'step_two' || $_REQUEST['update_step'] == 'step_one' && !$errors) {
@@ -547,18 +549,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } elseif (Registry::get('settings.General.disable_anonymous_checkout') != 'Y') {
             if (empty($auth['user_id']) && !empty($user_data['email'])) {
 
-                $email_exists = fn_is_user_exists(0, $user_data);
+                $user_data['email_exists'] = fn_is_user_exists(0, $user_data);
 
-                if (!empty($email_exists)) {
-                    fn_set_notification('E', __('error'), __('error_user_exists'));
-                    fn_save_post_data('user_data');
-
-                    if (Registry::get('runtime.action') == 'guest_checkout') {
-                        $_suffix = '.guest_checkout?edit_step=step_two';
-                    }
-
-                    return array(CONTROLLER_STATUS_REDIRECT, 'checkout.checkout' . $_suffix);
-                }
+//                 if (!empty($email_exists)) {
+//                     $points = fn_get_user_additional_data(POINTS, $email_exists);
+//                     if (!empty($points)) {
+//                         fn_set_notification('E', __('error'), __('error_user_exists'));
+//                         fn_save_post_data('user_data');
+// 
+//                         if (Registry::get('runtime.action') == 'guest_checkout') {
+//                             $_suffix = '.guest_checkout?edit_step=step_two';
+//                         }
+// 
+//                         return array(CONTROLLER_STATUS_REDIRECT, 'checkout.checkout' . $_suffix);
+//                     }
+//                 }
             }
 
             if (isset($user_data['fields'])) {
@@ -958,14 +963,14 @@ if ($mode == 'cart') {
         $completed_steps['step_four'] = true;
     }
 
-    if ((!empty($cart['shipping_failed']) || !empty($cart['company_shipping_failed'])) && !empty($completed_steps['step_three'])) {
-        $completed_steps['step_four'] = false;
-        $checkout_style = Registry::get('settings.General.checkout_style');
-
-        if ((defined('AJAX_REQUEST') && $checkout_style != 'multi_page') || ($checkout_style == 'multi_page' && !defined('AJAX_REQUEST'))) {
-            fn_set_notification('W', __('warning'), __('text_no_shipping_methods'));
-        }
-    }
+//     if ((!empty($cart['shipping_failed']) || !empty($cart['company_shipping_failed'])) && !empty($completed_steps['step_three'])) {
+//         $completed_steps['step_four'] = false;
+//         $checkout_style = Registry::get('settings.General.checkout_style');
+// 
+//         if ((defined('AJAX_REQUEST') && $checkout_style != 'multi_page') || ($checkout_style == 'multi_page' && !defined('AJAX_REQUEST'))) {
+//             fn_set_notification('W', __('warning'), __('text_no_shipping_methods'));
+//         }
+//     }
 
     // If shipping methods changed and shipping step is completed, display notification
     $shipping_hash = fn_get_shipping_hash($cart['product_groups']);

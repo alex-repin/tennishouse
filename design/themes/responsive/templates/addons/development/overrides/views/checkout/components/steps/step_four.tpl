@@ -38,9 +38,9 @@
                 {/if}
 
             {else}
-                {if $cart.shipping_failed}
+                {*if $cart.shipping_failed}
                     <p class="ty-error-text ty-center">{__("text_no_shipping_methods")}</p>
-                {/if}
+                {/if*}
 
                 {if $cart.amount_failed}
                     <div class="checkout__block">

@@ -204,6 +204,22 @@
                     <textarea class="span12" name="update_order[details]" id="details" cols="40" rows="5">{$order_info.details}</textarea>
                 </div>
             </div>
+            {if $current_email}
+                <span class="text-warning strong">{__("attention")}</span>
+                <span class="text-warning">{__("notice_update_customer_details", ["[email]" => $current_email])}</span>
+
+                <label for="update_customer_details" class="checkbox">
+                    <input type="checkbox" name="update_customer_details" id="update_customer_details" value="Y" />
+                {__("update_order_email")}</label>
+            {/if}
+            {if $existing_user_data}
+                <span class="text-warning strong">{__("attention")}</span>
+                <span class="text-warning">{__("notice_update_order_user_id", ["[user_name]" => "`$existing_user_data.firstname` `$existing_user_data.lastname`", "[user_link]" => "{"profiles.update?user_id=`$existing_user_data.user_id`"|fn_url}"])}</span>
+
+                <label for="update_customer_details" class="checkbox">
+                    <input type="checkbox" name="update_order_user_id" id="update_order_user_id" value="Y" />
+                {__("update_order_user_id")}</label>
+            {/if}
 
             </div>
             {/hook}

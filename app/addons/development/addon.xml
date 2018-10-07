@@ -1375,5 +1375,10 @@
         <item lang="ru" id="advantage_fitting_text">Вы можете примерить товар на месте и, если он не подошел, вернуть курьеру или отправить посылку обратно</item>
         <item lang="ru" id="sizing_table">Таблица размеров</item>
         <item lang="ru" id="q_used_our_service">Уже делали у нас заказы ?</item>
+        <item lang="ru" id="notice_update_customer_details">Покупатель изменил email в своем профиле на [email]. Поставьте галочку, чтобы обновить детали заказа:</item>
+        <item lang="ru" id="notice_update_order_user_id"><![CDATA[Покупатель <a href="[user_link]" target="_blank">[user_name]</a> имеет такой же email. Поставьте галочку, чтобы обновить детали заказа:]]></item>
+        <item lang="ru" id="update_order_email">Обновить email заказа</item>
+        <item lang="ru" id="update_order_user_id">Закрепить заказ за пользователем</item>
+        <item lang="ru" id="text_no_shipping_methods">Мы доставляем заказы в любую точку мира, однако, по какой-то причине система не смогла автоматически определить способы доставки. Поэтому после оформления заказа мы свяжемся с Вами для выбора удобного способа доставки.</item>
     </language_variables>
 </addon>

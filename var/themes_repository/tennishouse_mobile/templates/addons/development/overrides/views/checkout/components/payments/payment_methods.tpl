@@ -113,7 +113,7 @@
         {/if}
 
         {include file="views/checkout/components/customer_notes.tpl"}
-        {if !$auth.user_id}
+        {if !$auth.user_id && !$cart.user_data.email_exists}
         <div class="ty-control-group">
             <input type="checkbox" id="create_profile" name="create_profile" value="Y" class="checkbox" checked="checked"/>
             <label for="create_profile">{__("create_profile_checkout_text")}</label>

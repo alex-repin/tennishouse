@@ -122,14 +122,6 @@
             {/if}
         </div>
         {include file="views/profiles/components/profile_fields_info.tpl" fields=$profile_fields.C customer_info="Y"}
-        {if $email_changed}
-                <span class="text-warning strong">{__("attention")}</span>
-                <span class="text-warning">{__("notice_update_customer_details")}</span>
-
-                <label for="update_customer_details" class="checkbox">
-                    <input type="checkbox" name="update_customer_details" id="update_customer_details" value="Y" />
-                {__("update_customer_info")}</label>
-        {/if}
     {else}
         <p class="muted">{__("section_is_not_completed")}</p>
         <div class="enter-data">

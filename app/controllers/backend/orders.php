@@ -33,13 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($mode == 'update_details') {
         fn_trusted_vars('update_order');
 
-        // Update customer's email if its changed in customer's account
-        if (!empty($_REQUEST['update_customer_details']) && $_REQUEST['update_customer_details'] == 'Y') {
-            $u_id = db_get_field("SELECT user_id FROM ?:orders WHERE order_id = ?i", $_REQUEST['order_id']);
-            $current_email = db_get_field("SELECT email FROM ?:users WHERE user_id = ?i", $u_id);
-            db_query("UPDATE ?:orders SET email = ?s WHERE order_id = ?i", $current_email, $_REQUEST['order_id']);
-        }
-
         // Log order update
         fn_log_event('orders', 'update', array(
             'order_id' => $_REQUEST['order_id'],
@@ -87,6 +80,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!empty($_REQUEST['activate_files'])) {
             $edp_data = fn_generate_ekeys_for_edp(array(), $order_info, $_REQUEST['activate_files']);
         }
+
+        if (!empty($_REQUEST['update_order_user_id']) && $_REQUEST['update_order_user_id'] == 'Y') {
+            $user_id = fn_is_user_exists(0, $order_info);
+            db_query("UPDATE ?:orders SET user_id = ?s WHERE order_id = ?i", $user_id, $_REQUEST['order_id']);
+        }
+        
+        // Update customer's email if its changed in customer's account
+        if (!empty($_REQUEST['update_customer_details']) && $_REQUEST['update_customer_details'] == 'Y') {
+            $current_email = db_get_field("SELECT email FROM ?:users WHERE user_id = ?i", $order_info['user_id']);
+            db_query("UPDATE ?:orders SET email = ?s WHERE order_id = ?i", $current_email, $_REQUEST['order_id']);
+        }
+
 
         if (!empty($edp_data)) {
             Mailer::sendMail(array(
@@ -279,7 +284,13 @@ if ($mode == 'delete') {
     if (!empty($order_info['user_id'])) {
         $current_email = db_get_field("SELECT email FROM ?:users WHERE user_id = ?i", $order_info['user_id']);
         if (!empty($current_email) && $current_email != $order_info['email']) {
-            Registry::get('view')->assign('email_changed', true);
+            Registry::get('view')->assign('current_email', $current_email);
+        }
+    } else {
+        $email_exists = fn_is_user_exists(0, $order_info);
+        if (!empty($email_exists)) {
+            $existing_user_data = fn_get_user_short_info($email_exists);
+            Registry::get('view')->assign('existing_user_data', $existing_user_data);
         }
     }
 

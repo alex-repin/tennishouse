@@ -5361,7 +5361,7 @@ function fn_allow_place_order(&$cart)
 
     $cart['amount_failed'] = (Registry::get('settings.General.min_order_amount') > $total && floatval($total));
 
-    if (!empty($cart['amount_failed']) || !empty($cart['shipping_failed']) || !empty($cart['company_shipping_failed'])) {
+    if (!empty($cart['amount_failed'])/* || !empty($cart['shipping_failed']) || !empty($cart['company_shipping_failed'])*/) {
         return false;
     }
 

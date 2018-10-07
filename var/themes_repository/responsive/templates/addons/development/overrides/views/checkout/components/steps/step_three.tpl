@@ -34,19 +34,16 @@
                     {hook name="checkout:select_shipping"}
                         {if !$cart.shipping_failed}
                             {include file="views/checkout/components/shipping_rates.tpl" no_form=true display="radio"}
+                            {if $edit}
+                                <div class="ty-checkout__shipping-tips">
+                                <p>{__("delivery_times_text")}</p>
+                                    {__("shipping_tips")}
+                                </div>
+                            {/if}
                         {else}
-                            <p class="ty-error-text">{__("text_no_shipping_methods")}</p>
+                            <p class="">{__("text_no_shipping_methods")}</p>
                         {/if}
                     {/hook}
-                
-                    
-                    
-                    {if $edit}
-                        <div class="ty-checkout__shipping-tips">
-                        <p>{__("delivery_times_text")}</p>
-                            {__("shipping_tips")}
-                        </div>
-                    {/if}
                     </div>
                 </div>
                 
