@@ -1381,6 +1381,6 @@
         <item lang="ru" id="update_order_user_id">Закрепить заказ за пользователем</item>
         <item lang="ru" id="text_no_shipping_methods">Мы доставляем заказы в любую точку мира, однако, по какой-то причине система не смогла автоматически определить способы доставки. Поэтому после оформления заказа мы свяжемся с Вами для выбора удобного способа доставки.</item>
         <item lang="ru" id="authorize_apply_reward_points_title">Применить [amount] бонусных рублей</item>
-        <item lang="ru" id="authorize_apply_reward_points"><![CDATA[<div class="ty-authorize-apply-reward-points"><p style="font-size: 16px;">Применить <b>[amount]</b> бонусных рублей</p><p>У пользователя с адресом почты [email] имеется [amount] бонусных рублей, которые можно использовать в этом заказе. <a href="http://www.tennishouse.ru/login/" target="_blank">Авторизуйтесь</a> для получения скидки.</p></div>]]></item>
+        <item lang="ru" id="authorize_apply_reward_points"><![CDATA[<div class="ty-authorize-apply-reward-points"><p style="font-size: 16px;">Применить [amount] бонусных рублей</p><p>У пользователя с адресом почты <b>[email]</b> имеется [amount] бонусных рублей, которые можно использовать в этом заказе. <a href="http://www.tennishouse.ru/login/" target="_blank">Авторизуйтесь</a> для получения скидки.</p></div>]]></item>
     </language_variables>
 </addon>
