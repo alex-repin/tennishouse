@@ -206,6 +206,7 @@ $schema['addons/development/blocks/static_templates/image_title.tpl']['cache'] =
 $schema['addons/development/blocks/static_templates/top_block.tpl']['cache'] = array(
     'cache_level' => 'static',
     'no_object' => true,
+    'request_handlers' => array('q'),
     'auth_handlers' => array('user_id'),
     'session_handlers' => array('cart', 'wishlist', 'comparison_list')
 );

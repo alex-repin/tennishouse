@@ -296,17 +296,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $user_profile = array();
 
         if (!empty($_REQUEST['user_data'])) {
-            if (empty($auth['user_id']) && !empty($_REQUEST['user_data']['email'])) {
-                $email_exists = fn_is_user_exists(0, $_REQUEST['user_data']);
-
-                if (!empty($email_exists)) {
-                    fn_set_notification('E', __('error'), __('error_user_exists'));
-                    fn_save_post_data('user_data');
-
-                    return array(CONTROLLER_STATUS_REDIRECT, "checkout.checkout");
-                }
-            }
-
+        
             $user_data = $_REQUEST['user_data'];
 
             unset($user_data['user_type']);
@@ -330,14 +320,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if (!empty($auth['user_id'])) {
                 // Check email
-                $email_exists = fn_is_user_exists($auth['user_id'], $cart['user_data']);
-
-                if (!empty($email_exists)) {
-                    fn_set_notification('E', __('error'), __('error_user_exists'));
-                    $cart['user_data']['email'] = '';
-                } else {
-                    fn_update_user($auth['user_id'], $cart['user_data'], $auth, !empty($_REQUEST['ship_to_another']), false);
-                }
+                fn_update_user($auth['user_id'], $cart['user_data'], $auth, !empty($_REQUEST['ship_to_another']), false);
 
             } elseif (Registry::get('settings.General.disable_anonymous_checkout') == 'Y' || !empty($user_data['password1'])) {
                 $cart['profile_registration_attempt'] = true;
@@ -496,22 +479,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $errors = false;
 
-            // Update contact information
-//             if (($_REQUEST['update_step'] == 'step_one' || $_REQUEST['update_step'] == 'step_two') && !empty($user_data['email'])) {
-//                 // Check email
-//                 $email_exists = fn_is_user_exists($auth['user_id'], $user_data);
-// 
-//                 if (!empty($email_exists)) {
-//                     $points = fn_get_user_additional_data(POINTS, $auth['user_id']);
-//                     if (!empty($points)) {
-//                         fn_set_notification('E', __('error'), __('error_user_exists'));
-//                         $_suffix .= '?edit_step=' . $_REQUEST['update_step'];
-//                         $errors = true;
-//                         $_REQUEST['next_step'] = $_REQUEST['update_step'];
-//                     }
-//                 }
-//             }
-
             // Update billing/shipping information
             if ($_REQUEST['update_step'] == 'step_two' || $_REQUEST['update_step'] == 'step_one' && !$errors) {
                 if (!empty($user_data)) {
@@ -547,24 +514,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
         } elseif (Registry::get('settings.General.disable_anonymous_checkout') != 'Y') {
-            if (empty($auth['user_id']) && !empty($user_data['email'])) {
-
-                $user_data['email_exists'] = fn_is_user_exists(0, $user_data);
-
-//                 if (!empty($email_exists)) {
-//                     $points = fn_get_user_additional_data(POINTS, $email_exists);
-//                     if (!empty($points)) {
-//                         fn_set_notification('E', __('error'), __('error_user_exists'));
-//                         fn_save_post_data('user_data');
-// 
-//                         if (Registry::get('runtime.action') == 'guest_checkout') {
-//                             $_suffix = '.guest_checkout?edit_step=step_two';
-//                         }
-// 
-//                         return array(CONTROLLER_STATUS_REDIRECT, 'checkout.checkout' . $_suffix);
-//                     }
-//                 }
-            }
 
             if (isset($user_data['fields'])) {
                 $fields = fn_array_merge(isset($cart['user_data']['fields']) ? $cart['user_data']['fields'] : array(), $user_data['fields']);

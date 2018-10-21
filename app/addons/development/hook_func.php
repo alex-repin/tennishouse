@@ -424,6 +424,26 @@ function fn_development_calculate_cart_post(&$cart, $auth, $calculate_shipping, 
             }
         }
     }
+    $possible_user = array();
+    if (empty($auth['user_id']) && !empty($cart['user_data']['email'])) {
+        $email_exists = fn_is_user_exists(0, $cart['user_data']);
+
+        if (!empty($email_exists)) {
+            $possible_user = array(
+                'user_id' => $email_exists
+            );
+            $user_points = fn_get_user_additional_data(POINTS, $cart['user_data']['possible_user']['user_id']);
+            if (!empty($user_points) && $cart['points_info']['max_allowed'] > 0 && $cart['points_info']['total_price'] > 0) {
+                $possible_user['allowed_points'] = min($cart['points_info']['max_allowed'], $user_points, $cart['points_info']['total_price']);
+            }
+        }
+    }
+    if (!empty($possible_user)) {
+        $cart['user_data']['possible_user'] = $possible_user;
+    } else {
+        unset($cart['user_data']['possible_user']);
+    }
+
 }
 
 function fn_development_pre_get_cart_product_data($hash, $product, $skip_promotion, $cart, $auth, $promotion_amount, &$fields, $join)
