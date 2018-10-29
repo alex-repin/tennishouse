@@ -183,6 +183,9 @@ define('GLOBAL_COLOR_OPT_ID', 139);
 define('SHOE_SIZE_OPT_ID', 112);
 define('APPAREL_SIZE_OPT_ID', 141);
 define('APPAREL_KIDS_SIZE_OPT_ID', 209);
+define('BABOLAT_GRIP_OPT_ID', 269);
+define('WILSON_GRIP_OPT_ID', 544);
+define('HEAD_GRIP_OPT_ID', 547);
 /* Global options */
 
 define('SIZE_CHART_TAB_ID', 10);

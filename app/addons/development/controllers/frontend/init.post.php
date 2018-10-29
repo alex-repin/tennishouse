@@ -25,6 +25,13 @@ if (defined('HTTPS')) {
         $_SESSION['display_ssl_tooltip'] = 'N';
     }
 }
+if (!empty($_REQUEST['wid'])) {
+    if ($_REQUEST['wid'] == 'all') {
+        unset($_SESSION['wid']);
+    } else {
+        $_SESSION['wid'] = $_REQUEST['wid'];
+    }
+}
 if (empty($_SESSION['hide_anouncement'])) {
     $anouncement = db_get_field("SELECT text FROM ?:anouncements WHERE start_timestamp <= ?i AND end_timestamp + 86399 >= ?i ORDER BY priority ASC", TIME, TIME);
     if (!empty($anouncement)) {

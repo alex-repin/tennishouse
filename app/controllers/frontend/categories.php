@@ -302,14 +302,18 @@ if ($mode == 'catalog') {
                             $stb_feature['variants']['other'] = array('variant' => __("other"));
                         }
                         if (!empty($_REQUEST['stc_id'])) {
-                            $_SESSION['stc_id'][$main_parent_id] = $_REQUEST['stc_id'];
+                            if ($_REQUEST['stc_id'] == 'all') {
+                                unset($_SESSION['stc_id'][$main_parent_id]);
+                            } else {
+                                $_SESSION['stc_id'][$main_parent_id] = $_REQUEST['stc_id'];
+                            }
                         }
                         if (empty($params['stc_id'])) {
                             if (!empty($_SESSION['stc_id'][$main_parent_id]) && !empty($subtabs_categorization[$_SESSION['stc_id'][$main_parent_id]])) {
                                 $_REQUEST['stc_id'] = $params['stc_id'] = $_SESSION['stc_id'][$main_parent_id];
-                            } elseif (!empty($stb_feature['variants'])) {
-                                $keys = array_keys($stb_feature['variants']);
-                                $_REQUEST['stc_id'] = $params['stc_id'] = $_SESSION['stc_id'][$main_parent_id] = reset($keys);
+//                             } elseif (!empty($stb_feature['variants'])) {
+//                                 $keys = array_keys($stb_feature['variants']);
+//                                 $_REQUEST['stc_id'] = $params['stc_id'] = $_SESSION['stc_id'][$main_parent_id] = reset($keys);
                             }
                         }
                         if (!empty($params['stc_id']) && !empty($subtabs_categorization[$params['stc_id']])) {

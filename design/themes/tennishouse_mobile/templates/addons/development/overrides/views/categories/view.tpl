@@ -77,7 +77,7 @@
                 <div class="ty-categorization-subtabs__item ty-categorization-subtabs__item{$cst_count} {if $key == $active_subtab}ty-categorization-subtabs__item-active{/if}">
                     <div class="ty-categorization-subtabs__item-logo">{include file="addons/development/common/brand_logo.tpl" brand=$tab brand_variant_id=$tab.variant_id img_height=$img_ht}</div>
                     <h3>
-                    <a class="ty-categorization-subtabs__a text-hide {if $category_data.ajax_pagination == 'Y'}cm-ajax-force cm-ajax cm-ajax-full-render cm-history{/if}" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_subtab}href="{$filter_qstring|fn_link_attach:"stc_id=`$key`"|fn_url}"{/if}>
+                    <a class="ty-categorization-subtabs__a text-hide {if $category_data.ajax_pagination == 'Y'}cm-ajax-force cm-ajax cm-ajax-full-render cm-history{/if}" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_subtab}href="{$filter_qstring|fn_link_attach:"stc_id=`$key`"|fn_url}"{else}href="{$filter_qstring|fn_link_attach:"stc_id=all"|fn_url}"{/if}>
                         {$tab.variant}
                     </a>
                     </h3>

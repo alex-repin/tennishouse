@@ -986,13 +986,18 @@ function fn_development_calculate_cart_items(&$cart, &$cart_products, $auth)
 function fn_development_gather_additional_products_data_post($product_ids, $params, &$products, $auth)
 {
     $size_ids = array(
+        'R' => array(BABOLAT_GRIP_OPT_ID, WILSON_GRIP_OPT_ID, HEAD_GRIP_OPT_ID),
         'A' => array(APPAREL_SIZE_OPT_ID, APPAREL_KIDS_SIZE_OPT_ID),
         'S' => SHOE_SIZE_OPT_ID
     );
     if (AREA == 'C' && empty($params['get_for_one_product']) && !empty($products)) {
         $color_ids = $color_image_pairs = $color_prod_image_pairs = $features_condition = array();
         if (!empty($params['get_options'])) {
-            $avail_combinations = db_get_hash_multi_array("SELECT ?:product_warehouses_inventory.product_id, ?:product_options_inventory.combination FROM ?:product_warehouses_inventory LEFT JOIN ?:product_options_inventory ON ?:product_warehouses_inventory.combination_hash = ?:product_options_inventory.combination_hash WHERE ?:product_warehouses_inventory.amount > 0 AND ?:product_warehouses_inventory.product_id IN (?n)", array('product_id', 'combination'), $product_ids);
+            $warehouse_condition = '';
+            if (!empty($_SESSION['wid'])) {
+                $warehouse_condition .= db_quote("AND ?:product_warehouses_inventory.warehouse_id = ?i", $_SESSION['wid']);
+            }
+            $avail_combinations = db_get_hash_multi_array("SELECT ?:product_warehouses_inventory.product_id, ?:product_options_inventory.combination FROM ?:product_warehouses_inventory LEFT JOIN ?:product_options_inventory ON ?:product_warehouses_inventory.combination_hash = ?:product_options_inventory.combination_hash WHERE ?:product_warehouses_inventory.amount > 0 $warehouse_condition AND ?:product_warehouses_inventory.product_id IN (?n)", array('product_id', 'combination'), $product_ids);
         }
         
         foreach ($products as $i => $product) {

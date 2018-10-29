@@ -1368,7 +1368,7 @@
         <item lang="ru" id="advantage_air_delivery_title">Быстрая доставка</item>
         <item lang="ru" id="advantage_air_delivery_text">В любую точку мира в кратчайшие сроки. Бесплатная доставка на заказы от {free_shipping_cost} рублей по России</item>
         <item lang="ru" id="advantage_payment_on_delivery_title">Удобные способы оплаты</item>
-        <item lang="ru" id="advantage_payment_on_delivery_text">Оплата наличными при получении по России и Казахстану. А также оплата картами онлайн, по безналичному расчету и бонусными рублями</item>
+        <item lang="ru" id="advantage_payment_on_delivery_text">Оплата наличными при получении по России. А также оплата картами онлайн, по безналичному расчету и бонусными рублями</item>
         <item lang="ru" id="advantage_refund_title">Обмен и возврат</item>
         <item lang="ru" id="advantage_refund_text">В случае если товар не подошел, его можно сразу вернуть курьеру при доставке по Москве или отправить обратно при доставке в регионы</item>
         <item lang="ru" id="advantage_fitting_title">Бесплатная примерка</item>
@@ -1382,5 +1382,8 @@
         <item lang="ru" id="text_no_shipping_methods">Мы доставляем заказы в любую точку мира, однако, по какой-то причине система не смогла автоматически определить способы доставки. Поэтому после оформления заказа мы свяжемся с Вами для выбора удобного способа доставки.</item>
         <item lang="ru" id="authorize_apply_reward_points_title">Применить [amount] бонусных рублей</item>
         <item lang="ru" id="authorize_apply_reward_points"><![CDATA[<div class="ty-authorize-apply-reward-points"><p style="font-size: 16px;">Применить [amount] бонусных рублей</p><p>У пользователя с адресом почты <b>[email]</b> имеется [amount] бонусных рублей, которые можно использовать в этом заказе. <a href="http://www.tennishouse.ru/login/" target="_blank">Авторизуйтесь</a> для получения скидки.</p></div>]]></item>
+        <item lang="ru" id="available_option_269">Размер ручки</item>
+        <item lang="ru" id="available_option_544">Размер ручки</item>
+        <item lang="ru" id="available_option_547">Размер ручки</item>
     </language_variables>
 </addon>

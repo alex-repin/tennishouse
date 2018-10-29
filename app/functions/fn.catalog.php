@@ -7134,11 +7134,15 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
         $union_condition = ' AND ';
     }
 
-    $join = $condition = $u_condition = $inventory_condition = '';
+    $join = $condition = $u_condition = $inventory_condition = $warehouse_condition = '';
     $having = array();
 
+    if (!empty($_SESSION['wid'])) {
+        $warehouse_condition .= db_quote("AND warehouse_inventory.warehouse_id = ?i", $_SESSION['wid']);
+    }
+    
     $join .= db_quote(" LEFT JOIN ?:product_warehouses_inventory AS warehouse_inventory ON warehouse_inventory.product_id = products.product_id 
-        AND warehouse_inventory.amount > 0 AND (CASE products.tracking
+        AND warehouse_inventory.amount > 0 $warehouse_condition AND (CASE products.tracking
             WHEN ?s THEN warehouse_inventory.combination_hash != '0'
             WHEN ?s THEN warehouse_inventory.combination_hash = '0'
             WHEN ?s THEN 1
