@@ -202,7 +202,7 @@ define('REVIEW_PROMO_ID', 43);
 
 define('PROMOTION_TAG', 'P');
 
-define('EXC_PRODUCT_ITEMS', serialize(array(912, 778, 779, 780, 781, 782, 831, 1307, 1312, 1313, 1314, 1315, 1316, 1317, 1318, 1319)));
+define('EXC_PRODUCT_ITEMS', serialize(array(1615, 912, 778, 779, 780, 781, 782, 831, 1307, 1312, 1313, 1314, 1315, 1316, 1317, 1318, 1319)));
 define('BIG_CITIES', serialize(array(
     array(
         'city' => 'Москва',
