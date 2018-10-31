@@ -832,6 +832,29 @@ function fn_get_rss_news($params)
     return $news_feed;
 }
 
+function fn_reset_product_warehouses($product_id)
+{
+    $data = array();
+    $_data[] = array(
+        'warehouse_hash' => fn_generate_cart_id($product_id, array('warehouse_id' => TH_WAREHOUSE_ID)),
+        'warehouse_id' => TH_WAREHOUSE_ID,
+        'product_id' => $product_id,
+        'amount' => 0
+    );
+    $brand_warehouse_ids = db_get_fields("SELECT ?:warehouse_brands.warehouse_id FROM ?:warehouse_brands LEFT JOIN ?:product_features_values ON ?:product_features_values.variant_id = ?:warehouse_brands.brand_id WHERE ?:product_features_values.feature_id = ?i AND ?:product_features_values.product_id = ?i", BRAND_FEATURE_ID, $product_id);
+    if (!empty($brand_warehouse_ids)) {
+        foreach ($brand_warehouse_ids as $br_id) {
+            $_data[] = array(
+                'warehouse_hash' => fn_generate_cart_id($product_id, array('warehouse_id' => $br_id)),
+                'warehouse_id' => $br_id,
+                'product_id' => $product_id,
+                'amount' => 0
+            );
+        }
+    }
+    db_query("REPLACE ?:product_warehouses_inventory ?m", $_data);
+}
+
 function fn_update_product_tracking($product_id)
 {
     $options_left = db_get_fields("SELECT po.option_id, go.option_id FROM ?:product_options AS po LEFT JOIN ?:product_global_option_links AS go ON go.option_id = po.option_id WHERE (po.product_id = ?i OR go.product_id = ?i) AND po.option_type IN ('S','R','C') AND po.inventory = 'Y'", $product_id, $product_id);
@@ -839,6 +862,7 @@ function fn_update_product_tracking($product_id)
         $tracking = db_get_field("SELECT tracking FROM ?:products WHERE product_id = ?i", $product_id);
         if ($tracking == 'O') {
             db_query("UPDATE ?:products SET tracking = 'B' WHERE product_id = ?i", $product_id);
+            fn_reset_product_warehouses($product_id);
         }
     } else {
         db_query("UPDATE ?:products SET tracking = 'O' WHERE product_id = ?i", $product_id);

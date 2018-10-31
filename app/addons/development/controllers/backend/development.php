@@ -1416,6 +1416,46 @@ if ($mode == 'calculate_balance') {
     }
     fn_echo('Done');
     exit;
+} elseif ($mode == 'fix_obsolete_warehouse_inventory') {
+    $options_inventory = db_get_hash_multi_array("SELECT * FROM ?:product_options_inventory", array('product_id', 'combination_hash'));
+    $warehouse_inventory = db_get_hash_multi_array("SELECT * FROM ?:product_warehouses_inventory", array('product_id', 'warehouse_hash'));
+    $to_delete = array();
+    foreach ($options_inventory as $prod_id => $inv_combinations) {
+        if (!empty($warehouse_inventory[$prod_id])) {
+            $keys = array_keys($inv_combinations);
+            foreach ($warehouse_inventory[$prod_id] as $wh_id => $wh_data) {
+                if (!in_array($wh_data['combination_hash'], $keys)) {
+                    $to_delete[] = $wh_id;
+                }
+            }
+        }
+    }
+    if (!empty($to_delete)) {
+        db_query("DELETE FROM ?:product_warehouses_inventory WHERE warehouse_hash IN (?n)", $to_delete);
+    }
+    fn_echo('Done');
+    exit;
+} elseif ($mode == 'fix_missing_warehouse_inventory') {
+    $ids = db_get_fields("SELECT DISTINCT product_id FROM ?:product_warehouses_inventory");
+    $params['extend'] = array('categories');
+    $params['exclude_pid'] = $ids;
+
+    list($products, $search) = fn_get_products($params);
+    fn_gather_additional_products_data($products, array(
+        'get_icon' => false,
+        'get_detailed' => false,
+        'get_additional' => false,
+        'get_options' => false,
+        'get_discounts' => false,
+        'get_features' => true
+    ));
+    if (!empty($products)) {
+        foreach ($products as $i => $prod_data) {
+            fn_reset_product_warehouses($prod_data['product_id']);
+        }
+    }
+    fn_echo('Done');
+    exit;
 }
 
 function fn_fill_image_common_description(&$images_alts, $detailed_id, $name)

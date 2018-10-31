@@ -3888,6 +3888,7 @@ function fn_rebuild_product_options_inventory($product_id, $amount = 50)
 
     // Delete old combinations
     db_query("DELETE FROM ?:product_options_inventory WHERE product_id = ?i AND temp = 'Y'", $product_id);
+    db_query("DELETE FROM ?:product_warehouses_inventory WHERE product_id = ?i AND combination_hash IN (?n)", $product_id, $hashes);
 
     /**
      * Adds additional actions after rebuilding product options inventory
@@ -8039,6 +8040,7 @@ function fn_update_product_option($option_data, $option_id = 0, $lang_code = DES
      */
     fn_set_hook('update_product_option_pre', $option_data, $option_id, $lang_code);
 
+    $rebuild_combinations = false;
     // Add option
     if (empty($option_id)) {
 
@@ -8057,14 +8059,14 @@ function fn_update_product_option($option_data, $option_id = 0, $lang_code = DES
     } else {
 
         // if option inventory changed from Y to N, we should clear option combinations
-        if (!empty($option_data['product_id']) && !empty($option_data['inventory']) && $option_data['inventory'] == 'N') {
+        if (!empty($option_data['product_id'])) {
             $condition = fn_get_company_condition('?:product_options.company_id');
             $old_option_inventory = db_get_field("SELECT inventory FROM ?:product_options WHERE option_id = ?i $condition", $option_id);
-            if ($old_option_inventory == 'Y') {
-                $inventory_filled = db_get_field('SELECT COUNT(*) FROM ?:product_options_inventory WHERE product_id = ?i', $option_data['product_id']);
-                if ($inventory_filled) {
-                    fn_delete_product_option_combinations($option_data['product_id']);
-                }
+            if ($option_data['inventory'] != $old_option_inventory) {
+//                 $inventory_filled = db_get_field('SELECT COUNT(*) FROM ?:product_options_inventory WHERE product_id = ?i', $option_data['product_id']);
+//                 if ($inventory_filled) {
+                    $rebuild_combinations = true;
+//                 }
             }
         }
 
@@ -8175,6 +8177,9 @@ function fn_update_product_option($option_data, $option_id = 0, $lang_code = DES
         if (!empty($create) && !empty($option_data['product_id'])) {
             fn_update_exceptions($option_data['product_id']);
         }
+    }
+    if (!empty($rebuild_combinations)) {
+        fn_rebuild_product_options_inventory($option_data['product_id']);
     }
 
     /**

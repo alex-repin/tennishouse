@@ -268,9 +268,9 @@ if ($mode == 'inventory') {
 } elseif ($mode == 'delete') {
     if (!empty($_REQUEST['option_id']) && fn_check_company_id('product_options', 'option_id', $_REQUEST['option_id']) || (!empty($_REQUEST['product_id']) && fn_check_company_id('products', 'product_id', $_REQUEST['product_id']))) {
 
-        $p_id = db_get_field("SELECT product_id FROM ?:product_options WHERE option_id = ?i", $_REQUEST['option_id']);
+        $p_data = db_get_row("SELECT product_id, inventory FROM ?:product_options WHERE option_id = ?i", $_REQUEST['option_id']);
 
-        if (!empty($_REQUEST['product_id']) && empty($p_id)) { // we're deleting global option from the product
+        if (!empty($_REQUEST['product_id']) && empty($p_data['product_id'])) { // we're deleting global option from the product
             db_query("DELETE FROM ?:product_global_option_links WHERE product_id = ?i AND option_id = ?i", $_REQUEST['product_id'], $_REQUEST['option_id']);
             db_query("DELETE FROM ?:product_options_exceptions WHERE product_id = ?i", $_REQUEST['product_id']);
             // [tennishouse]
@@ -279,8 +279,11 @@ if ($mode == 'inventory') {
         } elseif (!empty($_REQUEST['product_id'])) {
             fn_delete_product_option($_REQUEST['option_id'], $_REQUEST['product_id']);
         }
+        if (!empty($_REQUEST['product_id']) && $p_data['inventory'] == 'Y') {
+            fn_rebuild_product_options_inventory($_REQUEST['product_id']);
+        }
 
-        if (empty($_REQUEST['product_id']) && empty($p_id)) { // we're deleting global option itself
+        if (empty($_REQUEST['product_id']) && empty($p_data['product_id'])) { // we're deleting global option itself
             db_query("DELETE FROM ?:product_global_option_links WHERE option_id = ?i", $_REQUEST['option_id']);
         }
     }
