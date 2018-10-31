@@ -541,6 +541,7 @@ function fn_development_clone_product($from_product_id, $to_product_id)
     if (!empty($warehouse_inventory)) {
         foreach ($warehouse_inventory as $i => $wh_data) {
             $wh_data['product_id'] = $to_product_id;
+            $wh_data['amount'] = 0;
             $wh_data['warehouse_hash'] = fn_generate_cart_id($to_product_id, array('warehouse_id' => $wh_data['warehouse_id']));
             db_query("INSERT INTO ?:product_warehouses_inventory ?e", $wh_data);
         }
