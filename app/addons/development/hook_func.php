@@ -986,7 +986,7 @@ function fn_development_calculate_cart_items(&$cart, &$cart_products, $auth)
 function fn_development_gather_additional_products_data_post($product_ids, $params, &$products, $auth)
 {
     $size_ids = array(
-        'R' => array(BABOLAT_GRIP_OPT_ID, WILSON_GRIP_OPT_ID, HEAD_GRIP_OPT_ID),
+        'R' => array(BABOLAT_GRIP_OPT_ID, BABOLAT_KIDS_GRIP_OPT_ID, WILSON_GRIP_OPT_ID, HEAD_GRIP_OPT_ID),
         'A' => array(APPAREL_SIZE_OPT_ID, APPAREL_KIDS_SIZE_OPT_ID),
         'S' => SHOE_SIZE_OPT_ID
     );

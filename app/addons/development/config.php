@@ -184,6 +184,7 @@ define('SHOE_SIZE_OPT_ID', 112);
 define('APPAREL_SIZE_OPT_ID', 141);
 define('APPAREL_KIDS_SIZE_OPT_ID', 209);
 define('BABOLAT_GRIP_OPT_ID', 269);
+define('BABOLAT_KIDS_GRIP_OPT_ID', 353);
 define('WILSON_GRIP_OPT_ID', 544);
 define('HEAD_GRIP_OPT_ID', 547);
 /* Global options */
