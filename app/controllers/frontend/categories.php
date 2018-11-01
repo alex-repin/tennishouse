@@ -228,8 +228,11 @@ if ($mode == 'catalog') {
                             $tb_feature['variants']['other'] = array('variant' => __("other"));
                         }
 
-                        if (count($tb_feature['variants']) == 1 && reset(array_keys($tb_feature['variants'])) == 'all') {
+                        if (count($tb_feature['variants']) == 1) {
+                            $keys = array_keys($tb_feature['variants']);
+                            if (reset($keys) == 'all') {
                                 unset($tb_feature['variants']['all']);
+                            }
                         }
                         if (!empty($_REQUEST['tc_id'])) {
                             $_SESSION['tc_id'][$main_parent_id] = $params['tc_id'] = $_REQUEST['tc_id'];
@@ -314,6 +317,8 @@ if ($mode == 'catalog') {
 //                             } elseif (!empty($stb_feature['variants'])) {
 //                                 $keys = array_keys($stb_feature['variants']);
 //                                 $_REQUEST['stc_id'] = $params['stc_id'] = $_SESSION['stc_id'][$main_parent_id] = reset($keys);
+                            } else {
+                                $params['stc_id'] = 'all';
                             }
                         }
                         if (!empty($params['stc_id']) && !empty($subtabs_categorization[$params['stc_id']])) {
