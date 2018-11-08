@@ -1390,5 +1390,6 @@
         <item lang="ru" id="promotion_cond_ip_city">IP город</item>
         <item lang="ru" id="promotion_cond_ip_state">IP регион</item>
         <item lang="ru" id="text_ip_cities_cities_wildcards">Названия городов через запятую</item>
+        <item lang="ru" id="hide_discount">Спрятать скидку</item>
     </language_variables>
 </addon>

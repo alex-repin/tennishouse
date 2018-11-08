@@ -2637,3 +2637,13 @@ function fn_rebuild_product_options_inventory_multi($product_ids, $products_opti
         }
     }
 }
+
+function fn_get_state_names($state_ids, $state_name)
+{
+    $result = array();
+    foreach ($state_ids as $id) {
+        $result[$id] = $state_name[$id];
+    }
+    
+    return $result;
+}
