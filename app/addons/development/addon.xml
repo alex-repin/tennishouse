@@ -1347,7 +1347,8 @@
         <item lang="ru" id="go_to_compare_list">Перейти к списку сравнения</item>
         <item lang="ru" id="wishlist_is_empty">Отмечайте товары для будущих покупок, нажав на "сердечко" на детальной странице понравившегося товара.</item>
         <item lang="ru" id="compare_list_is_empty">Сравните товары по характеристикам. Начните свой выбор с каталога товаров или воспользуйтесь поиском, если ищете что-то конкретное.</item>
-        <item lang="ru" id="promotion_cond_product_review">Новые отзывы товары</item>
+        <item lang="ru" id="promotion_cond_product_review">Новые отзывы на товары</item>
+        <item lang="ru" id="promotion_cond_store_review">Новые отзывы на магазин</item>
         <item lang="ru" id="promotion_cond_no_list_discount">Нет товарной(list) скидки</item>
         <item lang="ru" id="get_review_discount_text">Получить скидку [percent]%</item>
         <item lang="ru" id="get_review_discount_description"><![CDATA[<div class="ty-product-review-rp-text"><p style="font-size: 16px;">Получить скидку [percent]% прямо сейчас !</p><p>Скидка будет автоматически добавлена после написания отзыва на любой товар из категорий: <a href="http://www.tennishouse.ru/tennis-rackets/" target="_blank">Ракетки</a>, <a href="http://www.tennishouse.ru/tennis-balls/" target="_blank">Мячи</a>, <a href="http://www.tennishouse.ru/tennis-strings/" target="_blank">Струны</a>, <a href="http://www.tennishouse.ru/tennis-shoes/" target="_blank">Обувь</a>, <a href="http://www.tennishouse.ru/ball-machines/" target="_blank">Пушки</a>, <a href="http://www.tennishouse.ru/stringing-machines/" target="_blank">Станки</a>.</p><p>ВНИМАНИЕ. Отзыв должен быть информативен и полезен для других покупателей. Если отзыв не будет соответствовать этому критерию, то скидка в заказе будет аннулирована.</p></div>]]></item>
@@ -1386,5 +1387,8 @@
         <item lang="ru" id="available_option_544">Размер ручки</item>
         <item lang="ru" id="available_option_547">Размер ручки</item>
         <item lang="ru" id="available_option_353">Размер ручки</item>
+        <item lang="ru" id="promotion_cond_ip_city">IP город</item>
+        <item lang="ru" id="promotion_cond_ip_state">IP регион</item>
+        <item lang="ru" id="text_ip_cities_cities_wildcards">Названия городов через запятую</item>
     </language_variables>
 </addon>

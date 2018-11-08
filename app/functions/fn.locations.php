@@ -201,6 +201,17 @@ function fn_get_countries_name($country_codes, $lang_code = CART_LANGUAGE)
     return $countries;
 }
 
+function fn_destination_get_states($lang_code)
+{
+    list($_states) = fn_get_states(array(), 0, $lang_code);
+    $states = array();
+    foreach ($_states as $_state) {
+        $states[$_state['state_id']] = $_state['country'] . ': ' . $_state['state'];
+    }
+
+    return $states;
+
+}
 //
 // Get all destinations list
 //

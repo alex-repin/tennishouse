@@ -61,5 +61,18 @@ $scheme['conditions']['no_list_discount'] = array(
         ),
     ),
 );
+$scheme['conditions']['ip_city'] = array(
+    'operators' => array ('in', 'nin'),
+    'type' => 'city_textbox',
+    'field_function' => array('fn_promotion_validate_ip_city', '#this'),
+    'zones' => array('cart', 'catalog')
+);
+$scheme['conditions']['ip_state'] = array(
+    'operators' => array ('in', 'nin'),
+    'type' => 'state_selectbox',
+    'variants_function' => array('fn_destination_get_states', CART_LANGUAGE),
+    'field_function' => array('fn_promotion_validate_ip_state', '#this'),
+    'zones' => array('cart', 'catalog')
+);
 
 return $scheme;

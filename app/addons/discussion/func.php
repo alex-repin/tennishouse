@@ -518,7 +518,7 @@ function fn_get_discussion_objects()
 //
 // Clone discussion
 //
-function fn_clone_discussion($object_id, $new_object_id, $object_type)
+function fn_clone_discussion($object_id, $new_object_id, $object_type, $clone_posts = true)
 {
 
     // Clone attachment
@@ -534,22 +534,24 @@ function fn_clone_discussion($object_id, $new_object_id, $object_type)
     $thread_id = db_query("REPLACE INTO ?:discussion ?e", $data);
 
     // Clone posts
-    $data = db_get_array("SELECT * FROM ?:discussion_posts WHERE thread_id = ?i", $old_thread_id);
-    foreach ($data as $v) {
-        $old_post_id = $v['post_id'];
-        $v['thread_id'] = $thread_id;
-        unset($v['post_id']);
-        $post_id = db_query("INSERT INTO ?:discussion_posts ?e", $v);
+    if (!empty($clone_posts)) {
+        $data = db_get_array("SELECT * FROM ?:discussion_posts WHERE thread_id = ?i", $old_thread_id);
+        foreach ($data as $v) {
+            $old_post_id = $v['post_id'];
+            $v['thread_id'] = $thread_id;
+            unset($v['post_id']);
+            $post_id = db_query("INSERT INTO ?:discussion_posts ?e", $v);
 
-        $message = db_get_row("SELECT * FROM ?:discussion_messages WHERE post_id = ?i", $old_post_id);
-        $message['post_id'] = $post_id;
-        $message['thread_id'] = $thread_id;
-        db_query("INSERT INTO ?:discussion_messages ?e", $message);
+            $message = db_get_row("SELECT * FROM ?:discussion_messages WHERE post_id = ?i", $old_post_id);
+            $message['post_id'] = $post_id;
+            $message['thread_id'] = $thread_id;
+            db_query("INSERT INTO ?:discussion_messages ?e", $message);
 
-        $rating = db_get_row("SELECT * FROM ?:discussion_rating WHERE post_id = ?i", $old_post_id);
-        $rating['post_id'] = $post_id;
-        $rating['thread_id'] = $thread_id;
-        db_query("INSERT INTO ?:discussion_rating ?e", $rating);
+            $rating = db_get_row("SELECT * FROM ?:discussion_rating WHERE post_id = ?i", $old_post_id);
+            $rating['post_id'] = $post_id;
+            $rating['thread_id'] = $thread_id;
+            db_query("INSERT INTO ?:discussion_rating ?e", $rating);
+        }
     }
 
     return true;
@@ -557,7 +559,7 @@ function fn_clone_discussion($object_id, $new_object_id, $object_type)
 
 function fn_discussion_clone_product(&$product_id, &$to_product_id)
 {
-    fn_clone_discussion($product_id, $to_product_id, 'P');
+    fn_clone_discussion($product_id, $to_product_id, 'P', false);
 }
 
 function fn_get_rating_list($object_type, $parent_object_id = '')

@@ -74,7 +74,6 @@ $schema['central']['marketing']['items']['saving_system'] = array(
     'href' => 'development.saving_system',
     'position' => 910
 );
-
 $schema['central']['website']['items']['anouncements'] = array(
     'attrs' => array(
         'class'=>'is-addon'

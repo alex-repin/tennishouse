@@ -14,7 +14,7 @@
 
 use Tygh\Exceptions\DeveloperException;
 use Tygh\Registry;
-
+use Tygh\Http;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
@@ -37,6 +37,9 @@ if (empty($_SESSION['hide_anouncement'])) {
     if (!empty($anouncement)) {
         Registry::get('view')->assign('anouncement', $anouncement);
     }
+}
+if (empty($_SESSION['ip_data']) || $_SESSION['ip_data']['ip'] != $_SERVER['REMOTE_ADDR']) {
+    $_SESSION['ip_data'] = fn_get_location_by_ip();
 }
 // Registry::get('view')->assign('mobile_page_id', fn_crc32(implode('_', $_REQUEST)));
 Registry::get('view')->assign('company_phone', preg_replace('/[^0-9+]/', '', Registry::get('settings.Company.company_phone')));

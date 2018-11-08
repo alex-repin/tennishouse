@@ -482,8 +482,14 @@ function fn_promotion_apply_discount($promotion_id, $bonus, &$product, $use_base
     $discount = fn_promotions_calculate_discount($bonus['discount_bonus'], $base_price, $bonus['discount_value'], $product['price']);
     $discount = fn_format_price($discount);
 
-    $product['discount'] += $discount;
+    // TennisHouse
     $product['price'] -= $discount;
+    if (empty($bonus['hide_discount']) || $bonus['hide_discount'] != 'Y') {
+        $product['discount'] += $discount;
+    } else {
+        $product['original_price'] = $product['price'];
+    }
+    // TennisHouse
 
     if ($product['price'] < 0) {
         $product['discount'] += $product['price'];

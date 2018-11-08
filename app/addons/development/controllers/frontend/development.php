@@ -54,19 +54,10 @@ if ($mode == 'product_shipping_estimation') {
                 $approx_shipping['state'] = $profile_data['s_state'];
                 $approx_shipping['country'] = $profile_data['s_country'];
                 $approx_shipping['zipcode'] = $profile_data['s_zipcode'];
+            } elseif (!empty($_SESSION['ip_data']) && !empty($_SESSION['ip_data']['city']) && !empty($_SESSION['ip_data']['state']) && !empty($_SESSION['ip_data']['country'])) {
+                $approx_shipping = $_SESSION['ip_data'];
             } elseif (!empty($_SERVER['REMOTE_ADDR'])) {
-                $ip = $_SERVER['REMOTE_ADDR'] == '127.0.0.1' ? '79.132.124.103' : $_SERVER['REMOTE_ADDR'];
-                $response = Http::get('http://ipgeobase.ru:7020/geo',
-                    array('ip' => $ip)
-                );
-                $xml = @simplexml_load_string($response);
-                if (!empty($xml->ip->city)) {
-                    $approx_shipping['city'] = strval($xml->ip->city);
-                }
-                if (!empty($xml->ip->region) && $state = fn_find_state_match($xml->ip->region)) {
-                    $approx_shipping['country'] = 'RU';
-                    $approx_shipping['state'] = $state;
-                }
+                $approx_shipping = fn_get_location_by_ip();
             }
         }
         if (empty($approx_shipping['time']) && !empty($approx_shipping['country']) && !empty($approx_shipping['state']) && !empty($approx_shipping['city'])) {

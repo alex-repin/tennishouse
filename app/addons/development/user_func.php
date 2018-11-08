@@ -23,6 +23,31 @@ use Tygh\Settings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_get_location_by_ip()
+{
+    $data = array();
+    $data['ip'] = $_SERVER['REMOTE_ADDR'] == '127.0.0.1' ? '95.83.46.99' : $_SERVER['REMOTE_ADDR'];
+    $extra = array(
+        'request_timeout' => 2,
+        'timeout' => 1
+    );
+    $response = Http::get('http://ipgeobase.ru:7020/geo',
+        array('ip' => $data['ip']),
+        $extra
+    );
+    $xml = @simplexml_load_string($response);
+    if (!empty($xml->ip->city)) {
+        $data['city'] = strval($xml->ip->city);
+    }
+    if (!empty($xml->ip->region) && $state = fn_find_state_match($xml->ip->region)) {
+        $data['country'] = 'RU';
+        $data['state'] = $state['code'];
+        $data['state_id'] = $state['state_id'];
+    }
+    
+    return $data;
+}
+
 function fn_remove_condition(&$condition, $condition_name)
 {
     if (!empty($condition['conditions'])) {
@@ -193,6 +218,16 @@ function fn_promotion_validate_store_review(&$promotion, $auth, $promotion_id = 
 function fn_promotion_validate_product_review(&$promotion, $auth, $promotion_id = 0)
 {
     return fn_count_new_reviews($auth['user_id'], 'P');
+}
+
+function fn_promotion_validate_ip_state($promotion)
+{
+    return $_SESSION['ip_data']['state_id'];
+}
+
+function fn_promotion_validate_ip_city($promotion)
+{
+    return $_SESSION['ip_data']['city'];
 }
 
 function fn_get_subscriber_statuses($lang_code = CART_LANGUAGE)
@@ -391,7 +426,7 @@ function fn_get_product_review_discount(&$products)
     if (!empty($promotions[REVIEW_PROMO_ID]['conditions'])) {
         fn_remove_condition($promotions[REVIEW_PROMO_ID], 'product_review');
         foreach ($products as $i => &$product) {
-            if (empty($product['promotions'][REVIEW_PROMO_ID])) {
+            if (empty($product['promotions'][REVIEW_PROMO_ID]) && ($promotions[REVIEW_PROMO_ID]['stop'] == 'N' || ($promotions[REVIEW_PROMO_ID]['stop'] == 'Y' && empty($product['promotions'])))) {
                 $cart_products = array();
                 if (fn_promotion_check(REVIEW_PROMO_ID, $promotions[REVIEW_PROMO_ID]['conditions'], $product, $_SESSION['auth'], $cart_products) && !empty($promotions[REVIEW_PROMO_ID]['bonuses'])) {
                     foreach ($promotions[REVIEW_PROMO_ID]['bonuses'] as $bonus) {
@@ -2292,11 +2327,11 @@ function fn_find_state_match($state)
     $match = array();
     foreach ($states as $i => $st_dt) {
         $_state_parts = fn_get_state_parts($st_dt['state']);
-        $match[$st_dt['code']] = round(100 / count($state_parts) * count(array_intersect($_state_parts, $state_parts)), 2);
+        $match[$i] = round(100 / count($state_parts) * count(array_intersect($_state_parts, $state_parts)), 2);
     }
     if (!empty($match)) {
         arsort($match);
-        return key($match);
+        return $states[key($match)];
     }
     
     return false;

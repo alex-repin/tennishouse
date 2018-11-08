@@ -411,7 +411,12 @@ function fn_development_get_cart_product_data_post($hash, $product, $skip_promot
 
 function fn_development_calculate_cart_post(&$cart, $auth, $calculate_shipping, $calculate_taxes, $options_style, $apply_cart_promotions, $cart_products, $product_groups)
 {
-    $cart['review_discount'] = fn_get_product_review_discount($cart_products);
+
+    if (empty($cart['promotions'][REVIEW_PROMO_ID])) {
+        $cart['review_discount'] = fn_get_product_review_discount($cart_products);
+    } else {
+        unset($cart['review_discount']);
+    }
     $cart['net_total'] = $cart['net_subtotal'];
     if (!empty($cart['org_payment_surcharge'])) {
         $cart['net_total'] += $cart['org_payment_surcharge'];
@@ -448,6 +453,7 @@ function fn_development_calculate_cart_post(&$cart, $auth, $calculate_shipping, 
 
 function fn_development_pre_get_cart_product_data($hash, $product, $skip_promotion, $cart, $auth, $promotion_amount, &$fields, $join)
 {
+    $fields[] = '?:products.list_price';
     $fields[] = '?:products.net_cost';
     $fields[] = '?:products.net_currency_code';
 }
