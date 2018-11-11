@@ -465,6 +465,7 @@ function fn_seo_get_route(&$req, &$result, &$area, &$is_allowed_url)
                     }
                 }
             }
+//                             fn_print_die($uri);
         }
     }
 
@@ -607,8 +608,17 @@ function fn_seo_validate_object($seo, $path, $objects)
     $path = rtrim($path, '/'); // remove trailing slash
     $vars = fn_get_seo_vars($seo['type']);
 
-    // check parent objects
-    $result = fn_seo_validate_parents($path, $seo['path'], !empty($vars['parent_type']) ? $vars['parent_type'] : $seo['type'], $vars, $seo['lang_code']);
+    if (!empty($vars['parent_type']) && $vars['parent_type'] == 'any' && !empty($path)) {
+        $parent_names = explode('/', trim($path, '/'));
+        $parents = db_get_hash_single_array(
+            "SELECT object_id, name FROM ?:seo_names WHERE name IN (?a) AND type = ?s AND lang_code = ?s ?p",
+            array('object_id', 'name'), $parent_names, $parent_type, $lang_code, fn_get_seo_company_condition('?:seo_names.company_id')
+        );
+// fn_print_die($parent_names);        
+    } else {
+        // check parent objects
+        $result = fn_seo_validate_parents($path, $seo['path'], !empty($vars['parent_type']) ? $vars['parent_type'] : $seo['type'], $vars, $seo['lang_code']);
+    }
 
     if ($result) {
         if (fn_check_seo_schema_option($vars, 'html_options')) {

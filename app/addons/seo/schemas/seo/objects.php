@@ -140,16 +140,18 @@ $schema = array(
 
     ), // page     (tree)
     'e' => array(
+        'tree' => true,
         'table' => '?:product_feature_variant_descriptions',
         'description' => 'variant',
         'dispatch' => 'product_features.view',
         'item' => 'variant_id',
         'condition' => '',
-
+        'parent_type' => 'any',
         'name' => 'feature',
 
+        'tree_options' => array('features_nohtml'),
         'html_options' => array('file'),
-        'option' => 'seo_other_type',
+        'option' => 'seo_features_type',
 
         'indexed_pages' => array(
             'product_features.view' => array(
