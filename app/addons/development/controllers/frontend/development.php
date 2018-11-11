@@ -95,7 +95,8 @@ if ($mode == 'update_user_city') {
 }
 if ($mode == 'find_state_match') {
     header('Content-Type: application/json');
-    fn_echo(json_encode(fn_find_state_match($_REQUEST['state'])));
+    $state = fn_find_state_match($_REQUEST['state']);
+    fn_echo(json_encode($state['code']));
     exit;
 }
 if ($mode == 'find_state_data') {

@@ -222,12 +222,12 @@ function fn_promotion_validate_product_review(&$promotion, $auth, $promotion_id 
 
 function fn_promotion_validate_ip_state($promotion)
 {
-    return $_SESSION['ip_data']['state_id'];
+    return !empty($_SESSION['ip_data']['state_id']) ? $_SESSION['ip_data']['state_id'] : false;
 }
 
 function fn_promotion_validate_ip_city($promotion)
 {
-    return $_SESSION['ip_data']['city'];
+    return !empty($_SESSION['ip_data']['city']) ? $_SESSION['ip_data']['city'] : false;
 }
 
 function fn_get_subscriber_statuses($lang_code = CART_LANGUAGE)
