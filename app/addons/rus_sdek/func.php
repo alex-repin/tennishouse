@@ -179,7 +179,7 @@ function fn_sdek_calculate_cost_by_shipment($order_info, $shipping_info, $shipme
             
         }
 
-        $url = 'http://api.edostavka.ru/calculator/calculate_price_by_json.php';
+        $url = 'http://api.cdek.ru/calculator/calculate_price_by_json.php';
         $post['version'] = '1.0';       
         $post['dateExecute'] = date('Y-m-d');
 

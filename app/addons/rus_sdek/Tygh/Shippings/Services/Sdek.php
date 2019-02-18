@@ -127,7 +127,7 @@ class Sdek implements IService
         $this->city_id = $_code = RusSdek::SdekCityId($location);
         $_code_sender = $shipping_settings['from_city_id'];
 
-        $url = 'http://api.edostavka.ru/calculator/calculate_price_by_json.php';
+        $url = 'http://api.cdek.ru/calculator/calculate_price_by_json.php';
         isset($this->version) ? $post['version'] = $this->version : '';
         if (!empty($shipping_settings['dateexecute'])) {
             $timestamp = TIME + $shipping_settings['dateexecute'] * SECONDS_IN_DAY;

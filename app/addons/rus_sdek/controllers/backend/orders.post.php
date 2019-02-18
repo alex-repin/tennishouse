@@ -199,7 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $xml .= '            ' . '</Order>';
                 $xml .= '            ' . '</DeliveryRequest>';
 
-                $response = RusSdek::SdekXmlRequest('http://gw.edostavka.ru/new_orders.php', $xml, $data_auth);
+                $response = RusSdek::SdekXmlRequest('https://integration.cdek.ru/new_orders.php', $xml, $data_auth);
 
                 $result = RusSdek::resultXml($response);
 
@@ -269,7 +269,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $xml .= '            ' . RusSdek::arraySimpleXml('Order', $order_sdek);
                 $xml .= '            ' . '</DeleteRequest>';
 
-                $response = RusSdek::SdekXmlRequest('http://gw.edostavka.ru/delete_orders.php', $xml, $data_auth);
+                $response = RusSdek::SdekXmlRequest('https://integration.cdek.ru/delete_orders.php', $xml, $data_auth);
                 $result = RusSdek::resultXml($response);
                 if (empty($result['error'])) {
                     db_query('DELETE FROM ?:rus_sdek_products WHERE order_id = ?i and shipment_id = ?i ', $params['order_id'], $shipment_id);
@@ -449,7 +449,7 @@ function fn_sdek_get_ticket_order($data_auth, $order_id, $chek_id)
     $xml .= '            ' . RusSdek::arraySimpleXml('Order', $order_sdek);
     $xml .= '            ' . '</OrdersPrint>';
 
-    $response = RusSdek::SdekXmlRequest('http://gw.edostavka.ru/orders_print.php', $xml, $data_auth);
+    $response = RusSdek::SdekXmlRequest('https://integration.cdek.ru/orders_print.php', $xml, $data_auth);
 
     $download_file_dir = fn_get_files_dir_path() . '/sdek' . '/' . $chek_id . '/';
 

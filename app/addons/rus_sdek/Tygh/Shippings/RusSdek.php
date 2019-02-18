@@ -111,7 +111,7 @@ class RusSdek
 
         $xml .= '            ' . '</StatusReport>';
 
-        $response = RusSdek::SdekXmlRequest('http://gw.edostavka.ru/status_report_h.php', $xml, $data_auth);
+        $response = RusSdek::SdekXmlRequest('https://integration.cdek.ru/status_report_h.php', $xml, $data_auth);
 
         $_result = json_decode(json_encode((array) simplexml_load_string($response)), true);
 
@@ -285,7 +285,7 @@ class RusSdek
             'request_timeout' => 2,
             'timeout' => 1
         );
-        $result = Http::get('http://gw.edostavka.ru/pvzlist.php', $city, $extra);
+        $result = Http::get('https://integration.cdek.ru/pvzlist/v1/xml', $city, $extra);
         $xml = simplexml_load_string($result);
         if (!empty($xml)) {
             $count = count($xml->Pvz);

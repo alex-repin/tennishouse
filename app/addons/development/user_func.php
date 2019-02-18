@@ -29,17 +29,23 @@ function fn_get_location_by_ip()
     $data['ip'] = $_SERVER['REMOTE_ADDR'] == '127.0.0.1' ? '95.83.46.99' : $_SERVER['REMOTE_ADDR'];
     $extra = array(
         'request_timeout' => 2,
-        'timeout' => 1
+        'timeout' => 1,
+        'headers' => array('Accept: application/json',  'Authorization: Token 103a9bfee0f97140574ab8adbcbbf75e9e98a28c')
     );
-    $response = Http::get('http://ipgeobase.ru:7020/geo',
+//     $response = Http::get('http://ipgeobase.ru:7020/geo',
+//         array('ip' => $data['ip']),
+//         $extra
+//     );
+
+    $response = Http::get('https://suggestions.dadata.ru/suggestions/api/4_1/rs/detectAddressByIp',
         array('ip' => $data['ip']),
         $extra
     );
-    $xml = @simplexml_load_string($response);
-    if (!empty($xml->ip->city)) {
-        $data['city'] = strval($xml->ip->city);
+    $json = json_decode($response);
+    if (!empty($json->location->data->city)) {
+        $data['city'] = strval($json->location->data->city);
     }
-    if (!empty($xml->ip->region) && $state = fn_find_state_match($xml->ip->region)) {
+    if (!empty($json->location->data->region) && $state = fn_find_state_match($json->location->data->region)) {
         $data['country'] = 'RU';
         $data['state'] = $state['code'];
         $data['state_id'] = $state['state_id'];
