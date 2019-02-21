@@ -1,6 +1,4 @@
-{include file="common/price.tpl" value=$addons.gift_certificates.max_amount assign="max_amount"}
-{include file="common/price.tpl" value=$addons.gift_certificates.min_amount assign="min_amount"}
-{assign var="text_gift_cert_amount_alert" value=__("text_gift_cert_amount_alert", ["[min]" => $min_amount, "[max]" => $max_amount])}
+{assign var="text_gift_cert_amount_alert" value=__("text_gift_cert_amount_alert", ["[min]" => $addons.gift_certificates.min_amount, "[max]" => $addons.gift_certificates.max_amount])}
 
 <script type="text/javascript">
 (function(_, $) {
@@ -45,7 +43,17 @@
 {if !$config.tweaks.disable_dhtml && !$no_ajax && $runtime.mode != "update"}
     {assign var="is_ajax" value=true}
 {/if}
-
+<div class="ty-product-block__img-wrapper" id="product_page_left">
+    <div class="ty-gc-image">
+        <div class="gc-amount-text" id="gc_amount">{if $gift_cert_data}{$gift_cert_data.amount|fn_format_rate_value:"":$currencies.$secondary_currency.decimals:".":"":$currencies.$secondary_currency.coefficient}{else}0{/if} {$currencies.$secondary_currency.symbol nofilter}</div>
+        <div class="gc-comment-text" id="gc_comment">{if $gift_cert_data.message}{$gift_cert_data.message nofilter}{else}{__("gc_your_greetings")}{/if}</div>
+    </div>
+    {*<div class="ty-product-img cm-preview-wrapper">
+        {include file="common/image.tpl" obj_id="gc_image" images=$image_pair_var link_class="cm-image-previewer" image_width=$image_width image_height=$image_height image_id="preview[product_images_`$preview_id`]" itemprop="image"}
+    </div>*}
+</div>
+<div class="ty-product-block__left" id="product_page_right">
+<div class="ty-product-detail__buy-section">
 <form {if $is_ajax}class="cm-ajax cm-ajax-full-render" {/if}action="{""|fn_url}" method="post" target="_self" name="gift_certificates_form">
 {if $runtime.mode == "update"}
 <input type="hidden" name="gift_cert_id" value="{$gift_cert_id}" />
@@ -68,15 +76,12 @@
 
 <div class="ty-control-group ty-gift-certificate__amount">
     <label for="gift_cert_amount" class="ty-control-group__title cm-required cm-gc-validate-amount">{__("amount")}</label>
-    <span class="ty-gift-certificate__currency">{$currencies.$secondary_currency.symbol nofilter}</span>
-    <input type="text" id="gift_cert_amount" name="gift_cert_data[amount]" class="ty-gift-certificate__amount-input cm-numeric" data-p-sign="s" data-a-sep="" {if $currencies.$secondary_currency.decimals_separator}data-a-dec="{$currencies.$secondary_currency.decimals_separator}"{/if} size="5" value="{if $gift_cert_data}{$gift_cert_data.amount|fn_format_rate_value:"":$currencies.$secondary_currency.decimals:".":"":$currencies.$secondary_currency.coefficient}{else}{$addons.gift_certificates.min_amount|fn_format_rate_value:"":$currencies.$secondary_currency.decimals:".":"":$currencies.$secondary_currency.coefficient}{/if}" />
-    
-    <div class="ty-gift-certificate__amount-alert form-field-desc">{$text_gift_cert_amount_alert nofilter}</div>
+    <input type="text" id="gift_cert_amount" name="gift_cert_data[amount]" class="ty-gift-certificate__amount-input cm-numeric" data-p-sign="s" data-a-sep="" {if $currencies.$secondary_currency.decimals_separator}data-a-dec="{$currencies.$secondary_currency.decimals_separator}"{/if} size="5" value="{if $gift_cert_data}{$gift_cert_data.amount|fn_format_rate_value:"":$currencies.$secondary_currency.decimals:".":"":$currencies.$secondary_currency.coefficient}{/if}" onkeyup="$('#gc_amount').html($(this).val());" placeholder="{$text_gift_cert_amount_alert}" autocomplete="off" /><span class="ty-gift-certificate__currency">{$currencies.$secondary_currency.symbol nofilter}</span>
 </div>
 
 <div class="ty-control-group">
     <label for="gift_cert_message" class="ty-control-group__title">{__("gift_comment")}</label>
-    <textarea id="gift_cert_message" name="gift_cert_data[message]" cols="72" rows="4" class="ty-input-text-full" {if $is_text == "Y"}readonly="readonly"{/if}>{$gift_cert_data.message}</textarea>
+    <textarea id="gift_cert_message" name="gift_cert_data[message]" cols="72" rows="4" class="ty-input-text-full" {if $is_text == "Y"}readonly="readonly"{/if} onkeyup="$('#gc_comment').html($(this).val().replace(/\n\r?/g, '<br />'));" autocomplete="off" >{if $gift_cert_data.message}{$gift_cert_data.message}{/if}</textarea>
 </div>
 
 {if $addons.gift_certificates.free_products_allow == "Y"}
@@ -85,6 +90,8 @@
     </div>
 {/if}
 
+ <input id="gift_cert_template" type="hidden" name="gift_cert_data[send_via]" value="E" />
+{*
 <div class="ty-gift-certificate__switch clearfix">
     <div class="ty-gift-certificate__switch-label gift-send-right">{__("how_to_send")}</div>
     <div class="ty-gift-certificate__switch-mail">
@@ -96,6 +103,7 @@
         </div>
     </div>
 </div>
+*}
 
 <div id="gc_switcher">
 
@@ -104,6 +112,7 @@
             <label for="gift_cert_email" class="cm-required cm-email ty-control-group__title">{__("email")}</label>
             <input type="text" id="gift_cert_email" name="gift_cert_data[email]" class="ty-input-text-full" size="40" maxlength="128" value="{$gift_cert_data.email}" />
         </div>
+        {*
         <div class="ty-control-group">
             {if $templates|sizeof > 1}
                 <label for="gift_cert_template" class="ty-control-group__title">{__("template")}</label>
@@ -118,8 +127,10 @@
                 {/foreach}
             {/if}
         </div>
+        *}
     </div>
 
+    {*
     <div class="ty-gift-certificate__block{if $runtime.mode == "add" || $gift_cert_data.send_via == "E"} hidden{/if}" id="post_block">
 
         <div class="ty-control-group">
@@ -172,6 +183,7 @@
         </div>
 
     </div>
+    *}
 
 </div>
 
@@ -186,14 +198,16 @@
 {else}
     {include file="buttons/save.tpl" but_name="dispatch[gift_certificates.update]"}
 {/if}
-{if $templates}
+{*if $templates}
     <div class="ty-float-right ty-gift-certificate__preview-btn">
     {include file="buttons/button.tpl" but_text=__("preview") but_name="dispatch[gift_certificates.preview]" but_role="submit" but_meta="ty-btn__tertiary cm-new-window"}
     </div>
-{/if}
+{/if*}
 </div>
 
 </form>
+</div>
+</div>
 </div>
 {** / Gift certificates section **}
 

@@ -67,7 +67,7 @@ msgstr "Логотип для <b>подарочного сертификата</
 
 msgctxt "Languages::text_gift_cert_amount_alert"
 msgid "Amount should be between [min] and [max]"
-msgstr "Значение должно быть от [min] до [max]"
+msgstr "Укажите сумму от [min] до [max]"
 
 msgctxt "Languages::text_gift_cert_has_been_deleted"
 msgid "Gift certificate has been deleted successfully."
@@ -83,7 +83,7 @@ msgstr "Добавить товары в подарок"
 
 msgctxt "Languages::gift_comment"
 msgid "Message"
-msgstr "Сообщение"
+msgstr "Поздравление"
 
 msgctxt "Languages::certificate_verification"
 msgid "Validate/Redeem gift certificate"
@@ -203,11 +203,11 @@ msgstr "Ввод и проверка подарочного сертификат
 
 msgctxt "Languages::recipients_name"
 msgid "To"
-msgstr "Кому"
+msgstr "Имя получателя"
 
 msgctxt "Languages::purchasers_name"
 msgid "From"
-msgstr "От кого"
+msgstr "Имя дарителя"
 
 msgctxt "Languages::gift_cert_error_amount"
 msgid "Amount should not be higher than [max] and less than [min]"

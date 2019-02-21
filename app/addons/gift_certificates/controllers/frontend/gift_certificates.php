@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 Registry::get('view')->assign('gift_cert', $gift_cert);
                 $msg = Registry::get('view')->fetch('views/checkout/components/product_notification.tpl');
-                fn_set_notification('I', __('gift_certificate_added_to_cart'), $msg, 'I');
+                fn_set_notification('I', __('gift_certificate_added_to_cart'), $msg);
             }
 
             fn_save_cart_content($_SESSION['cart'], $auth['user_id']);

@@ -15,6 +15,7 @@
 use Tygh\Registry;
 use Tygh\Mailer;
 use Tygh\Navigation\LastView;
+use Tygh\Pdf;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
@@ -449,8 +450,11 @@ function fn_show_postal_card($gift_cert_data, $stored_products = array())
 
     $view = Registry::get('view');
     $view->assign('gift_cert_data', $gc_data);
+    $view->assign('fonts_path', fn_get_theme_path('[relative]/[theme]/css/addons/development/fonts'));
     $view->displayMail('addons/gift_certificates/templates/' . $gift_cert_data['template'], true, 'C', $company_id);
-
+//     $html[] = $view->displayMail('addons/gift_certificates/templates/' . $gift_cert_data['template'], false, 'C', $company_id);
+//     Pdf::render($html, __('gift_certificate'));
+    
     return true;
 }
 
