@@ -140,24 +140,28 @@ $schema = array(
 
     ), // page     (tree)
     'e' => array(
-        'tree' => true,
         'table' => '?:product_feature_variant_descriptions',
         'description' => 'variant',
         'dispatch' => 'product_features.view',
         'item' => 'variant_id',
-        'condition' => '',
-        'parent_type' => 'any',
+        'condition' => "AND ?:product_features.seo_variants = 'Y'",
+        'join' => 'LEFT JOIN ?:product_feature_variants ON ?:product_feature_variants.variant_id = ?:product_feature_variant_descriptions.variant_id LEFT JOIN ?:product_features ON ?:product_features.feature_id = ?:product_feature_variants.feature_id',
+        'is_particle' => true,
+
         'name' => 'feature',
 
-        'tree_options' => array('features_nohtml'),
         'html_options' => array('file'),
-        'option' => 'seo_features_type',
+        'option' => 'seo_other_type',
 
         'indexed_pages' => array(
             'product_features.view' => array(
                 'index' => array('variant_id'),
                 'noindex' => array('features_hash'),
             ),
+        ),
+        'particle_options' => array(
+            'item' => 'features_hash',
+            'value_prefix' => 'V',
         )
     ), // feature  (plain)
     's' => array(
@@ -233,6 +237,30 @@ $schema = array(
             'promotions.list' => array()
         )
     ), // promotion  (plain)
+//     'f' => array(
+//         'tree' => true,
+//         'table' => '?:product_feature_variant_descriptions',
+//         'description' => 'variant',
+//         'item' => 'features_hash',
+//         'condition' => '',
+//         'is_particle' => true,
+//         'name' => 'filter',
+// 
+//         'tree_options' => array('filters_nohtml'),
+//         'html_options' => array('file'),
+//         'option' => 'seo_filters_type',
+// 
+//         'tree_options' => array(
+//             'item' => 'features_hash',
+//             'value_prefix' => 'V',
+//         )
+// //         'indexed_pages' => array(
+// //             'product_features.view' => array(
+// //                 'index' => array('variant_id'),
+// //                 'noindex' => array('features_hash'),
+// //             ),
+// //         )
+//     ), // filter  (plain)
     // [tennishouse]
 );
 

@@ -32,10 +32,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 if ($mode == 'manage' || $mode == 'picker') {
 
     $params = $_REQUEST;
+    $params['feature_parent_id'] = !empty($params['group_id']) ? $params['group_id'] : 0;
     $params['get_descriptions'] = true;
 
     list($filters, $search) = fn_get_product_filters($params, Registry::get('settings.Appearance.admin_elements_per_page'));
 
+    Registry::get('view')->assign('active_tab', $params['feature_parent_id']);
     Registry::get('view')->assign('filters', $filters);
     Registry::get('view')->assign('search', $search);
 
@@ -58,6 +60,9 @@ if ($mode == 'manage' || $mode == 'picker') {
 
         list($filter_features) = fn_get_product_features($params, 0, DESCR_SL);
         Registry::get('view')->assign('filter_features', $filter_features);
+        
+        list($group_features) = fn_get_product_features(array('feature_types' => 'G'), 0, DESCR_SL);
+        Registry::get('view')->assign('group_features', $group_features);
     }
 
     if ($mode == 'picker') {

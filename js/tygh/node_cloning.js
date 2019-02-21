@@ -60,6 +60,10 @@
                     }
                     self.prop('id', new_id);
                     changes[id] = new_id;
+                    
+                    var IdRegEx = new RegExp('<!--' + id + '-->', 'g');
+                    var new_string = self.html().replace(IdRegEx, '<!--' + new_id + '-->');
+                    self.html(new_string);
                 }
                 if (self.prop('for')) {
                     var for_value = self.prop('for');
@@ -168,7 +172,7 @@
                     return false;
                 }
             });
-    
+
             // Insert node into the document
             if (before == true) {
                 self.before(new_node);

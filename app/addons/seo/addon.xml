@@ -65,11 +65,11 @@
                         </variants>
                     </item>
 
-                    <item id="seo_features_type">
+                    <item id="seo_filters_type">
                         <type>selectbox</type>
-                        <default_value>features_nohtml</default_value>
+                        <default_value>filters_nohtml</default_value>
                         <variants>
-                            <item id="features_nohtml">
+                            <item id="filters_nohtml">
                             </item>
                         </variants>
                     </item>

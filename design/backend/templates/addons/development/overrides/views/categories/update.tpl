@@ -124,13 +124,7 @@
         <select name="category_data[tabs_categorization]" id="elm_category_tabs_categorization" onchange="$('#tabs_options').toggle($(this).val() > 0);">
             <option value="" {if $category_data.tabs_categorization == "0"}selected="selected"{/if}> - {__("none")} - </option>
             {foreach from=$filter_features item=feature}
-                {if $feature.feature_type != 'G'}
-                    <option value="{$feature.feature_id}" {if $category_data.tabs_categorization == $feature.feature_id}selected="selected"{/if}>{if $feature.group_description}{$feature.group_description}: {/if}{$feature.description}</option>
-                {elseif $feature.subfeatures}
-                    {foreach from=$feature.subfeatures item=subfeature}
-                        <option value="{$subfeature.feature_id}" {if $category_data.tabs_categorization == $subfeature.feature_id}selected="selected"{/if}>{if $subfeature.group_description}{$subfeature.group_description}: {/if}{$subfeature.description}</option>
-                    {/foreach}
-                {/if}
+                <option value="{$feature.feature_id}" {if $category_data.tabs_categorization == $feature.feature_id}selected="selected"{/if}>{if $feature.group_description}{$feature.group_description}: {/if}{$feature.description}</option>
             {/foreach}
         </select>
         </div>
@@ -163,13 +157,7 @@
         <select name="category_data[subtabs_categorization]" id="elm_category_subtabs_categorization">
             <option value="" {if $category_data.subtabs_categorization == "0"}selected="selected"{/if}> - {__("none")} - </option>
             {foreach from=$filter_features item=feature}
-                {if $feature.feature_type != 'G'}
-                    <option value="{$feature.feature_id}" {if $category_data.subtabs_categorization == $feature.feature_id}selected="selected"{/if}>{if $feature.group_description}{$feature.group_description}: {/if}{$feature.description}</option>
-                {elseif $feature.subfeatures}
-                    {foreach from=$feature.subfeatures item=subfeature}
-                        <option value="{$subfeature.feature_id}" {if $category_data.subtabs_categorization == $subfeature.feature_id}selected="selected"{/if}>{if $subfeature.group_description}{$subfeature.group_description}: {/if}{$subfeature.description}</option>
-                    {/foreach}
-                {/if}
+                <option value="{$feature.feature_id}" {if $category_data.subtabs_categorization == $feature.feature_id}selected="selected"{/if}>{if $feature.group_description}{$feature.group_description}: {/if}{$feature.description}</option>
             {/foreach}
         </select>
         </div>

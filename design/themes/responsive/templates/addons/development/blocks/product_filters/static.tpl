@@ -25,8 +25,8 @@
 {assign var="reset_qstring" value="products.search"}
 
 {if $request_data.category_id && $settings.General.show_products_from_subcategories == "Y"}
-    {assign var="filter_qstring" value=$filter_qstring|fn_link_attach:"subcats=Y"}
-    {assign var="reset_qstring" value=$reset_qstring|fn_link_attach:"subcats=Y"}
+    {*assign var="filter_qstring" value=$filter_qstring|fn_link_attach:"subcats=Y"}
+    {assign var="reset_qstring" value=$reset_qstring|fn_link_attach:"subcats=Y"*}
 {/if}
 
 {assign var="allow_ajax" value=true}

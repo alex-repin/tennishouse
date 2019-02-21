@@ -1456,6 +1456,63 @@ if ($mode == 'calculate_balance') {
     }
     fn_echo('Done');
     exit;
+    
+} elseif ($mode == 'get_feature_variants') {
+
+    list($feature_variants,) = fn_get_product_feature_variants(array(
+        'feature_id' => $_REQUEST['feature_id']
+    ), 0, CART_LANGUAGE);
+    
+    Registry::get('view')->assign('feature_variants', $feature_variants);
+    Registry::get('view')->assign('feature_id', $_REQUEST['feature_id']);
+    Registry::get('view')->assign('data_name', $_REQUEST['data_name']);
+    Registry::get('view')->assign('key', str_replace('feature_variants_' . $_REQUEST['id'] . '_', '', $_REQUEST['result_ids']));
+    Registry::get('view')->assign('obj_id', $_REQUEST['result_ids']);
+    Registry::get('view')->display('addons/development/components/select_feature_variant_id.tpl');
+    exit;
+} elseif ($mode == 'move_to_root') {
+    
+    $update_ids = $categories = array(RACKETS_CATEGORY_ID, BAGS_CATEGORY_ID, BALLS_CATEGORY_ID, STRINGS_CATEGORY_ID, APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, OVERGRIPS_CATEGORY_ID, BASEGRIPS_CATEGORY_ID, DAMPENERS_CATEGORY_ID, OTHER_CATEGORY_ID, BADMINTON_RACKETS_CATEGORY_ID, SHUTTLECOCKS_CATEGORY_ID, BADMINTON_SHOES_CATEGORY_ID, BADMINTON_BAGS_CATEGORY_ID, BADMINTON_STRINGS_CATEGORY_ID);
+    $params = array(
+        'subcats' => 'Y',
+        'cid' => $categories
+    );
+    list($products, $search) = fn_get_products($params);
+    $update = $prod_ids = array();
+    foreach ($products as $prod) {
+        if (!empty($prod['all_path'])) {
+            $added = false;
+            $update_ids = array_merge($update_ids, $prod['category_ids']);
+            foreach ($prod['all_path'] as $path) {
+                $ids = explode('/', $path);
+                $inter = array_intersect($ids, $categories);
+                if (!empty($inter)) {
+                    $id = reset($inter);
+                    $update[] = array(
+                        'product_id' => $prod['product_id'],
+                        'category_id' => $id,
+                        'position' => 0,
+                        'link_type' => in_array($prod['main_category'], $ids) ? 'M' : 'A'
+                    );
+                    $added = true;
+                }
+            }
+            if (!empty($added)) {
+                $prod_ids[] = $prod['product_id'];
+            }
+        }
+    }
+    $update_ids = array_merge($update_ids, $categories);
+    if (!empty($prod_ids)) {
+        db_query("DELETE FROM ?:products_categories WHERE product_id IN (?n)", $prod_ids);
+    }
+    if (!empty($update)) {
+        db_query("REPLACE ?:products_categories ?m", $update);
+    }
+    fn_update_product_count($update_ids);
+    
+    fn_echo('Done');
+    exit;
 }
 
 function fn_fill_image_common_description(&$images_alts, $detailed_id, $name)

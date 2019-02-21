@@ -23,6 +23,121 @@ use Tygh\Settings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_get_category_features($cats)
+{
+    $find_set = array();
+    foreach ($cats as $cat_data) {
+        $find_set[] = db_quote(" FIND_IN_SET(?i, ?:product_features.categories_path) ", $cat_data['category_id']);
+    }
+    $find_in_set = db_quote(" AND (?p)", implode('OR', $find_set));
+//     fn_print_die($find_in_set);
+    $features = db_get_array("SELECT * FROM ?:product_features WHERE categories_path", array_keys($cats));
+}
+
+function fn_get_features_by_variant($variant_id = 0, $params = array())
+{
+    $default_params = array(
+        'variants' => true,
+        'plain' => true,
+        'exclude_group' => true
+    );
+    $params = array_merge($default_params, $params);
+    list($features) = fn_get_product_features($params, 0, DESCR_SL);
+    
+    if (!empty($variant_id)) {
+        $feature_id = db_get_field("SELECT feature_id FROM ?:product_feature_variants WHERE variant_id = ?i", $variant_id);
+        if (!empty($feature_id)) {
+            $features[$feature_id]['selected'] = true;
+        }
+    }
+    
+    return $features;
+}
+
+function fn_update_feature_seo($data, $item_id)
+{
+    if (!empty($data['features'])) {
+        $data['combination'] = '';
+        $v_ids = array();
+        foreach ($data['features'] as $key => $v_id) {
+            if (!empty($v_id) && !in_array($v_id, $v_ids)) {
+                $data['combination'] .= (($data['combination'] != '') ? ',' : '') . $v_id;
+                $v_ids[] = $v_id;
+            } else {
+                unset($data['features'][$key]);
+            }
+        }
+        $data['item_id'] = fn_generate_cart_id($data['category_id'], array('combination_hash' => $data['combination']));
+    }
+
+    if (!empty($item_id)) {
+        db_query("DELETE FROM ?:category_feature_seo WHERE item_id = ?i", $item_id);
+    }
+    db_query("REPLACE INTO ?:category_feature_seo ?e", $data);
+}
+
+function fn_delete_feature_seo($item_ids)
+{
+    db_query("DELETE FROM ?:category_feature_seo WHERE item_id IN (?n)", $item_ids);
+}
+
+function fn_get_feature_seo_data($fs_id)
+{
+    $feature_seo_data = db_get_array("SELECT a.* FROM ?:category_feature_seo as a WHERE item_id = ?i", $fs_id);
+    
+    return $feature_seo_data;
+}
+
+function fn_get_feature_seos($params)
+{
+    $features = $variants = $result = array();
+    $where = '';
+    if (!empty($params['category_id'])) {
+        $where .= db_quote(" AND a.category_id = ?i", $params['category_id']);
+    }
+    if (!empty($params['item_id'])) {
+        $where .= db_quote(" AND a.item_id = ?i", $params['item_id']);
+    }
+    if (AREA == 'C') {
+        $where .= db_quote(" AND a.status = 'A'");
+    }
+    $feature_seos = db_get_hash_array("SELECT a.* FROM ?:category_feature_seo as a WHERE 1 $where", 'item_id');
+    
+    if (!empty($feature_seos)) {
+        $feature_ids = $variant_ids = array();
+        foreach ($feature_seos as $i => $fs) {
+            $feature_seos[$i]['name'] = '';
+            $tmp = explode(',', $fs['combination']);
+            $feature_seos[$i]['features'] = db_get_hash_single_array("SELECT feature_id, variant_id FROM ?:product_feature_variants WHERE variant_id IN (?n)", array('feature_id', 'variant_id'), $tmp);
+            $variant_ids = array_merge($variant_ids, $tmp);
+            $feature_ids = array_merge($feature_ids, array_keys($feature_seos[$i]['features']));
+        }
+        if (!empty($params['get_descriptions']) && !empty($feature_seos[$i]['features'])) {
+            $result['description']['features'] = db_get_hash_single_array("SELECT feature_id, description FROM ?:product_features_descriptions WHERE feature_id IN (?n) AND lang_code = ?s", array('feature_id', 'description'), $feature_ids, DESCR_SL);
+            $result['description']['variants'] = db_get_hash_single_array("SELECT variant_id, variant FROM ?:product_feature_variant_descriptions WHERE variant_id IN (?n) AND lang_code = ?s", array('variant_id', 'variant'), $variant_ids, DESCR_SL);
+        }
+    }
+    $result['data'] = $feature_seos;
+    
+    return $result;
+}
+
+function fn_clean_ranges_from_feature_hash($feature_hash, $ranges, $field_type = '')
+{
+    $hash = explode('.', $feature_hash);
+    $prefix = empty($field_type) ? (in_array($range['feature_type'], array('N', 'O', 'D')) ? 'R' : 'V') : $field_type;
+
+    $result = $url;
+    foreach ($ranges as $range) {
+        $key = array_search($prefix . $range['range_id'], $hash);
+        if ($key !== false) {
+            unset($hash[$key]);
+        }
+    }
+    
+    return implode('.', $hash);
+}
+
 function fn_get_location_by_ip()
 {
     $data = array();

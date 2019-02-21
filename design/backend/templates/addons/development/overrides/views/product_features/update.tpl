@@ -75,43 +75,50 @@
         {if $is_group || $feature.feature_type == "G"}
             <input type="hidden" name="feature_data[feature_type]" value="G" />
         {else}
-        <div class="control-group">
-            <label class="control-label cm-required" for="elm_feature_type_{$id}">{__("type")}</label>
-            <div class="controls">
-            {if $feature.feature_type == "G"}{__("group")}{else}
-                <select name="feature_data[feature_type]" id="elm_feature_type_{$id}" data-ca-feature-id="{$id}" class="cm-feature-type {if !$id}cm-new-feature{/if}">
-                    <optgroup label="{__("checkbox")}">
-                        <option value="C" {if $feature.feature_type == "C"}selected="selected"{/if}>{__("single")}</option>
-                        <option value="M" {if $feature.feature_type == "M"}selected="selected"{/if}>{__("multiple")}</option>
-                    </optgroup>
-                    <optgroup label="{__("selectbox")}">
-                        <option value="S" {if $feature.feature_type == "S"}selected="selected"{/if}>{__("text")}</option>
-                        <option value="N" {if $feature.feature_type == "N"}selected="selected"{/if}>{__("number")}</option>
-                        <option value="E" {if $feature.feature_type == "E"}selected="selected"{/if}>{__("brand_type")}</option>
-                    </optgroup>
-                    <optgroup label="{__("others")}">
-                        <option value="T" {if $feature.feature_type == "T"}selected="selected"{/if}>{__("text")}</option>
-                        <option value="O" {if $feature.feature_type == "O"}selected="selected"{/if}>{__("number")}</option>
-                        <option value="D" {if $feature.feature_type == "D"}selected="selected"{/if}>{__("date")}</option>
-                    </optgroup>
-                </select>
-                <div class="error-message feature_type_{$id}" style="display: none" id="warning_feature_change_{$id}"><div class="arrow"></div><div class="message"><p>{__("warning_variants_removal")}</p></div></div>
-            {/if}
-            </div>
-        </div>
             <div class="control-group">
-            <label class="control-label" for="elm_feature_group_{$id}">{__("group")}</label>
-            <div class="controls">
-            {if $feature.feature_type == "G"}-{else}
-                <select name="feature_data[parent_id]" id="elm_feature_group_{$id}" data-ca-feature-id="{$id}" class="cm-feature-group">
-                    <option value="0">-{__("none")}-</option>
-                    {foreach from=$group_features item="group_feature"}
-                        {if $group_feature.feature_type == "G"}
-                            <option data-ca-display-on-product="{$group_feature.display_on_product}" data-ca-display-on-catalog="{$group_feature.display_on_catalog}" data-ca-display-on-header="{$group_feature.display_on_header}" value="{$group_feature.feature_id}"{if $group_feature.feature_id == $feature.parent_id}selected="selected"{/if}>{$group_feature.description}</option>
-                        {/if}
-                    {/foreach}
-                </select>
-            {/if}
+                <label class="control-label cm-required" for="elm_feature_type_{$id}">{__("type")}</label>
+                <div class="controls">
+                {if $feature.feature_type == "G"}{__("group")}{else}
+                    <select name="feature_data[feature_type]" id="elm_feature_type_{$id}" data-ca-feature-id="{$id}" class="cm-feature-type {if !$id}cm-new-feature{/if}">
+                        <optgroup label="{__("checkbox")}">
+                            <option value="C" {if $feature.feature_type == "C"}selected="selected"{/if}>{__("single")}</option>
+                            <option value="M" {if $feature.feature_type == "M"}selected="selected"{/if}>{__("multiple")}</option>
+                        </optgroup>
+                        <optgroup label="{__("selectbox")}">
+                            <option value="S" {if $feature.feature_type == "S"}selected="selected"{/if}>{__("text")}</option>
+                            <option value="N" {if $feature.feature_type == "N"}selected="selected"{/if}>{__("number")}</option>
+                            <option value="E" {if $feature.feature_type == "E"}selected="selected"{/if}>{__("brand_type")}</option>
+                        </optgroup>
+                        <optgroup label="{__("others")}">
+                            <option value="T" {if $feature.feature_type == "T"}selected="selected"{/if}>{__("text")}</option>
+                            <option value="O" {if $feature.feature_type == "O"}selected="selected"{/if}>{__("number")}</option>
+                            <option value="D" {if $feature.feature_type == "D"}selected="selected"{/if}>{__("date")}</option>
+                        </optgroup>
+                    </select>
+                    <div class="error-message feature_type_{$id}" style="display: none" id="warning_feature_change_{$id}"><div class="arrow"></div><div class="message"><p>{__("warning_variants_removal")}</p></div></div>
+                {/if}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="elm_feature_group_{$id}">{__("group")}</label>
+                <div class="controls">
+                {if $feature.feature_type == "G"}-{else}
+                    <select name="feature_data[parent_id]" id="elm_feature_group_{$id}" data-ca-feature-id="{$id}" class="cm-feature-group">
+                        <option value="0">-{__("none")}-</option>
+                        {foreach from=$group_features item="group_feature"}
+                            {if $group_feature.feature_type == "G"}
+                                <option data-ca-display-on-product="{$group_feature.display_on_product}" data-ca-display-on-catalog="{$group_feature.display_on_catalog}" data-ca-display-on-header="{$group_feature.display_on_header}" value="{$group_feature.feature_id}"{if $group_feature.feature_id == $feature.parent_id}selected="selected"{/if}>{$group_feature.description}</option>
+                            {/if}
+                        {/foreach}
+                    </select>
+                {/if}
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="elm_feature_group_{$id}">{__("parent_feature_variant")}</label>
+                <div class="controls">
+                {if $feature.feature_type == "G"}-{else}
+                    {include file="addons/development/components/select_feature_variant.tpl" data_name="feature_data" id=$id variant_id=$feature.parent_variant_id key="parent_variant_id"}
+                {/if}
             </div>
         </div>
         {/if}
@@ -136,6 +143,14 @@
             <div class="controls">
             <input type="hidden" name="feature_data[display_on_header]" value="N" />
             <input type="checkbox" name="feature_data[display_on_header]" value="Y"  data-ca-display-id="OnHeader" {if $feature.display_on_header == "Y"}checked="checked"{/if} {if $feature.parent_id && $group_features[$feature.parent_id].display_on_header == "Y"}disabled="disabled"{/if} />
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="elm_feature_seo_variants_{$id}">{__("feature_seo_variants")}</label>
+            <div class="controls">
+            <input type="hidden" name="feature_data[seo_variants]" value="N" />
+            <input type="checkbox" name="feature_data[seo_variants]" value="Y"  data-ca-display-id="OnHeader" {if $feature.seo_variants == "Y"}checked="checked"{/if} {if $feature.feature_type != "S" && $feature.feature_type != "E"}disabled="disabled"{/if} />
             </div>
         </div>
 

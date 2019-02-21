@@ -146,6 +146,37 @@ if ($mode == 'catalog') {
                     'av_ids' => (!empty($search['av_ids'])) ? $search['av_ids'] : array()
                 ));
             }
+            $_params = array(
+                'category_id' => $category_data['category_id']
+            );
+            $category_data['feature_seos'] = fn_get_feature_seos($_params);
+            
+            if (!empty($category_data['feature_seos']['data']) && !empty($search['av_ids'])) {
+                $match = array();
+                foreach ($category_data['feature_seos']['data'] as $item_id => $f_combination) {
+                    $_match = true;
+                    if (!empty($f_combination['features'])) {
+                        foreach ($f_combination['features'] as $f_id => $v_id) {
+                            if (empty($search['av_ids'][$f_id][$v_id])) {
+                                $_match = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (!empty($_match)) {
+                        $match[$item_id] = count($f_combination['features']);
+                    }
+                }
+                if (!empty($match)) {
+                    arsort($match);
+                    $comb_id = key($match);
+                    $category_data['page_title'] = !empty($category_data['feature_seos']['data'][$comb_id]['page_title']) ? $category_data['feature_seos']['data'][$comb_id]['page_title'] : $category_data['page_title'];
+                    $category_data['full_description'] = !empty($category_data['feature_seos']['data'][$comb_id]['full_description']) ? $category_data['feature_seos']['data'][$comb_id]['full_description'] : $category_data['full_description'];
+                    $category_data['meta_description'] = !empty($category_data['feature_seos']['data'][$comb_id]['meta_description']) ? $category_data['feature_seos']['data'][$comb_id]['meta_description'] : $category_data['meta_description'];
+                    $category_data['meta_keywords'] = !empty($category_data['feature_seos']['data'][$comb_id]['meta_keywords']) ? $category_data['feature_seos']['data'][$comb_id]['meta_keywords'] : $category_data['meta_keywords'];
+                    $category_data['robots'] = 'all';
+                }
+            }
             if (!empty($products)) {
                 if (empty($category_data['brand']) || $category_data['brand']['feature_id'] != $category_data['tabs_categorization']) {
                 
@@ -192,7 +223,6 @@ if ($mode == 'catalog') {
                         }
                         $_tb_feature_vars = $tb_feature['variants'];
                         $tb_feature['variants'] = $all_tab + $tmp_tabs + $_tb_feature_vars;
-//                         fn_print_die($tab_ids, $tmp_tabs);
                         $tb_feature['variants']['DSC'] = array(
                             'variant' => __("discounts"),
 //                             'variant_code' => 'DSC',

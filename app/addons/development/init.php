@@ -113,5 +113,9 @@ fn_register_hooks(
     'create_order',
     'login_user_post',
     'get_user_info_before',
-    'get_promotions'
+    'get_promotions',
+    'update_product_feature_pre',
+    'get_product_filters_before_select',
+    'get_filters_products_count_query_params',
+    'delete_category_post'
 );

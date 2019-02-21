@@ -311,6 +311,159 @@ function fn_get_rewrite_rules()
     return $rewrite_rules;
 }
 
+function fn_seo_get_route_request($uri, &$req, &$is_allowed_url, &$url_query)
+{
+    $rewrite_rules = fn_get_rewrite_rules();
+    foreach ($rewrite_rules as $pattern => $query) {
+        if (preg_match($pattern, $uri, $matches) || preg_match($pattern, urldecode($query), $matches)) {
+            $_query = preg_replace("!^.+\?!", '', $query);
+            parse_str($_query, $objects);
+            $result_values = 'matches';
+            $url_query = '';
+
+            foreach ($objects as $key => $value) {
+                preg_match('!^.+\[([0-9])+\]$!', $value, $_id);
+                $objects[$key] = (substr($value, 0, 1) == '$') ? ${$result_values}[$_id[1]] : $value;
+            }
+
+            // For the locations wich names stored in the table
+            if (!empty($objects) && !empty($objects['object_name'])) {
+                if (Registry::get('addons.seo.single_url') == 'Y') {
+                    $objects['sl'] = (Registry::get('addons.seo.seo_language') == 'Y') ? $objects['sl'] : '';
+                    $objects['sl'] = !empty($req['sl']) ? $req['sl'] : $objects['sl'];
+                }
+
+                $lang_cond = db_quote("AND lang_code = ?s", !empty($objects['sl']) ? $objects['sl'] : Registry::get('settings.Appearance.frontend_default_language'));
+
+                $object_type = db_get_field("SELECT type FROM ?:seo_names WHERE name = ?s ?p", $objects['object_name'], fn_get_seo_company_condition('?:seo_names.company_id'));
+
+                $_seo = db_get_array("SELECT * FROM ?:seo_names WHERE name = ?s ?p ?p ORDER BY dispatch DESC", $objects['object_name'], fn_get_seo_company_condition('?:seo_names.company_id', $object_type), $lang_cond);
+
+                if (empty($_seo)) {
+                    $_seo = db_get_array("SELECT * FROM ?:seo_names WHERE name = ?s ?p ORDER BY dispatch DESC", $objects['object_name'], fn_get_seo_company_condition('?:seo_names.company_id'));
+                }
+
+                if (empty($_seo) && !empty($objects['extension'])) {
+                    $_seo = db_get_array("SELECT * FROM ?:seo_names WHERE name = ?s ?p ?p ORDER BY dispatch DESC", $objects['object_name'] . '.' . $objects['extension'], fn_get_seo_company_condition('?:seo_names.company_id'), $lang_cond);
+                    if (empty($_seo)) {
+                        $_seo = db_get_array("SELECT * FROM ?:seo_names WHERE name = ?s ?p ORDER BY dispatch DESC", $objects['object_name'] . '.' . $objects['extension'], fn_get_seo_company_condition('?:seo_names.company_id', $object_type));
+                    }
+                }
+
+                if (!empty($_seo)) {
+
+                    $_seo_valid = false;
+
+                    foreach ($_seo as $__seo) {
+                        $_objects = $objects;
+                        if (Registry::get('addons.seo.single_url') != 'Y' && empty($_objects['sl'])) {
+                            $_objects['sl'] = $__seo['lang_code'];
+                        }
+
+                        if (fn_seo_validate_object($__seo, $uri, $_objects) == true) {
+                            $_seo_valid = true;
+                            $_seo = $__seo;
+                            $objects = $_objects;
+
+                            break;
+                        }
+                    }
+
+                    if ($_seo_valid == true) {
+                    
+                        $req['sl'] = $objects['sl'];
+
+                        $_seo_vars = fn_get_seo_vars($_seo['type']);
+                        
+                        if (!empty($_seo_vars['is_particle'])) {
+                            $base_uri = str_replace('/' . $_seo['name'], '', $uri);
+                        }
+                        if (!empty($_seo_vars['is_particle']) && !empty($base_uri)) {
+                            $parent_url_query = '';
+                            $_seo_vars = array_merge($_seo_vars, $_seo_vars['particle_options']);
+                            fn_seo_get_route_request(str_replace('/' . $_seo['name'], '', $uri), $req, $is_allowed_url, $parent_url_query);
+                            
+                            $url_query = $parent_url_query . '&' . $_seo_vars['item'] . '=' . (!empty($_seo_vars['value_prefix']) ? $_seo_vars['value_prefix'] : '') . $_seo['object_id'];
+                            if (!empty($_seo['object_id'])) {
+                                $req[$_seo_vars['item']] .= (!empty($req[$_seo_vars['item']]) ? '.' : '') . (!empty($_seo_vars['value_prefix']) ? $_seo_vars['value_prefix'] : '') . $_seo['object_id'];
+                            }
+                        } else {
+                            if ($_seo['type'] == 's') {
+                                $url_query = $_seo['dispatch'];
+                                $req['dispatch'] = $_seo['dispatch'];
+                            } else {
+                                $page_suffix = (!empty($objects['page'])) ? ('&page=' . $objects['page']) : '';
+                                $url_query = $_seo_vars['dispatch'] . '?' . $_seo_vars['item'] . '=' . (!empty($_seo_vars['value_prefix']) ? $_seo_vars['value_prefix'] : '') . $_seo['object_id'] . $page_suffix;
+
+                                $req['dispatch'] = $_seo_vars['dispatch'];
+                            }
+
+                            if (!empty($_seo['object_id'])) {
+                                $req[$_seo_vars['item']] .= (!empty($req[$_seo_vars['item']]) ? '.' : '') . (!empty($_seo_vars['value_prefix']) ? $_seo_vars['value_prefix'] : '') . $_seo['object_id'];
+                            }
+
+                            if (!empty($objects['page'])) {
+                                $req['page'] = $objects['page'];
+                            }
+                        }
+
+                        $is_allowed_url = true;
+                    }
+                }
+
+            // For the locations wich names are not in the table
+            } elseif (!empty($objects)) {
+                if (empty($objects['dispatch'])) {
+                    if (!empty($req['dispatch'])) {
+                        $req['dispatch'] = is_array($req['dispatch']) ? key($req['dispatch']) : $req['dispatch'];
+                        $url_query = $req['dispatch'];
+                    }
+                } else {
+                    $url_query = $objects['dispatch'];
+                    $req['dispatch'] = $objects['dispatch'];
+                }
+
+                $is_allowed_url = true;
+
+                if (!empty($objects['sl'])) {
+                    $is_allowed_url = false;
+                    $req['sl'] = $objects['sl'];
+                    if (Registry::get('addons.seo.seo_language') == 'Y') {
+                        $lang_statuses = !empty($_SESSION['auth']['area']) && $_SESSION['auth']['area'] == 'A' ? array('A', 'H') : array('A');
+                        $check_language = db_get_field("SELECT count(*) FROM ?:languages WHERE lang_code = ?s AND status IN (?a)", $req['sl'], $lang_statuses);
+                        if (!empty($check_language)) {
+                            $is_allowed_url = true;
+                        }
+                    } else {
+                        $is_allowed_url = true;
+                    }
+                }
+                $req += $objects;
+
+                // Empty query
+            } else {
+                $url_query = '';
+            }
+
+            if ($is_allowed_url) {
+                $lang_code = empty($objects['sl']) ? Registry::get('settings.Appearance.frontend_default_language') : $objects['sl'];
+
+                if (empty($req['sl'])) {
+                    unset($req['sl']);
+                }
+
+                $query_string = http_build_query($req);
+                $_SERVER['REQUEST_URI'] = fn_url($url_query . '?' . $query_string, 'C', 'rel', $lang_code);
+                $_SERVER['QUERY_STRING'] = $query_string;
+
+                $_SERVER['X-SEO-REWRITE'] = true;
+
+                break;
+            }
+        }
+    }
+}
+
 /**
  * "get_route" hook implemetation
  * @param array &$req input request
@@ -325,149 +478,16 @@ function fn_seo_get_route(&$req, &$result, &$area, &$is_allowed_url)
     if (!empty($_REQUEST['dispatch']) && $_REQUEST['dispatch'] == 'watermark.create') {
         return true;
     }
-    // [tennishouse]
+    
     if (($area == 'C') && !$is_allowed_url) {
 
         $uri = fn_get_seo_request_uri($_SERVER['REQUEST_URI']);
 
         if (!empty($uri)) {
-
-            $rewrite_rules = fn_get_rewrite_rules();
-            foreach ($rewrite_rules as $pattern => $query) {
-                if (preg_match($pattern, $uri, $matches) || preg_match($pattern, urldecode($query), $matches)) {
-                    $_query = preg_replace("!^.+\?!", '', $query);
-                    parse_str($_query, $objects);
-                    $result_values = 'matches';
-                    $url_query = '';
-
-                    foreach ($objects as $key => $value) {
-                        preg_match('!^.+\[([0-9])+\]$!', $value, $_id);
-                        $objects[$key] = (substr($value, 0, 1) == '$') ? ${$result_values}[$_id[1]] : $value;
-                    }
-
-                    // For the locations wich names stored in the table
-                    if (!empty($objects) && !empty($objects['object_name'])) {
-                        if (Registry::get('addons.seo.single_url') == 'Y') {
-                            $objects['sl'] = (Registry::get('addons.seo.seo_language') == 'Y') ? $objects['sl'] : '';
-                            $objects['sl'] = !empty($req['sl']) ? $req['sl'] : $objects['sl'];
-                        }
-
-                        $lang_cond = db_quote("AND lang_code = ?s", !empty($objects['sl']) ? $objects['sl'] : Registry::get('settings.Appearance.frontend_default_language'));
-
-                        $object_type = db_get_field("SELECT type FROM ?:seo_names WHERE name = ?s ?p", $objects['object_name'], fn_get_seo_company_condition('?:seo_names.company_id'));
-
-                        $_seo = db_get_array("SELECT * FROM ?:seo_names WHERE name = ?s ?p ?p ORDER BY dispatch DESC", $objects['object_name'], fn_get_seo_company_condition('?:seo_names.company_id', $object_type), $lang_cond);
-
-                        if (empty($_seo)) {
-                            $_seo = db_get_array("SELECT * FROM ?:seo_names WHERE name = ?s ?p ORDER BY dispatch DESC", $objects['object_name'], fn_get_seo_company_condition('?:seo_names.company_id'));
-                        }
-
-                        if (empty($_seo) && !empty($objects['extension'])) {
-                            $_seo = db_get_array("SELECT * FROM ?:seo_names WHERE name = ?s ?p ?p ORDER BY dispatch DESC", $objects['object_name'] . '.' . $objects['extension'], fn_get_seo_company_condition('?:seo_names.company_id'), $lang_cond);
-                            if (empty($_seo)) {
-                                $_seo = db_get_array("SELECT * FROM ?:seo_names WHERE name = ?s ?p ORDER BY dispatch DESC", $objects['object_name'] . '.' . $objects['extension'], fn_get_seo_company_condition('?:seo_names.company_id', $object_type));
-                            }
-                        }
-
-                        if (!empty($_seo)) {
-
-                            $_seo_valid = false;
-
-                            foreach ($_seo as $__seo) {
-                                $_objects = $objects;
-                                if (Registry::get('addons.seo.single_url') != 'Y' && empty($_objects['sl'])) {
-                                    $_objects['sl'] = $__seo['lang_code'];
-                                }
-
-                                if (fn_seo_validate_object($__seo, $uri, $_objects) == true) {
-                                    $_seo_valid = true;
-                                    $_seo = $__seo;
-                                    $objects = $_objects;
-
-                                    break;
-                                }
-                            }
-
-                            if ($_seo_valid == true) {
-                                $req['sl'] = $objects['sl'];
-
-                                $_seo_vars = fn_get_seo_vars($_seo['type']);
-                                if ($_seo['type'] == 's') {
-                                    $url_query = $_seo['dispatch'];
-                                    $req['dispatch'] = $_seo['dispatch'];
-                                } else {
-                                    $page_suffix = (!empty($objects['page'])) ? ('&page=' . $objects['page']) : '';
-                                    $url_query = $_seo_vars['dispatch'] . '?' . $_seo_vars['item'] . '=' . $_seo['object_id'] . $page_suffix;
-
-                                    $req['dispatch'] = $_seo_vars['dispatch'];
-                                }
-
-                                if (!empty($_seo['object_id'])) {
-                                    $req[$_seo_vars['item']] = $_seo['object_id'];
-                                }
-
-                                if (!empty($objects['page'])) {
-                                    $req['page'] = $objects['page'];
-                                }
-
-                                $is_allowed_url = true;
-                            }
-                        }
-
-                    // For the locations wich names are not in the table
-                    } elseif (!empty($objects)) {
-                        if (empty($objects['dispatch'])) {
-                            if (!empty($req['dispatch'])) {
-                                $req['dispatch'] = is_array($req['dispatch']) ? key($req['dispatch']) : $req['dispatch'];
-                                $url_query = $req['dispatch'];
-                            }
-                        } else {
-                            $url_query = $objects['dispatch'];
-                            $req['dispatch'] = $objects['dispatch'];
-                        }
-
-                        $is_allowed_url = true;
-
-                        if (!empty($objects['sl'])) {
-                            $is_allowed_url = false;
-                            $req['sl'] = $objects['sl'];
-                            if (Registry::get('addons.seo.seo_language') == 'Y') {
-                                $lang_statuses = !empty($_SESSION['auth']['area']) && $_SESSION['auth']['area'] == 'A' ? array('A', 'H') : array('A');
-                                $check_language = db_get_field("SELECT count(*) FROM ?:languages WHERE lang_code = ?s AND status IN (?a)", $req['sl'], $lang_statuses);
-                                if (!empty($check_language)) {
-                                    $is_allowed_url = true;
-                                }
-                            } else {
-                                $is_allowed_url = true;
-                            }
-                        }
-                        $req += $objects;
-
-                        // Empty query
-                    } else {
-                        $url_query = '';
-                    }
-
-                    if ($is_allowed_url) {
-                        $lang_code = empty($objects['sl']) ? Registry::get('settings.Appearance.frontend_default_language') : $objects['sl'];
-
-                        if (empty($req['sl'])) {
-                            unset($req['sl']);
-                        }
-
-                        $query_string = http_build_query($req);
-                        $_SERVER['REQUEST_URI'] = fn_url($url_query . '?' . $query_string, 'C', 'rel', $lang_code);
-                        $_SERVER['QUERY_STRING'] = $query_string;
-
-                        $_SERVER['X-SEO-REWRITE'] = true;
-
-                        break;
-                    }
-                }
-            }
-//                             fn_print_die($uri);
+            fn_seo_get_route_request($uri, $req, $is_allowed_url);
         }
     }
+    // [tennishouse]
 
     // check redirects
     if (empty($is_allowed_url)) {
@@ -608,14 +628,7 @@ function fn_seo_validate_object($seo, $path, $objects)
     $path = rtrim($path, '/'); // remove trailing slash
     $vars = fn_get_seo_vars($seo['type']);
 
-    if (!empty($vars['parent_type']) && $vars['parent_type'] == 'any' && !empty($path)) {
-        $parent_names = explode('/', trim($path, '/'));
-        $parents = db_get_hash_single_array(
-            "SELECT object_id, name FROM ?:seo_names WHERE name IN (?a) AND type = ?s AND lang_code = ?s ?p",
-            array('object_id', 'name'), $parent_names, $parent_type, $lang_code, fn_get_seo_company_condition('?:seo_names.company_id')
-        );
-// fn_print_die($parent_names);        
-    } else {
+    if (empty($vars['is_particle']) || empty($path)) {
         // check parent objects
         $result = fn_seo_validate_parents($path, $seo['path'], !empty($vars['parent_type']) ? $vars['parent_type'] : $seo['type'], $vars, $seo['lang_code']);
     }
@@ -1109,18 +1122,47 @@ function fn_seo_url_post(&$url, &$area, &$original_url, &$prefix, &$company_id_i
 
             $seo_vars = fn_get_seo_vars();
             $rewritten = false;
+            $frst = microtime();
 
             foreach ($seo_vars as $type => $seo_var) {
-                if (empty($seo_var['dispatch']) || ($seo_var['dispatch'] == $parsed_query['dispatch'] && !empty($parsed_query[$seo_var['item']]))) {
-
-                    if (!empty($seo_var['dispatch'])) {
-                        $link_parts['name'] = fn_seo_get_name($type, $parsed_query[$seo_var['item']], '', $company_id_in_url, $lang_code);
+                if (!empty($seo_var['is_particle']) || (!$rewritten && (empty($seo_var['dispatch']) || ($seo_var['dispatch'] == $parsed_query['dispatch'] && !empty($parsed_query[$seo_var['item']]))))) {
+                    
+                    if (!empty($seo_var['is_particle'])) {
+                        if (!empty($seo_var['particle_options'])) {
+                            $seo_var = array_merge($seo_var, $seo_var['particle_options']);
+                        }
+                        if (!empty($parsed_query[$seo_var['item']])) {
+                            $_query_items = $parsed_query[$seo_var['item']];
+                            $query_items = explode('.', $_query_items);
+                            $seo_items = array();
+                            foreach ($query_items as $query_item) {
+                                if (!empty($seo_var['value_prefix'])) {
+                                    $_query_item = str_replace($seo_var['value_prefix'], '', $query_item);
+                                }
+                                $name = fn_seo_get_name($type, $_query_item, '', $company_id_in_url, $lang_code);
+                                if (!empty($name)) {
+                                    $seo_items[$query_item] = $name;
+                                }
+                            }
+                            $part_name = implode('/', $seo_items);
+                            $items_left = array_diff($query_items, array_keys($seo_items));
+                            if (!empty($items_left)) {
+                                $parsed_query[$seo_var['item']] = implode('.', $items_left);
+                                unset($seo_var['item']);
+                            }
+                        } else {
+                            continue;
+                        }
+                    } elseif (!empty($seo_var['dispatch'])) {
+                        $part_name = fn_seo_get_name($type, $parsed_query[$seo_var['item']], '', $company_id_in_url, $lang_code);
                     } else {
-                        $link_parts['name'] = fn_seo_get_name($type, 0, $parsed_query['dispatch'], $company_id_in_url, $lang_code);
+                        $part_name = fn_seo_get_name($type, 0, $parsed_query['dispatch'], $company_id_in_url, $lang_code);
                     }
 
-                    if (empty($link_parts['name'])) {
+                    if (empty($part_name)) {
                         continue;
+                    } else {
+                        $link_parts['name'] .= $part_name;
                     }
 
                     if (fn_check_seo_schema_option($seo_var, 'tree_options', $seo_settings)) {
@@ -1150,8 +1192,10 @@ function fn_seo_url_post(&$url, &$area, &$original_url, &$prefix, &$company_id_i
 
                     fn_seo_parsed_query_unset($parsed_query, $seo_var['item']);
 
-                    $rewritten = true;
-                    break;
+                    if (empty($seo_var['is_particle'])) {
+                        $rewritten = true;
+                    }
+//                     break;
                 }
             }
 
@@ -1242,11 +1286,11 @@ function fn_seo_get_default_object_name($object_id, $object_type, $lang_code)
     if (!empty($_seo['table']) && isset($_seo['condition'])) {
         $lang_condition = '';
         if (empty($_seo['skip_lang_condition'])) {
-            $lang_condition = db_quote("AND lang_code = ?s", $lang_code);
+            $lang_condition = db_quote("AND $_seo[table].lang_code = ?s", $lang_code);
         }
         $object_name = db_get_field(
-            "SELECT $_seo[description] FROM $_seo[table] WHERE $_seo[item] = ?i ?p ?p",
-            $object_id, $lang_condition, $_seo['condition']
+            "SELECT $_seo[description] FROM $_seo[table] ?p WHERE $_seo[table].$_seo[item] = ?i ?p ?p",
+            $_seo['join'], $object_id, $lang_condition, $_seo['condition']
         );
     }
 

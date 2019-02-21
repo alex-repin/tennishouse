@@ -8,6 +8,13 @@ if ($_REQUEST['category_id'] == '254' && $_REQUEST['item_ids'] == '1312') {
         return array(CONTROLLER_STATUS_REDIRECT, "categories.view?category_id=254&item_ids=1312,1313,1314,1315,1316,1317,1318,1319");
     }
 
+- log.ERROR: https://www.tennishouse.ru/checkout/ [uid:1725][type:C] Message Duplicate entry 'evgeny@comsol.ru' for key 'email' (1062)INSERT INTO cscart_subscribers (`email`, `timestamp`, `status`) VALUES ('evgeny@comsol.ru', 1542264012, 'C')  Error at app/Tygh/Database.php, line: 795  Backtrace File:app/Tygh/Database.php Line:438 Function:_error  File:app/functions/fn.database.php Line:130 Function:query  File:app/addons/news_and_emails/func.php Line:34 Function:db_query  File:app/addons/news_and_emails/controllers/frontend/checkout.pre.php Line:23 Function:fn_add_subscriber  File:app/functions/fn.control.php Line:646 Function:include  File:app/functions/fn.control.php Line:416 Function:fn_run_controller  File:index.php Line:31 Function:fn_dispatch  
+- выбор пункта самовывоза по карте
+- прикреплять товары к странице также как и промо
+- добавить характеристики ракеток: инерция, юниорские/..., защитный стиль/атакующий...
+- при добавлении глобального цвета, запускается долгая генерация комбинаций
+- обновлять индекс при выборе города
+- промокод перенести в скидки каталога, сделать табы для промо корзины и каталога
 - seo фильтры, сделать некоторые комбинации фильтра индексируемыми, сылки на сео фильтры с характеристик товара
 - что то происходит с обычными скидками когда пишешь отзыв и получаешь -10%    
 - получи скидку в мобильной версии (дропдаун секция)

@@ -51,7 +51,9 @@ if ($mode == 'view') {
     Registry::get('view')->assign('category_data', $category_data);
 
     $predefined_meta = array();
-    if ($category_data['is_noindex'] == 'Y') {
+    if (!empty($category_data['robots'])) {
+        $predefined_meta['robots'] = $category_data['robots'];
+    } elseif ($category_data['is_noindex'] == 'Y') {
         $predefined_meta['robots'] = 'noindex';
         if ($category_data['is_nofollow'] == 'Y') {
             $predefined_meta['robots'] .= ',nofollow';

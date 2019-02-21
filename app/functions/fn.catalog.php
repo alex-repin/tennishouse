@@ -5273,11 +5273,11 @@ function fn_get_filters_products_count($params = array())
             }
             $category_ids[] = $params['category_id'];
 
-            $condition .= db_quote(" AND (categories_path = '' OR FIND_IN_SET(?i, categories_path))", $params['category_id']);
+            $condition .= db_quote(" AND (?:product_filters.categories_path = '' OR FIND_IN_SET(?i, ?:product_filters.categories_path))", $params['category_id']);
 
             $where .= db_quote(" AND ?:products_categories.category_id IN (?n)", $category_ids);
         } elseif (empty($params['get_for_home']) && empty($params['get_custom'])) {
-            $condition .= " AND categories_path = ''";
+            $condition .= " AND ?:product_filters.categories_path = ''";
         }
 
         if (!empty($params['filter_id'])) {
@@ -5302,7 +5302,7 @@ function fn_get_filters_products_count($params = array())
 
         $sf_fields = db_quote("?:product_filters.feature_id, ?:product_filters.filter_id, ?:product_filters.field_type, ?:product_filters.round_to, ?:product_filters.display, ?:product_filters.display_count, ?:product_filters.display_more_count, ?:product_filter_descriptions.filter, ?:product_features_descriptions.prefix, ?:product_features_descriptions.suffix");
         $sf_join =  db_quote("LEFT JOIN ?:product_filter_descriptions ON ?:product_filter_descriptions.filter_id = ?:product_filters.filter_id AND ?:product_filter_descriptions.lang_code = ?s LEFT JOIN ?:product_features_descriptions ON ?:product_features_descriptions.feature_id = ?:product_filters.feature_id AND ?:product_features_descriptions.lang_code = ?s", CART_LANGUAGE, CART_LANGUAGE);
-        $sf_sorting = db_quote("position, filter");
+        $sf_sorting = db_quote("?:product_filters.position, filter");
 
         /**
          * Change SQL parameters before select product filters
@@ -5313,7 +5313,7 @@ function fn_get_filters_products_count($params = array())
          * @param string $sf_sorting String containing the SQL-query ORDER BY clause
          * @param array $params Products filter search params
          */
-        fn_set_hook('get_filters_products_count_before_select_filters', $sf_fields, $sf_join, $condition, $sf_sorting, $params);
+        fn_set_hook('get_filters_products_count_before_select_filters', $sf_fields, $sf_join, $condition, $sf_sorting, $params, $av_ids);
 
         $limit = '';
         if (fn_allowed_for('ULTIMATE:FREE')) {
@@ -6111,7 +6111,7 @@ function fn_delete_range_from_url($url, $range, $field_type = '')
     fn_set_hook('delete_range_from_url_pre', $url, $range, $field_type);
 
     $prefix = empty($field_type) ? (in_array($range['feature_type'], array('N', 'O', 'D')) ? 'R' : 'V') : $field_type;
-    $fields = fn_get_product_filter_fields();
+//     $fields = fn_get_product_filter_fields();
     
     $element = $prefix . $range['range_id'];
     $pattern = '/(' . $element . '[\.]?)|([\.]?' . $element . ')(?![\d]+)/';

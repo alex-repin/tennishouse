@@ -13,3 +13,6 @@
         </div>
     </div>
 </div>
+<div id="content_feature_seo">
+    {include file="addons/development/views/feature_seo/manage.tpl" category_id=$id feature_seos=$category_data.feature_seos}
+</div>

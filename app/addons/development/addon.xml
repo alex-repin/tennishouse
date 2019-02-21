@@ -703,6 +703,26 @@
         <item>
             ALTER TABLE `cscart_products` ADD `variation_ids` TEXT NOT NULL;
         </item>
+        <item>
+            ALTER TABLE `cscart_product_features` ADD `seo_variants` CHAR(1) NOT NULL DEFAULT 'N';
+        </item>
+        <item>
+            CREATE TABLE IF NOT EXISTS `cscart_category_feature_seo` (
+                `item_id` int(11) UNSIGNED NOT NULL,
+                `category_id` INT(11) UNSIGNED NOT NULL,
+                `combination` VARCHAR(255) NOT NULL,
+                `status` CHAR(1) NOT NULL DEFAULT 'A',
+                `page_title` varchar(255) NOT NULL,
+                `full_description` mediumtext NOT NULL,
+                `meta_description` varchar(255) NOT NULL,
+                `meta_keywords` varchar(255) NOT NULL,
+                PRIMARY KEY (`item_id`),
+                KEY `category_id` (`category_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+        </item>
+        <item>
+            ALTER TABLE `cscart_product_features` ADD `parent_variant_id` MEDIUMINT(8) UNSIGNED NOT NULL DEFAULT '0'; 
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -1391,5 +1411,9 @@
         <item lang="ru" id="promotion_cond_ip_state">IP регион</item>
         <item lang="ru" id="text_ip_cities_cities_wildcards">Названия городов через запятую</item>
         <item lang="ru" id="hide_discount">Спрятать скидку</item>
+        <item lang="ru" id="feature_seo_variants">SEO оптимизированные характеристики</item>
+        <item lang="ru" id="feature_seo">SEO для характеристик</item>
+        <item lang="ru" id="choose_feature">Выберите характеристику</item>
+        <item lang="ru" id="parent_feature_variant">Родительская характеристика</item>
     </language_variables>
 </addon>

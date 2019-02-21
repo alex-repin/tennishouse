@@ -20,20 +20,16 @@ if ($mode == 'update' || $mode == 'add') {
 
     $params = array(
         'variants' => false,
-        'plain' => false,
+        'plain' => true,
+        'exclude_group' => true
     );
 
     list($filter_features) = fn_get_product_features($params, 0, DESCR_SL);
+
     Registry::get('view')->assign('filter_features', $filter_features);
     $section_features = array();
     foreach ($filter_features as $i => $feature) {
-        if ($feature['feature_type'] != 'G') {
-            $section_features[$feature['feature_id']] = (!empty($feature['group_description']) ? $feature['group_description'] . ': ' : '') . $feature['description'];
-        } elseif (!empty($feature['subfeatures'])) {
-            foreach ($feature['subfeatures'] as $j => $subfeature) {
-                $section_features[$subfeature['feature_id']] = (!empty($subfeature['group_description']) ? $subfeature['group_description'] . ': ' : '') . $subfeature['description'];
-            }
-        }
+        $section_features[$feature['feature_id']] = (!empty($feature['group_description']) ? $feature['group_description'] . ': ' : '') . $feature['description'];
     }
     $category_data = Registry::get('view')->gettemplatevars('category_data');
     if (!empty($category_data['sections_categorization'])) {
@@ -48,6 +44,12 @@ if ($mode == 'update' || $mode == 'add') {
     fn_get_schema('settings', 'variants.functions', 'php', true);
     $category_data['sortings'] = fn_settings_variants_appearance_available_product_list_sortings();
     
+    $params = array(
+        'category_id' => $category_data['category_id'],
+        'get_descriptions' => true
+    );
+    $category_data['feature_seos'] = fn_get_feature_seos($params);
+
     Registry::get('view')->assign('category_data', $category_data);
     Registry::get('view')->assign('section_features', $section_features);
     
@@ -59,6 +61,10 @@ if ($mode == 'update' || $mode == 'add') {
     $tabs = fn_insert_before_key($tabs, 'addons', 'cross_categories', $cross_tab);
     $tabs['qty_discounts'] = array (
         'title' => __('qty_discounts'),
+        'js' => true
+    );
+    $tabs['feature_seo'] = array (
+        'title' => __('feature_seo'),
         'js' => true
     );
     Registry::set('navigation.tabs', $tabs);

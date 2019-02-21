@@ -17,6 +17,23 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_delete_category_post($category_id, $recurse, $category_ids)
+{
+    db_query("DELETE FROM ?:category_featurer_seo WHERE category_id = ?i", $category_id);
+}
+
+function fn_development_get_filters_products_count_query_params(&$values_fields, $join, $sliders_join, $feature_ids, $where, $sliders_where, $filter_vq, $filter_rq)
+{
+    $values_fields[] = '?:product_features.seo_variants';
+}
+
+function fn_development_get_product_filters_before_select($fields, $join, &$condition, $group_by, $sorting, $limit, $params, $lang_code)
+{
+    if (isset($params['feature_parent_id']) && $params['feature_parent_id'] !== '') {
+        $condition .= db_quote(" AND ?:product_features.parent_id = ?i", $params['feature_parent_id']);
+    }
+}
+
 function fn_development_get_promotions($params, $fields, $sortings, &$condition, $join)
 {
     if (!empty($params['show_on_site'])) {
@@ -352,8 +369,17 @@ function fn_development_delete_feature_post($feature_id, $variant_ids)
 
 function fn_development_get_product_feature_data_before_select(&$fields, $join, $condition, $feature_id, $get_variants, $get_variant_images, $lang_code)
 {
+    $fields[] = '?:product_features.parent_variant_id';
     $fields[] = '?:product_features.note_url';
     $fields[] = '?:product_features.note_text';
+    $fields[] = '?:product_features.seo_variants';
+}
+
+function fn_development_update_product_feature_pre(&$feature_data, $feature_id, $lang_code)
+{
+    if (!in_array($feature_data['feature_type'], array('S', 'E'))) {
+        $feature_data['seo_variants'] = 'N';
+    }
 }
 
 function fn_development_get_orders($params, $fields, $sortings, &$condition, $join, $group)
@@ -750,10 +776,14 @@ function fn_development_get_product_option_data_pre($option_id, $product_id, &$f
     $fields .= ', b.default_text, b.option_note';
 }
 
-function fn_development_get_product_features(&$fields, $join, $condition, $params)
+function fn_development_get_product_features(&$fields, $join, &$condition, $params)
 {
     $fields[] = 'pf.note_url';
     $fields[] = 'pf.note_text';
+    
+    if (!empty($params['seo_variants'])) {
+        $condition .= " AND pf.seo_variants = 'Y'";
+    }
 }
 
 function fn_development_get_product_features_list_before_select(&$fields, $join, $condition, $product, $display_on, $lang_code)
@@ -1449,9 +1479,11 @@ function fn_development_get_filter_range_name_post(&$range_name, $range_type, $r
     }
 }
 
-function fn_development_get_filters_products_count_before_select_filters(&$sf_fields, &$sf_join, &$condition, $sf_sorting, $params)
+function fn_development_get_filters_products_count_before_select_filters(&$sf_fields, &$sf_join, &$condition, $sf_sorting, $params, $av_ids)
 {
-    $sf_fields .= db_quote(", ?:product_filters.is_slider, ?:product_filters.units, ?:product_filters.note_url, ?:product_filters.note_text");
+    $sf_fields .= db_quote(", ?:product_filters.is_slider, ?:product_filters.units, ?:product_filters.note_url, ?:product_filters.note_text, ?:product_features.seo_variants");
+    $sf_join .= db_quote("LEFT JOIN ?:product_features ON ?:product_features.feature_id = ?:product_filters.feature_id");
+    $condition .= db_quote(" AND (?:product_features.parent_variant_id = '0' OR ?:product_features.parent_variant_id IN (?n))", $av_ids);
 }
 
 function fn_development_update_category_pre(&$category_data, $category_id, $lang_code)

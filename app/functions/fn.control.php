@@ -119,7 +119,7 @@ function fn_set_hook($hook_name = NULL, &$arg1 = NULL, &$arg2 = NULL, &$arg3 = N
         call_user_func_array('fn_core_' . $hook_name, $args);
     }
 
-    $edition_acronym = fn_get_edition_acronym(PRODUCT_EDITION);
+    $edition_acronym = 'ult'/*fn_get_edition_acronym(PRODUCT_EDITION)*/;
     if (!empty($edition_acronym) && function_exists("fn_{$edition_acronym}_{$hook_name}")) {
         call_user_func_array("fn_{$edition_acronym}_{$hook_name}", $args);
     }

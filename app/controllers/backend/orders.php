@@ -334,8 +334,9 @@ if ($mode == 'delete') {
 
 } elseif ($mode == 'manage') {
 
+    $params['include_incompleted'] = true;
     if (!empty($params['status']) && $params['status'] == STATUS_INCOMPLETED_ORDER) {
-        $params['include_incompleted'] = true;
+        Registry::get('view')->assign('incompleted_view', true);
     }
 
     if (fn_allowed_for('MULTIVENDOR')) {
@@ -344,9 +345,9 @@ if ($mode == 'delete') {
 
     list($orders, $search, $totals) = fn_get_orders($params, Registry::get('settings.Appearance.admin_orders_per_page'), true);
 
-    if (!empty($params['include_incompleted']) || !empty($search['include_incompleted'])) {
-        Registry::get('view')->assign('incompleted_view', true);
-    }
+//     if (!empty($params['include_incompleted']) || !empty($search['include_incompleted'])) {
+//         Registry::get('view')->assign('incompleted_view', true);
+//     }
 
     if (!empty($_REQUEST['redirect_if_one']) && count($orders) == 1) {
         return array(CONTROLLER_STATUS_REDIRECT, "orders.details?order_id={$orders[0]['order_id']}");

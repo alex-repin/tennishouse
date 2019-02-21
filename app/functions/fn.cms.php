@@ -1012,7 +1012,10 @@ function fn_top_menu_form($top_menu, $level = 0, &$active = NULL)
             list($type, $id, $use_name) = fn_explode(':', $v['param_3']);
             if ($type == 'C') { // categories
                 $cats = fn_get_categories_tree($id, true);
+                $features = fn_get_category_features($cats);
+//                 fn_print_die($features);
                 $v['subitems'] = fn_array_merge(fn_top_menu_standardize($cats, 'category_id', 'category', 'subcategories', 'categories.view?category_id='), !empty($v['subitems']) ? $v['subitems'] : array(), false);
+//                 fn_print_die($v['subitems']);
 
                 if ($use_name == 'Y' && !empty($id)) {
                     $v['descr'] = fn_get_category_name($id);
