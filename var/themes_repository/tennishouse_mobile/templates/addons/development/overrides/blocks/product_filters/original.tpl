@@ -24,10 +24,10 @@
 
 {assign var="reset_qstring" value="products.search"}
 
-{if $request_data.category_id && $settings.General.show_products_from_subcategories == "Y"}
+{*if $request_data.category_id && $settings.General.show_products_from_subcategories == "Y"}
     {assign var="filter_qstring" value=$filter_qstring|fn_link_attach:"subcats=Y"}
     {assign var="reset_qstring" value=$reset_qstring|fn_link_attach:"subcats=Y"}
-{/if}
+{/if*}
 
 {assign var="allow_ajax" value=true}
 {assign var="ajax_div_ids" value="product_filters_*,products_search_*,category_products_*,product_features_*,breadcrumbs_*,currencies_*,languages_*,tabs_categorization,subtabs_categorization"}
