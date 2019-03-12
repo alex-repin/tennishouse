@@ -50,45 +50,25 @@
                                 {if $item2.$childs}
                                     <div class="ty-menu__submenu">
                                         {$submenu_width = 250 * $item2.$childs|count}
-                                        {$display_subheaders = $item2.object_id|fn_display_subheaders}
-                                        <div class="ty-menu__submenu-list cm-responsive-menu-submenu" {if $display_subheaders}style="width: {$submenu_width}px;"{/if}>
-                                            {if $item2.$childs}
-                                                {hook name="blocks:topmenu_dropdown_3levels_col_elements"}
-                                                {if $display_subheaders}
-                                                {$col_with = 99 / $item2.$childs|count}
-                                                {foreach from=$item2.$childs item="item3" name="item3"}
-                                                    {assign var="item3_url" value=$item3|fn_form_dropdown_object_link:$block.type}
-                                                    <div class="ty-menu__submenu-section" style="width: {$col_with}%;">
-                                                        <div class="ty-menu__submenu-item-subheader">
-                                                            <a{if $item3_url} href="{$item3_url}"{/if} class="ty-menu__submenu-link">
-                                                                {$item3.$name|upper nofilter}
-                                                            </a>
-                                                            {include file="addons/development/common/tooltip.tpl" note_url=$item3.note_url note_text=$item3.note_text}
-                                                        </div>
-                                                        <div class="ty-menu__menu-subheader-items">
-                                                        <ul>
-                                                        {foreach from=$item3.$childs item="item4" name="item4"}
-                                                            {assign var="item4_url" value=$item4|fn_form_dropdown_object_link:$block.type}
-                                                            <li class="ty-menu__submenu-item">
-                                                                <a{if $item4_url} href="{$item4_url}"{/if} class="ty-menu__submenu-link">{$item4.$name}</a>
-                                                                {include file="addons/development/common/tooltip.tpl" note_url=$item4.note_url note_text=$item4.note_text}
-                                                            </li>
-                                                        {/foreach}
-                                                        {if $item2.show_more && $item2_url}
-                                                            <li class="ty-menu__submenu-item ty-menu__submenu-alt-link">
-                                                                <a href="{$item2_url}" class="ty-menu__submenu-link">{__("text_topmenu_view_more")}</a>
-                                                            </li>
-                                                        {/if}
-                                                        </ul>
-                                                        </div>
-                                                    </div>
-                                                {/foreach}
-                                                {else}
+                                        <div class="ty-menu__submenu-list cm-responsive-menu-submenu" style="width: {$submenu_width}px;">
+                                            {hook name="blocks:topmenu_dropdown_3levels_col_elements"}
+                                            {$col_with = 99 / $item2.$childs|count}
+                                            {foreach from=$item2.$childs item="item3" name="item3"}
+                                                {assign var="item3_url" value=$item3|fn_form_dropdown_object_link:$block.type}
+                                                <div class="ty-menu__submenu-section" style="width: {$col_with}%;">
+                                                    {*<div class="ty-menu__submenu-item-subheader">
+                                                        <a{if $item3_url} href="{$item3_url}"{/if} class="ty-menu__submenu-link">
+                                                            {$item3.$name|upper nofilter}
+                                                        </a>
+                                                        {include file="addons/development/common/tooltip.tpl" note_url=$item3.note_url note_text=$item3.note_text}
+                                                    </div>*}
+                                                    <div class="ty-menu__menu-subheader-items">
                                                     <ul>
-                                                    {foreach from=$item2.$childs item="item3" name="item3"}
-                                                        {assign var="item3_url" value=$item3|fn_form_dropdown_object_link:$block.type}
+                                                    {foreach from=$item3.$childs item="item4" name="item4"}
+                                                        {assign var="item4_url" value=$item4|fn_form_dropdown_object_link:$block.type}
                                                         <li class="ty-menu__submenu-item">
-                                                            <a{if $item3_url} href="{$item3_url}"{/if} class="ty-menu__submenu-link">{$item3.$name}</a>
+                                                            <a{if $item4_url} href="{$item4_url}"{/if} class="ty-menu__submenu-link">{$item4.$name}</a>
+                                                            {include file="addons/development/common/tooltip.tpl" note_url=$item4.note_url note_text=$item4.note_text}
                                                         </li>
                                                     {/foreach}
                                                     {if $item2.show_more && $item2_url}
@@ -97,9 +77,10 @@
                                                         </li>
                                                     {/if}
                                                     </ul>
-                                                {/if}
-                                                {/hook}
-                                            {/if}
+                                                    </div>
+                                                </div>
+                                            {/foreach}
+                                            {/hook}
                                         </div>
                                     </div>
                                 {/if}

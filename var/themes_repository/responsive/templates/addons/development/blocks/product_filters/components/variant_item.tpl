@@ -14,5 +14,9 @@
         {assign var="href" value=$filter_qstring|fn_link_attach:"features_hash=`$filter_query_elm`"}
     {*/if*}
     {assign var="use_ajax" value=$href|fn_compare_dispatch:$current_url}
-    <div class="ty-product-filters__item{if $range.checked} checked{/if}{if $range.disabled} disabled{/if} cm-filter-item" {if !$range.disabled || $range.checked}data-target-url="{$href}"{/if}><span class="ty-filter-icon"><i class="ty-icon-ok ty-filter-icon__check"></i><i class="ty-icon-cancel ty-filter-icon__delete"></i></span>{$filter.prefix}{$range.range_name|fn_text_placeholders}{$filter.suffix}&nbsp;{*if !$range.disabled}<span class="ty-product-filters__count">&nbsp;({$range.products})</span>{/if*}</div>
+    {if $filter.seo_variants == 'Y'}
+        {if !$range.checked && !$range.disabled}<a href="{$href|fn_url}">{/if}<div class="ty-product-filters__item{if $range.checked} checked{/if}{if $range.disabled} disabled{/if}"><span class="ty-filter-icon"><i class="ty-icon-ok ty-filter-icon__check"></i><i class="ty-icon-cancel ty-filter-icon__delete"></i></span>{$filter.prefix}{$range.range_name|fn_text_placeholders}{$filter.suffix}</div>{if !$range.checked && !$range.disabled}</a>{/if}
+    {else}
+        <div class="ty-product-filters__item{if $range.checked} checked{/if}{if $range.disabled} disabled{/if} cm-filter-item" {if !$range.disabled || $range.checked}data-target-url="{$href}"{/if}><span class="ty-filter-icon"><i class="ty-icon-ok ty-filter-icon__check"></i><i class="ty-icon-cancel ty-filter-icon__delete"></i></span>{$filter.prefix}{$range.range_name|fn_text_placeholders}{$filter.suffix}</div>
+    {/if}
 </div>

@@ -1,7 +1,7 @@
 {foreach from=$product_features item=feature key="feature_id"}
     {$allow_enter_variant = $feature|fn_allow_save_object:"product_features"}
     {if $feature.feature_type != "G" && !$feature.feature_id|in_array:$product_data.hide_features}
-        <div class="control-group">
+        <div class="control-group" {if $feature.parent_variant_id && !$feature.parent_variant_id|in_array:$product_data.selected_variants}style="display: none;"{/if}>
             <label class="control-label" for="feature_{$feature_id}">{$feature.description}</label>
             <div class="controls">
             {if $feature.prefix}<span>{$feature.prefix}</span>{/if}

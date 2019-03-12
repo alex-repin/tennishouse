@@ -31,4 +31,8 @@ return array(
         'frequency' => 60 * 60 * 24,
         'function' => 'fn_update_rub_rate'
     ),
+    'M' => array(
+        'frequency' => 60 * 60 * 24,
+        'function' => 'fn_get_generate_categories_menu_subitems'
+    ),
 );

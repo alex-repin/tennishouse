@@ -124,9 +124,9 @@ if ($mode == 'search') {
             $cat_data = db_get_hash_array("SELECT a.category_id, a.is_virtual, b.category FROM ?:categories AS a LEFT JOIN ?:category_descriptions AS b ON a.category_id = b.category_id AND b.lang_code = ?s WHERE a.category_id IN (?n)", 'category_id', CART_LANGUAGE, $parent_ids);
             // [tennishouse]
             foreach ($parent_ids as $i => $c_id) {
-                if ($cat_data[$c_id]['is_virtual'] != 'Y') {
+//                 if ($cat_data[$c_id]['is_virtual'] != 'Y') {
                     fn_add_breadcrumb($cat_data[$c_id]['category'], "categories.view?category_id=$c_id");
-                }
+//                 }
             }
             // [tennishouse]
         }
@@ -217,12 +217,12 @@ if ($mode == 'search') {
 
 } elseif ($mode == 'options') {
 
-//     if (!defined('AJAX_REQUEST') && !empty($_REQUEST['product_data'])) {
-//         list($product_id, $_data) = each($_REQUEST['product_data']);
-//         $product_id = isset($_data['product_id']) ? $_data['product_id'] : $product_id;
-// 
-//         return array(CONTROLLER_STATUS_REDIRECT, 'products.view?product_id=' . $product_id);
-//     }
+    if (!defined('AJAX_REQUEST') && !empty($_REQUEST['product_data'])) {
+        list($product_id, $_data) = each($_REQUEST['product_data']);
+        $product_id = isset($_data['product_id']) ? $_data['product_id'] : $product_id;
+
+        return array(CONTROLLER_STATUS_REDIRECT, 'products.view?product_id=' . $product_id);
+    }
 } elseif ($mode == 'product_notifications') {
     fn_update_product_notifications(array(
         'product_id' => $_REQUEST['product_id'],

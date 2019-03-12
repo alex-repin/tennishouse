@@ -34,7 +34,7 @@
 
 {assign var="has_selected" value=false}
 {foreach from=$items item="filter" name="filters"}
-    {if $filter.slider || $filter.selected_ranges || $filter.ranges}
+    {if ($filter.slider || $filter.selected_ranges || $filter.ranges) && (!$category_data.tabs_categorization || $category_data.tabs_categorization != $filter.feature_id) && (!$category_data.subtabs_categorization || $category_data.subtabs_categorization != $filter.feature_id)}
         {assign var="filter_uid" value="`$block.block_id`_`$filter.filter_id`"}
         {assign var="cookie_name_show_filter" value="content_`$filter_uid`"}
         {assign var="collapse" value=true}

@@ -1349,6 +1349,12 @@ if ($mode == 'calculate_balance') {
 } elseif ($mode == 'update_rrp') {
     Registry::get('view')->assign('step', 'one');
     Registry::get('view')->assign('brands', fn_development_get_brands());
+} elseif ($mode == 'generate_menu') {
+    fn_get_generate_categories_menu_subitems();
+    exit;
+} elseif ($mode == 'update_rankings') {
+    fn_update_rankings();
+    exit;
 } elseif ($mode == 'generate_user_lkey' && !empty($_REQUEST['user_id'])) {
 
     fn_generate_ekey($_REQUEST['user_id'], 'L', SECONDS_IN_DAY * 90);
@@ -1494,6 +1500,7 @@ if ($mode == 'calculate_balance') {
                         'position' => 0,
                         'link_type' => in_array($prod['main_category'], $ids) ? 'M' : 'A'
                     );
+                    db_query("UPDATE ?:seo_names SET path = ?i WHERE object_id = ?i AND type = 'p' ", $id, $prod['product_id']);
                     $added = true;
                 }
             }

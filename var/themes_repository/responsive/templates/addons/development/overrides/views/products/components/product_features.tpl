@@ -25,7 +25,16 @@
                 </ul>
             {elseif $feature.feature_type == "S" || $feature.feature_type == "E"}
                 {foreach from=$feature.variants item="var"}
-                    {if $var.selected}{$var.variant}{/if}
+                    {if $var.selected}
+                        {if $feature.seo_variants == 'Y' && $feature_path}
+                            {assign var="href" value=$feature_path|fn_link_attach:"features_hash=V`$var.variant_id`"}
+                            <a href="{$href|fn_url}">
+                        {/if}
+                        {$var.variant}
+                        {if $feature.seo_variants == 'Y' && $feature_path}
+                            </a>
+                        {/if}
+                    {/if}
                 {/foreach}
             {elseif $feature.feature_type == "N" || $feature.feature_type == "O"}
                 {$feature.value_int|floatval|default:"-"}

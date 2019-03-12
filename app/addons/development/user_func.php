@@ -20,18 +20,107 @@ use Tygh\FeaturesCache;
 use Tygh\Menu;
 use Tygh\Shippings\Shippings;
 use Tygh\Settings;
+use Tygh\Enum\ProductTracking;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-function fn_get_category_features($cats)
+function fn_get_categories_subitems($cats)
 {
-    $find_set = array();
-    foreach ($cats as $cat_data) {
-        $find_set[] = db_quote(" FIND_IN_SET(?i, ?:product_features.categories_path) ", $cat_data['category_id']);
+    $subitems = array();
+    if (!empty($cats)) {
+        foreach ($cats as $c_id => $c_data) {
+            $subitems[$c_id] = !empty($c_data['menu_subitems']) ? unserialize($c_data['menu_subitems']) : array();
+        }
     }
-    $find_in_set = db_quote(" AND (?p)", implode('OR', $find_set));
-//     fn_print_die($find_in_set);
-    $features = db_get_array("SELECT * FROM ?:product_features WHERE categories_path", array_keys($cats));
+    
+    return $subitems;
+}
+
+function fn_get_generate_categories_menu_subitems()
+{
+    $cats = fn_get_categories_tree();
+    $subitems = fn_top_menu_standardize($cats, 'category_id', 'category', 'subcategories', 'categories.view?category_id=');
+
+    $join = db_quote(" LEFT JOIN ?:products ON ?:products.product_id = pfvl.product_id LEFT JOIN ?:product_feature_variants AS pfv ON pfvl.variant_id = pfv.variant_id LEFT JOIN ?:product_feature_variant_descriptions AS pfvd ON pfvd.variant_id = pfv.variant_id AND pfvd.lang_code = ?s INNER JOIN ?:products_categories AS pc ON pc.product_id = ?:products.product_id LEFT JOIN ?:categories ON ?:categories.category_id = pc.category_id " .
+    "LEFT JOIN ?:product_warehouses_inventory as warehouse_inventory ON warehouse_inventory.product_id = ?:products.product_id
+        AND warehouse_inventory.amount > 0 AND (CASE ?:products.tracking
+            WHEN ?s THEN warehouse_inventory.combination_hash != '0'
+            WHEN ?s THEN warehouse_inventory.combination_hash = '0'
+            WHEN ?s THEN 1
+        END)", CART_LANGUAGE,
+        ProductTracking::TRACK_WITH_OPTIONS,
+        ProductTracking::TRACK_WITHOUT_OPTIONS,
+        ProductTracking::DO_NOT_TRACK
+    );
+        
+    $condition = db_quote(
+        " AND (CASE ?:products.tracking
+            WHEN ?s THEN warehouse_inventory.amount > 0
+            WHEN ?s THEN warehouse_inventory.amount > 0
+            WHEN ?s THEN 1
+        END)",
+        ProductTracking::TRACK_WITH_OPTIONS,
+        ProductTracking::TRACK_WITHOUT_OPTIONS,
+        ProductTracking::DO_NOT_TRACK
+    );
+    
+    $values_fields = array (
+        'pfvl.feature_id',
+        'COUNT(DISTINCT ?:products.product_id) as products',
+        'pfvl.variant_id',
+        'pfvd.variant'
+    );
+        
+    $cats_subitems = $features = array();
+    foreach ($cats as $c_id => $c_data) {
+
+        $_condition = $condition;
+        $category_ids = db_get_fields("SELECT ct1.category_id FROM ?:categories AS ct LEFT JOIN ?:categories AS ct1 ON ct1.id_path LIKE CONCAT(ct.id_path, '/%') WHERE ct.category_id = ?i", $c_id);
+        $category_ids[] = $c_id;
+        $_condition .= db_quote(" AND pc.category_id IN (?n)", $category_ids);
+        $features[$c_id] = db_get_hash_single_array("SELECT pf.feature_id, pfd.description FROM ?:product_features AS pf LEFT JOIN ?:product_features_descriptions AS pfd ON pf.feature_id = pfd.feature_id AND pfd.lang_code = ?s WHERE pf.feature_type IN ('S', 'M', 'E') AND pf.seo_variants = 'Y' AND (pf.categories_path = '' OR FIND_IN_SET(?i, pf.categories_path)) AND pf.parent_variant_id = '0' ORDER BY pf.position ASC", array('feature_id', 'description'), CART_LANGUAGE, $c_id);
+        
+        if (!empty($features[$c_id])) {
+            foreach ($features[$c_id] as $f_id => $f_name) {
+                $cats_subitems[$c_id][$f_id] = db_get_hash_array("SELECT  " . implode(', ', $values_fields) . " FROM ?:product_features_values AS pfvl ?p WHERE pfvl.feature_id = ?i AND pfvl.lang_code = ?s AND ?:products.status IN ('A') ?p GROUP BY pfvl.variant_id ORDER BY products DESC, pfvd.variant", 'variant_id', $join, $f_id, CART_LANGUAGE, $_condition);
+            }
+        }
+    }
+
+    if (!empty($cats_subitems)) {
+        foreach ($cats_subitems as $c_id => $c_data) {
+            $_subitems = !empty($subitems[$c_id]['subitems']) ? $subitems[$c_id]['subitems'] : array();
+            $subitems[$c_id]['subitems'] = array();
+            if (count($_subitems) > 0) {
+                $subitems[$c_id]['subitems']['subcategories'] = array(
+                    'object_id' => $c_id,
+                    'is_virtual' => 'Y',
+                    'descr' => $subitems[$c_id]['descr'],
+                    'subitems' => $_subitems
+                );
+            }
+    
+            foreach ($c_data as $f_id => $f_data) {
+                $subitems[$c_id]['subitems'][$f_id] = array(
+                    'object_id' => $f_id,
+                    'is_virtual' => 'Y',
+                    'is_feature' => 'Y',
+                    'descr' => $features[$c_id][$f_id],
+                );
+                foreach ($f_data as $v_id => $v_data) {
+                    $subitems[$c_id]['subitems'][$f_id]['subitems'][$v_id] = array(
+                        'object_id' => $v_id,
+                        'is_virtual' => 'N',
+                        'is_feature' => 'Y',
+                        'descr' => $v_data['variant'],
+                        'new_window' => false,
+                        'param' => 'categories.view?category_id=' . $c_id . '&features_hash=V' . $v_id
+                    );
+                }
+            }
+            db_query("UPDATE ?:categories SET menu_subitems = ?s WHERE category_id = ?i", serialize($subitems[$c_id]), $c_id);
+        }
+    }
 }
 
 function fn_get_features_by_variant($variant_id = 0, $params = array())
@@ -83,7 +172,7 @@ function fn_delete_feature_seo($item_ids)
 
 function fn_get_feature_seo_data($fs_id)
 {
-    $feature_seo_data = db_get_array("SELECT a.* FROM ?:category_feature_seo as a WHERE item_id = ?i", $fs_id);
+    $feature_seo_data = db_get_array("SELECT a.* FROM ?:category_feature_seo as a WHERE item_id = ?i ORDER BY a.position ASC", $fs_id);
     
     return $feature_seo_data;
 }
@@ -101,7 +190,7 @@ function fn_get_feature_seos($params)
     if (AREA == 'C') {
         $where .= db_quote(" AND a.status = 'A'");
     }
-    $feature_seos = db_get_hash_array("SELECT a.* FROM ?:category_feature_seo as a WHERE 1 $where", 'item_id');
+    $feature_seos = db_get_hash_array("SELECT a.* FROM ?:category_feature_seo as a WHERE 1 $where ORDER BY a.position ASC", 'item_id');
     
     if (!empty($feature_seos)) {
         $feature_ids = $variant_ids = array();
@@ -125,10 +214,9 @@ function fn_get_feature_seos($params)
 function fn_clean_ranges_from_feature_hash($feature_hash, $ranges, $field_type = '')
 {
     $hash = explode('.', $feature_hash);
-    $prefix = empty($field_type) ? (in_array($range['feature_type'], array('N', 'O', 'D')) ? 'R' : 'V') : $field_type;
 
-    $result = $url;
     foreach ($ranges as $range) {
+        $prefix = empty($field_type) ? (in_array($range['feature_type'], array('N', 'O', 'D')) ? 'R' : 'V') : $field_type;
         $key = array_search($prefix . $range['range_id'], $hash);
         if ($key !== false) {
             unset($hash[$key]);
@@ -743,28 +831,31 @@ function fn_get_similar_category_products($params)
     return $result;
 }
 
-function fn_format_submenu(&$menu_items, $display_subheaders = true)
+function fn_format_submenu(&$menu_items)
 {
     if (!empty($menu_items)) {
-        if (count($menu_items) == 1) {
-            $elm_tmp = reset($menu_items);
-            if ($elm_tmp['is_virtual'] == 'Y' && !empty($elm_tmp['subitems'])) {
-                $menu_items = $elm_tmp['subitems'];
-            } elseif (empty($elm_tmp['subitems'])) {
-                $menu_items = array();
-            }
-        }
+//         if (count($menu_items) == 1) {
+//             $elm_tmp = reset($menu_items);
+//             if ($elm_tmp['is_virtual'] == 'Y' && !empty($elm_tmp['subitems'])) {
+//                 $menu_items = $elm_tmp['subitems'];
+//             } elseif (empty($elm_tmp['subitems'])) {
+//                 $menu_items = array();
+//             }
+//         }
+
         foreach ($menu_items as $j => $item) {
-            $display_subheaders = (!empty($item['level']) && $item['level'] == 1) ? fn_display_subheaders($item['object_id']) : $display_subheaders;
-            if (!empty($item['level']) && $item['level'] == 2 && !$display_subheaders && !empty($item['subitems'])) {
-                unset($menu_items[$j]['subitems']);
-            }
             if (!empty($item['subitems'])) {
                 $menu_items[$j]['expand'] = false;
                 if ($item['is_virtual'] == 'Y' && !empty($item['parent_id'])) {
                     $menu_items[$j]['href'] = 'categories.view?category_id=' . $item['parent_id'];
                 }
-                fn_format_submenu($menu_items[$j]['subitems'], $display_subheaders);
+                if (!empty($item['level']) && $item['level'] > 1 && count($menu_items[$j]['subitems']) < 2 && !empty($menu_items[$j]['is_feature']) && $menu_items[$j]['is_feature'] == 'Y') {
+                    unset($menu_items[$j]);
+                } else {
+                    fn_format_submenu($menu_items[$j]['subitems']);
+                }
+            } elseif (!empty($item['level']) && $item['level'] > 1 && $item['is_virtual'] == 'Y' && !empty($menu_items[$j]['is_feature']) && $menu_items[$j]['is_feature'] == 'Y') {
+                unset($menu_items[$j]);
             }
         }
     }
@@ -783,6 +874,7 @@ function fn_get_catalog_panel_categoies()
     );
     $menu_items = $menu[0]['subitems'];
     fn_format_submenu($menu_items);
+    
     return $menu_items;
 }
 
@@ -898,7 +990,7 @@ function fn_get_menu_items_th($value, $block, $block_scheme)
         $menu_items = fn_top_menu_form(fn_get_static_data($params));
         $block['properties'] = !empty($block['properties']) ? $block['properties'] : array();
         fn_dropdown_appearance_cut_second_third_levels($menu_items, 'subitems', $block['properties']);
-        
+
         foreach ($menu_items as $i => $item) {
             if (!empty($item['param_3'])) {
                 list($type, $id, $use_name) = fn_explode(':', $item['param_3']);
@@ -915,7 +1007,7 @@ function fn_get_menu_items_th($value, $block, $block_scheme)
                         if (!empty($group['subitems'])) {
                             $menu_items[$i]['subitems'][$j]['expand'] = false;
                             foreach ($group['subitems'] as $k => $item) {
-                                if (fn_gender_match($item['code'])) {
+                                if (!empty($item['code']) && fn_gender_match($item['code'])) {
                                     $menu_items[$i]['subitems'][$j]['expand'] = $k;
                                     break;
                                 }
@@ -929,7 +1021,7 @@ function fn_get_menu_items_th($value, $block, $block_scheme)
             }
         }
     }
-
+// fn_print_die($menu_items);
     return $menu_items;
 }
 
@@ -1071,6 +1163,7 @@ function fn_generate_features_cash()
 
 function fn_update_rankings($ids = array())
 {
+//     $ids = array(22);
     if (!empty($ids)) {
         $players = db_get_array("SELECT player_id, data_link, gender FROM ?:players WHERE data_link != '' AND player_id IN (?n)", $ids);
     } else {
@@ -1081,14 +1174,13 @@ function fn_update_rankings($ids = array())
         foreach ($players as $i => $player) {
             $result = Http::get($player['data_link']);
             if ($result) {
-                //$player_data = array('data' => array());
+                $player_data = array(
+                    'player_id' => $player['player_id']
+                );
                 if ($player['gender'] == 'M') {
                     if (preg_match('/<div class="player-ranking-position">.*?(\d+).*?<\/div>/', preg_replace('/[\r\n\t]/', '', $result), $match)) {
-                        if (preg_match('/>(\d+)</', $match[0], $_match)) {
-                            $player_data = array(
-                                'player_id' => $player['player_id'],
-                                'ranking' => isset($_match['1']) ? $_match['1'] : 'n/a'
-                            );
+                        if (preg_match('/>(\d+)</', preg_replace('/[\s\r\n\t]/', '', $match[0]), $_match)) {
+                            $player_data['ranking'] = isset($_match['1']) ? $_match['1'] : 'n/a';
                         }
                     }
                     if (preg_match('/id="playersStatsTable".*?>(.*?)<\/table>/', preg_replace('/[\r\n\t]/', '', $result), $match)) {
@@ -1107,24 +1199,21 @@ function fn_update_rankings($ids = array())
                     }
                     $update[] = $player_data;
                 } else {
-                    if (preg_match('/<div class="box ranking">.*?>([\d-]+)<.*?<\/div>/', preg_replace('/[\r\n]/', '', $result), $match)) {
-                        $player_data = array(
-                            'player_id' => $player['player_id'],
-                            'ranking' => isset($match['1']) ? $match['1'] : 'n/a'
-                        );
+                    if (preg_match('/<div class=".*?group-ranking-tabs.*?">.*?>([\d-]+)<.*?<\/div>/', preg_replace('/[\r\n\t]/', '', $result), $match)) {
+                        $player_data['ranking'] = isset($match['1']) ? $match['1'] : 'n/a';
                     }
-                    if (preg_match('/<tr>.*?<td>WTA Singles Titles<\/td>(.*?)<\/tr>/', preg_replace('/[\r\n]/', '', $result), $match)) {
-                        if (preg_match_all('/<td>(.*?)<\/td>/', $match[1], $match)) {
+                    if (preg_match('/>Wta Singles Titles<\/td>(.*?)<\/tr>/', preg_replace('/[\r\n\t]/', '', $result), $match)) {
+                        if (preg_match_all('/<td.*?>(\d+)<\/td>/', $match[1], $match)) {
                             $player_data['titles'] = $player_data['data']['career_titles'] = isset($match[1][1]) ? $match[1][1] : 'n/a';
                         }
                     }
-                    if (preg_match('/<tr>.*?<td>Prize Money<\/td>(.*?)<\/tr>/', preg_replace('/[\r\n]/', '', $result), $match)) {
+                    if (preg_match('/>Prize Money<\/td>(.*?)<\/tr>/', preg_replace('/[\r\n]/', '', $result), $match)) {
                         if (preg_match_all('/>\$(.*?)</', $match[1], $match)) {
                             $player_data['data']['career_prize'] = isset($match[1][1]) ? intval(str_replace(',', '', $match[1][1])) : 'n/a';
                         }
                     }
-                    if (preg_match('/<tr>.*?<td>W\/L - Singles<\/td>(.*?)<\/tr>/', preg_replace('/[\r\n]/', '', $result), $match)) {
-                        if (preg_match_all('/<td>(.*?) - (.*?)<\/td>/', $match[1], $match)) {
+                    if (preg_match('/>W\/L - Singles<\/td>(.*?)<\/tr>/', preg_replace('/[\r\n]/', '', $result), $match)) {
+                        if (preg_match_all('/>(.*?)\/(.*?)<\/td>/', $match[1], $match)) {
                             $player_data['data']['career_won'] = isset($match[1][1]) ? $match[1][1] : 'n/a';
                             $player_data['data']['career_lost'] = isset($match[2][1]) ? $match[2][1] : 'n/a';
                         }
@@ -1143,6 +1232,7 @@ function fn_update_rankings($ids = array())
                 }
                 db_query("UPDATE ?:players SET ?u WHERE player_id = ?i", $_dt, $_dt['player_id']);
             } else {
+                db_query("UPDATE ?:players SET status = 'H' WHERE player_id = ?i", $_dt['player_id']);
                 $errors[] = $_dt;
             }
         }
@@ -1380,26 +1470,20 @@ function fn_get_block_categories($category_id)
         'category_id' => $category_id,
         'visible' => true,
         'get_images' => true,
-        'limit' => 10
+        'limit' => 10,
+        'skip_filter' => true
     );
-    if (fn_display_subheaders($category_id)) {
-        $_params['skip_filter'] = true;
-    }
     list($subcategories, ) = fn_get_categories($_params, CART_LANGUAGE);
     if (!empty($subcategories)) {
-        if (fn_display_subheaders($category_id)) {
-            $subcategory = reset($subcategories);
-            $params = array (
-                'category_id' => $subcategory['category_id'],
-                'visible' => true,
-                'get_images' => true,
-                'limit' => 10
-            );
+        $subcategory = reset($subcategories);
+        $params = array (
+            'category_id' => $subcategory['category_id'],
+            'visible' => true,
+            'get_images' => true,
+            'limit' => 10
+        );
 
-            list($categories, ) = fn_get_categories($params, CART_LANGUAGE);
-        } else {
-            $categories = $subcategories;
-        }
+        list($categories, ) = fn_get_categories($params, CART_LANGUAGE);
     }
     
     return $categories;
@@ -1462,7 +1546,7 @@ function fn_get_subtitle_feature($features, $type = 'R')
 
 function fn_display_subheaders($category_id)
 {
-    return in_array($category_id, array(STRINGS_CATEGORY_ID));
+    return /*in_array($category_id, array(STRINGS_CATEGORY_ID))*/true;
 }
 
 function fn_get_product_cross_sales($params)

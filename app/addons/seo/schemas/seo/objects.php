@@ -53,7 +53,7 @@ $schema = array(
             'categories.catalog' => array(),
             'categories.view' => array(
                 'index' => array('category_id'),
-                'noindex' => array('features_hash')
+//                 'noindex' => array('features_hash')
             )
         )
 

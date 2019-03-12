@@ -2,6 +2,9 @@
 <div class="ty-product-filters" id="content_{$filter_uid}">
     <div id="ranges_{$filter_uid}" class="ty-product-filters__item-more" style="display: inline-block;">
         {foreach from=$filter.ranges item="range"}
+            {if $range.seo_variants == 'Y' && $filter.selected_ranges}
+                {$request_data.features_hash = $request_data.features_hash|fn_clean_ranges_from_feature_hash:$filter.selected_ranges:$filter.field_type}
+            {/if}
             {if $filter.selected_ranges && $range.range_id|array_key_exists:$filter.selected_ranges}
                 {capture name="has_selected"}Y{/capture}
                 <div class="ty-product-filters__group">
@@ -21,7 +24,11 @@
                             {assign var="href" value=$reset_lnk}
                         {/if}
                         {assign var="use_ajax" value=$href|fn_compare_dispatch:$current_url}
-                        <div data-target-url="{$href}" class="ty-product-filters__item checked cm-filter-item"><span class="ty-filter-icon"><i class="ty-icon-ok ty-filter-icon__check"></i><i class="ty-icon-cancel ty-filter-icon__delete"></i></span>{$filter.prefix}{$range.range_name|fn_text_placeholders}{$filter.suffix}</div>
+                        {if $filter.seo_variants == 'Y'}
+                            <a href="{$href|fn_url}"><div class="ty-product-filters__item checked"><span class="ty-filter-icon"><i class="ty-icon-ok ty-filter-icon__check"></i><i class="ty-icon-cancel ty-filter-icon__delete"></i></span>{$filter.prefix}{$range.range_name|fn_text_placeholders}{$filter.suffix}</div>{if !$range.checked && !$range.disabled}</a>{/if}
+                        {else}
+                            <div data-target-url="{$href}" class="ty-product-filters__item checked cm-filter-item"><span class="ty-filter-icon"><i class="ty-icon-ok ty-filter-icon__check"></i><i class="ty-icon-cancel ty-filter-icon__delete"></i></span>{$filter.prefix}{$range.range_name|fn_text_placeholders}{$filter.suffix}</div>
+                        {/if}
                     {/strip}
                 </div>
             {else}

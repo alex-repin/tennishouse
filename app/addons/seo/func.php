@@ -311,7 +311,7 @@ function fn_get_rewrite_rules()
     return $rewrite_rules;
 }
 
-function fn_seo_get_route_request($uri, &$req, &$is_allowed_url, &$url_query)
+function fn_seo_get_route_request($uri, &$req, &$is_allowed_url, &$url_query = '')
 {
     $rewrite_rules = fn_get_rewrite_rules();
     foreach ($rewrite_rules as $pattern => $query) {
@@ -385,7 +385,7 @@ function fn_seo_get_route_request($uri, &$req, &$is_allowed_url, &$url_query)
                             
                             $url_query = $parent_url_query . '&' . $_seo_vars['item'] . '=' . (!empty($_seo_vars['value_prefix']) ? $_seo_vars['value_prefix'] : '') . $_seo['object_id'];
                             if (!empty($_seo['object_id'])) {
-                                $req[$_seo_vars['item']] .= (!empty($req[$_seo_vars['item']]) ? '.' : '') . (!empty($_seo_vars['value_prefix']) ? $_seo_vars['value_prefix'] : '') . $_seo['object_id'];
+                                $req[$_seo_vars['item']] = (!empty($req[$_seo_vars['item']]) ? $req[$_seo_vars['item']] . '.' : '') . (!empty($_seo_vars['value_prefix']) ? $_seo_vars['value_prefix'] : '') . $_seo['object_id'];
                             }
                         } else {
                             if ($_seo['type'] == 's') {
@@ -399,7 +399,7 @@ function fn_seo_get_route_request($uri, &$req, &$is_allowed_url, &$url_query)
                             }
 
                             if (!empty($_seo['object_id'])) {
-                                $req[$_seo_vars['item']] .= (!empty($req[$_seo_vars['item']]) ? '.' : '') . (!empty($_seo_vars['value_prefix']) ? $_seo_vars['value_prefix'] : '') . $_seo['object_id'];
+                                $req[$_seo_vars['item']] = (!empty($req[$_seo_vars['item']]) ? $req[$_seo_vars['item']] . '.' : '') . (!empty($_seo_vars['value_prefix']) ? $_seo_vars['value_prefix'] : '') . $_seo['object_id'];
                             }
 
                             if (!empty($objects['page'])) {
@@ -502,6 +502,49 @@ function fn_seo_get_route(&$req, &$result, &$area, &$is_allowed_url)
             $req = array(
                 'dispatch' => '_no_page'
             );
+        }
+    } else {
+        // Correct hash order and remove dependant feature variants
+        if (!empty($req['features_hash'])) {
+            $parsed_ranges = fn_parse_features_hash($req['features_hash'], false);
+            $av_ids = array();
+            if (!empty($parsed_ranges[1])) {
+                foreach ($parsed_ranges[1] as $k => $v) {
+                    if ($v == 'V') {
+                        $av_ids[] = $parsed_ranges[2][$k];
+                    }
+                }
+            }
+            
+            $range_data = db_get_array("SELECT object_id, c.parent_variant_id FROM ?:seo_names AS a LEFT JOIN ?:product_feature_variants AS b ON a.object_id = b.variant_id LEFT JOIN ?:product_features AS c ON b.feature_id = c.feature_id LEFT JOIN ?:product_features AS d ON c.parent_id = d.feature_id AND c.parent_id != '0' WHERE a.object_id IN (?n) AND a.type = 'e' AND a.lang_code = ?s ORDER BY d.position, c.position", $av_ids, !empty($req['sl']) ? $req['sl'] : Registry::get('settings.Appearance.frontend_default_language'));
+            
+            if (!empty($range_data)) {
+                $range_order = array();
+                foreach ($range_data as $i => $r_data) {
+                    $range_order[] = $r_data['object_id'];
+                }
+                $f_iter = 0;
+                $changed = false;
+                $req['features_hash'] = '';
+                foreach ($parsed_ranges[2] as $i => $part) {
+                    $parent_id = $range_data[$f_iter]['parent_variant_id'];
+                    if (in_array($part, $range_order)) {
+                        if ($part != $range_order[$f_iter]) {
+                            $parsed_ranges[2][$i] = $range_order[$f_iter];
+                            $changed = true;
+                        }
+                        $f_iter++;
+                    }
+                    if (empty($parent_id) || in_array($parent_id, $av_ids)) {
+                        $req['features_hash'] .= (!empty($req['features_hash']) ? '.' : '') . $parsed_ranges[1][$i] . $parsed_ranges[2][$i];
+                    } else {
+                        $changed = true;
+                    }
+                }
+                if (!empty($changed)) {
+                    $result = array(INIT_STATUS_REDIRECT, fn_url('?' . http_build_query($req), 'C', 'rel', !empty($req['sl']) ? $req['sl'] : Registry::get('settings.Appearance.frontend_default_language')), false, true);
+                }
+            }
         }
     }
 }
@@ -1190,7 +1233,10 @@ function fn_seo_url_post(&$url, &$area, &$original_url, &$prefix, &$company_id_i
                         unset($parsed_query['page']);
                     }
 
-                    fn_seo_parsed_query_unset($parsed_query, $seo_var['item']);
+                    // tennishouse
+                    if (!empty($seo_var['item'])) {
+                        fn_seo_parsed_query_unset($parsed_query, $seo_var['item']);
+                    }
 
                     if (empty($seo_var['is_particle'])) {
                         $rewritten = true;

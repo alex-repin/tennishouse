@@ -1012,10 +1012,9 @@ function fn_top_menu_form($top_menu, $level = 0, &$active = NULL)
             list($type, $id, $use_name) = fn_explode(':', $v['param_3']);
             if ($type == 'C') { // categories
                 $cats = fn_get_categories_tree($id, true);
-                $features = fn_get_category_features($cats);
-//                 fn_print_die($features);
-                $v['subitems'] = fn_array_merge(fn_top_menu_standardize($cats, 'category_id', 'category', 'subcategories', 'categories.view?category_id='), !empty($v['subitems']) ? $v['subitems'] : array(), false);
-//                 fn_print_die($v['subitems']);
+                // tennishouse
+//                 $v['subitems'] = fn_array_merge(fn_top_menu_standardize($cats, 'category_id', 'category', 'subcategories', 'categories.view?category_id='), !empty($v['subitems']) ? $v['subitems'] : array(), false);
+                $v['subitems'] = fn_get_categories_subitems($cats);
 
                 if ($use_name == 'Y' && !empty($id)) {
                     $v['descr'] = fn_get_category_name($id);
@@ -1096,7 +1095,7 @@ function fn_top_menu_standardize($items, $id_name, $name, $children_name, $href_
             'note_url' => empty($v['note_url']) ? '' : $v['note_url'],
             'note_text' => empty($v['note_text']) ? '' : $v['note_text'],
             'code' => empty($v['code']) ? '' : $v['code'],
-            'is_virtual' => empty($v['is_virtual']) ? 'N' : $v['is_virtual'],
+//             'is_virtual' => empty($v['is_virtual']) ? 'N' : $v['is_virtual'],
             'parent_id' => empty($v['parent_id']) ? 0 : $v['parent_id'],
             // [tennishouse]
             'descr' => $v[$name],

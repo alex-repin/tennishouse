@@ -6,7 +6,7 @@
     <table class="table table-middle" width="100%">
     <thead>
     <tr class="cm-first-sibling">
-        <th class="cm-extended-feature {if $feature_type != "E"}hidden{/if}">
+        <th class="cm-extended-feature {if $feature_type != "E" && $seo_variants != 'Y'}hidden{/if}">
             <div name="plus_minus" id="on_st_{$id}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand hidden cm-combinations-features-{$id} exicon-expand"></div><div name="minus_plus" id="off_st_{$id}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand cm-combinations-features-{$id} exicon-collapse"></div>
         </th>
         <th width="5%">{__("position_short")}</th>
@@ -20,7 +20,7 @@
     {foreach from=$feature_variants item="var" name="fe_f"}
     {assign var="num" value=$smarty.foreach.fe_f.iteration}
     <tr>
-        <td width="2%" class="cm-extended-feature {if $feature_type != "E"}hidden{/if}">
+        <td width="2%" class="cm-extended-feature {if $feature_type != "E" && $seo_variants != 'Y'}hidden{/if}">
             <span id="on_extra_feature_{$id}_{$num}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand hidden cm-combination-features-{$id}"><span class="exicon-expand"></span></span>
             <span id="off_extra_feature_{$id}_{$num}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand cm-combination-features-{$id}"><span class="exicon-collapse"></span></span>
         </td>
@@ -44,9 +44,9 @@
             </div>
         </td>
     </tr>
-    <tr {if $feature_type != "E" && !$id|fn_feature_has_size_chart}class="hidden"{/if} id="extra_feature_{$id}_{$num}">
-        {if $feature_type == "E"}
+    <tr {if $feature_type != "E" && !$id|fn_feature_has_size_chart && $seo_variants != 'Y'}class="hidden"{/if} id="extra_feature_{$id}_{$num}">
         <td colspan="7">
+            {if $feature_type == "E"}
             <div class="control-group">
                 <label class="control-label" for="elm_image_{$id}_{$num}">{__("image")}</label>
                 <div class="controls">
@@ -104,10 +104,10 @@
                     <textarea name="feature_data[variants][{$num}][meta_keywords]" id="elm_meta_keywords_{$id}_{$num}" cols="55" rows="2" class="input-textarea-long">{$var.meta_keywords}</textarea>
                     </div>
                 </div>
-                {hook name="product_features:extended_feature"}{/hook}
             </div>
+            {/if}
+            {hook name="product_features:extended_feature"}{/hook}
         </td>
-        {/if}
         {if $id == $smarty.const.CLOTHES_GENDER_FEATURE_ID || $id == $smarty.const.SHOES_GENDER_FEATURE_ID}
         <td colspan="7">
             <div class="control-group">
@@ -126,7 +126,7 @@
     {$var = array()}
     <tbody class="hover" id="box_add_variants_for_existing_{$id}">
     <tr>
-        <td class="cm-extended-feature {if $feature_type != "E"}hidden{/if}">
+        <td class="cm-extended-feature {if $feature_type != "E" && $seo_variants != 'Y'}hidden{/if}">
             <span id="on_extra_feature_{$id}_{$num}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand hidden cm-combination-features-{$id}"><span class="exicon-expand"></span></span>
             <span id="off_extra_feature_{$id}_{$num}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand cm-combination-features-{$id}"><span class="exicon-collapse"></span></span>
         </td>
@@ -137,7 +137,7 @@
         <td>
             <input type="text" name="feature_data[variants][{$num}][variant]" value="" class="cm-feature-value {if $feature_type == "N"}cm-value-decimal{/if}" /></td>
         <td>
-            <textarea name="feature_data[variants][{$num}][description]" cols="50" rows="1" style="width: auto; height: 20px;">{$var.description}</textarea></td>
+            <textarea name="feature_data[variants][{$num}][description]" cols="50" rows="1" style="width: auto; height: 20px;"></textarea></td>
         <td>&nbsp;</td>
         <td class="right">
             <div class="hidden-tools">
@@ -145,20 +145,13 @@
             </div>
         </td>
     </tr>
-    <tr {if $feature_type != "E"}class="hidden"{/if} id="extra_feature_{$id}_{$num}">
+    <tr {if $feature_type != "E" && $seo_variants != 'Y'}class="hidden"{/if} id="extra_feature_{$id}_{$num}">
         <td colspan="5">
-
+            {if $feature_type == "E"}
             <div class="control-group">
                 <label class="control-label" for="elm_image_{$id}_{$num}">{__("image")}</label>
                 <div class="controls">
                 {include file="common/attach_images.tpl" image_name="variant_image" image_key=$num hide_titles=true no_detailed=true image_object_type="feature_variant" image_type="V" image_pair="" prefix=$id}
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label" for="elm_description_{$id}_{$num}">{__("description")}</label>
-                <div class="controls">
-                <textarea id="elm_description_{$id}_{$num}" name="feature_data[variants][{$num}][description]" cols="55" rows="8" class="cm-wysiwyg"></textarea>
                 </div>
             </div>
 
@@ -189,6 +182,7 @@
                 <textarea name="feature_data[variants][{$num}][meta_keywords]" id="elm_meta_keywords_{$id}_{$num}" cols="55" rows="2"></textarea>
                 </div>
             </div>
+            {/if}
             {hook name="product_features:extended_feature"}{/hook}
         </td>
     </tr>

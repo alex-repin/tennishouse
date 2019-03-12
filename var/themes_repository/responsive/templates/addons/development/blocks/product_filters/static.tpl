@@ -25,8 +25,8 @@
 {assign var="reset_qstring" value="products.search"}
 
 {if $request_data.category_id && $settings.General.show_products_from_subcategories == "Y"}
-    {assign var="filter_qstring" value=$filter_qstring|fn_link_attach:"subcats=Y"}
-    {assign var="reset_qstring" value=$reset_qstring|fn_link_attach:"subcats=Y"}
+    {*assign var="filter_qstring" value=$filter_qstring|fn_link_attach:"subcats=Y"}
+    {assign var="reset_qstring" value=$reset_qstring|fn_link_attach:"subcats=Y"*}
 {/if}
 
 {assign var="allow_ajax" value=true}
@@ -34,7 +34,7 @@
 
 {assign var="has_selected" value=false}
 {foreach from=$items item="filter" name="filters"}
-    {if $filter.slider || $filter.selected_ranges || $filter.ranges}
+    {if ($filter.slider || $filter.selected_ranges || $filter.ranges) && (!$category_data.tabs_categorization || $category_data.tabs_categorization != $filter.feature_id) && (!$category_data.subtabs_categorization || $category_data.subtabs_categorization != $filter.feature_id)}
         {assign var="filter_uid" value="`$block.block_id`_`$filter.filter_id`"}
         {assign var="cookie_name_show_filter" value="content_`$filter_uid`"}
         {assign var="collapse" value=true}

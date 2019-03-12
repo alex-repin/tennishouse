@@ -2,6 +2,9 @@
 <div class="ty-product-filters" id="content_{$filter_uid}">
     <div id="ranges_{$filter_uid}" class="ty-product-filters__item-more" style="display: inline-block;">
         {foreach from=$filter.ranges item="range"}
+            {if $range.seo_variants == 'Y' && $filter.selected_ranges}
+                {$request_data.features_hash = $request_data.features_hash|fn_clean_ranges_from_feature_hash:$filter.selected_ranges:$filter.field_type}
+            {/if}
             {if $filter.selected_ranges && $range.range_id|array_key_exists:$filter.selected_ranges}
                 {capture name="has_selected"}Y{/capture}
                 <div class="ty-product-filters__group">
@@ -29,9 +32,6 @@
                     {/strip}
                 </div>
             {else}
-                {if $range.seo_variants == 'Y' && $filter.selected_ranges}
-                    {$request_data.features_hash = $request_data.features_hash|fn_clean_ranges_from_feature_hash:$filter.selected_ranges:$filter.field_type}
-                {/if}
                 {include file="addons/development/blocks/product_filters/components/variant_item.tpl" range=$range filter=$filter ajax_div_ids=$ajax_div_ids filter_qstring=$filter_qstring reset_qstring=$reset_qstring allow_ajax=$allow_ajax}
             {/if}
         {/foreach}

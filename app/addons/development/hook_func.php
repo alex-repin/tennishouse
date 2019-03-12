@@ -19,7 +19,7 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 function fn_development_delete_category_post($category_id, $recurse, $category_ids)
 {
-    db_query("DELETE FROM ?:category_featurer_seo WHERE category_id = ?i", $category_id);
+    db_query("DELETE FROM ?:category_feature_seo WHERE category_id = ?i", $category_id);
 }
 
 function fn_development_get_filters_products_count_query_params(&$values_fields, $join, $sliders_join, $feature_ids, $where, $sliders_where, $filter_vq, $filter_rq)
@@ -780,6 +780,8 @@ function fn_development_get_product_features(&$fields, $join, &$condition, $para
 {
     $fields[] = 'pf.note_url';
     $fields[] = 'pf.note_text';
+    $fields[] = 'pf.seo_variants';
+    $fields[] = 'pf.parent_variant_id';
     
     if (!empty($params['seo_variants'])) {
         $condition .= " AND pf.seo_variants = 'Y'";
@@ -830,7 +832,7 @@ function fn_development_get_category_data_post($category_id, $field_list, $get_m
             fn_format_categorization($category_data, $categorization_data, 'subtabs_categorization');
             fn_format_categorization($category_data, $categorization_data, 'sections_categorization');
         }
-        $data_array = array('note_url', 'note_text', 'products_sorting', 'canonical', 'default_layout', 'selected_layouts', 'product_columns', 'all_items_tab', 'extended_tabs_categorization', 'products_per_page');
+        $data_array = array('note_url', 'note_text', 'products_sorting', 'canonical', 'default_layout', 'selected_layouts', 'product_columns'/*, 'all_items_tab', 'extended_tabs_categorization'*/, 'products_per_page');
         $data = fn_get_category_global_data($category_data, $data_array);
         foreach ($data_array as $i => $f_name) {
             if (empty($category_data[$f_name]) && !empty($data[$f_name])) {
@@ -847,7 +849,9 @@ function fn_development_get_category_data_post($category_id, $field_list, $get_m
     if (!empty($category_data['cross_categories'])) {
         $category_data['cross_categories'] = unserialize($category_data['cross_categories']);
     }
-    list($category_data['type_id'], $category_data['type']) = fn_identify_category_type($category_data['id_path']);
+    if (!empty($category_data['id_path'])) {
+        list($category_data['type_id'], $category_data['type']) = fn_identify_category_type($category_data['id_path']);
+    }
 }
 
 function fn_development_get_product_feature_variants(&$fields, $join, &$condition, $group_by, $sorting, $lang_code, $limit)
@@ -897,7 +901,8 @@ function fn_development_get_categories(&$params, $join, $condition, &$fields, $g
     $fields[] = '?:categories.note_text';
     $fields[] = '?:categories.product_count';
     $fields[] = '?:categories.code';
-    $fields[] = '?:categories.is_virtual';
+//     $fields[] = '?:categories.is_virtual';
+    $fields[] = '?:categories.menu_subitems';
     if (!empty($params['roundabout']) || !empty($params['get_description'])) {
         $fields[] = '?:category_descriptions.description';
         if (!empty($params['roundabout'])) {

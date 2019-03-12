@@ -121,14 +121,15 @@
         <label class="control-label" for="elm_category_tabs_categorization">{__("tabs_categorization")}:</label>
 
         <div class="controls">
-        <select name="category_data[tabs_categorization]" id="elm_category_tabs_categorization" onchange="$('#tabs_options').toggle($(this).val() > 0);">
+        <select name="category_data[tabs_categorization]" id="elm_category_tabs_categorization" {*onchange="$('#tabs_options').toggle($(this).val() > 0);"*}>
             <option value="" {if $category_data.tabs_categorization == "0"}selected="selected"{/if}> - {__("none")} - </option>
             {foreach from=$filter_features item=feature}
-                <option value="{$feature.feature_id}" {if $category_data.tabs_categorization == $feature.feature_id}selected="selected"{/if}>{if $feature.group_description}{$feature.group_description}: {/if}{$feature.description}</option>
+                <option value="{$feature.feature_id}" {if $category_data.tabs_categorization == $feature.feature_id}selected="selected"{/if}>{if $feature.feature_group}{$feature.feature_group}: {/if}{$feature.filter}</option>
             {/foreach}
         </select>
         </div>
     </div>
+    {*
     <div id="tabs_options" {if !$category_data.tabs_categorization}style="display: none;"{/if}>
         <div class="control-group">
             <label class="control-label" for="elm_category_extended_tabs_categorization">{__("extended_tabs_categorization")}:</label>
@@ -149,6 +150,7 @@
             </div>
         </div>
     </div>
+    *}
 
     <div class="control-group">
         <label class="control-label" for="elm_category_subtabs_categorization">{__("subtabs_categorization")}:</label>
@@ -157,7 +159,7 @@
         <select name="category_data[subtabs_categorization]" id="elm_category_subtabs_categorization">
             <option value="" {if $category_data.subtabs_categorization == "0"}selected="selected"{/if}> - {__("none")} - </option>
             {foreach from=$filter_features item=feature}
-                <option value="{$feature.feature_id}" {if $category_data.subtabs_categorization == $feature.feature_id}selected="selected"{/if}>{if $feature.group_description}{$feature.group_description}: {/if}{$feature.description}</option>
+                <option value="{$feature.feature_id}" {if $category_data.subtabs_categorization == $feature.feature_id}selected="selected"{/if}>{if $feature.feature_group}{$feature.feature_group}: {/if}{$feature.filter}</option>
             {/foreach}
         </select>
         </div>
@@ -223,6 +225,7 @@
             <input type="text" name="category_data[code]" id="elm_category_code" size="55" value="{$category_data.code}" class="input-text-short" />
         </div>
     </div>
+    {*
     <div class="control-group">
         <label class="control-label" for="elm_category_is_virtual">{__("is_virtual")}:</label>
         <div class="controls">
@@ -232,6 +235,7 @@
             </label>
         </div>
     </div>
+    *}
     <div class="control-group">
         <label class="control-label" for="elm_category_product_pretitle">{__("product_pretitle")}:</label>
         <div class="controls">

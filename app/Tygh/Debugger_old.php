@@ -14,7 +14,8 @@
 
 namespace Tygh;
 
-use Tygh\Registry;
+Use Tygh\Session;
+Use Tygh\Registry;
 
 class Debugger
 {
@@ -29,22 +30,18 @@ class Debugger
     protected static $active_debug_mode = false;
     protected static $allow_backtrace_sql = false;
     protected static $debugger_cookie = '';
-    protected static $actives = array();
-    protected static $hash = '';
+    protected static $actives = '';
 
     public static $checkpoints = array();
     public static $queries = array();
     public static $cache_queries = array();
     public static $backtraces = array();
-    public static $blocks = array();
     public static $totals = array(
         'count_queries' => 0,
         'time_queries' => 0,
         'time_cache_queries' => 0,
         'time_page' => 0,
         'memory_page' => 0,
-        'blocks_from_cache' => 0,
-        'blocks_rendered' => 0,
     );
 
     public static function init($reinit = false, $config = array())
@@ -55,8 +52,7 @@ class Debugger
         self::$debugger_cookie = !empty($_COOKIE['debugger']) ? $_COOKIE['debugger'] : '';
 
         if ($reinit) {
-            self::$hash = isset($_REQUEST['debugger_hash']) ? $_REQUEST['debugger_hash'] : (time() . '_' . uniqid(mt_rand()));
-            Registry::registerCache(array('debugger', 'dbg_' . self::$hash), array(), Registry::cacheLevel('static'));
+            Registry::registerCache('debugger', SESSION_ALIVE_TIME, Registry::cacheLevel('time'), true);
             self::$actives = fn_get_storage_data('debugger_active');
             self::$actives = !empty(self::$actives) ? unserialize(self::$actives) : array();
             $active_in_registry = !empty(self::$actives[self::$debugger_cookie]) && (time() - self::$actives[self::$debugger_cookie]) < 0 ? true : false;
@@ -85,13 +81,13 @@ class Debugger
             case (isset($_REQUEST[$debugger_token])):
 
                 $salt = '';
-                if (\Tygh::$app['session']['auth']['user_type'] == 'A' && \Tygh::$app['session']['auth']['is_root'] == 'Y') {
-                    $user_admin = db_get_row('SELECT email, password FROM ?:users WHERE user_id = ?i', \Tygh::$app['session']['auth']['user_id']);
+                if ($_SESSION['auth']['user_type'] == 'A' && $_SESSION['auth']['is_root'] == 'Y') {
+                    $user_admin = db_get_row('SELECT email, password FROM ?:users WHERE user_id = ?i', $_SESSION['auth']['user_id']);
                     $salt = $user_admin['email'] . $user_admin['password'];
                 }
 
                 if ($debugger_token != self::DEFAULT_TOKEN || !empty($salt)) { // for non-default token allow full access
-                    self::$debugger_cookie = substr(md5(Tygh::$app['session']->getID() . $salt), 0, 8);
+                    self::$debugger_cookie = substr(md5(SESSION::getId() . $salt), 0, 8);
 
                     $active_in_registry = true;
                     self::$active_debug_mode = true;
@@ -118,7 +114,8 @@ class Debugger
 
         if ($reinit && !empty(self::$debugger_cookie) && empty($active_in_registry)) {
             fn_set_cookie('debugger', '', 0);
-            self::cleanUpActives(self::$debugger_cookie);
+            unset(self::$actives[self::$debugger_cookie]);
+            fn_set_storage_data('debugger_active', serialize(self::$actives));
         }
 
         return self::$active_debug_mode;
@@ -133,20 +130,17 @@ class Debugger
     {
         if (!(defined('DEBUG_MODE') && DEBUG_MODE == true)) {
             fn_set_cookie('debugger', '', 0);
-            self::cleanUpActives(self::$debugger_cookie);
-            Registry::del('dbg_' . self::$hash);
+            unset(self::$actives[self::$debugger_cookie]);
+            fn_set_storage_data('debugger_active', serialize(self::$actives));
+            Registry::del('debugger.data.' . self::$debugger_cookie);
         }
     }
 
     public static function getData($data_time)
     {
-        $data = array();
-        if (!empty($data_time)) {
-            $debugger_data = Registry::get('dbg_' . $data_time);
-            $data = !empty($debugger_data) ? $debugger_data : array();
-        }
+        $debugger_id = !empty(self::$debugger_cookie) ? self::$debugger_cookie : substr(Session::getId(), 0, 8);
 
-        return $data;
+        return !empty($data_time) ? Registry::get('debugger.data.' . $debugger_id . '.' . $data_time) : array();
     }
 
     public static function checkpoint($name)
@@ -222,36 +216,39 @@ class Debugger
             return false;
         }
 
-        $debugger_id = !empty(self::$debugger_cookie) ? self::$debugger_cookie : substr(Tygh::$app['session']->getID(), 0, 8);
+        $data_time = time();
+        $debugger_id = !empty(self::$debugger_cookie) ? self::$debugger_cookie : substr(Session::getId(), 0, 8);
 
         $ch_p = array_values(self::$checkpoints);
 
         $included_templates = array();
         $depth = array();
-
-        foreach (\Tygh::$app['view']->template_objects as $k => $v) {
+        $d = 0;
+        foreach (Registry::get('view')->template_objects as $k => $v) {
             if (count(explode('#', $k)) == 1) {
                 continue;
             }
 
             list(, $tpl) = explode('#', $k);
-            $depth[$tpl] = 0;
 
-            if (isset($v->parent) && $v->parent instanceof \Smarty_Internal_Template) {
-                if (isset($depth[$v->parent->template_resource])) {
-                    $depth[$tpl] = $depth[$v->parent->template_resource] + 1;
+            if (!empty($v->parent)) {
+                if (property_exists($v->parent, 'template_resource')) {
+
+                    if (empty($depth[$v->parent->template_resource])) {
+                        $depth[$v->parent->template_resource] = ++$d;
+                    }
+
+                    $included_templates[] = array(
+                        'filename' => $tpl,
+                        'depth' => $depth[$v->parent->template_resource]
+                    );
                 }
-
-                $included_templates[] = array(
-                    'filename' => $tpl,
-                    'depth' => $depth[$tpl]
-                );
             }
         }
 
-        $assigned_vars = \Tygh::$app['view']->tpl_vars;
+        $assigned_vars = Registry::get('view')->tpl_vars;
         ksort($assigned_vars);
-        $exclude_vars = array('_REQUEST', 'config', 'settings', 'runtime', 'demo_password', 'demo_username', 'empty', 'ldelim', 'rdelim', 'app');
+        $exclude_vars = array('_REQUEST', 'config', 'settings', 'runtime', 'demo_password', 'demo_username', 'empty', 'ldelim', 'rdelim');
         foreach ($assigned_vars as $name => $value_obj) {
             if (in_array($name, $exclude_vars)) {
                 unset($assigned_vars[$name]);
@@ -271,22 +268,6 @@ class Debugger
             if (in_array(gettype($value), array('object', 'resource'))) {
                 $runtime[$key] = gettype($value);
             }
-        }
-
-        $warnings = array();
-        $count_queries = array();
-
-        // slow/repetitive SQL queries
-        foreach (self::$queries as $query) {
-            if ($query['time'] > self::LONG_QUERY_TIME) {
-                $warnings['sql'] = true;
-                break;
-            }
-            if (isset($count_queries[$query['query']])) {
-                $warnings['sql'] = true;
-                break;
-            }
-            $count_queries[$query['query']] = $query;
         }
 
         $data = array(
@@ -320,19 +301,29 @@ class Debugger
                 'tpls' => $included_templates,
                 'vars' => $assigned_vars,
             ),
-            'blocks' => self::$blocks,
             'totals' => self::$totals,
         );
 
-        Registry::set('dbg_' . self::$hash, $data);
+        $datas = Registry::get('debugger.data');
+        $datas = is_array($datas) ? $datas : array();
+        foreach (array_keys($datas) as $id) {
+            foreach (array_keys($datas[$id]) as $time) {
+                if ($time < time() - self::EXPIRE_DEBUGGER) {
+                    unset($datas[$id][$time]);
+                }
+            }
+            if (empty($datas[$id])) {
+                unset($datas[$id]);
+            }
+        }
+        $datas[$debugger_id][$data_time] = $data;
+        Registry::set('debugger.data', $datas);
 
-        \Tygh::$app['view']->assign('debugger_id', $debugger_id);
-        \Tygh::$app['view']->assign('debugger_hash', self::$hash);
-        \Tygh::$app['view']->assign('totals', self::$totals);
-        \Tygh::$app['view']->assign('warnings', $warnings);
-        \Tygh::$app['view']->assign('debugger_images_dir', rtrim(Registry::get('config.current_location'), '/') . '/' . fn_get_theme_path('[relative]/[theme]/media/images/debugger', 'A'));
+        Registry::get('view')->assign('debugger_id', $debugger_id);
+        Registry::get('view')->assign('debugger_hash', $data_time);
+        Registry::get('view')->assign('totals', self::$totals);
 
-        \Tygh::$app['view']->display('backend:views/debugger/debugger.tpl');
+        Registry::get('view')->display('views/debugger/debugger.tpl');
 
         return true;
     }
@@ -418,103 +409,4 @@ class Debugger
         return $return;
     }
 
-    public static function blockRenderingStarted($block)
-    {
-        if (!self::isActive()) {
-            return;
-        }
-        self::checkpoint('[Block] [' . $block['name'] . '] Render begin');
-
-        self::$blocks[$block['block_id']] = array(
-            'block'              => $block,
-            'render_performance' => array(
-                'found_at_cache' => false,
-                'begin' => self::$checkpoints['[Block] [' . $block['name'] . '] Render begin'],
-            )
-        );
-    }
-
-    public static function blockRenderingEnded($block_id)
-    {
-        if (!self::isActive()) {
-            return;
-        }
-
-        $block = &self::$blocks[$block_id];
-
-        self::checkpoint('[Block] [' . $block['block']['name'] . '] Render end');
-        $block['render_performance']['end'] = self::$checkpoints['[Block] [' . $block['block']['name']
-        . '] Render end'];
-
-        $block['render_performance']['total'] = array(
-            'time'           => $block['render_performance']['end']['time']
-                - $block['render_performance']['begin']['time'],
-            'memory'         => $block['render_performance']['end']['memory']
-                - $block['render_performance']['begin']['memory'],
-            'included_files' => $block['render_performance']['end']['included_files']
-                - $block['render_performance']['begin']['included_files'],
-            'queries'        => $block['render_performance']['end']['queries']
-                - $block['render_performance']['begin']['queries'],
-        );
-
-        self::$totals['blocks_rendered']++;
-        self::$totals['blocks_time'] += $block['render_performance']['total']['time'];
-    }
-
-    public static function blockFoundAtCache($block_id)
-    {
-        if (!self::isActive()) {
-            return;
-        }
-
-        $block = &self::$blocks[$block_id];
-        $block['render_performance']['found_at_cache'] = true;
-
-        self::$totals['blocks_from_cache']++;
-    }
-
-    /**
-     * Remove expired/deleted actives
-     *
-     * @param string|bool $debugger_cookie Debugger cookie to remove
-     */
-    public static function cleanUpActives($debugger_cookie = '')
-    {
-        foreach (self::$actives as $debugger_id => $lifetime) {
-            if ($lifetime < time() - SESSION_ALIVE_TIME) {
-                unset(self::$actives[$debugger_id]);
-            }
-        }
-        if ($debugger_cookie) {
-            unset(self::$actives[$debugger_cookie]);
-        }
-        fn_set_storage_data('debugger_active', serialize(self::$actives));
-    }
-
-    /**
-     * Sort query lists by specified field (preserves list keys)
-     *
-     * @param  array  $queries_list Queries list
-     * @param  string $order_by     Field to sort by
-     * @param  string $direction    'asc' or 'desc'
-     * @return array  Sorted list of queries
-     */
-    public static function sortQueries($queries_list, $order_by, $direction)
-    {
-        if ($order_by != 'number') {
-            uasort($queries_list, function($query1, $query2) use ($order_by, $direction) {
-                if ($query1[$order_by] > $query2[$order_by]) {
-                    return $direction == 'asc' ? 1 : -1;
-                } elseif ($query2[$order_by] > $query1[$order_by]) {
-                    return $direction == 'asc' ? -1 : 1;
-                }
-
-                return 0;
-            });
-        } elseif ($direction == 'desc') {
-            $queries_list = array_reverse($queries_list, true);
-        }
-
-        return $queries_list;
-    }
 }

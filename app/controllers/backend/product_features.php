@@ -128,6 +128,7 @@ if ($mode == 'update') {
     Registry::get('view')->assign('feature_variants', $variants);
     Registry::get('view')->assign('search', $search);
     Registry::get('view')->assign('feature_type', $_REQUEST['feature_type']);
+    Registry::get('view')->assign('seo_variants', $_REQUEST['seo_variants']);
     Registry::get('view')->assign('id', $_REQUEST['feature_id']);
     Registry::get('view')->display('views/product_features/components/variants_list.tpl');
     exit;

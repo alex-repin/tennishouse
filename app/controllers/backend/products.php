@@ -490,7 +490,6 @@ if ($mode == 'add') {
         }
     }
 
-    Registry::get('view')->assign('product_data', $product_data);
     Registry::get('view')->assign('taxes', $taxes);
 
     $product_options = fn_get_product_options($_REQUEST['product_id'], DESCR_SL);
@@ -570,7 +569,21 @@ if ($mode == 'add') {
             'title' => __('features'),
             'js' => true
         );
+        $product_data['selected_variants'] = array();
+        foreach ($product_data['product_features'] as $f_id => $f_data) {
+            if (!empty($f_data['variant_id'])) {
+                $product_data['selected_variants'][$f_id] = $f_data['variant_id'];
+            }
+            if (!empty($f_data['subfeatures'])) {
+                foreach ($f_data['subfeatures'] as $sf_id => $sf_data) {
+                    if (!empty($sf_data['variant_id'])) {
+                        $product_data['selected_variants'][$sf_id] = $sf_data['variant_id'];
+                    }
+                }
+            }
+        }
     }
+    Registry::get('view')->assign('product_data', $product_data);
 
     // [Product tabs]
     // block manager is disabled for vendors.

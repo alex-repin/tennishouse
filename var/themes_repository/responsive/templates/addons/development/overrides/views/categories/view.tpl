@@ -4,7 +4,7 @@
     <div class="ty-category-title__note-block">{if $category_data.note_url}<a href="{"`$category_data.note_url`"|fn_url}" target="_blank">{/if}<div class="ty-category-title__note"><div class="ty-category-title__note-text">{$category_data.note_text}</div><div class="ty-category-title__note-question"></div></div>{if $category_data.note_url}</a>{/if}</div>
 {/if}
 
-{*if $subcategories && !$category_data.category_id|fn_display_subheaders && !$category_data.parent_id}
+{*if $subcategories && !$category_data.parent_id}
     {math equation="ceil(n/c)" assign="rows" n=$subcategories|count c="2"}
     {split data=$subcategories size=$rows assign="splitted_subcategories"}
     <ul class="subcategories clearfix">
@@ -37,7 +37,8 @@
     {include file="views/products/components/product_filters_advanced_form.tpl" separate_form=true}
 {/if}
 
-{if $stb_feature.variants}
+{if $stb_feature.ranges}
+    {assign var="request_data" value=$smarty.request}
     {assign var="ajax_div_ids" value="product_filters_*,products_search_*,category_products_*,product_features_*,breadcrumbs_*,currencies_*,languages_*,tabs_categorization,subtabs_categorization"}
     {if $smarty.server.QUERY_STRING|strpos:"dispatch=" !== false}
         {assign var="filter_qstring" value=$config.current_url|fn_query_remove:"result_ids":"full_render":"filter_id":"view_all":"req_range_id":"advanced_filter":"subcats":"page":"stc_id"}
@@ -47,24 +48,29 @@
     <div class="clearfix">
         {*<div class="ty-categorization-subtabs__title">{$stb_feature.description}:</div>*}
         <div class="ty-categorization-subtabs" id="subtabs_categorization">
-            {$cst_width = 100 / $stb_feature.variants|count}
+            {$cst_width = 100 / $stb_feature.ranges|count}
             {strip}
-            {foreach from=$stb_feature.variants item=tab key=key}
-                {*if !$active_subtab}
-                    {assign var="active_subtab" value=$key}
-                {/if*}
-                {if $tab.variant_id == $smarty.const.KIRSCHBAUM_BRAND_ID}
+            {foreach from=$stb_feature.ranges item=range key=key}
+                {if $range.seo_variants == 'Y' && $stb_feature.selected_ranges}
+                    {$request_data.features_hash = $smarty.request.features_hash|fn_clean_ranges_from_feature_hash:$stb_feature.selected_ranges:$stb_feature.field_type}
+                {/if}
+                {if !$range.is_selected}
+                    {assign var="filter_query_elm" value=$request_data.features_hash|fn_add_range_to_url_hash:$range:$filter.field_type}
+                    {assign var="href" value=$filter_qstring|fn_link_attach:"features_hash=`$filter_query_elm`"}
+                {else}
+                    {assign var="filter_query_elm" value=$request_data.features_hash|fn_delete_range_from_url:$range:$stb_feature.field_type}
+                    {assign var="href" value=$filter_qstring|fn_link_attach:"features_hash=`$filter_query_elm`"}
+                {/if}
+                {if $range.range_id == $smarty.const.KIRSCHBAUM_BRAND_ID}
                     {$img_ht = "50"}
                 {else}
                     {$img_ht = "35"}
                 {/if}
-                <div class="ty-categorization-subtabs__item {if $key == $active_subtab}ty-categorization-subtabs__item-active{/if}" style="width: {$cst_width}%;">
-                    <div class="ty-categorization-subtabs__item-logo">{include file="addons/development/common/brand_logo.tpl" brand=$tab brand_variant_id=$tab.variant_id img_height=$img_ht}</div>
-                    <h3>
-                    <a class="ty-categorization-subtabs__a text-hide {if $category_data.ajax_pagination == 'Y'}cm-ajax-force cm-ajax cm-ajax-full-render cm-history{/if}" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if $key != $active_subtab}href="{$filter_qstring|fn_link_attach:"stc_id=`$key`"|fn_url}"{else}href="{$filter_qstring|fn_link_attach:"stc_id=all"|fn_url}"{/if}>
-                        {$tab.variant}
+                <div class="ty-categorization-subtabs__item {if $range.is_selected}ty-categorization-subtabs__item-active{/if}{if $range.disabled}ty-categorization-subtabs__item-disabled{/if}" style="width: {$cst_width}%;">
+                    <div class="ty-categorization-subtabs__item-logo">{include file="addons/development/common/brand_logo.tpl" brand=$range brand_variant_id=$range.variant_id img_height=$img_ht}</div>
+                    <a class="ty-categorization-subtabs__a text-hide {if $category_data.ajax_pagination == 'Y'}cm-ajax-force cm-ajax cm-ajax-full-render cm-history{/if}" data-ca-scroll=".cm-pagination-container" data-ca-target-id="{$ajax_div_ids}" {if !$range.disabled}href="{$href|fn_url}"{/if}>
+                        {if $range.is_selected}{if $tb_feature_selected}<h3>{else}<h2>{/if}{/if}{$range.range_name}{if $range.is_selected}{if $tb_feature_selected}</h3>{else}</h2>{/if}{/if}
                     </a>
-                    </h3>
                 </div>
             {/foreach}
             {/strip}

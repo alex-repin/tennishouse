@@ -710,6 +710,7 @@
             CREATE TABLE IF NOT EXISTS `cscart_category_feature_seo` (
                 `item_id` int(11) UNSIGNED NOT NULL,
                 `category_id` INT(11) UNSIGNED NOT NULL,
+                `position` SMALLINT(5) UNSIGNED NOT NULL DEFAULT '0',
                 `combination` VARCHAR(255) NOT NULL,
                 `status` CHAR(1) NOT NULL DEFAULT 'A',
                 `page_title` varchar(255) NOT NULL,
@@ -722,6 +723,9 @@
         </item>
         <item>
             ALTER TABLE `cscart_product_features` ADD `parent_variant_id` MEDIUMINT(8) UNSIGNED NOT NULL DEFAULT '0'; 
+        </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `menu_subitems` TEXT NOT NULL;
         </item>
     </queries>
     <language_variables>
@@ -822,6 +826,7 @@
         <item lang="ru" id="scale_of_discount">Шкала скидок</item>
         <item lang="ru" id="asphalt_surface">Асфальт</item>
         <item lang="ru" id="update_exchange_rates">Обновить курсы валют и ЦЕНЫ! товаров</item>
+        <item lang="ru" id="generate_menu">Сгенерировать топ меню</item>
         <item lang="ru" id="racket_string_tension">Ракетка - струна - жесткость натяжки</item>
         <item lang="ru" id="additional_info_note">Следующая информация необязательна для заполнения, но другим пользователям будет интересно знать ее, т.к. с ней Ваш комментарий будет более полный</item>
         <item lang="ru" id="tennishouse_general">Основной контейнер TennisHouse</item>

@@ -18,6 +18,8 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 if ($mode == 'update' || $mode == 'add') {
 
+    Registry::get('view')->assign('filter_items', $filters);
+
     $params = array(
         'variants' => false,
         'plain' => true,
@@ -25,13 +27,18 @@ if ($mode == 'update' || $mode == 'add') {
     );
 
     list($filter_features) = fn_get_product_features($params, 0, DESCR_SL);
-
-    Registry::get('view')->assign('filter_features', $filter_features);
     $section_features = array();
     foreach ($filter_features as $i => $feature) {
         $section_features[$feature['feature_id']] = (!empty($feature['group_description']) ? $feature['group_description'] . ': ' : '') . $feature['description'];
     }
     $category_data = Registry::get('view')->gettemplatevars('category_data');
+    $filter_params = array(
+        'get_variants' => false,
+        'short' => true,
+        'category_ids' => $category_data['category_id']
+    );
+    list($filters) = fn_get_product_filters($filter_params);
+    Registry::get('view')->assign('filter_features', $filters);
     if (!empty($category_data['sections_categorization'])) {
         $f_ids = array();
         foreach ($category_data['sections_categorization'] as $j => $f_id) {

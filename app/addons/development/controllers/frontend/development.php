@@ -26,9 +26,6 @@ if ($mode == 'update_rub_rate') {
 } elseif ($mode == 'generate_features_cache') {
     FeaturesCache::generate(CART_LANGUAGE);
     exit;
-} elseif ($mode == 'update_rankings') {
-    fn_update_rankings();
-    exit;
 } elseif ($mode == 'cron_routine') {
     fn_set_hook('cron_routine');
     exit;

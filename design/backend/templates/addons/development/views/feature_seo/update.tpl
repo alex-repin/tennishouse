@@ -77,6 +77,13 @@
         </div>
     </div>
 
+    <div class="control-group">
+        <label class="control-label" for="elm_feature_seo_position">{__("position")}:</label>
+        <div class="controls">
+            <input type="text" name="feature_seo_data[position]" id="elm_feature_seo_position" size="10" value="{$feature_seo.position}" class="input-text-short" />
+        </div>
+    </div>
+    
     <div class="buttons-container">
         {include file="buttons/save_cancel.tpl" but_name="dispatch[feature_seo.update]" cancel_action="close" save=$id but_meta="cm-dialog-closer cm-ajax"}
     </div>

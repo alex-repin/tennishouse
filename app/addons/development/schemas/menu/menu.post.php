@@ -32,9 +32,12 @@ $schema['top']['administration']['items']['development'] = array(
             'href' => 'development.update_rrp',
             'position' => 120,
         ),
+        'generate_menu' => array(
+            'href' => 'development.generate_menu',
+            'position' => 130,
+        ),
         'update_rankings' => array(
-            'href' => fn_url('development.update_rankings', 'C'),
-            'ajax' => true,
+            'href' => 'development.update_rankings',
             'position' => 110,
         ),
     ),

@@ -50,6 +50,9 @@ function fn_init_templater($area = AREA)
 
     $view->registerResource('tygh', new Tygh\SmartyEngine\FileResource());
 
+    // resource for shared templates loaded from backend
+    $view->registerResource('backend', new Tygh\SmartyEngine\BackendResource());
+    
     if ($area == 'A') {
     
         if (!empty($_SESSION['auth']['user_id'])) {

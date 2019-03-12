@@ -1,6 +1,6 @@
 <div id="category_products_{$block.block_id}">
 
-{*if $subcategories && !$category_data.category_id|fn_display_subheaders && !$category_data.parent_id}
+{*if $subcategories && !$category_data.parent_id}
     {math equation="ceil(n/c)" assign="rows" n=$subcategories|count c="2"}
     {split data=$subcategories size=$rows assign="splitted_subcategories"}
     <ul class="subcategories clearfix">
@@ -33,7 +33,7 @@
     {include file="views/products/components/product_filters_advanced_form.tpl" separate_form=true}
 {/if}
 
-{if $tb_feature.variants || $stb_feature.variants}
+{*if $tb_feature.variants || $stb_feature.variants}
     <div class="clearfix" id="tabs_categorization">
         {assign var="ajax_div_ids" value="product_filters_*,products_search_*,category_products_*,product_features_*,breadcrumbs_*,currencies_*,languages_*,tabs_categorization"}
         {if $tb_feature.variants}
@@ -86,7 +86,7 @@
             {/strip}
         <!--subtabs_categorization--></div>
     </div>
-{/if}
+{/if*}
 
 {if $products}
 {assign var="layouts" value=""|fn_get_products_views:false:0}

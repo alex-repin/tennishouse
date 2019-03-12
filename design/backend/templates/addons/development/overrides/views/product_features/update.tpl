@@ -27,7 +27,7 @@
 <div class="tabs cm-j-tabs">
     <ul class="nav nav-tabs">
         <li id="tab_details_{$id}" class="cm-js active"><a>{__("general")}</a></li>
-        <li id="tab_variants_{$id}" class="cm-js cm-ajax {if $feature.feature_type && "SMNE"|strpos:$feature.feature_type === false || !$feature}hidden{/if}"><a href="{"product_features.get_variants?feature_id=`$id`&feature_type=`$feature.feature_type`"|fn_url}">{__("variants")}</a></li>
+        <li id="tab_variants_{$id}" class="cm-js cm-ajax {if $feature.feature_type && "SMNE"|strpos:$feature.feature_type === false || !$feature}hidden{/if}"><a href="{"product_features.get_variants?feature_id=`$id`&feature_type=`$feature.feature_type`&seo_variants=`$feature.seo_variants`"|fn_url}">{__("variants")}</a></li>
         <li id="tab_categories_{$id}" class="cm-js {if $feature.parent_id} hidden{/if}"><a>{__("categories")}</a></li>
     </ul>
 </div>
