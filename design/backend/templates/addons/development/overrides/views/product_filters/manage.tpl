@@ -29,7 +29,7 @@ function fn_check_product_filter_type(value, tab_id, id)
 <div class="cm-j-tabs cm-track tabs tabs-with-conf">
     <ul class="nav nav-tabs">
     <li id="group_0" class="{if 0 == $active_tab} active extra-tab{/if}">
-        <a href="{"product_filters.manage?group_id=`0`"|fn_url}">{__("common_features")}</a>
+        <a href="{"product_filters.manage?group_id=0"|fn_url}">{__("common_features")}</a>
     </li>
     {foreach from=$group_features item=tab key=key name=tabs}
         <li id="group_{$key}" class="{if $key == $active_tab} active extra-tab{/if}">

@@ -150,7 +150,7 @@
             <label class="control-label" for="elm_feature_seo_variants_{$id}">{__("feature_seo_variants")}</label>
             <div class="controls">
             <input type="hidden" name="feature_data[seo_variants]" value="N" />
-            <input type="checkbox" name="feature_data[seo_variants]" value="Y"  data-ca-display-id="OnHeader" {if $feature.seo_variants == "Y"}checked="checked"{/if} {if $feature.feature_type != "S" && $feature.feature_type != "E"}disabled="disabled"{/if} />
+            <input type="checkbox" name="feature_data[seo_variants]" value="Y"  data-ca-display-id="OnHeader" {if $feature.seo_variants == "Y"}checked="checked"{/if} {if !$feature.feature_type|fn_seo_variants_allowed}disabled="disabled"{/if} />
             </div>
         </div>
 

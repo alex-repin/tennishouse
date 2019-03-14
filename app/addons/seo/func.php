@@ -1168,7 +1168,7 @@ function fn_seo_url_post(&$url, &$area, &$original_url, &$prefix, &$company_id_i
             $frst = microtime();
 
             foreach ($seo_vars as $type => $seo_var) {
-                if (!empty($seo_var['is_particle']) || (!$rewritten && (empty($seo_var['dispatch']) || ($seo_var['dispatch'] == $parsed_query['dispatch'] && !empty($parsed_query[$seo_var['item']]))))) {
+                if (!empty($seo_var['is_particle']) || (!$rewritten && (empty($seo_var['dispatch']) || (!empty($seo_var['dispatch']) && $seo_var['dispatch'] == $parsed_query['dispatch'] && !empty($parsed_query[$seo_var['item']]))))) {
                     
                     if (!empty($seo_var['is_particle'])) {
                         if (!empty($seo_var['particle_options'])) {
@@ -2011,7 +2011,7 @@ function fn_seo_check_and_update_product_sharing(&$product_id, &$shared, &$share
 /* Feature hooks */
 function fn_seo_update_product_feature_post(&$feature_data, &$feature_id, &$deleted_variants, &$lang_code)
 {
-    if ($feature_data['feature_type'] == 'E' && !empty($feature_data['variants'])) {
+    if ($feature_data['seo_variants'] == 'Y' && !empty($feature_data['variants'])) {
         if (!empty($feature_data['variants'])) {
             foreach ($feature_data['variants'] as $v) {
                 if (!empty($v['variant_id'])) {

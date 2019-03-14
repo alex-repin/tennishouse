@@ -1520,6 +1520,36 @@ if ($mode == 'calculate_balance') {
     
     fn_echo('Done');
     exit;
+} elseif ($mode == 'cleanup_category_seo') {
+    $cat_ids = db_get_fields("SELECT object_id FROM ?:seo_names LEFT JOIN ?:categories ON ?:categories.category_id = ?:seo_names.object_id WHERE type = 'c' AND category_id IS NULL");
+//     db_query("DELETE FROM ?:seo_names WHERE type = 'c' AND object_id IN (?n)", $cat_ids);
+    exit;
+} elseif ($mode == 'cleanup_feature_seo') {
+    $fv_ids = db_get_fields("SELECT object_id FROM ?:seo_names LEFT JOIN ?:product_feature_variants ON ?:product_feature_variants.variant_id = ?:seo_names.object_id LEFT JOIN ?:product_features ON ?:product_features.feature_id = ?:product_feature_variants.feature_id WHERE type = 'e' AND (seo_variants = 'N' OR ?:product_features.feature_id IS NULL)");
+//     db_query("DELETE FROM ?:seo_names WHERE type = 'e' AND object_id IN (?n)", $fv_ids);
+    exit;
+} elseif ($mode == 'fix_old_seo') {
+    $objects = db_get_array("SELECT * FROM ?:seo_names1 WHERE type = 'p'");
+    $cat_ids = db_get_hash_single_array("SELECT object_id, name FROM ?:seo_names1 WHERE type = 'c'", array('object_id', 'name'));
+    
+    foreach ($objects as $i => $obj) {
+        $src = '';
+        if (!empty($obj['path'])) {
+            $path = explode('/', $obj['path']);
+            $new_path = array();
+            foreach ($path as $pth) {
+                $new_path[] = $cat_ids[$pth];
+            }
+//             fn_seo_update_redirect(array(
+//                 'src' => '/' . implode('/', $new_path) . '/' . $obj['name'],
+//                 'type' => $obj['type'],
+//                 'object_id' => $obj['object_id'],
+//                 'company_id' => 1,
+//                 'lang_code' => 'ru'
+//             ), 0, false);
+        }
+    }
+    exit;
 }
 
 function fn_fill_image_common_description(&$images_alts, $detailed_id, $name)

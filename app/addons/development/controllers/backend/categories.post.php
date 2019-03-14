@@ -35,7 +35,8 @@ if ($mode == 'update' || $mode == 'add') {
     $filter_params = array(
         'get_variants' => false,
         'short' => true,
-        'category_ids' => $category_data['category_id']
+        'category_ids' => $category_data['category_id'],
+        'feature_type' => array('S', 'M', 'E')
     );
     list($filters) = fn_get_product_filters($filter_params);
     Registry::get('view')->assign('filter_features', $filters);

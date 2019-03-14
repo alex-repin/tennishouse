@@ -24,6 +24,11 @@ use Tygh\Enum\ProductTracking;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_seo_variants_allowed($type)
+{
+    return in_array($type, unserialize(SEO_VARIANTS_ALLOWED));
+}
+
 function fn_get_categories_subitems($cats)
 {
     $subitems = array();
@@ -71,55 +76,51 @@ function fn_get_generate_categories_menu_subitems()
         'pfvd.variant'
     );
         
-    $cats_subitems = $features = array();
     foreach ($cats as $c_id => $c_data) {
 
+        $cats_subitems = $features = array();
         $_condition = $condition;
         $category_ids = db_get_fields("SELECT ct1.category_id FROM ?:categories AS ct LEFT JOIN ?:categories AS ct1 ON ct1.id_path LIKE CONCAT(ct.id_path, '/%') WHERE ct.category_id = ?i", $c_id);
         $category_ids[] = $c_id;
+        $limit = 2 - (!empty($subitems[$c_id]['subitems']) ? 1 : 0);
         $_condition .= db_quote(" AND pc.category_id IN (?n)", $category_ids);
-        $features[$c_id] = db_get_hash_single_array("SELECT pf.feature_id, pfd.description FROM ?:product_features AS pf LEFT JOIN ?:product_features_descriptions AS pfd ON pf.feature_id = pfd.feature_id AND pfd.lang_code = ?s WHERE pf.feature_type IN ('S', 'M', 'E') AND pf.seo_variants = 'Y' AND (pf.categories_path = '' OR FIND_IN_SET(?i, pf.categories_path)) AND pf.parent_variant_id = '0' ORDER BY pf.position ASC", array('feature_id', 'description'), CART_LANGUAGE, $c_id);
+        $features = db_get_hash_single_array("SELECT pf.feature_id, pfd.description FROM ?:product_features AS pf LEFT JOIN ?:product_features_descriptions AS pfd ON pf.feature_id = pfd.feature_id AND pfd.lang_code = ?s WHERE pf.feature_type IN (?a) AND pf.seo_variants = 'Y' AND (pf.categories_path = '' OR FIND_IN_SET(?i, pf.categories_path)) AND pf.parent_variant_id = '0' ORDER BY pf.position ASC LIMIT ?i", array('feature_id', 'description'), CART_LANGUAGE, unserialize(SEO_VARIANTS_ALLOWED), $c_id, $limit);
         
-        if (!empty($features[$c_id])) {
-            foreach ($features[$c_id] as $f_id => $f_name) {
-                $cats_subitems[$c_id][$f_id] = db_get_hash_array("SELECT  " . implode(', ', $values_fields) . " FROM ?:product_features_values AS pfvl ?p WHERE pfvl.feature_id = ?i AND pfvl.lang_code = ?s AND ?:products.status IN ('A') ?p GROUP BY pfvl.variant_id ORDER BY products DESC, pfvd.variant", 'variant_id', $join, $f_id, CART_LANGUAGE, $_condition);
+        if (!empty($features)) {
+            foreach ($features as $f_id => $f_name) {
+                $cats_subitems[$f_id] = db_get_hash_array("SELECT  " . implode(', ', $values_fields) . " FROM ?:product_features_values AS pfvl ?p WHERE pfvl.feature_id = ?i AND pfvl.lang_code = ?s AND ?:products.status IN ('A') ?p GROUP BY pfvl.variant_id ORDER BY pfv.position", 'variant_id', $join, $f_id, CART_LANGUAGE, $_condition);
             }
         }
-    }
+        $_subitems = !empty($subitems[$c_id]['subitems']) ? $subitems[$c_id]['subitems'] : array();
+        $subitems[$c_id]['subitems'] = array();
+        if (count($_subitems) > 0) {
+            $subitems[$c_id]['subitems']['subcategories'] = array(
+                'object_id' => $c_id,
+                'is_virtual' => 'Y',
+                'descr' => $subitems[$c_id]['descr'],
+                'subitems' => $_subitems
+            );
+        }
 
-    if (!empty($cats_subitems)) {
-        foreach ($cats_subitems as $c_id => $c_data) {
-            $_subitems = !empty($subitems[$c_id]['subitems']) ? $subitems[$c_id]['subitems'] : array();
-            $subitems[$c_id]['subitems'] = array();
-            if (count($_subitems) > 0) {
-                $subitems[$c_id]['subitems']['subcategories'] = array(
-                    'object_id' => $c_id,
-                    'is_virtual' => 'Y',
-                    'descr' => $subitems[$c_id]['descr'],
-                    'subitems' => $_subitems
-                );
-            }
-    
-            foreach ($c_data as $f_id => $f_data) {
-                $subitems[$c_id]['subitems'][$f_id] = array(
-                    'object_id' => $f_id,
-                    'is_virtual' => 'Y',
+        foreach ($cats_subitems as $f_id => $f_data) {
+            $subitems[$c_id]['subitems'][$f_id] = array(
+                'object_id' => $f_id,
+                'is_virtual' => 'Y',
+                'is_feature' => 'Y',
+                'descr' => $features[$f_id],
+            );
+            foreach ($f_data as $v_id => $v_data) {
+                $subitems[$c_id]['subitems'][$f_id]['subitems'][$v_id] = array(
+                    'object_id' => $v_id,
+                    'is_virtual' => 'N',
                     'is_feature' => 'Y',
-                    'descr' => $features[$c_id][$f_id],
+                    'descr' => $v_data['variant'],
+                    'new_window' => false,
+                    'param' => 'categories.view?category_id=' . $c_id . '&features_hash=V' . $v_id
                 );
-                foreach ($f_data as $v_id => $v_data) {
-                    $subitems[$c_id]['subitems'][$f_id]['subitems'][$v_id] = array(
-                        'object_id' => $v_id,
-                        'is_virtual' => 'N',
-                        'is_feature' => 'Y',
-                        'descr' => $v_data['variant'],
-                        'new_window' => false,
-                        'param' => 'categories.view?category_id=' . $c_id . '&features_hash=V' . $v_id
-                    );
-                }
             }
-            db_query("UPDATE ?:categories SET menu_subitems = ?s WHERE category_id = ?i", serialize($subitems[$c_id]), $c_id);
         }
+        db_query("UPDATE ?:categories SET menu_subitems = ?s WHERE category_id = ?i", serialize($subitems[$c_id]), $c_id);
     }
 }
 
@@ -846,7 +847,7 @@ function fn_format_submenu(&$menu_items)
         foreach ($menu_items as $j => $item) {
             if (!empty($item['subitems'])) {
                 $menu_items[$j]['expand'] = false;
-                if ($item['is_virtual'] == 'Y' && !empty($item['parent_id'])) {
+                if (!empty($item['is_virtual']) && $item['is_virtual'] == 'Y' && !empty($item['parent_id'])) {
                     $menu_items[$j]['href'] = 'categories.view?category_id=' . $item['parent_id'];
                 }
                 if (!empty($item['level']) && $item['level'] > 1 && count($menu_items[$j]['subitems']) < 2 && !empty($menu_items[$j]['is_feature']) && $menu_items[$j]['is_feature'] == 'Y') {
@@ -854,7 +855,7 @@ function fn_format_submenu(&$menu_items)
                 } else {
                     fn_format_submenu($menu_items[$j]['subitems']);
                 }
-            } elseif (!empty($item['level']) && $item['level'] > 1 && $item['is_virtual'] == 'Y' && !empty($menu_items[$j]['is_feature']) && $menu_items[$j]['is_feature'] == 'Y') {
+            } elseif (!empty($item['level']) && $item['level'] > 1 && !empty($item['is_virtual']) && $item['is_virtual'] == 'Y' && !empty($menu_items[$j]['is_feature']) && $menu_items[$j]['is_feature'] == 'Y') {
                 unset($menu_items[$j]);
             }
         }

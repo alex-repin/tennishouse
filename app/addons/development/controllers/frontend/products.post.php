@@ -65,10 +65,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 if ($mode == 'view') {
 
     $product = Registry::get('view')->gettemplatevars('product');
+    $currencies = Registry::get('currencies');
+    $ttl_prc = fn_format_price($product['price']);
     if (__('product_page_title_' . $product['category_type']) != '_product_page_title_' . strtolower($product['category_type']) && __('product_page_title_' . $product['category_type']) != '') {
-        Registry::get('view')->assign('page_title', $product['product'] . ' – ' . __('product_page_title_' . $product['category_type']));
+        Registry::get('view')->assign('page_title', $product['product'] . ' ' . $product['product_code'] . ' – ' . __('product_page_title_' . $product['category_type'], array('[price]' => $ttl_prc . ' ' . strip_tags($currencies[CART_PRIMARY_CURRENCY]['symbol']))));
     } else {
-        Registry::get('view')->assign('page_title', $product['product'] . ' – ' . __('product_page_title'));
+        Registry::get('view')->assign('page_title', $product['product'] . ' ' . $product['product_code'] . ' – ' . __('product_page_title', array('[price]' => $ttl_prc . ' ' . strip_tags($currencies[CART_PRIMARY_CURRENCY]['symbol']))));
     }
     $features = array();
     if (!empty($product['product_features'])) {

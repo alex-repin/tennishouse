@@ -29,8 +29,16 @@ function fn_development_get_filters_products_count_query_params(&$values_fields,
 
 function fn_development_get_product_filters_before_select($fields, $join, &$condition, $group_by, $sorting, $limit, $params, $lang_code)
 {
-    if (isset($params['feature_parent_id']) && $params['feature_parent_id'] !== '') {
-        $condition .= db_quote(" AND ?:product_features.parent_id = ?i", $params['feature_parent_id']);
+    if (isset($params['feature_parent_id'])) {
+        if (!empty($params['feature_parent_id'])) {
+            $condition .= db_quote(" AND ?:product_features.parent_id = ?i", $params['feature_parent_id']);
+        } else {
+            $condition .= db_quote(" AND (?:product_features.parent_id = '0' OR ?:product_features.parent_id IS NULL)", $params['feature_parent_id']);
+        }
+    }
+    if (!empty($params['feature_type'])) {
+        $types = is_array($params['feature_type']) ? $params['feature_type'] : fn_explode(',', $params['feature_type']);
+        $condition .= db_quote(" AND ?:product_features.feature_type IN (?a)", $params['feature_type']);
     }
 }
 
@@ -377,7 +385,7 @@ function fn_development_get_product_feature_data_before_select(&$fields, $join, 
 
 function fn_development_update_product_feature_pre(&$feature_data, $feature_id, $lang_code)
 {
-    if (!in_array($feature_data['feature_type'], array('S', 'E'))) {
+    if (!in_array($feature_data['feature_type'], unserialize(SEO_VARIANTS_ALLOWED))) {
         $feature_data['seo_variants'] = 'N';
     }
 }
@@ -1174,11 +1182,11 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                     } elseif ($product['type'] == 'B') {
                         $product['subtitle'] = __("size") .  ' - ' .  $products_features[$product['product_id']][BAG_SIZE_FEATURE_ID]['variants'];
                     } elseif ($product['type'] == 'ST') {
-                        if (!empty($variants) && count($variants) > 1 && $series_feature['feature_type'] == 'M') {
-                            $product['subtitle'] = __("hybrid");
-                        } else {
+//                         if (!empty($variants) && count($variants) > 1 && $series_feature['feature_type'] == 'M') {
+//                             $product['subtitle'] = __("hybrid");
+//                         } else {
                             $product['subtitle'] = __("structure") .  ' - ' .  reset($variants);
-                        }
+//                         }
                     } elseif ($product['type'] == 'BL') {
                         $product['subtitle'] = __("type") .  ' - ' .  reset($variants);
                         $product['description_features'] = array();
@@ -1488,7 +1496,7 @@ function fn_development_get_filters_products_count_before_select_filters(&$sf_fi
 {
     $sf_fields .= db_quote(", ?:product_filters.is_slider, ?:product_filters.units, ?:product_filters.note_url, ?:product_filters.note_text, ?:product_features.seo_variants");
     $sf_join .= db_quote("LEFT JOIN ?:product_features ON ?:product_features.feature_id = ?:product_filters.feature_id");
-    $condition .= db_quote(" AND (?:product_features.parent_variant_id = '0' OR ?:product_features.parent_variant_id IN (?n))", $av_ids);
+    $condition .= db_quote(" AND (?:product_features.parent_variant_id = '0' OR ?:product_features.parent_variant_id IS NULL OR ?:product_features.parent_variant_id IN (?n))", $av_ids);
 }
 
 function fn_development_update_category_pre(&$category_data, $category_id, $lang_code)
