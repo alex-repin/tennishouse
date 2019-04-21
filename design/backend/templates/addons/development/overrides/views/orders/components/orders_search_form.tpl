@@ -29,13 +29,24 @@
 </div>
 
 <div class="sidebar-field">
-    <label for="issuer">{__("issuer")}</label>
-    <input type="text" name="issuer" id="issuer" value="{$search.issuer}" size="30" />
+    <label for="order_id">{__("order_id")}</label>
+    <div class="controls">
+        <input type="text" name="order_id" id="order_id" value="{$search.order_id}" size="10"/>
+    </div>
 </div>
 
 <div class="sidebar-field">
-    <label for="total_from">{__("total")}&nbsp;({$currencies.$primary_currency.symbol nofilter})</label>
-    <input type="text" class="input-small" name="total_from" id="total_from" value="{$search.total_from}" size="3" /> - <input type="text" class="input-small" name="total_to" value="{$search.total_to}" size="3" />
+    <label for="order_number">{__("order_number")}</label>
+    <div class="controls">
+        <input type="text" name="order_number" id="order_number" value="{$search.order_number}" size="10"/>
+    </div>
+</div>
+
+<div class="sidebar-field">
+    <label for="phone" class="cm-phone">{__("phone")}</label>
+    <div class="controls">
+        <input type="text" class="cm-cr-mask-phone" name="phone" id="phone" value="{$search.phone}" size="10"/>
+    </div>
 </div>
 
 {/capture}
@@ -43,6 +54,18 @@
 {capture name="advanced_search"}
 
 {hook name="orders:advanced_search"}
+
+<div class="group form-horizontal">
+<div class="control-group">
+    <label class="control-label" for="issuer">{__("issuer")}</label>
+    <input type="text" name="issuer" id="issuer" value="{$search.issuer}" size="30" />
+</div>
+
+<div class="control-group">
+    <label class="control-label" for="total_from">{__("total")}&nbsp;({$currencies.$primary_currency.symbol nofilter})</label>
+    <input type="text" class="input-small" name="total_from" id="total_from" value="{$search.total_from}" size="3" /> - <input type="text" class="input-small" name="total_to" value="{$search.total_to}" size="3" />
+</div>
+</div>
 
 <div class="group form-horizontal">
 <div class="control-group">
@@ -76,19 +99,6 @@
             <option value="Y" {if $search.tax_exempt == "Y"}selected="selected"{/if}>{__("yes")}</option>
             <option value="N" {if $search.tax_exempt == "N"}selected="selected"{/if}>{__("no")}</option>
         </select>
-        </div>
-    </div>
-    <div class="control-group">
-        <label class="control-label" for="order_id">{__("order_id")}</label>
-        <div class="controls">
-            <input type="text" name="order_id" id="order_id" value="{$search.order_id}" size="10"/>
-        </div>
-    </div>
-
-    <div class="control-group">
-        <label class="control-label" for="order_number">{__("order_number")}</label>
-        <div class="controls">
-            <input type="text" name="order_number" id="order_number" value="{$search.order_number}" size="10"/>
         </div>
     </div>
 

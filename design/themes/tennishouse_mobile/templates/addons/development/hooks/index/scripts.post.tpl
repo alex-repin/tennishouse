@@ -23,12 +23,15 @@
 {script src="js/addons/development/recaptcha.js"}
 <script src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoaded&render=explicit"></script>
 {/if}
+<script src="https://api-maps.yandex.ru/2.1/?apikey={$addons.development.ymaps_api_key|escape:javascript nofilter}&lang=ru_RU" type="text/javascript"></script>
 
 {script src="js/addons/development/jquery.mobile-1.4.5.min.js"}
 {script src="js/addons/development/jquery.kladr.min.js"}
 
 <script type="text/javascript">
 var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
+var change_pickup_location = '{__("change_pickup_location")|escape:"javascript"}';
+var images_dir = '{$images_dir}';
 
 {literal}
 
@@ -293,6 +296,9 @@ var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
                                             state.selectmenu('refresh');
                                         }
                                     }
+                                    if (typeof(elm.data('callback')) != 'undefined') {
+                                        eval(elm.data('callback'));
+                                    }
                                     state.trigger('change');
                                 },
                             });
@@ -395,6 +401,215 @@ var error_validator_city = '{__("error_validator_city")|escape:"javascript"}';
             fn_hide_form(e, event);
         });
         $(this).unbind( event )
+    }
+    
+    function fn_toggle_ymaps_view()
+    {
+        $('#view_as_list').toggle();
+        $('#view_as_map').toggle();
+        $('#map').toggle();
+        $('#office_list').toggle();
+    }
+    
+    function fn_select_office(code)
+    {
+        $('#office_id').val(code);
+        if ($('#s_state').val() != $('#elm_s_state').val() || $('#elm_s_city').val() != $('#s_city').val()) {
+            var update = true;
+        } else {
+            var update = false;
+        }
+        $('#elm_s_state').val($('#s_state').val());
+        $('#elm_s_city').val($('#s_city').val());
+        $('#elm_s_city_id').val($('#s_city_id').val());
+        
+        $('#opener_pickup_location').removeClass('ty-btn');
+        $('#opener_pickup_location span').html(change_pickup_location);
+        
+        name = $('#office_name_' + code).html() + ' | ';
+        if (typeof($('#office_metro_' + code).data('metroStation')) != 'undefined') {
+            name += $('#office_metro_' + code).data('metroStation') + ' | ';
+        }
+        name += $('#office_address_' + code).html();
+        $('#selected_office_data').html(name).removeClass('hidden');
+
+        if (update) {
+            $('#step_three_but').click();
+        }
+    }
+    
+    function fn_ymaps_hide_office()
+    {
+        $('#office_details_list').hide();
+        $('#office_details_list_block').children().hide();
+    }
+    
+    function fn_ymaps_show_office(id)
+    {
+        $('#office_details_list').show();
+        $('#office_details_list_block').children().hide();
+        $('#office_' + id + '_details').show();
+    }
+    
+    function fn_rebuild_offices(relocate)
+    {
+        if (typeof(ymaps) == 'undefined') {
+            return false;
+        }
+        offices = [];
+        var clusterIcons = [{
+            href: images_dir + '/addons/development/cluster.svg',
+            size: [48, 48],
+            offset: [-24, -24]
+        }];
+        clusterer = new ymaps.Clusterer({
+            clusterIcons: clusterIcons,
+        });
+        $('#office_list').children('.ty-one-office').each(function() {
+            var plcm = new ymaps.Placemark([$(this).data('ymapsCoordY'), $(this).data('ymapsCoordX')], {'id': $(this).data('ymapsCode')}, {
+                iconLayout: 'default#image',
+                iconImageHref: images_dir + '/addons/development/placemark.svg',
+                iconImageSize: [44, 44],
+                iconImageOffset: [-15, -27]
+            });
+            plcm.events.add('click', function() {
+                fn_ymaps_show_office(plcm.properties.get('id'));
+            });
+            offices.push(plcm);
+        });
+        
+        if (offices.length > 0) {
+            clusterer.add(offices);
+            myMap.geoObjects.add(clusterer);
+
+            if (relocate) {
+                var coords = ymaps.util.bounds.getCenterAndZoom(myMap.geoObjects.getBounds(), myMap.container.getSize(), myMap.options.get('projection'));
+                if (offices.length > 1) {
+                    zoom = coords.zoom;
+                } else {
+                    zoom = 14;
+                }
+                myMap.setCenter(coords.center, zoom);
+            }
+            
+        } else {
+            ymaps.geocode($("#ymaps_select_city [data-autocompletetype='city']").val(), {
+                results: 1
+            }).then(function (res) {
+                var firstGeoObject = res.geoObjects.get(0),
+                bounds = firstGeoObject.properties.get('boundedBy');
+
+                myMap.setBounds(bounds, {
+                    checkZoomRange: true
+                });
+            });
+            
+        }
+    }
+    
+    function fn_reload_city_offices(relocate)
+    {
+        var ymaps_select_city = $('#ymaps_select_city');
+        $.ceAjax('request', fn_url('sdek.select_office'), {
+            method: 'post',
+            result_ids: 'office_list,office_details_list,ymaps_select_city',
+            data: {country: $("[data-autocompletetype='country']", ymaps_select_city).val(), state: $("[data-autocompletetype='state']", ymaps_select_city).val(), city: $("[data-autocompletetype='city']", ymaps_select_city).val(), city_id: $("[data-autocompletetype='city_id']", ymaps_select_city).val()},
+            callback: function(data) {
+                if (typeof(ymaps) != 'undefined') {
+                    myMap.geoObjects.removeAll();
+                }
+                fn_rebuild_offices(relocate);
+                $('#ymaps_select_city').each(function() {
+                    fn_init_autocomplete($(this));
+                });
+            },
+        });
+    }
+
+    function fn_init_ymaps()
+    {
+    
+        if (typeof(myMap) == 'undefined' || $('#map').html().length == 0) {
+            $('#ymaps_select_city').each(function() {
+                fn_init_autocomplete($(this));
+            });
+            
+            if (typeof(ymaps) != 'undefined') {
+            ymaps.ready(function () {
+                
+                if ($("#ymaps_select_city [data-autocompletetype='city']").val()) {
+                    myMap = new ymaps.Map("map", {
+                        center: [55.76, 37.64],
+                        zoom: 5,
+                        controls: ['zoomControl']
+                    }, {suppressMapOpenBlock: true});
+                    
+                    var searchControl = new ymaps.control.SearchControl({
+                        options: {
+                            float: 'left',
+                            floatIndex: 100,
+                            noPlacemark: true,
+                            maxWidth: [30, 72, 500],
+                            fitMaxWidth: true,
+                        }
+                    });
+                    searchControl.events.add('resultselect', function (e) {
+                        var result = searchControl.getResult(0);
+                        result.then(function (res) {
+                            properties = res.properties.get('metaDataProperty.GeocoderMetaData.Address.Components');
+                            var city_name, state_name;
+                            if (properties.length) {
+                                for (var i = 0; i < properties.length; i++) {
+                                    if (properties[i].kind == 'locality') {
+                                        city_name = properties[i].name;
+                                    }
+                                    if (properties[i].kind == 'province') {
+                                        state_name = properties[i].name;
+                                    }
+                                }
+                                if (state_name.length && city_name.length) {
+                                    $.ceAjax('request', fn_url('development.find_state_match'), {
+                                        method: 'post',
+                                        data: {state: state_name},
+                                        callback: function(data) {
+                                            state_code = data.text.replace(/\"/g, "");
+                                            if (state_code.length) {
+                                                if (state_code != $("#ymaps_select_city [data-autocompletetype='state']").val() || city_name != $("#ymaps_select_city [data-autocompletetype='city']").val()) {
+                                                    $("#ymaps_select_city [data-autocompletetype='state']").val(state_code);
+                                                    $("#ymaps_select_city [data-autocompletetype='city']").val(city_name);
+
+                                                    
+                                                    $.ceAjax('request', fn_url('sdek.select_office'), {
+                                                        method: 'post',
+                                                        result_ids: 'office_list,office_details_list,ymaps_select_city',
+                                                        data: {country: $("#ymaps_select_city [data-autocompletetype='country']").val(), state: state_code, city: city_name},
+                                                        callback: function(data) {
+                                                            myMap.geoObjects.removeAll();
+                                                            fn_rebuild_offices(false);
+                                                            $('#ymaps_select_city').each(function() {
+                                                                fn_init_autocomplete($(this));
+                                                            });
+                                                        },
+                                                    });
+                                                }
+                                            }
+                                        },
+                                    });
+                                }
+                            }
+                            
+                        }, function (err) {
+                            console.log("Ошибка");
+                        });
+                    });
+                    myMap.controls.add(searchControl);
+                    
+                }
+                
+                fn_rebuild_offices(true);
+            });
+            }
+        }
     }
         
     (function(_, $) {

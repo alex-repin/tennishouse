@@ -1601,7 +1601,7 @@ function fn_update_user($user_id, $user_data, &$auth, $ship_to_another, $notify_
         }
     } else {
         if (AREA == 'C') {
-            fn_set_notification('N', __('information'), __('text_profile_is_updated'));
+            fn_set_notification('N', __('information'), __('text_profile_is_updated'), '', 'update');
         }
     }
 

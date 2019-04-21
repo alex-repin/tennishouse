@@ -275,6 +275,20 @@
                     </item>
                 </items>
             </section>
+            <section id="yandex_maps">
+                <translations>
+                    <item lang="ru">Yandex Maps</item>
+                </translations>
+                <items>
+                    <item id="ymaps_api_key">
+                        <type>input</type>
+                        <default_value>7846960e-f39a-40ab-b471-e15dc3a56109</default_value>
+                        <translations>
+                            <item lang="ru">API key</item>
+                        </translations>
+                    </item>
+                </items>
+            </section>
         </sections>
     </settings>
     <compatibility>
@@ -1420,5 +1434,19 @@
         <item lang="ru" id="feature_seo">SEO для характеристик</item>
         <item lang="ru" id="choose_feature">Выберите характеристику</item>
         <item lang="ru" id="parent_feature_variant">Родительская характеристика</item>
+        <item lang="ru" id="select_pickup_location">Выбрать пункт</item>
+        <item lang="ru" id="pickup_location_selection">Выбор пункта самовывоза</item>
+        <item lang="ru" id="metro_station">Станция метро</item>
+        <item lang="ru" id="back_to_list">Назад к списку</item>
+        <item lang="ru" id="working_hours_text">Время работы</item>
+        <item lang="ru" id="how_to_get">Как добраться</item>
+        <item lang="ru" id="locality">Населенный пункт</item>
+        <item lang="ru" id="select_this_office">Выбрать этот пункт</item>
+        <item lang="ru" id="no_offices_in_this_city">К сожалению, в этом населенном пункте нет пунктов выдачи. Пожалуйста, выберите другой.</item>
+        <item lang="ru" id="change_pickup_location">Изменить пункт</item>
+        <item lang="ru" id="zoom_out_to_see_offices">Уменьшите масштаб, чтобы увидеть ближайшие пункты</item>
+        <item lang="ru" id="zoom_out_to_see_more_offices">Уменьшите масштаб, чтобы увидеть больше пунктов в этом городе</item>
+        <item lang="ru" id="ymaps_display_as_list">Показать списком</item>
+        <item lang="ru" id="ymaps_display_as_map">Показать на карте</item>
     </language_variables>
 </addon>

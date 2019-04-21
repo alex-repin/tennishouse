@@ -120,8 +120,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // Fill shipping info with billing if needed
             if (empty($_REQUEST['ship_to_another'])) {
-                fn_fill_address($_REQUEST['user_data'], $profile_fields, true);
+                fn_fill_address($_REQUEST['user_data'], $profile_fields, !fn_compare_shipping_billing($profile_fields));
             }
+            
             // Add descriptions for countries and states
             fn_add_user_data_descriptions($_REQUEST['user_data']);
             $cart['user_data'] = $_REQUEST['user_data'];

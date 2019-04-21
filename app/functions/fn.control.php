@@ -337,14 +337,14 @@ function fn_dispatch($controller = '', $mode = '', $action = '', $dispatch_extra
     } elseif ($area == 'C' && $_SERVER['REQUEST_METHOD'] != 'POST' && !defined('AJAX_REQUEST')) {
         $secure_controllers = fn_get_secure_controllers();
         // if we are not on https but controller is secure, redirect to https
-        if (isset($secure_controllers[$controller]) && $secure_controllers[$controller] == 'active' && !defined('HTTPS')) {
+        if (/*isset($secure_controllers[$controller]) && $secure_controllers[$controller] == 'active' &&*/ !defined('HTTPS')) {
             fn_redirect(Registry::get('config.https_location') . '/' . Registry::get('config.current_url'));
         }
 
         // if we are on https and the controller is insecure, redirect to http
-        if (!isset($secure_controllers[$controller]) && defined('HTTPS') && Registry::get('settings.Security.keep_https') != 'Y') {
-            fn_redirect('http://' . Registry::get('config.http_host') . Registry::get('config.http_path') . '/' . Registry::get('config.current_url'));
-        }
+//         if (!isset($secure_controllers[$controller]) && defined('HTTPS') && Registry::get('settings.Security.keep_https') != 'Y') {
+//             fn_redirect('http://' . Registry::get('config.http_host') . Registry::get('config.http_path') . '/' . Registry::get('config.current_url'));
+//         }
     }
 
     LastView::instance()->prepare($_REQUEST);

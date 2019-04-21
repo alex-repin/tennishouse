@@ -480,7 +480,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $errors = false;
 
             // Update billing/shipping information
-            if ($_REQUEST['update_step'] == 'step_two' || $_REQUEST['update_step'] == 'step_one' && !$errors) {
+            if ($_REQUEST['update_step'] == 'step_three' || $_REQUEST['update_step'] == 'step_two' || $_REQUEST['update_step'] == 'step_one' && !$errors) {
                 if (!empty($user_data)) {
                     $user_data = fn_array_merge($current_user_data, $user_data);
                     $user_data['user_type'] = !empty($current_user_data['user_type']) ? $current_user_data['user_type'] : AREA;
@@ -505,6 +505,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 list($user_id, $profile_id) = fn_update_user($auth['user_id'], $user_data, $auth, !empty($_REQUEST['ship_to_another']), $send_notification, false);
 
+                fn_delete_notification('update');
                 $cart['profile_id'] = $profile_id;
             }
 

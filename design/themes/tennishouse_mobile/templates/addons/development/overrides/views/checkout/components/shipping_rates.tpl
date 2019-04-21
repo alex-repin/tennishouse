@@ -1,6 +1,10 @@
 {literal}
 <script type="text/javascript">
-function fn_calculate_total_shipping_cost() {
+function fn_calculate_total_shipping_cost(obj) {
+
+    if (obj.attr('checked') == 'checked') {
+        return true;
+    }
     params = [];
     parents = Tygh.$('#shipping_rates_list');
     radio = Tygh.$('input[type=radio]:checked', parents);
@@ -15,6 +19,7 @@ function fn_calculate_total_shipping_cost() {
         url += '&' + params[i]['name'] + '=' + escape(params[i]['value']);
     }
 
+    obj.attr('checked', 'checked');
     Tygh.$.ceAjax('request', url, {
         result_ids: 'shipping_rates_list,checkout_info_summary_*,checkout_order_info_*',
         method: 'get',
@@ -116,7 +121,7 @@ function fn_calculate_total_shipping_cost() {
                         {if $display == "radio"}
                                 <div class="ty-shipping-options__method-group" id="shipping_group_{$group_key}_{$shipping.shipping_id}">
                                     <div class="ty-shipping-options__method-info">
-                                        <input type="radio" class="ty-valign" id="sh_{$group_key}_{$shipping.shipping_id}" name="shipping_ids[{$group_key}]" value="{$shipping.shipping_id}" onclick="fn_calculate_total_shipping_cost();" {$checked} />
+                                        <input type="radio" class="ty-valign" id="sh_{$group_key}_{$shipping.shipping_id}" name="shipping_ids[{$group_key}]" value="{$shipping.shipping_id}" onclick="fn_calculate_total_shipping_cost($(this));" {$checked} />
                                         <label for="sh_{$group_key}_{$shipping.shipping_id}" class="ty-valign ty-shipping-options__item-title">
                                             {if $shipping.icon}
                                                 {include file="common/image.tpl" obj_id=$shipping.shipping_id images=$shipping.icon image_width="70" image_height="35" keep_transparent=true}
@@ -124,7 +129,7 @@ function fn_calculate_total_shipping_cost() {
                                             <div>{$shipping.shipping} {$delivery_time} - <b>{$rate nofilter}</b></div>
                                         </label>
                                     </div>
-                                    <div class="ty-shipping-options__method-payments">
+                                    {*<div class="ty-shipping-options__method-payments">
                                         {foreach from=$shipping.available_payments key="payment_type" item="payment_status"}
                                             <div>
                                                 <div class="ty-shipping-options__method-payments-mark">
@@ -136,7 +141,7 @@ function fn_calculate_total_shipping_cost() {
                                                 </div><div class="ty-shipping-options__method-payments-type">{if $payment_status == 'Y'}{__($payment_type)}{else}{__("`$payment_type`_disabled")}{/if}</div>
                                             </div>
                                         {/foreach}
-                                    </div>
+                                    </div>*}
                                 </div>
                                 {*if $shipping.website}
                                 <div class="shipping_carrier_link">

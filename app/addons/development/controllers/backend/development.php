@@ -631,6 +631,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
     
+    if ($mode == 'find_state_match') {
+        header('Content-Type: application/json');
+        $state = fn_find_state_match($_REQUEST['state']);
+        fn_echo(json_encode($state['code']));
+        exit;
+    }
+    
     return array(CONTROLLER_STATUS_OK, $suffix);
 }
 

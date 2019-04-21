@@ -395,6 +395,9 @@ function fn_development_get_orders($params, $fields, $sortings, &$condition, $jo
     if (!empty($params['order_number'])) {
         $condition .= db_quote(" AND ?:orders.order_number LIKE ?l", "%" . trim($params['order_number']) . "%");
     }
+    if (!empty($params['phone'])) {
+        $condition .= db_quote(" AND ?:orders.phone = ?s", trim($params['phone']));
+    }
 }
 
 function fn_development_pre_get_orders($params, &$fields, $sortings, $get_totals, $lang_code)

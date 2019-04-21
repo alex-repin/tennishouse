@@ -10088,6 +10088,7 @@ var dialog = $.widget( "ui.dialog", {
 		minHeight: 150,
 		minWidth: 150,
 		modal: false,
+                fullMode: false,
 		position: {
 			my: "center",
 			at: "center",
@@ -10149,10 +10150,12 @@ var dialog = $.widget( "ui.dialog", {
 			parent: this.element.parent(),
 			index: this.element.parent().children().index( this.element )
 		};
+                
                 this.originalTitle = this.element.attr( "title" );
 		this.options.title = this.options.title || this.originalTitle;
                 this.originalTitleTag = this.element.data('titleTag');
                 this.options.titleTag = this.originalTitleTag || this.options.titleTag;
+                this.options.fullMode = this.element.data( "fullMode" );
 
 		this._createWrapper();
 
@@ -10894,6 +10897,10 @@ var dialog = $.widget( "ui.dialog", {
 		});
 		this.document.data( "ui-dialog-overlays",
 			(this.document.data( "ui-dialog-overlays" ) || 0) + 1 );
+                if ( this.options.fullMode ) {
+                    // Tennishouse
+                    this.uiDialog.wrap( "<div class='ui-dialog-wrapper'></div>" ).wrap( "<div class='ui-dialog-wrapper-layer'></div>" );
+                }
 	},
 
 	_destroyOverlay: function() {
@@ -10914,6 +10921,10 @@ var dialog = $.widget( "ui.dialog", {
 
 			this.overlay.remove();
 			this.overlay = null;
+                        if ( this.options.fullMode ) {
+                            // Tennishouse
+                            this.uiDialog.unwrap().unwrap();
+                        }
 		}
 	}
 });
