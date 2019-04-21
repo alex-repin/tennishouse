@@ -568,6 +568,33 @@ var images_dir = '{$images_dir}';
         }
     }
     
+    function fn_ymaps_refresh_offices()
+    {
+        if (typeof(ymaps) == 'undefined') {
+            return false;
+        }
+        $('#office_list').children('.ty-one-office').each(function(){
+            $(this).hide();
+        });
+        var visibleObjects = ymaps.geoQuery(offices).searchIntersect(myMap);
+        
+        visibleObjects.each(function(x) {
+            $('#office_' + x.properties.get('id')).show();
+        });
+        
+        if (!visibleObjects.getLength()) {
+            $('#no_offices_zoom_tip').show();
+            $('#more_offices_zoom_tip').hide();
+        } else {
+            if (ymaps.geoQuery(offices).getLength() > visibleObjects.getLength()) {
+                $('#more_offices_zoom_tip').show();
+            } else {
+                $('#more_offices_zoom_tip').hide();
+            }
+            $('#no_offices_zoom_tip').hide();
+        }
+    }
+    
     function fn_rebuild_offices(offices_list, relocate)
     {
         if (typeof(ymaps) == 'undefined') {
@@ -614,26 +641,7 @@ var images_dir = '{$images_dir}';
             }
             
             myMap.events.add('boundschange', function () {
-                $('#office_list').children('.ty-one-office').each(function(){
-                    $(this).hide();
-                });
-                var visibleObjects = ymaps.geoQuery(offices).searchIntersect(myMap);
-                
-                visibleObjects.each(function(x) {
-                    $('#office_' + x.properties.get('id')).show();
-                });
-                
-                if (!visibleObjects.getLength()) {
-                    $('#no_offices_zoom_tip').show();
-                    $('#more_offices_zoom_tip').hide();
-                } else {
-                    if (ymaps.geoQuery(offices).getLength() > visibleObjects.getLength()) {
-                        $('#more_offices_zoom_tip').show();
-                    } else {
-                        $('#more_offices_zoom_tip').hide();
-                    }
-                    $('#no_offices_zoom_tip').hide();
-                }
+                fn_ymaps_refresh_offices();
             });
         } else {
             ymaps.geocode($("#office_list [data-autocompletetype='city']").val(), {
@@ -729,7 +737,7 @@ var images_dir = '{$images_dir}';
                                                         callback: function(data) {
                                                             myMap.geoObjects.removeAll();
                                                             fn_rebuild_offices($('#office_list'), false);
-    //                                                         myMap.events.fire('boundschange');
+                                                            fn_ymaps_refresh_offices();
                                                             $('#ymaps_select_city').each(function() {
                                                                 fn_init_autocomplete($(this));
                                                             });
