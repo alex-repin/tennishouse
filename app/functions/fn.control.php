@@ -337,7 +337,7 @@ function fn_dispatch($controller = '', $mode = '', $action = '', $dispatch_extra
     } elseif ($area == 'C' && $_SERVER['REQUEST_METHOD'] != 'POST' && !defined('AJAX_REQUEST')) {
         $secure_controllers = fn_get_secure_controllers();
         // if we are not on https but controller is secure, redirect to https
-        if (/*isset($secure_controllers[$controller]) && $secure_controllers[$controller] == 'active' &&*/ !defined('HTTPS')) {
+        if (isset($secure_controllers[$controller]) && $secure_controllers[$controller] == 'active' && !defined('HTTPS')) {
             fn_redirect(Registry::get('config.https_location') . '/' . Registry::get('config.current_url'));
         }
 
