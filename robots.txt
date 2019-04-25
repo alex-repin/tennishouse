@@ -1,8 +1,8 @@
 User-agent: *
 Disallow: /app/
 Disallow: /store_closed.html
-Sitemap: http://www.tennishouse.ru/sitemap.xml
-Host: www.tennishouse.ru
+Sitemap: https://www.tennishouse.ru/sitemap.xml
+Host: https://www.tennishouse.ru
 
 User-agent: bingbot
 Disallow: /

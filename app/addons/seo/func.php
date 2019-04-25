@@ -783,9 +783,9 @@ function fn_seo_get_parent_items_path($seo_var, $object_type, $object_id, $compa
  */
 function fn_seo_is_indexed_page($request)
 {
-    if (defined('HTTPS')) {
-        return false;
-    }
+//     if (defined('HTTPS')) {
+//         return false;
+//     }
 
     $indexed_pages = array();
     $seo_vars = fn_get_seo_vars();
