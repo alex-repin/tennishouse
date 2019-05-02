@@ -213,6 +213,8 @@ define('PROMOTION_TAG', 'P');
 define('FILTER_BLOCK_ID', 30);
 define('FILTER_SNAPPING_ID', 35);
 
+define('ORDER_STATUS_DELIVERED', 'H');
+
 define('SEO_VARIANTS_ALLOWED', serialize(array('S', 'M', 'E')));
 define('EXC_PRODUCT_ITEMS', serialize(array(1615, 912, 778, 779, 780, 781, 782, 831, 1307, 1312, 1313, 1314, 1315, 1316, 1317, 1318, 1319)));
 define('BIG_CITIES', serialize(array(

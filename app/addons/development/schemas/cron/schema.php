@@ -35,4 +35,8 @@ return array(
         'frequency' => 60 * 60 * 24,
         'function' => 'fn_get_generate_categories_menu_subitems'
     ),
+    'S' => array(
+        'frequency' => 60 * 60 * 24,
+        'function' => 'fn_check_delivery_statuses'
+    ),
 );

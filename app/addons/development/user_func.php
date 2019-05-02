@@ -21,8 +21,48 @@ use Tygh\Menu;
 use Tygh\Shippings\Shippings;
 use Tygh\Settings;
 use Tygh\Enum\ProductTracking;
+use Tygh\Shippings\RusSdek;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
+
+function fn_check_delivery_statuses()
+{
+    $data = db_get_hash_array("SELECT ?:orders.order_id, GROUP_CONCAT(DISTINCT ?:shipment_items.shipment_id SEPARATOR ',') AS shipment_ids FROM ?:orders LEFT JOIN ?:shipment_items ON ?:shipment_items.order_id = ?:orders.order_id WHERE ?:orders.status = 'A' GROUP BY order_id", 'order_id');
+    
+    if (!empty($data)) {
+        $_shipment_ids = array();
+        foreach ($data as $order_id => $order_data) {
+            $data[$order_id]['shipment_ids'] = explode(',', $order_data['shipment_ids']);
+            $_shipment_ids = array_merge($_shipment_ids, $data[$order_id]['shipment_ids']);
+        }
+        $shipment_data = db_get_hash_array("SELECT shipment_id, shipping_id, timestamp FROM ?:shipments WHERE shipment_id IN (?n)", 'shipment_id', $_shipment_ids);
+        foreach ($data as $order_id => $order_data) {
+            foreach ($order_data['shipment_ids'] as $i => $shipment_id) {
+                if (!empty($shipment_data[$shipment_id])) {
+                    $params_shipping = array(
+                        'shipping_id' => $shipment_data[$shipment_id]['shipping_id'],
+                        'Date' => date("Y-m-d", $shipment_data[$shipment_id]['timestamp']),
+                    );
+                    $data_auth = RusSdek::SdekDataAuth($params_shipping);
+                    if (empty($data_auth)) {
+                        continue;
+                    }
+                    fn_print_r($data_auth, $order_id, $shipment_id);
+                    $date_status = RusSdek::orderStatusXml($data_auth, $order_id, $shipment_id);
+                    fn_print_die($date_status);
+                    RusSdek::SdekAddStatusOrders($date_status);
+                    $last = array_pop($date_status);
+                    if ($last['status'] == 'Вручен') {
+                        unset($data[$order_id]['shipment_ids'][$i]);
+                    }
+                }
+            }
+            if (empty($data[$order_id]['shipment_ids'])) {
+                fn_change_order_status($order_id, ORDER_STATUS_DELIVERED);
+            }
+        }
+    }
+}
 
 function fn_seo_variants_allowed($type)
 {
