@@ -40,7 +40,10 @@ if ($mode == 'create_order' && !empty($_REQUEST['user_id'])) {
         foreach ($cart_info['products'] as $key => $product) {
             $cart_info['products'][$key] = unserialize($product['extra']);
             if (!empty($product['user_data']) && empty($user_data)) {
-                $user_data = unserialize($product['user_data']);
+                $ud = unserialize($product['user_data']);
+                if (!empty($ud)) {
+                    $user_data = $ud;
+                }
             }
         }
     }
