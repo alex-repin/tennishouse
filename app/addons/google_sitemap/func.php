@@ -27,7 +27,7 @@ function fn_get_google_sitemap_company_condition($field)
 
 function fn_google_sitemap_generate_link($object, $value, $languages)
 {
-    $http_location = Registry::get('config.http_location');
+    $http_location = Registry::get('config.https_location');
 
     switch ($object) {
         case 'product':
@@ -60,10 +60,10 @@ function fn_google_sitemap_generate_link($object, $value, $languages)
 
     $links = array();
     if (count($languages) == 1) {
-        $links[] = fn_url($link, 'C', 'http', CART_LANGUAGE);
+        $links[] = fn_url($link, 'C', 'https', CART_LANGUAGE);
     } else {
         foreach ($languages as $lang_code => $lang) {
-            $links[] = fn_url($link . '&sl=' . $lang_code, 'C', 'http', $lang_code);
+            $links[] = fn_url($link . '&sl=' . $lang_code, 'C', 'https', $lang_code);
         }
     }
 
@@ -152,7 +152,7 @@ function fn_google_sitemap_get_content($map_page = 0)
     define('MAX_SIZE_IN_KBYTES', 10000); // 10240 KB || 10 Mb is the maximum for one sitemap file
 
     $sitemap_settings = Registry::get('addons.google_sitemap');
-    $location = Registry::get('config.http_location');
+    $location = Registry::get('config.https_location');
     $lmod = date("Y-m-d", TIME);
 
     header("Content-Type: text/xml;charset=utf-8");
@@ -198,10 +198,20 @@ HEAD;
 
     if ($sitemap_settings['include_categories'] == "Y") {
         $categories = db_get_fields("SELECT category_id FROM ?:categories WHERE FIND_IN_SET(?i, usergroup_ids) AND status = 'A' ?p", USERGROUP_ALL, fn_get_google_sitemap_company_condition('?:categories.company_id'));
+        
+        $features_seo = db_get_hash_multi_array("SELECT combination, category_id, item_id FROM ?:category_feature_seo WHERE status = 'A'", array('category_id', 'item_id'));
 
         //Add the all active categories
         foreach ($categories as $category) {
             $links = fn_google_sitemap_generate_link('category', $category, $languages);
+            
+            if (!empty($features_seo[$category])) {
+                foreach ($features_seo[$category] as $c_data) {
+                    $ids = explode(',', $c_data['combination']);
+                    $lks = fn_google_sitemap_generate_link('category', $category . '?features_hash=V' . implode('.V', $ids), $languages);
+                    $links = array_merge($links, $lks);
+                }
+            }
             $item = fn_google_sitemap_print_item_info($links, $lmod, $sitemap_settings['categories_change'], $sitemap_settings['categories_priority']);
 
             fn_google_sitemap_check_counter($file, $link_counter, $file_counter, $links, $simple_head, $simple_foot);
@@ -302,7 +312,7 @@ HEAD;
         $params = array('plain' => true);
         list($players, ) = fn_get_players($params);
 
-        $links = array(fn_url('players.list', 'C', 'http', CART_LANGUAGE));
+        $links = array(fn_url('players.list', 'C', 'https', CART_LANGUAGE));
         $item = fn_google_sitemap_print_item_info($links, $lmod, $sitemap_settings['players_change'], $sitemap_settings['players_priority']);
         fn_google_sitemap_check_counter($file, $link_counter, $file_counter, $links, $simple_head, $simple_foot);
         fwrite($file, $item);
@@ -335,7 +345,7 @@ HEAD;
             if ($seo_enabled) {
                 $name = $location . '/sitemap' . $i . '.xml';
             } else {
-                $name = fn_url('xmlsitemap.view?page=' . $i, 'C', 'http');
+                $name = fn_url('xmlsitemap.view?page=' . $i, 'C', 'https');
             }
 
             $name = htmlentities($name);

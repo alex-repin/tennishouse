@@ -278,7 +278,7 @@ function fn_call_requests_place_order($params, &$cart, &$auth, $product_data)
         ), $cart, $auth);
     }
 
-    fn_calculate_cart_content($cart, $auth, 'A', true, 'F', true);
+    fn_calculate_cart_content($cart, $auth, 'A', true, 'F', false);
 
     $order_id = 0;
     if ($res = fn_place_order($cart, $auth)) {

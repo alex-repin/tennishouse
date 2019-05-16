@@ -121,7 +121,7 @@ function fn_calculate_total_shipping_cost(obj) {
                         {if $display == "radio"}
                                 <div class="ty-shipping-options__method-group" id="shipping_group_{$group_key}_{$shipping.shipping_id}">
                                     <div class="ty-shipping-options__method-info">
-                                        <input type="radio" class="ty-valign" id="sh_{$group_key}_{$shipping.shipping_id}" name="shipping_ids[{$group_key}]" value="{$shipping.shipping_id}" onclick="fn_calculate_total_shipping_cost($(this));" {$checked} />
+                                        <input type="radio" class="ty-valign" id="sh_{$group_key}_{$shipping.shipping_id}" name="shipping_ids[{$group_key}]" value="{$shipping.shipping_id}" onchange="fn_calculate_total_shipping_cost($(this));" {$checked} />
                                         <label for="sh_{$group_key}_{$shipping.shipping_id}" class="ty-valign ty-shipping-options__item-title">
                                             {if $shipping.icon}
                                                 {include file="common/image.tpl" obj_id=$shipping.shipping_id images=$shipping.icon image_width="70" image_height="35" keep_transparent=true}

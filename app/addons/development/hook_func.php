@@ -2204,7 +2204,7 @@ function fn_development_render_blocks($grid, &$block, $object, $content)
 {
     if (!empty($block['properties']['capture_content']) && $block['properties']['capture_content'] == 'Y' && $block['object_type'] == 'products' && !empty($block['object_id'])) {
         $product = Registry::get('view')->getTemplateVars('product');
-        if (!empty($product) && ($product['product_type'] != 'C' && $product['amount'] <= 0) || ($product['product_type'] == 'C' && empty($product['hide_stock_info']))) {
+        if (!empty($product) && $product['tracking'] != 'D' && ($product['product_type'] != 'C' && $product['amount'] <= 0) || ($product['product_type'] == 'C' && empty($product['hide_stock_info']))) {
             $dmode = fn_get_session_data('dmode');
             if ($dmode != 'M') {
                 $block['extra_properties']['columns_number'] = 2;

@@ -1974,9 +1974,9 @@ function fn_change_order_status($order_id, $status_to, $status_from = '', $force
                 if ($order_warehouses == false) {
                     $status_to = 'B'; //backorder
                     $_error = true;
-                    fn_set_notification('W', __('warning'), __('low_stock_subj', array(
-                        '[product]' => fn_get_product_name($v['product_id']) . ' #' . $v['product_id']
-                    )));
+//                     fn_set_notification('W', __('warning'), __('low_stock_subj', array(
+//                         '[product]' => fn_get_product_name($v['product_id']) . ' #' . $v['product_id']
+//                     )));
 
                     break;
                 } else {
@@ -4421,7 +4421,7 @@ function fn_order_placement_routines($action = '', $order_id = 0, $force_notific
                     fn_set_notification('N', __('order_placed'), __('text_order_placed_successfully'), 'K');
                 }
             } elseif ($status == STATUS_BACKORDERED_ORDER) {
-                fn_set_notification('W', __('important'), __('text_order_backordered'));
+                fn_set_notification('N', __('important'), __('text_order_backordered'));
             } else {
                 $_payment_info = db_get_field("SELECT data FROM ?:order_data WHERE order_id = ?i AND type = 'P'", $order_id);
                 if ($area == 'A' || $action == 'repay') {
