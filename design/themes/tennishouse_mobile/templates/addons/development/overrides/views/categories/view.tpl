@@ -113,7 +113,7 @@
 <!--category_products_{$block.block_id}--></div>
 
 {capture name="mainbox_title"}
-{$category_data.category}
+{if $category_data.page_title}{$category_data.page_title}{else}{$category_data.category}{/if}
 {if $category_data.brand.image_pair.icon.image_path}
     <div class="ty-category__title">
         <div class="ty-category__title-logo">
