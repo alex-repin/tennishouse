@@ -41,15 +41,13 @@ function fn_update_competitive_catalog($fresh = false)
     
     while (true) {
         if (list($price, $code, $name) = fn_parse_competitive_price($link . $cur_id)) {
-            if (!empty($price) && !empty($name) && !empty($code)) {
-                $data[] = array(
-                    'link' => $link . $cur_id,
-                    'code' => $code,
-                    'name' => $name,
-                    'price' => $price,
-                    'object_id' => $cur_id
-                );
-            }
+            $data[] = array(
+                'link' => $link . $cur_id,
+                'code' => $code,
+                'name' => $name,
+                'price' => $price,
+                'object_id' => $cur_id
+            );
             $real_id = $cur_id;
         }
         if (count($data) == 50) {
