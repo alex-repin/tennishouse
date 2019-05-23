@@ -741,6 +741,19 @@
         <item>
             ALTER TABLE `cscart_categories` ADD `menu_subitems` TEXT NOT NULL;
         </item>
+        <item>
+            CREATE TABLE IF NOT EXISTS `cscart_competitive_prices` (
+                `item_id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `link` varchar(255) NOT NULL,
+                `code` varchar(32) NOT NULL,
+                `name` varchar(2555) NOT NULL,
+                `price` decimal(12,2) NOT NULL DEFAULT '0.00',
+                `object_id` varchar(64) NOT NULL,
+                PRIMARY KEY (`item_id`),
+                INDEX(`code`),
+                UNIQUE(`link`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>

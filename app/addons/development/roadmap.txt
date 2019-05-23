@@ -11,9 +11,7 @@ if ($_REQUEST['category_id'] == '254' && $_REQUEST['item_ids'] == '1312') {
     
 - парсер цен для ракетлона    
 - комбинации seo variants сгруппировать в дерево    
-- пушки и станки всегда доступны в наличии    
 - log.ERROR: https://www.tennishouse.ru/checkout/ [uid:1725][type:C] Message Duplicate entry 'evgeny@comsol.ru' for key 'email' (1062)INSERT INTO cscart_subscribers (`email`, `timestamp`, `status`) VALUES ('evgeny@comsol.ru', 1542264012, 'C')  Error at app/Tygh/Database.php, line: 795  Backtrace File:app/Tygh/Database.php Line:438 Function:_error  File:app/functions/fn.database.php Line:130 Function:query  File:app/addons/news_and_emails/func.php Line:34 Function:db_query  File:app/addons/news_and_emails/controllers/frontend/checkout.pre.php Line:23 Function:fn_add_subscriber  File:app/functions/fn.control.php Line:646 Function:include  File:app/functions/fn.control.php Line:416 Function:fn_run_controller  File:index.php Line:31 Function:fn_dispatch  
-- выбор пункта самовывоза по карте
 - прикреплять товары к странице также как и промо
 - добавить характеристики ракеток: инерция, юниорские/..., защитный стиль/атакующий...
 - при добавлении глобального цвета, запускается долгая генерация комбинаций

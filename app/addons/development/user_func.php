@@ -25,6 +25,94 @@ use Tygh\Shippings\RusSdek;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_update_competitive_catalog($fresh = false)
+{
+    $link = 'https://racketlon.ru/index.php?dispatch=products.view&product_id=';
+    if (empty($fresh)) {
+        $cur_id = db_get_field("SELECT object_id FROM ?:competitive_prices ORDER BY object_id DESC LIMIT 1");
+        if (empty($cur_id)) {
+            $fresh = true;
+        }
+    } else {
+        $cur_id = 0;
+    }
+    $data = array();
+    $real_id = $cur_id;
+    
+    while (true) {
+        if (list($price, $code, $name) = fn_parse_competitive_price($link . $cur_id)) {
+            if (!empty($price) && !empty($name) && !empty($code)) {
+                $data[] = array(
+                    'link' => $link . $cur_id,
+                    'code' => $code,
+                    'name' => $name,
+                    'price' => $price,
+                    'object_id' => $cur_id
+                );
+            }
+            $real_id = $cur_id;
+        }
+        if (count($data) == 50) {
+            db_query("REPLACE INTO ?:competitive_prices ?m", $data);
+            $data = array();
+        }
+        if (!empty($fresh)) {
+            if ($cur_id > 27000 && $real_id + 100 < $cur_id) {
+                break;
+            }
+        } else {
+            if ($real_id + 100 < $cur_id) {
+                break;
+            }
+        }
+        $cur_id++;
+    }
+    
+    if (!empty($data)) {
+        db_query("REPLACE INTO ?:competitive_prices ?m", $data);
+    }
+    
+    fn_print_r($real_id, $cur_id);
+}
+
+function fn_parse_competitive_price($link)
+{
+    $extra = array(
+        'request_timeout' => 10
+    );
+    
+    $name = $price = $code = '';
+    $response = Http::get($link, array(), $extra);
+    if (!empty($response)) {
+        preg_match('/<title>(.*?)<\/title>/', preg_replace('/[\r\n\t]/', '', $response), $_name);
+        if (!empty($_name['1']) && $_name['1'] != 'Страница не найдена') {
+            preg_match('/<h1 class="ty-product-block-title".*?>.*?>([^>]*?)<\/.*?<\/h1>/', preg_replace('/[\r\n\t]/', '', $response), $_name);
+            if (!empty($_name['1'])) {
+                $name = $_name['1'];
+            }
+        } else {
+            return false;
+        }
+        preg_match('/id="sku_update_\d+".*?>(.*?)<\/div>/', preg_replace('/[\r\n\t]/', '', $response), $_code);
+        if (!empty($_code[1])) {
+            preg_match('/<span class="ty-control-group__item">(.*?)<\/span>/', preg_replace('/[\r\n\t]/', '', $_code[1]), $__code);
+            if (!empty($__code[1])) {
+                $code = $__code[1];
+            }
+        }
+        preg_match('/id="sec_discounted_price_\d+".*?>(.*?)<\/span>/', preg_replace('/[\r\n\t]/', '', $response), $_price);
+        if (!empty($_price[1])) {
+            $price = floatval(str_replace('&nbsp;', '', $_price[1]));
+        }
+    }
+    
+//     if (empty($price) || empty($code) || empty($name)) {
+//         return false;
+//     }
+    
+    return array($price, $code, $name);
+}
+
 function fn_check_delivery_statuses()
 {
     $data = db_get_hash_array("SELECT ?:orders.order_id, GROUP_CONCAT(DISTINCT ?:shipment_items.shipment_id SEPARATOR ',') AS shipment_ids FROM ?:orders LEFT JOIN ?:shipment_items ON ?:shipment_items.order_id = ?:orders.order_id WHERE ?:orders.status = 'A' GROUP BY order_id", 'order_id');
