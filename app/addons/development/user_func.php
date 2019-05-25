@@ -55,6 +55,12 @@ function fn_update_competitive_catalog($fresh = false)
             $data = array();
         }
         if (!empty($fresh)) {
+            if (empty($real_id) && fmod($cur_id, 50) == 0) {
+                db_query("REPLACE INTO ?:competitive_prices ?e", array(
+                    'link' => $link . $cur_id,
+                    'object_id' => $cur_id
+                ));
+            }
             if ($cur_id > 27000 && $real_id + 100 < $cur_id) {
                 break;
             }
@@ -63,14 +69,13 @@ function fn_update_competitive_catalog($fresh = false)
                 break;
             }
         }
+        fn_echo(' . ');
         $cur_id++;
     }
     
     if (!empty($data)) {
         db_query("REPLACE INTO ?:competitive_prices ?m", $data);
     }
-    
-    fn_print_r($real_id, $cur_id);
 }
 
 function fn_parse_competitive_price($link)

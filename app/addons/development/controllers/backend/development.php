@@ -1557,6 +1557,7 @@ if ($mode == 'calculate_balance') {
         }
     }
     exit;
+
 }
 
 function fn_fill_image_common_description(&$images_alts, $detailed_id, $name)
