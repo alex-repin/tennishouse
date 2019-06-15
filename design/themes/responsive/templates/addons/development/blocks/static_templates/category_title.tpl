@@ -2,7 +2,7 @@
     <div class="ty-category-title cm-parallax" style="background: url({$category_data.main_pair.detailed.image_path}) center 109px no-repeat fixed;" data-speed="1.5">
         {*<img src="{$category_data.main_pair.detailed.image_path}" alt="{$category_data.category}" width="1015"/>*}
         <h1 class="ty-image-title__name">
-            {if $category_data.page_title}{$category_data.page_title}{else}{$category_data.category}{/if}
+            {if $category_data.feature_title}{$category_data.feature_title}{else}{$category_data.category}{/if}
         </h1>
     </div>
     {if $tb_feature.ranges || $stb_feature.variants}

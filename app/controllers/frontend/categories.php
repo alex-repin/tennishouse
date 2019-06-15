@@ -172,7 +172,7 @@ if ($mode == 'catalog') {
                 if (!empty($match)) {
                     arsort($match);
                     $comb_id = key($match);
-                    $category_data['page_title'] = $category_data['feature_seos']['data'][$comb_id]['page_title'];
+                    $category_data['page_title'] = $category_data['feature_title'] = $category_data['feature_seos']['data'][$comb_id]['page_title'];
                     $category_data['full_description'] = $category_data['feature_seos']['data'][$comb_id]['full_description'];
                     $category_data['meta_description'] = $category_data['feature_seos']['data'][$comb_id]['meta_description'];
                     $category_data['meta_keywords'] = $category_data['feature_seos']['data'][$comb_id]['meta_keywords'];
@@ -482,7 +482,7 @@ if ($mode == 'catalog') {
             Registry::get('view')->assign('search', $search);
 //         }
     
-        // If page title for this category is exist than assign it to template
+        // If a page title for this category exists then assign it to the template
         if (!empty($category_data['page_title'])) {
              Registry::get('view')->assign('page_title', $category_data['page_title']);
              $category_title = $category_data['page_title'];

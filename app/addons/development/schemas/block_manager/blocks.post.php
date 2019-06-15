@@ -82,7 +82,7 @@ $schema['products']['content']['items']['fillings']['player_apparel_shoes'] = ar
 );
 $schema['products']['content']['items']['fillings']['similar_products'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'request' => array (
             'similar_pid' => '%PRODUCT_ID%',
@@ -126,7 +126,7 @@ $schema['products']['settings']['all_items_url'] = array (
 );
 $schema['products']['content']['items']['fillings']['allcourt_shoes'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'shoes_surface' => 'allcourt',
         'shuffle' => 'Y',
@@ -140,7 +140,7 @@ $schema['products']['content']['items']['fillings']['allcourt_shoes'] = array(
 );
 $schema['products']['content']['items']['fillings']['shoes_for_clay'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'shoes_surface' => 'clay',
         'shuffle' => 'Y',
@@ -154,7 +154,7 @@ $schema['products']['content']['items']['fillings']['shoes_for_clay'] = array(
 );
 $schema['products']['content']['items']['fillings']['shoes_for_grass'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'shoes_surface' => 'grass',
         'shuffle' => 'Y',
@@ -168,7 +168,7 @@ $schema['products']['content']['items']['fillings']['shoes_for_grass'] = array(
 );
 $schema['products']['content']['items']['fillings']['power_rackets'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'rackets_type' => 'power',
         'shuffle' => 'Y',
@@ -182,7 +182,7 @@ $schema['products']['content']['items']['fillings']['power_rackets'] = array(
 );
 $schema['products']['content']['items']['fillings']['club_rackets'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'rackets_type' => 'club',
         'shuffle' => 'Y',
@@ -196,7 +196,7 @@ $schema['products']['content']['items']['fillings']['club_rackets'] = array(
 );
 $schema['products']['content']['items']['fillings']['pro_rackets'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'rackets_type' => 'pro',
         'shuffle' => 'Y',
@@ -210,7 +210,7 @@ $schema['products']['content']['items']['fillings']['pro_rackets'] = array(
 );
 $schema['products']['content']['items']['fillings']['heavy_head_light_rackets'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'rackets_type' => 'heavy_head_light',
         'shuffle' => 'Y',
@@ -224,7 +224,7 @@ $schema['products']['content']['items']['fillings']['heavy_head_light_rackets'] 
 );
 $schema['products']['content']['items']['fillings']['light_head_heavy_rackets'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'rackets_type' => 'light_head_heavy',
         'shuffle' => 'Y',
@@ -238,7 +238,7 @@ $schema['products']['content']['items']['fillings']['light_head_heavy_rackets'] 
 );
 $schema['products']['content']['items']['fillings']['stiff_rackets'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'rackets_type' => 'stiff',
         'shuffle' => 'Y',
@@ -252,7 +252,7 @@ $schema['products']['content']['items']['fillings']['stiff_rackets'] = array(
 );
 $schema['products']['content']['items']['fillings']['soft_rackets'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'rackets_type' => 'soft',
         'shuffle' => 'Y',
@@ -266,7 +266,7 @@ $schema['products']['content']['items']['fillings']['soft_rackets'] = array(
 );
 $schema['products']['content']['items']['fillings']['regular_head_rackets'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'rackets_type' => 'regular_head',
         'shuffle' => 'Y',
@@ -280,7 +280,7 @@ $schema['products']['content']['items']['fillings']['regular_head_rackets'] = ar
 );
 $schema['products']['content']['items']['fillings']['regular_length_rackets'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'rackets_type' => 'regular_length',
         'shuffle' => 'Y',
@@ -294,7 +294,7 @@ $schema['products']['content']['items']['fillings']['regular_length_rackets'] = 
 );
 $schema['products']['content']['items']['fillings']['closed_pattern_rackets'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'rackets_type' => 'closed_pattern',
         'shuffle' => 'Y',
@@ -308,7 +308,7 @@ $schema['products']['content']['items']['fillings']['closed_pattern_rackets'] = 
 );
 $schema['products']['content']['items']['fillings']['open_pattern_rackets'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'rackets_type' => 'open_pattern',
         'shuffle' => 'Y',
@@ -322,7 +322,7 @@ $schema['products']['content']['items']['fillings']['open_pattern_rackets'] = ar
 );
 $schema['products']['content']['items']['fillings']['kids_17_rackets'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'rackets_type' => 'kids_17',
         'shuffle' => 'Y',
@@ -336,7 +336,7 @@ $schema['products']['content']['items']['fillings']['kids_17_rackets'] = array(
 );
 $schema['products']['content']['items']['fillings']['kids_19_rackets'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'rackets_type' => 'kids_19',
         'shuffle' => 'Y',
@@ -350,7 +350,7 @@ $schema['products']['content']['items']['fillings']['kids_19_rackets'] = array(
 );
 $schema['products']['content']['items']['fillings']['kids_21_rackets'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'rackets_type' => 'kids_21',
         'shuffle' => 'Y',
@@ -364,7 +364,7 @@ $schema['products']['content']['items']['fillings']['kids_21_rackets'] = array(
 );
 $schema['products']['content']['items']['fillings']['kids_23_rackets'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'rackets_type' => 'kids_23',
         'shuffle' => 'Y',
@@ -378,7 +378,7 @@ $schema['products']['content']['items']['fillings']['kids_23_rackets'] = array(
 );
 $schema['products']['content']['items']['fillings']['kids_25_rackets'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'rackets_type' => 'kids_25',
         'shuffle' => 'Y',
@@ -392,7 +392,7 @@ $schema['products']['content']['items']['fillings']['kids_25_rackets'] = array(
 );
 $schema['products']['content']['items']['fillings']['kids_26_rackets'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'rackets_type' => 'kids_26',
         'shuffle' => 'Y',
@@ -406,7 +406,7 @@ $schema['products']['content']['items']['fillings']['kids_26_rackets'] = array(
 );
 $schema['products']['content']['items']['fillings']['natural_gut_strings'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'strings_type' => 'natural_gut',
         'shuffle' => 'Y',
@@ -420,7 +420,7 @@ $schema['products']['content']['items']['fillings']['natural_gut_strings'] = arr
 );
 $schema['products']['content']['items']['fillings']['nylon_strings'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'strings_type' => 'nylon',
         'shuffle' => 'Y',
@@ -434,7 +434,7 @@ $schema['products']['content']['items']['fillings']['nylon_strings'] = array(
 );
 $schema['products']['content']['items']['fillings']['polyester_strings'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'strings_type' => 'polyester',
         'shuffle' => 'Y',
@@ -448,7 +448,7 @@ $schema['products']['content']['items']['fillings']['polyester_strings'] = array
 );
 $schema['products']['content']['items']['fillings']['hybrid_strings'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'strings_type' => 'hybrid',
         'shuffle' => 'Y',
@@ -462,7 +462,7 @@ $schema['products']['content']['items']['fillings']['hybrid_strings'] = array(
 );
 $schema['products']['content']['items']['fillings']['monofil_strings'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'strings_type' => 'monofil',
         'shuffle' => 'Y',
@@ -476,7 +476,7 @@ $schema['products']['content']['items']['fillings']['monofil_strings'] = array(
 );
 $schema['products']['content']['items']['fillings']['multifil_strings'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'strings_type' => 'multifil',
         'shuffle' => 'Y',
@@ -490,7 +490,7 @@ $schema['products']['content']['items']['fillings']['multifil_strings'] = array(
 );
 $schema['products']['content']['items']['fillings']['textured_strings'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'strings_type' => 'textured',
         'shuffle' => 'Y',
@@ -504,7 +504,7 @@ $schema['products']['content']['items']['fillings']['textured_strings'] = array(
 );
 $schema['products']['content']['items']['fillings']['synthetic_gut_strings'] = array(
     'params' => array (
-        'sort_by' => 'price',
+        'sort_by' => 'popularity',
         'sort_order' => 'desc',
         'strings_type' => 'synthetic_gut',
         'shuffle' => 'Y',

@@ -98,7 +98,7 @@
 <div class="cm-pagination-container"></div>
 {/if}
 {if ($category_data.full_description || $runtime.customization_mode.live_editor)}
-    <div class="ty-wysiwyg-content ty-mb-s ty-no-select" {live_edit name="category:full_description:{$category_data.category_id}"}>{$category_data.full_description nofilter}</div>
+    <div class="ty-wysiwyg-content ty-mb-s ty-no-select ty-category-description" {live_edit name="category:full_description:{$category_data.category_id}"}>{$category_data.full_description nofilter}</div>
 {/if}
 <!--category_products_{$block.block_id}--></div>
 

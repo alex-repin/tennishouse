@@ -3105,6 +3105,15 @@ input.ty-search-block__input:focus {
     line-height: 21px;
     font-family: @headings_font;
 }
+.ty-category-description {
+    font-size: 1.3rem;
+    h2, h3 {
+        font-size: 1.5rem !important;
+    }
+    p, li {
+        font-size: 1.3rem;
+    }
+}
 .ty-category__title {
     display: inline-block;
     border-bottom: 2px solid #333;
@@ -5970,11 +5979,7 @@ and (max-device-width : 480px) {
 .ty-product-tabs {
     position: relative;
     margin: 30px 0 0 0;
-    p, a, li, td {
-        font-size: 1.2rem;
-        color: lighten(@font, 20%);
-    }
-    .ty-page-description div {
+    p, a, li, td, .ty-page-description div, .ty-product-description {
         font-size: 1.2rem;
         color: lighten(@font, 20%);
     }

@@ -8141,6 +8141,7 @@ function fn_update_product_option($option_data, $option_id = 0, $lang_code = DES
                 foreach (fn_get_translation_languages() as $v['lang_code'] => $_v) {
                     db_query("INSERT INTO ?:product_option_variants_descriptions ?e", $v);
                 }
+                $rebuild_combinations = true;
             } else {
                 db_query("UPDATE ?:product_option_variants SET ?u WHERE variant_id = ?i", $v, $v['variant_id']);
                 db_query("UPDATE ?:product_option_variants_descriptions SET ?u WHERE variant_id = ?i AND lang_code = ?s", $v, $v['variant_id'], $lang_code);
@@ -8164,6 +8165,7 @@ function fn_update_product_option($option_data, $option_id = 0, $lang_code = DES
         $condition = !empty($var_ids) ? db_quote('AND variant_id NOT IN (?n)', $var_ids) : '';
         $deleted_variants = db_get_fields("SELECT variant_id FROM ?:product_option_variants WHERE option_id = ?i $condition", $option_id, $var_ids);
         if (!empty($deleted_variants)) {
+            $rebuild_combinations = true;
             db_query("DELETE FROM ?:product_option_variants WHERE variant_id IN (?n)", $deleted_variants);
             db_query("DELETE FROM ?:product_option_variants_descriptions WHERE variant_id IN (?n)", $deleted_variants);
             foreach ($deleted_variants as $v_id) {

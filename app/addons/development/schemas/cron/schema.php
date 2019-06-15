@@ -40,7 +40,11 @@ return array(
         'function' => 'fn_check_delivery_statuses'
     ),
     'C' => array(
-        'frequency' => 60 * 60 * 24,
+        'frequency' => 60 * 60 * 24 * 7,
         'function' => 'fn_update_competitive_catalog'
+    ),
+    'I' => array(
+        'frequency' => 60 * 60 * 24,
+        'function' => 'fn_update_competitive_prices'
     ),
 );

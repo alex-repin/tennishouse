@@ -2141,7 +2141,7 @@ function fn_is_user_exists($user_id, $user_data)
      */
     fn_set_hook('is_user_exists_pre', $user_id, $user_data);
 
-    $condition = db_quote(" (?p ?p) ", (!empty($user_data['email']) ? db_quote('email = ?s', $user_data['email']) : '0'), (empty($user_data['user_login']) ? '' : db_quote(" OR user_login = ?s", $user_data['user_login'])));
+    $condition = db_quote(" (?p ?p ?p) ", (!empty($user_data['email']) && $user_data['email'] != NO_EMAIL ? db_quote('email = ?s', $user_data['email']) : '0'), (empty($user_data['user_login']) ? '' : db_quote(" OR user_login = ?s", $user_data['user_login'])), (empty($user_data['phone']) ? '' : db_quote(" OR phone = ?s", $user_data['phone'])));
     $condition .= db_quote(" AND user_id != ?i", $user_id);
 
     fn_set_hook('user_exist', $user_id, $user_data, $condition);

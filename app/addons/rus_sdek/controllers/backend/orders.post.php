@@ -134,6 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $data_auth['Currency'] = $order_info['s_currency'];
                     }
                 }
+                $data_auth['wait'] = true;
 
                 $xml = '            ' . RusSdek::arraySimpleXml('DeliveryRequest', $data_auth, 'open');
 

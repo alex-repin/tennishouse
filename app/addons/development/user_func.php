@@ -25,6 +25,39 @@ use Tygh\Shippings\RusSdek;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_update_competitive_prices()
+{
+    $link = 'https://racketlon.ru/index.php?dispatch=products.view&product_id=';
+    $data = db_get_hash_array("SELECT * FROM ?:competitive_prices ORDER BY object_id DESC", 'object_id');
+    
+    $to_delete = $to_update = array();
+    foreach ($data as $_dt) {
+        if (list($price, $code, $name) = fn_parse_competitive_price($link . $_dt['object_id'])) {
+            $upd_item = array(
+                'item_id' => $_dt['item_id'],
+                'link' => $link . $_dt['object_id'],
+                'code' => $code,
+                'name' => $name,
+                'price' => $price,
+                'object_id' => $_dt['object_id'],
+                'timestamp' => TIME
+            );
+            if ($price != $_dt['price']) {
+                $upd_item['old_price'] = $_dt['price'];
+            }
+            $to_update[] = $upd_item;
+        } else {
+            $to_delete[] = $_dt['item_id'];
+        }
+    }
+    if (!empty($to_update)) {
+        db_query("REPLACE INTO ?:competitive_prices ?m", $to_update);
+    }
+    if (!empty($to_delete)) {
+        db_query("DELETE FROM ?:competitive_prices WHERE item_id IN (?n)", $to_delete);
+    }
+}
+
 function fn_update_competitive_catalog($fresh = false)
 {
     $link = 'https://racketlon.ru/index.php?dispatch=products.view&product_id=';
@@ -38,6 +71,7 @@ function fn_update_competitive_catalog($fresh = false)
     }
     $data = array();
     $real_id = $cur_id;
+    $cur_id++;
     
     while (true) {
         if (list($price, $code, $name) = fn_parse_competitive_price($link . $cur_id)) {
@@ -46,7 +80,8 @@ function fn_update_competitive_catalog($fresh = false)
                 'code' => $code,
                 'name' => $name,
                 'price' => $price,
-                'object_id' => $cur_id
+                'object_id' => $cur_id,
+                'timestamp' => TIME
             );
             $real_id = $cur_id;
         }
@@ -56,8 +91,9 @@ function fn_update_competitive_catalog($fresh = false)
         }
         if (!empty($fresh)) {
             if (empty($real_id) && fmod($cur_id, 50) == 0) {
+                db_query("DELETE FROM ?:competitive_prices WHERE link = 'temp'");
                 db_query("REPLACE INTO ?:competitive_prices ?e", array(
-                    'link' => $link . $cur_id,
+                    'link' => 'temp',
                     'object_id' => $cur_id
                 ));
             }

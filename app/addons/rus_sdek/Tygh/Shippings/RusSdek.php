@@ -269,10 +269,12 @@ class RusSdek
             'xml_request' => '<?xml version="1.0" encoding="UTF-8" ?>' . $xml
         );
 
-        $extra = array(
-            'request_timeout' => 2,
-            'timeout' => 1
-        );
+        if (empty($params_request['wait'])) {
+            $extra = array(
+                'request_timeout' => 2,
+                'timeout' => 1
+            );
+        }
 
         $response = Http::post($url, $xml_request, $extra);
 

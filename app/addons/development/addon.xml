@@ -754,6 +754,12 @@
                 UNIQUE(`link`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
         </item>
+        <item>
+            ALTER TABLE `cscart_competitive_prices` ADD `old_price` DECIMAL(12,2) NOT NULL DEFAULT '0.00';
+        </item>
+        <item>
+            ALTER TABLE `cscart_competitive_prices` ADD `timestamp` INT(11) UNSIGNED NOT NULL DEFAULT '0';
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -1429,7 +1435,7 @@
         <item lang="ru" id="sizing_table">Таблица размеров</item>
         <item lang="ru" id="q_used_our_service">Уже делали у нас заказы ?</item>
         <item lang="ru" id="notice_update_customer_details">Покупатель изменил email в своем профиле на [email]. Поставьте галочку, чтобы обновить детали заказа:</item>
-        <item lang="ru" id="notice_update_order_user_id"><![CDATA[Покупатель <a href="[user_link]" target="_blank">[user_name]</a> имеет такой же email. Поставьте галочку, чтобы обновить детали заказа:]]></item>
+        <item lang="ru" id="notice_update_order_user_id"><![CDATA[Покупатель <a href="[user_link]" target="_blank">[user_name]</a> имеет такой же email/телефон. Поставьте галочку, чтобы обновить детали заказа:]]></item>
         <item lang="ru" id="update_order_email">Обновить email заказа</item>
         <item lang="ru" id="update_order_user_id">Закрепить заказ за пользователем</item>
         <item lang="ru" id="text_no_shipping_methods">Мы доставляем заказы в любую точку мира, однако, по какой-то причине система не смогла автоматически определить способы доставки. Поэтому после оформления заказа мы свяжемся с Вами для выбора удобного способа доставки.</item>

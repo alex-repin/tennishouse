@@ -174,6 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($mode == 'update') {
         fn_trusted_vars('option_data', 'regexp');
 
+        ini_set('memory_limit', '1024M');
         if (fn_allowed_for('MULTIVENDOR')) {
             $option_data = array();
 
