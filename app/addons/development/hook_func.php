@@ -2110,8 +2110,8 @@ function fn_development_update_category_post($category_data, $category_id, $lang
 
 function fn_development_get_product_data($product_id, &$field_list, &$join, $auth, $lang_code, $condition)
 {
-    $join .= db_quote(" LEFT JOIN ?:product_tags ON ?:product_tags.product_id = ?:products.product_id");
-    $field_list .= ", GROUP_CONCAT(DISTINCT CONCAT_WS('_', ?:product_tags.promotion_id, ?:product_tags.tag) SEPARATOR ',') AS tags";
+    $join .= db_quote(" LEFT JOIN ?:product_tags ON ?:product_tags.product_id = ?:products.product_id LEFT JOIN ?:competitive_prices ON ?:competitive_prices.code = ?:products.product_code");
+    $field_list .= ", GROUP_CONCAT(DISTINCT CONCAT_WS('_', ?:product_tags.promotion_id, ?:product_tags.tag) SEPARATOR ',') AS tags, ?:competitive_prices.price AS c_price, ?:competitive_prices.link AS c_link, ?:competitive_prices.name AS c_name, ?:competitive_prices.in_stock AS c_in_stock";
 }
 
 function fn_development_get_product_data_post(&$product_data, $auth, $preview, $lang_code)

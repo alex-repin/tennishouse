@@ -638,6 +638,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
     
+    if ($mode == 'eqialize_prices') {
+        if (!empty($_REQUEST['product_ids'])) {
+            $result = $data = array();
+            foreach ($_REQUEST['product_ids'] as $pair) {
+                $_pair = explode(',', $pair);
+                $result[$_pair[0]] = $_pair[1];
+            }
+            $price = db_get_hash_single_array("SELECT item_id, price FROM ?:competitive_prices WHERE item_id IN (?n)", array('item_id', 'price'), array_values($result));
+            foreach ($result as $product_id => $item_id) {
+                $data[] = array(
+                    'product_id' => $product_id,
+                    'price' => $price[$item_id],
+                    'lower_limit' => 1,
+                    'usergroup_id' => 0
+                );
+            }
+            db_query("REPLACE INTO ?:product_prices ?m", $data);
+        }
+        
+        $suffix = "development.competitive_prices";
+    }
+    
     return array(CONTROLLER_STATUS_OK, $suffix);
 }
 
@@ -1558,6 +1580,23 @@ if ($mode == 'calculate_balance') {
     }
     exit;
 
+} elseif ($mode == 'competitive_prices') {
+
+    $products = db_get_array("SELECT a.product_id, a.product_code, d.product, b.price, c.name, c.price AS c_price, c.code, c.item_id, e.category_id, f.category, c.link, c.in_stock FROM ?:products AS a LEFT JOIN ?:product_prices AS b ON b.product_id = a.product_id AND b.lower_limit = '1' INNER JOIN ?:competitive_prices AS c ON c.code = a.product_code AND b.price != c.price LEFT JOIN ?:product_descriptions AS d ON d.product_id = a.product_id AND d.lang_code = ?s LEFT JOIN ?:products_categories as e ON e.product_id = a.product_id AND e.link_type = 'M' LEFT JOIN ?:category_descriptions as f ON f.category_id = e.category_id AND f.lang_code = ?s", CART_LANGUAGE, CART_LANGUAGE);
+    
+    $result = array();
+    if (!empty($products)) {
+        foreach ($products as $product) {
+            if (empty($result[$product['category_id']])) {
+                $result[$product['category_id']]['category'] = $product['category'];
+                $result[$product['category_id']]['category_id'] = $product['category_id'];
+            }
+            $result[$product['category_id']]['products'][] = $product;
+        }
+    }
+    
+    Registry::get('view')->assign('competitive_prices', $result);
+    
 }
 
 function fn_fill_image_common_description(&$images_alts, $detailed_id, $name)

@@ -638,7 +638,7 @@
                 `expire` int(11) UNSIGNED NOT NULL,
                 `promotion_id` MEDIUMINT(8) UNSIGNED NOT NULL,
                 UNIQUE KEY `promo_code` (`promo_code`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
         </item>
         <item>
             ALTER TABLE `cscart_orders` ADD `order_number` VARCHAR(32) NOT NULL;
@@ -748,17 +748,14 @@
                 `code` varchar(32) NOT NULL,
                 `name` varchar(2555) NOT NULL,
                 `price` decimal(12,2) NOT NULL DEFAULT '0.00',
+                `old_price` DECIMAL(12,2) NOT NULL DEFAULT '0.00',
                 `object_id` mediumint(8) UNSIGNED NOT NULL,
+                `timestamp` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+                `in_stock` CHAR(1) NOT NULL DEFAULT 'N',
                 PRIMARY KEY (`item_id`),
                 INDEX(`code`),
                 UNIQUE(`link`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-        </item>
-        <item>
-            ALTER TABLE `cscart_competitive_prices` ADD `old_price` DECIMAL(12,2) NOT NULL DEFAULT '0.00';
-        </item>
-        <item>
-            ALTER TABLE `cscart_competitive_prices` ADD `timestamp` INT(11) UNSIGNED NOT NULL DEFAULT '0';
         </item>
     </queries>
     <language_variables>
@@ -1467,5 +1464,8 @@
         <item lang="ru" id="zoom_out_to_see_more_offices">Уменьшите масштаб, чтобы увидеть больше пунктов в этом городе</item>
         <item lang="ru" id="ymaps_display_as_list">Показать списком</item>
         <item lang="ru" id="ymaps_display_as_map">Показать на карте</item>
+        <item lang="ru" id="competitive_prices">Цены конкурентов</item>
+        <item lang="ru" id="competitive_prices_menu_description">Обновить цены товаров с учетом цен конкурентов</item>
+        <item lang="ru" id="cprices_out_of_stock">Нет</item>
     </language_variables>
 </addon>

@@ -32,13 +32,14 @@ function fn_update_competitive_prices()
     
     $to_delete = $to_update = array();
     foreach ($data as $_dt) {
-        if (list($price, $code, $name) = fn_parse_competitive_price($link . $_dt['object_id'])) {
+        if (list($price, $code, $name, $in_stock) = fn_parse_competitive_price($link . $_dt['object_id'])) {
             $upd_item = array(
                 'item_id' => $_dt['item_id'],
                 'link' => $link . $_dt['object_id'],
                 'code' => $code,
                 'name' => $name,
                 'price' => $price,
+                'in_stock' => $in_stock,
                 'object_id' => $_dt['object_id'],
                 'timestamp' => TIME
             );
@@ -50,6 +51,7 @@ function fn_update_competitive_prices()
             $to_delete[] = $_dt['item_id'];
         }
     }
+    
     if (!empty($to_update)) {
         db_query("REPLACE INTO ?:competitive_prices ?m", $to_update);
     }
@@ -74,12 +76,13 @@ function fn_update_competitive_catalog($fresh = false)
     $cur_id++;
     
     while (true) {
-        if (list($price, $code, $name) = fn_parse_competitive_price($link . $cur_id)) {
+        if (list($price, $code, $name, $in_stock) = fn_parse_competitive_price($link . $cur_id)) {
             $data[] = array(
                 'link' => $link . $cur_id,
                 'code' => $code,
                 'name' => $name,
                 'price' => $price,
+                'in_stock' => $in_stock,
                 'object_id' => $cur_id,
                 'timestamp' => TIME
             );
@@ -120,7 +123,7 @@ function fn_parse_competitive_price($link)
         'request_timeout' => 10
     );
     
-    $name = $price = $code = '';
+    $name = $price = $code = $in_stock = '';
     $response = Http::get($link, array(), $extra);
     if (!empty($response)) {
         preg_match('/<title>(.*?)<\/title>/', preg_replace('/[\r\n\t]/', '', $response), $_name);
@@ -143,13 +146,18 @@ function fn_parse_competitive_price($link)
         if (!empty($_price[1])) {
             $price = floatval(str_replace('&nbsp;', '', $_price[1]));
         }
+        preg_match('/id="(in|out_of)_stock_info_\d+".*?>(.*?)<\/span>/', preg_replace('/[\r\n\t]/', '', $response), $_in_stock);
+        if (!empty($_in_stock[2])) {
+            $in_stock_trim = trim($_in_stock[2]);
+            if ($in_stock_trim == 'В наличии') {
+                $in_stock = 'Y';
+            } else {
+                $in_stock = 'N';
+            }
+        }
     }
     
-//     if (empty($price) || empty($code) || empty($name)) {
-//         return false;
-//     }
-    
-    return array($price, $code, $name);
+    return array($price, $code, $name, $in_stock);
 }
 
 function fn_check_delivery_statuses()
@@ -174,9 +182,7 @@ function fn_check_delivery_statuses()
                     if (empty($data_auth)) {
                         continue;
                     }
-                    fn_print_r($data_auth, $order_id, $shipment_id);
                     $date_status = RusSdek::orderStatusXml($data_auth, $order_id, $shipment_id);
-                    fn_print_die($date_status);
                     RusSdek::SdekAddStatusOrders($date_status);
                     $last = array_pop($date_status);
                     if ($last['status'] == 'Вручен') {

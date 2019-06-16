@@ -84,6 +84,7 @@
                         <label for="elm_price_price" class="control-label">{__("price")} ({$currencies.$primary_currency.symbol nofilter}):</label>
                         <div class="controls">
                             <input type="text" name="product_data[price]" id="elm_price_price" size="10" value="{$product_data.price|default:"0.00"|fn_format_price:$primary_currency:null:false}" class="input-long" />
+                            {if $product_data.c_price && $product_data.c_name && $product_data.c_link}<span style="margin-left: 10px;">{include file="common/price.tpl" value=$product_data.c_price} <a target="_blank" href="{$product_data.c_link}">{$product_data.c_name}</a>{if $product_data.c_in_stock != 'Y'}  {__("cprices_out_of_stock")}{/if}</span>{/if}
                             {include file="buttons/update_for_all.tpl" display=$show_update_for_all object_id='price' name="update_all_vendors[price]"}
                         </div>
                     </div>
