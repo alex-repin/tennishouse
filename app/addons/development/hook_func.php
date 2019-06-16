@@ -1709,6 +1709,22 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
     }
     $join .= db_quote(" LEFT JOIN ?:product_tags ON ?:product_tags.product_id = products.product_id");
     $fields[] = 'GROUP_CONCAT(DISTINCT(?:product_tags.tag)) AS tags';
+    
+    if (!empty($params['competition'])) {
+        if ($params['competition'] == 'N') {
+            $join .= db_quote(" LEFT JOIN ?:competitive_prices ON ?:competitive_prices.code = products.product_code");
+            $condition .= db_quote(' AND ?:competitive_prices.item_id IS NULL');
+        } elseif ($params['competition'] == 'D') {
+            $join .= db_quote(" INNER JOIN ?:competitive_prices ON ?:competitive_prices.code = products.product_code");
+            $condition .= db_quote(' AND ?:competitive_prices.price != prices.price');
+            $fields[] = '?:competitive_prices.name AS c_name';
+            $fields[] = '?:competitive_prices.price AS c_price';
+            $fields[] = '?:competitive_prices.code AS c_code';
+            $fields[] = '?:competitive_prices.item_id AS c_item_id';
+            $fields[] = '?:competitive_prices.link AS c_link';
+            $fields[] = '?:competitive_prices.in_stock AS c_in_stock';
+        }
+    }
 }
 
 function fn_development_get_products_pre(&$params, $items_per_page, $lang_code)

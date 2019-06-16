@@ -1467,6 +1467,7 @@
         <item lang="ru" id="competitive_prices">Цены конкурентов</item>
         <item lang="ru" id="competitive_prices_menu_description">Обновить цены товаров с учетом цен конкурентов</item>
         <item lang="ru" id="cprices_out_of_stock">Нет</item>
-        <item lang="ru" id="equalize_prices">Уравнять цены</item>
+        <item lang="ru" id="cprices_differ">Разные цены</item>
+        <item lang="ru" id="cprices_no_competitor">Цены не найдены</item>
     </language_variables>
 </addon>
