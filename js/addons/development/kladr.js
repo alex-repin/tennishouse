@@ -626,6 +626,9 @@
 					value = get('valueFormat')(obj, query);
 					label = get('labelFormat')(obj, query);
 
+                                        if (value == 'Бесплатная версия kladr-api.ru') {
+                                            continue;
+                                        }
 					$a = $('<a data-val="' + value + '">' + label + '</a>');
 					$a.data('kladr-object', obj);
 
