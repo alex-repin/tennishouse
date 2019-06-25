@@ -50,6 +50,14 @@ function fn_update_competitive_prices()
         } else {
             $to_delete[] = $_dt['item_id'];
         }
+        if (count($to_update) == 50) {
+            db_query("REPLACE INTO ?:competitive_prices ?m", $to_update);
+            $to_update = array();
+        }
+        if (count($to_delete) == 50) {
+            db_query("DELETE FROM ?:competitive_prices WHERE item_id IN (?n)", $to_delete);
+            $to_delete = array();
+        }
     }
     
     if (!empty($to_update)) {
