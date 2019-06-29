@@ -37,8 +37,8 @@ if ($mode == 'view' && !empty($_REQUEST['page_id'])) {
     if (!defined('HTTPS') && $page_is_https == 'Y') {
         return array(CONTROLLER_STATUS_REDIRECT, Registry::get('config.https_location') . '/' . Registry::get('config.current_url'));
 
-    } elseif (defined('HTTPS') && Registry::get('settings.Security.keep_https') != 'Y' && $page_is_https != 'Y') {
-        return array(CONTROLLER_STATUS_REDIRECT, Registry::get('config.http_location') . '/' . Registry::get('config.current_url'));
+//     } elseif (defined('HTTPS') && Registry::get('settings.Security.keep_https') != 'Y' && $page_is_https != 'Y') {
+//         return array(CONTROLLER_STATUS_REDIRECT, Registry::get('config.http_location') . '/' . Registry::get('config.current_url'));
     }
 
     $restored_form_values = fn_restore_post_data('form_values');
