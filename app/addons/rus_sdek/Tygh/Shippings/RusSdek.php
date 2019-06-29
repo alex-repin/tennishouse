@@ -283,10 +283,13 @@ class RusSdek
 
     public static function SdekPvzOffices($city)
     {
-        $extra = array(
-            'request_timeout' => 2,
-            'timeout' => 1
-        );
+        $extra = array();
+        if (AREA == 'C') {
+            $extra = array(
+                'request_timeout' => 2,
+                'timeout' => 1
+            );
+        }
         $result = Http::get('https://integration.cdek.ru/pvzlist/v1/xml', $city, $extra);
         $xml = simplexml_load_string($result);
         if (!empty($xml)) {

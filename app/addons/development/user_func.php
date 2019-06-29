@@ -45,6 +45,8 @@ function fn_update_competitive_prices()
             );
             if ($price != $_dt['price']) {
                 $upd_item['old_price'] = $_dt['price'];
+            } else {
+                $upd_item['old_price'] = $_dt['old_price'];
             }
             $to_update[] = $upd_item;
         } else {
@@ -58,6 +60,7 @@ function fn_update_competitive_prices()
             db_query("DELETE FROM ?:competitive_prices WHERE item_id IN (?n)", $to_delete);
             $to_delete = array();
         }
+        fn_echo(' . ');
     }
     
     if (!empty($to_update)) {
