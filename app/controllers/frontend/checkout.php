@@ -1003,6 +1003,7 @@ if ($mode == 'cart') {
     }
     Registry::get('view')->assign('expand_cart', !isset($_SESSION['expand_cart']) ? false : $_SESSION['expand_cart']);
     $_SESSION['edit_step'] = $edit_step;
+    fn_save_cart_step($cart, $auth['user_id']);
     Registry::get('view')->assign('use_ajax', 'true');
     Registry::get('view')->assign('edit_step', $edit_step);
     Registry::get('view')->assign('completed_steps', $completed_steps);

@@ -660,6 +660,52 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $suffix = "development.competitive_prices";
     }
     
+    if ($mode == 'autocomplete_cproducts') {
+
+        if (!empty($_REQUEST['q']) && $_REQUEST['id']) {
+            
+            $params['q'] = trim($_REQUEST['q']);
+            $pieces = fn_explode(' ', $params['q']);
+            $search_type = ' AND ';
+            
+            foreach ($pieces as $piece) {
+                if (strlen($piece) == 0) {
+                    continue;
+                }
+
+                $_condition[] = db_quote("name LIKE ?l", '%' . $piece . '%');
+            }
+
+            $_cond = implode($search_type, $_condition);
+            
+            $products = db_get_array("SELECT * FROM ?:competitive_prices WHERE $_cond ORDER BY item_id DESC");
+            
+            Registry::get('view')->assign('results', $products);
+            Registry::get('view')->assign('product_id', $_REQUEST['id']);
+            Registry::get('view')->display('addons/development/views/development/competitive_prices_results.tpl');
+            exit();
+        }
+    }
+    
+    if ($mode == 'add_competitive_pairs') {
+        
+        if (!empty($_REQUEST['pairs'])) {
+            $data = array();
+            foreach ($_REQUEST['pairs'] as $product_id => $item_id) {
+                if (!empty($item_id)) {
+                    $data[] = array(
+                        'competitive_id' => $item_id,
+                        'product_id' => $product_id
+                    );
+                }
+            }
+            if (!empty($data)) {
+                db_query("REPLACE INTO ?:competitive_pairs ?m", $data);
+            }
+        }
+        $suffix = "development.competitive_prices?mode=N";
+    }
+    
     return array(CONTROLLER_STATUS_OK, $suffix);
 }
 
@@ -1582,14 +1628,21 @@ if ($mode == 'calculate_balance') {
 
 } elseif ($mode == 'competitive_prices') {
 
-    if ($_REQUEST['mode'] == 'N') {
+    $cp_mode = empty($_REQUEST['mode']) ? 'D' : $_REQUEST['mode'];
+    
+    if ($cp_mode == 'N') {
         $params = array(
             'hide_out_of_stock' => 'Y',
             'competition' => 'N'
         );
+    } elseif ($cp_mode == 'D') {
+        $params = array(
+            'hide_out_of_stock' => 'Y',
+            'competition' => 'D'
+        );
     } else {
         $params = array(
-            'competition' => 'D'
+            'hide_out_of_stock' => 'Y',
         );
     }
     
@@ -1609,7 +1662,7 @@ if ($mode == 'calculate_balance') {
         }
     }
    
-    Registry::get('view')->assign('competition', $params['competition']);
+    Registry::get('view')->assign('mode', $cp_mode);
     Registry::get('view')->assign('competitive_prices', $_result);
     
 }

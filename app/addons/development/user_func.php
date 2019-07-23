@@ -25,6 +25,41 @@ use Tygh\Shippings\RusSdek;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_save_cart_step($cart, $user_id)
+{
+    $step = 0;
+    if ($_SESSION['edit_step'] == 'step_two') {
+        $step = 1;
+    } elseif ($_SESSION['edit_step'] == 'step_three') {
+        $step = 2;
+    } elseif ($_SESSION['edit_step'] == 'step_four') {
+        $step = 3;
+    }
+    
+    $user_type = 'R';
+    if (empty($user_id)) {
+        if (fn_get_session_data('cu_id')) {
+            $user_id = fn_get_session_data('cu_id');
+        } else {
+            $user_id = fn_crc32(uniqid(TIME));
+            fn_set_session_data('cu_id', $user_id, COOKIE_ALIVE_TIME);
+        }
+        $user_type = 'U';
+    }
+    
+    if (!empty($user_id)) {
+    
+        $condition = db_quote(" AND user_id = ?i AND type = 'C' AND user_type = ?s", $user_id, $user_type);
+        if (fn_allowed_for('ULTIMATE')) {
+            $condition .= fn_get_company_condition('?:user_session_products.company_id');
+        }
+
+        if (!empty($cart['products']) && is_array($cart['products'])) {
+            db_query("UPDATE ?:user_session_products SET step = ?s WHERE item_id IN (?n) AND user_id = ?i AND type = 'C' AND user_type = ?s", $step, array_keys($cart['products']), $user_id, $user_type);
+        }
+    }
+}
+
 function fn_update_competitive_prices()
 {
     $link = 'https://racketlon.ru/index.php?dispatch=products.view&product_id=';

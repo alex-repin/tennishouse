@@ -12,13 +12,14 @@
 <tr>
     <th width="1%">
         {include file="common/check_items.tpl"}</th>
-    <th width="25%">
+    <th width="27%">
         <span id="off_carts" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hidden hand cm-combinations-carts"/><span class="exicon-collapse"></span></span>
         <span id="on_carts" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="cm-combinations-carts"><span class="exicon-expand"></span></span>
         <a class="cm-ajax{if $search.sort_by == "customer"} sort-link-{$search.sort_order_rev}{/if}" href="{"`$c_url`&sort_by=customer&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id="pagination_contents">{__("customer")}</a>
     </th>
-    <th width="15%"><a class="cm-ajax{if $search.sort_by == "date"} sort-link-{$search.sort_order_rev}{/if}" href="{"`$c_url`&sort_by=date&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id="pagination_contents">{__("date")}</a></th>
+    <th width="13%"><a class="cm-ajax{if $search.sort_by == "date"} sort-link-{$search.sort_order_rev}{/if}" href="{"`$c_url`&sort_by=date&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id="pagination_contents">{__("date")}</a></th>
     <th width="10%">{__("cart_content")}</th>
+    <th width="2%">{__("step")}</th>
     <th width="10%">{__("total")}</th>
     <th width="10%">{__("ip")}</th>
     {hook name="cart:items_list_header"}
@@ -64,6 +65,7 @@
         {$customer.date|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"}
     </td>
     <td>{$customer.cart_products|default:"0"} {__("product_s")}</td>
+    <td>{if $customer.step}{$customer.step}{/if}</td>
     <td>{include file="common/price.tpl" value=$customer.total}</td>
     <td>{$customer.ip_address}</td>
     {hook name="cart:items_list"}

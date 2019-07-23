@@ -201,6 +201,12 @@ select {
 }
 .ty-cr-information {
     width : 430px;
+    margin-bottom: 10px;
+}
+.ty-call-request-form {
+    input {
+        width : 430px;
+    }
 }
 .ty-cr-product-info-header .ty-product-block-title {
     font-size: 2rem;
@@ -3417,6 +3423,7 @@ input.ty-search-block__input:focus {
 }
 .ty-control-group {
     margin: 0;
+    position: relative;
 }
 .ty-pc-container-separator {
 /*    border-bottom: 1px solid #dfe2e6; 
@@ -4392,13 +4399,13 @@ input.ty-search-block__input:focus {
 .ty-email-confirmation__yes-block {
     left: 270px;
     position: absolute;
-    top: 32px;
+    top: 28px;
 }
 .ty-email-confirmation__not-block {
     left: 272px;
     position: absolute;
-    top: 33px;
-    width: 210px;
+    top: 30px;
+    width: 310px;
 }
 .ty-email-confirmation_yes {
     background: url("../../../design/themes/responsive/media/images/addons/development/cm.png") no-repeat transparent;
@@ -4425,6 +4432,7 @@ input.ty-search-block__input:focus {
     color: #f78282;
     padding: 0 0 0 35px;
     margin-top: -6px;
+    white-space: normal;
 }
 .ty-profile-field__switch {
     border-radius: 0;
@@ -4508,21 +4516,21 @@ input.ty-search-block__input:focus {
         .transition(none);
     }
     .ty-control-group {
-        margin-bottom: 10px;
+        margin-bottom: 10px; 
         position: relative;
     }
     .captcha {
         margin-top: 0;
     }
-    .ty-control-group__title {
+    input:placeholder-shown + .ty-control-group__title {
         display: none;
-        font-size: 13px;
+/*        font-size: 13px;
         font-weight: normal;
         left: 30px;
         padding: 0;
         position: absolute;
         top: 5px;
-        color: darken(@base, 40%);
+        color: darken(@base, 40%);*/
     }
     .cm-hint {
         color: darken(@base, 20%);
@@ -4533,6 +4541,142 @@ input.ty-search-block__input:focus {
     .ty-btn {
         font-size: 18px;
         padding: 9px 14px;
+    }
+}
+.cm-label-placeholder, .ty-mainbox-body > .ty-login .cm-label-placeholder, .ty-account .cm-label-placeholder {
+    .ty-control-group {
+        margin-bottom: 10px; 
+    }
+    input::placeholder {
+        opacity: 0;
+    }
+    input[type="text"], input[type="password"] {
+        font-size: 1.5rem;
+        height: 60px;
+        padding: 0 8px 0 17px;
+        transition: all 0.15s ease 0s;
+        ~ label {
+            font-weight: normal;
+            font-size: 1.5rem;
+            padding: 0;
+            position: absolute;
+            display: block;
+            top: 18px;
+            left: 17px;
+            color: darken(@base, 40%);
+            cursor: text;
+            transition: all 0.15s ease 0s;
+        }
+    }
+    .ty-calendar__block {
+        width: auto;
+        ~ label {
+            font-weight: normal;
+            font-size: 1.1rem;
+            padding: 0;
+            position: absolute;
+            display: block;
+            top: 6px;
+            left: 17px;
+            color: darken(@base, 40%);
+            cursor: text;
+            transition: all 0.15s ease 0s;
+        }
+    }
+    input[type="text"]:focus, input[type="password"]:focus, input[type="text"].cm-input-full, input[type="password"].cm-input-full {
+        padding: 20px 8px 0 17px;
+        ~ label {
+            top: 6px;
+            font-size: 1.1rem;
+        }
+    }
+    select, input.cm-state {
+        ~ label {
+            font-weight: normal;
+            font-size: 1.1rem;
+            padding: 0;
+            position: absolute;
+            display: block;
+            top: 6px;
+            left: 17px;
+            color: darken(@base, 40%);
+            cursor: text;
+            transition: all 0.23s ease-in-out 0s;
+        }
+        + .sbHolder {
+            height: 58px;
+            display: block;
+/*             padding-top: 28px; */
+            .sbSelector {
+                font-size: 1.5rem;
+                display: inline-block;
+                vertical-align: middle;
+                padding-top: 20px;
+            }
+            .sbToggle {
+                float: none;
+                display: inline-block;
+                vertical-align: middle;
+                height: 58px;
+                background-position-y: center;
+            }
+            .sbOptions {
+                li {
+                    height: 40px;
+                    line-height: 40px;
+                        div {
+                            font-size: 1.5rem;
+                        }
+                    }
+            }
+        }
+        + .sbHolder::after {
+            content: "";
+            height: 100%;
+            display: inline-block;
+            vertical-align: middle;
+        }
+    }
+}
+.cm-label-placeholder.ty-mini-form-mode {
+    input[type="text"], input[type="password"] {
+        font-size: 1.3rem;
+        height: 50px;
+        ~ label {
+            top: 15px;
+            font-size: 1.3rem;
+        }
+    }
+    input[type="text"]:focus, input[type="password"]:focus, input[type="text"].cm-input-full, input[type="password"].cm-input-full {
+        padding: 15px 8px 0 17px;
+        ~ label {
+            font-size: 1rem;
+            top: 4px;
+        }
+    }
+    select, input.cm-state {
+        ~ label {
+            font-size: 1rem;
+        }
+        + .sbHolder {
+            height: 48px;
+            .sbSelector {
+                font-size: 1.3rem;
+                padding-top: 18px;
+            }
+            .sbToggle {
+                height: 48px;
+            }
+            .sbOptions {
+                li {
+                    height: 35px;
+                    line-height: 35px;
+                    div {
+                        font-size: 1.3rem;
+                    }
+                }
+            }
+        }
     }
 }
 .ty-subscribe-confirmation-sent {
@@ -4612,6 +4756,22 @@ input.ty-search-block__input:focus {
     white-space: nowrap;
     .ty-newsletters, .captcha {
         padding: 0 18px;
+    }
+    .ty-control-group {
+        margin-bottom: 10px;
+    }
+    .ty-billing-country, .ty-billing-state, .ty-shipping-country, .ty-shipping-state {
+        width: 100%;
+        .sbHolder {
+            width: 100%;
+            .sbSelector {
+                width: calc(~'95% - 16px');
+                padding-left: 16px;
+            }
+            .sbToggle {
+                width: 5%;
+            }
+        }
     }
 }
 .ty-additional-info {
@@ -6567,7 +6727,7 @@ input.ty-rf_input-answer{
     overflow-x: hidden;
     overflow-y: auto;
     min-width: 200px;
-    max-height: 420px;
+/*     max-height: 420px; */
     color: #313131;
 }
 
@@ -6579,7 +6739,7 @@ input.ty-rf_input-answer{
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    line-height: 30px;
+    line-height: 35px;
 }
 
 #kladr_autocomplete li + li {
@@ -6600,8 +6760,8 @@ input.ty-rf_input-answer{
     color: @font;
     padding: 1px 7px;
     width: 100%;
+    font-size: 1.3rem;
 }
-
 #kladr_autocomplete strong {
 /*     color: darken(@menu, 30%); */
 }
@@ -6740,6 +6900,9 @@ a.ty-promo-descr-link{
 }
 .ty-rma-return {
     padding: @content_padding;
+}
+.ty-success-registration__text {
+    padding: 7px @content_padding_size 40px;
 }
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
     .ty-add-to-compare {

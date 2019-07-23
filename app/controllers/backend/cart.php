@@ -161,6 +161,7 @@ function fn_get_carts($params, $items_per_page = 0)
     $fields = array (
         '?:user_session_products.user_id',
         '?:user_session_products.user_data',
+        '?:user_session_products.step',
         '?:users.firstname',
         '?:users.lastname',
         '?:user_session_products.timestamp AS date',

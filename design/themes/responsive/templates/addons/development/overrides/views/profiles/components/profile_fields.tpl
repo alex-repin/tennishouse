@@ -1,7 +1,7 @@
 {if $show_email}
     <div class="ty-control-group">
-        <label for="{$id_prefix}elm_email" class="cm-required cm-email">{__("email")}<i>*</i></label>
         <input type="text" id="{$id_prefix}elm_email" name="user_data[email]" size="32" value="{$user_data.email}" class="ty-input-text {$_class}" {$disabled_param} />
+        <label for="{$id_prefix}elm_email" class="cm-required cm-email">{__("email")}<i>*</i></label>
     </div>
 {else}
 
@@ -69,16 +69,13 @@
 
 {hook name="profiles:profile_fields"}
 <div class="ty-control-group ty-profile-field__item ty-{$field.class}">
-    {if $pref_field_name != $field.description || $field.required == "Y"}
-        <label for="{$id_prefix}elm_{$field.field_id}" class="ty-control-group__title cm-profile-field {if $field.required == "Y"}cm-required{/if}{if $field.field_type == "P"} cm-phone{/if}{if $field.field_type == "Z"} cm-zipcode{/if}{if $field.field_type == "E"} cm-email{/if} {if $field.field_type == "Z"}{if $section == "S"}cm-location-shipping{else}cm-location-billing{/if}{/if}{if $data_id == 's_city' || $data_id == 'b_city'} cm-city{/if}">{$field.description}</label>
-    {/if}
 
     {if $field.field_type == "A"}  {* State selectbox *}
         {$_country = $settings.General.default_country}
         {$_state = $value|default:$session_state|default:$settings.General.default_state}
 
         <select {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} id="{$id_prefix}elm_{$field.field_id}" class="ty-profile-field__select-state cm-state cm-dropdown {if $section == "S"}cm-location-shipping{else}cm-location-billing{/if} {if !$skip_field}{$_class}{/if}" name="{$data_name}[{$data_id}]" {if !$skip_field}{$disabled_param nofilter}{/if}>
-            <option value="">- {__("select_state")} -</option>
+            {*<option value="">- {__("select_state")} -</option>*}
             {if $states && $states.$_country}
                 {foreach from=$states.$_country item=state}
                     <option {if $_state == $state.code}selected="selected"{/if} value="{$state.code}">{$state.state}</option>
@@ -90,7 +87,7 @@
         {assign var="_country" value=$value|default:$settings.General.default_country}
         <select {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} id="{$id_prefix}elm_{$field.field_id}" class="ty-profile-field__select-country cm-country cm-dropdown {if $section == "S"}cm-location-shipping{else}cm-location-billing{/if} {if !$skip_field}{$_class}{else}cm-skip-avail-switch{/if}" name="{$data_name}[{$data_id}]" {if !$skip_field}{$disabled_param nofilter}{/if}>
             {hook name="profiles:country_selectbox_items"}
-            <option value="">- {__("select_country")} -</option>
+            {*<option value="">- {__("select_country")} -</option>*}
             {foreach from=$countries item="country" key="code"}
             <option {if $_country == $code}selected="selected"{/if} value="{$code}">{$country}</option>
             {/foreach}
@@ -106,9 +103,9 @@
     
     {elseif $field.field_type == "D"}  {* Date *}
         {if !$skip_field}
-            {include file="common/calendar.tpl" date_id="`$id_prefix`elm_`$field.field_id`" date_name="`$data_name`[`$data_id`]" date_val=$value start_year="1902" end_year="0" extra=$disabled_param}
+            {include file="common/calendar.tpl" date_id="`$id_prefix`elm_`$field.field_id`" date_name="`$data_name`[`$data_id`]" date_val=$value start_year="1902" end_year="0" extra=$disabled_param placeholder=$field.description}
         {else}
-            {include file="common/calendar.tpl" date_id="`$id_prefix`elm_`$field.field_id`" date_name="`$data_name`[`$data_id`]" date_val=$value start_year="1902" end_year="0"}
+            {include file="common/calendar.tpl" date_id="`$id_prefix`elm_`$field.field_id`" date_name="`$data_name`[`$data_id`]" date_val=$value start_year="1902" end_year="0" placeholder=$field.description}
         {/if}
 
     {elseif $field.field_type == "S"}  {* Selectbox *}
@@ -138,6 +135,11 @@
             <input type="hidden" {if $field.autocomplete_type}data-autocompletetype="city_id"{/if} name="{$data_name}[{$data_id}_kladr_id]" value="{$user_data.$kladr_name|default:$session_city_id}" />
         {/if}
         <input {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} type="text" id="{$id_prefix}elm_{$field.field_id}" name="{$data_name}[{$data_id}]" size="32" value="{if $data_id == 's_city' || $data_id == 'b_city'}{$value|default:$session_city}{else}{$value}{/if}" class="ty-input-text {if !$skip_field}{$_class}{else}cm-skip-avail-switch{/if}{if $field.class == 'shipping-phone' || $field.class == 'billing-phone'} cm-cr-mask-phone{/if}" {if !$skip_field}{$disabled_param nofilter}{/if} {if $data_id == 's_city' || $data_id == 'b_city'}placeholder="{__('just_name')}" onblur="fn_check_city($(this), true);" onkeydown="fn_city_change($(this));"{/if} />
+        
+    {/if}
+    
+    {if $pref_field_name != $field.description || $field.required == "Y"}
+        <label for="{$id_prefix}elm_{$field.field_id}" class="ty-control-group__title cm-profile-field {if $field.required == "Y"}cm-required{/if}{if $field.field_type == "P"} cm-phone{/if}{if $field.field_type == "Z"} cm-zipcode{/if}{if $field.field_type == "E"} cm-email{/if} {if $field.field_type == "Z"}{if $section == "S"}cm-location-shipping{else}cm-location-billing{/if}{/if}{if $data_id == 's_city' || $data_id == 'b_city'} cm-city{/if}">{$field.description}</label>
     {/if}
 
     {if $field.class == 'ntrp-selectbox'}<div class="ty-profile-field-note"><a href="{"pages.view?page_id=42"|fn_url}">{__("how_to_know_your_game_level")}</a></div>{/if}
@@ -154,6 +156,7 @@
     $('.cm-autocomplete-block').each(function() {
         fn_init_autocomplete($(this));
     });
+    fn_init_placeholder();
 }(Tygh, Tygh.$));
 
 </script>

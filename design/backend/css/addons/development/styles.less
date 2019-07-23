@@ -137,12 +137,94 @@
 }
 .ty-c-prices-title {
     font-size: 1.5rem;
-    margin-bottom: 10px;
+    margin: 20px 0 10px;
 }
 .ty-c-price-lower {
 }
 .ty-c-price-higher {
     color: #e83841;
+}
+.ty-cp-row {
+    border-top: 1px solid #ddd;
+    padding: 8px;
+}
+.ty-cp-row:hover {
+    background-color: @tableBackgroundAccent;
+}
+.ty-cp-cell {
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+    input {
+        margin: 0;
+    }
+}
+.ty-cp-checkbox {
+    width: 2%;
+}
+.ty-cp-name {
+    width: 28%;
+}
+.ty-cp-c-name {
+    width: 48%;
+}
+.ty-cp-org-name {
+    width: 20%;
+}
+.ty-cp-stock {
+    width: 2%;
+}
+.ty-cp-code {
+    width: 6%;
+}
+.ty-cp-price {
+    width: 6%;
+}
+.ty-cp-input {
+    width: 50%;
+}
+.ty-cp-item-id {
+    width: 6%;
+}
+.ty-cp-search-results {
+    display: none;
+}
+.ty-cp-search-results {
+    position: absolute;
+    background-color: #fff;
+    width: 100%;
+    box-shadow: 0 4px 10px rgba(0,0,0,.1);
+    z-index: 10;
+}
+.ty-cp-search-results-item {
+    border-bottom: 1px solid #ddd;
+    padding: 0 40px 0 0;
+    position: relative;
+}
+.ty-cp-search-results-item:hover {
+    background-color: #f6f7f8;
+}
+.ty-cp-search-results-item-sold-out {
+    color: lighten(#333, 40%);
+}
+.ty-cp-search-results-item-link {
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 2rem;
+    padding: 5px 10px;
+    height: 40px;
+}
+.ty-cp-search-results-item-link:hover {
+    text-decoration: none;
+}
+.ty-cp-search-results-item-select {
+    height: 40px;
+    line-height: 20px;
+    padding: 5px 10px;
+}
+.ty-cp-item-id-input {
+    width: 50px;
 }
 /* KLADR */
 .kladr-error {

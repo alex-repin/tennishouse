@@ -208,6 +208,13 @@ var images_dir = '{$images_dir}';
             }
             return (obj.typeShort ? obj.typeShort + '. ' : '') + obj.name;
         }
+        
+        function fn_switch_kladr(obj)
+        {
+//             fn_print_r(obj.val());
+//             $("[data-autocompletetype='city']").unbind();
+        }
+        
         function fn_init_autocomplete(elm)
         {
             var city = $("[data-autocompletetype='city']", elm);
@@ -339,8 +346,11 @@ var images_dir = '{$images_dir}';
 //         function fn_init_autocomplete(elm)
 //         {
 //             var city = $("[data-autocompletetype='city']", elm);
+//             var address = $("[data-autocompletetype='street-address']", elm);
 //             var state = $("[data-autocompletetype='state']", elm);
 //             var city_id = $("[data-autocompletetype='city_id']", elm);
+//             var zip = $("[data-autocompletetype='postal-code']", elm);
+//             var country = $("[data-autocompletetype='country']", elm);
 // 
 //             if (city.length) {
 //                 city.autocomplete({
@@ -375,6 +385,15 @@ var images_dir = '{$images_dir}';
 //             var check_state = $("[data-autocompletetype='state']", elm).val();
 //             var check_country = $("[data-autocompletetype='country']", elm).val();
 // 
+// //             $.ceAjax('request', 'https://integration.cdek.ru/v1/location/cities/json?cityName=' + encodeURIComponent(request.term), {
+// //                 callback: function(data) {
+// //                 fn_print_r('ed');
+// //                     for (var i = 0, l = data.length; i < l; i++) {
+// //                         fn_print_r(data[i]);
+// //                     }
+// // //                     response(data.autocomplete);
+// //                 }
+// //             });
 //             $.ceAjax('request', fn_url('city.autocomplete_city?q=' + encodeURIComponent(request.term) + '&check_state=' + check_state + '&check_country=' + check_country), {
 //                 callback: function(data) {
 //                     response(data.autocomplete);
@@ -764,6 +783,46 @@ var images_dir = '{$images_dir}';
         }
     }
     
+    function fn_init_placeholder()
+    {
+        $('.cm-label-placeholder :input').each(function(){
+            if ($(this).val()) {
+                $(this).addClass('cm-input-full');
+            } else {
+                $(this).removeClass('cm-input-full');
+            }
+            $(this).on('keyup keypress blur change', function(){
+                if ($(this).val()) {
+                    $(this).addClass('cm-input-full');
+                } else {
+                    $(this).removeClass('cm-input-full');
+                }
+            });
+        })
+    }
+    
+    function fn_init_autosubmit()
+    {
+        $('.cm-auto-submit').each(function(){
+            if (typeof($(this).data('autoSubmitDispatch')) != 'undefined') {
+                var auto_form = $(this);
+
+                $(auto_form, ":input").on('keydown change', function() {
+                    auto_form.data('changed', true);
+                });
+                setInterval(function() {
+                    if (auto_form.data('changed')) {
+                        $.ceAjax('request', fn_url(auto_form.data('autoSubmitDispatch') + '?' + auto_form.serialize().replace(/&dispatch=([^&]+)/, '')), {
+                            method: 'get',
+                            hidden: true,
+                        });
+                        auto_form.data('changed', false);
+                    }
+                }, 1000);
+            }
+        });
+    }
+    
     (function(_, $) {
         $(function() {
             $(document).ready(function() {
@@ -874,24 +933,6 @@ var images_dir = '{$images_dir}';
                     location.href = $(this).data('href');
                 });
             });
-            $('.cm-auto-submit').each(function(){
-                if (typeof($(this).data('autoSubmitDispatch')) != 'undefined') {
-                    var auto_form = $(this);
-
-                    $(auto_form, ":input").on('keydown change', function() {
-                        auto_form.data('changed', true);
-                    });
-                    setInterval(function() {
-                        if (auto_form.data('changed')) {
-                            $.ceAjax('request', fn_url(auto_form.data('autoSubmitDispatch') + '?' + auto_form.serialize().replace(/&dispatch=([^&]+)/, '')), {
-                                method: 'get',
-                                hidden: true,
-                            });
-                            auto_form.data('changed', false);
-                        }
-                    }, 1000);
-                }
-            });
             $('.cm-ajax-search').each(function(){
                 $(this).focus(function(){
                     $('#top_search').show();
@@ -920,6 +961,8 @@ var images_dir = '{$images_dir}';
             $('.cm-show-form').focus(function(e){
                 fn_show_form(e);
             });
+            fn_init_autosubmit();
+            fn_init_placeholder();
         });
     }(Tygh, Tygh.$));
 {/literal}

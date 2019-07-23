@@ -757,6 +757,16 @@
                 UNIQUE(`link`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
         </item>
+        <item>
+            CREATE TABLE IF NOT EXISTS `cscart_competitive_pairs` (
+                `competitive_id` mediumint(8) NOT NULL,
+                `product_id` mediumint(8) NOT NULL,
+                PRIMARY KEY (`product_id`)
+            );
+        </item>
+        <item>
+            ALTER TABLE `cscart_user_session_products` ADD `step` TINYINT(1) NOT NULL;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -1467,7 +1477,9 @@
         <item lang="ru" id="competitive_prices">Цены конкурентов</item>
         <item lang="ru" id="competitive_prices_menu_description">Обновить цены товаров с учетом цен конкурентов</item>
         <item lang="ru" id="cprices_out_of_stock">Нет</item>
-        <item lang="ru" id="cprices_differ">Разные цены</item>
-        <item lang="ru" id="cprices_no_competitor">Цены не найдены</item>
+        <item lang="ru" id="step">Шаг</item>
+        <item lang="ru" id="cprices_no_competitor">Конкурент не найден</item>
+        <item lang="ru" id="cprices_differ">Цены отличаются</item>
+        <item lang="ru" id="cprices_no_competitor_all">Все товары</item>
     </language_variables>
 </addon>

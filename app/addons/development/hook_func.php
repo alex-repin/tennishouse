@@ -1712,10 +1712,10 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
     
     if (!empty($params['competition'])) {
         if ($params['competition'] == 'N') {
-            $join .= db_quote(" LEFT JOIN ?:competitive_prices ON ?:competitive_prices.code = products.product_code");
-            $condition .= db_quote(' AND ?:competitive_prices.item_id IS NULL');
+            $join .= db_quote(" LEFT JOIN ?:competitive_prices ON ?:competitive_prices.code = products.product_code LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = products.product_id");
+            $condition .= db_quote(' AND ?:competitive_prices.item_id IS NULL AND ?:competitive_pairs.competitive_id IS NULL');
         } elseif ($params['competition'] == 'D') {
-            $join .= db_quote(" INNER JOIN ?:competitive_prices ON ?:competitive_prices.code = products.product_code");
+            $join .= db_quote(" LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = products.product_id INNER JOIN ?:competitive_prices ON (?:competitive_prices.code = products.product_code OR ?:competitive_pairs.competitive_id = ?:competitive_prices.item_id)");
             $condition .= db_quote(' AND ?:competitive_prices.price != prices.price');
             $fields[] = '?:competitive_prices.name AS c_name';
             $fields[] = '?:competitive_prices.price AS c_price';
@@ -2126,7 +2126,7 @@ function fn_development_update_category_post($category_data, $category_id, $lang
 
 function fn_development_get_product_data($product_id, &$field_list, &$join, $auth, $lang_code, $condition)
 {
-    $join .= db_quote(" LEFT JOIN ?:product_tags ON ?:product_tags.product_id = ?:products.product_id LEFT JOIN ?:competitive_prices ON ?:competitive_prices.code = ?:products.product_code");
+    $join .= db_quote(" LEFT JOIN ?:product_tags ON ?:product_tags.product_id = ?:products.product_id LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = ?:products.product_id LEFT JOIN ?:competitive_prices ON ?:competitive_prices.code = ?:products.product_code OR ?:competitive_pairs.competitive_id = ?:competitive_prices.item_id");
     $field_list .= ", GROUP_CONCAT(DISTINCT CONCAT_WS('_', ?:product_tags.promotion_id, ?:product_tags.tag) SEPARATOR ',') AS tags, ?:competitive_prices.price AS c_price, ?:competitive_prices.link AS c_link, ?:competitive_prices.name AS c_name, ?:competitive_prices.in_stock AS c_in_stock";
 }
 

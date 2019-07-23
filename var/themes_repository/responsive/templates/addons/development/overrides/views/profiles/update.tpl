@@ -3,7 +3,7 @@
 {if $runtime.mode == "add" && $settings.General.quick_registration == "Y"}
     <div class="ty-account">
     
-        <form name="profiles_register_form" action="{""|fn_url}" method="post">
+        <form name="profiles_register_form" action="{""|fn_url}" method="post" class="cm-label-placeholder">
             {*include file="views/profiles/components/profile_fields.tpl" section="C" nothing_extra="Y"*}
             {include file="views/profiles/components/profiles_account.tpl" nothing_extra="Y" location="checkout"}
         
@@ -26,7 +26,7 @@
 
     {capture name="tabsbox"}
         <div class="ty-profile-field form-wrap" id="content_general">
-            <form name="profile_form" action="{""|fn_url}" method="post">
+            <form name="profile_form" action="{""|fn_url}" method="post" class="cm-label-placeholder">
                 <input id="selected_section" type="hidden" value="general" name="selected_section"/>
                 <input id="default_card_id" type="hidden" value="" name="default_cc"/>
                 <input type="hidden" name="profile_id" value="{$user_data.profile_id}" />

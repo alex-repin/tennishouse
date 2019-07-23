@@ -60,7 +60,7 @@ select {
     min-width: 2em;
 }
 .ty-shipping-country, .ty-billing-country, .ty-shipping-zip-code, .ty-billing-zip-code, .ty-shipping-state, .ty-billing-state {
-    display: none;
+/*     display: none; */
 }
 .ty-billing-country + .ty-billing-state, .ty-shipping-country + .ty-shipping-state {
     margin-left: 0;
@@ -2961,6 +2961,7 @@ table.ty-cart-content {
 }
 .ty-control-group {
     margin: 0;
+    position: relative;
 }
 .ty-pc-zero-price-note {
     color: lighten(@font, 35%);
@@ -3922,7 +3923,7 @@ a.ty-password-forgot__a {
     .ty-control-group {
         margin-bottom: 10px;
         position: relative;
-        .ty-control-group__title, .ty-captcha__label {
+        input:placeholder-shown + .ty-control-group__title, .ty-captcha__label {
             display: none;
         }
         .ty-control-group__title {
@@ -4007,6 +4008,98 @@ a.ty-password-forgot__a {
     .buttons-container {
         background-color: transparent;
         padding: 0;
+    }
+}
+.cm-label-placeholder, .ty-mainbox-body > .ty-login .cm-label-placeholder, .ty-account .cm-label-placeholder {
+    input::placeholder {
+        opacity: 0;
+    }
+    input[type="text"], input[type="password"], input[type="tel"] {
+        font-size: 1.2rem;
+        height: 60px;
+        padding: 0 8px 0 17px;
+        transition: all 0.15s ease 0s;
+    }
+    .ty-control-group {
+        margin-bottom: 10px; 
+    }
+    .ui-input-text, .ui-select {
+        ~ .ty-control-group__title {
+            font-weight: normal;
+            font-size: 1.2rem;
+            padding: 0;
+            position: absolute;
+            display: block;
+            top: 18px;
+            left: 17px;
+            color: darken(@base, 40%);
+            cursor: text;
+            transition: all 0.15s ease 0s;
+        }
+    }
+    .ty-calendar__block {
+        width: auto;
+        ~ label {
+            font-weight: normal;
+            font-size: 0.9rem;
+            padding: 0;
+            position: absolute;
+            display: block;
+            top: 6px;
+            left: 17px;
+            color: darken(@base, 40%);
+            cursor: text;
+            transition: all 0.15s ease 0s;
+        }
+    }
+    input[type="text"]:focus, input[type="password"]:focus, input[type="tel"]:focus, .cm-input-full input[type="text"], .cm-input-full input[type="password"], .cm-input-full input[type="tel"] {
+        padding: 20px 8px 0 17px;
+    }
+    .cm-input-full, .ui-focus, .ui-select {
+        ~ .ty-control-group__title {
+            top: 6px;
+            font-size: 0.9rem;
+        }
+    }
+    .ui-select .ui-btn, input.cm-state {
+        font-size: 1.2rem;
+        box-shadow: none;
+        padding: 1.47em 0.8em .25em;
+        text-align: left;
+        ~ label {
+            font-weight: normal;
+            font-size: 1.1rem;
+            padding: 0;
+            position: absolute;
+            display: block;
+            top: 6px;
+            left: 17px;
+            color: darken(@base, 40%);
+            cursor: text;
+            transition: all 0.23s ease-in-out 0s;
+        }
+    }
+}
+.cm-label-placeholder.ty-mini-form-mode {
+    input[type="text"], input[type="password"], input[type="tel"] {
+        font-size: 1.3rem;
+        height: 50px;
+        ~ label {
+            top: 15px;
+            font-size: 1.3rem;
+        }
+    }
+    input[type="text"]:focus, input[type="password"]:focus, input[type="tel"]:focus, input[type="text"].cm-input-full, input[type="password"].cm-input-full, input[type="tel"].cm-input-full {
+        padding: 15px 8px 0 17px;
+        ~ label {
+            font-size: 1rem;
+            top: 4px;
+        }
+    }
+    select, input.cm-state {
+        ~ label {
+            font-size: 1rem;
+        }
     }
 }
 .ty-call-request .buttons-container {
@@ -6220,4 +6313,7 @@ a.ty-promo-descr-link{
 }
 #promotion.ty-tabs__item.active {
     background-color: #734fa0;
+}
+.ty-success-registration__text {
+    padding: 7px @content_padding_size 40px;
 }
