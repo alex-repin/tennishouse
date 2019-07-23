@@ -152,7 +152,7 @@ define('SESS_VALIDATE_UA', true); // link session ID with user-agent
 
 define('BILLING_ADDRESS_PREFIX', 'b');
 define('SHIPPING_ADDRESS_PREFIX', 's');
-define('DEBUGGING_IP', '91.77.225.176');
+define('DEBUGGING_IP', '79.139.187.123');
 
 /*
  * Dynamic options
