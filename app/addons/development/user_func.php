@@ -183,9 +183,9 @@ function fn_parse_competitive_price($link)
         }
         preg_match('/id="sku_update_\d+".*?>(.*?)<\/div>/', preg_replace('/[\r\n\t]/', '', $response), $_code);
         if (!empty($_code[1])) {
-            preg_match('/<span class="ty-control-group__item">(.*?)<\/span>/', preg_replace('/[\r\n\t]/', '', $_code[1]), $__code);
-            if (!empty($__code[1])) {
-                $code = $__code[1];
+            preg_match('/<span class="ty-control-group__item (.*?)>(.*?)</', preg_replace('/[\r\n\t]/', '', $_code[1]), $__code);
+            if (!empty($__code[2])) {
+                $code = $__code[2];
             }
         }
         preg_match('/id="sec_discounted_price_\d+".*?>(.*?)<\/span>/', preg_replace('/[\r\n\t]/', '', $response), $_price);
@@ -202,7 +202,7 @@ function fn_parse_competitive_price($link)
             }
         }
     }
-    
+
     return array($price, $code, $name, $in_stock);
 }
 

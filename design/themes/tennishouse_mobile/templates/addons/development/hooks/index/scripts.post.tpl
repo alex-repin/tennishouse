@@ -615,12 +615,22 @@ var images_dir = '{$images_dir}';
     function fn_init_placeholder()
     {
         $('.cm-label-placeholder :input').each(function(){
+        
+            $(this).on('animationstart', function(event){
+                if (event.originalEvent.animationName == 'onAutoFillStart') {
+                    $(this).parent('.ui-input-text').addClass('cm-input-full');
+                } else {
+                    $(this).parent('.ui-input-text').removeClass('cm-input-full');
+                }
+            });
+
+
             if ($(this).val()) {
                 $(this).parent('.ui-input-text').addClass('cm-input-full');
             } else {
                 $(this).parent('.ui-input-text').removeClass('cm-input-full');
             }
-            $(this).on('keyup keypress blur change', function(){
+            $(this).on('keyup keypress change', function(){
                 if ($(this).val()) {
                     $(this).parent('.ui-input-text').addClass('cm-input-full');
                 } else {

@@ -4590,6 +4590,20 @@ input.ty-search-block__input:focus {
             font-size: 1.1rem;
         }
     }
+    @keyframes onAutoFillStart {
+        from   {background-color: transparent}
+        to   {background-color: transparent}
+    }
+    @keyframes onAutoFillCancel {
+        from   {background-color: transparent}
+        to   {background-color: transparent}
+    }
+    input:-webkit-autofill {
+        animation-name: onAutoFillStart;
+    }
+    input:not(:-webkit-autofill) {
+        animation-name: onAutoFillCancel;
+    }
     select, input.cm-state {
         ~ label {
             font-weight: normal;
