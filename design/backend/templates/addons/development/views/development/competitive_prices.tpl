@@ -1,6 +1,7 @@
 {capture name="mainbox"}
 
 <form action="{""|fn_url}" method="post" name="c_prices_form" class="form-edit">
+<input type="hidden" name="mode" value="{$mode}">
 
 <div class="cm-j-tabs cm-track tabs tabs-with-conf">
     <ul class="nav nav-tabs">
@@ -39,7 +40,7 @@
                         <div class="ty-cp-cell ty-cp-code">{$product.product_code}</div>
                         <div class="ty-cp-cell ty-cp-price">{include file="common/price.tpl" value=$product.price}</div>
                         <div class="ty-cp-cell ty-cp-item-id">
-                            <input type="text" name="pairs[{$product.product_id}]" size="55" value="" class="ty-cp-item-id-input" id="cp_item_id_{$product.product_id}"/>
+                            <input type="text" name="pairs[{$product.product_id}]" size="55" value="{if $product.c_item_id}{$product.c_item_id}{/if}" class="ty-cp-item-id-input" id="cp_item_id_{$product.product_id}"/>
                         </div>
                         <div class="ty-cp-cell ty-cp-input">
                             {$product_id = $product.product_id}

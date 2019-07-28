@@ -1715,8 +1715,16 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
             $join .= db_quote(" LEFT JOIN ?:competitive_prices ON ?:competitive_prices.code = products.product_code LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = products.product_id");
             $condition .= db_quote(' AND ?:competitive_prices.item_id IS NULL AND ?:competitive_pairs.competitive_id IS NULL');
         } elseif ($params['competition'] == 'D') {
-            $join .= db_quote(" LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = products.product_id INNER JOIN ?:competitive_prices ON (?:competitive_prices.code = products.product_code OR ?:competitive_pairs.competitive_id = ?:competitive_prices.item_id)");
-            $condition .= db_quote(' AND ?:competitive_prices.price != prices.price');
+            $join .= db_quote(" LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = products.product_id LEFT JOIN ?:competitive_prices AS cp1 ON cp1.code = products.product_code LEFT JOIN ?:competitive_prices AS cp2 ON cp2.item_id = ?:competitive_pairs.competitive_id");
+            $condition .= db_quote(' AND ((cp1.item_id IS NOT NULL AND cp1.price != prices.price) OR (cp2.item_id IS NOT NULL AND cp2.price != prices.price))');
+            $fields[] = 'IF (cp1.item_id IS NOT NULL, cp1.name, cp2.name) AS c_name';
+            $fields[] = 'IF (cp1.item_id IS NOT NULL, cp1.price, cp2.price) AS c_price';
+            $fields[] = 'IF (cp1.item_id IS NOT NULL, cp1.code, cp2.code) AS c_code';
+            $fields[] = 'IF (cp1.item_id IS NOT NULL, cp1.item_id, cp2.item_id) AS c_item_id';
+            $fields[] = 'IF (cp1.item_id IS NOT NULL, cp1.link, cp2.link) AS c_link';
+            $fields[] = 'IF (cp1.item_id IS NOT NULL, cp1.in_stock, cp2.in_stock) AS c_in_stock';
+        } elseif ($params['competition'] == 'A') {
+            $join .= db_quote(" LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = products.product_id LEFT JOIN ?:competitive_prices ON ?:competitive_prices.item_id = ?:competitive_pairs.competitive_id");
             $fields[] = '?:competitive_prices.name AS c_name';
             $fields[] = '?:competitive_prices.price AS c_price';
             $fields[] = '?:competitive_prices.code AS c_code';

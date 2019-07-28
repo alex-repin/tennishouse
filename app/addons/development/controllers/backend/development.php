@@ -690,20 +690,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($mode == 'add_competitive_pairs') {
         
         if (!empty($_REQUEST['pairs'])) {
-            $data = array();
+            $data = $to_delete = array();
             foreach ($_REQUEST['pairs'] as $product_id => $item_id) {
                 if (!empty($item_id)) {
-                    $data[] = array(
-                        'competitive_id' => $item_id,
-                        'product_id' => $product_id
-                    );
+                    if ($item_id == '-') {
+                        $to_delete[] = $product_id;
+                    } else {
+                        $data[] = array(
+                            'competitive_id' => $item_id,
+                            'product_id' => $product_id
+                        );
+                    }
                 }
+            }
+            if (!empty($to_delete)) {
+                db_query("DELETE FROM ?:competitive_pairs WHERE product_id IN (?n)", $to_delete);
             }
             if (!empty($data)) {
                 db_query("REPLACE INTO ?:competitive_pairs ?m", $data);
             }
         }
-        $suffix = "development.competitive_prices?mode=N";
+        $suffix = "development.competitive_prices?mode=" . $_REQUEST['mode'];
     }
     
     return array(CONTROLLER_STATUS_OK, $suffix);
@@ -1642,7 +1649,8 @@ if ($mode == 'calculate_balance') {
         );
     } else {
         $params = array(
-            'hide_out_of_stock' => 'Y',
+            'competition' => 'A',
+            'hide_out_of_stock' => 'Y'
         );
     }
     
@@ -1665,6 +1673,9 @@ if ($mode == 'calculate_balance') {
     Registry::get('view')->assign('mode', $cp_mode);
     Registry::get('view')->assign('competitive_prices', $_result);
     
+} elseif ($mode == 'tst') {
+    fn_update_competitive_prices();
+    exit;
 }
 
 function fn_fill_image_common_description(&$images_alts, $detailed_id, $name)

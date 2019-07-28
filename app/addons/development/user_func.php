@@ -62,15 +62,15 @@ function fn_save_cart_step($cart, $user_id)
 
 function fn_update_competitive_prices()
 {
-    $link = 'https://racketlon.ru/index.php?dispatch=products.view&product_id=';
     $data = db_get_hash_array("SELECT * FROM ?:competitive_prices ORDER BY object_id DESC", 'object_id');
-    
+    $errors = array();
+
     $to_delete = $to_update = array();
     foreach ($data as $_dt) {
-        if (list($price, $code, $name, $in_stock) = fn_parse_competitive_price($link . $_dt['object_id'])) {
+        if (list($price, $code, $name, $in_stock) = fn_parse_competitive_price($_dt['link'])) {
             $upd_item = array(
                 'item_id' => $_dt['item_id'],
-                'link' => $link . $_dt['object_id'],
+                'link' => $_dt['link'],
                 'code' => $code,
                 'name' => $name,
                 'price' => $price,
@@ -104,63 +104,106 @@ function fn_update_competitive_prices()
     if (!empty($to_delete)) {
         db_query("DELETE FROM ?:competitive_prices WHERE item_id IN (?n)", $to_delete);
     }
+    
+    return array(true, $errors);
 }
 
 function fn_update_competitive_catalog($fresh = false)
 {
+    $errors = array();
     $link = 'https://racketlon.ru/index.php?dispatch=products.view&product_id=';
-    if (empty($fresh)) {
-        $cur_id = db_get_field("SELECT object_id FROM ?:competitive_prices ORDER BY object_id DESC LIMIT 1");
-        if (empty($cur_id)) {
-            $fresh = true;
-        }
-    } else {
-        $cur_id = 0;
-    }
-    $data = array();
-    $real_id = $cur_id;
-    $cur_id++;
+//     if (empty($fresh)) {
+//         $cur_id = db_get_field("SELECT object_id FROM ?:competitive_prices ORDER BY object_id DESC LIMIT 1");
+//         if (empty($cur_id)) {
+//             $fresh = true;
+//         }
+//     } else {
+//         $cur_id = 0;
+//     }
+//     $data = array();
+//     $real_id = $cur_id;
+//     $cur_id++;
+//     
+//     // Go up
+//     while (true) {
+//         if (list($price, $code, $name, $in_stock) = fn_parse_competitive_price($link . $cur_id)) {
+//             $data[] = array(
+//                 'link' => $link . $cur_id,
+//                 'code' => $code,
+//                 'name' => $name,
+//                 'price' => $price,
+//                 'in_stock' => $in_stock,
+//                 'object_id' => $cur_id,
+//                 'timestamp' => TIME
+//             );
+//             $real_id = $cur_id;
+//         }
+//         if (count($data) == 50) {
+//             db_query("REPLACE INTO ?:competitive_prices ?m", $data);
+//             $data = array();
+//         }
+//         if (!empty($fresh)) {
+//             if (empty($real_id) && fmod($cur_id, 50) == 0) {
+//                 db_query("DELETE FROM ?:competitive_prices WHERE link = 'temp'");
+//                 db_query("REPLACE INTO ?:competitive_prices ?e", array(
+//                     'link' => 'temp',
+//                     'object_id' => $cur_id
+//                 ));
+//             }
+//             if ($cur_id > 27000 && $real_id + 100 < $cur_id) {
+//                 break;
+//             }
+//         } else {
+//             if ($real_id + 100 < $cur_id) {
+//                 break;
+//             }
+//         }
+//         fn_echo(' . ');
+//         $cur_id++;
+//     }
+//     
+//     if (!empty($data)) {
+//         db_query("REPLACE INTO ?:competitive_prices ?m", $data);
+//     }
     
-    while (true) {
-        if (list($price, $code, $name, $in_stock) = fn_parse_competitive_price($link . $cur_id)) {
-            $data[] = array(
-                'link' => $link . $cur_id,
-                'code' => $code,
-                'name' => $name,
-                'price' => $price,
-                'in_stock' => $in_stock,
-                'object_id' => $cur_id,
-                'timestamp' => TIME
-            );
-            $real_id = $cur_id;
-        }
-        if (count($data) == 50) {
-            db_query("REPLACE INTO ?:competitive_prices ?m", $data);
-            $data = array();
-        }
-        if (!empty($fresh)) {
-            if (empty($real_id) && fmod($cur_id, 50) == 0) {
-                db_query("DELETE FROM ?:competitive_prices WHERE link = 'temp'");
-                db_query("REPLACE INTO ?:competitive_prices ?e", array(
-                    'link' => 'temp',
-                    'object_id' => $cur_id
-                ));
+    // Go down
+    $exist_ids = db_get_fields("SELECT object_id FROM ?:competitive_prices ORDER BY object_id DESC");
+    
+    $real_id = $cur_id = max($exist_ids);
+    $data = array();
+    $cur_id--;
+    
+    while ($cur_id > 0) {
+        if (!in_array($cur_id, $exist_ids)) {
+            if (list($price, $code, $name, $in_stock) = fn_parse_competitive_price($link . $cur_id)) {
+                $data[] = array(
+                    'link' => $link . $cur_id,
+                    'code' => $code,
+                    'name' => $name,
+                    'price' => $price,
+                    'in_stock' => $in_stock,
+                    'object_id' => $cur_id,
+                    'timestamp' => TIME
+                );
+                $real_id = $cur_id;
             }
-            if ($cur_id > 27000 && $real_id + 100 < $cur_id) {
-                break;
+            if (count($data) == 50) {
+                db_query("REPLACE INTO ?:competitive_prices ?m", $data);
+                $data = array();
             }
         } else {
-            if ($real_id + 100 < $cur_id) {
-                break;
-            }
+            $real_id = $cur_id;
         }
+        
         fn_echo(' . ');
-        $cur_id++;
+        $cur_id--;
     }
     
     if (!empty($data)) {
         db_query("REPLACE INTO ?:competitive_prices ?m", $data);
     }
+
+    return array(true, $errors);
 }
 
 function fn_parse_competitive_price($link)
@@ -208,6 +251,7 @@ function fn_parse_competitive_price($link)
 
 function fn_check_delivery_statuses()
 {
+    $errors = array();
     $data = db_get_hash_array("SELECT ?:orders.order_id, GROUP_CONCAT(DISTINCT ?:shipment_items.shipment_id SEPARATOR ',') AS shipment_ids FROM ?:orders LEFT JOIN ?:shipment_items ON ?:shipment_items.order_id = ?:orders.order_id WHERE ?:orders.status = 'A' GROUP BY order_id", 'order_id');
     
     if (!empty($data)) {
@@ -241,6 +285,8 @@ function fn_check_delivery_statuses()
             }
         }
     }
+    
+    return array(true, $errors);
 }
 
 function fn_seo_variants_allowed($type)
@@ -262,6 +308,7 @@ function fn_get_categories_subitems($cats)
 
 function fn_get_generate_categories_menu_subitems()
 {
+    $errors = array();
     $cats = fn_get_categories_tree();
     $subitems = fn_top_menu_standardize($cats, 'category_id', 'category', 'subcategories', 'categories.view?category_id=');
 
@@ -341,6 +388,8 @@ function fn_get_generate_categories_menu_subitems()
         }
         db_query("UPDATE ?:categories SET menu_subitems = ?s WHERE category_id = ?i", serialize($subitems[$c_id]), $c_id);
     }
+    
+    return array(true, $errors);
 }
 
 function fn_get_features_by_variant($variant_id = 0, $params = array())
