@@ -108,72 +108,15 @@ function fn_update_competitive_prices()
     return array(true, $errors);
 }
 
-function fn_update_competitive_catalog($fresh = false)
+function fn_update_competitive_catalog()
 {
-    $errors = array();
+    $errors = $data = array();
     $link = 'https://racketlon.ru/index.php?dispatch=products.view&product_id=';
-//     if (empty($fresh)) {
-//         $cur_id = db_get_field("SELECT object_id FROM ?:competitive_prices ORDER BY object_id DESC LIMIT 1");
-//         if (empty($cur_id)) {
-//             $fresh = true;
-//         }
-//     } else {
-//         $cur_id = 0;
-//     }
-//     $data = array();
-//     $real_id = $cur_id;
-//     $cur_id++;
-//     
-//     // Go up
-//     while (true) {
-//         if (list($price, $code, $name, $in_stock) = fn_parse_competitive_price($link . $cur_id)) {
-//             $data[] = array(
-//                 'link' => $link . $cur_id,
-//                 'code' => $code,
-//                 'name' => $name,
-//                 'price' => $price,
-//                 'in_stock' => $in_stock,
-//                 'object_id' => $cur_id,
-//                 'timestamp' => TIME
-//             );
-//             $real_id = $cur_id;
-//         }
-//         if (count($data) == 50) {
-//             db_query("REPLACE INTO ?:competitive_prices ?m", $data);
-//             $data = array();
-//         }
-//         if (!empty($fresh)) {
-//             if (empty($real_id) && fmod($cur_id, 50) == 0) {
-//                 db_query("DELETE FROM ?:competitive_prices WHERE link = 'temp'");
-//                 db_query("REPLACE INTO ?:competitive_prices ?e", array(
-//                     'link' => 'temp',
-//                     'object_id' => $cur_id
-//                 ));
-//             }
-//             if ($cur_id > 27000 && $real_id + 100 < $cur_id) {
-//                 break;
-//             }
-//         } else {
-//             if ($real_id + 100 < $cur_id) {
-//                 break;
-//             }
-//         }
-//         fn_echo(' . ');
-//         $cur_id++;
-//     }
-//     
-//     if (!empty($data)) {
-//         db_query("REPLACE INTO ?:competitive_prices ?m", $data);
-//     }
-    
-    // Go down
+    $cur_id = 1;
     $exist_ids = db_get_fields("SELECT object_id FROM ?:competitive_prices ORDER BY object_id DESC");
+    $max_id = max($exist_ids);
     
-    $real_id = $cur_id = max($exist_ids);
-    $data = array();
-    $cur_id--;
-    
-    while ($cur_id > 0) {
+    while (true) {
         if (!in_array($cur_id, $exist_ids)) {
             if (list($price, $code, $name, $in_stock) = fn_parse_competitive_price($link . $cur_id)) {
                 $data[] = array(
@@ -195,14 +138,18 @@ function fn_update_competitive_catalog($fresh = false)
             $real_id = $cur_id;
         }
         
+        if ($max_id < $cur_id && $real_id + 100 < $cur_id) {
+            break;
+        }
+        
         fn_echo(' . ');
-        $cur_id--;
+        $cur_id++;
     }
     
     if (!empty($data)) {
         db_query("REPLACE INTO ?:competitive_prices ?m", $data);
     }
-
+    
     return array(true, $errors);
 }
 

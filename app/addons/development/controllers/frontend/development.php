@@ -128,7 +128,3 @@ if ($mode == 'load_image') {
     }
     exit;
 }
-if ($mode == 'tst') {
-    fn_update_competitive_catalog();
-    exit;
-}
