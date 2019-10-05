@@ -626,9 +626,45 @@ function fn_count_new_reviews($user_id, $object_type)
     return $reviews;
 }
 
+function fn_promotion_apply_cart_mod_rule($bonus, &$cart, &$auth, &$cart_products)
+{
+    if ($bonus['bonus'] == 'cart_product_discount') {
+        if (!isset($cart['products'][$cart['promotion_item_id']]['extra']['promotions'][$bonus['promotion_id']]) && !isset($cart['products'][$cart['promotion_item_id']]['promotions'][$bonus['promotion_id']])) {
+            if (fn_promotion_apply_discount($bonus['promotion_id'], $bonus, $cart_products[$cart['promotion_item_id']])) {
+                $cart['use_discount'] = true;
+            }
+        }
+    } elseif ($bonus['bonus'] == 'discount_on_products') {
+        if (fn_promotion_validate_attribute($cart_products[$cart['promotion_item_id']]['product_id'], $bonus['value'], 'in') && !isset($cart['products'][$k]['extra']['promotions'][$bonus['promotion_id']])) {
+            if (fn_promotion_apply_discount($bonus['promotion_id'], $bonus, $cart_products[$cart['promotion_item_id']])) {
+                $cart['use_discount'] = true;
+            }
+        }
+
+    } elseif ($bonus['bonus'] == 'discount_on_categories') {
+        if (fn_promotion_validate_attribute($cart_products[$cart['promotion_item_id']]['category_ids'], $bonus['value'], 'in') && !isset($cart['products'][$k]['extra']['promotions'][$bonus['promotion_id']])) {
+            if (fn_promotion_apply_discount($bonus['promotion_id'], $bonus, $cart_products[$cart['promotion_item_id']])) {
+                $cart['use_discount'] = true;
+            }
+        }
+
+    }
+
+    return true;
+}
+
 function fn_promotion_validate_no_list_discount(&$promotion, $product, $promotion_id = 0)
 {
     if (!empty($product['list_price']) && $product['list_price'] > $product['price']) {
+        return 'N';
+    } else {
+        return 'Y';
+    }
+}
+
+function fn_promotion_validate_no_catalog_discount(&$promotion, $cart, $cart_products, $promotion_id = 0)
+{
+    if ((!empty($cart_products[$cart['promotion_item_id']]['list_price']) && $cart_products[$cart['promotion_item_id']]['list_price'] > $cart_products[$cart['promotion_item_id']]['price']) || !empty($cart_products[$cart['promotion_item_id']]['discount']) || !empty($cart_products[$cart['promotion_item_id']]['hidden_discount'])) {
         return 'N';
     } else {
         return 'Y';
@@ -854,6 +890,7 @@ function fn_get_product_review_discount(&$products)
             if (empty($product['promotions'][REVIEW_PROMO_ID]) && ($promotions[REVIEW_PROMO_ID]['stop'] == 'N' || ($promotions[REVIEW_PROMO_ID]['stop'] == 'Y' && empty($product['promotions'])))) {
                 $cart_products = array();
                 if (fn_promotion_check(REVIEW_PROMO_ID, $promotions[REVIEW_PROMO_ID]['conditions'], $product, $_SESSION['auth'], $cart_products) && !empty($promotions[REVIEW_PROMO_ID]['bonuses'])) {
+//                     fn_print_die($product);
                     foreach ($promotions[REVIEW_PROMO_ID]['bonuses'] as $bonus) {
                         if ($bonus['bonus'] == 'product_discount') {
                             $product['review_discount'] = $result = $bonus['discount_value'];

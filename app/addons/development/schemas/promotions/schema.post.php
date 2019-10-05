@@ -54,7 +54,17 @@ $scheme['conditions']['store_review'] = array(
 $scheme['conditions']['no_list_discount'] = array(
     'type' => 'statement',
     'field_function' => array('fn_promotion_validate_no_list_discount', '#this', '@product', '#id'),
-    'zones' => array('cart', 'catalog'),
+    'zones' => array('catalog'),
+    'applicability' => array( // applicable for "positive" groups only
+        'group' => array(
+            'set_value' => true
+        ),
+    ),
+);
+$scheme['conditions']['no_catalog_discount'] = array(
+    'type' => 'statement',
+    'field_function' => array('fn_promotion_validate_no_catalog_discount', '#this', '@cart', '@cart_products', '#id'),
+    'zones' => array('cart'),
     'applicability' => array( // applicable for "positive" groups only
         'group' => array(
             'set_value' => true
@@ -74,5 +84,12 @@ $scheme['conditions']['ip_state'] = array(
     'field_function' => array('fn_promotion_validate_ip_state', '#this'),
     'zones' => array('cart', 'catalog')
 );
-
+$scheme['bonuses']['cart_product_discount'] = array (
+    'function' => array('fn_promotion_apply_cart_mod_rule', '#this', '@cart', '@auth', '@cart_products'),
+    'discount_bonuses' => array('to_percentage', 'by_percentage', 'to_fixed', 'by_fixed'),
+    'zones' => array('cart'),
+);
+$scheme['bonuses']['discount_on_products']['function'] = array('fn_promotion_apply_cart_mod_rule', '#this', '@cart', '@auth', '@cart_products');
+$scheme['bonuses']['discount_on_categories']['function'] = array('fn_promotion_apply_cart_mod_rule', '#this', '@cart', '@auth', '@cart_products');
+    
 return $scheme;

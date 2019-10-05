@@ -296,6 +296,14 @@ function fn_promotion_rebuild_mixed_data(items, value, id, element_id, condition
         </div>
     </div>
     
+    <div class="control-group">
+        <label class="control-label" for="elm_promotion_no_sum_up">{__("no_sum_up")}</label>
+        <div class="controls">
+        <input type="hidden" name="promotion_data[no_sum_up]" value="N" />
+        <input type="checkbox" name="promotion_data[no_sum_up]" id="elm_promotion_stop" value="Y" {if $promotion_data.no_sum_up == "Y"}checked="checked"{/if}/>
+        </div>
+    </div>
+    
     {include file="common/select_status.tpl" input_name="promotion_data[status]" id="elm_promotion_status" obj=$promotion_data hidden=true}
 
 </fieldset>

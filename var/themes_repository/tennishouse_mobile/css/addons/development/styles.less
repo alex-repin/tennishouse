@@ -60,7 +60,7 @@ select {
     min-width: 2em;
 }
 .ty-shipping-country, .ty-billing-country, .ty-shipping-zip-code, .ty-billing-zip-code, .ty-shipping-state, .ty-billing-state {
-/*     display: none; */
+    display: none;
 }
 .ty-billing-country + .ty-billing-state, .ty-shipping-country + .ty-shipping-state {
     margin-left: 0;
@@ -1289,6 +1289,9 @@ input:focus::placeholder, textarea:focus::placeholder {
 .ty-cart-total {
     background: none;
 }
+.ty-cart-content__price-discount {
+    color: #e74c3c;
+}
 /* Top block */
 
 
@@ -1599,8 +1602,9 @@ input.ty-search-block__input {
         vertical-align: top;
     }
 }
-.ty-discussion-post__message {
+.ty-discussion-post__message, .ty-product-tabs .ty-discussion-post__message p {
     font-size: 1rem;
+    color: @font;
 }
 .discussion-block {
     position: relative;
@@ -4055,6 +4059,21 @@ a.ty-password-forgot__a {
     input[type="text"]:focus, input[type="password"]:focus, input[type="tel"]:focus, .cm-input-full input[type="text"], .cm-input-full input[type="password"], .cm-input-full input[type="tel"] {
         padding: 20px 8px 0 17px;
     }
+    @keyframes onAutoFillStart {
+        from   {background-color: transparent}
+        to   {background-color: transparent}
+    }
+    @keyframes onAutoFillCancel {
+        from   {background-color: transparent}
+        to   {background-color: transparent}
+    }
+    input:-webkit-autofill {
+        animation-name: onAutoFillStart;
+    }
+    input:not(:-webkit-autofill) {
+        animation-name: onAutoFillCancel;
+    }
+
     .cm-input-full, .ui-focus, .ui-select {
         ~ .ty-control-group__title {
             top: 6px;

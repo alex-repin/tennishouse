@@ -86,6 +86,7 @@ fn_register_hooks(
     'pre_get_cart_product_data',
     'calculate_cart_post',
     'get_cart_product_data_post',
+    'get_cart_product_data',
     'get_order_info',
     'pre_get_orders',
     'get_orders',
@@ -117,5 +118,6 @@ fn_register_hooks(
     'update_product_feature_pre',
     'get_product_filters_before_select',
     'get_filters_products_count_query_params',
-    'delete_category_post'
+    'delete_category_post',
+    'update_promotion_post'
 );

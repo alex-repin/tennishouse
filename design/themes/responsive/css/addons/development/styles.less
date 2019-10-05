@@ -1209,6 +1209,9 @@ input:focus::placeholder, textarea:focus::placeholder {
 .ty-cart-content__total {
     display: inline-block;
 }
+.ty-cart-content__price-discount {
+    color: #e74c3c;
+}
 .ty-cart-content__total-title {
 }
 .ty-cart-content__total-amount {
@@ -4840,8 +4843,9 @@ input.ty-search-block__input:focus {
     top: 8px;
     vertical-align: top;
 }
-.ty-discussion-post__message {
+.ty-discussion-post__message, .ty-product-tabs .ty-discussion-post__message p {
     font-size: 1.1rem;
+    color: @font;
 }
 .discussion-block {
     position: relative;

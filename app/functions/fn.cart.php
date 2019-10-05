@@ -2795,7 +2795,7 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
         foreach ($cart['products'] as $k => $v) {
             $cart['products'][$k]['amount_total'] = isset($amount_totals[$v['product_id']]) ? $amount_totals[$v['product_id']] : $v['amount'];
 
-            $_cproduct = fn_get_cart_product_data($k, $cart['products'][$k], false, $cart, $auth);
+            $_cproduct = fn_get_cart_product_data($k, $cart['products'][$k], true, $cart, $auth);
             if (empty($_cproduct)) { // FIXME - for deleted products for OM
                 fn_delete_cart_product($cart, $k);
 
@@ -2820,7 +2820,7 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
 
         // Apply cart promotions
         if ($apply_cart_promotions == true && $cart['subtotal'] >= 0) {
-            $cart['applied_promotions'] = fn_promotion_apply('cart', $cart, $auth, $cart_products);
+            list($cart['applied_promotions'], $cart['potential_promotions']) = fn_promotion_apply('cart', $cart, $auth, $cart_products);
             if (!empty($cart['stored_subtotal_discount'])) {
                 $cart['subtotal_discount'] = $prev_discount;
             }
@@ -3097,6 +3097,8 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
 
                 if (!empty($product['discount'])) {
                     $cart['discount'] += $product['discount'] * $product['amount'];
+                } elseif (!empty($product['list_discount'])) {
+                    $cart['discount'] += $product['list_discount'] * $product['amount'];
                 }
             }
         }

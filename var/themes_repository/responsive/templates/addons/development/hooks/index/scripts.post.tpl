@@ -786,12 +786,22 @@ var images_dir = '{$images_dir}';
     function fn_init_placeholder()
     {
         $('.cm-label-placeholder :input').each(function(){
+        
+            $(this).on('animationstart', function(event){
+                if (event.originalEvent.animationName == 'onAutoFillStart') {
+                    $(this).addClass('cm-input-full');
+                } else {
+                    $(this).removeClass('cm-input-full');
+                }
+            });
+            
             if ($(this).val()) {
                 $(this).addClass('cm-input-full');
             } else {
                 $(this).removeClass('cm-input-full');
             }
-            $(this).on('keyup keypress blur change', function(){
+            $(this).on('keyup keypress change', function(){
+//                 fn_print_r($(this).val());
                 if ($(this).val()) {
                     $(this).addClass('cm-input-full');
                 } else {
@@ -857,6 +867,7 @@ var images_dir = '{$images_dir}';
                         $(this).css('left', Math.max(0, (($(window).width() - submenu_width) / 2) + $(window).scrollLeft()) + 'px');
                     }
                 });
+                fn_init_placeholder();
             });
             
             if (!$('#tygh_main_container').hasClass('touch')) {
@@ -962,7 +973,6 @@ var images_dir = '{$images_dir}';
                 fn_show_form(e);
             });
             fn_init_autosubmit();
-            fn_init_placeholder();
         });
     }(Tygh, Tygh.$));
 {/literal}

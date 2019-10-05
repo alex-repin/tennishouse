@@ -17,6 +17,23 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_update_promotion_post($data, $promotion_id)
+{
+    if ($data['zone'] == 'cart') {
+        $bonuses = unserialize($data['bonuses']);
+        $is_item_discount = 'N';
+        if (!empty($bonuses)) {
+            foreach ($bonuses as $bonus) {
+                if (in_array($bonus['bonus'], array('discount_on_products', 'discount_on_categories', 'cart_product_discount'))) {
+                    $is_item_discount = 'Y';
+                    break;
+                }
+            }
+        }
+        db_query("UPDATE ?:promotions SET is_item_discount = ?s WHERE promotion_id = ?i", $is_item_discount, $promotion_id);
+    }
+}
+
 function fn_development_delete_category_post($category_id, $recurse, $category_ids)
 {
     db_query("DELETE FROM ?:category_feature_seo WHERE category_id = ?i", $category_id);
@@ -46,6 +63,9 @@ function fn_development_get_promotions($params, $fields, $sortings, &$condition,
 {
     if (!empty($params['show_on_site'])) {
         $condition .= db_quote(" AND ?:promotions.show_on_site = ?s", $params['show_on_site']);
+    }
+    if (!empty($params['is_item_discount'])) {
+        $condition .= db_quote(" AND ?:promotions.is_item_discount = ?s", $params['is_item_discount']);
     }
 }
 
@@ -96,6 +116,7 @@ function fn_development_set_point_payment(&$user_points, $auth)
                 $user_points += $count < $settings['review_number_limit_' . $type] ? $count * $settings['review_reward_' . $type] : $settings['review_number_limit_' . $type] * $settings['review_reward_' . $type];
             }
         }
+        $_SESSION['user_points'] = $user_points;
     }
 }
 
@@ -432,6 +453,14 @@ function fn_development_get_order_info(&$order, $additional_data)
     $order['order_number'] = !empty($order['order_number']) ? $order['order_number'] : $order['order_id'];
 }
 
+function fn_development_get_cart_product_data($product_id, &$_pdata, &$product, $auth, $cart, $hash)
+{
+    if (!empty($_pdata['list_price']) && $_pdata['list_price'] > $_pdata['price']) {
+        $product['list_discount'] = $_pdata['list_discount'] = $_pdata['list_price'] - $_pdata['price'];
+        $product['list_discount_prc'] = $_pdata['list_discount_prc'] = sprintf('%d', round($_pdata['list_discount'] * 100 / $_pdata['list_price']));
+    }
+}
+
 function fn_development_get_cart_product_data_post($hash, $product, $skip_promotion, &$cart, $auth, $promotion_amount, &$_pdata)
 {
     $net_cost_rub = 0;
@@ -448,8 +477,7 @@ function fn_development_get_cart_product_data_post($hash, $product, $skip_promot
 
 function fn_development_calculate_cart_post(&$cart, $auth, $calculate_shipping, $calculate_taxes, $options_style, $apply_cart_promotions, $cart_products, $product_groups)
 {
-
-    if (empty($cart['promotions'][REVIEW_PROMO_ID])) {
+    if (empty($cart['potential_promotions'][REVIEW_PROMO_ID])) {
         $cart['review_discount'] = fn_get_product_review_discount($cart_products);
     } else {
         unset($cart['review_discount']);
@@ -1715,7 +1743,7 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
             $join .= db_quote(" LEFT JOIN ?:competitive_prices ON ?:competitive_prices.code = products.product_code LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = products.product_id");
             $condition .= db_quote(' AND ?:competitive_prices.item_id IS NULL AND ?:competitive_pairs.competitive_id IS NULL');
         } elseif ($params['competition'] == 'D') {
-            $join .= db_quote(" LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = products.product_id LEFT JOIN ?:competitive_prices AS cp1 ON cp1.code = products.product_code LEFT JOIN ?:competitive_prices AS cp2 ON cp2.item_id = ?:competitive_pairs.competitive_id");
+            $join .= db_quote(" LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = products.product_id LEFT JOIN ?:competitive_prices AS cp2 ON cp2.code = products.product_code LEFT JOIN ?:competitive_prices AS cp1 ON cp1.item_id = ?:competitive_pairs.competitive_id");
             $condition .= db_quote(' AND ((cp1.item_id IS NOT NULL AND cp1.price != prices.price) OR (cp2.item_id IS NOT NULL AND cp2.price != prices.price))');
             $fields[] = 'IF (cp1.item_id IS NOT NULL, cp1.name, cp2.name) AS c_name';
             $fields[] = 'IF (cp1.item_id IS NOT NULL, cp1.price, cp2.price) AS c_price';

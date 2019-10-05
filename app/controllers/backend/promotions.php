@@ -168,8 +168,11 @@ if ($mode == 'update') {
 // promotions list
 } elseif ($mode == 'manage') {
 
+    $_REQUEST['zone'] = !empty($_REQUEST['zone']) ? $_REQUEST['zone'] : 'catalog';
+
     list($promotions, $search) = fn_get_promotions($_REQUEST, Registry::get('settings.Appearance.admin_elements_per_page'), DESCR_SL);
 
+    Registry::get('view')->assign('zone', $_REQUEST['zone']);
     Registry::get('view')->assign('search', $search);
     Registry::get('view')->assign('promotions', $promotions);
     fn_set_notification('W', __('warning'), __('delete_absolete_promotions'));

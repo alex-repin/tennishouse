@@ -483,7 +483,7 @@ function fn_reward_points_change_order_status(&$status_to, &$status_from, &$orde
         if ($order_statuses[$status_to]['params']['inventory'] == 'D' && $order_statuses[$status_from]['params']['inventory'] == 'I') {
             if (!empty($points_info['in_use']['points'])) {
                 // decrease points in use
-                $user_points = !empty($order_info['user_id']) ? fn_get_user_additional_data(POINTS, $order_info['user_id']) : (!empty($_SESSION['reward_points']) ? $_SESSION['reward_points'] : 0);
+                $user_points = !empty($order_info['user_id']) ? fn_get_user_additional_data(POINTS, $order_info['user_id']) : (!empty($_SESSION['user_points']) ? $_SESSION['user_points'] : 0);
                 if ($points_info['in_use']['points'] > $user_points) {
                     fn_set_notification('W', __('warning'), __('text_order_status_has_not_been_changed'));
                     $status_to = $status_from;
@@ -491,7 +491,7 @@ function fn_reward_points_change_order_status(&$status_to, &$status_from, &$orde
                     if (!empty($order_info['user_id'])) {
                         $log_id = fn_change_user_points( - $points_info['in_use']['points'], $order_info['user_id'], serialize(fn_array_merge($reason, array('text' => 'text_decrease_points_in_use'))), $action);
                     } else {
-                        $_SESSION['reward_points'] -= $points_info['in_use']['points'];
+                        $_SESSION['user_points'] -= $points_info['in_use']['points'];
                     }
                 }
             }
