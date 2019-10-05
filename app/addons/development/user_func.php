@@ -635,14 +635,14 @@ function fn_promotion_apply_cart_mod_rule($bonus, &$cart, &$auth, &$cart_product
             }
         }
     } elseif ($bonus['bonus'] == 'discount_on_products') {
-        if (fn_promotion_validate_attribute($cart_products[$cart['promotion_item_id']]['product_id'], $bonus['value'], 'in') && !isset($cart['products'][$k]['extra']['promotions'][$bonus['promotion_id']])) {
+        if (fn_promotion_validate_attribute($cart_products[$cart['promotion_item_id']]['product_id'], $bonus['value'], 'in') && !isset($cart['products'][$cart['promotion_item_id']]['extra']['promotions'][$bonus['promotion_id']])) {
             if (fn_promotion_apply_discount($bonus['promotion_id'], $bonus, $cart_products[$cart['promotion_item_id']])) {
                 $cart['use_discount'] = true;
             }
         }
 
     } elseif ($bonus['bonus'] == 'discount_on_categories') {
-        if (fn_promotion_validate_attribute($cart_products[$cart['promotion_item_id']]['category_ids'], $bonus['value'], 'in') && !isset($cart['products'][$k]['extra']['promotions'][$bonus['promotion_id']])) {
+        if (fn_promotion_validate_attribute($cart_products[$cart['promotion_item_id']]['category_ids'], $bonus['value'], 'in') && !isset($cart['products'][$cart['promotion_item_id']]['extra']['promotions'][$bonus['promotion_id']])) {
             if (fn_promotion_apply_discount($bonus['promotion_id'], $bonus, $cart_products[$cart['promotion_item_id']])) {
                 $cart['use_discount'] = true;
             }
@@ -664,7 +664,7 @@ function fn_promotion_validate_no_list_discount(&$promotion, $product, $promotio
 
 function fn_promotion_validate_no_catalog_discount(&$promotion, $cart, $cart_products, $promotion_id = 0)
 {
-    if ((!empty($cart_products[$cart['promotion_item_id']]['list_price']) && $cart_products[$cart['promotion_item_id']]['list_price'] > $cart_products[$cart['promotion_item_id']]['price']) || !empty($cart_products[$cart['promotion_item_id']]['discount']) || !empty($cart_products[$cart['promotion_item_id']]['hidden_discount'])) {
+    if (!empty($cart['promotion_item_id']) && ((!empty($cart_products[$cart['promotion_item_id']]['list_price']) && $cart_products[$cart['promotion_item_id']]['list_price'] > $cart_products[$cart['promotion_item_id']]['price']) || !empty($cart_products[$cart['promotion_item_id']]['discount']) || !empty($cart_products[$cart['promotion_item_id']]['hidden_discount']))) {
         return 'N';
     } else {
         return 'Y';

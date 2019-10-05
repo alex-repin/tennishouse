@@ -403,6 +403,7 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
                         }
                     }
                 }
+
                 foreach ($item_discount_promos as $p_id => $promotion) {
                     // Rule is valid and can be applied
                     if (fn_promotion_check($promotion['promotion_id'], $promotion['conditions'], $data, $auth, $cart_products)) {
@@ -424,7 +425,6 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
                         }
                     }
                 }
-                
                 if (!empty($cproduct_order) && !empty($cproduct_vars)) {
                     asort($cproduct_order);
                     $prom_key = key($cproduct_order);
@@ -821,7 +821,7 @@ function fn_promotion_apply_cart_rule($bonus, &$cart, &$auth, &$cart_products)
  * @param array $cart_products cart products array (for cart rules)
  * @return bool true if promotion can be applied, false - otherwise
  */
-function fn_promotion_check($promotion_id, $condition, &$data, &$auth, &$cart_products)
+function fn_promotion_check($promotion_id, $condition, &$data, &$auth, &$cart_products = NULL)
 {
     // This is unconditional promotiontion
     if (empty($condition)) {
@@ -1165,7 +1165,7 @@ function fn_promotion_validate_attribute($value, $condition, $op)
  * @param array $cart_products cart products
  * @return bool true in success, false - otherwise
  */
-function fn_promotion_apply_bonuses($promotion, &$data, &$auth, &$cart_products)
+function fn_promotion_apply_bonuses($promotion, &$data, &$auth, &$cart_products = NULL)
 {
     $schema = fn_promotion_get_schema('bonuses');
     $can_apply = false;
