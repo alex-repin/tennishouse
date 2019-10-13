@@ -69,6 +69,7 @@
                         </tr>
                     </thead>
                 {/hook}
+
                 {foreach from=$order_info.products item="product" key="key"}
                     {hook name="orders:items_list_row"}
                         {if !$product.extra.parent}
@@ -94,7 +95,8 @@
                                 <td class="ty-center">&nbsp;{$product.amount}</td>
                                 {if $order_info.use_discount}
                                     <td class="ty-right">
-                                        {if $product.extra.discount|floatval}{include file="common/price.tpl" value=$product.extra.discount}{else}-{/if}
+                                        {if $product.discount|floatval}{include file="common/price.tpl" value=$product.discount class="ty-cart-content__price-discount"}{else}-{/if}
+                                        {if $product.discount_prc|floatval} <span class="ty-cart-content__price-discount">({$product.discount_prc}%)</span>{/if}
                                     </td>
                                 {/if}
                                 {if $order_info.taxes && $settings.General.tax_calculation != "subtotal"}

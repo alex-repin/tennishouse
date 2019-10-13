@@ -90,6 +90,13 @@
                     </div>
                     
                     <div class="control-group">
+                        <label class="control-label" for="elm_list_price">{__("list_price")} ({$currencies.$primary_currency.symbol nofilter}) :</label>
+                        <div class="controls">
+                            <input type="text" name="product_data[list_price]" id="elm_list_price" size="10" value="{$product_data.list_price|default:"0.00"}" class="input-long" />
+                        </div>
+                    </div>
+
+                    <div class="control-group">
                         <label class="control-label cm-required" for="elm_net_cost">{__("net_cost")}:</label>
                         <div class="controls">
                             <input type="text" name="product_data[net_cost]" id="elm_net_price" size="10" value="{$product_data.net_cost|default:"0.00"}" class="input-long" />
@@ -203,13 +210,6 @@
                         <label class="control-label cm-required" for="elm_product_code">{__("sku")}:</label>
                         <div class="controls">
                             <input type="text" name="product_data[product_code]" id="elm_product_code" size="20" maxlength="32"  value="{$product_data.product_code}" class="input-long" />
-                        </div>
-                    </div>
-
-                    <div class="control-group">
-                        <label class="control-label" for="elm_list_price">{__("list_price")} ({$currencies.$primary_currency.symbol nofilter}) :</label>
-                        <div class="controls">
-                            <input type="text" name="product_data[list_price]" id="elm_list_price" size="10" value="{$product_data.list_price|default:"0.00"}" class="input-long" />
                         </div>
                     </div>
 

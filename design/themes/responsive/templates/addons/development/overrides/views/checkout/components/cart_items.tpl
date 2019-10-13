@@ -109,11 +109,7 @@
                         </td>
 
                         <td class="ty-cart-content__product-elem ty-cart-content__price cm-reload-{$obj_id}" id="price_display_update_{$obj_id}">
-                        {if !$product.discount|floatval && $product.list_discount|floatval}
-                            {include file="common/price.tpl" value=$product.list_price span_id="product_price_`$key`" class="ty-sub-price"}
-                        {else}
                             {include file="common/price.tpl" value=$product.original_price span_id="product_price_`$key`" class="ty-sub-price"}
-                        {/if}
                         <!--price_display_update_{$obj_id}--></td>
 
                         {if $cart.discount|floatval}
@@ -121,9 +117,6 @@
                                 {if $product.discount|floatval}
                                     {include file="common/price.tpl" value=$product.discount span_id="discount_subtotal_`$key`" class="ty-cart-content__price-discount"}
                                     {if $product.discount_prc|floatval} <span class="ty-cart-content__price-discount">({$product.discount_prc}%)</span>{/if}
-                                {elseif $product.list_discount|floatval}
-                                    {include file="common/price.tpl" value=$product.list_discount span_id="discount_subtotal_`$key`" class="ty-cart-content__price-discount"}
-                                    {if $product.list_discount_prc|floatval} <span class="ty-cart-content__price-discount">({$product.list_discount_prc}%)</span>{/if}
                                 {/if}
                             </td>
                         {/if}

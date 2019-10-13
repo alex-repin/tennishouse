@@ -119,5 +119,6 @@ fn_register_hooks(
     'get_product_filters_before_select',
     'get_filters_products_count_query_params',
     'delete_category_post',
-    'update_promotion_post'
+    'update_promotion_post',
+    'gather_additional_product_data_before_options'
 );

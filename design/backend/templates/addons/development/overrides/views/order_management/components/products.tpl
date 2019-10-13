@@ -62,7 +62,7 @@
     {else}
         {if $cart.order_id && !$cp.product_configurator_groups}
         <input type="hidden" name="cart_products[{$key}][stored_discount]" value="Y" />
-        <input type="text" class="input-hidden input-mini cm-numeric" size="5" name="cart_products[{$key}][discount]" value="{$cp.discount}" data-a-sign="{$currencies.$primary_currency.symbol|strip_tags nofilter}" data-a-dec="," data-a-sep="." />
+        <input type="text" class="input-hidden input-mini cm-numeric" size="5" name="cart_products[{$key}][discount]" value="{$cp.discount}" data-a-dec="," data-a-sep="." />
         {else}
         {include file="common/price.tpl" value=$cp.discount}
         {/if}

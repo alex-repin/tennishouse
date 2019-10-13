@@ -629,20 +629,20 @@ function fn_count_new_reviews($user_id, $object_type)
 function fn_promotion_apply_cart_mod_rule($bonus, &$cart, &$auth, &$cart_products)
 {
     if ($bonus['bonus'] == 'cart_product_discount') {
-        if (!isset($cart['products'][$cart['promotion_item_id']]['extra']['promotions'][$bonus['promotion_id']]) && !isset($cart['products'][$cart['promotion_item_id']]['promotions'][$bonus['promotion_id']])) {
+        if (!isset($cart['products'][$cart['promotion_item_id']]['promotions'][$bonus['promotion_id']])) {
             if (fn_promotion_apply_discount($bonus['promotion_id'], $bonus, $cart_products[$cart['promotion_item_id']])) {
                 $cart['use_discount'] = true;
             }
         }
     } elseif ($bonus['bonus'] == 'discount_on_products') {
-        if (fn_promotion_validate_attribute($cart_products[$cart['promotion_item_id']]['product_id'], $bonus['value'], 'in') && !isset($cart['products'][$cart['promotion_item_id']]['extra']['promotions'][$bonus['promotion_id']])) {
+        if (fn_promotion_validate_attribute($cart_products[$cart['promotion_item_id']]['product_id'], $bonus['value'], 'in') && !isset($cart['products'][$cart['promotion_item_id']]['promotions'][$bonus['promotion_id']])) {
             if (fn_promotion_apply_discount($bonus['promotion_id'], $bonus, $cart_products[$cart['promotion_item_id']])) {
                 $cart['use_discount'] = true;
             }
         }
 
     } elseif ($bonus['bonus'] == 'discount_on_categories') {
-        if (fn_promotion_validate_attribute($cart_products[$cart['promotion_item_id']]['category_ids'], $bonus['value'], 'in') && !isset($cart['products'][$cart['promotion_item_id']]['extra']['promotions'][$bonus['promotion_id']])) {
+        if (fn_promotion_validate_attribute($cart_products[$cart['promotion_item_id']]['category_ids'], $bonus['value'], 'in') && !isset($cart['products'][$cart['promotion_item_id']]['promotions'][$bonus['promotion_id']])) {
             if (fn_promotion_apply_discount($bonus['promotion_id'], $bonus, $cart_products[$cart['promotion_item_id']])) {
                 $cart['use_discount'] = true;
             }
@@ -887,10 +887,9 @@ function fn_get_product_review_discount(&$products)
     if (!empty($promotions[REVIEW_PROMO_ID]['conditions'])) {
         fn_remove_condition($promotions[REVIEW_PROMO_ID], 'product_review');
         foreach ($products as $i => &$product) {
-            if (empty($product['promotions'][REVIEW_PROMO_ID]) && ($promotions[REVIEW_PROMO_ID]['stop'] == 'N' || ($promotions[REVIEW_PROMO_ID]['stop'] == 'Y' && empty($product['promotions'])))) {
+            if (($promotions[REVIEW_PROMO_ID]['no_sum_up'] == 'N' || ($promotions[REVIEW_PROMO_ID]['no_sum_up'] == 'Y' && empty($product['discount']))) && empty($product['promotions'][REVIEW_PROMO_ID]) && ($promotions[REVIEW_PROMO_ID]['stop'] == 'N' || ($promotions[REVIEW_PROMO_ID]['stop'] == 'Y' && empty($product['discount'])))) {
                 $cart_products = array();
                 if (fn_promotion_check(REVIEW_PROMO_ID, $promotions[REVIEW_PROMO_ID]['conditions'], $product, $_SESSION['auth'], $cart_products) && !empty($promotions[REVIEW_PROMO_ID]['bonuses'])) {
-//                     fn_print_die($product);
                     foreach ($promotions[REVIEW_PROMO_ID]['bonuses'] as $bonus) {
                         if ($bonus['bonus'] == 'product_discount') {
                             $product['review_discount'] = $result = $bonus['discount_value'];
@@ -933,7 +932,7 @@ function fn_allow_user_thread_review_reward($thread_id, $object_type, $user_id, 
             }
         }
     }
-//      fn_print_die($posts, $time_limit, $thread_id, $object_type, $user_id, $exclude_post_id);
+
     return ($count < $settings['review_number_limit_' . $object_type]) ? true : false;
 }
 
@@ -1087,15 +1086,6 @@ function fn_get_similar_category_products($params)
 function fn_format_submenu(&$menu_items)
 {
     if (!empty($menu_items)) {
-//         if (count($menu_items) == 1) {
-//             $elm_tmp = reset($menu_items);
-//             if ($elm_tmp['is_virtual'] == 'Y' && !empty($elm_tmp['subitems'])) {
-//                 $menu_items = $elm_tmp['subitems'];
-//             } elseif (empty($elm_tmp['subitems'])) {
-//                 $menu_items = array();
-//             }
-//         }
-
         foreach ($menu_items as $j => $item) {
             if (!empty($item['subitems'])) {
                 $menu_items[$j]['expand'] = false;
@@ -1151,9 +1141,6 @@ function fn_get_catalog_panel_pages()
     $block['content']['menu'] = 2;
     $menu_items = fn_get_menu_items_th(true, $block, true);
     foreach ($menu_items as $i => $m_item) {
-//         if ($m_item['id_path'] == 163) {
-//             fn_print_r($menu_items[$i]);
-//         }
         if (in_array($m_item['id_path'], array(152, 153, 163))) {
             unset($menu_items[$i]);
         }
@@ -1416,7 +1403,6 @@ function fn_generate_features_cash()
 
 function fn_update_rankings($ids = array())
 {
-//     $ids = array(22);
     if (!empty($ids)) {
         $players = db_get_array("SELECT player_id, data_link, gender FROM ?:players WHERE data_link != '' AND player_id IN (?n)", $ids);
     } else {
@@ -1822,18 +1808,6 @@ function fn_get_product_cross_sales($params)
                     'items' => fn_get_result_products($_params, 'cid', $params_array)
                 );
             }
-//             $_params = array (
-//                 'sort_by' => 'random',
-//                 'limit' => (!empty($_SESSION['product_features'][R_STRINGS_FEATURE_ID]['value']) && $_SESSION['product_features'][R_STRINGS_FEATURE_ID]['value'] == 'N') ? 1 : 4,
-//                 'cid' => OVERGRIPS_CATEGORY_ID,
-//                 'subcats' => 'Y',
-//                 'amount_from' => 1
-//             );
-//             list($prods,) = fn_get_products($_params);
-//             $result[] = array(
-//                 'title' => __('overgrips'),
-//                 'items' => $prods
-//             );
         }
     }
     
@@ -1915,11 +1889,6 @@ function fn_get_same_brand_products($params)
         foreach ($products as $i => $product) {
             $ids[] = $product['product_id'];
             $_products[$product['product_id']] = $product;
-//             $all_ids = array();
-//             foreach ($product['all_path'] as $k => $path) {
-//                 $all_ids = array_merge($all_ids, explode('/', $path));
-//             }
-//             $products[$i]['all_path_ids'] = array_unique($all_ids);
         }
         $objective_cat_ids = array(RACKETS_CATEGORY_ID, APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, BAGS_CATEGORY_ID, STRINGS_CATEGORY_ID, BALLS_CATEGORY_ID);
         $category_path = db_get_field("SELECT id_path FROM ?:categories AS c LEFT JOIN ?:products_categories AS pc ON pc.category_id = c.category_id AND pc.link_type = 'M' LEFT JOIN ?:products AS p ON p.product_id = pc.product_id WHERE p.product_id = ?i", $params['same_brand_pid']);
@@ -1927,31 +1896,6 @@ function fn_get_same_brand_products($params)
         if (!empty($show_cat_ids)) {
             fn_gender_categories($show_cat_ids);
             $limit = ceil($_limit / count($show_cat_ids));
-            
-//             $check_cats = array();
-//             foreach ($show_cat_ids as $j => $cats) {
-//                 $check_cats[$j] = $limit;
-//             }
-//             $start = microtime();
-//             foreach ($products as $i => $product) {
-//             fn_print_die($product, $show_cat_ids);
-//                 foreach ($show_cat_ids as $h => $id) {
-//                     if ($check_cats[$h] > 0) {
-//                         if (!empty(array_intersect($product['all_path_ids'], $id))) {
-//                             $result[] = $product;
-//                             $check_cats[$h]--;
-//                             if ($check_cats[$h] == 0) {
-//                                 unset($show_cat_ids[$h]);
-//                             }
-//                         }
-//                     }
-//                 }
-//                 if (empty($show_cat_ids)) {
-//                     break;
-//                 }
-//             }
-//         fn_print_die($start, microtime());
-
             $_params = array (
                 'sort_by' => 'random',
                 'limit' => $limit,

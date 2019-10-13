@@ -984,6 +984,9 @@ function fn_create_order_details($order_id, $cart)
             if (isset($v['pc_original_price'])) {
                 $extra['pc_original_price'] = floatval($v['pc_original_price']);
             }
+            if (isset($v['hidden_discount'])) {
+                $extra['base_price'] -= floatval($v['hidden_discount']);
+            }
             // TennisHouse
             if (!empty($v['promotions'])) {
                 $extra['promotions'] = $v['promotions'];
@@ -1670,11 +1673,6 @@ function fn_get_order_info($order_id, $native_language = false, $format_info = t
 
                 $order['products'][$k]['company_id'] = empty($v['extra']['company_id']) ? 0 : $v['extra']['company_id'];
 
-                if (!empty($v['extra']['discount']) && floatval($v['extra']['discount'])) {
-                    $order['products'][$k]['discount'] = $v['extra']['discount'];
-                    $order['use_discount'] = true;
-                }
-
                 if (!empty($v['extra']['promotions'])) {
                     $order['products'][$k]['promotions'] = $v['extra']['promotions'];
                 }
@@ -1685,6 +1683,11 @@ function fn_get_order_info($order_id, $native_language = false, $format_info = t
                     $order['products'][$k]['base_price'] = $v['price'];
                 }
                 $order['products'][$k]['original_price'] = $order['products'][$k]['base_price'];
+                if (!empty($v['extra']['discount']) && floatval($v['extra']['discount'])) {
+                    $order['products'][$k]['discount'] = $v['extra']['discount'];
+                    $order['products'][$k]['discount_prc'] = sprintf('%d', round($order['products'][$k]['discount'] * 100 / $order['products'][$k]['original_price']));;
+                    $order['use_discount'] = true;
+                }
 
                 // Form hash key for this product
                 $order['products'][$k]['cart_id'] = $v['item_id'];
@@ -3097,8 +3100,6 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
 
                 if (!empty($product['discount'])) {
                     $cart['discount'] += $product['discount'] * $product['amount'];
-                } elseif (!empty($product['list_discount'])) {
-                    $cart['discount'] += $product['list_discount'] * $product['amount'];
                 }
             }
         }

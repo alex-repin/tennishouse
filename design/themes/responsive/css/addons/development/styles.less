@@ -3963,7 +3963,7 @@ input.ty-search-block__input:focus {
     }
 }
 .payment_carrier_link {
-    left: 150px;
+    left: 60px;
     position: absolute;
     top: 32px;
 }
@@ -4152,7 +4152,14 @@ input.ty-search-block__input:focus {
     padding: 0;
     position: relative;
 }
-.ty-payments-list__item-group, .ty-shipping-options__method-group {
+.ty-payments-list__item-group {
+    padding: 19px 0 19px 10px;
+    cursor: pointer;
+    .radio:not(checked) + label {
+        padding: 0 0 0 50px;
+    }
+}
+.ty-shipping-options__method-group {
     padding: 19px 0 19px 10px;
     cursor: pointer;
     .radio:not(checked) + label {
@@ -4171,6 +4178,7 @@ input.ty-search-block__input:focus {
 }
 .ty-shipping-options__item-title {
     padding: 10px 0;
+    vertical-align: top;
 }
 .ty-payments-list__item-title {
     display: inline-block;
@@ -4481,6 +4489,9 @@ input.ty-search-block__input:focus {
 }
 .ty-orders-detail {
     padding: @content_padding;
+}
+.ty-orders-detail__table-product {
+    width: 55%;
 }
 .ty-orders-search-page {
     padding: @content_padding;

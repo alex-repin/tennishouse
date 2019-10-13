@@ -274,26 +274,16 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
         $params = array(
             'active' => true,
             'expand' => true,
-            'zone' => $zone,
             'sort_by' => 'priority',
             'sort_order' => 'asc'
         );
 
+        if ($zone == 'catalog') {
+            $params['zone'] = $zone;
+        }
         list($promotions[$zone]) = fn_get_promotions($params);
     }
     
-    if ($zone == 'cart' && !isset($promotions['catalog'])) {
-        $params = array(
-            'active' => true,
-            'expand' => true,
-            'zone' => 'catalog',
-            'sort_by' => 'priority',
-            'sort_order' => 'asc'
-        );
-
-        list($promotions['catalog']) = fn_get_promotions($params);
-    }
-
     // If we're in cart, set flag that promotions available
     if ($zone == 'cart') {
         $_promotion_ids = !empty($data['promotions']) ? array_keys($data['promotions']) : array();
@@ -317,8 +307,22 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
         if ($zone == 'cart') {
             // Delete obsolete discounts
             foreach ($cart_products as $p_id => $_val) {
-                $data['products'][$p_id]['discount'] = !empty($_val['discount']) ? $_val['discount'] : 0;
-                $data['products'][$p_id]['promotions'] = !empty($_val['promotions']) ? $_val['promotions'] : array();
+                if (empty($data['order_id']) || !empty($data['recalculate_catalog_promotions'])) {
+                    $data['products'][$p_id]['discount'] = !empty($_val['discount']) ? $_val['discount'] : 0;
+                    $data['products'][$p_id]['hidden_discount'] = !empty($_val['hidden_discount']) ? $_val['hidden_discount'] : 0;
+                    $data['products'][$p_id]['promotions'] = !empty($_val['promotions']) ? $_val['promotions'] : array();
+                    $data['products'][$p_id]['extra']['promotions'] = array();
+                } else {
+                    if (isset($data['products'][$p_id]['discount'])) {
+                        $cart_products[$p_id]['discount'] = $data['products'][$p_id]['discount'];
+                        $cart_products[$p_id]['price'] -= $data['products'][$p_id]['discount'];
+
+                        if ($cart_products[$p_id]['price'] < 0) {
+                            $cart_products[$p_id]['discount'] += $cart_products[$p_id]['price'];
+                            $cart_products[$p_id]['price'] = 0;
+                        }
+                    }
+                }
             }
 
             // Summarize discounts
@@ -338,9 +342,9 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
         }
     }
 
-    if (empty($promotions[$zone]) && ($zone == 'cart' && empty($promotions['catalog']))) {
-        return false;
-    }
+//     if (empty($promotions[$zone])) {
+//         return false;
+//     }
 
     $_SESSION['promotion_notices']['promotion'] = array(
         'applied' => false,
@@ -353,75 +357,74 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
             fn_promotion_check_coupon($data, true);
         }
     }
-    if ($zone == 'cart') {
-//         foreach ($promotions[$zone] as $promotion) {
-//             if (fn_promotion_check($promotion['promotion_id'], $promotion['conditions'], $data, $auth, $cart_products)) {
-//                 if (fn_promotion_apply_bonuses($promotion, $data, $auth, $cart_products)) {
-// 
-//                     // Stop processing further rules, if needed
-//                     if ($promotion['stop'] == 'Y') {
-//                         break;
-//                     }
-//                 }
-//             }
-//         }
-        $item_discount_promos = array();
-        foreach ($promotions[$zone] as $promotion) {
-            if ($promotion['is_item_discount'] == 'Y') {
-                $item_discount_promos[$promotion['promotion_id']] = $promotion;
-                continue;
-            }
+    
+    $ordered_promotions = array(
+        'item_no_sum_up' => array(),
+        'item_sum_up' => array(),
+        'subtotal' => array()
+    );
+    foreach ($promotions[$zone] as $promotion) {
+        if ($promotion['is_item_discount'] == 'N' && $promotion['zone'] == 'cart') {
+            $ordered_promotions['subtotal'][$promotion['promotion_id']] = $promotion;
+        } elseif ($promotion['no_sum_up'] == 'N') {
+            $ordered_promotions['item_sum_up'][$promotion['promotion_id']] = $promotion;
+        } else {
+            $ordered_promotions['item_no_sum_up'][$promotion['promotion_id']] = $promotion;
         }
-
-        if (!empty($item_discount_promos) || !empty($promotions['catalog'])) {
+    }
+    if ($zone == 'cart') {
+        if (empty($data['order_id']) || !empty($data['recalculate_catalog_promotions'])) {
             foreach ($cart_products as $k => $cproduct) {
-                if (isset($cproduct['exclude_from_calculate']) || (!floatval($cproduct['base_price']) && $cproduct['base_price'] != 0)) {
+                if (isset($cproduct['exclude_from_calculate']) || (!floatval($cproduct['base_price']) && $cproduct['base_price'] != 0) || (empty($ordered_promotions['item_no_sum_up']) && empty($cart_products[$k]['list_price']))) {
                     continue;
                 }
                 $data['promotion_item_id'] = $k;
                 $cproduct_vars = $cproduct_order = array();
-                if (!empty($promotions['catalog'])) {
-                    foreach ($promotions['catalog'] as $p_id => $promotion) {
-                        // Rule is valid and can be applied
-                        if (fn_promotion_check($promotion['promotion_id'], $promotion['conditions'], $cart_products[$k], $auth)) {
-                            if ($promotion['no_sum_up'] == 'Y') {
-                                $_cproduct = $cart_products[$k];
-                            }
-                            if (fn_promotion_apply_bonuses($promotion, $cart_products[$k], $auth)) {
-                            
-                                $potential_promotions[$promotion['promotion_id']] = true;
-                                // Stop processing further rules, if needed
-                                if ($promotion['stop'] == 'Y') {
-                                    break;
+                if (!empty($cart_products[$k]['list_price']) && !empty($cart_products[$k]['discount'])) {
+                    $cart_products[$k]['price'] -= $cart_products[$k]['discount'];
+                    $cproduct_vars['list'] = $cart_products[$k];
+                    $cproduct_order['list'] = $cart_products[$k]['price'];
+                    $cart_products[$k]['price'] = $cart_products[$k]['base_price'] = $cart_products[$k]['list_price'];
+                }
+                if (!empty($ordered_promotions['item_no_sum_up'])) {
+                    foreach ($ordered_promotions['item_no_sum_up'] as $p_id => $promotion) {
+                        if ($promotion['zone'] == 'catalog') {
+                            // Rule is valid and can be applied
+                            if (fn_promotion_check($promotion['promotion_id'], $promotion['conditions'], $cart_products[$k], $auth)) {
+                                if ($promotion['no_sum_up'] == 'Y') {
+                                    $_cproduct = $cart_products[$k];
+                                }
+                                if (fn_promotion_apply_bonuses($promotion, $cart_products[$k], $auth)) {
+                                    $potential_promotions[$promotion['promotion_id']] = true;
+                                    // Stop processing further rules, if needed
+                                    if ($promotion['stop'] == 'Y') {
+                                        break;
+                                    }
+                                }
+                                if ($promotion['no_sum_up'] == 'Y') {
+                                    $cproduct_vars[$p_id] = $cart_products[$k];
+                                    $cproduct_order[$p_id] = $cart_products[$k]['price'];
+                                    $cart_products[$k] = $_cproduct;
                                 }
                             }
-                            if ($promotion['no_sum_up'] == 'Y') {
-                                $cproduct_vars[$p_id] = $cart_products[$k];
-                                $cproduct_order[$p_id] = $cart_products[$k]['price'];
-                                $cart_products[$k] = $_cproduct;
+                        } else {
+                            if (fn_promotion_check($promotion['promotion_id'], $promotion['conditions'], $data, $auth, $cart_products)) {
+                                if ($promotion['no_sum_up'] == 'Y') {
+                                    $_cproduct = $cart_products[$k];
+                                }
+                                if (fn_promotion_apply_bonuses($promotion, $data, $auth, $cart_products)) {
+                                    $potential_promotions[$promotion['promotion_id']] = true;
+                                    // Stop processing further rules, if needed
+                                    if ($promotion['stop'] == 'Y') {
+                                        break;
+                                    }
+                                }
+                                if ($promotion['no_sum_up'] == 'Y') {
+                                    $cproduct_vars[$p_id] = $cart_products[$k];
+                                    $cproduct_order[$p_id] = $cart_products[$k]['price'];
+                                    $cart_products[$k] = $_cproduct;
+                                }
                             }
-                        }
-                    }
-                }
-
-                foreach ($item_discount_promos as $p_id => $promotion) {
-                    // Rule is valid and can be applied
-                    if (fn_promotion_check($promotion['promotion_id'], $promotion['conditions'], $data, $auth, $cart_products)) {
-                        if ($promotion['no_sum_up'] == 'Y') {
-                            $_cproduct = $cart_products[$k];
-                        }
-                        if (fn_promotion_apply_bonuses($promotion, $data, $auth, $cart_products)) {
-
-                            $potential_promotions[$promotion['promotion_id']] = true;
-                            // Stop processing further rules, if needed
-                            if ($promotion['stop'] == 'Y') {
-                                break;
-                            }
-                        }
-                        if ($promotion['no_sum_up'] == 'Y') {
-                            $cproduct_vars[$p_id] = $cart_products[$k];
-                            $cproduct_order[$p_id] = $cart_products[$k]['price'];
-                            $cart_products[$k] = $_cproduct;
                         }
                     }
                 }
@@ -429,59 +432,117 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
                     asort($cproduct_order);
                     $prom_key = key($cproduct_order);
                     $data['subtotal'] = $data['subtotal'] - $cart_products[$k]['subtotal'] + $cproduct_vars[$prom_key]['subtotal'];
+                    if (!empty($cproduct_vars[$prom_key]['hidden_discount'])) {
+                        $data['products'][$k]['hidden_discount'] = $cproduct_vars[$prom_key]['hidden_discount'];
+                    }
                     $cart_products[$k] = $cproduct_vars[$prom_key];
-                    $applied_promotions[$prom_key] = !empty($promotions[$zone][$prom_key]) ? $promotions[$zone][$prom_key] : (!empty($promotions['catalog'][$prom_key]) ? $promotions['catalog'][$prom_key] : '');
-                    
-                    if (empty($data['promotions'][$prom_key]['bonuses'])) {
-                        foreach ($applied_promotions[$prom_key]['bonuses'] as $bonus) {
-                            if (!isset($data['promotions'][$prom_key]['bonuses'])) {
-                                $data['promotions'][$prom_key]['bonuses'] = array();
+                    if ($prom_key != 'list') {
+                        $applied_promotions[$prom_key] = !empty($promotions[$zone][$prom_key]) ? $promotions[$zone][$prom_key] : (!empty($promotions['catalog'][$prom_key]) ? $promotions['catalog'][$prom_key] : '');
+                        
+                        if (empty($data['promotions'][$prom_key]['bonuses'])) {
+                            foreach ($applied_promotions[$prom_key]['bonuses'] as $bonus) {
+                                if (!isset($data['promotions'][$prom_key]['bonuses'])) {
+                                    $data['promotions'][$prom_key]['bonuses'] = array();
+                                }
+                                $bonus_id = count($data['promotions'][$prom_key]['bonuses']);
+                                $data['promotions'][$prom_key]['bonuses'][$bonus_id] = $bonus;
                             }
-                            $bonus_id = count($data['promotions'][$prom_key]['bonuses']);
-                            $data['promotions'][$prom_key]['bonuses'][$bonus_id] = $bonus;
                         }
                     }
                 }
             }
-        }
-        unset($data['promotion_item_id']);
-        foreach ($promotions[$zone] as $promotion) {
-            if ($promotion['is_item_discount'] == 'Y') {
-                continue;
+            if (!empty($ordered_promotions['item_sum_up'])) {
+                foreach ($cart_products as $k => $cproduct) {
+                    if (isset($cproduct['exclude_from_calculate']) || (!floatval($cproduct['base_price']) && $cproduct['base_price'] != 0)) {
+                        continue;
+                    }
+                    $data['promotion_item_id'] = $k;
+                    foreach ($ordered_promotions['item_sum_up'] as $p_id => $promotion) {
+                        if ($promotion['zone'] == 'catalog') {
+                            // Rule is valid and can be applied
+                            if (fn_promotion_check($promotion['promotion_id'], $promotion['conditions'], $cart_products[$k], $auth)) {
+                                if (fn_promotion_apply_bonuses($promotion, $cart_products[$k], $auth)) {
+                                    $applied_promotions[$promotion['promotion_id']] = $promotion;
+                                    $potential_promotions[$promotion['promotion_id']] = true;
+                                    // Stop processing further rules, if needed
+                                    if ($promotion['stop'] == 'Y') {
+                                        break;
+                                    }
+                                }
+                            }
+                        } else {
+                            if (fn_promotion_check($promotion['promotion_id'], $promotion['conditions'], $data, $auth, $cart_products)) {
+                                if (fn_promotion_apply_bonuses($promotion, $data, $auth, $cart_products)) {
+                                    $applied_promotions[$promotion['promotion_id']] = $promotion;
+                                    $potential_promotions[$promotion['promotion_id']] = true;
+                                    // Stop processing further rules, if needed
+                                    if ($promotion['stop'] == 'Y') {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            // Rule is valid and can be applied
-            if (fn_promotion_check($promotion['promotion_id'], $promotion['conditions'], $data, $auth, $cart_products)) {
-                if (fn_promotion_apply_bonuses($promotion, $data, $auth, $cart_products)) {
-                    $potential_promotions[$promotion['promotion_id']] = true;
-                    $applied_promotions[$promotion['promotion_id']] = $promotion;
+        } else {
+            foreach ($cart_products as $k => $cproduct) {
+                $cart_products[$k]['subtotal'] = $cproduct['price'] * $cproduct['amount'];
+                if (!empty($cproduct['discount'])) {
+                    $data['use_discount'] = true;
+                }
+            }
+        }
 
-                    // Stop processing further rules, if needed
-                    if ($promotion['stop'] == 'Y') {
-                        break;
+        unset($data['promotion_item_id']);
+        if (!empty($ordered_promotions['subtotal'])) {
+            foreach ($ordered_promotions['subtotal'] as $promotion) {
+                if ($promotion['is_item_discount'] == 'Y') {
+                    continue;
+                }
+                // Rule is valid and can be applied
+                if (fn_promotion_check($promotion['promotion_id'], $promotion['conditions'], $data, $auth, $cart_products)) {
+                    if (fn_promotion_apply_bonuses($promotion, $data, $auth, $cart_products)) {
+                        $potential_promotions[$promotion['promotion_id']] = true;
+                        $applied_promotions[$promotion['promotion_id']] = $promotion;
+
+                        // Stop processing further rules, if needed
+                        if ($promotion['stop'] == 'Y') {
+                            break;
+                        }
                     }
                 }
             }
         }
     } else {
         $cproduct_vars = $cproduct_order = array();
-        foreach ($promotions[$zone] as $p_id => $promotion) {
-            // Rule is valid and can be applied
-            if (fn_promotion_check($promotion['promotion_id'], $promotion['conditions'], $data, $auth, $cart_products)) {
-                if ($promotion['no_sum_up'] == 'Y') {
-                    $_cproduct = $data;
-                }
-                if (fn_promotion_apply_bonuses($promotion, $data, $auth, $cart_products)) {
-                
-                    $potential_promotions[$promotion['promotion_id']] = true;
-                    // Stop processing further rules, if needed
-                    if ($promotion['stop'] == 'Y') {
-                        break;
+        if (!empty($ordered_promotions['item_no_sum_up']) || !empty($data['list_price'])) {
+            if (!empty($data['list_price']) && !empty($data['discount'])) {
+                $data['price'] -= $data['discount'];
+                $cproduct_vars['list'] = $data;
+                $cproduct_order['list'] = $data['price'];
+                $data['price'] = $data['base_price'] = $data['list_price'];
+            }
+            if (!empty($ordered_promotions['item_no_sum_up'])) {
+                foreach ($ordered_promotions['item_no_sum_up'] as $p_id => $promotion) {
+                    // Rule is valid and can be applied
+                    if (fn_promotion_check($promotion['promotion_id'], $promotion['conditions'], $data, $auth, $cart_products)) {
+                        if ($promotion['no_sum_up'] == 'Y') {
+                            $_cproduct = $data;
+                        }
+                        if (fn_promotion_apply_bonuses($promotion, $data, $auth, $cart_products)) {
+                            $potential_promotions[$promotion['promotion_id']] = true;
+                            // Stop processing further rules, if needed
+                            if ($promotion['stop'] == 'Y') {
+                                break;
+                            }
+                        }
+                        if ($promotion['no_sum_up'] == 'Y') {
+                            $cproduct_vars[$p_id] = $data;
+                            $cproduct_order[$p_id] = $data['price'];
+                            $data = $_cproduct;
+                        }
                     }
-                }
-                if ($promotion['no_sum_up'] == 'Y') {
-                    $cproduct_vars[$p_id] = $data;
-                    $cproduct_order[$p_id] = $data['price'];
-                    $data = $_cproduct;
                 }
             }
         }
@@ -489,7 +550,24 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
             asort($cproduct_order);
             $prom_key = key($cproduct_order);
             $data = $cproduct_vars[$prom_key];
-            $applied_promotions[$prom_key] = $promotions[$zone][$prom_key];
+            if ($prom_key != 'list') {
+                $applied_promotions[$prom_key] = $promotions[$zone][$prom_key];
+            }
+        }
+        if (!empty($ordered_promotions['item_sum_up'])) {
+            foreach ($ordered_promotions['item_sum_up'] as $p_id => $promotion) {
+                // Rule is valid and can be applied
+                if (fn_promotion_check($promotion['promotion_id'], $promotion['conditions'], $data, $auth, $cart_products)) {
+                    if (fn_promotion_apply_bonuses($promotion, $data, $auth, $cart_products)) {
+                        $applied_promotions[$promotion['promotion_id']] = $promotion;
+                        $potential_promotions[$promotion['promotion_id']] = true;
+                        // Stop processing further rules, if needed
+                        if ($promotion['stop'] == 'Y') {
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 

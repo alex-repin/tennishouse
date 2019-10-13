@@ -453,11 +453,21 @@ function fn_development_get_order_info(&$order, $additional_data)
     $order['order_number'] = !empty($order['order_number']) ? $order['order_number'] : $order['order_id'];
 }
 
+function fn_development_gather_additional_product_data_before_options(&$product, $auth, $params)
+{
+    if (!empty($product['list_price']) && $product['list_price'] > $product['price']) {
+        $product['discount'] = $product['list_price'] - $product['price'];
+        $product['discount_prc'] = sprintf('%d', round($product['discount'] * 100 / $product['list_price']));
+        $product['base_price'] = $product['price'] = $product['list_price'];
+    }
+}
+
 function fn_development_get_cart_product_data($product_id, &$_pdata, &$product, $auth, $cart, $hash)
 {
     if (!empty($_pdata['list_price']) && $_pdata['list_price'] > $_pdata['price']) {
-        $product['list_discount'] = $_pdata['list_discount'] = $_pdata['list_price'] - $_pdata['price'];
-        $product['list_discount_prc'] = $_pdata['list_discount_prc'] = sprintf('%d', round($_pdata['list_discount'] * 100 / $_pdata['list_price']));
+        $_pdata['discount'] = $_pdata['list_price'] - $_pdata['price'];
+        $_pdata['discount_prc'] = sprintf('%d', round($_pdata['discount'] * 100 / $_pdata['list_price']));
+        $_pdata['base_price'] = $_pdata['price'] = $_pdata['list_price'];
     }
 }
 
@@ -473,6 +483,10 @@ function fn_development_get_cart_product_data_post($hash, $product, $skip_promot
     $net_cost = (!empty($_pdata['net_cost']) && !empty($_pdata['net_currency_code'])) ? $_pdata['net_cost'] * Registry::get('currencies.' . $_pdata['net_currency_code'] . '.coefficient') : $_pdata['price'];
     $_pdata['net_cost_rub'] = ($net_cost + $net_cost_rub) * $product['amount'];
     $cart['net_subtotal'] += $_pdata['net_cost_rub'];
+    
+    if (!empty($_pdata['discount'])) {
+        $_pdata['subtotal'] = ($_pdata['price'] - $_pdata['discount']) * $_pdata['amount'];
+    }
 }
 
 function fn_development_calculate_cart_post(&$cart, $auth, $calculate_shipping, $calculate_taxes, $options_style, $apply_cart_promotions, $cart_products, $product_groups)

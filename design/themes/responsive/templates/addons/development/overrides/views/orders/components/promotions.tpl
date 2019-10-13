@@ -3,7 +3,7 @@
 
 {foreach from=$promotions item="promotion" name="pfe" key="promotion_id"}
 <div class="ty-orders-promotion__block">
-    <h5 class="ty-orders-promotion__title">{$promotion.name}</h5>
+    <div class="ty-orders-promotion__title">{$promotion.name}</div>
 
     {foreach from=$order_info.promotions.$promotion_id.bonuses item="bonus"}
     {if $bonus.bonus == "give_coupon"}
@@ -14,9 +14,9 @@
     {/if}
     {/foreach}
 
-    {if $promotion.short_description|trim}
+    {*if $promotion.short_description|trim}
         <div class="ty-orders-promotion__description">{$promotion.short_description nofilter}</div>
-    {/if}
+    {/if*}
 </div>
 {/foreach}
 </div>

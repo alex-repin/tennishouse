@@ -164,7 +164,7 @@ function fn_reward_points_get_cart_product_data(&$product_id, &$_pdata, &$produc
     }
 }
 
-function fn_reward_points_calculate_cart_items(&$cart, &$cart_products, &$auth)
+function fn_reward_points_calculate_cart_items_after_promotions(&$cart, &$cart_products, &$auth)
 {
     fn_set_hook('reward_points_cart_calculation', $cart_products, $cart, $auth);
 
@@ -211,7 +211,7 @@ function fn_reward_points_calculate_cart_items(&$cart, &$cart_products, &$auth)
         $cart['points_info']['in_use']['points'] = $cart['points_info']['total_price'];
     }
 
-    if (/*!empty($cart['points_info']['in_use']) && */(Registry::get('runtime.controller') == 'checkout' || (defined('ORDER_MANAGEMENT') && in_array(Registry::get('runtime.mode'), array('update', 'place_order', 'add'))))) {
+    if (!empty($cart['points_info']['in_use'] || empty($cart['order_id'])) && (Registry::get('runtime.controller') == 'checkout' || (defined('ORDER_MANAGEMENT') && in_array(Registry::get('runtime.mode'), array('update', 'place_order', 'add'))))) {
         fn_set_point_payment($cart, $cart_products, $auth);
     }
 
@@ -281,23 +281,11 @@ function fn_set_point_payment(&$cart, &$cart_products, &$auth)
     fn_set_hook('set_point_payment', $user_points, $auth);
     
     if ($per * $user_points * floatval($cart['subtotal']) > 0) {
-        $points_in_use = min($cart['points_info']['max_allowed'], $user_points, $cart['points_info']['total_price'])/*$cart['points_info']['in_use']['points']*/;
-//         if ($points_in_use > $user_points) {
-//             $points_in_use = $user_points;
-//             fn_set_notification('W', __('warning'), __('text_points_exceed_points_on_account'));
-//         }
-//         if (empty($cart['points_info']['total_price'])) {
-//             $cart['points_info']['total_price'] = 0;
-//         }
-//         if ($points_in_use > $cart['points_info']['total_price'] || $points_in_use > $cart['points_info']['max_allowed']) {
-//             if ($points_in_use > $cart['points_info']['total_price']) {
-//                 $points_in_use = $cart['points_info']['total_price'];
-//             }
-//             if ($points_in_use > $cart['points_info']['max_allowed']) {
-//                 $points_in_use = $cart['points_info']['max_allowed'];
-//             }
-//             fn_set_notification('W', __('warning'), __('text_points_exceed_points_that_can_be_applied'));
-//         }
+        if (empty($cart['order_id'])) {
+            $points_in_use = min($cart['points_info']['max_allowed'], $user_points, $cart['points_info']['total_price']);
+        } else {
+            $points_in_use = min($cart['points_info']['in_use']['points'], $cart['points_info']['max_allowed'], $user_points, $cart['points_info']['total_price']);
+        }
         if (!empty($points_in_use)) {
             $cost = 0;
             $subtotal_discount_coef = (!empty($cart['subtotal_discount'])) ? (1 - $cart['subtotal_discount'] / $cart['subtotal']) : 1;
@@ -715,7 +703,8 @@ function fn_calculate_product_price_in_points(&$product, &$auth, $get_point_info
 
     $product['points_info']['raw_price'] = $per * $subtotal;
     if (!empty($product['net_cost_rub']) && !empty($product['original_price'])) {
-        $product['points_info']['max_allowed'] = floor($product['points_info']['raw_price'] - $per * ($product['net_cost_rub'] + $product['original_price'] * $product['amount'] * Registry::get('addons.reward_points.min_margin') / 100));
+        $original_price = $product['original_price'] + (!empty($product['hidden_discount']) ? $product['hidden_discount'] : 0);
+        $product['points_info']['max_allowed'] = floor($product['points_info']['raw_price'] - $per * ($product['net_cost_rub'] + $original_price * $product['amount'] * Registry::get('addons.reward_points.min_margin') / 100));
     }
     $product['points_info']['price'] = round($product['points_info']['raw_price']);
 }
