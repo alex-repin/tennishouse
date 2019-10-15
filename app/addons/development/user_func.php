@@ -25,6 +25,33 @@ use Tygh\Shippings\RusSdek;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_is_free_shipping($product)
+{
+    if ($product['price'] < Registry::get('addons.development.free_shipping_cost')) {
+        return false;
+    }
+    
+    $params = array(
+        'active' => true,
+        'expand' => true,
+        'promotion_id' => FREE_SHIPPING_PROMO_ID,
+    );
+
+    list($promotions,) = fn_get_promotions($params);
+    if (!empty($promotions[FREE_SHIPPING_PROMO_ID]['conditions'])) {
+        $params = array(
+            'ex_condition_name' => 'categories'
+        );
+        fn_remove_condition($promotions[FREE_SHIPPING_PROMO_ID], $params);
+        $cart_products = array();
+        if (!fn_promotion_check(FREE_SHIPPING_PROMO_ID, $promotions[FREE_SHIPPING_PROMO_ID]['conditions'], $product, $_SESSION['auth'], $cart_products)) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
 function fn_save_cart_step($cart, $user_id)
 {
     $step = 0;
@@ -473,14 +500,14 @@ function fn_get_location_by_ip()
     return $data;
 }
 
-function fn_remove_condition(&$condition, $condition_name)
+function fn_remove_condition(&$condition, $params)
 {
     if (!empty($condition['conditions'])) {
         if (!empty($condition['conditions']['conditions'])) {
-            fn_remove_condition($condition['conditions'], $condition_name);
+            fn_remove_condition($condition['conditions'], $params);
         } elseif (is_array($condition['conditions'])) {
             foreach ($condition['conditions'] as $key => $_condition) {
-                if (!empty($_condition['condition']) && $_condition['condition'] == $condition_name) {
+                if (!empty($_condition['condition']) && ((!empty($params['condition_name']) && $_condition['condition'] == $params['condition_name']) || (!empty($params['ex_condition_name']) && $_condition['condition'] != $params['ex_condition_name']) )) {
                     unset($condition['conditions'][$key]);
                 }
             }
@@ -885,7 +912,10 @@ function fn_get_product_review_discount(&$products)
         $products = array($products);
     }
     if (!empty($promotions[REVIEW_PROMO_ID]['conditions'])) {
-        fn_remove_condition($promotions[REVIEW_PROMO_ID], 'product_review');
+        $params = array(
+            'condition_name' => 'product_review'
+        );
+        fn_remove_condition($promotions[REVIEW_PROMO_ID], $params);
         foreach ($products as $i => &$product) {
             if (($promotions[REVIEW_PROMO_ID]['no_sum_up'] == 'N' || ($promotions[REVIEW_PROMO_ID]['no_sum_up'] == 'Y' && empty($product['discount']))) && empty($product['promotions'][REVIEW_PROMO_ID]) && ($promotions[REVIEW_PROMO_ID]['stop'] == 'N' || ($promotions[REVIEW_PROMO_ID]['stop'] == 'Y' && empty($product['discount'])))) {
                 $cart_products = array();

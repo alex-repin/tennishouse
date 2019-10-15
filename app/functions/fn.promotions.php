@@ -517,7 +517,7 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
     } else {
         $cproduct_vars = $cproduct_order = array();
         if (!empty($ordered_promotions['item_no_sum_up']) || !empty($data['list_price'])) {
-            if (!empty($data['list_price']) && !empty($data['discount'])) {
+            if (empty($data['is_prices']) && !empty($data['list_price']) && !empty($data['discount'])) {
                 $data['price'] -= $data['discount'];
                 $cproduct_vars['list'] = $data;
                 $cproduct_order['list'] = $data['price'];

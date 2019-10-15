@@ -44,6 +44,7 @@
                                     {$shipment.rec_address}
                                 {else}
                                     <select name="add_sdek_info[{$shipment_id}][Address][PvzCode]" class="input-medium" id="item_modifier_type">
+                                        <option value=""></option>
                                         {foreach from=$shipment.offices item=address_shipping}
                                             <option value="{$address_shipping.Code}" {if $address_shipping.Code == $sdek_pvz}selected="selected"{/if}>{$address_shipping.Address}</option>
                                         {/foreach}

@@ -192,7 +192,7 @@
                     
                     <div class="ty-product-detail_shipping">
                         <div class="ty-product-detail__info-title">{__("shipping")}</div>
-                        {if $product.price > $addons.development.free_shipping_cost}
+                        {if $product.is_free_shipping}
                             <div class="ty-product-free-shipping">{__("free_shipping_product_text")}</div>
                         {/if}
                         {include file="addons/development/common/product_shipping_estimation.tpl"}

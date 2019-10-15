@@ -679,6 +679,7 @@ function fn_gather_additional_products_data(&$products, $params)
                 $product_copy = $product;
                 foreach ($product['prices'] as $pr_k => $pr_v) {
                     $product_copy['base_price'] = $product_copy['price'] = $pr_v['price'];
+                    $product_copy['is_prices'] = true;
                     fn_promotion_apply('catalog', $product_copy, $auth);
                     $product['prices'][$pr_k]['price'] = $product_copy['price'];
                 }
