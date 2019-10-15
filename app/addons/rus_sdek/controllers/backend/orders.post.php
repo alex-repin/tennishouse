@@ -197,6 +197,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $xml .= '            ' . RusSdek::arraySimpleXml('AddService', array('ServiceCode' => 30));
                     $xml .= '            ' . RusSdek::arraySimpleXml('AddService', array('ServiceCode' => 37));
                 }
+                if ($sdek_info['is_partial'] == 'Y') {
+                    $xml .= '            ' . RusSdek::arraySimpleXml('AddService', array('ServiceCode' => 36));
+                }
                 $xml .= '            ' . '</Order>';
                 $xml .= '            ' . '</DeliveryRequest>';
 
@@ -401,6 +404,15 @@ if ($mode == 'details') {
                             $data_shipments[$shipment['shipment_id']]['offices'] = $offices;
                         } else {
                             $data_shipments[$shipment['shipment_id']]['rec_address'] = (!empty($order_info['s_address'])) ? $order_info['s_address'] : $order_info['b_address'];
+                        }
+                    }
+
+                    foreach ($shipment['products'] as $item_id => $k) {
+                        $category_ids = db_get_fields("SELECT category_id FROM ?:products_categories WHERE product_id = ?i ORDER BY link_type DESC", $order_info['products'][$item_id]['product_id']);
+                        if (in_array(APPAREL_CATEGORY_ID, $category_ids) || in_array(SHOES_CATEGORY_ID, $category_ids)) {
+                            $data_shipments[$shipment['shipment_id']]['try_on'] = true;
+                            $data_shipments[$shipment['shipment_id']]['is_partial'] = true;
+                            break;
                         }
                     }
             }

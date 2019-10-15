@@ -27,6 +27,7 @@
                             {/if}
                         </th>
                         <th width="10%">{__("try_on")}</th>
+                        <th width="10%">{__("is_partial")}</th>
                         <th width="5%">{if !$shipment.register_id}{__("shipping_cost")}{/if}</th>
                         <th width="10%">&nbsp;</th>
                     </tr>
@@ -82,8 +83,12 @@
                                 {if $shipment.try_on == 'Y'}{__("yes")}{else}{__("no")}{/if}
                             {else}
                                 <input type="hidden" name="add_sdek_info[{$shipment_id}][try_on]" value="N" />
-                                <input type="checkbox" name="add_sdek_info[{$shipment_id}][try_on]" value="Y" />
+                                <input type="checkbox" name="add_sdek_info[{$shipment_id}][try_on]" value="Y" {if $shipment.try_on}checked="checked"{/if} />
                             {/if}
+                        </td>
+                        <td class="left nowrap">
+                            <input type="hidden" name="add_sdek_info[{$shipment_id}][is_partial]" value="N" />
+                            <input type="checkbox" name="add_sdek_info[{$shipment_id}][is_partial]" value="Y" {if $shipment.is_partial}checked="checked"{/if} />
                         </td>
                         <td class="right nowrap">
                             {if $shipment.register_id}
