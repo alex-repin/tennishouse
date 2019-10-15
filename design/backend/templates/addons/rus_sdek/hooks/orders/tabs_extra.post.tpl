@@ -15,8 +15,6 @@
                     <tr>    
                         <th width="30%" class="shift-left">{__("sdek.sdek_address_shipping")}</th>
                         {*<th width="10%">{__("sdek.sdek_tariff")}</th>*}
-                        <th width="5%">{__("weight_sdek")}</th>
-                        <th width="15%">{__("dimensions_sdek")}</th>
                         <th width="25%">
                             {if !empty($shipment.register_id)}
                                 {if !empty($shipment.notes)}
@@ -57,20 +55,6 @@
                             <input type="hidden" name="add_sdek_info[{$shipment_id}][Order][TariffTypeCode]" value="{$shipment.tariff_id}" />
                             {$shipment.shipping}
                         </td>*}
-                        <td class="left nowrap {$no_hide_input}">
-                            {if !empty($shipment.register_id)}
-                                {$shipment.weight}
-                            {else}
-                                <input type="text" name="add_sdek_info[{$shipment_id}][Order][Weight]" value="{$shipment.weight}" class="input-mini" size="6"/>
-                            {/if}
-                        </td>
-                        <td class="left nowrap {$no_hide_input}">
-                            {if !empty($shipment.register_id)}
-                                {$shipment.dimensions.size_a} X {$shipment.dimensions.size_b} X {$shipment.dimensions.size_c}
-                            {else}
-                                <input type="text" name="add_sdek_info[{$shipment_id}][Order][Size_A]" value="" class="input-mini" size="6"/>X<input type="text" name="add_sdek_info[{$shipment_id}][Order][Size_B]" value="" class="input-mini" size="6"/>X<input type="text" name="add_sdek_info[{$shipment_id}][Order][Size_C]" value="" class="input-mini" size="6"/>
-                            {/if}
-                        </td>
                         <td class="left nowrap">
                             {if !empty($shipment.register_id)}
                                 {$shipment.notes}
@@ -83,12 +67,16 @@
                                 {if $shipment.try_on == 'Y'}{__("yes")}{else}{__("no")}{/if}
                             {else}
                                 <input type="hidden" name="add_sdek_info[{$shipment_id}][try_on]" value="N" />
-                                <input type="checkbox" name="add_sdek_info[{$shipment_id}][try_on]" value="Y" {if $shipment.try_on}checked="checked"{/if} />
+                                <input type="checkbox" name="add_sdek_info[{$shipment_id}][try_on]" value="Y" {if $sdek_shipments.$shipment_id.try_on}checked="checked"{/if} />
                             {/if}
                         </td>
                         <td class="left nowrap">
-                            <input type="hidden" name="add_sdek_info[{$shipment_id}][is_partial]" value="N" />
-                            <input type="checkbox" name="add_sdek_info[{$shipment_id}][is_partial]" value="Y" {if $shipment.is_partial}checked="checked"{/if} />
+                            {if !empty($shipment.register_id)}
+                                {if $shipment.is_partial == 'Y'}{__("yes")}{else}{__("no")}{/if}
+                            {else}
+                                <input type="hidden" name="add_sdek_info[{$shipment_id}][is_partial]" value="N" />
+                                <input type="checkbox" name="add_sdek_info[{$shipment_id}][is_partial]" value="Y" {if $sdek_shipments.$shipment_id.is_partial}checked="checked"{/if} />
+                            {/if}
                         </td>
                         <td class="right nowrap">
                             {if $shipment.register_id}
@@ -153,6 +141,78 @@
                             </table>
                         </div>
                     {/if}
+                </div>
+                <div class="control-group">
+                    <table class="table table-middle sdek-packages-table" width="100%">
+                    <thead class="cm-first-sibling">
+                    <tr>
+                        <th width="10%">{__("weight_sdek")}</th>
+                        <th width="10%">{__("width")}</th>
+                        <th width="10%">{__("height")}</th>
+                        <th width="10%">{__("length")}</th>
+                        <th width="50%">{__("items")}</th>
+                        <th width="15%">&nbsp;</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {if !empty($shipment.register_id)}
+                        {foreach from=$shipment.packages item="package"}
+                            <tr class="{cycle values="table-row , " reset=1}" id="box_add_package">
+                                <td width="10%">
+                                    {$package.Weight}</td>
+                                <td width="10%">
+                                    {$package.Size_A}</td>
+                                <td width="10%">
+                                    {$package.Size_B}</td>
+                                <td width="10%">
+                                    {$package.Size_C}</td>
+                                <td width="50%">
+                                    {foreach from=$package.products item="product_id"}
+                                        {$order_info.products.$product_id.product}</br>
+                                    {/foreach}
+                                <td width="15%" class="right">
+                                    
+                                </td>
+                            </tr>
+                        {/foreach}
+                    {else}
+                        {math equation="x+1" x=$_key|default:0 assign="new_key"}
+                        <tr class="{cycle values="table-row , " reset=1}" id="box_add_package">
+                            <td width="10%">
+                                <input type="text" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][Weight]" value="" class="input-mini" size="6" /></td>
+                            <td width="10%">
+                                <input type="text" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][Size_A]" value="" class="input-mini" size="6" /></td>
+                            <td width="10%">
+                                <input type="text" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][Size_B]" value="" class="input-mini" size="6" /></td>
+                            <td width="10%">
+                                <input type="text" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][Size_C]" value="" class="input-mini" size="6" /></td>
+                            <td width="50%">
+                                {foreach from=$sdek_shipments.$shipment_id.products item="nth" key="product_id"}
+                                    <input type="checkbox" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][products][]" value="{$product_id}" /> {$order_info.products.$product_id.product}</br>
+                                {/foreach}
+                            <td width="15%" class="right">
+                                {include file="buttons/multiple_buttons.tpl" item_id="add_package" tag_level="3"}
+                            </td>
+                        </tr>
+                    {/if}
+                    </tbody>
+                    </table>
+{*                    
+                    <td class="left nowrap {$no_hide_input}">
+                        {if !empty($shipment.register_id)}
+                            {$shipment.weight}
+                        {else}
+                            <input type="text" name="add_sdek_info[{$shipment_id}][Order][Weight]" value="{$shipment.weight}" class="input-mini" size="6"/>
+                        {/if}
+                    </td>
+                    <td class="left nowrap {$no_hide_input}">
+                        {if !empty($shipment.register_id)}
+                            {$shipment.dimensions.size_a} X {$shipment.dimensions.size_b} X {$shipment.dimensions.size_c}
+                        {else}
+                            <input type="text" name="add_sdek_info[{$shipment_id}][Order][Size_A]" value="" class="input-mini" size="6"/>X<input type="text" name="add_sdek_info[{$shipment_id}][Order][Size_B]" value="" class="input-mini" size="6"/>X<input type="text" name="add_sdek_info[{$shipment_id}][Order][Size_C]" value="" class="input-mini" size="6"/>
+                        {/if}
+                    </td>
+                    *}
                 </div>
             </form>
             <hr />

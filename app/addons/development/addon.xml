@@ -773,6 +773,15 @@
         <item>
             ALTER TABLE `cscart_promotions` ADD `is_item_discount` CHAR(1) NOT NULL DEFAULT 'N';
         </item>
+        <item>
+            ALTER TABLE `cscart_rus_sdek_register` ADD `packages` TEXT NOT NULL;
+        </item>
+        <item>
+            ALTER TABLE `cscart_rus_sdek_register` ADD `try_on` CHAR(1) NOT NULL DEFAULT 'N';
+        </item>
+        <item>
+            ALTER TABLE `cscart_rus_sdek_register` ADD `is_partial` CHAR(1) NOT NULL DEFAULT 'N';
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -1492,5 +1501,6 @@
         <item lang="ru" id="cart_promotions">Промо корзины</item>
         <item lang="ru" id="catalog_promotions">Промо каталога</item>
         <item lang="ru" id="no_sum_up">Не суммировать с другими скидками</item>
+        <item lang="ru" id="is_partial">Частичная выдача</item>
     </language_variables>
 </addon>

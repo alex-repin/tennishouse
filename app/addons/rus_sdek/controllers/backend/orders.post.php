@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $sdek_product['product'] .= ')';
                     }
                     
-                    $sdek_products[] = $sdek_product;
+                    $sdek_products[$data_product['item_id']] = $sdek_product;
                 }
 
                 $data_auth['Number'] = $params['order_id'] . '_' . $shipment_id;
@@ -161,38 +161,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $xml .= '            ' . RusSdek::arraySimpleXml('Address', $sdek_info['Address']);
                 }
 
-                $package_for_xml = array (
-                    'Number' => $shipment_id,
-                    'BarCode' => $shipment_id,
-                    'Weight' => (!empty($sdek_info['Order']['Weight']) ? $sdek_info['Order']['Weight'] : $weight) * 1000,
-                    'SizeA' => $sdek_info['Order']['Size_A'],
-                    'SizeB' => $sdek_info['Order']['Size_B'],
-                    'SizeC' => $sdek_info['Order']['Size_C'],
-                );
-                $xml .= '            ' . RusSdek::arraySimpleXml('Package', $package_for_xml, 'open');
-
-                foreach ($sdek_products as $k => $product) {
-                    $product_for_xml = array (
-                        'WareKey' => $product['ware_key'],
-                        'Cost' => $product['price'],
-                        'Payment' => $product['total'],
-                        'Weight' => $product['weight'] * 1000,
-                        'Amount' => $product['amount'],
-                        'Comment' => $product['product'],
-                    );
-                    
-                    if (!empty($order_info['s_currency'])) {
-                        $product_for_xml['CostEx'] = fn_format_price_by_currency($product['price'], $order_info['s_currency']);
-                        $product_for_xml['PaymentEx'] = fn_format_price_by_currency($product['price'], $order_info['s_currency']);
-                        $product_for_xml['WeightBrutto'] = $product['weight'] * 1000;
-                        $product_for_xml['CommentEx'] = preg_replace('/[а-яА-Я]/ui', '', $product['product']);
-                        $product_for_xml['Link'] = $product['link'];
+                if (!empty($sdek_info['Order']['Packages'])) {
+                    foreach ($sdek_info['Order']['Packages'] as $num => $p_data) {
+                        $package_for_xml = array (
+                            'Number' => $shipment_id . '_' . $num,
+                            'BarCode' => $shipment_id . '_' . $num,
+                            'Weight' => (!empty($p_data['Weight']) ? $p_data['Weight'] : $weight) * 1000,
+                            'SizeA' => $p_data['Size_A'],
+                            'SizeB' => $p_data['Size_B'],
+                            'SizeC' => $p_data['Size_C'],
+                        );
+                        $xml .= '            ' . RusSdek::arraySimpleXml('Package', $package_for_xml, 'open');
+                        
+                        foreach ($p_data['products'] as $item_key) {
+                            $product_for_xml = array (
+                                'WareKey' => $sdek_products[$item_key]['ware_key'],
+                                'Cost' => $sdek_products[$item_key]['price'],
+                                'Payment' => $sdek_products[$item_key]['total'],
+                                'Weight' => $sdek_products[$item_key]['weight'] * 1000,
+                                'Amount' => $sdek_products[$item_key]['amount'],
+                                'Comment' => $sdek_products[$item_key]['product'],
+                            );
+                            
+                            if (!empty($order_info['s_currency'])) {
+                                $product_for_xml['CostEx'] = fn_format_price_by_currency($sdek_products[$item_key]['price'], $order_info['s_currency']);
+                                $product_for_xml['PaymentEx'] = fn_format_price_by_currency($sdek_products[$item_key]['price'], $order_info['s_currency']);
+                                $product_for_xml['WeightBrutto'] = $sdek_products[$item_key]['weight'] * 1000;
+                                $product_for_xml['CommentEx'] = preg_replace('/[а-яА-Я]/ui', '', $sdek_products[$item_key]['product']);
+                                $product_for_xml['Link'] = $sdek_products[$item_key]['link'];
+                            }
+                            
+                            $xml .= '            ' . RusSdek::arraySimpleXml('Item', $product_for_xml);
+                        }
+                        $xml .= '            ' . '</Package>';
                     }
-                    
-                    $xml .= '            ' . RusSdek::arraySimpleXml('Item', $product_for_xml);
                 }
 
-                $xml .= '            ' . '</Package>';
                 if ($sdek_info['try_on'] == 'Y') {
                     $xml .= '            ' . RusSdek::arraySimpleXml('AddService', array('ServiceCode' => 30));
                     $xml .= '            ' . RusSdek::arraySimpleXml('AddService', array('ServiceCode' => 37));
@@ -220,8 +224,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         'tariff' => $sdek_info['Order']['TariffTypeCode'],
                         'file_sdek' => $shipment_id . '/' . $params['order_id'] . '.pdf',
                         'notes' => $sdek_info['Order']['Comment'],
-                        'dimensions' => serialize(array('size_a' => $sdek_info['Order']['Size_A'], 'size_b' => $sdek_info['Order']['Size_B'], 'size_c' => $sdek_info['Order']['Size_C'])),
-                        'weight' => $sdek_info['Order']['Weight']
+//                         'dimensions' => serialize(array('size_a' => $sdek_info['Order']['Size_A'], 'size_b' => $sdek_info['Order']['Size_B'], 'size_c' => $sdek_info['Order']['Size_C'])),
+//                         'weight' => $sdek_info['Order']['Weight'],
+                        'packages' => serialize($sdek_info['Order']['Packages']),
+                        'try_on' => $sdek_info['try_on'],
+                        'is_partial' => $sdek_info['is_partial']
                     );
 
                     if (!empty($result['number'])) {
@@ -330,7 +337,7 @@ if ($mode == 'details') {
 
         foreach ($all_shipments as $key => $_shipment) {
             if ($_shipment['carrier'] == 'sdek') {
-                $sdek_shipments[] = $_shipment;
+                $sdek_shipments[$_shipment['shipment_id']] = $_shipment;
             }
         }
 
@@ -348,11 +355,12 @@ if ($mode == 'details') {
 
             foreach ($sdek_shipments as $key => $shipment) {
 
-                    $data_sdek = db_get_row("SELECT register_id, order_id, timestamp, status, tariff, address_pvz, address, file_sdek, notes, dimensions, weight FROM ?:rus_sdek_register WHERE order_id = ?i and shipment_id = ?i", $shipment['order_id'], $shipment['shipment_id']);
+                    $data_sdek = db_get_row("SELECT register_id, order_id, timestamp, status, tariff, address_pvz, address, file_sdek, notes, dimensions, weight, packages, try_on, is_partial FROM ?:rus_sdek_register WHERE order_id = ?i and shipment_id = ?i", $shipment['order_id'], $shipment['shipment_id']);
 
                     if (!empty($data_sdek)) {
                         $data_shipments[$shipment['shipment_id']] = $data_sdek;
                         $data_shipments[$shipment['shipment_id']]['dimensions'] = !empty($data_sdek['dimensions']) ? unserialize($data_sdek['dimensions']) : array();
+                        $data_shipments[$shipment['shipment_id']]['packages'] = !empty($data_sdek['packages']) ? unserialize($data_sdek['packages']) : array();
                         $data_shipments[$shipment['shipment_id']]['shipping'] = $shipment['shipping'];
                         $office_services = unserialize(SDEK_OFFICE_SERVICES);
                         if (in_array($data_shipments[$shipment['shipment_id']]['tariff'], $office_services)) {
@@ -410,8 +418,8 @@ if ($mode == 'details') {
                     foreach ($shipment['products'] as $item_id => $k) {
                         $category_ids = db_get_fields("SELECT category_id FROM ?:products_categories WHERE product_id = ?i ORDER BY link_type DESC", $order_info['products'][$item_id]['product_id']);
                         if (in_array(APPAREL_CATEGORY_ID, $category_ids) || in_array(SHOES_CATEGORY_ID, $category_ids)) {
-                            $data_shipments[$shipment['shipment_id']]['try_on'] = true;
-                            $data_shipments[$shipment['shipment_id']]['is_partial'] = true;
+                            $sdek_shipments[$shipment['shipment_id']]['try_on'] = true;
+                            $sdek_shipments[$shipment['shipment_id']]['is_partial'] = true;
                             break;
                         }
                     }
@@ -430,6 +438,7 @@ if ($mode == 'details') {
                 Registry::get('view')->assign('order_id', $params['order_id']);
 
             }
+            Registry::get('view')->assign('sdek_shipments', $sdek_shipments);
         }
     }
 
