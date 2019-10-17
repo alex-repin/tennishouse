@@ -16,6 +16,11 @@
         <div><a href="{"products.view?product_id=`$prod.product_id``$ekey_sfx`"|fn_url:'C':'http'}" target="_blank">{__("write_review_about_product", ["[product_name]" => $prod.product])}</a></div>
     {/foreach}
 {/if}
+{if $order_info.tracking_number}
+    <p>
+    {__("tracking_number")}: {$order_info.tracking_number}
+    </p>
+{/if}
 {if $order_info.office_info}
     <p>
     <table cellpadding="1" cellspacing="1" border="0" width="100%">

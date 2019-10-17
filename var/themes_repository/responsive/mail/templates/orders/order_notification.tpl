@@ -18,7 +18,7 @@
 {/if}
 {if $order_info.tracking_number}
     <p>
-    {__("tracking_number"}: {$order_info.tracking_number}
+    {__("tracking_number")}: {$order_info.tracking_number}
     </p>
 {/if}
 {if $order_info.office_info}
