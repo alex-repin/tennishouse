@@ -8,7 +8,6 @@ if ($_REQUEST['category_id'] == '254' && $_REQUEST['item_ids'] == '1312') {
         return array(CONTROLLER_STATUS_REDIRECT, "categories.view?category_id=254&item_ids=1312,1313,1314,1315,1316,1317,1318,1319");
     }
 
-- формат телефона +1 цифра    
 - статус активного игрока "скрыто"    
 - международная доставка
 - автогенерация описания

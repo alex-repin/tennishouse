@@ -3,11 +3,18 @@
     $.ceEvent('on', 'ce.commoninit', function(context) {
 
         // inputmask
-        $('.cm-cr-mask-time').mask('99:99');
+        $('.cm-cr-mask-time').mask('00:00');
 
         // inputmask-multi
         var mask_elements = $('.cm-cr-mask-phone');
-        $('.cm-cr-mask-phone').mask('+7(999)999-99-99');
+        $('.cm-cr-mask-phone').mask('+7(Z00)000-00-00', {
+            translation: {
+                'Z': {
+                    pattern: /9/
+                }
+            },
+            clearIfNotMatch: true
+        });
 //         if (mask_elements.length && _.call_requests_phone_masks_list) {
 //             var maskList = $.masksSort(_.call_requests_phone_masks_list, ['#'], /[0-9]|#/, "mask");
 //             var maskOpts = {

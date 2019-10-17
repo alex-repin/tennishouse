@@ -1,7 +1,8 @@
-{script src="js/lib/maskedinput/jquery.maskedinput.min.js"}
+{*script src="js/lib/maskedinput/jquery.maskedinput.min.js"}
 
 {script src="js/lib/inputmask/jquery.inputmask.min.js"}
-{script src="js/addons/call_requests/lib/inputmask-multi/jquery.inputmask-multi.js"}
+{script src="js/addons/call_requests/lib/inputmask-multi/jquery.inputmask-multi.js"*}
+{script src="js/addons/call_requests/lib/inputmask-multi/jquery.mask.min.js"}
 
 <script type="text/javascript">
     (function(_, $) {
