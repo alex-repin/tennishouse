@@ -1,5 +1,5 @@
 <div class="ty-checkout-complete__order-success">
-    <p>{__("text_order_placed_successfully")}</p>
+    <p>{__("text_order_placed_successfully", ["[phone]" => $order_info.phone])}</p>
     {if $order_info.delivery_time}
         <div class="ty-delivery-time__checkout">
             <div class="ty-process-time__checkout">{__("order_process_time")}: 1 {__("workdays")}</div>

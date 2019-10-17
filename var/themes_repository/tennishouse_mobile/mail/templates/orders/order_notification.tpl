@@ -8,13 +8,18 @@
         {$order_info.destination_delivery_info}
     </p>
 {/if}
-{if $order_info.discussion}
+{if $order_info.discussion && $status_settings.product_reviews == 'Y'}
     <p>
         {__("write_product_review_email_text")}:
     </p>
     {foreach from=$order_info.discussion item="prod"}
         <div><a href="{"products.view?product_id=`$prod.product_id``$ekey_sfx`"|fn_url:'C':'http'}" target="_blank">{__("write_review_about_product", ["[product_name]" => $prod.product])}</a></div>
     {/foreach}
+{/if}
+{if $order_info.tracking_number}
+    <p>
+    {__("tracking_number"}: {$order_info.tracking_number}
+    </p>
 {/if}
 {if $order_info.office_info}
     <p>

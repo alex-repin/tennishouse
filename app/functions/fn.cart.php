@@ -4422,7 +4422,7 @@ function fn_order_placement_routines($action = '', $order_id = 0, $force_notific
                 if ($action == 'repay') {
                     fn_set_notification('N', __('congratulations'), __('text_order_repayed_successfully'));
                 } else {
-                    fn_set_notification('N', __('order_placed'), __('text_order_placed_successfully'), 'K');
+                    fn_set_notification('N', __('order_placed'), __('text_order_placed_successfully', array('[phone]' => $order_info['phone'])), 'K');
                 }
             } elseif ($status == STATUS_BACKORDERED_ORDER) {
                 fn_set_notification('N', __('important'), __('text_order_backordered'));
