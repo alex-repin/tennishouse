@@ -619,7 +619,7 @@ var images_dir = '{$images_dir}';
             $(this).on('animationstart', function(event){
                 if (event.originalEvent.animationName == 'onAutoFillStart') {
                     $(this).parent('.ui-input-text').addClass('cm-input-full');
-//                 } else {
+//                 } else if (event.originalEvent.animationName == 'onAutoFillCancel') {
 //                     $(this).parent('.ui-input-text').removeClass('cm-input-full');
                 }
             });
