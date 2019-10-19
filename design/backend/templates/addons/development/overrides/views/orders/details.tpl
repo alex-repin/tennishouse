@@ -474,6 +474,12 @@
 <!--content_promotions--></div>
 {/if}
 
+{if $order_info.sms}
+<div id="content_sms">
+    {include file="addons/development/components/sms.tpl" sms_list=$order_info.sms}
+<!--content_sms--></div>
+{/if}
+
 {hook name="orders:tabs_content"}
 {/hook}
 

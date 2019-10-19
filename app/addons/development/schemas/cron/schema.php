@@ -47,4 +47,8 @@ return array(
         'frequency' => 60 * 60 * 24 * 7,
         'function' => 'fn_update_competitive_catalog'
     ),
+    'T' => array(
+        'frequency' => 60 * 60,
+        'function' => 'fn_check_sms'
+    ),
 );

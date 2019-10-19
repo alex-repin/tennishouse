@@ -39,10 +39,10 @@
     {include file="common/check_items.tpl" check_statuses=$order_status_descr}
     </th>
     <th width="9%"><a class="cm-ajax" href="{"`$c_url`&sort_by=order_id&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id={$rev}>{__("id")}{if $search.sort_by == "order_id"}{$c_icon nofilter}{else}{$c_dummy nofilter}{/if}</a></th>
-    <th width="15%"><a class="cm-ajax" href="{"`$c_url`&sort_by=status&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id={$rev}>{__("status")}{if $search.sort_by == "status"}{$c_icon nofilter}{else}{$c_dummy nofilter}{/if}</a></th>
+    <th width="14%"><a class="cm-ajax" href="{"`$c_url`&sort_by=status&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id={$rev}>{__("status")}{if $search.sort_by == "status"}{$c_icon nofilter}{else}{$c_dummy nofilter}{/if}</a></th>
     <th width="9%"><a class="cm-ajax" href="{"`$c_url`&sort_by=date&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id={$rev}>{__("date")}{if $search.sort_by == "date"}{$c_icon nofilter}{else}{$c_dummy nofilter}{/if}</a></th>
     <th width="17%"><a class="cm-ajax" href="{"`$c_url`&sort_by=customer&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id={$rev}>{__("customer")}{if $search.sort_by == "customer"}{$c_icon nofilter}{/if}</a></th>
-    <th width="13%">{__("phone")}</th>
+    <th width="14%">{__("phone")}</th>
     <th width="15%">{__("destination")}</th>
 
     {hook name="orders:manage_header"}{/hook}
@@ -80,7 +80,7 @@
         {if $o.email}<a href="mailto:{$o.email|escape:url}">@</a> {/if}
         {if $o.user_id}<a href="{"profiles.update?user_id=`$o.user_id`"|fn_url}">{/if}{$o.lastname} {$o.firstname}{if $o.user_id}</a>{/if}
     </td>
-    <td><a href="tel:{$o.phone}">{$o.phone}</a></td>
+    <td><a href="tel:{$o.phone}" style="vertical-align: top;">{$o.phone}</a>{if $o.sms_status == 'ok_delivered'}<span class="ty-sms-delivered"></span>{/if}</td>
     <td>{if $o.s_city}{$o.s_city}{else} - {/if}{if $o.s_country}{if $o.s_city}, {/if}{$o.s_country|fn_get_country_name}{else} - {/if}</td>
 
     {hook name="orders:manage_data"}{/hook}

@@ -257,6 +257,13 @@ if ($mode == 'delete') {
         ));
     }
 
+    if (!empty($order_info['sms'])) {
+        Registry::set('navigation.tabs.sms', array (
+            'title' => __('sms'),
+            'js' => true
+        ));
+    }
+
     list($shipments) = fn_get_shipments_info(array('order_id' => $params['order_id'], 'advanced_info' => true));
     $use_shipments = !fn_one_full_shipped($shipments);
 

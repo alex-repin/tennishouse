@@ -782,6 +782,18 @@
         <item>
             ALTER TABLE `cscart_rus_sdek_register` ADD `is_partial` CHAR(1) NOT NULL DEFAULT 'N';
         </item>
+        <item>
+            CREATE TABLE IF NOT EXISTS `cscart_sms_statuses` (
+                `sms_id` int(11) NOT NULL,
+                `phone` varchar(32) NOT NULL,
+                `text` text NOT NULL,
+                `order_id` mediumint(8) NOT NULL,
+                `order_status` char(1) NOT NULL,
+                `sms_status` varchar(64) NOT NULL DEFAULT 'not_sent',
+                `timestamp` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+                PRIMARY KEY (`sms_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -1502,5 +1514,6 @@
         <item lang="ru" id="catalog_promotions">Промо каталога</item>
         <item lang="ru" id="no_sum_up">Не суммировать с другими скидками</item>
         <item lang="ru" id="is_partial">Частичная выдача</item>
+        <item lang="ru" id="sms">SMS</item>
     </language_variables>
 </addon>

@@ -35,6 +35,26 @@ function fn_settings_variants_addons_rus_unisender_list_name()
     return fn_unisender_get_lists();
 }
 
+function fn_check_sms()
+{
+    $sms_list = db_get_hash_array("SELECT a.sms_id, a.sms_status FROM ?:sms_statuses AS a LEFT JOIN ?:orders AS b ON a.order_id = b.order_id WHERE b.status NOT IN ('C', 'E', 'G') AND (a.sms_status = 'ok_sent' OR a.sms_status = 'not_sent')", 'sms_id');
+    if (!empty($sms_list)) {
+        $api_key = Registry::get('addons.rus_unisender.api_key');
+        $data = array(
+            'api_key' => $api_key,
+        );
+        foreach ($sms_list as $sms_data) {
+            $_data = $data;
+            $_data['sms_id'] = $sms_data['sms_id'];
+            $response = array();
+            fn_unisender_api('checkSms', $_data, $response);
+            if (!empty($response['status']) && $response['status'] != $sms_data['sms_status']) {
+                db_query("UPDATE ?:sms_statuses SET sms_status = ?s WHERE sms_id = ?i", $response['status'], $sms_data['sms_id']);
+            }
+        }
+    }
+}
+
 function fn_add_users_to_unisender($user_ids, $notify = true)
 {
     $api_key = Registry::get('addons.rus_unisender.api_key');
@@ -269,26 +289,27 @@ function fn_rus_unisender_send_sms($text_sms, $phone, $order_id = 0, $status_to 
 
         $send_sms = false;
 
-        if ($order_id == 0) {
+//         if ($order_id == 0) {
             $post['text'] = $text_sms;
             $send_sms = true;
 
-        } else {
-            $statuses = Registry::get('addons.rus_unisender.order_status_sms');
-
-            if (array_key_exists($status_to, $statuses)) {
-                $status_data = fn_get_status_data($status_to, STATUSES_ORDER);
-                $status_description = $status_data['description'];
-
-                $text = str_replace('[status]', $status_description, $text_sms);
-                $post['text'] = $text;
-
-                $send_sms = true;
-            }
-        }
+//         } else {
+//             $statuses = Registry::get('addons.rus_unisender.order_status_sms');
+// 
+//             if (array_key_exists($status_to, $statuses)) {
+//                 $status_data = fn_get_status_data($status_to, STATUSES_ORDER);
+//                 $status_description = $status_data['description'];
+// 
+//                 $text = str_replace('[status]', $status_description, $text_sms);
+//                 $post['text'] = $text;
+// 
+//                 $send_sms = true;
+//             }
+//         }
 
         if ($send_sms) {
             if (!fn_unisender_api('sendSms', $post, $response)) {
+                fn_set_notification('N', __('notice'), $response);
                 if (AREA == 'C') {
                     $email = Registry::get('settings.Company.company_site_administrator');
                     Mailer::sendMail(array(
@@ -302,9 +323,24 @@ function fn_rus_unisender_send_sms($text_sms, $phone, $order_id = 0, $status_to 
                         'company_id' => fn_get_company_id('orders', 'order_id', $order_id),
                     ), 'C', CART_LANGUAGE);
                 }
-
-            } elseif (AREA != 'C') {
-                fn_set_notification('N', __('notice'), __('sent'));
+                
+            } else {
+            
+                if (!empty($response['sms_id'])) {
+                    $data = array(
+                        'sms_id' => $response['sms_id'],
+                        'phone' => $phone,
+                        'text' => $post['text'],
+                        'order_id' => $order_id,
+                        'order_status' => $status_to,
+                        'timestamp' => TIME,
+                    );
+                    db_query("REPLACE INTO ?:sms_statuses ?e", $data);
+                }
+                
+                if (AREA == 'A') {
+                    fn_set_notification('N', __('notice'), $post['text'], 'F');
+                }
             }
         }
     }

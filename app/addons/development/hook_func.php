@@ -254,10 +254,7 @@ function fn_development_order_notification($order_info, $order_statuses, $force_
                 }
                 $order_status['sms_text'] = str_replace('[office_info]', $office_info, $order_status['sms_text']);
             }
-            if (AREA == 'A') {
-                fn_set_notification('N', __('notice'), $order_status['sms_text'], 'F');
-            }
-            fn_rus_unisender_send_sms($order_status['sms_text'], $phone);
+            fn_rus_unisender_send_sms($order_status['sms_text'], $phone, $order_info['order_id'], $order_info['status']);
         }
     }
 }
@@ -411,7 +408,7 @@ function fn_development_update_product_feature_pre(&$feature_data, $feature_id, 
     }
 }
 
-function fn_development_get_orders($params, $fields, $sortings, &$condition, $join, $group)
+function fn_development_get_orders($params, &$fields, $sortings, &$condition, &$join, $group)
 {
     if (!empty($params['order_number'])) {
         $condition .= db_quote(" AND ?:orders.order_number LIKE ?l", "%" . trim($params['order_number']) . "%");
@@ -419,6 +416,11 @@ function fn_development_get_orders($params, $fields, $sortings, &$condition, $jo
     if (!empty($params['phone'])) {
         $condition .= db_quote(" AND ?:orders.phone = ?s", trim($params['phone']));
     }
+    if (AREA == 'A') {
+        $fields[] = "?:sms_statuses.sms_status";
+        $join .= " LEFT JOIN ?:sms_statuses ON ?:sms_statuses.order_id = ?:orders.order_id AND ?:sms_statuses.timestamp = (SELECT MAX(?:sms_statuses.timestamp) FROM ?:sms_statuses WHERE ?:sms_statuses.order_id = ?:orders.order_id)";
+    }
+
 }
 
 function fn_development_pre_get_orders($params, &$fields, $sortings, $get_totals, $lang_code)
@@ -449,6 +451,9 @@ function fn_development_get_order_info(&$order, $additional_data)
                 }
             }
         }
+    }
+    if (AREA == 'A') {
+        $order['sms'] = db_get_hash_array("SELECT * FROM ?:sms_statuses WHERE order_id = ?i", 'sms_id', $order['order_id']);
     }
     $order['order_number'] = !empty($order['order_number']) ? $order['order_number'] : $order['order_id'];
 }
