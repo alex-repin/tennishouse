@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         'price' => $price,
                         'amount' => $amount,
                         'total' => ($order_info['status'] == 'P') ? 0 : $price,
-                        'weight' => $amount * $product_weight,
+                        'weight' => /*$amount * */$product_weight,
                         'order_id' => $params['order_id'],
                         'shipment_id' => $shipment_id,
                         'link' => fn_url("products.view&product_id=" . $data_product['product_id'], 'C')
@@ -173,13 +173,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         );
                         $xml .= '            ' . RusSdek::arraySimpleXml('Package', $package_for_xml, 'open');
                         
-                        foreach ($p_data['products'] as $item_key) {
+                        foreach ($p_data['products'] as $item_key => $amount) {
                             $product_for_xml = array (
                                 'WareKey' => $sdek_products[$item_key]['ware_key'],
                                 'Cost' => $sdek_products[$item_key]['price'],
                                 'Payment' => $sdek_products[$item_key]['total'],
-                                'Weight' => $sdek_products[$item_key]['weight'] * 1000,
-                                'Amount' => $sdek_products[$item_key]['amount'],
+                                'Weight' => $sdek_products[$item_key]['weight'] * 1000 * $amount,
+                                'Amount' => $amount,
                                 'Comment' => $sdek_products[$item_key]['product'],
                             );
                             

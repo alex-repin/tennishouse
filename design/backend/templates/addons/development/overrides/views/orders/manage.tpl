@@ -80,7 +80,18 @@
         {if $o.email}<a href="mailto:{$o.email|escape:url}">@</a> {/if}
         {if $o.user_id}<a href="{"profiles.update?user_id=`$o.user_id`"|fn_url}">{/if}{$o.lastname} {$o.firstname}{if $o.user_id}</a>{/if}
     </td>
-    <td><a href="tel:{$o.phone}" style="vertical-align: top;">{$o.phone}</a>{if $o.sms_status == 'ok_delivered'}<span class="ty-sms-delivered"></span>{/if}</td>
+    <td>
+        <a href="tel:{$o.phone}" style="vertical-align: top;">{$o.phone}</a>
+        {if $o.sms_status}
+            {if $o.sms_status == 'ok_delivered'}
+                <span class="ty-sms-delivered"></span>
+            {elseif $o.sms_status == 'not_sent'}
+                <span class="ty-sms-not-sent"></span>
+            {else}
+                <span class="ty-sms-not-delivered"></span>
+            {/if}
+        {/if}
+    </td>
     <td>{if $o.s_city}{$o.s_city}{else} - {/if}{if $o.s_country}{if $o.s_city}, {/if}{$o.s_country|fn_get_country_name}{else} - {/if}</td>
 
     {hook name="orders:manage_data"}{/hook}
