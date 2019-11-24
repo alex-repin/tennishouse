@@ -179,8 +179,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if (!empty($sdek_info['Order']['Packages'])) {
                     foreach ($sdek_info['Order']['Packages'] as $num => $p_data) {
                         $package_for_xml = array (
-                            'Number' => $shipment_id . '_' . $num,
-                            'BarCode' => $shipment_id . '_' . $num,
+                            'Number' => $num,
+                            'BarCode' => $num,
                             'Weight' => (!empty($p_data['Weight']) ? $p_data['Weight'] : $weight) * 1000,
                             'SizeA' => $p_data['Size_A'],
                             'SizeB' => $p_data['Size_B'],
@@ -189,6 +189,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $xml .= '            ' . RusSdek::arraySimpleXml('Package', $package_for_xml, 'open');
                         
                         foreach ($p_data['products'] as $item_key => $amount) {
+                            if (empty($amount)) {
+                                unset($sdek_info['Order']['Packages'][$num]['products'][$item_key]);
+                                continue;
+                            }
                             $product_for_xml = array (
                                 'WareKey' => $sdek_products[$item_key]['ware_key'],
                                 'Cost' => $sdek_products[$item_key]['price'],
