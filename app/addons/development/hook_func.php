@@ -460,19 +460,35 @@ function fn_development_get_order_info(&$order, $additional_data)
 
 function fn_development_gather_additional_product_data_before_options(&$product, $auth, $params)
 {
-    if (!empty($product['list_price']) && $product['list_price'] > $product['price']) {
-        $product['discount'] = $product['list_price'] - $product['price'];
-        $product['discount_prc'] = sprintf('%d', round($product['discount'] * 100 / $product['list_price']));
-        $product['base_price'] = $product['price'] = $product['list_price'];
+    if (!empty($product['qty_discount_price']) || floatval($product['list_price'])) {
+        if (floatval($product['list_price']) && $product['list_price'] > $product['price']) {
+            $discount = $product['list_price'] - $product['price'];
+            $product['base_price'] = $product['price'] = $product['list_price'];
+        }
+        if (!empty($product['qty_discount_price']) && $product['qty_discount_price'] < $product['price'] && (empty($discount) || ($product['price'] - $discount > $product['qty_discount_price']))) {
+            $discount = $product['price'] - $product['qty_discount_price'];
+        }
+        if (!empty($discount)) {
+            $product['discount'] = $discount;
+            $product['discount_prc'] = sprintf('%d', round($product['discount'] * 100 / $product['price']));
+        }
     }
 }
 
 function fn_development_get_cart_product_data($product_id, &$_pdata, &$product, $auth, $cart, $hash)
 {
-    if (!empty($_pdata['list_price']) && $_pdata['list_price'] > $_pdata['price']) {
-        $_pdata['discount'] = $_pdata['list_price'] - $_pdata['price'];
-        $_pdata['discount_prc'] = sprintf('%d', round($_pdata['discount'] * 100 / $_pdata['list_price']));
-        $_pdata['base_price'] = $_pdata['price'] = $_pdata['list_price'];
+    if (!empty($_pdata['qty_discount_price']) || floatval($_pdata['list_price'])) {
+        if (floatval($_pdata['list_price']) && $_pdata['list_price'] > $_pdata['price']) {
+            $discount = $_pdata['list_price'] - $_pdata['price'];
+            $_pdata['base_price'] = $_pdata['price'] = $_pdata['list_price'];
+        }
+        if (!empty($_pdata['qty_discount_price']) && $_pdata['qty_discount_price'] < $_pdata['price'] && (empty($discount) || ($_pdata['price'] - $discount > $_pdata['qty_discount_price']))) {
+            $discount = $_pdata['price'] - $_pdata['qty_discount_price'];
+        }
+        if (!empty($discount)) {
+            $_pdata['discount'] = $discount;
+            $_pdata['discount_prc'] = sprintf('%d', round($_pdata['discount'] * 100 / $_pdata['price']));
+        }
     }
 }
 

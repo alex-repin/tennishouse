@@ -142,17 +142,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $order_for_sdek['Number'] = $params['order_id'] . '_' . $shipment_id;
                 $order_for_sdek['DateInvoice'] = date("Y-m-d", $shipment['shipment_timestamp']);
                 $order_for_sdek['RecipientEmail'] = $order_info['email'];
+                if ($order_info['status'] != 'P' && $sdek_info['is_partial'] == 'Y') {
+                    if (empty($order_info['display_shipping_cost']) && !empty($order_info['original_shipping_cost']) && $order_info['original_shipping_cost'] > $order_info['display_shipping_cost']) {
+                        $order_for_sdek['Comment'] .= ' ' . __("try_on_shipping_comment", ["[amount]" => Registry::get('addons.development.free_shipping_cost')]);
+                    } elseif (!empty($order_info['display_shipping_cost']) && !empty($order_info['original_shipping_cost']) && $order_info['original_shipping_cost'] > $order_info['display_shipping_cost']) {
+                        $order_for_sdek['Comment'] .= ' ' . __("try_on_shipping_comment_2", ["[amount]" => Registry::get('addons.development.free_shipping_cost')]);
+                    }
+                }
                 if ($order_info['s_country'] != 'RU') {
                     $order_for_sdek['ShipperName'] = Registry::get('settings.Company.company_name');
                     $order_for_sdek['SellerAddress'] = Registry::get('settings.Company.company_address');
                     $order_for_sdek['ShipperAddress'] = Registry::get('settings.Company.company_address');
                     if (!empty($order_info['s_currency'])) {
-                        $order_for_sdek['DeliveryRecipientCost'] = ($order_info['status'] == 'P') ? 0 : fn_format_price_by_currency($order_for_sdek['DeliveryRecipientCost'], $order_info['s_currency']);
+                        if ($sdek_info['is_partial'] == 'Y' || $order_info['status'] == 'P') {
+                            $order_for_sdek['DeliveryRecipientCost'] = 0;
+                        } else {
+                            $order_for_sdek['DeliveryRecipientCost'] = fn_format_price_by_currency($order_info['original_shipping_cost'], $order_info['s_currency']);
+                        }
 //                         $order_for_sdek['RecipientCurrency'] = $order_info['s_currency'];
 //                         $order_for_sdek['ItemsCurrency'] = $order_info['s_currency'];
                     }
                 } else {
-                    $order_for_sdek['DeliveryRecipientCost'] = ($order_info['status'] == 'P') ? 0 : $order_for_sdek['DeliveryRecipientCost'];
+                    if ($sdek_info['is_partial'] == 'Y' || $order_info['status'] == 'P') {
+                        $order_for_sdek['DeliveryRecipientCost'] = 0;
+                    } else {
+                        $order_for_sdek['DeliveryRecipientCost'] = $order_info['original_shipping_cost'];
+                    }
                 }
 
                 $xml .= '            ' . RusSdek::arraySimpleXml('Order', $order_for_sdek, 'open');
@@ -189,6 +204,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 $product_for_xml['WeightBrutto'] = $sdek_products[$item_key]['weight'] * 1000;
                                 $product_for_xml['CommentEx'] = preg_replace('/[а-яА-Я]/ui', '', $sdek_products[$item_key]['product']);
                                 $product_for_xml['Link'] = $sdek_products[$item_key]['link'];
+                            }
+                            
+                            $xml .= '            ' . RusSdek::arraySimpleXml('Item', $product_for_xml);
+                        }
+                        
+                        if ($order_info['status'] != 'P' && $sdek_info['is_partial'] == 'Y' && $num == 1) {
+                            if (empty($order_info['display_shipping_cost']) && !empty($order_info['original_shipping_cost']) && $order_info['original_shipping_cost'] > $order_info['display_shipping_cost']) {
+                                $product_for_xml = array (
+                                    'WareKey' => 'SHPNG',
+                                    'Cost' => $order_info['display_shipping_cost'],
+                                    'Payment' => $order_info['display_shipping_cost'],
+                                    'Weight' => 0,
+                                    'Amount' => 1,
+                                    'Comment' => __("shipping_sdek_item"),
+                                );
+                            } elseif (!empty($order_info['display_shipping_cost']) && !empty($order_info['original_shipping_cost']) && $order_info['original_shipping_cost'] > $order_info['display_shipping_cost']) {
+                                $product_for_xml = array (
+                                    'WareKey' => 'SHPNG',
+                                    'Cost' => $order_info['display_shipping_cost'],
+                                    'Payment' => $order_info['display_shipping_cost'],
+                                    'Weight' => 0,
+                                    'Amount' => 1,
+                                    'Comment' => __("shipping_sdek_item") . ' 1',
+                                );
+                                $xml .= '            ' . RusSdek::arraySimpleXml('Item', $product_for_xml);
+                                $product_for_xml = array (
+                                    'WareKey' => 'SHPNG2',
+                                    'Cost' => $order_info['original_shipping_cost'],
+                                    'Payment' => $order_info['original_shipping_cost'],
+                                    'Weight' => 0,
+                                    'Amount' => 1,
+                                    'Comment' => __("shipping_sdek_item") . ' 2',
+                                );
                             }
                             
                             $xml .= '            ' . RusSdek::arraySimpleXml('Item', $product_for_xml);
@@ -415,12 +463,14 @@ if ($mode == 'details') {
                         }
                     }
 
-                    foreach ($shipment['products'] as $item_id => $k) {
-                        $category_ids = db_get_fields("SELECT category_id FROM ?:products_categories WHERE product_id = ?i ORDER BY link_type DESC", $order_info['products'][$item_id]['product_id']);
-                        if (in_array(APPAREL_CATEGORY_ID, $category_ids) || in_array(SHOES_CATEGORY_ID, $category_ids)) {
-                            $sdek_shipments[$shipment['shipment_id']]['try_on'] = true;
-                            $sdek_shipments[$shipment['shipment_id']]['is_partial'] = true;
-                            break;
+                    if ($order_info['status'] != 'P') {
+                        foreach ($shipment['products'] as $item_id => $k) {
+                            $category_ids = db_get_fields("SELECT category_id FROM ?:products_categories WHERE product_id = ?i ORDER BY link_type DESC", $order_info['products'][$item_id]['product_id']);
+                            if (in_array(APPAREL_CATEGORY_ID, $category_ids) || in_array(SHOES_CATEGORY_ID, $category_ids)) {
+                                $sdek_shipments[$shipment['shipment_id']]['try_on'] = true;
+                                $sdek_shipments[$shipment['shipment_id']]['is_partial'] = true;
+                                break;
+                            }
                         }
                     }
             }

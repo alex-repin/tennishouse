@@ -150,7 +150,7 @@
                                 <input type="text" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][Size_C]" value="" class="input-mini" size="6" /></td>
                             <td width="50%">
                                 {foreach from=$sdek_shipments.$shipment_id.products item="nth" key="product_id"}
-                                    {*<input type="checkbox" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][products][]" value="{$product_id}" /> *}{$order_info.products.$product_id.product}<input type="text" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][products][{$product_id}]" value="{$order_info.products.$product_id.amount}" class="input-mini" size="6" /></br>
+                                    <div class="ty-sdek-package-item">{$order_info.products.$product_id.product}<input type="text" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][products][{$product_id}]" value="{$order_info.products.$product_id.amount}" class="input-mini" size="6" /></div>
                                 {/foreach}
                             <td width="15%" class="right">
                                 {include file="buttons/multiple_buttons.tpl" item_id="add_package" tag_level="3"}

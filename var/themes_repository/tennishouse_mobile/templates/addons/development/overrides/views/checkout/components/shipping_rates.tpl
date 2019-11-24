@@ -126,7 +126,7 @@ function fn_calculate_total_shipping_cost(obj) {
                                             {if $shipping.icon}
                                                 {include file="common/image.tpl" obj_id=$shipping.shipping_id images=$shipping.icon image_width="70" image_height="35" keep_transparent=true}
                                             {/if}
-                                            <div>{$shipping.shipping} {$delivery_time} - <b>{$rate nofilter}</b></div>
+                                            <div>{$shipping.shipping} {$delivery_time} - <b>{$rate nofilter}</b>{if $shipping.original_rate && $shipping.original_rate > $shipping.rate} {include file="common/price.tpl" value=$shipping.original_rate class="ty-line-through"}{/if}</div>
                                         </label>
                                     </div>
                                     {*<div class="ty-shipping-options__method-payments">
@@ -177,7 +177,7 @@ function fn_calculate_total_shipping_cost(obj) {
                 {/if}
 
                 {if $smarty.foreach.spg.last && !$group.all_edp_free_shipping && !($group.all_free_shipping || $group.free_shipping)}
-                    <p class="ty-shipping-options__total">{__("total")}:&nbsp;{include file="common/price.tpl" value=$cart.display_shipping_cost class="ty-price"}</p>
+                    <p class="ty-shipping-options__total">{__("total")}:&nbsp;<strong>{include file="common/price.tpl" value=$cart.display_shipping_cost class="ty-price"}</strong>{if $cart.original_shipping_cost && $cart.try_on && $cart.original_shipping_cost > $cart.shipping_cost} {__("try_on_shipping_cost", ["[cost]" => {include file="common/price.tpl" value=$cart.original_shipping_cost class="ty-price"}, "[amount]" => {include file="common/price.tpl" value=$addons.development.free_shipping_cost class="ty-price"}])}{/if}</p>
                 {/if}
 
             {else}

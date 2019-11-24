@@ -343,7 +343,7 @@ function fn_get_product_name($product_id, $lang_code = CART_LANGUAGE, $as_array 
  * @param array $auth Array of authorization data
  * @return float Price
  */
-function fn_get_product_price($product_id, $amount, &$auth)
+function fn_get_product_price($product_id, $amount, &$auth, &$product = array())
 {
     /**
      * Change parameters for getting product price
@@ -364,6 +364,21 @@ function fn_get_product_price($product_id, $amount, &$auth)
         . "ORDER BY lower_limit DESC LIMIT 1",
         $amount, $product_id, $usergroup_condition
     );
+    
+    if (!empty($product)) {
+        $_price = db_get_field(
+            "SELECT MIN(IF(?:product_prices.percentage_discount = 0, ?:product_prices.price, "
+                . "?:product_prices.price - (?:product_prices.price * ?:product_prices.percentage_discount)/100)) as price "
+            . "FROM ?:product_prices "
+            . "WHERE lower_limit <=?i AND ?:product_prices.product_id = ?i ?p "
+            . "ORDER BY lower_limit DESC LIMIT 1",
+            1, $product_id, $usergroup_condition
+        );
+        if ($price < $_price) {
+            $product['qty_discount_price'] = $price;
+            $price = $_price;
+        }
+    }
 
     /**
      * Change product price
@@ -685,10 +700,10 @@ function fn_gather_additional_products_data(&$products, $params)
                 }
             }
 
-            if (/*empty($product['discount']) && */!empty($product['list_price']) && !empty($product['price']) && floatval($product['price']) && $product['list_price'] > $product['price']) {
-                $product['list_discount'] = fn_format_price($product['list_price'] - $product['price']);
-                $product['list_discount_prc'] = sprintf('%d', round($product['list_discount'] * 100 / $product['list_price']));
-            }
+//             if (/*empty($product['discount']) && */!empty($product['list_price']) && !empty($product['price']) && floatval($product['price']) && $product['list_price'] > $product['price']) {
+//                 $product['list_discount'] = fn_format_price($product['list_price'] - $product['price']);
+//                 $product['list_discount_prc'] = sprintf('%d', round($product['list_discount'] * 100 / $product['list_price']));
+//             }
         }
 
         // FIXME: old product options scheme

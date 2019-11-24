@@ -1515,5 +1515,9 @@
         <item lang="ru" id="no_sum_up">Не суммировать с другими скидками</item>
         <item lang="ru" id="is_partial">Частичная выдача</item>
         <item lang="ru" id="sms">SMS</item>
+        <item lang="ru" id="shipping_sdek_item">Доставка</item>
+        <item lang="ru" id="try_on_shipping_cost"><![CDATA[В случае выкупа товаров менее чем на [amount], стоимость доставки составит <strong>[cost]</strong>]]></item>
+        <item lang="ru" id="try_on_shipping_comment">В случае выкупа товаров более чем на [amount], доставка бесплатная</item>
+        <item lang="ru" id="try_on_shipping_comment_2">В случае выкупа товаров менее чем на [amount] - Доставка 1, иначе - Доставка 2</item>
     </language_variables>
 </addon>

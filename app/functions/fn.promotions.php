@@ -375,16 +375,16 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
     if ($zone == 'cart') {
         if (empty($data['order_id']) || !empty($data['recalculate_catalog_promotions'])) {
             foreach ($cart_products as $k => $cproduct) {
-                if (isset($cproduct['exclude_from_calculate']) || (!floatval($cproduct['base_price']) && $cproduct['base_price'] != 0) || (empty($ordered_promotions['item_no_sum_up']) && empty($cart_products[$k]['list_price']))) {
+                if (isset($cproduct['exclude_from_calculate']) || (!floatval($cproduct['base_price']) && $cproduct['base_price'] != 0) || (empty($ordered_promotions['item_no_sum_up']) && !floatval($cart_products[$k]['list_price']) && empty($cart_products[$k]['qty_discount_price']))) {
                     continue;
                 }
                 $data['promotion_item_id'] = $k;
                 $cproduct_vars = $cproduct_order = array();
-                if (!empty($cart_products[$k]['list_price']) && !empty($cart_products[$k]['discount'])) {
-                    $cart_products[$k]['price'] -= $cart_products[$k]['discount'];
-                    $cproduct_vars['list'] = $cart_products[$k];
-                    $cproduct_order['list'] = $cart_products[$k]['price'];
-                    $cart_products[$k]['price'] = $cart_products[$k]['base_price'] = $cart_products[$k]['list_price'];
+                if (!empty($cart_products[$k]['discount'])) {
+                    $cproduct_vars['item_disc'] = $cart_products[$k];
+                    $cproduct_vars['item_disc']['price'] -= $cart_products[$k]['discount'];
+                    $cproduct_order['item_disc'] = $cproduct_vars['item_disc']['price'];
+                    $cart_products[$k]['discount'] = $cart_products[$k]['discount_prc'] = 0;
                 }
                 if (!empty($ordered_promotions['item_no_sum_up'])) {
                     foreach ($ordered_promotions['item_no_sum_up'] as $p_id => $promotion) {
@@ -436,7 +436,7 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
                         $data['products'][$k]['hidden_discount'] = $cproduct_vars[$prom_key]['hidden_discount'];
                     }
                     $cart_products[$k] = $cproduct_vars[$prom_key];
-                    if ($prom_key != 'list') {
+                    if ($prom_key != 'item_disc') {
                         $applied_promotions[$prom_key] = !empty($promotions[$zone][$prom_key]) ? $promotions[$zone][$prom_key] : (!empty($promotions['catalog'][$prom_key]) ? $promotions['catalog'][$prom_key] : '');
                         
                         if (empty($data['promotions'][$prom_key]['bonuses'])) {
@@ -516,12 +516,12 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
         }
     } else {
         $cproduct_vars = $cproduct_order = array();
-        if (!empty($ordered_promotions['item_no_sum_up']) || !empty($data['list_price'])) {
-            if (empty($data['is_prices']) && !empty($data['list_price']) && !empty($data['discount'])) {
-                $data['price'] -= $data['discount'];
-                $cproduct_vars['list'] = $data;
-                $cproduct_order['list'] = $data['price'];
-                $data['price'] = $data['base_price'] = $data['list_price'];
+        if (!empty($ordered_promotions['item_no_sum_up']) || floatval($data['list_price']) || !empty($data['qty_discount_price'])) {
+            if (empty($data['is_prices']) && !empty($data['discount'])) {
+                    $cproduct_vars['item_disc'] = $data;
+                    $cproduct_vars['item_disc']['price'] -= $data['discount'];
+                    $cproduct_order['item_disc'] = $cproduct_vars['item_disc']['price'];
+                    $data['discount'] = 0;
             }
             if (!empty($ordered_promotions['item_no_sum_up'])) {
                 foreach ($ordered_promotions['item_no_sum_up'] as $p_id => $promotion) {
@@ -550,7 +550,7 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
             asort($cproduct_order);
             $prom_key = key($cproduct_order);
             $data = $cproduct_vars[$prom_key];
-            if ($prom_key != 'list') {
+            if ($prom_key != 'list' && $prom_key != 'qty') {
                 $applied_promotions[$prom_key] = $promotions[$zone][$prom_key];
             }
         }

@@ -145,7 +145,7 @@ function fn_get_cart_product_data($hash, &$product, $skip_promotion, &$cart, &$a
         $_pdata['options_count'] = db_get_field("SELECT COUNT(*) FROM ?:product_options WHERE product_id = ?i AND status = 'A'", $product['product_id']);
 
         $amount = !empty($product['amount_total']) ? $product['amount_total'] : $product['amount'];
-        $_pdata['price'] = fn_get_product_price($product['product_id'], $amount, $auth);
+        $_pdata['price'] = fn_get_product_price($product['product_id'], $amount, $auth, $_pdata);
 
         $_pdata['base_price'] = (isset($product['stored_price']) && $product['stored_price'] == 'Y') ? $product['price'] : $_pdata['price'];
 
@@ -1611,7 +1611,7 @@ function fn_get_order_info($order_id, $native_language = false, $format_info = t
             $additional_data = db_get_hash_single_array("SELECT type, data FROM ?:order_data WHERE order_id = ?i", array('type', 'data'), $order_id);
 
             $order['taxes'] = array();
-            $order['tax_subtotal'] = 0;
+            $order['tax_subtotal'] = $order['original_shipping_cost'] = 0;
             $order['display_shipping_cost'] = $order['shipping_cost'];
 
             // Replace country, state and title values with their descriptions
@@ -1628,6 +1628,7 @@ function fn_get_order_info($order_id, $native_language = false, $format_info = t
 
                 foreach ($order['shipping'] as $key => $v) {
                     $shipping_id = isset($v['shipping_id']) ? $v['shipping_id'] : 0;
+                    $order['original_shipping_cost'] += $v['original_rate'];
                     $shipping_name = fn_get_shipping_name($shipping_id, $lang_code);
                     if ($shipping_name) {
                         $order['shipping'][$key]['shipping'] = $shipping_name;
@@ -2767,7 +2768,7 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
     $cart['subtotal'] = $cart['display_subtotal'] = $cart['original_subtotal'] = $cart['amount'] = $cart['total'] = $cart['discount'] = $cart['tax_subtotal'] = $cart['net_subtotal'] = $cart['net_total'] = 0;
 
     $cart['use_discount'] = false;
-    $cart['shipping_required'] = false;
+    $cart['shipping_required'] = $cart['try_on'] = false;
     $cart['shipping_failed'] = $cart['company_shipping_failed'] = false;
     $cart['stored_taxes'] = empty($cart['stored_taxes']) ? 'N': $cart['stored_taxes'];
     $cart['display_shipping_cost'] = $cart['shipping_cost'] = 0;
@@ -2794,6 +2795,7 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
             }
         }
 
+        $try_on_cats = unserialize(TRY_ON_CAT_IDS);
         // Collect product data
         foreach ($cart['products'] as $k => $v) {
             $cart['products'][$k]['amount_total'] = isset($amount_totals[$v['product_id']]) ? $amount_totals[$v['product_id']] : $v['amount'];
@@ -2803,6 +2805,9 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
                 fn_delete_cart_product($cart, $k);
 
                 continue;
+            }
+            if (empty($cart['try_on']) && in_array($cart['products'][$k]['main_category'], $try_on_cats)) {
+                $cart['try_on'] = true;
             }
 
             $cart_products[$k] = $_cproduct;
@@ -2972,7 +2977,7 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
         $product_groups = &$cart['product_groups'];
 
         // FIXME
-        $cart['shipping_cost'] = 0;
+        $cart['shipping_cost'] = $cart['original_shipping_cost'] = 0;
         $cart['shipping'] = array();
         $cart['chosen_shipping'] = !empty($cart['chosen_shipping']) ? $cart['chosen_shipping'] : array();
 
@@ -2994,6 +2999,7 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
             foreach ($group['shippings'] as $shipping_id => $shipping) {
                 if (isset($cart['chosen_shipping'][$key_group]) && $cart['chosen_shipping'][$key_group] == $shipping_id) {
                     $cart['shipping_cost'] += $shipping['rate'];
+                    $cart['original_shipping_cost'] += $shipping['original_rate'];
                 }
             }
 
