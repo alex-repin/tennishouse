@@ -157,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         if ($sdek_info['is_partial'] == 'Y' || $order_info['status'] == 'P') {
                             $order_for_sdek['DeliveryRecipientCost'] = 0;
                         } else {
-                            $order_for_sdek['DeliveryRecipientCost'] = fn_format_price_by_currency($order_info['original_shipping_cost'], $order_info['s_currency']);
+                            $order_for_sdek['DeliveryRecipientCost'] = fn_format_price_by_currency($order_for_sdek['DeliveryRecipientCost'], $order_info['s_currency']);
                         }
 //                         $order_for_sdek['RecipientCurrency'] = $order_info['s_currency'];
 //                         $order_for_sdek['ItemsCurrency'] = $order_info['s_currency'];
@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     if ($sdek_info['is_partial'] == 'Y' || $order_info['status'] == 'P') {
                         $order_for_sdek['DeliveryRecipientCost'] = 0;
                     } else {
-                        $order_for_sdek['DeliveryRecipientCost'] = $order_info['original_shipping_cost'];
+                        $order_for_sdek['DeliveryRecipientCost'] = $order_for_sdek['DeliveryRecipientCost'];
                     }
                 }
 
