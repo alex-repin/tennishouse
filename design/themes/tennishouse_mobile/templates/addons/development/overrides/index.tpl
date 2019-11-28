@@ -100,8 +100,8 @@ window.onerror = function(errorMessage) {
 {hook name="index:footer"}{/hook}
 {include file="common/scripts.tpl"}
 {if $anouncement}
-    <div class="ty-anouncement" id="anouncement_block">
-        <div class="ty-anouncement-text">{$anouncement}</div>
+    <div class="ty-anouncement{if $anouncement.class != ''} {$anouncement.class}{/if}" id="anouncement_block">
+        <div class="ty-anouncement-text">{$anouncement.text nofilter}</div>
         <div class="ty-anouncement-close" onclick="fn_close_anouncement();"></div>
     </div>
 {/if}

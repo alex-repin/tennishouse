@@ -794,6 +794,9 @@
                 PRIMARY KEY (`sms_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
         </item>
+        <item>
+            ALTER TABLE `cscart_anouncements` ADD `class` VARCHAR(128) NOT NULL;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>

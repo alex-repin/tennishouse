@@ -6,7 +6,8 @@
         <thead>
         <tr class="cm-first-sibling">
             <th width="7%">{__("priority")}</th>
-            <th width="65%">{__("text")}</th>
+            <th width="55%">{__("text")}</th>
+            <th width="10%">{__("class")}</th>
             <th width="11%">{__("start_date")}</th>
             <th width="11%">{__("end_date")}</th>
             <th>&nbsp;</th>
@@ -18,7 +19,10 @@
                     <input type="text" name="anouncements_data[{$k}][priority]" size="3" value="{$anouncement.priority}" class="input-micro" />
                 </td>
                 <td>
-                    <textarea name="anouncements_data[{$k}][text]" cols="55" rows="2" class="input-large">{$anouncement.text}</textarea>
+                    <textarea name="anouncements_data[{$k}][text]" cols="55" rows="2" class="cm-wysiwyg input-large">{$anouncement.text}</textarea>
+                </td>
+                <td>
+                    <input type="text" name="anouncements_data[{$k}][class]" size="6" value="{$anouncement.class}" class="input-small" />
                 </td>
                 <td>
                     {include file="common/calendar.tpl" date_id="elm_anouncement_start_`$k`" date_name="anouncements_data[{$k}][start_timestamp]" date_val=$anouncement.start_timestamp|default:$smarty.const.TIME start_year=$settings.Company.company_start_year}

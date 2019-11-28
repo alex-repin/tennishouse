@@ -35,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $ancs[] = array(
                         'anouncement_id' => $k,
                         'text' => $anc_data['text'],
+                        'class' => $anc_data['class'],
                         'start_timestamp' => fn_parse_date($anc_data['start_timestamp']),
                         'end_timestamp' => fn_parse_date($anc_data['end_timestamp']),
                         'priority' => $anc_data['priority'],

@@ -33,7 +33,7 @@ if (!empty($_REQUEST['wid'])) {
     }
 }
 if (empty($_SESSION['hide_anouncement'])) {
-    $anouncement = db_get_field("SELECT text FROM ?:anouncements WHERE start_timestamp <= ?i AND end_timestamp + 86399 >= ?i ORDER BY priority ASC", TIME, TIME);
+    $anouncement = db_get_row("SELECT text, class FROM ?:anouncements WHERE start_timestamp <= ?i AND end_timestamp + 86399 >= ?i ORDER BY priority ASC", TIME, TIME);
     if (!empty($anouncement)) {
         Registry::get('view')->assign('anouncement', $anouncement);
     }
