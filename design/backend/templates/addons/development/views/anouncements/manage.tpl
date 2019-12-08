@@ -44,7 +44,10 @@
                 <input type="text" name="anouncements_data[{$k}][priority]" size="3" value="0" class="input-micro" />
             </td>
             <td>
-                <textarea name="anouncements_data[{$k}][text]" cols="55" rows="2" class="input-large"></textarea>
+                <textarea name="anouncements_data[{$k}][text]" cols="55" rows="2" class="cm-wysiwyg input-large"></textarea>
+            </td>
+            <td>
+                <input type="text" name="anouncements_data[{$k}][class]" size="6" value="" class="input-small" />
             </td>
             <td>
                 {include file="common/calendar.tpl" date_id="elm_anouncement_start_`$k`" date_name="anouncements_data[{$k}][start_timestamp]" date_val=$smarty.const.TIME start_year=$settings.Company.company_start_year}

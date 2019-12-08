@@ -154,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $order_for_sdek['SellerAddress'] = Registry::get('settings.Company.company_address');
                     $order_for_sdek['ShipperAddress'] = Registry::get('settings.Company.company_address');
                     if (!empty($order_info['s_currency'])) {
-                        if ($sdek_info['is_partial'] == 'Y' || $order_info['status'] == 'P') {
+                        if ((empty($order_info['display_shipping_cost']) && $sdek_info['is_partial'] == 'Y') || $order_info['status'] == 'P') {
                             $order_for_sdek['DeliveryRecipientCost'] = 0;
                         } else {
                             $order_for_sdek['DeliveryRecipientCost'] = fn_format_price_by_currency($order_for_sdek['DeliveryRecipientCost'], $order_info['s_currency']);
@@ -163,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 //                         $order_for_sdek['ItemsCurrency'] = $order_info['s_currency'];
                     }
                 } else {
-                    if ($sdek_info['is_partial'] == 'Y' || $order_info['status'] == 'P') {
+                    if ((empty($order_info['display_shipping_cost']) && $sdek_info['is_partial'] == 'Y') || $order_info['status'] == 'P') {
                         $order_for_sdek['DeliveryRecipientCost'] = 0;
                     } else {
                         $order_for_sdek['DeliveryRecipientCost'] = $order_for_sdek['DeliveryRecipientCost'];
@@ -223,6 +223,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     'Amount' => 1,
                                     'Comment' => __("shipping_sdek_item"),
                                 );
+                                $xml .= '            ' . RusSdek::arraySimpleXml('Item', $product_for_xml);
                             } elseif (!empty($order_info['display_shipping_cost']) && !empty($order_info['original_shipping_cost']) && $order_info['original_shipping_cost'] > $order_info['display_shipping_cost']) {
                                 $product_for_xml = array (
                                     'WareKey' => 'SHPNG',
@@ -232,7 +233,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     'Amount' => 1,
                                     'Comment' => __("shipping_sdek_item") . ' 1',
                                 );
-                                $xml .= '            ' . RusSdek::arraySimpleXml('Item', $product_for_xml);
                                 $product_for_xml = array (
                                     'WareKey' => 'SHPNG2',
                                     'Cost' => $order_info['original_shipping_cost'],
@@ -241,9 +241,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     'Amount' => 1,
                                     'Comment' => __("shipping_sdek_item") . ' 2',
                                 );
+                                $xml .= '            ' . RusSdek::arraySimpleXml('Item', $product_for_xml);
                             }
-                            
-                            $xml .= '            ' . RusSdek::arraySimpleXml('Item', $product_for_xml);
                         }
                         $xml .= '            ' . '</Package>';
                     }

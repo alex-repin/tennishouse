@@ -37,6 +37,7 @@ function fn_settings_variants_addons_rus_unisender_list_name()
 
 function fn_check_sms()
 {
+    $errors = array();
     $sms_list = db_get_hash_array("SELECT a.sms_id, a.sms_status FROM ?:sms_statuses AS a LEFT JOIN ?:orders AS b ON a.order_id = b.order_id WHERE b.status NOT IN ('C', 'E', 'G') AND (a.sms_status = 'ok_sent' OR a.sms_status = 'not_sent')", 'sms_id');
     if (!empty($sms_list)) {
         $api_key = Registry::get('addons.rus_unisender.api_key');
@@ -53,6 +54,8 @@ function fn_check_sms()
             }
         }
     }
+    
+    return array(true, $errors);
 }
 
 function fn_add_users_to_unisender($user_ids, $notify = true)

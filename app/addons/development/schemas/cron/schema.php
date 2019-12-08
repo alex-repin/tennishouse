@@ -16,36 +16,44 @@
 return array(
     'F' => array(
         'frequency' => 60 * 60 * 24,
-        'function' => 'fn_generate_features_cash'
+        'function' => 'fn_generate_features_cash',
+        'H' => '02'
     ),
     'R' => array(
         'frequency' => 60 * 60 * 24,
         'function' => 'fn_update_rankings',
-        'wday' => '2'
+        'wday' => '2',
+        'H' => '02'
     ),
     'E' => array(
         'frequency' => 60 * 60 * 24,
-        'function' => 'fn_check_expired_points'
+        'function' => 'fn_check_expired_points',
+        'H' => '02'
     ),
     'P' => array(
         'frequency' => 60 * 60 * 24,
-        'function' => 'fn_update_rub_rate'
+        'function' => 'fn_update_rub_rate',
+        'H' => '02'
     ),
     'M' => array(
         'frequency' => 60 * 60 * 24,
-        'function' => 'fn_get_generate_categories_menu_subitems'
+        'function' => 'fn_get_generate_categories_menu_subitems',
+        'H' => '02'
     ),
     'S' => array(
         'frequency' => 60 * 60 * 24,
-        'function' => 'fn_check_delivery_statuses'
+        'function' => 'fn_check_delivery_statuses',
+        'H' => '02'
     ),
     'I' => array(
         'frequency' => 60 * 60 * 24,
-        'function' => 'fn_update_competitive_prices'
+        'function' => 'fn_update_competitive_prices',
+        'H' => '02'
     ),
     'C' => array(
         'frequency' => 60 * 60 * 24 * 7,
-        'function' => 'fn_update_competitive_catalog'
+        'function' => 'fn_update_competitive_catalog',
+        'H' => '02'
     ),
     'T' => array(
         'frequency' => 60 * 60,

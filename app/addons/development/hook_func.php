@@ -605,7 +605,7 @@ function fn_development_cron_routine()
     
     if (!empty($scheme)) {
         foreach ($scheme as $type => $data) {
-            if (!empty($data['wday']) && $data['wday'] != date('N')) {
+            if ((!empty($data['wday']) && $data['wday'] != date('N')) || (!empty($data['H']) && $data['H'] != date('H'))) {
                 continue;
             }
             $is_executed = db_get_field("SELECT log_id FROM ?:cron_logs WHERE type = ?s AND status = 'F' AND timestamp > ?i", $type, TIME - $data['frequency']);
