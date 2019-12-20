@@ -355,8 +355,17 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
 
     if (!fn_allowed_for('ULTIMATE:FREE')) {
         // Pre-check coupon
-        if ($zone == 'cart' && !empty($data['pending_coupon'])) {
-            fn_promotion_check_coupon($data, true);
+        if ($zone == 'cart') {
+            if (!empty($data['pending_coupon'])) {
+                fn_promotion_check_coupon($data, true);
+            }
+            if (!empty($_SESSION['coupons'])) {
+                foreach ($_SESSION['coupons'] as $coupon => $p_id) {
+                    if (!in_array($coupon, array_keys($data['coupons']))) {
+                        $data['coupons'][$coupon] = $p_id;
+                    }
+                }
+            }
         }
     }
     
@@ -393,39 +402,33 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
                         if ($promotion['zone'] == 'catalog') {
                             // Rule is valid and can be applied
                             if (fn_promotion_check($promotion['promotion_id'], $promotion['conditions'], $cart_products[$k], $auth)) {
-                                if ($promotion['no_sum_up'] == 'Y') {
-                                    $_cproduct = $cart_products[$k];
-                                }
+                                $_cproduct = $cart_products[$k];
                                 if (fn_promotion_apply_bonuses($promotion, $cart_products[$k], $auth)) {
                                     $potential_promotions[$promotion['promotion_id']] = true;
                                     // Stop processing further rules, if needed
+                                    $cproduct_vars[$p_id] = $cart_products[$k];
+                                    $cproduct_order[$p_id] = $cart_products[$k]['price'];
+                                    $cart_products[$k] = $_cproduct;
                                     if ($promotion['stop'] == 'Y') {
                                         break;
                                     }
                                 }
-                                if ($promotion['no_sum_up'] == 'Y') {
-                                    $cproduct_vars[$p_id] = $cart_products[$k];
-                                    $cproduct_order[$p_id] = $cart_products[$k]['price'];
-                                    $cart_products[$k] = $_cproduct;
-                                }
+//                                 $cart_products[$k] = $_cproduct;
                             }
                         } else {
                             if (fn_promotion_check($promotion['promotion_id'], $promotion['conditions'], $data, $auth, $cart_products)) {
-                                if ($promotion['no_sum_up'] == 'Y') {
-                                    $_cproduct = $cart_products[$k];
-                                }
+                                $_cproduct = $cart_products[$k];
                                 if (fn_promotion_apply_bonuses($promotion, $data, $auth, $cart_products)) {
                                     $potential_promotions[$promotion['promotion_id']] = true;
                                     // Stop processing further rules, if needed
+                                    $cproduct_vars[$p_id] = $cart_products[$k];
+                                    $cproduct_order[$p_id] = $cart_products[$k]['price'];
+                                    $cart_products[$k] = $_cproduct;
                                     if ($promotion['stop'] == 'Y') {
                                         break;
                                     }
                                 }
-                                if ($promotion['no_sum_up'] == 'Y') {
-                                    $cproduct_vars[$p_id] = $cart_products[$k];
-                                    $cproduct_order[$p_id] = $cart_products[$k]['price'];
-                                    $cart_products[$k] = $_cproduct;
-                                }
+//                                 $cart_products[$k] = $_cproduct;
                             }
                         }
                     }
@@ -529,21 +532,18 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
                 foreach ($ordered_promotions['item_no_sum_up'] as $p_id => $promotion) {
                     // Rule is valid and can be applied
                     if (fn_promotion_check($promotion['promotion_id'], $promotion['conditions'], $data, $auth, $cart_products)) {
-                        if ($promotion['no_sum_up'] == 'Y') {
-                            $_cproduct = $data;
-                        }
+                        $_cproduct = $data;
                         if (fn_promotion_apply_bonuses($promotion, $data, $auth, $cart_products)) {
                             $potential_promotions[$promotion['promotion_id']] = true;
                             // Stop processing further rules, if needed
+                            $cproduct_vars[$p_id] = $data;
+                            $cproduct_order[$p_id] = $data['price'];
+                            $data = $_cproduct;
                             if ($promotion['stop'] == 'Y') {
                                 break;
                             }
                         }
-                        if ($promotion['no_sum_up'] == 'Y') {
-                            $cproduct_vars[$p_id] = $data;
-                            $cproduct_order[$p_id] = $data['price'];
-                            $data = $_cproduct;
-                        }
+//                         $data = $_cproduct;
                     }
                 }
             }

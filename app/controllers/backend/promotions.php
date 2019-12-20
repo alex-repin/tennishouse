@@ -170,7 +170,7 @@ if ($mode == 'update') {
 
     $_REQUEST['zone'] = !empty($_REQUEST['zone']) ? $_REQUEST['zone'] : 'catalog';
 
-    list($promotions, $search) = fn_get_promotions($_REQUEST, Registry::get('settings.Appearance.admin_elements_per_page'), DESCR_SL);
+    list($promotions, $search) = fn_get_promotions($_REQUEST, 0, DESCR_SL);
 
     Registry::get('view')->assign('zone', $_REQUEST['zone']);
     Registry::get('view')->assign('search', $search);

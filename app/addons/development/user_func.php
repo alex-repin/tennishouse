@@ -680,6 +680,45 @@ function fn_promotion_apply_cart_mod_rule($bonus, &$cart, &$auth, &$cart_product
     return true;
 }
 
+function fn_promotion_validate_catalog_coupon(&$promotion, $product, $promotion_id = 0)
+{
+    $values = fn_explode(',', $promotion['value']);
+
+    // Check already applied coupons
+    if (!empty($_SESSION['coupons'])) {
+        $coupons = array_keys($_SESSION['coupons']);
+        
+        if ($promotion['operator'] == 'cont') {
+            $codes = array();
+            foreach ($coupons as $coupon_val) {
+                foreach ($values as $cond_val) {
+                    $cond_val = strtolower($cond_val);
+                }
+            }
+        } else {
+            $codes = array();
+            foreach ($values as $expected_coupon_code) {
+                if (in_array(strtolower($expected_coupon_code), $coupons)) {
+                    $codes[] = $expected_coupon_code;
+                }
+            }
+        }
+
+        if (!empty($codes) && !empty($promotion_id)) {
+            foreach ($codes as $_code) {
+                $_code = strtolower($_code);
+                if (is_array($_SESSION['coupons'][$_code]) && !in_array($promotion_id, $_SESSION['coupons'][$_code])) {
+                    $_SESSION['coupons'][$_code][] = $promotion_id;
+                }
+            }
+        }
+
+        return $codes;
+    }
+
+    return false;
+}
+
 function fn_promotion_validate_no_list_discount(&$promotion, $product, $promotion_id = 0)
 {
     if (!empty($product['list_price']) && $product['list_price'] > $product['price']) {

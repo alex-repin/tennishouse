@@ -71,6 +71,19 @@ $scheme['conditions']['no_catalog_discount'] = array(
         ),
     ),
 );
+$scheme['conditions']['catalog_coupon_code'] = array(
+    'operators' => array ('eq', 'in'),
+    // 'cont' - 'contains' was removed as ambiguous, but you can uncomment it back
+    //'operators' => array ('eq', 'cont', 'in'),
+    'type' => 'input',
+    'field_function' => array('fn_promotion_validate_catalog_coupon', '#this', '@product', '#id'),
+    'zones' => array('catalog'),
+    'applicability' => array( // applicable for "positive" groups only
+        'group' => array(
+            'set_value' => true
+        ),
+    ),
+);
 $scheme['conditions']['ip_city'] = array(
     'operators' => array ('in', 'nin'),
     'type' => 'city_textbox',

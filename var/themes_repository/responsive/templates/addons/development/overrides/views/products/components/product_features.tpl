@@ -27,7 +27,12 @@
                 {foreach from=$feature.variants item="var"}
                     {if $var.selected}
                         {if $feature.seo_variants == 'Y' && $feature_path}
-                            {assign var="href" value=$feature_path|fn_link_attach:"features_hash=V`$var.variant_id`"}
+                            {if $feature.parent_variant_id}
+                                {assign var="pre_hash" value="`$feature.parent_variant_id`.V"}
+                            {else}
+                                {assign var="pre_hash" value=""}
+                            {/if}
+                            {assign var="href" value=$feature_path|fn_link_attach:"features_hash=V`$pre_hash``$var.variant_id`"}
                             <a href="{$href|fn_url}">
                         {/if}
                         {$var.variant}

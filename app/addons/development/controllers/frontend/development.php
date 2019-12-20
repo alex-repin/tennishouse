@@ -20,6 +20,41 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 $approx_shipping = & $_SESSION['approx_shipping'];
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    // Apply Discount Coupon
+    if ($mode == 'apply_coupon') {
+        fn_trusted_vars('catalog_coupon');
+
+        if (!empty($_REQUEST['catalog_coupon'])) {
+            $code = strtolower(trim($_REQUEST['catalog_coupon']));
+            $params = array (
+                'active' => true,
+                'coupon_code' => $code,
+                'zone' => 'catalog'
+            );
+
+            list($coupon) = fn_get_promotions($params);
+
+            if (empty($coupon)) {
+                if (!fn_notification_exists('extra', 'error_coupon_already_used')) {
+                    fn_set_notification('N', __('notice'), __('no_such_coupon'), '', 'no_such_coupon');
+                }
+            } else {
+//                 fn_set_notification('N', __('notice'), __('text_applied_promotions'), '', 'text_applied_promotions');
+                $_SESSION['coupons'][$code] = array_keys($coupon);
+                $_SESSION['cart']['recalculate'] = true;
+
+                if (!empty($_SESSION['cart']['chosen_shipping'])) {
+                    $_SESSION['cart']['calculate_shipping'] = true;
+                }
+            }
+        }
+
+        exit;
+    }
+}
+
 if ($mode == 'update_rub_rate') {
     fn_update_rub_rate();
     exit;
