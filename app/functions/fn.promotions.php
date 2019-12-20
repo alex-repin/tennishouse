@@ -280,6 +280,8 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
 
         if ($zone == 'catalog') {
             $params['zone'] = $zone;
+        } elseif (empty($data['apply_cart_promotions'])) {
+            $params['zone'] = 'catalog';
         }
         list($promotions[$zone]) = fn_get_promotions($params);
     }
