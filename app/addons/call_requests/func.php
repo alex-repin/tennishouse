@@ -182,6 +182,12 @@ function fn_do_call_request($params, &$cart, &$auth, $product_data)
 {
     $result = array();
 
+    preg_match('/[^\d\+\(\)\-]/u', $params['phone'], $match);
+    
+    if (!empty($match[0]) || empty($params['state'])) {
+        return false;
+    }
+    
     $params['cart_products'] = fn_call_request_get_cart_products($cart);
 
     if ((!empty($product_data) || !empty($params['product_id'])) && (!empty($params['email']) || !empty($params['phone']))) {
