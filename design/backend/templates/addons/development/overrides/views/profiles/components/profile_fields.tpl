@@ -75,7 +75,7 @@
 {/if}
 
 <div class="control-group">
-    <label for="{$id_prefix}elm_{$field.field_id}" class="control-label cm-profile-field {if $field.required == "Y"}cm-required{/if}{if $field.field_type == "P"} cm-phone{/if}{if $field.field_type == "Z"} cm-zipcode{/if}{if $field.field_type == "E"} cm-email{/if} {if $field.field_type == "Z"}{if $section == "S"}cm-location-shipping{else}cm-location-billing{/if}{/if}">{$field.description}:</label>
+    <label for="{$id_prefix}elm_{$field.field_id}" class="control-label cm-profile-field {if $field.required == "Y"}{*cm-required*}{/if}{if $field.field_type == "P"} cm-phone{/if}{if $field.field_type == "Z"} cm-zipcode{/if}{if $field.field_type == "E"} cm-email{/if} {if $field.field_type == "Z"}{if $section == "S"}cm-location-shipping{else}cm-location-billing{/if}{/if}">{$field.description}:</label>
 
     <div class="controls">
 
