@@ -35,6 +35,28 @@ if (!empty($_REQUEST['wid'])) {
 if (empty($_SESSION['hide_anouncement'])) {
     $anouncement = db_get_row("SELECT text, class FROM ?:anouncements WHERE start_timestamp <= ?i AND end_timestamp + 86399 >= ?i ORDER BY priority ASC", TIME, TIME);
     if (!empty($anouncement)) {
+        if (preg_match_all('/\[apply_code\|(.*)\]/u', $anouncement['text'], $matches)) {
+            foreach ($matches[1] as $i => $vl) {
+                $values = explode('|', $vl);
+                if (in_array(strtolower(trim($values[0])), array_keys($_SESSION['coupons']))) {
+                    $anouncement['text'] = str_replace($matches[0][$i], (!empty($values[2]) ? $values[2] : __('promo_applied')) .
+                        ' <form action="' . fn_url() . '" method="post" name="form_link" class="">
+                            <input type="hidden" name="catalog_coupon" value="' . $values[0] . '">
+                            <input type="hidden" name="redirect_url" value="' . Registry::get('config.current_url') . '">
+                            <button class="ty-button-link ty-btn" name="dispatch[development.delete_coupon]" type="submit">' . __('cancel') . '</button>
+                        </form>',
+                    $anouncement['text']);
+                } else {
+                    $anouncement['text'] = str_replace($matches[0][$i],
+                        '<form action="' . fn_url() . '" method="post" name="form_link" class="">
+                            <input type="hidden" name="catalog_coupon" value="' . $values[0] . '">
+                            <input type="hidden" name="redirect_url" value="' . Registry::get('config.current_url') . '">
+                            <button class="ty-button-link ty-btn" name="dispatch[development.apply_coupon]" type="submit">' . (!empty($values[1]) ? $values[1] : __('apply')) . '</button>
+                        </form>',
+                    $anouncement['text']);
+                }
+            }
+        }
         Registry::get('view')->assign('anouncement', $anouncement);
     }
 }

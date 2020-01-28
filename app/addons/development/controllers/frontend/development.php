@@ -51,7 +51,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
 
-        exit;
+        if (!empty($_REQUEST['redirect_url'])) {
+            return array(CONTROLLER_STATUS_REDIRECT, $_REQUEST['redirect_url']);
+        } else {
+            exit;
+        }
+    }
+    
+    if ($mode == 'delete_coupon') {
+        fn_trusted_vars('catalog_coupon');
+
+        $code = strtolower(trim($_REQUEST['catalog_coupon']));
+        unset($_SESSION['coupons'][$code], $_SESSION['cart']['coupons'][$code], $_SESSION['cart']['pending_coupon']);
+        $_SESSION['cart']['recalculate'] = true;
+
+        if (!empty($_SESSION['cart']['chosen_shipping'])) {
+            $_SESSION['cart']['calculate_shipping'] = true;
+        }
+
+        if (!empty($_REQUEST['redirect_url'])) {
+            return array(CONTROLLER_STATUS_REDIRECT, $_REQUEST['redirect_url']);
+        } else {
+            exit;
+        }
     }
 }
 
