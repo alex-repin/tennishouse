@@ -2223,7 +2223,7 @@ function fn_development_get_product_data_post(&$product_data, $auth, $preview, $
     $types_ids = fn_get_categories_types($product_data['main_category']);
     $product_data['id_path'] = db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $product_data['main_category']);
     list($product_data['type_id'], $product_data['type']) = fn_identify_category_type($product_data['id_path']);
-    list($product_data['category_type_id'], $product_data['category_type']) = ($product_data['product_type'] == 'C') ? array('', 'PC') : fn_get_category_type($types_ids[$product_data['main_category']]);
+    list($product_data['category_type_id'], $product_data['category_type']) = (!empty($product_data['product_type']) && $product_data['product_type'] == 'C') ? array('', 'PC') : fn_get_category_type($types_ids[$product_data['main_category']]);
     if (!in_array($product_data['category_type'], array('A', 'S'))) {
         $product_data['offer_help'] = true;
     }

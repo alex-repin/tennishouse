@@ -552,7 +552,7 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
             asort($cproduct_order);
             $prom_key = key($cproduct_order);
             $data = $cproduct_vars[$prom_key];
-            if ($prom_key != 'list' && $prom_key != 'qty') {
+            if ($prom_key != 'item_disc') {
                 $applied_promotions[$prom_key] = $promotions[$zone][$prom_key];
             }
         }

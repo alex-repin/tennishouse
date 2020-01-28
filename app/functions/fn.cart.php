@@ -1401,7 +1401,9 @@ function fn_save_cart_content(&$cart, $user_id, $type = 'C', $user_type = 'R')
                 $_cart_prods[$_item_id]['session_id'] = Session::getId();
                 // TennisHouse
                 $_cart_prods[$_item_id]['step'] = !empty($_SESSION['edit_step']) ? ($_SESSION['edit_step'] == 'step_two' ? 1 : ($_SESSION['edit_step'] == 'step_three' ? 2 : ($_SESSION['edit_step'] == 'step_four' ? 3 : 0))) : 0;
-                $_cart_prods[$_item_id]['user_data'] = serialize($cart['user_data']);
+                if (!empty($cart['user_data'])) {
+                    $_cart_prods[$_item_id]['user_data'] = serialize($cart['user_data']);
+                }
                 // TennisHouse
 
                 $ip = fn_get_ip();
