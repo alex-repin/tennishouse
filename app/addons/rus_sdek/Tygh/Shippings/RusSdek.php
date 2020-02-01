@@ -148,57 +148,55 @@ class RusSdek
         
         if (!empty($location['country']) && !empty($location['city'])) {
         // [tennishouse]
-            if ($location['country'] == 'RU') {
-            
-                if (preg_match('/^[a-zA-Z]+$/',$location['city'])) {
-                    $lang_code = 'en';
-                } else {
+            if (preg_match('/^[a-zA-Z]+$/',$location['city'])) {
+                $lang_code = 'en';
+            } else {
+                $lang_code = 'ru';
+            }
+
+            if (($lang_code == 'en') && (Registry::get('addons.rus_cities.status') == 'A')) {
+                $d_city = db_get_field("SELECT a.city FROM ?:rus_city_descriptions as a LEFT JOIN ?:rus_city_descriptions as b ON a.city_id = b.city_id WHERE a.lang_code = ?s and b.lang_code = ?s and b.city LIKE ?l ", 'ru', $lang_code, $location['city']);
+                if (!empty($d_city)) {
+                    $location['city'] = $d_city;
                     $lang_code = 'ru';
                 }
+            }
+            
+            $condition = db_quote(" d.lang_code = ?s AND d.city LIKE ?l AND c.status = ?s", $lang_code , $location['city'] . "%", 'A');
+            if (!empty($location['country'])) {
+                $condition .= db_quote(" AND c.country_code = ?s", $location['country']);
+            }
 
-                if (($lang_code == 'en') && (Registry::get('addons.rus_cities.status') == 'A')) {
-                    $d_city = db_get_field("SELECT a.city FROM ?:rus_city_descriptions as a LEFT JOIN ?:rus_city_descriptions as b ON a.city_id = b.city_id WHERE a.lang_code = ?s and b.lang_code = ?s and b.city LIKE ?l ", 'ru', $lang_code, $location['city']);
-                    if (!empty($d_city)) {
-                        $location['city'] = $d_city;
-                        $lang_code = 'ru';
+            $result = db_get_hash_array("SELECT c.city_code, c.state_code, d.city FROM ?:rus_city_sdek_descriptions as d LEFT JOIN ?:rus_cities_sdek as c ON c.city_id = d.city_id WHERE ?p", 'city_code', $condition);
+
+            if (count($result) == 1) {
+                reset($result);
+                $_result = key($result);
+            } elseif (count($result) > 1) {
+                if (!empty($location['state'])) {
+                    foreach ($result as $c_code => $c_data) {
+                        if ($location['state'] != $c_data['state_code']) {
+                            unset($result[$c_code]);
+                        }
                     }
                 }
-
-                $condition = db_quote(" d.lang_code = ?s AND d.city LIKE ?l AND c.status = ?s", $lang_code , $location['city'] . "%", 'A');
-                if (!empty($location['country'])) {
-                    $condition .= db_quote(" AND c.country_code = ?s", $location['country']);
-                }
-
-                $result = db_get_hash_array("SELECT c.city_code, c.state_code, d.city FROM ?:rus_city_sdek_descriptions as d LEFT JOIN ?:rus_cities_sdek as c ON c.city_id = d.city_id WHERE ?p", 'city_code', $condition);
-
                 if (count($result) == 1) {
                     reset($result);
                     $_result = key($result);
                 } elseif (count($result) > 1) {
-                    if (!empty($location['state'])) {
-                        foreach ($result as $c_code => $c_data) {
-                            if ($location['state'] != $c_data['state_code']) {
-                                unset($result[$c_code]);
-                            }
+                    $max_match = $city_id = 0;
+                    foreach ($result as $c_code => $c_data) {
+                        $prc = round(strlen($location['city'])/strlen($c_data['city']), 2) * 100;
+                        if ($prc > $max_match) {
+                            $max_match = $prc;
+                            $city_id = $c_code;
                         }
                     }
-                    if (count($result) == 1) {
-                        reset($result);
-                        $_result = key($result);
-                    } elseif (count($result) > 1) {
-                        $max_match = $city_id = 0;
-                        foreach ($result as $c_code => $c_data) {
-                            $prc = round(strlen($location['city'])/strlen($c_data['city']), 2) * 100;
-                            if ($prc > $max_match) {
-                                $max_match = $prc;
-                                $city_id = $c_code;
-                            }
-                        }
-                        $_result = $city_id;
-                    }
+                    $_result = $city_id;
                 }
             }
-            if ($location['country'] != 'RU' || empty($_result)) {
+
+            if (empty($_result)) {
 //                     fn_set_notification('E', __('notice'), __('shippings.sdek.city_error'));
                 $data = array(
                     'q' => $location['city'],
@@ -235,7 +233,11 @@ class RusSdek
                         }
                     }
                 }
-                if (!empty($_result) && !empty($location['country']) && !empty($location['state']) && !empty($location['city'])) {
+                $exists = db_get_field("SELECT city_code FROM ?:rus_cities_sdek WHERE city_code = ?i", $_result);
+                if (!empty($exists)) {
+                    $_result = $exists;
+                    db_query("UPDATE ?:rus_cities_sdek SET country_code = ?s, state_code = ?s WHERE city_code = ?i", $location['country'], $location['state'], $_result);
+                } elseif (!empty($_result) && !empty($location['country']) && !empty($location['city']) && (!empty($location['state']) || $location['country'] != 'RU')) {
                     $_data = array(
                         'country_code' => $location['country'],
                         'state_code' => $location['state'],
