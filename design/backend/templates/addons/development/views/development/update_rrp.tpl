@@ -6,6 +6,16 @@
 
 {if $step == 'one'}
     <div class="control-group">
+        <label class="control-label">{__("type")}:</label>
+        <div class="controls">
+            <select class="span3" name="type">
+                <option value="">{__("none")}</option>
+                <option value="rrp">{__("rrp")}</option>
+                <option value="ean">{__("ean")}</option>
+            </select>
+        </div>
+    </div>
+    <div class="control-group">
         <label class="control-label">{__("select_file")}:</label>
         <div class="controls">{include file="common/fileuploader.tpl" var_name="csv_file[0]"}</div>
     </div>

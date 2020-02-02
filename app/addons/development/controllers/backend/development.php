@@ -41,80 +41,99 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $codes = array();
                     while (($data = fn_fgetcsv($f, $max_line_size, $delimiter)) !== false) {
                         $code = $data[0];
-                        $price = $net_cost = 0;
-                        if (count($data) == 2) {
-                            $price = floatval(str_replace(',', '.', $data[1]));
-                        } elseif (count($data) == 3) {
-                            $price = floatval(str_replace(',', '.', $data[2]));
-                            $net_cost = floatval(str_replace(',', '.', $data[1]));
-                        }
-                        if (!empty($code) && !empty($price)) {
-                            $codes[] = $code;
-                            $product_ids = db_get_array("SELECT product_id, import_divider FROM ?:products WHERE product_code = ?s", $code);
-                            if (!empty($product_ids)) {
-                                foreach ($product_ids as $i => $p_data) {
-                                    if (!empty($net_cost)) {
-                                        db_query("UPDATE ?:products SET auto_price = 'N', update_with_currencies = 'N', list_price = '0', net_cost = ?d WHERE product_id = ?s", $p_data['import_divider'] * $net_cost, $p_data['product_id']);
-                                    } else {
-                                        db_query("UPDATE ?:products SET auto_price = 'N', update_with_currencies = 'N', list_price = '0' WHERE product_id = ?s", $p_data['product_id']);
-                                    }
-                                    if ($p_data['import_divider'] == '1') {
-                                        $product_data = array(
-                                            'price' => $price
-                                        );
-                                        fn_get_product_prices($p_data['product_id'], $product_data, $auth);
-                                        if (!empty($product_data['prices'])) {
-                                            foreach ($product_data['prices'] as $j => $pr) {
-                                                if (!empty($pr['percentage_discount'])) {
-                                                    $product_data['prices'][$j]['price'] = $pr['percentage_discount'];
-                                                    $product_data['prices'][$j]['type'] = 'P';
-                                                } else {
-                                                    $product_data['prices'][$j]['type'] = 'A';
+                        if ($_REQUEST['type'] == 'rrp') {
+                            $price = $net_cost = 0;
+                            if (count($data) == 2) {
+                                $price = floatval(str_replace(',', '.', $data[1]));
+                            } elseif (count($data) == 3) {
+                                $price = floatval(str_replace(',', '.', $data[2]));
+                                $net_cost = floatval(str_replace(',', '.', $data[1]));
+                            }
+                            if (!empty($code) && !empty($price)) {
+                                $codes[] = $code;
+                                $product_ids = db_get_array("SELECT product_id, import_divider FROM ?:products WHERE product_code = ?s", $code);
+                                if (!empty($product_ids)) {
+                                    foreach ($product_ids as $i => $p_data) {
+                                        if (!empty($net_cost)) {
+                                            db_query("UPDATE ?:products SET auto_price = 'N', update_with_currencies = 'N', list_price = '0', net_cost = ?d WHERE product_id = ?s", $p_data['import_divider'] * $net_cost, $p_data['product_id']);
+                                        } else {
+                                            db_query("UPDATE ?:products SET auto_price = 'N', update_with_currencies = 'N', list_price = '0' WHERE product_id = ?s", $p_data['product_id']);
+                                        }
+                                        if ($p_data['import_divider'] == '1') {
+                                            $product_data = array(
+                                                'price' => $price
+                                            );
+                                            fn_get_product_prices($p_data['product_id'], $product_data, $auth);
+                                            if (!empty($product_data['prices'])) {
+                                                foreach ($product_data['prices'] as $j => $pr) {
+                                                    if (!empty($pr['percentage_discount'])) {
+                                                        $product_data['prices'][$j]['price'] = $pr['percentage_discount'];
+                                                        $product_data['prices'][$j]['type'] = 'P';
+                                                    } else {
+                                                        $product_data['prices'][$j]['type'] = 'A';
+                                                    }
                                                 }
                                             }
+                                            fn_update_product_prices($p_data['product_id'], $product_data);
                                         }
-                                        fn_update_product_prices($p_data['product_id'], $product_data);
+                                    }
+                                }
+                            }
+                        } elseif ($_REQUEST['type'] == 'ean') {
+                            $ean = $data[1];
+                            if (!empty($code) && !empty($ean)) {
+                                $codes[] = $code;
+                                $product_ids = db_get_array("SELECT product_id, import_divider FROM ?:products WHERE product_code = ?s", $code);
+                                if (!empty($product_ids)) {
+                                    foreach ($product_ids as $i => $p_data) {
+                                        db_query("UPDATE ?:products SET ean = ?s WHERE product_id = ?i", $ean, $p_data['product_id']);
                                     }
                                 }
                             }
                         }
                     }
-                    $params = array(
-                        'features_hash' => 'V' . implode('.V', $_REQUEST['rrp_data']['brand_ids']),
-                        'not_product_codes' => $codes,
-                        'sort_by' => 'updated_timestamp',
-                        'sort_order' => 'desc'
-                    );
-                    list($products,) = fn_get_products($params);
-                    fn_gather_additional_products_data($products, array(
-                        'get_icon' => false,
-                        'get_detailed' => false,
-                        'get_additional' => false,
-                        'get_options' => false,
-                        'get_discounts' => true,
-                        'get_features' => false,
-                        'get_title_features' => false,
-                        'allow_duplication' => false
-                    ));
-                    $cids = $_result = array();
-                    foreach ($products as $i => $product) {
-                        if ($product['net_cost'] > 0) {
-                            $product['net_cost_rub'] = $product['net_cost'] * Registry::get('currencies.' . $product['net_currency_code'] . '.coefficient');
-                            $_result[$product['type_id']][] = $product;
+                    if ($_REQUEST['type'] == 'rrp') {
+                        $params = array(
+                            'features_hash' => 'V' . implode('.V', $_REQUEST['rrp_data']['brand_ids']),
+                            'not_product_codes' => $codes,
+                            'sort_by' => 'updated_timestamp',
+                            'sort_order' => 'desc'
+                        );
+                        list($products,) = fn_get_products($params);
+                        fn_gather_additional_products_data($products, array(
+                            'get_icon' => false,
+                            'get_detailed' => false,
+                            'get_additional' => false,
+                            'get_options' => false,
+                            'get_discounts' => true,
+                            'get_features' => false,
+                            'get_title_features' => false,
+                            'allow_duplication' => false
+                        ));
+                        $cids = $_result = array();
+                        foreach ($products as $i => $product) {
+                            if ($product['net_cost'] > 0) {
+                                $product['net_cost_rub'] = $product['net_cost'] * Registry::get('currencies.' . $product['net_currency_code'] . '.coefficient');
+                                $_result[$product['type_id']][] = $product;
+                            }
                         }
+                        $categories = db_get_array("SELECT a.category_id, b.category FROM ?:categories AS a LEFT JOIN ?:category_descriptions AS b ON b.category_id = a.category_id AND b.lang_code = ?s WHERE a.category_id IN (?n) ORDER BY a.position ASC", CART_LANGUAGE, array_keys($_result));
+                        $params = array(
+                            'zone' => 'catalog'
+                        );
+                        list($promotions,) = fn_get_promotions($params);
+                        Registry::get('view')->assign('promotions', $promotions);
+                        Registry::get('view')->assign('products', $_result);
+                        Registry::get('view')->assign('categories', $categories);
                     }
-                    $categories = db_get_array("SELECT a.category_id, b.category FROM ?:categories AS a LEFT JOIN ?:category_descriptions AS b ON b.category_id = a.category_id AND b.lang_code = ?s WHERE a.category_id IN (?n) ORDER BY a.position ASC", CART_LANGUAGE, array_keys($_result));
-                    $params = array(
-                        'zone' => 'catalog'
-                    );
-                    list($promotions,) = fn_get_promotions($params);
-                    Registry::get('view')->assign('promotions', $promotions);
-                    Registry::get('view')->assign('products', $_result);
-                    Registry::get('view')->assign('categories', $categories);
                 }
             }
             fn_set_notification('N', __('notice'), __('done'));
-            $step = 'two';
+            if ($_REQUEST['type'] == 'rrp') {
+                $step = 'two';
+            } elseif ($_REQUEST['type'] == 'ean') {
+                $step = 'one';
+            }
         } elseif ($_REQUEST['step'] == 'two') {
             if (!empty($_REQUEST['promotion_id']) && !empty($_REQUEST['product_ids'])) {
                 $promotion_data = fn_get_promotion_data($_REQUEST['promotion_id']);
@@ -141,6 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $step = 'three';
         }
         Registry::get('view')->assign('step', $step);
+        Registry::get('view')->assign('brands', fn_development_get_brands());
         Registry::get('view')->display('addons/development/views/development/update_rrp.tpl');
         exit;
     }
@@ -1675,6 +1695,27 @@ if ($mode == 'calculate_balance') {
     
 } elseif ($mode == 'tst') {
     fn_update_competitive_prices();
+    exit;
+} elseif ($mode == 'generate_models') {
+    $params['extend'] = array('categories', 'description');
+    list($products, $search) = fn_get_products($params);
+    fn_gather_additional_products_data($products, array(
+        'get_icon' => false,
+        'get_detailed' => false,
+        'get_additional' => false,
+        'get_options' => false,
+        'get_discounts' => false,
+        'get_features' => true,
+        'get_title_features' => true
+    ));
+    if (!empty($products)) {
+        foreach ($products as $product) {
+            $model = trim(preg_replace(array('/[^a-zA-Z ]/', '/' . $product['product_features'][BRAND_FEATURE_ID]['variant'] . '/i'), '', $product['product']));
+            if (!empty($model)) {
+                db_query("UPDATE ?:products SET model = ?s WHERE product_id = ?i", $model, $product['product_id']);
+            }
+        }
+    }
     exit;
 }
 

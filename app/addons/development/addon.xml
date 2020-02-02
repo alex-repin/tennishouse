@@ -797,6 +797,9 @@
         <item>
             ALTER TABLE `cscart_anouncements` ADD `class` VARCHAR(128) NOT NULL;
         </item>
+        <item>
+            ALTER TABLE `cscart_products` ADD `ean` VARCHAR(13) NOT NULL, ADD `model` VARCHAR(64) NOT NULL;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -1518,6 +1521,8 @@
         <item lang="ru" id="no_sum_up">Не суммировать с другими скидками</item>
         <item lang="ru" id="is_partial">Частичная выдача</item>
         <item lang="ru" id="sms">SMS</item>
+        <item lang="ru" id="ean">EAN</item>
+        <item lang="ru" id="rrp">РРЦ</item>
         <item lang="ru" id="shipping_sdek_item">Доставка</item>
         <item lang="ru" id="try_on_shipping_cost"><![CDATA[В случае выкупа товаров менее чем на [amount], стоимость доставки составит <strong>[cost]</strong>]]></item>
         <item lang="ru" id="try_on_shipping_comment">В случае выкупа товаров более чем на [amount], доставка бесплатная</item>

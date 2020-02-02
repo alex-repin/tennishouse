@@ -706,6 +706,14 @@ class Yml implements IYml
             $yml_data['seller_warranty'] = $product['yml_seller_warranty'];
         }
 
+        if (!empty($product['ean'])) {
+            $yml_data['barcode'] = $product['ean'];
+        }
+
+        if (!empty($product['model'])) {
+            $yml_data['model'] = $product['model'];
+        }
+
         if (!empty($product['product_features'])) {
             foreach ($product['product_features'] as $feature) {
                 $yml_data['param@name=' . $this->escape($feature['description'])] = $feature['value'];

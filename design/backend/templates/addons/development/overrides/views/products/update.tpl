@@ -212,6 +212,18 @@
                             <input type="text" name="product_data[product_code]" id="elm_product_code" size="20" maxlength="32"  value="{$product_data.product_code}" class="input-long" />
                         </div>
                     </div>
+                    <div class="control-group">
+                        <label class="control-label" for="elm_ean">{__("ean")}:</label>
+                        <div class="controls">
+                            <input type="text" name="product_data[ean]" id="elm_ean" size="20" maxlength="32"  value="{$product_data.ean}" class="input-long" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="elm_model">{__("model")}:</label>
+                        <div class="controls">
+                            <input type="text" name="product_data[model]" id="elm_model" size="20" maxlength="32"  value="{$product_data.model}" class="input-long" />
+                        </div>
+                    </div>
 
                     <div class="control-group">
                         <label class="control-label" for="elm_in_stock">{__("in_stock")}:</label>
