@@ -103,7 +103,7 @@ window.onerror = function(errorMessage) {
     <div class="ty-anouncement{if $anouncement.class != ''} {$anouncement.class}{/if}" id="anouncement_block">
         <div class="ty-anouncement-text">{$anouncement.text nofilter}</div>
         <div class="ty-anouncement-close" onclick="fn_close_anouncement();"></div>
-    </div>
+    <!--anouncement_block--></div>
 {/if}
 <!--tygh_container--></div>
 {hook name="index:body_footer"}{/hook}

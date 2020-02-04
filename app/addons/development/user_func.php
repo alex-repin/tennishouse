@@ -25,6 +25,57 @@ use Tygh\Shippings\RusSdek;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_delete_coupon($code)
+{
+    unset($_SESSION['coupons'][$code], $_SESSION['cart']['coupons'][$code], $_SESSION['cart']['pending_coupon']);
+}
+
+function fn_parse_catalog_promo(&$text, $prefix)
+{
+    if (preg_match_all('/\[apply_code\|(.*)\]/u', $text, $matches)) {
+        foreach ($matches[1] as $i => $vl) {
+            $values = explode('|', $vl);
+            $params = array (
+                'active' => true,
+                'coupon_code' => $values[0]
+            );
+            list($coupon) = fn_get_promotions($params);
+            
+            if (in_array(strtolower(trim($values[0])), array_keys($_SESSION['coupons']))) {
+            
+                if (!empty($coupon)) {
+                    $text = str_replace($matches[0][$i], '<div class="ty-catalog-promocode-block" id="catalog_promocode_' . $prefix . '">' . (!empty($values[2]) ? $values[2] : __('promo_applied')) .
+                        ' <form action="' . fn_url() . '" method="post" name="form_link" class="cm-ajax cm-ajax-force cm-ajax-full-render">
+                                <input type="hidden" name="catalog_coupon" value="' . $values[0] . '">
+                                <input type="hidden" name="result_ids" value="product_details,pagination_contents,checkout*,cart_status*,cart_items,payment-methods,catalog_promocode*">
+                                <input type="hidden" name="redirect_url" value="' . Registry::get('config.current_url') . '">
+                                <button class="ty-button-link ty-btn" name="dispatch[development.delete_coupon]" type="submit">' . __('cancel') . '</button>
+                            </form>
+                        <!--catalog_promocode_' . $prefix . '--></div>',
+                    $text);
+                } else {
+                    $text = str_replace($matches[0][$i], '', $text);
+                }
+            } else {
+                if (!empty($coupon)) {
+                    $text = str_replace($matches[0][$i],
+                        '<div class="ty-catalog-promocode-block" id="catalog_promocode_' . $prefix . '">
+                            <form action="' . fn_url() . '" method="post" name="form_link" class="cm-ajax cm-ajax-force cm-ajax-full-render">
+                                <input type="hidden" name="catalog_coupon" value="' . $values[0] . '">
+                                <input type="hidden" name="result_ids" value="product_details,pagination_contents,checkout*,cart_status*,cart_items,payment-methods,catalog_promocode*">
+                                <input type="hidden" name="redirect_url" value="' . Registry::get('config.current_url') . '">
+                                <button class="ty-button-link ty-btn" name="dispatch[development.apply_coupon]" type="submit">' . (!empty($values[1]) ? $values[1] : __('apply')) . '</button>
+                            </form>
+                        <!--catalog_promocode_' . $prefix . '--></div>',
+                    $text);
+                } else {
+                    $text = str_replace($matches[0][$i], '', $text);
+                }
+            }
+        }
+    }
+}
+
 function fn_is_free_shipping($product)
 {
     if ($product['price'] < Registry::get('addons.development.free_shipping_cost')) {

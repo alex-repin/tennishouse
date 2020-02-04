@@ -615,7 +615,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 //
 if ($mode == 'delete_coupon') {
     fn_trusted_vars('coupon_code');
-    unset($cart['coupons'][$_REQUEST['coupon_code']], $_SESSION['coupons'][$_REQUEST['coupon_code']], $cart['pending_coupon']);
+    fn_delete_coupon($_REQUEST['coupon_code']);
     $cart['recalculate'] = true;
 
     if (!empty($cart['chosen_shipping'])) {
@@ -697,6 +697,7 @@ if ($mode == 'cart') {
 //         fn_set_notification('N', __('notice'), __('text_product_has_been_deleted'));
         }
     }
+
 // Step 1/2: Customer information
 } elseif ($mode == 'customer_info') {
 

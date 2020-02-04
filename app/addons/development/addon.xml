@@ -1523,6 +1523,7 @@
         <item lang="ru" id="sms">SMS</item>
         <item lang="ru" id="ean">EAN</item>
         <item lang="ru" id="rrp">РРЦ</item>
+        <item lang="ru" id="cannot_apply_coupon">Более крупная скидка уже применена</item>
         <item lang="ru" id="shipping_sdek_item">Доставка</item>
         <item lang="ru" id="try_on_shipping_cost"><![CDATA[В случае выкупа товаров менее чем на [amount], стоимость доставки составит <strong>[cost]</strong>]]></item>
         <item lang="ru" id="try_on_shipping_comment">В случае выкупа товаров более чем на [amount], доставка бесплатная</item>

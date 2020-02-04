@@ -142,6 +142,7 @@ if ($mode == 'search') {
     }
 
     fn_gather_additional_product_data($product, true, true);
+    fn_parse_catalog_promo($product['full_description'], 'description');
     Registry::get('view')->assign('product', $product);
 
     // If page title for this product is exist than assign it to template

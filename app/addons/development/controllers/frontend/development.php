@@ -43,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
 //                 fn_set_notification('N', __('notice'), __('text_applied_promotions'), '', 'text_applied_promotions');
                 $_SESSION['coupons'][$code] = array_keys($coupon);
+                $_SESSION['cart']['pending_coupon'] = $code;
                 $_SESSION['cart']['recalculate'] = true;
 
                 if (!empty($_SESSION['cart']['chosen_shipping'])) {
@@ -62,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         fn_trusted_vars('catalog_coupon');
 
         $code = strtolower(trim($_REQUEST['catalog_coupon']));
-        unset($_SESSION['coupons'][$code], $_SESSION['cart']['coupons'][$code], $_SESSION['cart']['pending_coupon']);
+        fn_delete_coupon($code);
         $_SESSION['cart']['recalculate'] = true;
 
         if (!empty($_SESSION['cart']['chosen_shipping'])) {

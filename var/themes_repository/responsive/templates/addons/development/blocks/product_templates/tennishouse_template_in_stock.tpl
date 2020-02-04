@@ -1,5 +1,5 @@
 {script src="js/tygh/exceptions.js"}
-<div class="ty-product-block">
+<div class="ty-product-block" id="product_details">
     <div itemscope itemtype="http://schema.org/Product" class="ty-product-block__wrapper clearfix">
     {hook name="products:view_main_info"}
         {if $product}
@@ -211,8 +211,11 @@
                                 <span class="ty-product-detail__info-title">{__("expert_consultation")}</span>
                             </div>
                             <div class="ty-consultation_column">
-                                <div class="ty-consultation-phone">{$settings.Company.company_phone}</div>
+                                <div class="ty-consultation-phone">{$settings.Company.company_phone} </div>
                                 <div class="ty-consultation-email">{$settings.Company.company_support_department}</div>
+                            </div>
+                            <div class="ty-consultation_column ty-float-right">
+                                <span class="ty-product-detail__info-title">{__("product_code")}: </span><span class="ty-product-detail__code">{$product.product_code}</span>
                             </div>
                         </div>
                     {*/if*}
@@ -271,7 +274,7 @@
         {assign var="hide_form" value=$smarty.capture.orig_val_hide_form}
     {/if}
 
-</div>
+<!--product_details--></div>
 
 {if $block_tabs.tabs}
     <div class="ty-tennishouse-container ty-products-scroller">

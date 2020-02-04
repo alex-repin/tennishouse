@@ -211,7 +211,7 @@ function fn_reward_points_calculate_cart_items_after_promotions(&$cart, &$cart_p
         $cart['points_info']['in_use']['points'] = $cart['points_info']['total_price'];
     }
 
-    if (!empty($cart['points_info']['in_use'] || empty($cart['order_id'])) && (Registry::get('runtime.controller') == 'checkout' || (defined('ORDER_MANAGEMENT') && in_array(Registry::get('runtime.mode'), array('update', 'place_order', 'add'))))) {
+    if ((!empty($cart['points_info']['in_use']) || empty($cart['order_id'])) && (Registry::get('runtime.controller') == 'checkout' || (defined('ORDER_MANAGEMENT') && in_array(Registry::get('runtime.mode'), array('update', 'place_order', 'add'))))) {
         fn_set_point_payment($cart, $cart_products, $auth);
     }
 

@@ -17,6 +17,17 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_dispatch_before_display()
+{
+    if (empty($_SESSION['hide_anouncement'])) {
+        $anouncement = db_get_row("SELECT text, class FROM ?:anouncements WHERE start_timestamp <= ?i AND end_timestamp + 86399 >= ?i ORDER BY priority ASC", TIME, TIME);
+        if (!empty($anouncement)) {
+            fn_parse_catalog_promo($anouncement['text'], 'anouncements');
+            Registry::get('view')->assign('anouncement', $anouncement);
+        }
+    }
+}
+
 function fn_development_update_promotion_post($data, $promotion_id)
 {
     if ($data['zone'] == 'cart') {

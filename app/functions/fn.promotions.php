@@ -352,6 +352,7 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
         'applied' => false,
         'messages' => array()
     );
+//                         fn_print_die($data['coupons'], $_SESSION['coupons']);
 
     if (!fn_allowed_for('ULTIMATE:FREE')) {
         // Pre-check coupon
@@ -359,11 +360,11 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
             if (!empty($data['pending_coupon'])) {
                 fn_promotion_check_coupon($data, true);
             }
-            if (!empty($_SESSION['coupons'])) {
-                foreach ($_SESSION['coupons'] as $coupon => $p_id) {
-                    if (!in_array($coupon, array_keys($data['coupons']))) {
-                        $data['coupons'][$coupon] = $p_id;
-                    }
+        }
+        if (!empty($_SESSION['coupons'])) {
+            foreach ($_SESSION['coupons'] as $coupon => $proms) {
+                if (empty($data['coupons']) || !in_array($coupon, array_keys($data['coupons']))) {
+                    $data['coupons'][$coupon] = $proms;
                 }
             }
         }
@@ -396,6 +397,9 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
                     $cproduct_vars['item_disc']['price'] -= $cart_products[$k]['discount'];
                     $cproduct_order['item_disc'] = $cproduct_vars['item_disc']['price'];
                     $cart_products[$k]['discount'] = $cart_products[$k]['discount_prc'] = 0;
+                }
+                if (!empty($data['coupons'])) {
+                    $cart_products[$k]['coupons'] = $data['coupons'];
                 }
                 if (!empty($ordered_promotions['item_no_sum_up'])) {
                     foreach ($ordered_promotions['item_no_sum_up'] as $p_id => $promotion) {
@@ -454,6 +458,13 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
                             }
                         }
                     }
+//                     if (!empty($data['coupons'])) {
+//                         foreach ($cproduct_vars as $c_key => $c_var) {
+//                             if ($c_key != $prom_key && !empty($c_var['promotions'])) {
+//                                 fn_print_die($data['coupons'], $c_var);
+//                             }
+//                         }
+//                     }
                 }
             }
             if (!empty($ordered_promotions['item_sum_up'])) {
@@ -575,7 +586,6 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
 
     if (!fn_allowed_for('ULTIMATE:FREE')) {
         if ($zone == 'cart') {
-
             // Post-check coupon
             if (!empty($data['pending_coupon'])) {
                 // re-check coupons if some promotion has a coupon code "contains" condition
@@ -621,7 +631,7 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
                 }
 
             } else {
-                $data['coupons'] = array();
+                $data['coupons'] = $_SESSION['coupons'] = array();
             }
         }
     }
@@ -912,7 +922,7 @@ function fn_promotion_check($promotion_id, $condition, &$data, &$auth, &$cart_pr
     if (!empty($condition['conditions'])) {
         foreach ($condition['conditions'] as $cond) {
             // [tennishouse]
-            if (!empty($cond['condition']) && ($cond['condition'] == 'coupon_code' || $cond['condition'] == 'auto_coupons' || $cond['condition'] == 'promo_codes')) {
+            if (!empty($cond['condition']) && ($cond['condition'] == 'coupon_code' || $cond['condition'] == 'auto_coupons' || $cond['condition'] == 'promo_codes' || $cond['condition'] == 'catalog_coupon_code')) {
             // [tennishouse]
                 $data['has_coupons'] = true;
             }
@@ -1506,7 +1516,7 @@ function fn_promotion_check_coupon(&$cart, $initial_check, $applied_promotions =
     // Pre-check: find if coupon is already used or only single coupon is allowed
     if ($initial_check == true) {
         fn_set_hook('pre_promotion_check_coupon', $cart['pending_coupon'], $cart);
-
+        
         if (!empty($cart['coupons'][$cart['pending_coupon']])) {
             $_SESSION['promotion_notices']['promotion']['messages'][] = 'coupon_already_used';
             unset($cart['pending_coupon']);
@@ -1519,7 +1529,7 @@ function fn_promotion_check_coupon(&$cart, $initial_check, $applied_promotions =
             $result = false;
 
         } else {
-            $cart['coupons'][$cart['pending_coupon']] = true;
+            $cart['coupons'][$cart['pending_coupon']] = $_SESSION['coupons'][$cart['pending_coupon']] = true;
         }
 
     // Post-check: check if coupon was applied successfully
@@ -1529,8 +1539,8 @@ function fn_promotion_check_coupon(&$cart, $initial_check, $applied_promotions =
             if (!empty($applied_promotions)) {
                 $params = array (
                     'active' => true,
-                    'coupon_code' => !empty($cart['pending_original_coupon']) ? $cart['pending_original_coupon'] : $cart['pending_coupon'],
-                    'promotion_id' => array_keys($applied_promotions)
+                    'coupon_code' => !empty($cart['pending_original_coupon']) ? $cart['pending_original_coupon'] : $cart['pending_coupon']
+//                     'promotion_id' => array_keys($applied_promotions)
                 );
 
                 list($coupon) = fn_get_promotions($params);
@@ -1540,12 +1550,18 @@ function fn_promotion_check_coupon(&$cart, $initial_check, $applied_promotions =
                 if (!fn_notification_exists('extra', 'error_coupon_already_used')) {
                     $_SESSION['promotion_notices']['promotion']['messages'][] = 'no_such_coupon';
                 }
-                unset($cart['coupons'][$cart['pending_coupon']]);
+                unset($cart['coupons'][$cart['pending_coupon']], $_SESSION['coupons'][$cart['pending_coupon']]);
 
                 $result = false;
             } else {
-                $cart['coupons'][$cart['pending_coupon']] = array_keys($coupon);
-                fn_set_hook('promotion_check_coupon', $cart['pending_coupon'], $cart);
+                if (empty(array_intersect(array_keys($applied_promotions), array_keys($coupon)))) {
+                    $_SESSION['promotion_notices']['promotion']['applied'] = true;
+                    $_SESSION['promotion_notices']['promotion']['messages'][] = 'cannot_apply_coupon';
+                    unset($cart['coupons'][$cart['pending_coupon']], $_SESSION['coupons'][$cart['pending_coupon']]);
+                } else {
+                    $cart['coupons'][$cart['pending_coupon']] = $_SESSION['coupons'][$cart['pending_coupon']] = array_keys($coupon);
+                    fn_set_hook('promotion_check_coupon', $cart['pending_coupon'], $cart);
+                }
             }
 
             unset($cart['pending_coupon'], $cart['pending_original_coupon']);
