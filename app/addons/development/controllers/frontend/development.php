@@ -64,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $code = strtolower(trim($_REQUEST['catalog_coupon']));
         fn_delete_coupon($code);
+        unset($_SESSION['cart']['pending_coupon']);
         $_SESSION['cart']['recalculate'] = true;
 
         if (!empty($_SESSION['cart']['chosen_shipping'])) {

@@ -2080,6 +2080,25 @@ function fn_development_update_product_post($product_data, $product_id, $lang_co
     if (!empty($main_pair)) {
         fn_image_to_display($main_pair, Registry::get('settings.Thumbnails.product_lists_thumbnail_width'), Registry::get('settings.Thumbnails.product_lists_thumbnail_height'));
     }
+    
+    if ($product_data['old_product_code'] != $product_data['product_code']) {
+        fn_rebuild_inventory_codes($product_id);
+    }
+    
+    if ($product_data['old_brand_id'] != $product_data['product_features'][BRAND_FEATURE_ID] || $product_data['old_product'] != $product_data['product'] || empty($product_data['model'])) {
+        $data = array(
+            'product_id' => $product_id
+        );
+        
+        $brand_name = db_get_field("SELECT b.variant FROM ?:product_features_values AS a LEFT JOIN ?:product_feature_variant_descriptions AS b ON b.variant_id = a.variant_id AND b.lang_code = ?s WHERE a.product_id = ?i AND a.feature_id = ?i", $lang_code, $product_id, BRAND_FEATURE_ID);
+        
+        if (!empty($brand_name)) {
+            $model = trim(preg_replace(array('/[^a-zA-Z ]/', '/' . $brand_name . '/i'), '', $product_data['product']));
+            if (!empty($model)) {
+                db_query("UPDATE ?:products SET model = ?s WHERE product_id = ?i", $model, $product_id);
+            }
+        }
+    }
 }
 
 function fn_development_update_product_pre(&$product_data, $product_id, $lang_code, $can_update)
@@ -2107,7 +2126,8 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
             fn_get_product_margin($product_data);
         }
 
-        $old_data = db_get_row("SELECT auto_price, margin, net_cost, net_currency_code FROM ?:products WHERE product_id = ?i", $product_id);
+        $old_data = db_get_row("SELECT auto_price, margin, net_cost, net_currency_code, product_code, product, variant_id AS brand_id FROM ?:products LEFT JOIN ?:product_descriptions ON ?:product_descriptions.product_id = ?:products.product_id AND ?:product_descriptions.lang_code = ?s LEFT JOIN ?:product_features_values ON ?:product_features_values.product_id = ?:products.product_id AND ?:product_features_values.feature_id = ?i WHERE ?:products.product_id = ?i", $lang_code, BRAND_FEATURE_ID, $product_id);
+        
         if (!empty($product_data['auto_price']) && $product_data['auto_price'] == 'Y' && $product_data['net_cost'] > 0 && $product_data['margin'] > 0 && !empty($product_data['net_currency_code']) && (empty($old_data['auto_price']) || $product_data['auto_price'] != $old_data['auto_price'] || $product_data['margin'] != $old_data['margin'] || $product_data['net_cost'] != $old_data['net_cost'] || $product_data['net_currency_code'] != $old_data['net_currency_code'])) {
             $base_price = fn_calculate_base_price($product_data);
             $product_data['price'] = fn_round_price($base_price);
@@ -2124,6 +2144,9 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
             }
         }
         
+        $product_data['old_product_code'] = $old_data['product_code'];
+        $product_data['old_product'] = $old_data['product'];
+        $product_data['old_brand_id'] = $old_data['brand_id'];
         if ($product_data['weight'] == 0 && !empty($global_data['shipping_weight'])) {
             $product_data['weight'] = $global_data['shipping_weight'];
         }

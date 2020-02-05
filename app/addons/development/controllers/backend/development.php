@@ -1717,6 +1717,15 @@ if ($mode == 'calculate_balance') {
         }
     }
     exit;
+} elseif ($mode == 'check_codes') {
+    $res = db_get_hash_multi_array("SELECT a.product_id, a.product_code, b.product_code AS inventory_code, b.combination_hash FROM ?:products AS a LEFT JOIN ?:product_options_inventory AS b ON a.product_id = b.product_id WHERE b.product_code NOT LIKE CONCAT(a.product_code, '%')", array('product_id', 'combination_hash'));
+    
+    if (!empty($res)) {
+        foreach ($res as $product_id => $combs) {
+            fn_rebuild_inventory_codes($product_id);
+        }
+    }
+    exit;
 }
 
 function fn_fill_image_common_description(&$images_alts, $detailed_id, $name)

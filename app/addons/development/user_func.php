@@ -25,9 +25,43 @@ use Tygh\Shippings\RusSdek;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_rebuild_inventory_codes($product_id)
+{
+    $options = db_get_fields("SELECT a.option_id FROM ?:product_options as a LEFT JOIN ?:product_global_option_links as b ON a.option_id = b.option_id WHERE (a.product_id = ?i OR b.product_id = ?i) AND a.option_type IN ('S','R','C') AND a.inventory = 'Y' ORDER BY position", $product_id, $product_id);
+    
+    if (empty($options)) {
+        db_query("DELETE FROM ?:product_options_inventory WHERE product_id = ?i", $product_id);
+        return false;
+    }
+
+    foreach ($options as $k => $option_id) {
+        $variants[$k] = db_get_fields("SELECT variant_id FROM ?:product_option_variants WHERE option_id = ?i ORDER BY position", $option_id);
+        $variant_codes[$option_id] = db_get_hash_single_array("SELECT variant_id, code_suffix FROM ?:product_option_variants WHERE variant_id IN (?a)", array('variant_id', 'code_suffix'), $variants[$k]);
+    }
+    $product_code = db_get_field("SELECT product_code FROM ?:products WHERE product_id = ?i", $product_id);
+    
+    $combinations = fn_get_options_combinations($options, $variants);
+    
+    if (!empty($combinations)) {
+        foreach ($combinations as $combination) {
+
+            $combination_hash = fn_generate_cart_id($product_id, array('product_options' => $combination));
+            $_product_code = (!empty($product_code)) ? $product_code : '';
+            foreach ($combination as $option_id => $variant_id) {
+                if (isset($variant_codes[$option_id][$variant_id])) {
+                    $_product_code .= $variant_codes[$option_id][$variant_id];
+                }
+            }
+            db_query("UPDATE ?:product_options_inventory SET product_code = ?s WHERE combination_hash = ?i", $_product_code, $combination_hash);
+        }
+    }
+    
+    return true;
+}
+
 function fn_delete_coupon($code)
 {
-    unset($_SESSION['coupons'][$code], $_SESSION['cart']['coupons'][$code], $_SESSION['cart']['pending_coupon']);
+    unset($_SESSION['coupons'][$code], $_SESSION['cart']['coupons'][$code]);
 }
 
 function fn_parse_catalog_promo(&$text, $prefix)

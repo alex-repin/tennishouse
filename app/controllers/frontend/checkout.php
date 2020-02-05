@@ -616,6 +616,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 if ($mode == 'delete_coupon') {
     fn_trusted_vars('coupon_code');
     fn_delete_coupon($_REQUEST['coupon_code']);
+    unset($cart['pending_coupon']);
     $cart['recalculate'] = true;
 
     if (!empty($cart['chosen_shipping'])) {
