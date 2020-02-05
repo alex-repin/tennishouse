@@ -621,11 +621,11 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
                     foreach ($data['coupons'] as $_coupon_code => $_p_ids) {
                         foreach ($_p_ids as $_ind => $_p_id) {
                             if (!isset($applied_promotions[$_p_id])) {
-                                unset($data['coupons'][$_coupon_code][$_ind]);
+                                unset($data['coupons'][$_coupon_code][$_ind], $_SESSION['coupons'][$_coupon_code][$_ind]);
                             }
                         }
                         if (empty($data['coupons'][$_coupon_code])) {
-                            unset($data['coupons'][$_coupon_code]);
+                            unset($data['coupons'][$_coupon_code], $_SESSION['coupons'][$_coupon_code]);
                         }
                     }
                 }
