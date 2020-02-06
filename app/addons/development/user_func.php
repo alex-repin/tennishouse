@@ -1322,7 +1322,7 @@ function fn_process_php_errors($errno, $errstr, $errfile, $errline, $errcontext)
 
 function fn_get_discounted_products($params, $items_per_page = 0)
 {
-    list($products, $search) = fn_get_products($params);
+    list($products, $params) = fn_get_products($params);
     if (Registry::get('settings.General.catalog_image_afterload') == 'Y') {
         fn_gather_additional_products_data($products, array(
             'get_icon' => false,
@@ -1592,24 +1592,18 @@ function fn_update_rankings($ids = array())
                     }
                     $update[] = $player_data;
                 } else {
-                    if (preg_match('/<div class=".*?group-ranking-tabs.*?">.*?>([\d-]+)<.*?<\/div>/', preg_replace('/[\r\n\t]/', '', $result), $match)) {
+                    if (preg_match('/<span class="player-header-image-col__rank-pos.*?".*?data-single="(\d+)"/', preg_replace('/[\r\n\t]/', '', $result), $match)) {
                         $player_data['ranking'] = isset($match['1']) ? $match['1'] : 'n/a';
                     }
-                    if (preg_match('/>Wta Singles Titles<\/td>(.*?)<\/tr>/', preg_replace('/[\r\n\t]/', '', $result), $match)) {
-                        if (preg_match_all('/<td.*?>(\d+)<\/td>/', $match[1], $match)) {
-                            $player_data['titles'] = $player_data['data']['career_titles'] = isset($match[1][1]) ? $match[1][1] : 'n/a';
-                        }
+                    if (preg_match('/data-single="Singles Titles".*?data-single="Singles Titles".*?data-single="(\d+)".*?<\/div>.*?Career<\/div>/', preg_replace('/[\r\n\t]/', '', $result), $match)) {
+                        $player_data['titles'] = $player_data['data']['career_titles'] = isset($match[1]) ? $match[1] : 'n/a';
                     }
-                    if (preg_match('/>Prize Money<\/td>(.*?)<\/tr>/', preg_replace('/[\r\n]/', '', $result), $match)) {
-                        if (preg_match_all('/>\$(.*?)</', $match[1], $match)) {
-                            $player_data['data']['career_prize'] = isset($match[1][1]) ? intval(str_replace(',', '', $match[1][1])) : 'n/a';
-                        }
+                    if (preg_match('/>Prize Money<\/div>.*?>Prize Money<\/div>.*?data-single="(\d+)".*?Career<\/div>/', preg_replace('/[\r\n]/', '', $result), $match)) {
+                        $player_data['data']['career_prize'] = isset($match[1]) ? $match[1] : 'n/a';
                     }
-                    if (preg_match('/>W\/L - Singles<\/td>(.*?)<\/tr>/', preg_replace('/[\r\n]/', '', $result), $match)) {
-                        if (preg_match_all('/>(.*?)\/(.*?)<\/td>/', $match[1], $match)) {
-                            $player_data['data']['career_won'] = isset($match[1][1]) ? $match[1][1] : 'n/a';
-                            $player_data['data']['career_lost'] = isset($match[2][1]) ? $match[2][1] : 'n/a';
-                        }
+                    if (preg_match('/data-single="W\/L Singles".*?data-single="W\/L Singles".*?data-single="(\d+)".*?data-single="(\d+)".*?<\/div>.*?Career<\/div>/', preg_replace('/[\r\n\t]/', '', $result), $match)) {
+                        $player_data['data']['career_won'] = isset($match[1]) ? $match[1] : 'n/a';
+                        $player_data['data']['career_lost'] = isset($match[2]) ? $match[2] : 'n/a';
                     }
                     $update[] = $player_data;
                 }
@@ -1623,6 +1617,7 @@ function fn_update_rankings($ids = array())
                 if (!empty($_dt['data'])) {
                     $_dt['data'] = serialize($_dt['data']);
                 }
+                $_dt['status'] = 'A';
                 db_query("UPDATE ?:players SET ?u WHERE player_id = ?i", $_dt, $_dt['player_id']);
             } else {
                 db_query("UPDATE ?:players SET status = 'H' WHERE player_id = ?i", $_dt['player_id']);

@@ -189,6 +189,7 @@ $schema = array(
         'dispatch' => 'players.view',
         'item' => 'player_id',
         'condition' => '',
+        'join' => '',
         'skip_lang_condition' => true,
 
         'name' => 'player',
