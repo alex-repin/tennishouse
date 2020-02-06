@@ -1,7 +1,7 @@
 {capture name="buttons"}
     {if $settings.General.checkout_redirect != "Y"}
         <div class="">
-            {include file="buttons/button.tpl" but_text=__("view_cart") but_href="checkout.cart" but_role="action" but_meta="ty-btn__primary"}
+            {include file="buttons/button.tpl" but_text=__("go_to_cart") but_href="checkout.cart" but_role="action" but_meta="ty-btn__primary"}
         </div>
     {/if}
     {*<div class="">
@@ -15,7 +15,7 @@
     <div class="ty-product-notification__total-info clearfix">
         <div class="ty-product-notification__amount ty-float-left"> {__("items_in_cart", [$smarty.session.cart.amount])}</div>
         <div class="ty-product-notification__subtotal ty-float-right">
-            {__("cart_subtotal")} {include file="common/price.tpl" value=$smarty.session.cart.display_subtotal}
+            {__("cart_subtotal")} {include file="common/price.tpl" value=$smarty.session.cart.display_subtotal class="ty-price-num"}
         </div>
     </div>
 {/capture}

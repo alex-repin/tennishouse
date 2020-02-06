@@ -15,7 +15,7 @@
                                     <div class="ty-cart-items__list-item-desc">
                                         <a href="{"products.view?product_id=`$p.product_id`{if $p.ohash}&{$p.ohash}{/if}"|fn_url}">{$p.product_id|fn_get_product_name nofilter}</a>
                                     <p>
-                                        <span>{$p.amount}</span><span>&nbsp;x&nbsp;</span>{include file="common/price.tpl" value=$p.display_price span_id="price_`$key`_panel" class="none"}
+                                        <span>{$p.amount}</span><span>&nbsp;x&nbsp;</span>{include file="common/price.tpl" value=$p.display_price span_id="price_`$key`_panel" class="ty-price-num"}
                                     </p>
                                     </div>
                                     <div class="ty-cart-items__list-item-tools cm-cart-item-delete">

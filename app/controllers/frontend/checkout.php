@@ -81,10 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $added_products = array();
             foreach ($cart['products'] as $key => $data) {
                 if (empty($prev_cart_products[$key]) || !empty($prev_cart_products[$key]) && $prev_cart_products[$key]['amount'] != $data['amount']) {
-                    if (!empty($cart_products[$key]['main_pair'])) {
-                        $cart['products'][$key]['main_pair'] = $cart_products[$key]['main_pair'];
-                    }
-                    $added_products[$key] = $cart['products'][$key];
+                    $added_products[$key] = $cart_products[$key];
                     $added_products[$key]['product_option_data'] = fn_get_selected_product_options_info($data['product_options']);
                     if (!empty($prev_cart_products[$key])) {
                         $added_products[$key]['amount'] = $data['amount'] - $prev_cart_products[$key]['amount'];
@@ -94,6 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             if (!empty($added_products)) {
+//             fn_print_die($added_products);
                 Registry::get('view')->assign('added_products', $added_products);
                 if (Registry::get('config.tweaks.disable_dhtml') && Registry::get('config.tweaks.redirect_to_cart')) {
                     Registry::get('view')->assign('continue_url', (!empty($_REQUEST['redirect_url']) && empty($_REQUEST['appearance']['details_page'])) ? $_REQUEST['redirect_url'] : $_SESSION['continue_url']);

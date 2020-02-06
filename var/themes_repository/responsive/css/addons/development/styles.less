@@ -419,7 +419,8 @@ select {
 }
 .ty-product-notification__content {
     display: inline-block;
-    width: 500px;
+    width: 86%;
+    vertical-align: top;
 }
 .ty-product-notification__content-item {
     display: inline-block;
@@ -427,6 +428,52 @@ select {
 }
 .ty-product-notification__body .ty-product-options-content {
     width: auto;
+}
+.ty-product-notification__price {
+    width: 40%;
+    display: inline-block;
+    vertical-align: top;
+    text-align: right;
+    float: none;
+    margin: 0;
+    .ty-price-num {
+        font-size: 1.3rem;
+    }
+    .ty-product-notification__price-val {
+        margin-bottom: 3px;
+        .ty-product-notification__price-val-disc {
+            margin-right: 3px;
+        }
+    }
+    .ty-product-notification__price-disc {
+        color: lighten(@font, 35%);
+        line-height: 1.2rem;
+    }
+}
+.ty-product-notification__subtotal {
+    .ty-price-num {
+        font-size: 1.3rem;
+    }
+}
+.ty-product-notification__content-amount {
+    width: 10%;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+}
+.ty-product-notification__content-name {
+    width: 48%;
+    display: inline-block;
+    .ty-product-notification__product-name {
+        color: @font;
+        font-weight: bold;
+    }
+    .ty-product-options__title {
+        display: none;
+    }
+    .ty-product-options-name {
+        width: auto;
+    }
 }
 label.cm-required::after {
     content: none;
@@ -591,6 +638,7 @@ label.cm-required::after {
         color: #fff;
         font-size: 1rem;
         vertical-align: top;
+        line-height: normal;
     }
 }
 /* Placeholder */
@@ -2614,11 +2662,13 @@ input.ty-search-block__input:focus {
     float: none;
     margin-right: 0;
     padding: 0;
-    
+    width: 12%;
+    margin-right: 1%;
+    display: inline-block;
 }
 .ty-product-notification__item .ty-image-wrapper {
     float: left;
-    margin-right: 10px;
+/*     margin-right: 10px; */
     
 }
 .ty-pc-product-notification .ty-product-notification__item .ty-image-wrapper {

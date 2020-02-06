@@ -337,7 +337,7 @@ select {
 }
 .ty-product-notification__content {
     display: inline-block;
-/*     width: 500px; */
+    width: 80%;
 }
 .ty-product-notification__content-item {
     display: inline-block;
@@ -348,6 +348,68 @@ select {
     .ty-product-options-content {
         width: auto;
     }
+}
+.ty-product-notification__price {
+    width: 40%;
+    display: inline-block;
+    vertical-align: top;
+    text-align: right;
+    float: none;
+    margin: 0;
+    .ty-price-num {
+        font-size: 1.1rem;
+    }
+    .ty-product-notification__price-val {
+        margin-bottom: 3px;
+        .ty-product-notification__price-val-disc {
+            margin-right: 3px;
+        }
+    }
+    .ty-product-notification__price-disc {
+        color: lighten(@font, 35%);
+        line-height: 1.2rem;
+    }
+}
+.ty-product-notification__subtotal {
+    .ty-price-num {
+        font-size: 1.1rem;
+    }
+}
+.ty-product-notification__content-amount {
+    width: 10%;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+}
+.ty-product-notification__content-name {
+    width: 48%;
+    display: inline-block;
+    .ty-product-notification__product-name {
+        color: @font;
+        font-weight: bold;
+    }
+    .ty-product-options__title {
+        display: none;
+    }
+    .ty-product-options-name {
+        width: auto;
+    }
+}
+.ty-product-notification__item .ty-image-wrapper {
+/*     float: left; */
+    margin-right: 0;
+    padding: 0;
+    
+}
+.ty-product-notification__image,
+.ty-product-notification__body .ty-no-image {
+    float: none;
+    margin-right: 0;
+    padding: 0;
+    display: inline-block;
+    vertical-align: top;
+    width: 17%;
+    margin-right: 2%;
 }
 label.cm-required::after {
     content: none;
@@ -1001,6 +1063,11 @@ input:focus::placeholder, textarea:focus::placeholder {
     vertical-align: middle;
     width: 100%;
     position: relative;
+}
+.ty-cart-items__list {
+    .ty-price-num {
+        font-size: 1.1rem;
+    }
 }
 .ty-cart-items__list-item-tools {
     display: block;
@@ -2016,19 +2083,6 @@ input.ty-search-block__input {
 table.ty-cart-content {
     border: 1px solid #ECF0F1;
     margin-top: 10px;
-}
-.ty-product-notification__item .ty-image-wrapper {
-/*     float: left; */
-    margin-right: 10px;
-    padding: 10px;
-    
-}
-.ty-product-notification__image,
-.ty-product-notification__body .ty-no-image {
-    float: none;
-    margin-right: 0;
-    padding: 0;
-    display: inline-block;
 }
 .ty-cart-content__image {
     text-align: center;
