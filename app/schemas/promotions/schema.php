@@ -163,7 +163,7 @@ if (!fn_allowed_for('ULTIMATE:FREE')) {
         'zones' => array('cart')
     );
     $scheme['conditions']['coupon_code'] = array(
-        'operators' => array ('eq', 'in'),
+        'operators' => array ('eq', 'in', 'neq'),
         // 'cont' - 'contains' was removed as ambiguous, but you can uncomment it back
         //'operators' => array ('eq', 'cont', 'in'),
         'type' => 'input',

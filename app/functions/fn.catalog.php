@@ -9330,6 +9330,8 @@ function fn_clone_product($product_id)
     $data = db_get_row("SELECT * FROM ?:products WHERE product_id = ?i", $product_id);
     unset($data['product_id']);
     unset($data['likes']);
+    unset($data['ean']);
+    unset($data['model']);
     $data['status'] = 'D';
     $data['timestamp'] = $data['updated_timestamp'] = time();
     $pid = db_query("INSERT INTO ?:products ?e", $data);
