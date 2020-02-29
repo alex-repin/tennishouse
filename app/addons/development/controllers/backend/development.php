@@ -665,6 +665,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_pair = explode(',', $pair);
                 $result[$_pair[0]] = $_pair[1];
             }
+            if (!empty($action) && $action == 'discounts') {
+                $prices = db_get_hash_single_array("SELECT product_id, price FROM ?:product_prices WHERE product_id IN (?n) AND lower_limit = '1'", array('product_id', 'price'), array_keys($result));
+                if (!empty($prices)) {
+                    foreach ($prices as $prod_id => $prc) {
+                        db_query("UPDATE ?:products SET list_price = IF (list_price > ?i, list_price, ?i) WHERE product_id = ?i", $prc, $prc, $prod_id);
+                    }
+                }
+            }
             $price = db_get_hash_single_array("SELECT item_id, price FROM ?:competitive_prices WHERE item_id IN (?n)", array('item_id', 'price'), array_values($result));
             foreach ($result as $product_id => $item_id) {
                 $data[] = array(

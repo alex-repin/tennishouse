@@ -1529,5 +1529,6 @@
         <item lang="ru" id="try_on_shipping_cost"><![CDATA[В случае выкупа товаров менее чем на [amount], стоимость доставки составит <strong>[cost]</strong>]]></item>
         <item lang="ru" id="try_on_shipping_comment">В случае выкупа товаров более чем на [amount], доставка бесплатная</item>
         <item lang="ru" id="try_on_shipping_comment_2">В случае выкупа товаров менее чем на [amount] - Доставка 1, иначе - Доставка 2</item>
+        <item lang="ru" id="equalize_prices_as_discounts">Уравнять цены скидкой</item>
     </language_variables>
 </addon>

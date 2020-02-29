@@ -1919,6 +1919,8 @@ function fn_get_subtitle_feature($features, $type = 'R')
         $feature_ids = array(OG_TYPE_FEATURE_ID);
     } else if ($type == 'BG') {
         $feature_ids = array(BG_TYPE_FEATURE_ID);
+    } else if ($type == 'TM') {
+        $feature_ids = array(TM_TYPE_FEATURE_ID);
     }
     if (!empty($feature_ids)) {
         foreach ($features as $feature_id => $feature) {
@@ -2382,6 +2384,7 @@ function fn_get_category_type($category_id)
         BALL_MACHINE_CATEGORY_ID => 'BM',
         STR_MACHINE_CATEGORY_ID => 'SM',
         BALL_MACHINE_ACC_CATEGORY_ID => 'BA',
+        TREADMILL_CATEGORY_ID => 'TM',
     );
     
     return !empty($types[$category_id]) ? array($category_id, $types[$category_id]) : array('', '');
@@ -2422,6 +2425,8 @@ function fn_identify_type_category_id($path)
             $type = BALL_MACHINE_ACC_CATEGORY_ID;
         } elseif (in_array(BALL_MACHINE_CATEGORY_ID, $cats)) {
             $type = BALL_MACHINE_CATEGORY_ID;
+        } elseif (in_array(TREADMILL_CATEGORY_ID, $cats)) {
+            $type = TREADMILL_CATEGORY_ID;
         }
     }
     

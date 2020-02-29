@@ -1276,6 +1276,8 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                         $product['subtitle'] = __("type") .  ' - ' .  reset($variants);
                     } elseif ($product['type'] == 'BG') {
                         $product['subtitle'] = __("material") .  ' - ' .  reset($variants);
+                    } elseif ($product['type'] == 'TM') {
+                        $product['subtitle'] = __("type") .  ' - ' .  reset($variants);
                     }
                 }
             }

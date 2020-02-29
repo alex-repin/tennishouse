@@ -99,6 +99,7 @@
     {if $competitive_prices}
         {capture name="tools_list"}
             <li>{btn type="list" text=__("equalize_prices") dispatch="dispatch[development.eqialize_prices]" form="c_prices_form"}</li>
+            <li>{btn type="list" text=__("equalize_prices_as_discounts") dispatch="dispatch[development.eqialize_prices.discounts]" form="c_prices_form"}</li>
         {/capture}
         {dropdown content=$smarty.capture.tools_list}
     {/if}
