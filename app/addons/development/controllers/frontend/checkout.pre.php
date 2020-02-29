@@ -27,6 +27,28 @@ if (empty($_SESSION['cart'])) {
 
 $cart = & $_SESSION['cart'];
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $_suffix = '';
+    $_action = '';
+
+    //
+    // Add product to cart
+    //
+    if ($mode == 'add') {
+        if (!empty($_REQUEST['product_data'][$dispatch_extra])) {
+            $product_data = db_get_row("SELECT a.category_id, b.value FROM ?:products_categories AS a LEFT JOIN ?:product_features_values AS b ON a.product_id = b.product_id AND b.feature_id = ?i WHERE a.product_id = ?i AND a.link_type = 'M'", R_STRINGS_FEATURE_ID, $dispatch_extra);
+            if ($product_data['category_id'] == RACKETS_CATEGORY_ID && !empty($product_data['value']) && $product_data['value'] == 'N') {
+                $_SESSION['add_product_request'] = $_REQUEST;
+                $msg = Registry::get('view')->fetch('addons/development/views/racket_customization/customization.tpl');
+                fn_set_notification('I', __('racket_unstrung_dialog_title'), $msg, 'K', array('class' => 'notification-content-stringing'));
+                exit;
+            }
+        }
+    }
+    
+}
+
 if (!empty($_REQUEST['order_id']) && strpos($_REQUEST['order_id'], '-') !== false) {
     $_REQUEST['order_id'] = db_get_field("SELECT order_id FROM ?:orders WHERE order_number = ?s", $_REQUEST['order_id']);
 }

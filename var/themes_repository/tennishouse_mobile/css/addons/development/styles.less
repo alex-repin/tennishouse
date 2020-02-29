@@ -464,40 +464,59 @@ label.cm-required::after {
 .ty-anouncement-close:hover {
     background: url("../../../media/images/addons/development/anouncement_close_hover.png") no-repeat scroll center center;
 }
-.ty-ny20 {
-    background-color: #fff;
-    border: 1px solid #fff;
-}
-.ty-ny-body {
+.ty-anc-body {
     text-align: center;
 }
-.ty-ny-text {
+.ty-anc-text {
     font-size: 0.9rem;
 }
-.ty-ny-title {
-    font-size: 1.3rem;
+.ty-anc-title {
+    font-size: 1.15rem;
     font-weight: bold;
 }
-.ty-ny-wrap {
+.ty-anc-wrap {
     display: inline-block;
-    margin: 0 30px;
+    width: 80%;
 }
-.ty-ny-right {
-    background-image: url("../../../media/images/addons/development/hat.svg");
+.ty-anc-left {
     background-size: contain;
     background-repeat: no-repeat;
-    display: inline-block;
-    position: absolute;
-    right: 0;
-    top: -5px;
-    width: 100px;
-    height: 100px;
+    width: 20%;
+    height: 70px;
     vertical-align: top;
-    color:
-    #fff;
     font-size: 50px;
     font-weight: bold;
     line-height: 100px;
+    float: left;
+}
+.ty-anc-text-bot {
+    color: @font;
+    font-size: 1.5rem;
+    line-height: 2.5rem;
+    font-weight: bold;
+}
+.ty-catalog-promocode-block {
+    display: inline-block;
+    line-height: 2.5rem;
+    vertical-align: top;
+    color: #fff;
+    form {
+        display: inline-block;
+    }
+}
+.ty-dsc23 {
+    background-color: #abcaa3;
+    border: 1px solid #fff;
+    opacity: 0.95;
+    .ty-anc-left {
+        background-image: url("../../../media/images/addons/development/starm.svg");
+    }
+    .ty-anc-text, .ty-anc-title {
+        color: #fff;
+    }
+    .ty-anc-text-bot, button {
+        color: #69c;
+    }
 }
 .ty-bf-body {
     text-align: center;

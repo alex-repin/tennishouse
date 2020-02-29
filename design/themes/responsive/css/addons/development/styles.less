@@ -409,7 +409,11 @@ select {
     .ty-sd_subtitle {
         margin-bottom: 15px;
         font-size: 1.2rem;
-        color: lighten(@font, 35%);
+/*         color: lighten(@font, 35%); */
+    }
+    .ty-sd_subtitle p {
+        font-size: 1.2rem;
+/*         color: lighten(@font, 35%); */
     }
     .ty-popup-notification-title {
         font-weight: bold;
@@ -427,41 +431,62 @@ select {
     }
     .ty-grid-list__stringing {
         font-size: 0;
-        .ty-grid-list__item-wrapper {
-            .ty-grid-list__item {
-                height: 400px;
-                padding: 10px 10px;
-                .ty-grid-list__item-sd-title {
-                    text-align: center;
-                    font-weight: bold;
-                    font-size: 1.3rem;
-                    height: 46px;
-                }
-                .ty-grid-list__item-sd-bg {
-                    background-repeat: no-repeat;
-                    background-size: contain;
-                    background-position: center center;
-                    height: 230px;
-                    width: auto;
-                    position: relative;
-                }
-                .ty-grid-list__item-sd-u-bg {
-                    background-image: url("../../../media/images/addons/development/sd_unstrung.svg");
-                }
-                .ty-grid-list__item-sd-es-bg {
-                    background-image: url("../../../media/images/addons/development/sd_strung5.svg");
-                }
-                .ty-grid-list__item-sd-m-bg {
-                    background-image: url("../../../media/images/addons/development/sd_m_strung2.svg");
-                }
-                .ty-grid-list__item-sd-price {
-                    text-align: center;
-                    margin-top: 60px;
-                    div {
-                        color: lighten(@font, 35%);
-                    }
-                }
+    }
+    .ty-grid-list__item {
+        height: 400px;
+        padding: 10px 10px;
+        .ty-grid-list__item-sd-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.3rem;
+            height: 46px;
+        }
+        .ty-grid-list__item-sd-bg {
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center center;
+            height: 230px;
+            width: auto;
+            position: relative;
+        }
+        .ty-grid-list__item-sd-u-bg {
+            background-image: url("../../../media/images/addons/development/sd_unstrung.svg");
+        }
+        .ty-grid-list__item-sd-es-bg {
+            background-image: url("../../../media/images/addons/development/sd_strung5.svg");
+        }
+        .ty-grid-list__item-sd-m-bg {
+            background-image: url("../../../media/images/addons/development/sd_m_strung2.svg");
+        }
+        .ty-grid-list__item-sd-price {
+            text-align: center;
+            margin-top: 60px;
+            div {
+                color: lighten(@font, 35%);
             }
+        }
+    }
+    .ty-sd_expert_recommendation_notes__text {
+        width: 100%;
+        height: 300px;
+        font-size: 1.3rem;
+    }
+    .ty-sd-back-button {
+        color: @links;
+        cursor: pointer;
+        font-size: 1.3rem;
+    }
+    .ty-sd__mode-2-textaera {
+        display: inline-block;
+        width: 66%;
+    }
+    .ty-sd__content-mode-2 {
+        .ty-grid-list__item {
+            height: 300px;
+            border: none;
+        }
+        .ty-grid-list__item:hover {
+            box-shadow: none;
         }
     }
 }

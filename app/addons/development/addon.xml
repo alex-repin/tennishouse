@@ -1530,5 +1530,11 @@
         <item lang="ru" id="try_on_shipping_comment">В случае выкупа товаров более чем на [amount], доставка бесплатная</item>
         <item lang="ru" id="try_on_shipping_comment_2">В случае выкупа товаров менее чем на [amount] - Доставка 1, иначе - Доставка 2</item>
         <item lang="ru" id="equalize_prices_as_discounts">Уравнять цены скидкой</item>
+        <item lang="ru" id="racket_unstrung_dialog_title">Эта ракетка поставляется производителем без струн</item>
+        <item lang="ru" id="keep_unstring">Оставить без струн</item>
+        <item lang="ru" id="expert_stringing">Рекомендация специалиста</item>
+        <item lang="ru" id="manual_stringing_selection">Выбрать струну самостоятельно</item>
+        <item lang="ru" id="sd_subtitle">Мы можем выполнить натяжку струны на эту ракетку или оставить ее без струн</item>
+        <item lang="ru" id="sd_subtitle_mode_2"><![CDATA[<p>Наш специалист подберет оптимальные струны и жесткость натяжки. Для этого укажите следующую информацию об игроке:</p><p>Пол, возраст, игровой стаж, уровень игры, регулярность тренировок. Если есть индивидуальные предпочтения или пожелания, то какие.</p>]]></item>
     </language_variables>
 </addon>

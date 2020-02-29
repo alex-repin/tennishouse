@@ -972,6 +972,17 @@ var images_dir = '{$images_dir}';
             $('.cm-show-form').focus(function(e){
                 fn_show_form(e);
             });
+            $.ceEvent('on', 'ce.commoninit', function(context) {
+                $('.cm-sd-option').each(function(){
+                    $(this).click(function(){
+                        $('#sd_option').val($(this).data('sdOption'));
+                        $('#stringing_form_submit').delay(1000).click();
+                    });
+                });
+            });
+            $.ceEvent('on', 'ce.notificationshow', function(notification) {
+                $.commonInit(notification);
+            });
             fn_init_autosubmit();
         });
     }(Tygh, Tygh.$));

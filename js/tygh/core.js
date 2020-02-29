@@ -3945,7 +3945,9 @@ var Tygh = {
                         attach: clicked_elm
                     });
                     if (!message_set) {
-                        $.scrollToElm(popups[i]);
+                        if (!popups[i].data('noScroll')) {
+                            $.scrollToElm(popups[i]);
+                        }
                         message_set = true;
                     }
                     break;
@@ -4445,6 +4447,7 @@ var Tygh = {
                 data.title = _processTranslation(data.title);
                 close_class = data.close_class;
                 attach = data.attach || false;
+                class_extra = (typeof(data.extra) != 'undefined' && data.extra.class) || '';
 
                 // Popup message in the screen center - should be only one at time
                 if (data.type == 'I') {
@@ -4459,7 +4462,8 @@ var Tygh = {
                     } else {
                         title = '<div class="ty-popup-notification-title">' + data.title + '<span class="cm-notification-close close"></span></div>';
                     }
-                    var notification = $('<div class="cm-notification-content cm-notification-content-extended notification-content-extended ' + (data.message_state == "I" ? ' cm-auto-hide' : '') + (attach.length > 0 ? ' cm-notification-content__add-to-cart' : '') + '" data-ca-notification-key="' + key + '">' +
+                    
+                    var notification = $('<div class="cm-notification-content cm-notification-content-extended notification-content-extended ' + (class_extra != '' ? ' ' + class_extra : '') + (data.message_state == "I" ? ' cm-auto-hide' : '') + (attach.length > 0 ? ' cm-notification-content__add-to-cart' : '') + '" data-ca-notification-key="' + key + '">' +
                         title +
                         '<div class="notification-body-extended">' +
                         data.message +
