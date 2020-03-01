@@ -61,7 +61,7 @@
         </div>
     </td>
     <td class="right">
-        {include file="common/select_popup.tpl" id=$shipping.shipping_id display=$status_display status=$shipping.status hidden="" object_id_name="shipping_id" table="shippings"}        
+        {include file="common/select_popup.tpl" id=$shipping.shipping_id display=$status_display status=$shipping.status hidden="true" object_id_name="shipping_id" table="shippings"}        
     </td>
 </tr>
 {/foreach}

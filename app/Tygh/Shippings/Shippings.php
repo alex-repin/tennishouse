@@ -406,7 +406,11 @@ class Shippings
         $join = "LEFT JOIN ?:shipping_descriptions ON ?:shippings.shipping_id = ?:shipping_descriptions.shipping_id ";
         $join .= "LEFT JOIN ?:shipping_services ON ?:shipping_services.service_id = ?:shippings.service_id ";
 
-        $condition .= db_quote('?:shippings.status = ?s', 'A');
+        if (AREA == 'C') {
+            $condition .= db_quote('?:shippings.status = ?s', 'A');
+        } else {
+            $condition .= db_quote("?:shippings.status IN ('A', 'H')");
+        }
         $condition .= db_quote(' AND ?:shippings.shipping_id IN (?n)', $shippings);
         $condition .= db_quote(' AND (?:shippings.min_weight <= ?d', $package_weight);
         $condition .= db_quote(' AND (?:shippings.max_weight >= ?d OR ?:shippings.max_weight = 0.00))', $package_weight);
