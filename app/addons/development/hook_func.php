@@ -2095,7 +2095,7 @@ function fn_development_update_product_post($product_data, $product_id, $lang_co
         $brand_name = db_get_field("SELECT b.variant FROM ?:product_features_values AS a LEFT JOIN ?:product_feature_variant_descriptions AS b ON b.variant_id = a.variant_id AND b.lang_code = ?s WHERE a.product_id = ?i AND a.feature_id = ?i", $lang_code, $product_id, BRAND_FEATURE_ID);
         
         if (!empty($brand_name)) {
-            $model = trim(preg_replace(array('/[^a-zA-Z ]/', '/' . $brand_name . '/i'), '', $product_data['product']));
+            $model = trim(preg_replace(array('/[а-яА-Я]/', '/' . $brand_name . '/i'), '', $product_data['product']));
             if (!empty($model)) {
                 db_query("UPDATE ?:products SET model = ?s WHERE product_id = ?i", $model, $product_id);
             }
