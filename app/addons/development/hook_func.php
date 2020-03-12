@@ -1256,7 +1256,7 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
 //                         $product['subtitle'] = reset($variants) .  ' - ' .  $brand;
                     } elseif ($product['type'] == 'S') {
                         $product['subtitle'] = __("surface") .  ' - ' .  reset($variants);
-                    } elseif ($product['type'] == 'B') {
+                    } elseif ($product['type'] == 'B' && !empty($products_features[$product['product_id']][BAG_SIZE_FEATURE_ID]['variants'])) {
                         $product['subtitle'] = __("size") .  ' - ' .  $products_features[$product['product_id']][BAG_SIZE_FEATURE_ID]['variants'];
                     } elseif ($product['type'] == 'ST') {
 //                         if (!empty($variants) && count($variants) > 1 && $series_feature['feature_type'] == 'M') {

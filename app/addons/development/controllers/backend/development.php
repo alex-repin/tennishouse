@@ -1702,7 +1702,7 @@ if ($mode == 'calculate_balance') {
     Registry::get('view')->assign('competitive_prices', $_result);
     
 } elseif ($mode == 'tst') {
-    fn_update_competitive_prices();
+    fn_check_sms();
     exit;
 } elseif ($mode == 'generate_models') {
     $params['extend'] = array('categories', 'description');
