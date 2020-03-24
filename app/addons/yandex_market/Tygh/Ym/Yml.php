@@ -197,12 +197,12 @@ class Yml implements IYml
                     }
                 }
 
-                if ($product['tracking'] == 'O') {
-                    $product['amount'] = db_get_field(
-                        "SELECT SUM(amount) FROM ?:product_warehouses_inventory WHERE product_id = ?i AND combination_hash != '0'",
-                        $product['product_id']
-                    );
-                }
+//                 if ($product['tracking'] == 'O') {
+//                     $product['amount'] = db_get_field(
+//                         "SELECT SUM(amount) FROM ?:product_warehouses_inventory WHERE product_id = ?i AND combination_hash != '0'",
+//                         $product['product_id']
+//                     );
+//                 }
 
                 if ($this->options['export_stock'] == 'Y' && $product['amount'] <= 0) {
                     $is_broken = true;
