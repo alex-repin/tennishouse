@@ -28,7 +28,7 @@ class Yml implements IYml
     protected $page = 0;
     protected $debug = false;
 
-    protected $disabled_category_ids = array();
+    protected $disabled_category_ids;
 
     public function __construct($company_id, $options = array(), $lang_code = DESCR_SL, $page = 0, $debug = false)
     {
@@ -75,10 +75,10 @@ class Yml implements IYml
             }
         }
 
-        foreach ((array) $company_ids as $company_id) {
-            $self = new self($company_id);
-            $self->clearCache();
-        }
+//         foreach ((array) $company_ids as $company_id) {
+//             $self = new self($company_id);
+//             $self->clearCache();
+//         }
     }
 
     public function generate($filename)
