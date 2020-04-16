@@ -130,6 +130,7 @@ define('GRASS_SURFACE_FV_ID', 361);
 define('POWER_RACKET_FV_ID', 211);
 define('CLUB_RACKET_FV_ID', 212);
 define('PRO_RACKET_FV_ID', 265);
+define('JUNIOR_RACKET_FV_ID', 6815);
 define('KIDS_RACKET_FV_ID', 282);
 define('REGULAR_LENGTH_FV_ID', 141);
 define('CLOSED_PATTERN_FV_ID', 191);

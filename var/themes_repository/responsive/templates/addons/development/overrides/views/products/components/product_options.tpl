@@ -51,7 +51,7 @@
         {/capture}
         <div class="{if $smarty.capture.variant_images|trim} hidden{/if}">
         {if !("SRC"|strpos:$po.option_type !== false && !$po.variants && $po.missing_variants_handling == "H")}
-            <label {if $po.option_type !== "R" && $po.option_type !== "F"}for="option_{$obj_prefix}{$id}_{$po.option_id}"{/if} class="ty-control-group__label ty-product-options__item-label{if $po.required == "Y"} cm-required cm-requirement-popup{/if}{if $po.regexp} cm-regexp{/if} {if $po.option_type == 'S' || $po.option_type == "I"}hidden{/if}" {if $po.regexp}data-ca-regexp="{$po.regexp}" data-ca-message="{$po.incorrect_message}"{/if}>
+            <label {if $po.option_type !== "R" && $po.option_type !== "F"}for="option_{$obj_prefix}{$id}_{$po.option_id}"{/if} class="ty-control-group__label ty-product-options__item-label{if $po.required == "Y"} cm-required cm-requirement-popup{/if}{if $po.regexp} cm-regexp{/if} {if $po.option_type == 'S' || $po.option_type == "I" || $po.option_type == "T"}hidden{/if}" {if $po.regexp}data-ca-regexp="{$po.regexp}" data-ca-message="{$po.incorrect_message}"{/if}>
                 {$po.option_name}
             </label>
             {if $po.option_type == "S"} {*Selectbox*}
@@ -111,7 +111,7 @@
             {elseif $po.option_type == "I"} {*Input*}
                 <input id="option_{$obj_prefix}{$id}_{$po.option_id}" placeholder="{$po.option_name}" type="text" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$po.value|default:$po.inner_hint}" {if $product.exclude_from_calculate && !$product.aoc}disabled="disabled"{/if} class="ty-valign ty-input-text{if $po.inner_hint} cm-hint{/if}{if $product.exclude_from_calculate && !$product.aoc} disabled{/if}" {if $po.inner_hint}title="{$po.inner_hint}"{/if} {if $disabled}disabled="disabled"{/if} />
             {elseif $po.option_type == "T"} {*Textarea*}
-                <textarea id="option_{$obj_prefix}{$id}_{$po.option_id}" class="ty-product-options__textarea{if $po.inner_hint} cm-hint{/if}{if $product.exclude_from_calculate && !$product.aoc} disabled{/if}" rows="3" name="{$name}[{$id}][product_options][{$po.option_id}]" {if $product.exclude_from_calculate && !$product.aoc}disabled="disabled"{/if} {if $po.inner_hint}title="{$po.inner_hint}"{/if} >{$po.value|default:$po.inner_hint}</textarea>
+                <textarea id="option_{$obj_prefix}{$id}_{$po.option_id}" placeholder="{$po.option_name}" class="ty-product-options__textarea{if $po.inner_hint} cm-hint{/if}{if $product.exclude_from_calculate && !$product.aoc} disabled{/if}" rows="3" name="{$name}[{$id}][product_options][{$po.option_id}]" {if $product.exclude_from_calculate && !$product.aoc}disabled="disabled"{/if} {if $po.inner_hint}title="{$po.inner_hint}"{/if} {if $disabled}disabled="disabled"{/if}>{$po.value|default:$po.inner_hint}</textarea>
             {elseif $po.option_type == "F"} {*File*}
                 <div class="ty-product-options__elem ty-product-options__fileuploader">
                     {include file="common/fileuploader.tpl" images=$product.extra.custom_files[$po.option_id] var_name="`$name`[`$po.option_id``$id`]" multiupload=$po.multiupload hidden_name="`$name`[custom_files][`$po.option_id``$id`]" hidden_value="`$id`_`$po.option_id`" label_id="option_`$obj_prefix``$id`_`$po.option_id`" prefix=$obj_prefix}
@@ -171,10 +171,3 @@
 }(Tygh, Tygh.$));
 </script>
 {/if}
-<script type="text/javascript">
-(function(_, $) {
-    $('.cm-dropdown').each(function() {
-        $(this).selectbox();
-    });
-}(Tygh, Tygh.$));
-</script>

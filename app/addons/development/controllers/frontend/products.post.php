@@ -133,7 +133,7 @@ if ($mode == 'view') {
 //             }
 //             if (!empty($product['header_features'][BRAND_FEATURE_ID]['variants'][$brand_id][$gender . '_' . $cat_type . '_size_chart'])) {
 //                 $brand_size_chart = true;
-//                 $title = $product['header_features'][BRAND_FEATURE_ID]['variants'][$brand_id]['variant'];
+//                 $title = $product['header_features'][BRAND_FEATURE_ID]['variants'][$brand_id]['variant'];JUNIOR_RACKET_FV_ID
 //             }
 //         }
     }
@@ -190,6 +190,13 @@ if ($mode == 'view') {
     Registry::get('view')->assign('block_tabs', $block_tabs);
 
     fn_get_product_review_discount($product);
+    if ($product['category_type'] == 'R' && in_array($product['product_features'][TYPE_FEATURE_ID]['variant_id'], array(PRO_RACKET_FV_ID, CLUB_RACKET_FV_ID, POWER_RACKET_FV_ID, JUNIOR_RACKET_FV_ID))) {
+        if (!empty($product['product_features'][R_STRINGS_FEATURE_ID]['value']) && $product['product_features'][R_STRINGS_FEATURE_ID]['value'] == 'Y') {
+            $product['customization_type'] = 'S';
+        } else {
+            $product['customization_type'] = 'U';
+        }
+    }
     Registry::get('view')->assign('product', $product);
     
 } elseif ($mode == 'sale') {

@@ -4,6 +4,7 @@
     {if $settings.General.allow_anonymous_shopping == "allow_shopping" || $auth.user_id}
         {if $product.in_cart}
             {include file="buttons/button.tpl" but_id=$but_id but_text=__("in_cart") but_href="checkout.cart" but_role="text" but_name="" but_meta="ty-btn__primary ty-btn__big ty-btn__add-to-cart ty-btn__add-to-cart-in-cart" but_icon="ty-in-cart-icon"}
+            {include file="buttons/button.tpl" but_id="`$but_id`_hidden" but_name=$but_name but_role="big" but_meta="hidden"}
         {else}
             {include file="buttons/button.tpl" but_id=$but_id but_text=$but_text|default:__("add_to_cart") but_name=$but_name but_onclick=$but_onclick but_href=$but_href but_target=$but_target but_role=$but_role|default:"text" but_meta="ty-btn__primary ty-btn__big ty-btn__add-to-cart cm-form-dialog-closer"}
         {/if}

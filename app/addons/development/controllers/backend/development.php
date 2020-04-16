@@ -1734,6 +1734,39 @@ if ($mode == 'calculate_balance') {
         }
     }
     exit;
+} elseif ($mode == 'clean_up_exceptions') {
+    $exceptions = db_get_hash_multi_array("SELECT * FROM ?:product_options_exceptions", array('product_id', 'exception_id'));
+    $product_options = fn_get_product_options(array_keys($exceptions), CART_LANGUAGE, true, false, false, false, false);
+    
+    $delete = array();
+    foreach ($exceptions as $product_id => $_exceptions) {
+        if (count($product_options[$product_id]) > 0) {
+            foreach ($_exceptions as $e_id => $e_data) {
+                $combination = unserialize($e_data['combination']);
+                if (count($combination) != count($product_options[$product_id])) {
+                    $delete[$e_id] = $e_data;
+                } else {
+                    $correct = true;
+                    foreach ($combination as $opt_id => $v_id) {
+                        if (empty($product_options[$product_id][$opt_id]) || empty($product_options[$product_id][$opt_id]['variants'][$v_id])) {
+                            $correct = false;
+                            break;
+                        }
+                    }
+                    if (empty($correct)) {
+                        $delete[$e_id] = $e_data;
+                    }
+                }
+            }
+        } else {
+            $delete += $_exceptions;
+        }
+    }
+    if (!empty($delete)) {
+        db_query("DELETE FROM ?:product_options_exceptions WHERE exception_id IN (?n)", array_keys($delete));
+    }
+    
+    exit;
 }
 
 function fn_fill_image_common_description(&$images_alts, $detailed_id, $name)

@@ -352,7 +352,6 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
         'applied' => false,
         'messages' => array()
     );
-//                         fn_print_die($data['coupons'], $_SESSION['coupons']);
 
     if (!fn_allowed_for('ULTIMATE:FREE')) {
         // Pre-check coupon
@@ -458,13 +457,6 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
                             }
                         }
                     }
-//                     if (!empty($data['coupons'])) {
-//                         foreach ($cproduct_vars as $c_key => $c_var) {
-//                             if ($c_key != $prom_key && !empty($c_var['promotions'])) {
-//                                 fn_print_die($data['coupons'], $c_var);
-//                             }
-//                         }
-//                     }
                 }
             }
             if (!empty($ordered_promotions['item_sum_up'])) {

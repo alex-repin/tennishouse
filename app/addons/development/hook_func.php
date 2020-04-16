@@ -360,7 +360,7 @@ function fn_development_change_order_status_post($status_to, $status_from, $orde
 {
     $saving_data = db_get_hash_array("SELECT * FROM ?:savings_groups ORDER BY amount ASC", 'group_id');
     if (!empty($saving_data) && !empty($order_info['user_id'])) {
-        $orders_total = db_get_field("SELECT SUM(total) FROM ?:orders WHERE user_id = ?i AND (status = 'C' OR status = 'E')", $order_info['user_id']);
+        $orders_total = db_get_field("SELECT SUM(total) FROM ?:orders WHERE user_id = ?i AND status IN (?a)", $order_info['user_id'], unserialize(ORDER_COMPLETE_STATUSES));
         $usergroup_ids = array();
         foreach ($saving_data as $i => $group_data) {
             $usergroup_ids[] = $group_data['usergroup_id'];
@@ -471,9 +471,9 @@ function fn_development_get_order_info(&$order, $additional_data)
 
 function fn_development_gather_additional_product_data_before_options(&$product, $auth, $params)
 {
-    if (!empty($product['qty_discount_price']) || floatval($product['list_price'])) {
+    if (!empty($params['get_discounts']) && (!empty($product['qty_discount_price']) || floatval($product['list_price']))) {
         if (floatval($product['list_price']) && $product['list_price'] > $product['price']) {
-            $discount = $product['list_price'] - $product['price'];
+            $discount = $product['list_discount'] = $product['list_price'] - $product['price'];
             $product['base_price'] = $product['price'] = $product['list_price'];
         }
         if (!empty($product['qty_discount_price']) && $product['qty_discount_price'] < $product['price'] && (empty($discount) || ($product['price'] - $discount > $product['qty_discount_price']))) {
@@ -490,7 +490,7 @@ function fn_development_get_cart_product_data($product_id, &$_pdata, &$product, 
 {
     if (!empty($_pdata['qty_discount_price']) || floatval($_pdata['list_price'])) {
         if (floatval($_pdata['list_price']) && $_pdata['list_price'] > $_pdata['price']) {
-            $discount = $_pdata['list_price'] - $_pdata['price'];
+            $discount = $_pdata['list_discount'] = $_pdata['list_price'] - $_pdata['price'];
             $_pdata['base_price'] = $_pdata['price'] = $_pdata['list_price'];
         }
         if (!empty($_pdata['qty_discount_price']) && $_pdata['qty_discount_price'] < $_pdata['price'] && (empty($discount) || ($_pdata['price'] - $discount > $_pdata['qty_discount_price']))) {
@@ -1193,7 +1193,7 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
         
         if (!empty($params['get_title_features'])) {
             $condition = db_quote("f.display_on_catalog = 'Y' AND f.status = 'A' AND IF(f.parent_id, (SELECT status FROM ?:product_features as df WHERE df.feature_id = f.parent_id), 'A') = 'A' ?p AND (v.variant_id != 0 OR (f.feature_type != 'C' AND v.value != '') OR (f.feature_type = 'C') OR v.value_int != '') AND v.lang_code = ?s", db_quote(" AND (?p)", implode('OR', $features_condition)), CART_LANGUAGE);
-            $fields = db_quote("f.feature_type, fd.description, v.variant_id, v.feature_id, GROUP_CONCAT(vd.variant SEPARATOR ',') as variants, v.product_id, gf.position as gposition");
+            $fields = db_quote("f.feature_type, fd.description, v.variant_id, v.value, v.feature_id, GROUP_CONCAT(vd.variant SEPARATOR ',') as variants, v.product_id, gf.position as gposition");
             $join = db_quote(
                 " LEFT JOIN ?:product_features_descriptions as fd ON fd.feature_id = f.feature_id AND fd.lang_code = ?s"
                 . " LEFT JOIN ?:product_features_values as v ON v.feature_id = f.feature_id"
@@ -1204,10 +1204,10 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
             $brands = fn_get_product_feature_data(BRAND_FEATURE_ID, true, true);
         }
 
-        if (!empty($params['get_options']) && !(Registry::get('settings.Appearance.catalog_options_mode') == 'Y' && !empty($params['allow_duplication']))) {
-            if (!empty($color_ids)) {
+        if (!empty($params['get_options']) && !empty($color_ids)) {
+            $color_image_pairs_add = fn_get_image_pairs($color_ids, 'variant_additional', 'Z', false, true, CART_LANGUAGE, true);
+            if (Registry::get('settings.Appearance.catalog_options_mode') != 'Y' || empty($params['allow_duplication'])) {
                 $color_image_pairs = fn_get_image_pairs($color_ids, 'variant_image', 'V', true, false, CART_LANGUAGE);
-                $color_image_pairs_add = fn_get_image_pairs($color_ids, 'variant_additional', 'Z', false, true, CART_LANGUAGE, true);
             }
         }
 
@@ -1225,6 +1225,16 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                                     $product['option_images'][$v_data['variant_id']] = reset($color_image_pairs[$v_data['variant_id']]);
                                 }
                             }
+                        }
+                    }
+                }
+            }
+            if (!empty($product['selected_options']) && $product['tracking'] == 'O' && !empty($product['product_options'])) {
+                foreach ($product['product_options'] as $i => $opt_data) {
+                    if (!empty($product['selected_options'][$opt_data['option_id']]) && !empty($opt_data['parent_option_id']) && $opt_data['parent_option_id'] == GLOBAL_COLOR_OPT_ID) {
+                        $product['ohash'] = 'ohash[' . $opt_data['option_id'] . ']=' . $product['selected_options'][$opt_data['option_id']];
+                        if(!empty($color_image_pairs_add[$product['selected_options'][$opt_data['option_id']]])) {
+                            $product['main_pair'] = reset($color_image_pairs_add[$product['selected_options'][$opt_data['option_id']]]);
                         }
                     }
                 }
@@ -1280,85 +1290,76 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                         $product['subtitle'] = __("type") .  ' - ' .  reset($variants);
                     }
                 }
+                $product['free_strings'] = fn_is_free_strings($product, $products_features[$product['product_id']]);
             }
         }
 
-        if (!empty($params['get_options'])) {
-            if (!empty($color_ids)) {
-                $color_prod_image_pairs = fn_get_image_pairs($color_ids, 'variant_additional', 'Z', false, true, CART_LANGUAGE, true);
-                $color_prod_image_pairs_add = fn_get_image_pairs($color_ids, 'variant_additional', 'Z', false, false, CART_LANGUAGE);
-            }
-
+        if (!empty($params['get_options']) && Registry::get('settings.Appearance.catalog_options_mode') == 'Y' && !empty($params['allow_duplication']) && !empty($color_ids)) {
+            $color_prod_image_pairs_add = fn_get_image_pairs($color_ids, 'variant_additional', 'Z', false, false, CART_LANGUAGE);
+            $new_products = array();
             foreach ($products as $i => &$product) {
-                if (!empty($product['selected_options']) && $product['tracking'] == 'O' && !empty($product['product_options'])) {
-                    foreach ($product['product_options'] as $i => $opt_data) {
-                        if (!empty($product['selected_options'][$opt_data['option_id']]) && !empty($opt_data['parent_option_id']) && $opt_data['parent_option_id'] == GLOBAL_COLOR_OPT_ID) {
-                            $product['ohash'] = 'ohash[' . $opt_data['option_id'] . ']=' . $product['selected_options'][$opt_data['option_id']];
-                            if(!empty($color_prod_image_pairs[$product['selected_options'][$opt_data['option_id']]])) {
-                                $product['main_pair'] = reset($color_prod_image_pairs[$product['selected_options'][$opt_data['option_id']]]);
-                            }
-                        }
-                    }
-                }
-            }
-            if (Registry::get('settings.Appearance.catalog_options_mode') == 'Y' && !empty($params['allow_duplication'])) {
-                $new_products = array();
-                foreach ($products as $i => &$product) {
-                    $found = false;
-                    if ($product['tracking'] == 'O' && !empty($product['product_options'])) {
-                        foreach ($product['product_options'] as $j => $opt_data) {
-                            if (!empty($opt_data['parent_option_id']) && $opt_data['parent_option_id'] == GLOBAL_COLOR_OPT_ID && !empty($opt_data['variants'])) {
-                                $iteration = 0;
-                                $found = true;
-                                foreach ($opt_data['variants'] as $k => $v_data) {
-                                    if (empty($params['av_ids'][$opt_data['feature_id']]) || (!empty($params['av_ids'][$opt_data['feature_id']]) && !empty($params['av_ids'][$opt_data['feature_id']][$v_data['feature_variant_id']]))) {
-                                        $image_pair = !empty($color_prod_image_pairs[$v_data['variant_id']]) ? reset($color_prod_image_pairs[$v_data['variant_id']]) : array();
-                                        $new_product = array();
-                                        if (!empty($image_pair) && $image_pair['pair_id'] != $product['main_pair']['pair_id']) {
-                                            $new_product = $product;
-                                            $new_product['main_pair'] = reset($color_prod_image_pairs[$v_data['variant_id']]);
-                                            if (!empty($color_prod_image_pairs_add[$v_data['variant_id']])) {
-                                                array_shift($color_prod_image_pairs_add[$v_data['variant_id']]);
-                                                $new_product['image_pairs'] = $color_prod_image_pairs_add[$v_data['variant_id']];
-                                            }
-                                        } elseif (empty($image_pair)) {
-                                            $new_product = $product;
+                $found = false;
+                if ($product['tracking'] == 'O' && !empty($product['product_options'])) {
+                    foreach ($product['product_options'] as $j => $opt_data) {
+                        if (!empty($opt_data['parent_option_id']) && $opt_data['parent_option_id'] == GLOBAL_COLOR_OPT_ID && !empty($opt_data['variants'])) {
+                            $iteration = 0;
+                            $found = true;
+                            foreach ($opt_data['variants'] as $k => $v_data) {
+                                if (empty($params['av_ids'][$opt_data['feature_id']]) || (!empty($params['av_ids'][$opt_data['feature_id']]) && !empty($params['av_ids'][$opt_data['feature_id']][$v_data['feature_variant_id']]))) {
+                                    $image_pair = !empty($color_image_pairs_add[$v_data['variant_id']]) ? reset($color_image_pairs_add[$v_data['variant_id']]) : array();
+                                    $new_product = array();
+                                    if (!empty($image_pair) && $image_pair['pair_id'] != $product['main_pair']['pair_id']) {
+                                        $new_product = $product;
+                                        $new_product['main_pair'] = reset($color_image_pairs_add[$v_data['variant_id']]);
+                                        if (!empty($color_prod_image_pairs_add[$v_data['variant_id']])) {
+                                            array_shift($color_prod_image_pairs_add[$v_data['variant_id']]);
+                                            $new_product['image_pairs'] = $color_prod_image_pairs_add[$v_data['variant_id']];
                                         }
-                                        if (!empty($new_product)) {
-                                            if (!empty($new_product['sizes']) && !empty($new_product['sizes']['color_variants'][$v_data['variant_id']])) {
-                                                $filter_passed = empty($params['av_ids'][$new_product['sizes']['feature_id']]) ? true : false;
-                                                foreach ($new_product['sizes']['variants'] as $v_id => $v_name) {
-                                                    if (empty($new_product['sizes']['color_variants'][$v_data['variant_id']][$v_id])) {
-                                                        unset($new_product['sizes']['variants'][$v_id]);
-                                                    } elseif (!$filter_passed && !empty($params['av_ids'][$new_product['sizes']['feature_id']][$new_product['sizes']['feature_variants'][$v_id]])) {
-                                                        $filter_passed = true;
-                                                    }
-                                                }
-                                                if (!$filter_passed) {
-                                                    continue;
-                                                }
-                                            }
-                                            if ($iteration > 0) {
-                                                $new_product['ohash'] = 'ohash[' . $opt_data['option_id'] . ']=' . $v_data['variant_id'];
-                                                $new_product['selected_options'][$opt_data['option_id']] = $v_data['variant_id'];
-                                                $new_product['obj_prefix'] = $v_data['variant_id'];
-                                            }
-                                            if ($new_product['type'] == 'A' && !empty($v_data['variant_name'])) {
-                                                $new_product['product'] .= ' ' . $v_data['variant_name'];
-                                            }
-                                            $new_products[] = $new_product;
-                                        }
-                                        $iteration++;
+                                    } elseif (empty($image_pair)) {
+                                        $new_product = $product;
                                     }
+                                    if (!empty($new_product)) {
+                                        if (!empty($new_product['sizes']) && !empty($new_product['sizes']['color_variants'][$v_data['variant_id']])) {
+                                            $filter_passed = empty($params['av_ids'][$new_product['sizes']['feature_id']]) ? true : false;
+                                            foreach ($new_product['sizes']['variants'] as $v_id => $v_name) {
+                                                if (empty($new_product['sizes']['color_variants'][$v_data['variant_id']][$v_id])) {
+                                                    unset($new_product['sizes']['variants'][$v_id]);
+                                                } elseif (!$filter_passed && !empty($params['av_ids'][$new_product['sizes']['feature_id']][$new_product['sizes']['feature_variants'][$v_id]])) {
+                                                    $filter_passed = true;
+                                                }
+                                            }
+                                            if (!$filter_passed) {
+                                                continue;
+                                            }
+                                        }
+                                        if ($iteration > 0) {
+                                            $new_product['ohash'] = 'ohash[' . $opt_data['option_id'] . ']=' . $v_data['variant_id'];
+                                            $new_product['selected_options'][$opt_data['option_id']] = $v_data['variant_id'];
+                                            $new_product['obj_prefix'] = $v_data['variant_id'];
+                                        }
+                                        if ($new_product['type'] == 'A' && !empty($v_data['variant_name'])) {
+                                            $new_product['product'] .= ' ' . $v_data['variant_name'];
+                                        }
+                                        $new_products[] = $new_product;
+                                    }
+                                    $iteration++;
                                 }
                             }
                         }
                     }
-                    if (!$found)  {
-                        $new_products[] = $product;
-                    }
                 }
-                $products = $new_products;
+                if (!$found)  {
+                    $new_products[] = $product;
+                }
+            }
+            $products = $new_products;
+        }
+    }
+    if (empty($params['get_for_one_product'])) {
+        foreach ($products as $k => $_product) {
+            if (isset($_product['virtual_parent_id']) && !empty($_product['original_id'])) {
+                $products[$_product['virtual_parent_id']]['configuration'][$_product['original_id']] = $_product;
+                unset($products[$k]);
             }
         }
     }
@@ -1437,7 +1438,7 @@ function fn_development_gather_additional_product_data_post(&$product, $auth, $p
         } else {
             $product['product_hash'] = fn_generate_cart_id($product['product_id'], array('product_options' => $product['product_options']), true);
         }
-        if (in_array($product['product_hash'], array_keys($_SESSION['cart']['products']))) {
+        if (!empty($_SESSION['cart']['products']) && in_array($product['product_hash'], array_keys($_SESSION['cart']['products']))) {
             $product['in_cart'] = true;
         } else {
             $product['in_cart'] = false;
@@ -1487,6 +1488,7 @@ function fn_development_gather_additional_product_data_post(&$product, $auth, $p
                 $product['product_options'][APPAREL_KIDS_SIZE_OPT_ID]['popup_title'] = __('sizing_table');
             }
         }
+        $product['free_strings'] = fn_is_free_strings($product, $product['product_features']);
     }
     if (AREA == 'C') {
         $product['is_liked'] = fn_check_wishlist($product['product_id']);

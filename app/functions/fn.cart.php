@@ -252,6 +252,9 @@ function fn_get_cart_product_data($hash, &$product, $skip_promotion, &$cart, &$a
         } else {
             $_pdata['product_options'] = $product['product_options'];
         }
+        if (isset($product['original_product_data'])) {
+            $_pdata['original_product_data'] = $product['original_product_data'];
+        }
 
         fn_set_hook('get_cart_product_data_post_options', $product['product_id'], $_pdata, $product);
 
@@ -2787,6 +2790,7 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
 
         fn_set_hook('calculate_cart_items_pre', $cart, $cart_products, $auth);
         
+        fn_update_original_amount($cart);
         $amount_totals = array();
         if (Registry::get('settings.General.disregard_options_for_discounts') == 'Y') {
             foreach ($cart['products'] as $k => $v) {
@@ -2809,7 +2813,7 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
 
                 continue;
             }
-            if (empty($cart['try_on']) && in_array($cart['products'][$k]['main_category'], $try_on_cats)) {
+            if (empty($cart['try_on']) && !empty($cart['products'][$k]['main_category']) && in_array($cart['products'][$k]['main_category'], $try_on_cats)) {
                 $cart['try_on'] = true;
             }
 
@@ -3939,8 +3943,8 @@ function fn_get_product_taxes($idx, $cart, $cart_products)
 {
     if ($cart['stored_taxes'] == 'Y') {
         $_idx = '';
-        if (isset($cart['products'][$idx]['original_product_data']['cart_id'])) {
-            $_idx = $cart['products'][$idx]['original_product_data']['cart_id'];
+        if (isset($cart['products'][$idx]['original_product_data'][$cart['products'][$idx]['selectable_cart_id']]['cart_id'])) {
+            $_idx = $cart['products'][$idx]['original_product_data'][$cart['products'][$idx]['selectable_cart_id']]['cart_id'];
         }
 
         $taxes = array();
@@ -4188,14 +4192,43 @@ function fn_check_amount_in_stock($product_id, $amount, $product_options, $cart_
                         (
                         // [tennishouse]
                             $product['tracking'] == ProductTracking::TRACK_WITH_OPTIONS &&
-                            (!empty($v['selectable_cart_id']) && $v['selectable_cart_id'] == $selectable_cart_id)
+                            !empty($v['selectable_cart_id']) && $v['selectable_cart_id'] == $selectable_cart_id
                         // [tennishouse]
                         )
                     ) {
-                        $current_amount -= $v['amount'];
+//                         $org_amount = !empty($v['original_amount']) ? $v['original_amount'] : 0;
+                        $current_amount -= $v['amount'] - $org_amount;
                     }
                 } else {
                     $product_not_in_cart = false;
+                }
+                
+                if (!empty($v['configuration'])) {
+                    foreach ($v['configuration'] as $_k => $_v) {
+                        if (!isset($_v['product_id'])) {
+                            continue;
+                        }
+                        // Check if the product with the same selectable options already exists ( for tracking = O)
+                        if ($_k != $cart_id) {
+                            if (isset ($product['tracking']) &&
+                                (
+                                    $product['tracking'] == ProductTracking::TRACK_WITHOUT_OPTIONS &&
+                                    $_v['product_id'] == $product_id
+                                ) ||
+                                (
+                                // [tennishouse]
+                                    $product['tracking'] == ProductTracking::TRACK_WITH_OPTIONS &&
+                                    !empty($_v['selectable_cart_id']) && $_v['selectable_cart_id'] == $selectable_cart_id
+                                // [tennishouse]
+                                )
+                            ) {
+//                                 $_org_amount = !empty($_v['original_amount']) ? $_v['original_amount'] : 0;
+                                $current_amount -= $_v['amount'] - $_org_amount;
+                            }
+                        } else {
+                            $product_not_in_cart = false;
+                        }
+                    }
                 }
             }
 
@@ -4203,15 +4236,6 @@ function fn_check_amount_in_stock($product_id, $amount, $product_options, $cart_
                 !empty($update_id) && $product_not_in_cart && !empty($cart['products'][$update_id])
             ) {
                 $current_amount += $cart['products'][$update_id]['amount'];
-            }
-
-            if ($product['tracking'] == ProductTracking::TRACK_WITH_OPTIONS) {
-                // Store cart_id for selectable options in cart variable, so if the same product is added to
-                // the cart with the same selectable options, but different text options,
-                // the total amount will be tracked anyway as it is the one product
-                if (!empty($selectable_cart_id) && isset($cart['products'][$cart_id])) {
-                    $cart['products'][$cart_id]['selectable_cart_id'] = $selectable_cart_id;
-                }
             }
         }
     }
@@ -4580,6 +4604,8 @@ function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false, 
 
         fn_set_hook('pre_add_to_cart', $product_data, $cart, $auth, $update);
 
+        fn_restore_original_product_data($product_data, $cart);
+        
         foreach ($product_data as $key => $data) {
             if (empty($key)) {
                 continue;
@@ -4601,10 +4627,10 @@ function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false, 
 
             // Check if product options exist
             if (!empty($auto_options)) {
-                $default_options = fn_get_default_product_options($product_id);
+                $default_options = fn_get_default_product_options($product_id/*, false, $data*/);
             }
             if (!isset($data['product_options'])) {
-                $data['product_options'] = !empty($auto_options) ? $default_options : fn_get_default_product_options($product_id);
+                $data['product_options'] = !empty($auto_options) ? $default_options : fn_get_default_product_options($product_id/*, false, $data*/);
             }
 
             // Generate cart id
@@ -4718,7 +4744,8 @@ function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false, 
                         $_REQUEST['redirect_url'] = $redirect_url; //FIXME: Very very very BAD style to use the global variables in the functions!!!
                     }
 
-                    return false;
+//                     return false;
+                    continue;
                 }
             }
 
@@ -4732,6 +4759,7 @@ function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false, 
                 $id_path = db_get_field("SELECT cs.id_path FROM ?:categories AS cs LEFT JOIN ?:products_categories AS pc ON cs.category_id = pc.category_id WHERE pc.link_type = 'M' AND pc.product_id = ?i", $product_id);
                 $cart['products'][$_id]['category_name'] = fn_get_category_name(fn_identify_type_category_id($id_path));
                 $cart['products'][$_id]['product_id'] = $product_id;
+                $cart['products'][$_id]['selectable_cart_id'] = fn_generate_cart_id($product_id, array('product_options' => $data['product_options']), true);
                 $cart['products'][$_id]['product_code'] = fn_get_product_code($product_id, $data['product_options']);
                 $cart['products'][$_id]['product'] = fn_get_product_name($product_id);
                 $cart['products'][$_id]['amount'] = $amount;
@@ -4749,7 +4777,7 @@ function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false, 
                 // add image for minicart
                 $cart['products'][$_id]['main_pair'] = fn_get_cart_product_icon($product_id, $data);
 
-                fn_define_original_amount($product_id, $_id, $cart['products'][$_id], $data);
+                fn_define_original_amount($product_id, $cart['products'][$_id]['selectable_cart_id'], $cart['products'][$_id], $data);
 
                 if ($update == true && $key != $_id) {
                     fn_delete_cart_product($cart, $key, false);
@@ -4833,6 +4861,7 @@ function fn_form_cart($order_id, &$cart, &$auth)
         return false;
     }
 
+    $cart['original_product_data'] = array();
     // Fill the cart
     foreach ($order_info['products'] as $_id => $item) {
         $_item = array (
@@ -4843,18 +4872,28 @@ function fn_form_cart($order_id, &$cart, &$auth)
                 'stored_discount' => 'Y',
                 'stored_price' => 'Y',
                 'discount' => (!empty($item['extra']['discount']) ? $item['extra']['discount'] : 0),
-                'original_amount' => $item['amount'], // the original amount, that stored in order
-                'original_product_data' => array ( // the original cart ID and amount, that stored in order
-                    'cart_id' => $_id,
-                    'amount' => $item['amount'],
-                ),
             ),
         );
         if (isset($item['extra'])) {
             $_item[$item['product_id']]['extra'] = $item['extra'];
+            $_item[$item['product_id']]['extra']['original_product_data'] = array();
         }
-
-        fn_add_product_to_cart($_item, $cart, $auth);
+        if (defined('ORDER_MANAGEMENT')) {
+            $_item[$item['product_id']]['original_amount'] = $item['amount'];
+            $selectable_cart_id = fn_generate_cart_id($item['product_id'], array('product_options' => $_item[$item['product_id']]['product_options']), true);
+            $_item[$item['product_id']]['original_product_data'][$selectable_cart_id] = $_item[$item['product_id']]['extra']['original_product_data'][$selectable_cart_id] = array (
+                'cart_id' => $selectable_cart_id,
+                'amount' => $item['amount'],
+                'product_options' => $_item[$item['product_id']]['product_options']
+            );
+        }
+        if (!empty(fn_add_product_to_cart($_item, $cart, $auth)) && defined('ORDER_MANAGEMENT')) {
+            if (in_array($selectable_cart_id, array_keys($cart['original_product_data'][$item['product_id']]))) {
+                $cart['original_product_data'][$item['product_id']][$selectable_cart_id]['amount'] += $_item[$item['product_id']]['original_product_data'][$selectable_cart_id]['amount'];
+            } else {
+                $cart['original_product_data'][$item['product_id']][$selectable_cart_id] = $_item[$item['product_id']]['original_product_data'][$selectable_cart_id];
+            }
+        }
     }
 
     // Workaround for the add-ons that do not add a product to cart unless the parent product is already added.
@@ -4869,17 +4908,26 @@ function fn_form_cart($order_id, &$cart, &$auth)
                         'stored_discount' => 'Y',
                         'stored_price' => 'Y',
                         'discount' => (!empty($item['extra']['discount']) ? $item['extra']['discount'] : 0),
-                        'original_amount' => $item['amount'], // the original amount, that stored in order
-                        'original_product_data' => array ( // the original cart ID and amount, that stored in order
-                            'cart_id' => $_id,
-                            'amount' => $item['amount'],
-                        ),
                     ),
                 );
                 if (isset($item['extra'])) {
                     $_item[$item['product_id']]['extra'] = $item['extra'];
                 }
-                fn_add_product_to_cart($_item, $cart, $auth);
+                if (defined('ORDER_MANAGEMENT')) {
+                    $_item[$item['product_id']]['original_amount'] = $item['amount'];
+                    $_item[$item['product_id']]['original_product_data'][$selectable_cart_id] = $_item[$item['product_id']]['extra']['original_product_data'][$selectable_cart_id] = array (
+                        'cart_id' => fn_generate_cart_id($item['product_id'], array('product_options' => $_item[$item['product_id']]['product_options']), true),
+                        'amount' => $item['amount'],
+                        'product_options' => $_item[$item['product_id']]['product_options']
+                    );
+                }
+                if (!empty(fn_add_product_to_cart($_item, $cart, $auth)) && defined('ORDER_MANAGEMENT')) {
+                    if (in_array($selectable_cart_id, array_keys($cart['original_product_data'][$item['product_id']]))) {
+                        $cart['original_product_data'][$item['product_id']][$selectable_cart_id]['amount'] += $_item[$item['product_id']]['original_product_data'][$selectable_cart_id]['amount'];
+                    } else {
+                        $cart['original_product_data'][$item['product_id']][$selectable_cart_id] = $_item[$item['product_id']]['original_product_data'][$selectable_cart_id];
+                    }
+                }
             }
         }
     }
@@ -6165,17 +6213,44 @@ function fn_update_stored_cart_taxes(&$cart, $update_id, $new_id, $consider_exis
 
 function fn_define_original_amount($product_id, $cart_id, &$product, $prev_product)
 {
-    if (!empty($prev_product['original_product_data']) && !empty($prev_product['original_product_data']['amount'])) {
-        $tracking = db_get_field("SELECT tracking FROM ?:products WHERE product_id = ?i", $product_id);
-        if ($tracking != ProductTracking::TRACK_WITH_OPTIONS ||
-            $tracking == ProductTracking::TRACK_WITH_OPTIONS &&
-            $prev_product['original_product_data']['cart_id'] == $cart_id
-        ) {
-            $product['original_amount'] = $prev_product['original_product_data']['amount'];
-        }
+    if (!empty($prev_product['original_product_data'])) {
         $product['original_product_data'] = $prev_product['original_product_data'];
+        if (!empty($product['selectable_cart_id']) && !empty($prev_product['original_product_data'][$product['selectable_cart_id']]['amount'])) {
+            $product['original_amount'] = $prev_product['original_product_data'][$product['selectable_cart_id']]['amount'];
+        }
     } elseif (!empty($prev_product['original_amount'])) {
         $product['original_amount'] = $prev_product['original_amount'];
+    }
+}
+
+function fn_update_original_amount(&$cart)
+{
+    foreach ($cart['products'] as $_id => $product) {
+        if (!empty($product['original_product_data'][$product['selectable_cart_id']]['amount'])) {
+            $cart['products'][$_id]['original_amount'] = $product['original_product_data'][$product['selectable_cart_id']]['amount'];
+        }
+        if (!empty($cart['products'][$_id]['configuration'])) {
+            foreach ($cart['products'][$_id]['configuration'] as $c_id => $c_prod) {
+                if (!empty($c_prod['original_product_data'][$c_prod['selectable_cart_id']]['amount'])) {
+                    $cart['products'][$_id]['configuration'][$c_id]['original_amount'] = $c_prod['original_product_data'][$c_prod['selectable_cart_id']]['amount'];
+                }
+            }
+        }
+    }
+}
+
+function fn_restore_original_product_data(&$product_data, $cart)
+{
+    if (!empty($cart['original_product_data'])) {
+        foreach ($product_data as $i => $data) {
+            if (!empty($cart['original_product_data'][$data['product_id']])) {
+                $product_data[$i]['original_product_data'] = $cart['original_product_data'][$data['product_id']];
+                $selectable_cart_id = fn_generate_cart_id($data['product_id'], array('product_options' => (!empty($data['product_options']) ? $data['product_options'] : array())), true);
+                if (!empty($cart['original_product_data'][$data['product_id']][$selectable_cart_id])) {
+                    $product_data[$i]['original_amount'] = $cart['original_product_data'][$data['product_id']][$selectable_cart_id]['amount'];
+                }
+            }
+        }
     }
 }
 
@@ -6906,9 +6981,10 @@ function fn_update_cart_products(&$cart, $product_data, $auth)
                 if (!isset($cart['products'][$_id])) { //if combination doesn't exist in the cart
                     $cart['products'][$_id] = $v;
                     $cart['products'][$_id]['company_id'] = !empty($cart['products'][$k]['company_id']) ? $cart['products'][$k]['company_id'] : 0;
+                    $cart['products'][$_id]['selectable_cart_id'] = fn_generate_cart_id($v['product_id'], array('product_options' => $v['extra']['product_options']), true);
                     $_product = $cart['products'][$k];
 
-                    fn_define_original_amount($v['product_id'], $_id, $cart['products'][$_id], $_product);
+                    fn_define_original_amount($v['product_id'], $cart['products'][$_id]['selectable_cart_id'], $cart['products'][$_id], $_product);
 
                     fn_delete_cart_product($cart, $k);
 

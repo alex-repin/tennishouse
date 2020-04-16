@@ -51,7 +51,9 @@
             <td style="padding: 2px 10px; background-color: #ffffff; text-align: center; font-size: 12px; font-family: Arial;border-right: 1px solid #868686;border-bottom: 1px solid #868686;">{$_product.extra.step}</td>
             <td style="padding: 2px 10px; background-color: #ffffff; text-align: right; font-size: 12px; font-family: Arial;border-right: 1px solid #868686;border-bottom: 1px solid #868686;">{if $_product.extra.exclude_from_calculate}{__("free")}{else}{include file="common/price.tpl" value=$_product.original_price}{/if}</td>
             {if $order_info.use_discount}
-            <td style="padding: 2px 10px; background-color: #ffffff; text-align: right; font-size: 12px; font-family: Arial;border-right: 1px solid #868686;border-bottom: 1px solid #868686;">{if $_product.extra.discount|floatval}{include file="common/price.tpl" value=$_product.extra.discount}{else}&nbsp;-&nbsp;{/if}</td>
+            <td style="padding: 2px 10px; background-color: #ffffff; text-align: right; font-size: 12px; font-family: Arial;border-right: 1px solid #868686;border-bottom: 1px solid #868686;">
+                {if $_product.discount|floatval}{include file="common/price.tpl" value=$_product.discount}{elseif $_product.extra.discount|floatval}{include file="common/price.tpl" value=$_product.extra.discount}{else}&nbsp;-&nbsp;{/if}
+            </td>
             {/if}
             {if $order_info.taxes && $settings.General.tax_calculation != "subtotal"}
                 <td style="padding: 2px 10px; background-color: #ffffff; text-align: right; font-size: 12px; font-family: Arial;border-right: 1px solid #868686;border-bottom: 1px solid #868686;">{if $_product.tax_value}{include file="common/price.tpl" value=$_product.tax_value}{else}&nbsp;-&nbsp;{/if}</td>

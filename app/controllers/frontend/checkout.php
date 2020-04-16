@@ -95,31 +95,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if (Registry::get('config.tweaks.disable_dhtml') && Registry::get('config.tweaks.redirect_to_cart')) {
                     Registry::get('view')->assign('continue_url', (!empty($_REQUEST['redirect_url']) && empty($_REQUEST['appearance']['details_page'])) ? $_REQUEST['redirect_url'] : $_SESSION['continue_url']);
                 }
-                $cross_sales = array();
-                foreach ($added_products as $item_id => $item_data) {
-                    if (!empty($cart_products[$item_id])) {
-                        $global_data = fn_get_product_global_data($cart_products[$item_id], array('cross_categories'));
-                        if (!empty($global_data['cross_categories'])) {
-                            $cross_categories = explode(',', unserialize($global_data['cross_categories']));
-                            $cross_sales = array_merge($cross_sales, fn_get_cross_sales(array('category_ids' => $cross_categories, 'price_to' => $cart_products[$item_id]['price'])));
-                        }
-                    }
-                }
-                if (!empty($cross_sales)) {
-                    $cross_categories = array();
-                    $added_product_keys = implode(',', array_keys($added_products));
-                    foreach ($cross_sales as $i => $cross_group) {
-                        if (!in_array($cross_group['category_id'], $cross_categories)) {
-                            $cross_categories[] = $cross_group['category_id'];
-                            foreach ($cross_group['products'] as $k => $cross_prods) {
-                                $cross_sales[$i]['products'][$k]['added_product_keys'] = $added_product_keys;
-                            }
-                        } else {
-                            unset($cross_sales[$i]);
-                        }
-                    }
-                }
-                Registry::get('view')->assign('cross_sales', $cross_sales);
+//                 $cross_sales = array();
+//                 foreach ($added_products as $item_id => $item_data) {
+//                     if (!empty($cart_products[$item_id])) {
+//                         $global_data = fn_get_product_global_data($cart_products[$item_id], array('cross_categories'));
+//                         if (!empty($global_data['cross_categories'])) {
+//                             $cross_categories = explode(',', unserialize($global_data['cross_categories']));
+//                             $cross_sales = array_merge($cross_sales, fn_get_cross_sales(array('category_ids' => $cross_categories, 'price_to' => $cart_products[$item_id]['price'])));
+//                         }
+//                     }
+//                 }
+//                 if (!empty($cross_sales)) {
+//                     $cross_categories = array();
+//                     $added_product_keys = implode(',', array_keys($added_products));
+//                     foreach ($cross_sales as $i => $cross_group) {
+//                         if (!in_array($cross_group['category_id'], $cross_categories)) {
+//                             $cross_categories[] = $cross_group['category_id'];
+//                             foreach ($cross_group['products'] as $k => $cross_prods) {
+//                                 $cross_sales[$i]['products'][$k]['added_product_keys'] = $added_product_keys;
+//                             }
+//                         } else {
+//                             unset($cross_sales[$i]);
+//                         }
+//                     }
+//                 }
+//                 Registry::get('view')->assign('cross_sales', $cross_sales);
                 Registry::get('view')->assign('highlight', true);
                 $msg = Registry::get('view')->fetch('views/checkout/components/product_notification.tpl');
                 fn_set_notification('I', __($product_cnt > 1 ? 'products_added_to_cart' : 'product_added_to_cart'), $msg);
@@ -155,6 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 foreach ($added_products as $item_id => $item_data) {
                     Registry::get('view')->assign('product', array('product_hash' => $item_id, 'in_cart' => true));
                     Registry::get('view')->assign('but_id', 'button_checkout_' . $item_data['product_id']);
+                    Registry::get('view')->assign('but_name', 'dispatch[checkout.add..' . $item_data['product_id'] . ']');
                     Registry::get('view')->display('buttons/add_to_cart.tpl');
                 }
             }

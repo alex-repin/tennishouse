@@ -13,6 +13,7 @@
 ****************************************************************************/
 
 use Tygh\Registry;
+use Tygh\Customization;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
@@ -36,13 +37,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Add product to cart
     //
     if ($mode == 'add') {
-        if (!empty($_REQUEST['product_data'][$dispatch_extra])) {
-            $product_data = db_get_row("SELECT a.category_id, b.value FROM ?:products_categories AS a LEFT JOIN ?:product_features_values AS b ON a.product_id = b.product_id AND b.feature_id = ?i WHERE a.product_id = ?i AND a.link_type = 'M'", R_STRINGS_FEATURE_ID, $dispatch_extra);
-            if ($product_data['category_id'] == RACKETS_CATEGORY_ID && !empty($product_data['value']) && $product_data['value'] == 'N') {
-                $_SESSION['add_product_request'] = $_REQUEST;
-                $msg = Registry::get('view')->fetch('addons/development/views/racket_customization/customization.tpl');
-                fn_set_notification('I', __('racket_unstrung_dialog_title'), $msg, 'K', array('class' => 'notification-content-stringing'));
+        $product_data = db_get_row("SELECT a.category_id, b.variant_id, c.value FROM ?:products_categories AS a LEFT JOIN ?:product_features_values AS b ON a.product_id = b.product_id AND b.feature_id = ?i LEFT JOIN ?:product_features_values AS c ON a.product_id = c.product_id AND c.feature_id = ?i WHERE a.product_id = ?i AND a.link_type = 'M'", TYPE_FEATURE_ID, R_STRINGS_FEATURE_ID, $dispatch_extra);
+        if ($product_data['category_id'] == RACKETS_CATEGORY_ID && (!empty($product_data['variant_id']) && in_array($product_data['variant_id'], array(PRO_RACKET_FV_ID, CLUB_RACKET_FV_ID, POWER_RACKET_FV_ID, JUNIOR_RACKET_FV_ID))) && !in_array($dispatch_extra, unserialize(EXC_PRODUCT_ITEMS))) {
+            $params = $_REQUEST;
+            if (!empty($product_data['value']) && $product_data['value'] == 'N') {
+                $params['sd_data'] = 'reload=1&option=0';
+                Customization::displayCustomization($params);
                 exit;
+            } else {
+                parse_str($params['sd_change'], $change);
+                if (isset($change['option'])) {
+                    $params['sd_data'] = 'reload=1&option=' . $change['option'];
+                    Customization::displayCustomization($params);
+                    exit;
+                }
             }
         }
     }

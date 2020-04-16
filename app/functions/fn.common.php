@@ -533,18 +533,20 @@ function fn_get_notifications()
     $_notifications = array();
 
     foreach ($_SESSION['notifications'] as $k => $v) {
-        if (!empty($v['init_message'])) {
-            $placeholders = array();
 
-            if (!empty($v['extra'])) {
-                $extra = @unserialize($v['extra']);
+        if (!empty($v['extra'])) {
+            $extra = @unserialize($v['extra']);
+            if (!empty($v['init_message'])) {
+                $placeholders = array();
                 if (!empty($extra) && !empty($extra['placeholders'])) {
                     $placeholders = $extra['placeholders'];
                 }
+                $v['title'] = __($v['title'], !empty($placeholders['title']) ? $placeholders['title'] : array());
+                $v['message'] = __($v['message'], !empty($placeholders['message']) ? $placeholders['message'] : array());
             }
-
-            $v['title'] = __($v['title'], !empty($placeholders['title']) ? $placeholders['title'] : array());
-            $v['message'] = __($v['message'], !empty($placeholders['message']) ? $placeholders['message'] : array());
+            if (!empty($extra) && !empty($extra['dialog_class'])) {
+                $v['dialog_class'] = $extra['dialog_class'];
+            }
         }
 
         // Display notification if this is not ajax request, or ajax request and notifiactions was just set

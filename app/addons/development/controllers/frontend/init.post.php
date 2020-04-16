@@ -32,9 +32,9 @@ if (!empty($_REQUEST['wid'])) {
         $_SESSION['wid'] = $_REQUEST['wid'];
     }
 }
-if (empty($_SESSION['ip_data']) || $_SESSION['ip_data']['ip'] != $_SERVER['REMOTE_ADDR']) {
-    $_SESSION['ip_data'] = fn_get_location_by_ip();
-}
+// if (empty($_SESSION['ip_data']) || $_SESSION['ip_data']['ip'] != $_SERVER['REMOTE_ADDR']) {
+//     $_SESSION['ip_data'] = fn_get_location_by_ip();
+// }
 // Registry::get('view')->assign('mobile_page_id', fn_crc32(implode('_', $_REQUEST)));
 Registry::get('view')->assign('company_phone', preg_replace('/[^0-9+]/', '', Registry::get('settings.Company.company_phone')));
 

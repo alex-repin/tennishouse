@@ -242,7 +242,7 @@ function fn_get_product_data($product_id, &$auth, $lang_code = CART_LANGUAGE, $f
             // [tennishouse]
             list($product_data['product_features']) = fn_get_product_features($_params, 0, $lang_code);
             $product_data['header_features'] = fn_get_product_features_list($product_data, 'H');
-        } else {
+        } elseif (AREA == 'A') {
             $product_data['product_features'] = fn_get_product_features_list($product_data, 'A');
         }
 
@@ -3327,7 +3327,7 @@ function fn_get_selected_product_options($product_id, $selected_options, $lang_c
      */
     fn_set_hook('get_selected_product_options_before_select', $fields, $condition, $join, $extra_variant_fields);
 
-    $_opts = db_get_array("SELECT $fields FROM ?:product_options as a $join WHERE $condition ORDER BY a.position");
+    $_opts = db_get_hash_array("SELECT $fields FROM ?:product_options as a $join WHERE $condition ORDER BY a.position", 'option_id');
     if (is_array($_opts)) {
         $_status = (AREA == 'A') ? '' : " AND a.status = 'A'";
         foreach ($_opts as $k => $v) {
@@ -8692,7 +8692,7 @@ function fn_apply_options_rules($product)
     }
 
     // [tennishouse]
-    if (empty($selected_options)/* && $product['options_type'] == 'P'*/ && !empty($product['get_default_options'])) {
+    if (empty($selected_options) && ($product['options_type'] == 'P' || !empty($product['get_default_options']))) {
         $selected_options = fn_get_default_product_options($product['product_id'], true, $product);
     }
 
@@ -8701,7 +8701,8 @@ function fn_apply_options_rules($product)
 
     } elseif (empty($product['changed_option'])) {
         
-        if ($product['options_type'] == 'S' && !empty($product['get_default_options'])) {
+        // Preselect only options that are duplicated on the list page
+        if ($product['options_type'] == 'S' && !empty($product['get_default_options']) && $product['get_default_options'] == 'C') {
             foreach ($selected_options as $opt_id => $vr_id) {
                 if ($product['product_options'][$opt_id]['show_on_catalog'] != 'Y') {
                     unset($selected_options[$opt_id]);
@@ -8831,6 +8832,17 @@ function fn_apply_exceptions_rules($product)
         $exceptions = fn_get_product_exceptions($product['product_id'], true);
     } else {
         $exceptions = $product['exceptions'];
+    }
+
+    // Allow an excepted combination if it was originally purchased for the order management
+    if (!empty($exceptions) && !empty($product['original_product_data'])) {
+        foreach ($product['original_product_data'] as $j => $exps) {
+            foreach ($exceptions as $i => $exp) {
+                if (empty(array_diff($exp, $exps['product_options']))) {
+                    unset($exceptions[$i]);
+                }
+            }
+        }
     }
 
     if (empty($exceptions)) {
@@ -9037,7 +9049,7 @@ function fn_apply_exceptions_rules($product)
 
     foreach ($product['product_options'] as $_id => &$option) {
         $option_id = $option['option_id'];
-        if ($product['options_type'] == 'P' && !in_array($option['option_type'], array('I', 'T', 'F')) && empty($option['value'])) {
+        if (($product['options_type'] == 'P' || (!empty($product['get_default_options']) && $product['get_default_options'] == 'A')) && !in_array($option['option_type'], array('I', 'T', 'F')) && empty($option['value'])) {
             if (empty($option['disabled']) && !empty($option['variants'])) {
                 $variant = reset($option['variants']);
                 $option['value'] = $variant['variant_id'];

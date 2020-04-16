@@ -5,7 +5,6 @@
 *}
 {strip}
 <div class="ty-product-notification__body cm-notification-max-height">
-    {include file="views/products/components/product_notification_items.tpl"}
     {$product_info nofilter}
 </div>
 <div class="ty-product-notification__buttons clearfix">

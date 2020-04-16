@@ -1516,6 +1516,7 @@
         <item lang="ru" id="cprices_no_competitor_all">Все товары</item>
         <item lang="ru" id="promotion_bonus_cart_product_discount">Скидка на все товары в корзине</item>
         <item lang="ru" id="promotion_cond_no_catalog_discount">Нет скидки каталога</item>
+        <item lang="ru" id="promotion_cond_free_strings">Условие бесплатной натяжки</item>
         <item lang="ru" id="cart_promotions">Промо корзины</item>
         <item lang="ru" id="catalog_promotions">Промо каталога</item>
         <item lang="ru" id="no_sum_up">Не суммировать с другими скидками</item>
@@ -1535,6 +1536,15 @@
         <item lang="ru" id="expert_stringing">Рекомендация специалиста</item>
         <item lang="ru" id="manual_stringing_selection">Выбрать струну самостоятельно</item>
         <item lang="ru" id="sd_subtitle">Мы можем выполнить натяжку струны на эту ракетку или оставить ее без струн</item>
-        <item lang="ru" id="sd_subtitle_mode_2"><![CDATA[<p>Наш специалист подберет оптимальные струны и жесткость натяжки. Для этого укажите следующую информацию об игроке:</p><p>Пол, возраст, игровой стаж, уровень игры, регулярность тренировок. Если есть индивидуальные предпочтения или пожелания, то какие.</p>]]></item>
+        <item lang="ru" id="sd_subtitle_mode_2"><![CDATA[<p>Наш специалист подберет оптимальные струны и выполнит работу по их натяжке.[paid_strings] Укажите по возможности следующую информацию об игроке в поле ниже:</p><p>Пол, возраст, игровой стаж, уровень игры, регулярность тренировок. Если есть индивидуальные предпочтения или пожелания, то какие.</p>]]></item>
+        <item lang="ru" id="paid_strings_text"> Стоимость струн будет добавлена в заказ.</item>
+        <item lang="ru" id="racket_customization_dialog_title">Подготовить ракетку к игре</item>
+        <item lang="ru" id="sd_subtitle_customization">Подбери свою индивидуальную конфигурацию</item>
+        <item lang="ru" id="all_brands">Все производители</item>
+        <item lang="ru" id="prepare_racket_description">Помощник позволит подобрать струну, обмотки и виброгаситель и получить скидку</item>
+        <item lang="ru" id="prepare_racket_description_no_strings">Помощник позволит подобрать обмотки и виброгаситель и получить скидку</item>
+        <item lang="ru" id="string_discount">Скидка на струны</item>
+        <item lang="ru" id="stringing_service_discount">Скидка на натяжку</item>
+        <item lang="ru" id="string_stringing_service_discount">Скидка на струны и натяжку</item>
     </language_variables>
 </addon>

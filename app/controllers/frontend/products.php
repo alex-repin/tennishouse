@@ -138,7 +138,7 @@ if ($mode == 'search') {
     } elseif (!empty($_REQUEST['ohash'])) {
         $product['selected_options'] = $_REQUEST['ohash'];
     } else {
-        $product['get_default_options'] = true;
+        $product['get_default_options'] = 'C';
     }
 
     fn_gather_additional_product_data($product, true, true);

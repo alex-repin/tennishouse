@@ -25,6 +25,95 @@ use Tygh\Shippings\RusSdek;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+if (!function_exists('array_key_first')) {
+    function array_key_first(array $arr) {
+        foreach($arr as $key => $unused) {
+            return $key;
+        }
+        return NULL;
+    }
+}
+
+function fn_apply_selected_options(&$product, $options, $exceptions = array())
+{
+    $product['selected_options'] = empty($product['selected_options']) ? array() : $product['selected_options'];
+
+    if (!isset($product['options_type']) || !isset($product['exceptions_type'])) {
+        $types = db_get_row('SELECT options_type, exceptions_type FROM ?:products WHERE product_id = ?i', $product['product_id']);
+        $product['options_type'] = $types['options_type'];
+        $product['exceptions_type'] = $types['exceptions_type'];
+    }
+
+    if (empty($product['product_options'])) {
+        if (!empty($product['combination'])) {
+            $selected_options = fn_get_product_options_by_combination($product['combination']);
+        }
+
+        $product['product_options'] = (!empty($selected_options)) ? fn_get_selected_product_options($product['product_id'], $selected_options, CART_LANGUAGE) : $options;
+    }
+
+    if (!empty($exceptions)) {
+        $product['exceptions'] = $exceptions;
+    }
+    if (!empty($products_inventory)) {
+        $product['inventory_combinations'] = $products_inventory[$product_id];
+    }
+    $product = fn_apply_options_rules($product);
+
+    $product['has_options'] = !empty($product['product_options']);
+
+    if (!fn_allowed_for('ULTIMATE:FREE')) {
+        $product = fn_apply_exceptions_rules($product);
+    }
+    unset($product['exceptions']);
+    unset($product['inventory_combinations']);
+
+    // Change price
+    $selected_options = isset($product['selected_options']) ? $product['selected_options'] : array();
+    foreach ($product['product_options'] as $option) {
+        if (!empty($option['disabled'])) {
+            unset($selected_options[$option['option_id']]);
+        }
+    }
+
+    $product['selected_options'] = $selected_options;
+    if (empty($product['modifiers_price'])) {
+        if (!isset($product['base_price'])) {
+            $product['base_price'] = $product['price']; 
+        }
+        $product['base_modifier'] = fn_apply_options_modifiers($selected_options, $product['base_price'], 'P', array(), array('product_data' => $product));
+        $old_price = $product['price'];
+        $product['price'] = fn_apply_options_modifiers($selected_options, $product['price'], 'P', array(), array('product_data' => $product));
+
+        if (empty($product['original_price'])) {
+            $product['original_price'] = $old_price;
+        }
+
+        $product['original_price'] = fn_apply_options_modifiers($selected_options, $product['original_price'], 'P', array(), array('product_data' => $product));
+        $product['modifiers_price'] = $product['price'] - $old_price;
+    }
+
+    if (!empty($product['list_price'])) {
+        $product['list_price'] = fn_apply_options_modifiers($selected_options, $product['list_price'], 'P', array(), array('product_data' => $product));
+    }
+
+    if (!empty($product['prices']) && is_array($product['prices'])) {
+        foreach ($product['prices'] as $pr_k => $pr_v) {
+            $product['prices'][$pr_k]['price'] = fn_apply_options_modifiers($selected_options, $pr_v['price'], 'P', array(), array('product_data' => $product));
+        }
+    }
+}
+
+function fn_is_free_strings($product, $features)
+{
+    if ($product['main_category'] == RACKETS_CATEGORY_ID && !empty($features[R_STRINGS_FEATURE_ID]['value']) && $features[R_STRINGS_FEATURE_ID]['value'] == 'N' && empty($product['list_discount']) && (empty($product['list_price']) || $product['list_price'] < $product['price']) && in_array($features[TYPE_FEATURE_ID]['variant_id'], array(PRO_RACKET_FV_ID, CLUB_RACKET_FV_ID, POWER_RACKET_FV_ID, JUNIOR_RACKET_FV_ID))) {
+        return true;
+    } else {
+        return false;
+    }
+    
+}
+
 function fn_rebuild_inventory_codes($product_id)
 {
     $options = db_get_fields("SELECT a.option_id FROM ?:product_options as a LEFT JOIN ?:product_global_option_links as b ON a.option_id = b.option_id WHERE (a.product_id = ?i OR b.product_id = ?i) AND a.option_type IN ('S','R','C') AND a.inventory = 'Y' ORDER BY position", $product_id, $product_id);
@@ -822,14 +911,40 @@ function fn_promotion_validate_no_catalog_discount(&$promotion, $cart, $cart_pro
     }
 }
 
+function fn_promotion_validate_free_strings(&$promotion, $cart, $cart_products, $promotion_id = 0)
+{
+    static $features = array();
+    
+    if ($cart['products'][$cart['promotion_item_id']]['product_id'] == STRINGING_PRODUCT_ID && !empty($cart['products'][$cart['promotion_item_id']]['extra']['parent']['configuration']) && !empty($cart_products[$cart['products'][$cart['promotion_item_id']]['extra']['parent']['configuration']])) {
+        $product = $cart_products[$cart['products'][$cart['promotion_item_id']]['extra']['parent']['configuration']];
+        if ($product['main_category'] == RACKETS_CATEGORY_ID && empty($product['list_discount'])) {
+            if (!isset($features[$product['product_id']])) {
+                $features[$product['product_id']] = db_get_hash_array("SELECT feature_id, variant_id, value, value_int FROM ?:product_features_values WHERE product_id = ?i AND feature_id IN (?n) AND lang_code = ?s", 'feature_id', $product['product_id'], array(R_STRINGS_FEATURE_ID, TYPE_FEATURE_ID), CART_LANGUAGE);
+            }
+            if (!empty($features[$product['product_id']][R_STRINGS_FEATURE_ID]['value']) && $features[$product['product_id']][R_STRINGS_FEATURE_ID]['value'] == 'N' && in_array($features[$product['product_id']][TYPE_FEATURE_ID]['variant_id'], array(PRO_RACKET_FV_ID, CLUB_RACKET_FV_ID, POWER_RACKET_FV_ID, JUNIOR_RACKET_FV_ID))) {
+                return true;
+            }
+        }
+    }
+    
+    return 'N';
+}
+
 function fn_promotion_validate_store_review(&$promotion, $auth, $promotion_id = 0)
 {
+fn_print_r('1');
     return fn_count_new_reviews($auth['user_id'], 'E');
 }
 
 function fn_promotion_validate_product_review(&$promotion, $auth, $promotion_id = 0)
 {
-    return fn_count_new_reviews($auth['user_id'], 'P');
+    static $reviews;
+    
+    if (!isset($reviews)) {
+        $reviews = fn_count_new_reviews($auth['user_id'], 'P');
+    }
+
+    return $reviews;
 }
 
 function fn_promotion_validate_ip_state($promotion)

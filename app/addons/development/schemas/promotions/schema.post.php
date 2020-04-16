@@ -71,6 +71,16 @@ $scheme['conditions']['no_catalog_discount'] = array(
         ),
     ),
 );
+$scheme['conditions']['free_strings'] = array(
+    'type' => 'statement',
+    'field_function' => array('fn_promotion_validate_free_strings', '#this', '@cart', '@cart_products', '#id'),
+    'zones' => array('cart'),
+    'applicability' => array( // applicable for "positive" groups only
+        'group' => array(
+            'set_value' => true
+        ),
+    ),
+);
 $scheme['conditions']['catalog_coupon_code'] = array(
     'operators' => array ('eq', 'in'),
     // 'cont' - 'contains' was removed as ambiguous, but you can uncomment it back

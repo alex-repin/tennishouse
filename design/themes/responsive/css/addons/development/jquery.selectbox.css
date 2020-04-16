@@ -21,6 +21,12 @@
     width: 306px;
     padding-left: 9px;
 }
+.notification-content-customization .sbHolder {
+    width: 320px;
+}
+.notification-content-customization .sbHolder .sbSelector {
+    width: 275px;
+}
 .sbToggle {
     background: url("../../../media/images/addons/development/select-icons.png") -64px 0 no-repeat #fff;
     display: inline-block;

@@ -37,13 +37,17 @@ fn_register_hooks(
     'get_order_items_info_post',
     'reorder_item',
     'change_order_status',
+    'gather_additional_products_data_pre',
     'gather_additional_product_data_post',
+    'gather_additional_product_data_params',
     'gather_additional_product_data_before_options',
+    'gather_additional_products_data_post',
     'calculate_cart_items_after_promotions',
     'calculate_cart_items_pre',
     'update_cart_data_post',
     'form_cart',
     'calculate_cart_items',
     'update_cart_products_pre',
-    'reorder'
+    'reorder',
+    'post_check_amount_in_stock'
 );

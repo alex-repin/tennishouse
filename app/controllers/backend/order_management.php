@@ -363,7 +363,6 @@ if ($mode == 'edit' && !empty($_REQUEST['order_id'])) {
     }
 
     fn_gather_additional_products_data($cart_products, array('get_icon' => false, 'get_detailed' => false, 'get_options' => true, 'get_discounts' => false));
-
     Registry::get('view')->assign('cart_products', $cart_products);
 
     //

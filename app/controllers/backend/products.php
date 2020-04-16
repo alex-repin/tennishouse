@@ -57,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
         // [tennishouse]
+        db_query("DELETE FROM ?:product_options_exceptions WHERE product_id = ?i", $_REQUEST['product_id']);
         fn_update_product_tracking($_REQUEST['product_id']);
         $condition = fn_get_company_condition('?:product_options.company_id');
         $inventory = db_get_field("SELECT inventory FROM ?:product_options WHERE option_id = ?i $condition", $_REQUEST['global_option']['id']);

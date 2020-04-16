@@ -13,15 +13,12 @@
 ****************************************************************************/
 
 use Tygh\Registry;
+use Tygh\Customization;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-if ($mode == 'submit') {
-
-    Registry::get('view')->assign('mode', $_REQUEST['sd_option']);
-    Registry::get('view')->display('addons/development/views/racket_customization/customization.tpl');
-    exit;
-}
 if ($mode == 'view') {
 
+    Customization::displayCustomization($_REQUEST);
+    exit;
 }

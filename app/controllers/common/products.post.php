@@ -138,42 +138,102 @@ if ($mode == 'options') {
             }
         }
 
+        $ids = array();
         foreach ($cart_products as $cart_id => $item) {
-            if (isset($_cart['products'][$cart_id])) {
-                $amount = isset($item['amount']) ? $item['amount'] : 1;
-                $product_data = fn_get_product_data($item['product_id'], $auth, CART_LANGUAGE, '', false, false, false, false, false, false, false);
-
-                if ($product_data['options_type'] == 'S' && isset($item['product_options']) && isset($_REQUEST['changed_option'][$cart_id])) {
-                    $item['product_options'] = fn_fill_sequential_options($item, $_REQUEST['changed_option'][$cart_id]);
-                    unset($_REQUEST['changed_option']);
-                }
-
-                $product_options = isset($item['product_options']) ? $item['product_options'] : array();
-                $amount = fn_check_amount_in_stock($item['product_id'], $amount, $product_options, $cart_id, $_cart['products'][$cart_id]['is_edp'], 0, $_cart);
-
-                if ($amount === false) {
-                    unset($_cart['products'][$cart_id]);
-                    continue;
-                }
-
-                $_cart['products'][$cart_id]['amount'] = $amount;
-                $_cart['products'][$cart_id]['product_options'] = isset($item['product_options']) ? $item['product_options'] : array();
-
-                if (!empty($_cart['products'][$cart_id]['extra']['saved_options_key'])) {
-                    $_cart['saved_product_options'][$_cart['products'][$cart_id]['extra']['saved_options_key']] = $_cart['products'][$cart_id]['product_options'];
-                }
-
-                if (!empty($item['object_id'])) {
-                    $_cart['products'][$cart_id]['object_id'] = $item['object_id'];
-
-                    if (!empty($_cart['products'][$cart_id]['extra']['saved_options_key'])) {
-                        // Product from promotion. Save object_id for this product
-                        $_cart['saved_object_ids'][$_cart['products'][$cart_id]['extra']['saved_options_key']] = $item['object_id'];
-                    }
+            $ids[] = $item['product_id'];
+            if (!empty($item['configuration'])) {
+                foreach ($item['configuration'] as $group_id => $group) {
+                    $ids[] = reset($group['product_ids']);
                 }
             }
         }
 
+        $params = array(
+            'item_ids' => implode(',', $ids),
+        );
+        list($products, $search) = fn_get_products($params);
+        
+        $options = fn_get_product_options($ids, CART_LANGUAGE, false, false, false, false, false);
+        $exceptions = fn_get_products_exceptions($ids, true);
+        
+        foreach ($cart_products as $cart_id => $item) {
+            $i = array_search($item['product_id'], $ids);
+            $prod = &$products[$i];
+            if (!empty($_REQUEST['changed_option'][$cart_id])) {
+                $prod['changed_option'] = $_REQUEST['changed_option'][$cart_id];
+            }
+            
+            if (!empty($_cart['products'][$cart_id]['original_product_data'])) {
+                $prod['original_product_data'] = $_cart['products'][$cart_id]['original_product_data'];
+            }
+            if (!empty($item['product_options'])) {
+                $prod['selected_options'] = $item['product_options'];
+            }
+            $prod['get_default_options'] = 'A';
+            fn_apply_selected_options($prod, $options[$prod['product_id']], $exceptions[$prod['product_id']]);
+            $_cart['products'][$cart_id]['product_options'] = isset($prod['selected_options']) ? $prod['selected_options'] : array();
+            $_cart['products'][$cart_id]['selectable_cart_id'] = fn_generate_cart_id($prod['product_id'], array('product_options' => $_cart['products'][$cart_id]['product_options']), true);
+
+            if (!empty($item['configuration'])) {
+                foreach ($item['configuration'] as $group_id => $group) {
+                
+                    if (empty($group['object_id']) || empty($group['product_ids'])) {
+                        continue;
+                    }
+                    $_i = array_search(reset($group['product_ids']), $ids);
+                    $_prod = &$products[$_i];
+                    $_cart_id = $group['object_id'];
+                    
+                    if (!empty($_REQUEST['changed_option'][$_prod['product_id']])) {
+                        $_prod['changed_option'] = $_REQUEST['changed_option'][$_prod['product_id']];
+                    }
+                    
+                    if (!empty($_cart['products'][$cart_id]['configuration'][$_cart_id]['original_product_data'])) {
+                        $_prod['original_product_data'] = $_cart['products'][$cart_id]['configuration'][$_cart_id]['original_product_data'];
+                    }
+                    if (!empty($group['options'][$_prod['product_id']]['product_options'])) {
+                        $_prod['selected_options'] = $group['options'][$_prod['product_id']]['product_options'];
+                    }
+                    $_prod['get_default_options'] = 'A';
+
+                    fn_apply_selected_options($_prod, $options[$_prod['product_id']], $exceptions[$_prod['product_id']]);
+
+                    $_cart['products'][$cart_id]['configuration'][$_cart_id]['product_options'] = $_cart['products'][$cart_id]['extra']['configuration'][$group_id]['options'][$_prod['product_id']]['product_options'] = isset($_prod['selected_options']) ? $_prod['selected_options'] : array();
+                    $_cart['products'][$cart_id]['configuration'][$_cart_id]['selectable_cart_id'] = fn_generate_cart_id($_prod['product_id'], array('product_options' => $_cart['products'][$cart_id]['configuration'][$_cart_id]['product_options']), true);
+                }
+            }
+
+            $amount = isset($item['amount']) ? $item['amount'] : 1;
+            $original_amount = 0;
+            
+            if (!empty($_cart['products'][$cart_id]['original_product_data'][$_cart['products'][$cart_id]['selectable_cart_id']]['amount'])) {
+                $original_amount = $_cart['products'][$cart_id]['original_amount'] = $_cart['products'][$cart_id]['original_product_data'][$_cart['products'][$cart_id]['selectable_cart_id']]['amount'];
+            }
+            
+            $amount = fn_check_amount_in_stock($prod['product_id'], $amount, $prod['selected_options'], $cart_id, $_cart['products'][$cart_id]['is_edp'], $original_amount, $_cart);
+            
+            if ($amount === false) {
+                unset($_cart['products'][$cart_id]);
+                unset($_cart['product_groups']);
+                continue;
+            }
+
+            $_cart['products'][$cart_id]['amount'] = $amount;
+
+            if (!empty($_cart['products'][$cart_id]['extra']['saved_options_key'])) {
+                $_cart['saved_product_options'][$_cart['products'][$cart_id]['extra']['saved_options_key']] = $_cart['products'][$cart_id]['product_options'];
+            }
+
+            if (!empty($item['object_id'])) {
+                $_cart['products'][$cart_id]['object_id'] = $item['object_id'];
+
+                if (!empty($_cart['products'][$cart_id]['extra']['saved_options_key'])) {
+                    // Product from promotion. Save object_id for this product
+                    $_cart['saved_object_ids'][$_cart['products'][$cart_id]['extra']['saved_options_key']] = $item['object_id'];
+                }
+            }
+        }
+        
         fn_set_hook('calculate_options', $cart_products, $_cart, $auth);
 
         $exclude_products = array();
@@ -183,40 +243,22 @@ if ($mode == 'options') {
             }
         }
 
-        list ($cart_products) = fn_calculate_cart_content($_cart, $_auth, 'S', true, 'F', true);
-
-        fn_gather_additional_products_data($cart_products, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => false));
-
-        $changed_options = false;
-        foreach ($cart_products as $item_id => $product) {
-            $cart_id = !empty($product['object_id']) ? $product['object_id'] : $item_id;
-
-            if ($_cart['products'][$cart_id]['product_options'] != $product['selected_options']) {
-                $_cart['products'][$cart_id]['product_options'] = $product['selected_options'];
-                $changed_options = true;
-            }
-        }
-
-        if ($changed_options) {
-            list ($cart_products) = fn_calculate_cart_content($_cart, $_auth, 'S', true, 'F', true);
-
-            fn_gather_additional_products_data($cart_products, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => false));
-        }
-
+        $_recalculate = false;
         if (count($_SESSION['cart']['products']) != count($_cart['products'])) {
-            $_recalculate = false;
             foreach ($_SESSION['cart']['products'] as $cart_id => $product) {
                 if (!isset($_cart['products'][$cart_id]) && !isset($exclude_products[$cart_id])) {
                     $_recalculate = true;
                     break;
                 }
             }
-
-            if ($_recalculate) {
-                $_cart = $_SESSION['cart'];
-                list ($cart_products) = fn_calculate_cart_content($_cart, $_auth, 'S', true, 'F', true);
-            }
         }
+
+        if (!empty($_recalculate)) {
+            $_cart = $_SESSION['cart'];
+        }
+
+        list ($cart_products) = fn_calculate_cart_content($_cart, $_auth, 'S', true, 'F', true);
+        fn_gather_additional_products_data($cart_products, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => false));
 
         // Restore the cart_id
         if (!empty($cart_products)) {
@@ -308,28 +350,32 @@ function fn_fill_sequential_options($item, $changed_option)
 
     $product['changed_option'] = $changed_option;
     $product['selected_options'] = $item['product_options'];
+    $product['get_default_options'] = 'A';
+    if (!empty($item['original_product_data'])) {
+        $product['original_product_data'] = $item['original_product_data'];
+    }
 
     fn_gather_additional_product_data($product, false, false, true, false, false);
 
-    if (count($item['product_options']) != count($product['selected_options'])) {
-        foreach ($item['product_options'] as $option_id => $variant_id) {
-            if (isset($product['selected_options'][$option_id]) || (in_array($product['product_options'][$option_id]['option_type'], array('I', 'T', 'F')))) {
-                continue;
-            }
-
-            if (!empty($product['product_options'][$option_id]['variants'])) {
-                reset($product['product_options'][$option_id]['variants']);
-                $variant_id = key($product['product_options'][$option_id]['variants']);
-            } else {
-                $variant_id = '';
-            }
-
-            $product['selected_options'][$option_id] = $variant_id;
-            $product['changed_option'] = $option_id;
-
-            fn_gather_additional_product_data($product, false, false, true, false, false);
-        }
-    }
+//     if (count($item['product_options']) != count($product['selected_options'])) {
+//         foreach ($item['product_options'] as $option_id => $variant_id) {
+//             if (isset($product['selected_options'][$option_id]) || (in_array($product['product_options'][$option_id]['option_type'], array('I', 'T', 'F')))) {
+//                 continue;
+//             }
+// 
+//             if (!empty($product['product_options'][$option_id]['variants'])) {
+//                 reset($product['product_options'][$option_id]['variants']);
+//                 $variant_id = key($product['product_options'][$option_id]['variants']);
+//             } else {
+//                 $variant_id = '';
+//             }
+// 
+//             $product['selected_options'][$option_id] = $variant_id;
+//             $product['changed_option'] = $option_id;
+// 
+//             fn_gather_additional_product_data($product, false, false, true, false, false);
+//         }
+//     }
 
     return $product['selected_options'];
 }

@@ -218,6 +218,59 @@ function fn_product_configurator_get_products(&$params, &$fields, &$sortings, &$
     return true;
 }
 
+function fn_product_configurator_gather_additional_product_data_params(&$products, $params)
+{
+//     foreach ($products as $k => &$prod) {
+//         if (!empty($prod['selected_configuration'])) {
+//             foreach ($prod['selected_configuration'] as $group_id => $_data) {
+//                 foreach ($_data['product_ids'] as $product_id) {
+//                     $data = array(
+//                         'product_id' => $product_id,
+//                         'original_id' => $group_id,
+//                         'virtual_parent_id' => 0,
+//                         'get_default_options' => 'A'
+//                     );
+//                     if (!empty($_data['options'][$product_id]['product_options'])) {
+//                         $data['selected_options'] = $_data['options'][$product_id]['product_options'];
+//                     }
+//                     if (!empty($prod['changed_configuration_option']) && $product_id == array_key_first($prod['changed_configuration_option'])) {
+//                         $data['changed_option'] = reset($prod['changed_configuration_option']);
+//                     }
+//                     $products[] = $data;
+//                 }
+//             }
+//         }
+//     }
+}
+
+function fn_product_configurator_gather_additional_products_data_pre(&$products, $params)
+{
+    if (empty($params['get_for_one_product'])) {
+        foreach ($products as $k => &$product) {
+            if (!empty($product['configuration'])) {
+                foreach ($product['configuration'] as $item_id => $_data) {
+                    $_data['virtual_parent_id'] = $k;
+                    $_data['original_id'] = $item_id;
+                    $products[] = $_data;
+                }
+            }
+        }
+    }
+}
+
+function fn_product_configurator_gather_additional_products_data_post($product_ids, $params, &$products, $auth)
+{
+// Moved to the dev addon in order to apply variant images
+//     if (empty($params['get_for_one_product'])) {
+//         foreach ($products as $k => $product) {
+//             if (isset($product['virtual_parent_id']) && !empty($product['original_id'])) {
+//                 $products[$product['virtual_parent_id']]['configuration'][$product['original_id']] = $product;
+//                 unset($products[$k]);
+//             }
+//         }
+//     }
+}
+
 function fn_product_configurator_gather_additional_product_data_before_options(&$product, $auth, $params)
 {
     if (!empty($params['get_for_one_product'])) {
@@ -288,18 +341,19 @@ function fn_product_configurator_gather_additional_product_data_post(&$product, 
 //             $product['list_price'] += $c_og_price;
 //         }
 //     }
-    if (AREA == 'A' && !empty($product['extra']['configuration'])) {
+    if (AREA == 'A' && !empty($product['extra']['configuration']) && $product['main_category'] == RACKETS_CATEGORY_ID) {
         $product['configuration_mode'] = true;
         $selected_configuration = $product['extra']['configuration'];
-        if (!empty($product['extra']['configuration'][STRINGING_GROUP_ID])) {
-            fn_get_stringing_options($product, $selected_configuration);
-        }
-        if (!empty($product['extra']['configuration'][DAMPENER_GROUP_ID])) {
-            fn_get_dampener_options($product, $selected_configuration);
-        }
-        if (!empty($product['extra']['configuration'][OVERGRIP_GROUP_ID])) {
-            fn_get_overgrip_options($product, $selected_configuration);
-        }
+        fn_get_customization_options($product, $selected_configuration);
+//         if (!empty($product['extra']['configuration'][STRINGING_GROUP_ID]) || !empty($product['extra']['configuration'][STRINGING_TENSION_GROUP_ID])) {
+//             fn_get_stringing_options($product, $selected_configuration);
+//         }
+//         if (!empty($product['extra']['configuration'][DAMPENER_GROUP_ID])) {
+//             fn_get_dampener_options($product, $selected_configuration);
+//         }
+//         if (!empty($product['extra']['configuration'][OVERGRIP_GROUP_ID])) {
+//             fn_get_overgrip_options($product, $selected_configuration);
+//         }
         if (!empty($product['product_configurator_groups']) && !empty($product['configuration'])) {
             foreach ($product['product_configurator_groups'] as $k => $pc) {
                 foreach ($product['configuration'] as $l => $cnf) {
@@ -310,18 +364,18 @@ function fn_product_configurator_gather_additional_product_data_post(&$product, 
             }
         }
     }
-    if (AREA == 'C' && $_REQUEST['dispatch'] == 'checkout.cart' && !empty($product['configuration']) && ($params['get_icon'] || $params['get_detailed'])) {
-        $prod_ids = array();
-        foreach ($product['configuration'] as $i => $prod) {
-            $prod_ids[] = $prod['product_id'];
-        }
-        $products_images = fn_get_image_pairs($prod_ids, 'product', 'M', $params['get_icon'], $params['get_detailed'], CART_LANGUAGE);
-        foreach ($product['configuration'] as $i => &$prod) {
-            if (empty($prod['main_pair']) && !empty($products_images[$prod['product_id']])) {
-                $prod['main_pair'] = reset($products_images[$prod['product_id']]);
-            }
-        }
-    }
+//     if (AREA == 'C' && in_array($_REQUEST['dispatch'], array('checkout.cart', 'racket_customization.submit')) && !empty($product['configuration']) && ($params['get_icon'] || $params['get_detailed'])) {
+//         $prod_ids = array();
+//         foreach ($product['configuration'] as $i => $prod) {
+//             $prod_ids[] = $prod['product_id'];
+//         }
+//         $products_images = fn_get_image_pairs($prod_ids, 'product', 'M', $params['get_icon'], $params['get_detailed'], CART_LANGUAGE);
+//         foreach ($product['configuration'] as $i => &$prod) {
+//             if (empty($prod['main_pair']) && !empty($products_images[$prod['product_id']])) {
+//                 $prod['main_pair'] = reset($products_images[$prod['product_id']]);
+//             }
+//         }
+//     }
 }
 
 function fn_product_configurator_update_cart_data_post(&$cart, $cart_products)
@@ -503,15 +557,6 @@ function fn_product_configurator_calculate_cart_items_pre(&$cart, $cart_products
     }
 }
 
-function fn_product_configurator_form_cart($order_info, &$cart)
-{
-    foreach ($cart['products'] as $k => &$product) {
-        if (!empty($product['extra']['configuration_data'])) {
-            $product['configuration'] = $product['extra']['configuration_data'];
-        }
-    }
-}
-
 function fn_product_configurator_calculate_cart_items($cart, &$cart_products, $auth)
 {
     if (AREA == 'A') {
@@ -557,6 +602,22 @@ function fn_product_configurator_calculate_cart_items_after_promotions(&$cart, &
                 $product['configuration'][$item_id]['product'] = $cart_products[$item_id]['product'];
                 unset($cart_products[$item_id]);
                 unset($cart['products'][$item_id]);
+            }
+        }
+    }
+}
+
+function fn_product_configurator_post_check_amount_in_stock($product_id, &$amount, $product_options, $cart_id, $is_edp, $original_amount, &$cart)
+{
+    if (!empty($cart['products'][$cart_id]['configuration'])) {
+        foreach ($cart['products'][$cart_id]['configuration'] as $_cart_id => $prod) {
+            $selectable_cart_id = fn_generate_cart_id($prod['product_id'], array('product_options' => (!empty($prod['product_options']) ? $prod['product_options'] : array())), true);
+            $_original_amount = !empty($prod['original_product_data'][$selectable_cart_id]['amount']) ? $prod['original_product_data'][$selectable_cart_id]['amount'] : 0 ;
+            $_amount = fn_check_amount_in_stock($prod['product_id'], $prod['amount'], (!empty($prod['product_options']) ? $prod['product_options'] : array()), $_cart_id, (!empty($prod['is_edp']) && $prod['is_edp'] == 'Y' ? 'Y' : 'N'), (!empty($prod['original_product_data'][$selectable_cart_id]['amount']) ? $prod['original_product_data'][$selectable_cart_id]['amount'] : 0), $cart);
+
+            if (empty($_amount)) {
+                $amount = false;
+                break;
             }
         }
     }
@@ -618,6 +679,31 @@ function fn_product_configurator_get_cart_product_data($product_id, &$_pdata, &$
             $product['amount'] = $total_amount;
             foreach ($product['configuration'] as $item_id => $_data) {
                 $_pdata['configuration'][$item_id]['amount'] = $product['configuration'][$item_id]['amount'] = (int) $product['configuration'][$item_id]['extra']['step'] * $total_amount;
+            }
+        }
+    }
+}
+
+function fn_product_configurator_form_cart($order_info, &$cart)
+{
+    foreach ($cart['products'] as $k => &$product) {
+        if (!empty($product['extra']['configuration_data'])) {
+            $product['configuration'] = $product['extra']['configuration_data'];
+            if (defined('ORDER_MANAGEMENT')) {
+                foreach ($product['configuration'] as $_id => $conf) {
+                    $product['configuration'][$_id]['original_amount'] = $conf['amount'];
+                    $selectable_cart_id = fn_generate_cart_id($conf['product_id'], array('product_options' => (!empty($conf['product_options']) ? $conf['product_options'] : array())), true);
+                    $product['configuration'][$_id]['original_product_data'][$selectable_cart_id] = $product['configuration'][$_id]['extra']['original_product_data'][$selectable_cart_id] = array (
+                        'cart_id' => $selectable_cart_id,
+                        'amount' => $conf['amount'],
+                        'product_options' => !empty($conf['product_options']) ? $conf['product_options'] : array()
+                    );
+                    if (in_array($selectable_cart_id, array_keys($cart['original_product_data'][$conf['product_id']]))) {
+                        $cart['original_product_data'][$conf['product_id']][$selectable_cart_id]['amount'] += $conf['amount'];
+                    } else {
+                        $cart['original_product_data'][$conf['product_id']][$selectable_cart_id] = $product['configuration'][$_id]['original_product_data'][$selectable_cart_id];
+                    }
+                }
             }
         }
     }
@@ -847,6 +933,7 @@ function fn_product_configurator_get_order_items_info_post(&$order, $v, $k)
     if (!empty($v['extra']['configuration_data'])) {
         foreach ($v['extra']['configuration_data'] as $i => $cp) {
             $order['products'][$k]['extra']['configuration_data'][$i]['is_accessible'] = fn_is_accessible_product($cp);
+            $order['products'][$k]['extra']['configuration_data'][$i]['discount_prc'] = sprintf('%d', round($order['products'][$k]['extra']['configuration_data'][$i]['discount'] * 100 / $order['products'][$k]['extra']['configuration_data'][$i]['original_price']));;
         }
     }
 }
@@ -971,15 +1058,275 @@ function fn_product_configurator_update_product_pre(&$product_data, $product_id,
     return true;
 }
 
+function fn_get_customization_options(&$product, $selected_configuration, $get_stringing = true)
+{
+    static $_products, $product_options, $product_exceptions;
+    $cids = $show_out_of_stock_ids = $stringing_options = $dampener_options = $overgrip_options = array();
+    
+    if (!empty($selected_configuration[STRINGING_GROUP_ID]) && !isset($_products[STRINGING_GROUP_ID])) {
+        $cids[] = STRINGS_CATEGORY_ID;
+    }
+    if (!empty($selected_configuration[DAMPENER_GROUP_ID]) && !isset($_products[DAMPENER_GROUP_ID])) {
+        $cids[] = DAMPENERS_CATEGORY_ID;
+    }
+    if (!empty($selected_configuration[OVERGRIP_GROUP_ID]) && !isset($_products[OVERGRIP_GROUP_ID])) {
+        $cids[] = OVERGRIPS_CATEGORY_ID;
+    }
+    if (!empty($cids)) {
+        $params = array(
+            'cid' => implode(',', $cids),
+            'subcats' => 'Y'
+        );
+        
+        list($products, $search) = fn_get_products($params);
+        if (!empty($products)) {
+            foreach ($products as $i => $prod) {
+                if ($prod['product_id'] == STRINGING_PRODUCT_ID) {
+                    $_products[STRINGING_TENSION_GROUP_ID][$prod['product_id']] = $prod;
+                } elseif ($prod['main_category'] == STRINGS_CATEGORY_ID) {
+                    $_products[STRINGING_GROUP_ID][$prod['product_id']] = $prod;
+                } elseif ($prod['main_category'] == DAMPENERS_CATEGORY_ID) {
+                    $_products[DAMPENER_GROUP_ID][$prod['product_id']] = $prod;
+                } elseif ($prod['main_category'] == OVERGRIPS_CATEGORY_ID) {
+                    $_products[OVERGRIP_GROUP_ID][$prod['product_id']] = $prod;
+                }
+            }
+        }
+    }
+    $cart_ref = $group_ref = array();
+    if (!empty($product['configuration'])) {
+        foreach ($product['configuration'] as $group_id => $prod) {
+            $cart_ref[$prod['product_id']] = $group_ref[$prod['group_id']] = $group_id;
+        }
+    }
+    
+    $opt_product_ids = $exc_product_ids = $ids_ref = array();
+    foreach ($_products as $group => $prods) {
+        $fill_opt = $fill_exc = false;
+        if (!isset($product_options[$group])) {
+            $fill_opt = true;
+        }
+        if (!isset($product_exceptions[$group])) {
+            $fill_exc = true;
+        }
+        $selected_id = reset($selected_configuration[$group]['product_ids']);
+        foreach ($prods as $i => $v) {
+            $ids_ref[$v['product_id']] = $group;
+            if (!empty($fill_opt) && !in_array($v['product_id'], $opt_product_ids)) {
+                $opt_product_ids[] = $v['product_id'];
+            }
+            if (!empty($fill_exc) && !in_array($v['product_id'], $exc_product_ids)) {
+                $exc_product_ids[] = $v['product_id'];
+            }
+            if ($v['product_id'] == $selected_id && !empty($product['configuration'][$cart_ref[$v['product_id']]]['original_product_data'])) {
+                $_products[$group][$i]['original_product_data'] = $product['configuration'][$cart_ref[$v['product_id']]]['original_product_data'];
+            }
+        }
+    }
+    if (!empty($opt_product_ids)) {
+        $options = fn_get_product_options($opt_product_ids, CART_LANGUAGE, false, false, false, false, false);
+        if (!empty($options)) {
+            foreach ($options as $prod_id => $opts) {
+                $product_options[$ids_ref[$prod_id]][$prod_id] = $opts;
+            }
+        }
+    }
+    if (!empty($exc_product_ids)) {
+        $exceptions = fn_get_products_exceptions($exc_product_ids, true);
+        if (!empty($exceptions)) {
+            foreach ($exceptions as $prod_id => $excps) {
+                $product_exceptions[$ids_ref[$prod_id]][$prod_id] = $excps;
+            }
+        }
+    }
+    
+    $c_price = 0;
+    if (!empty($selected_configuration[STRINGING_GROUP_ID])) {
+        $stringing_options = array(
+            'group_id' => STRINGING_GROUP_ID,
+            'configurator_group_name' => __("string"),
+            'full_description' => __("select_stringing"),
+            'configurator_group_type' => 'S',
+            'position' => 0,
+            'default_product_ids' => 'CONSULT_STRINGING',
+            'required' => 'N',
+            'max_amount' => 1,
+            'amount' => 1,
+            'is_separate' => true,
+            'group_item_id' => $group_ref[STRINGING_GROUP_ID]
+        );
+        $base_stringing_options = array(
+            array(
+                'product_id' => 'UNSTRUNG',
+                'product' => __('unstrung'),
+                'no_product' => true
+            ),
+            array(
+                'product_id' => 'CONSULT_STRINGING',
+                'product' => __('consult_string'),
+                'no_product' => true,
+                'no_price' => true
+            )
+        );
+        list($stringing_options, $cprice) = fn_format_customization_group($_products[STRINGING_GROUP_ID], $stringing_options, $base_stringing_options, $selected_configuration[STRINGING_GROUP_ID], $product_options[STRINGING_GROUP_ID], $product_exceptions[STRINGING_GROUP_ID]);
+        $c_price += $cprice;
+        $product['product_configurator_groups'][STRINGING_GROUP_ID] = $stringing_options;
+    }
+
+    if (!empty($selected_configuration[STRINGING_TENSION_GROUP_ID])) {
+        $tension_product = reset($_products[STRINGING_TENSION_GROUP_ID]);
+        if (!empty($product_options[STRINGING_TENSION_GROUP_ID][STRINGING_PRODUCT_ID])) {
+            if (!empty($selected_configuration[STRINGING_TENSION_GROUP_ID]['options'][STRINGING_PRODUCT_ID]['product_options'])) {
+                $tension_product['selected_options'] = $selected_configuration[STRINGING_TENSION_GROUP_ID]['options'][STRINGING_PRODUCT_ID]['product_options'];
+            }
+            fn_apply_selected_options($tension_product, $product_options[STRINGING_TENSION_GROUP_ID][STRINGING_PRODUCT_ID]);
+        }
+        $tension_options = array(
+            'group_id' => STRINGING_TENSION_GROUP_ID,
+            'configurator_group_name' => __("stringing_service"),
+            'configurator_group_type' => 'T',
+            'position' => 0,
+            'default_product_ids' => STRINGING_PRODUCT_ID,
+            'product' => $tension_product,
+            'is_separate' => true,
+            'group_item_id' => $group_ref[STRINGING_TENSION_GROUP_ID]
+        );
+        $c_price += $tension_product['price'];
+        $product['product_configurator_groups'][STRINGING_TENSION_GROUP_ID] = $tension_options;
+    }
+        
+    if (!empty($selected_configuration[DAMPENER_GROUP_ID])) {
+        $dampener_options = array(
+            'group_id' => DAMPENER_GROUP_ID,
+            'configurator_group_name' => __("dampener"),
+            'full_description' => __("select_dampener"),
+            'configurator_group_type' => 'S',
+            'position' => 0,
+            'default_product_ids' => 0,
+            'required' => 'N',
+            'max_amount' => 1,
+            'amount' => 1,
+            'is_separate' => true,
+            'group_item_id' => $group_ref[DAMPENER_GROUP_ID],
+            'description' => db_get_field("SELECT description FROM ?:category_descriptions WHERE category_id = ?i and lang_code = ?s", DAMPENERS_CATEGORY_ID, CART_LANGUAGE)
+        );
+        $base_dampener_options = array(
+            array(
+                'product_id' => 'NODAMPENER',
+                'product' => __('no_dampener'),
+                'no_product' => true
+            ),
+        );
+        list($dampener_options, $cprice) = fn_format_customization_group($_products[DAMPENER_GROUP_ID], $dampener_options, $base_dampener_options, $selected_configuration[DAMPENER_GROUP_ID], $product_options[DAMPENER_GROUP_ID], $product_exceptions[DAMPENER_GROUP_ID]);
+        $c_price += $cprice;
+        $product['product_configurator_groups'][DAMPENER_GROUP_ID] = $dampener_options;
+    }
+    
+    if (!empty($selected_configuration[OVERGRIP_GROUP_ID])) {
+        $overgrip_options = array(
+            'group_id' => OVERGRIP_GROUP_ID,
+            'configurator_group_name' => __("overgrip"),
+            'full_description' => __("select_overgrip"),
+            'configurator_group_type' => 'S',
+            'position' => 0,
+            'default_product_ids' => 0,
+            'required' => 'N',
+            'max_amount' => 1,
+            'amount' => 1,
+            'is_separate' => true,
+            'group_item_id' => $group_ref[OVERGRIP_GROUP_ID],
+            'description' => db_get_field("SELECT description FROM ?:category_descriptions WHERE category_id = ?i and lang_code = ?s", OVERGRIPS_CATEGORY_ID, CART_LANGUAGE)
+        );
+        $base_overgrip_options = array(
+            array(
+                'product_id' => 'NOOVERGRIP',
+                'product' => __('no_overgrip'),
+                'no_product' => true
+            ),
+        );
+        list($overgrip_options, $cprice) = fn_format_customization_group($_products[OVERGRIP_GROUP_ID], $overgrip_options, $base_overgrip_options, $selected_configuration[OVERGRIP_GROUP_ID], $product_options[OVERGRIP_GROUP_ID], $product_exceptions[OVERGRIP_GROUP_ID]);
+        $c_price += $cprice;
+        $product['product_configurator_groups'][OVERGRIP_GROUP_ID] = $overgrip_options;
+    }
+    
+    return array($stringing_options, $dampener_options, $overgrip_options, $c_price);
+}
+
+function fn_format_customization_group($_products, $group_options, $base_group_options, $selected_configuration = array(), $options = array(), $exceptions = array())
+{
+    $c_price = 0;
+    $original_product_ids = !empty($_SESSION['cart']['original_product_data']) ? array_keys($_SESSION['cart']['original_product_data']) : array();
+    
+    $default_ids = explode(':', $group_options['default_product_ids']);
+    $selected_ids = empty($selected_configuration['product_ids']) ? $default_ids : (!is_array($selected_configuration['product_ids']) ? array($selected_configuration['product_ids']) : $selected_configuration['product_ids']);
+    $selected_options = empty($selected_configuration['options']) ? array() : $selected_configuration['options'];
+    
+    foreach ($_products as $_k => $_v) {
+
+        if (in_array($_v['product_id'], $selected_ids)) {
+            if (!empty($selected_options[$_v['product_id']]['product_options'])) {
+                $_products[$_k]['selected_options'] = $selected_options[$_v['product_id']]['product_options'];
+            }
+        }
+        if (($_v['status'] == 'D' || $_v['amount'] <= 0) && (empty($original_product_ids) || !in_array($_v['product_id'], $original_product_ids))) {
+            unset($_products[$_k]);
+        }
+    }
+    
+    foreach ($_products as $i => $prod) {
+        if (!empty($options[$prod['product_id']])) {
+            fn_apply_selected_options($_products[$i], $options[$prod['product_id']], $exceptions[$prod['product_id']]);
+        }
+    }
+
+    $_products = array_merge($base_group_options, $_products);
+    
+    $class_ids = array();
+    $is_selected = false;
+    foreach ($_products as $_k => $_v) {
+
+        $_products[$_k] = $_v;
+
+        if (in_array($_v['product_id'], $selected_ids)) {
+            $group_options['no_product'] = !empty($_v['no_product']) ? $_v['no_product'] : false;
+            $is_selected = true;
+            $_products[$_k]['selected'] = 'Y';
+            $group_options['selected_product'] = $_v['product_id'];
+            if (!empty($_v['price'])) {
+                $c_price += $_v['price'] * $group_options['amount'];
+            }
+        } else {
+            $_products[$_k]['selected'] = 'N';
+        }
+
+        // Recommended products
+        if (in_array($_v['product_id'], $default_ids)) {
+            $_products[$_k]['recommended'] = 'Y';
+        }
+
+        if (!empty($_v['class_ids'])) {
+            $_products[$_k]['class_ids'] = explode(',', $_v['class_ids']);
+            $class_ids = array_merge($class_ids, $_products[$_k]['class_ids']);
+        }
+    }
+
+    $group_options['products_count'] = count($_products);
+    $group_options['products'] = $_products;
+    
+    return array($group_options, $c_price);
+}
+
 function fn_get_stringing_options(&$product, $selected_configuration, $get_stringing = true)
 {
+    static $_products;
+    
     $stringing_options = array(
         'group_id' => STRINGING_GROUP_ID,
         'configurator_group_name' => __("string"),
         'full_description' => __("select_stringing"),
         'configurator_group_type' => 'S',
         'position' => 0,
-        'default_product_ids' => 0,
+        'default_product_ids' => 'CONSULT_STRINGING',
         'required' => 'N',
         'max_amount' => 1,
         'amount' => 1,
@@ -1000,11 +1347,13 @@ function fn_get_stringing_options(&$product, $selected_configuration, $get_strin
     );
     $c_price = 0;
 
-    $params = array(
-        'cid' => STRINGS_CATEGORY_ID,
-        'subcats' => 'Y'
-    );
-    list($_products, $search) = fn_get_products($params);
+    if (!isset($_products)) {
+        $params = array(
+            'cid' => STRINGS_CATEGORY_ID,
+            'subcats' => 'Y'
+        );
+        list($_products, $search) = fn_get_products($params);
+    }
     
     $default_ids = explode(':', $stringing_options['default_product_ids']);
     $selected_ids = empty($selected_configuration[$stringing_options['group_id']]['product_ids']) ? $default_ids : (!is_array($selected_configuration[$stringing_options['group_id']]['product_ids']) ? array($selected_configuration[$stringing_options['group_id']]['product_ids']) : $selected_configuration[$stringing_options['group_id']]['product_ids']);
@@ -1014,6 +1363,9 @@ function fn_get_stringing_options(&$product, $selected_configuration, $get_strin
             if (!empty($selected_options[$_v['product_id']]['product_options'])) {
                 $_products[$_k]['selected_options'] = $selected_options[$_v['product_id']]['product_options'];
             }
+        }
+        if ($_v['status'] == 'D' || $_v['amount'] <= 0) {
+            unset($_products[$_k]);
         }
     }
     
@@ -1101,6 +1453,8 @@ function fn_get_stringing_options(&$product, $selected_configuration, $get_strin
 
 function fn_get_dampener_options(&$product, $selected_configuration)
 {
+    static $_products;
+    
     $dampener_options = array(
         'group_id' => DAMPENER_GROUP_ID,
         'configurator_group_name' => __("dampener"),
@@ -1120,20 +1474,16 @@ function fn_get_dampener_options(&$product, $selected_configuration)
             'product' => __('no_dampener'),
             'no_product' => true
         ),
-//         array(
-//             'product_id' => 'CONSULT',
-//             'product' => __('consult_string'),
-//             'no_product' => true,
-//             'no_price' => true
-//         )
     );
     $c_price = 0;
 
-    $params = array(
-        'cid' => DAMPENERS_CATEGORY_ID,
-        'subcats' => 'Y'
-    );
-    list($_products, $search) = fn_get_products($params);
+    if (!isset($_products)) {
+        $params = array(
+            'cid' => DAMPENERS_CATEGORY_ID,
+            'subcats' => 'Y'
+        );
+        list($_products, $search) = fn_get_products($params);
+    }
     
     $default_ids = explode(':', $dampener_options['default_product_ids']);
     $selected_ids = empty($selected_configuration[$dampener_options['group_id']]['product_ids']) ? $default_ids : (!is_array($selected_configuration[$dampener_options['group_id']]['product_ids']) ? array($selected_configuration[$dampener_options['group_id']]['product_ids']) : $selected_configuration[$dampener_options['group_id']]['product_ids']);
@@ -1145,6 +1495,9 @@ function fn_get_dampener_options(&$product, $selected_configuration)
             if (!empty($selected_options[$_v['product_id']]['product_options'])) {
                 $_products[$_k]['selected_options'] = $selected_options[$_v['product_id']]['product_options'];
             }
+        }
+        if ($_v['status'] == 'D' || $_v['amount'] <= 0) {
+            unset($_products[$_k]);
         }
     }
     
@@ -1200,6 +1553,8 @@ function fn_get_dampener_options(&$product, $selected_configuration)
 
 function fn_get_overgrip_options(&$product, $selected_configuration)
 {
+    static $_products;
+    
     $overgrip_options = array(
         'group_id' => OVERGRIP_GROUP_ID,
         'configurator_group_name' => __("overgrip"),
@@ -1219,20 +1574,16 @@ function fn_get_overgrip_options(&$product, $selected_configuration)
             'product' => __('no_overgrip'),
             'no_product' => true
         ),
-//         array(
-//             'product_id' => 'CONSULT',
-//             'product' => __('consult_string'),
-//             'no_product' => true,
-//             'no_price' => true
-//         )
     );
     $c_price = 0;
 
-    $params = array(
-        'cid' => OVERGRIPS_CATEGORY_ID,
-        'subcats' => 'Y'
-    );
-    list($_products, $search) = fn_get_products($params);
+    if (!isset($_products)) {
+        $params = array(
+            'cid' => OVERGRIPS_CATEGORY_ID,
+            'subcats' => 'Y'
+        );
+        list($_products, $search) = fn_get_products($params);
+    }
     
     $default_ids = explode(':', $overgrip_options['default_product_ids']);
     $selected_ids = empty($selected_configuration[$overgrip_options['group_id']]['product_ids']) ? $default_ids : (!is_array($selected_configuration[$overgrip_options['group_id']]['product_ids']) ? array($selected_configuration[$overgrip_options['group_id']]['product_ids']) : $selected_configuration[$overgrip_options['group_id']]['product_ids']);
@@ -1244,6 +1595,9 @@ function fn_get_overgrip_options(&$product, $selected_configuration)
             if (!empty($selected_options[$_v['product_id']]['product_options'])) {
                 $_products[$_k]['selected_options'] = $selected_options[$_v['product_id']]['product_options'];
             }
+        }
+        if ($_v['status'] == 'D' || $_v['amount'] <= 0) {
+            unset($_products[$_k]);
         }
     }
     
@@ -1563,6 +1917,11 @@ function fn_product_configurator_update_cart_products_post(&$cart, $product_data
 {
     if (!empty($cart['products'])) {
         foreach ($cart['products'] as $_id => $product) {
+            if (!empty($product['prev_cart_id']) && !empty($product_data[$product['prev_cart_id']])) {
+                $product_data[$product['prev_cart_id']]['cart_id'] = $_id;
+                $product_data[$_id] = $product_data[$product['prev_cart_id']];
+                unset($product_data[$product['prev_cart_id']]);
+            }
             if (!empty($product['extra']['configuration']) && !empty($product['prev_cart_id']) && $product['prev_cart_id'] != $_id) {
                 foreach ($cart['products'] as $aux_id => $aux_product) {
                     if (!empty($aux_product['extra']['parent']['configuration']) && $aux_product['extra']['parent']['configuration'] == $product['prev_cart_id']) {
@@ -1574,7 +1933,7 @@ function fn_product_configurator_update_cart_products_post(&$cart, $product_data
         }
 
         foreach ($cart['products'] as $upd_id => $upd_product) {
-            if (!empty($upd_product['update_c_id']) && $upd_product['update_c_id'] == true) {
+            if (!empty($upd_product['update_c_id'])) {
                 $new_id = fn_generate_cart_id($upd_product['product_id'], $upd_product['extra'], false);
 
                 if (!isset($cart['products'][$new_id])) {
@@ -1623,7 +1982,7 @@ function fn_product_configurator_update_cart_products_post(&$cart, $product_data
                 }
                 $p_data['extra'] = $cart['products'][$i]['extra'];
                 $_product_data[$p_data['product_id']] = $p_data;
-                $ids = fn_add_product_to_cart($_product_data, $cart, $customer_auth);
+                $ids = fn_add_product_to_cart($_product_data, $cart, !empty($_SESSION['customer_auth']) ? $_SESSION['customer_auth'] : fn_fill_auth(array(), array(), false, 'C'));
                 $new_key = array_search($p_data['product_id'], $ids);
                 if ($count > count($cart['products'][$new_key]['configuration'])) {
                     $cart = $org_cart;
