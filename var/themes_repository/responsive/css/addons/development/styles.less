@@ -418,8 +418,33 @@ select {
     .ty-popup-notification-title {
         font-weight: bold;
         font-size: 1.7rem;
-        padding: 17px 30px 16px 20px;
+        padding: 0;
         color: #000;
+    }
+    .ty-customization-title {
+        padding: 17px 30px 16px 30px;
+        display: inline-block;
+        font-size: 1.7rem;
+        font-family: @headings_font;
+        font-weight: bold;
+        vertical-align: top;
+        white-space: normal;
+    }
+    .ty-customization-menu {
+        font-family: @headings_font;
+        height: 62px;
+        width: 70px;
+        padding: 0;
+        text-align: center;
+        background-size: 30px 26px;
+        background-repeat: no-repeat;
+        background-color: transparent;
+        cursor: pointer;
+        background-image: url("../../../media/images/addons/development/arrow_left_dd.svg");
+        background-position: center center;
+        display: inline-block;
+        border-right: 1px solid @border_color;
+        vertical-align: top;
     }
     .ty-product-notification__body {
         padding: 0px 20px 25px;
@@ -683,6 +708,7 @@ select {
     box-shadow: 0 1px 16px rgba(0, 0, 0, 1);
     z-index: 510;
     margin: 0;
+    z-index: 1001;
 }
 .notification-content-extended h1 {
     background: #fff;

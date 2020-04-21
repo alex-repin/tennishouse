@@ -1,8 +1,5 @@
 <div id="rc_dialog">
 {capture name="buttons"}
-    {if $dialog_data.option && !$dialog_data.edit_configuration && !$racket.is_strung}
-        <div class="ty-sd-back-button cm-sd-option" data-home="1" {if $dialog_data.option == '3'}data-reload="true"{/if}>{__("back")}</div>
-    {/if}
 {/capture}
 {capture name="info"}
         <div class="{if $dialog_data.option}ty-sd__content-mode-{$dialog_data.option}{/if}" {if $dialog_data.option}id="sd_content_mode_{$dialog_data.option}"{/if}>
@@ -249,7 +246,7 @@
                         </div>
                     </div>
                     <div class="ty-column3">
-                        <div class="ty-grid-list__item-wrapper cm-sd-option" data-option="2" data-step="{$smarty.const.STRINGING_TENSION_GROUP_ID}" data-product-add="{$smarty.const.STRINGING_PRODUCT_ID}">
+                        <div class="ty-grid-list__item-wrapper cm-sd-option" data-option="2" data-step="{$smarty.const.STRINGING_TENSION_GROUP_ID}" data-product-add="{$smarty.const.STRINGING_PRODUCT_ID}" data-reload="true">
                             <div class="ty-grid-list__item">
                                 <div class="ty-grid-list__item-sd-bg ty-grid-list__item-sd-es-bg"></div>
                                 <div class="ty-grid-list__item-sd-title">{__("expert_stringing")}</div>
@@ -285,7 +282,7 @@
             {/if}
             <button class="hidden" id="stringing_form_submit" type="submit"></button>
         </form>
-        {if $dialog_data.option}<!--sd__content-mode-{$dialog_data.option}-->{/if}</div>
+        {if $dialog_data.option}<!--sd_content_mode_{$dialog_data.option}-->{/if}</div>
 {/capture}
 {include file="addons/development/views/racket_customization/stringing_notification.tpl" product_buttons=$smarty.capture.buttons product_info=$smarty.capture.info}
 <!--rc_dialog--></div>

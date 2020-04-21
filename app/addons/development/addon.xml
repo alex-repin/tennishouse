@@ -1546,5 +1546,9 @@
         <item lang="ru" id="string_discount">Скидка на струны</item>
         <item lang="ru" id="stringing_service_discount">Скидка на натяжку</item>
         <item lang="ru" id="string_stringing_service_discount">Скидка на струны и натяжку</item>
+        <item lang="ru" id="back_to_menu">Назад к меню</item>
+        <item lang="ru" id="show_customization_details">Собранный комплект</item>
+        <item lang="ru" id="go_to_products_list">К cписку товаров</item>
+        <item lang="ru" id="dampeners">Виброгасители</item>
     </language_variables>
 </addon>

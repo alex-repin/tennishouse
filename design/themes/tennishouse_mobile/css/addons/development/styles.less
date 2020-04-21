@@ -311,12 +311,441 @@ select {
     box-shadow: 0 1px 16px rgba(0, 0, 0, 1);
     z-index: 1000;
     margin: 0;
+    width: 96%;
     h1 {
         background: #fff;
         border-bottom: 1px solid @base;
         span {
             font-size: 20px;
         }
+    }
+}
+.notification-content-stringing {
+/*     width: 600px; */
+    .ty-product-options__description {
+        margin: 0;
+    }
+    .ty-price-num, .ty-list-price {
+        font-size: 1.2rem;
+    }
+    .ty-sd_subtitle {
+        margin-bottom: 15px;
+        font-size: 1rem;
+/*         color: lighten(@font, 35%); */
+    }
+    .ty-sd_subtitle p {
+        font-size: 1rem;
+/*         color: lighten(@font, 35%); */
+    }
+    .ty-product-notification__buttons {
+        padding: 0;
+        height: 50px;
+        border-top: 1px solid @border_color;
+    }
+    .ty-popup-notification-title {
+        font-weight: bold;
+        font-size: 1.4rem;
+        color: #000;
+        white-space: normal;
+        padding: 0;
+        span {
+            top: 21px;
+        }
+    }
+    .ty-customization-title {
+        padding: 17px 30px 16px 30px;
+        font-size: 1.4rem;
+        font-family: @headings_font;
+        font-weight: bold;
+        vertical-align: top;
+        white-space: normal;
+        overflow: auto;
+        display: block;
+    }
+    .ty-customization-menu {
+        font-family: @headings_font;
+        height: 62px;
+        width: 70px;
+        float: left;
+        padding: 0;
+        background-size: 25px 22px;
+        background-repeat: no-repeat;
+        background-color: transparent;
+        cursor: pointer;
+        background-image: url("../../../media/images/addons/development/arrow_left_dd.svg");
+        background-position: center center;
+/*         border-right: 1px solid @border_color; */
+    }
+    .ty-product-notification__body {
+        padding: 0px 20px 25px;
+    }
+    .ty-grid-list__item-additional-wrapper {
+        bottom: -10px;
+        top: -5px;
+        right: -5px;
+    }
+    .ty-grid-list__stringing {
+        font-size: 0;
+        margin-bottom: 10px;
+    }
+    .ty-grid-list__item {
+        height: 400px;
+        padding: 10px 10px;
+        position: unset;
+        .ty-grid-list__item-sd-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            height: 46px;
+        }
+        .ty-grid-list__item-sd-bg {
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center center;
+            height: 230px;
+            width: auto;
+            position: relative;
+        }
+        .ty-grid-list__item-sd-u-bg {
+            background-image: url("../../../media/images/addons/development/sd_unstrung.svg");
+        }
+        .ty-grid-list__item-sd-es-bg {
+            background-image: url("../../../media/images/addons/development/sd_strung5.svg");
+        }
+        .ty-grid-list__item-sd-m-bg {
+            background-image: url("../../../media/images/addons/development/sd_m_strung2.svg");
+        }
+        .ty-grid-list__item-sd-price {
+            text-align: center;
+            margin-top: 40px;
+            div {
+                color: lighten(@font, 35%);
+            }
+        }
+    }
+    .ty-sd-back-button {
+        color: @links;
+        cursor: pointer;
+        font-size: 1rem;
+        padding: 15px 20px;
+    }
+    .ty-sd__mode-2-textaera {
+        display: inline-block;
+        width: 55%;
+        vertical-align: top;
+    }
+    .ty-sd__mode-2-item {
+        display: inline-block;
+        width: 43%;
+        margin-right: 2%;
+    }
+    .ty-sd__content-mode-2 {
+        .ty-grid-list__item {
+            height: 300px;
+            border: none;
+        }
+        .ty-grid-list__item:hover {
+            box-shadow: none;
+        }
+        .ty-product-options__textarea {
+            min-width: auto;
+            width: 100%;
+            height: 250px;
+            font-size: 1rem;
+        }
+        .sbHolder {
+            width: 230px;
+        }
+        .sbSelector {
+            width: 185px;
+        }
+        .ty-sd-plus-strings {
+            color: darken(#ed1c24, 20%);
+            font-size: 1.2rem;
+            display: inline-block;
+            font-weight: bold;
+        }
+        .ty-sd_customization-product-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    }
+    .ty-sd_customization-add-to-cart {
+        display: block;
+        padding: 5px;
+        text-align: center;
+        font-size: 1.5rem;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+}
+.notification-content-customization {
+    width: 100% !important;
+    .ty-sd_customization-products-list-steps {
+        margin-bottom: 5px;
+        position: sticky;
+        top: 0;
+        z-index: 10000;
+        background-color: #fff;
+        border-bottom: 1px solid @border_color;
+        border-right: 1px solid #fff;
+        width: 100%;
+    }
+    .ty-sd_customization-products-selector {
+        display: block;
+        border: 2px solid lighten(@font, 45%);
+        color: lighten(@font, 45%);
+        text-align: center;
+        font-size: 1rem;
+        line-height: 2.5rem;
+        font-weight: bold;
+        cursor: pointer;
+        text-align: center;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+    .ty-sd_customization-products-selector-active {
+        border: 2px solid #fff400;
+        color: #595830;
+        cursor: default;
+    }
+    .ty-sd_customization-products-selected-active {
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center center;
+        height: 14px;
+        width: 15px;
+        position: relative;
+        background-image: url("../../../media/images/addons/development/checkmark_active.svg");
+        display: inline-block;
+        margin-right: 5px;
+    }
+    .ty-sd_customization-products-selected-inactive {
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center center;
+        height: 14px;
+        width: 15px;
+        position: relative;
+        background-image: url("../../../media/images/addons/development/checkmark_inactive.svg");
+        display: inline-block;
+        margin-right: 5px;
+    }
+    .ty-sd_customization-products-active {
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center center;
+        height: 13px;
+        width: 13px;
+        position: relative;
+        background-image: url("../../../media/images/addons/development/plus_active.svg");
+        display: inline-block;
+        margin-right: 5px;
+    }
+    .ty-sd_customization-products-inactive {
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center center;
+        height: 13px;
+        width: 13px;
+        position: relative;
+        background-image: url("../../../media/images/addons/development/plus_inactive.svg");
+        display: inline-block;
+        margin-right: 5px;
+    }
+    .ty-grid-list__item {
+        height: auto;
+        padding: 10px 10px 40px;
+    }
+    .ty-customization-detail-link {
+        padding: 15px 1rem;
+        font-size: 1rem;
+        font-weight: bold;
+        text-align: center;
+        background-size: 25px 40px;
+        background-repeat: no-repeat;
+        background-color: transparent;
+        cursor: pointer;
+        color: #fff;
+        background-color: #5cb5e5;
+    }
+    .ty-customization-detail-link-left {
+        background-image: url("../../../media/images/addons/development/arrow-left.svg");
+        background-position: left 5% center;
+    }
+    .ty-customization-detail-link-right {
+        background-image: url("../../../media/images/addons/development/arrow-right.svg");
+        background-position: right 5% center;
+    }
+    .ty-customization-footer:hover {
+        background-color:  lighten(@base, 5%);
+    }
+    .ty-pagination__item {
+        cursor: pointer;
+    }
+    .ty-pagination__item-disabled {
+        cursor: auto;
+        background: @base;
+    }
+    .ty-sd_customization-filter {
+        margin-bottom: 10px;
+        display: inline-block;
+    }
+    .ty-pagination__item-disabled:hover {
+        background: @base;
+    }
+    .ty-sd_subtitle {
+        font-size: 2.5rem;
+    }
+    .ty-customization-total {
+        display: block;
+    }
+    .ty-customization-total-title {
+        font-size: 1.1rem;
+        display: inline-block;
+    }
+    .ty-sd_customization-product-title {
+        font-size: 1.5rem;
+    }
+    .ty-sd_customization-steps-wrapper {
+        margin: 20px 0 10px;
+    }
+    .ty-sd_customization-details-trigger {
+        position: sticky;
+        bottom: 0;
+        display: block;
+        background-color: #fff;
+    }
+    .ty-sd_customization-details {
+        vertical-align: top;
+        margin-right: 1%;
+        margin-bottom: 10px;
+    }
+    .ty-sd_customization-products-list {
+        display: block;
+    }
+    .ty-sd_customization-details-image {
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center center;
+        display: block;
+    }
+    .ty-sd_customization-details-image-strings {
+        background-image: url("../../../media/images/addons/development/cd_string1.svg");
+    }
+    .ty-sd_customization-details-image-dampener {
+        background-image: url("../../../media/images/addons/development/cd_dampener.svg");
+    }
+    .ty-sd_customization-details-image-overgrip {
+        background-image: url("../../../media/images/addons/development/cd_grip.svg");
+    }
+    .ty-sd_customization-selector {
+        display: inline-block;
+        width: 89%;
+        border: 2px dashed lighten(@font, 45%);
+        color: lighten(@font, 45%);
+        margin-bottom: 10px;
+        text-align: center;
+        font-size: 1rem;
+        line-height: 3rem;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 0 5%;
+        text-align: right;
+        transition: all .33s ease-in-out;
+    }
+    .ty-sd_customization-selected {
+        border-bottom: 1px solid @border_color;
+        display: inline-block;
+        width: 100%;
+        margin: 10px 0 15px;
+        padding-bottom: 10px;
+        min-height: 100px;
+    }
+    .ty-sd__product-delete {
+        width: 6%;
+        margin: 2px 0 0 0;
+        display: inline-block;
+        vertical-align: top;
+        cursor: pointer;    
+    }
+    .ty-sd_customization-selector:hover {
+        border: 2px dashed @font;
+        color: @font;
+    }
+    .ty-sd_customization-selector-active, .ty-sd_customization-selector-active:hover {
+        border: 2px dashed #fff400;
+        color: #595830;
+        cursor: default;
+    }
+    .ty-sd_customization-selector-sign {
+        float: left;
+        font-size: 2rem;
+    }
+    .ty-sd-product__item {
+        font-size: 0;
+        display: inline-block;
+        width: 100%;
+        .ty-sd-product__image {
+            width: 23%;
+            display: inline-block;
+        }
+        .ty-sd-product__content {
+            width: 75%;
+            text-align: left;
+            margin-left: 2%;
+            display: inline-block;
+            vertical-align: top;
+            line-height: normal;
+            margin-bottom: 10px;
+        }
+        .ty-sd-product__content-name-wrapper {
+            display: inline-block;
+            width: 100%;
+            font-size: 0;
+        }
+        .ty-sd-product__price {
+            text-align: right;
+        }
+        .ty-sd-product__price-discount {
+            color: darken(#ed1c24, 20%);;
+        }
+        .ty-sd-product__price-disc {
+            color: lighten(@font, 35%);
+            line-height: 1.2rem;
+        }
+        .ty-sd-group__products-item-options {
+            line-height: normal;
+            text-align: left;
+            display: block;
+            margin-top: 10px;
+            .sbHolder {
+                width: 235px;
+            }
+            .sbSelector {
+                width: 190px;
+            }
+        }
+        .ty-price-num {
+            font-size: 1.4rem;
+        }
+        .ty-sd-product__content-name {
+            font-size: 1.2rem;
+            line-height: 1.4rem;
+            width: 94%;
+            display: inline-block;
+        }
+        .ty-list-price {
+            font-size: 1.5rem;
+        }
+    }
+    .sbOptions {
+        z-index: 10000;
+    }
+    .ty-sd_customization-add-to-cart-disabled {
+        cursor: auto;
+        background-color: darken(@base, 10%);
     }
 }
 .ty-product-notify-email {
@@ -338,15 +767,18 @@ select {
 .ty-product-notification__content {
     display: inline-block;
     width: 80%;
+    font-size: 0;
 }
 .ty-product-notification__content-item {
     display: inline-block;
     width: 100%;
 }
 .ty-product-notification__body {
-    padding: 0 1rem;
     .ty-product-options-content {
         width: auto;
+    }
+    .ty-product-options__info {
+        margin-top: 10px;
     }
 }
 .ty-product-notification__price {
@@ -885,6 +1317,32 @@ input:focus::placeholder, textarea:focus::placeholder {
     margin: 0;
     margin: 0 0 0 -1px;
     border-left: 1px solid #bdb500;
+}
+.ty-product-notification__item {
+    margin-bottom: 10px;
+}
+.ty-product-notification__item:last-child {
+    margin-bottom: 0;
+}
+.ty-pc-ajax-loading-box {
+    min-height: 52px;
+    width: 52px;
+    background:url('../media/images/icons/ajax_loader.gif') no-repeat 10px 10px #0d0d0d;
+    opacity: 0.8;
+    .border-radius(5px);
+    margin: 70px auto;
+}
+.ty-pc-product-notification {
+    margin-top: 10px;
+    .ty-product-notification__item {
+        margin-left: 10px;
+    }
+    .ty-product-notification__content {
+        width: 80%;
+    }
+}
+.ty-pc-title {
+    font-weight: bold;
 }
 .ty-logo-container:hover {
     background: lighten(@top_menu_background, 17%);
@@ -2106,6 +2564,15 @@ table.ty-cart-content {
 .ty-cart-content__image {
     text-align: center;
     float: none;
+    .ty-btn {
+        border: 1px solid #BDC3C7;
+        background-color: #fff;
+        color: #BDC3C7;
+    }
+    .ty-btn:hover {
+        border: 1px solid @font;
+        color: @font;
+    }
 }
 .ty-cart-content__image-consult-stringing {
     background-image: url("../../../media/images/addons/development/select_string.jpg");
@@ -2912,6 +3379,9 @@ table.ty-cart-content {
     display: block;
     width: 100%;
 }
+.ty-product-block__button .hidden, .ty-step__body-active .hidden {
+    display: none;
+}
 .ty-cart-content__buttons .ty-btn {
     display: block;
 }
@@ -3087,16 +3557,52 @@ table.ty-cart-content {
     padding-left: 15px;
     margin-left: 3px;
 }
+.ty-product-shipping-section {
+    display: block;
+    margin-bottom: 20px;
+}
+.ty-product-shipping-title {
+    display: inline-block;
+    font-size: 17px;
+    margin-right: 20px;
+}
+.ty-product-shipping-input {
+    display: inline;
+    vertical-align: bottom;
+    input {
+        width: 100%;
+    }
+}
+.ty-select-city-block {
+    display: block;
+    margin: 10px 0;
+}
+.ty-select-city-row {
+    display: block;
+}
+.ty-select-city-item {
+    border: 1px solid transparent;
+    display: inline-block;
+    padding: 3px 7px;
+    width: 150px;
+    cursor: pointer;
+}
+.ty-select-city-item:hover {
+    border-color: darken(@base, 5%);
+}
 .ty-consultation-text {
     font-size: 0.9rem;
     color: lighten(@font, 35%);
     margin-right: 10px;
 }
+.ty-product-detail_code_wrapper {
+    margin-top: 5px;
+}
 .ty-consultation-phone {
     font-size: 0.9rem;
     height: 23px;
     padding-left: 35px;
-    margin: 0 0 5px;
+    margin: 5px 0 5px;
     background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8' %3F%3E%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='xMinYMid'%3E%3Cpath style='fill:%235a5a5a;' d='m 45.844898,99.838126 c -4.267446,-0.43177 -8.801989,-1.39733 -12.303211,-2.61977 -1.507534,-0.52635 -4.805562,-1.89388 -5.544689,-2.29911 -0.158043,-0.0866 -1.114223,-0.60714 -2.124844,-1.15665 C 18.451658,89.727846 11.788184,83.346586 7.3051023,75.981916 3.285113,69.378006 1.0615363,62.629206 0.21969953,54.476946 -0.58541136,46.680356 0.84791422,37.704496 4.0982594,30.188386 9.1083439,18.603046 18.601738,9.1089858 30.186266,4.0985458 37.701853,0.84797582 46.677082,-0.58545418 54.473123,0.21971582 c 7.236128,0.74734 13.31626,2.56703998 19.093943,5.71457998 9.607145,5.2337302 17.021216,13.0064702 21.610696,22.6561602 3.762029,7.90992 5.466848,17.50169 4.600994,25.88649 -0.771313,7.46931 -2.562348,13.34161 -5.970227,19.57467 -3.727903,6.81839 -9.318876,12.95619 -15.767568,17.30972 -2.000331,1.35043 -2.70307,1.76843 -5.388487,3.20515 -3.818626,2.04299 -9.779099,4.00886 -14.344584,4.7311 -4.256162,0.6733 -9.082113,0.882614 -12.462992,0.54054 z m 25.466926,-22.23473 c 0.747381,-0.34807 1.420381,-0.92422 3.278941,-2.80709 2.519135,-2.55208 3.063282,-3.35373 3.384385,-4.98598 0.711878,-3.61867 -1.698062,-7.40951 -5.446667,-8.56764 -0.74698,-0.23078 -1.717656,-0.50861 -2.157056,-0.6174 -0.4394,-0.10878 -1.891534,-0.49402 -3.226963,-0.85607 -2.640633,-0.7159 -3.606299,-0.79618 -5.050813,-0.41991 -1.484845,0.38678 -2.34167,0.92143 -3.87955,2.4208 -2.043646,1.99246 -1.773615,1.85072 -2.871919,1.50749 -8.873747,-2.77319 -15.843879,-9.74382 -18.616873,-18.61819 -0.344133,-1.10132 -0.451536,-0.89071 1.385933,-2.71783 1.532972,-1.52434 1.998105,-2.22295 2.446361,-3.67434 0.478468,-1.54921 0.42741,-2.68458 -0.230372,-5.12268 -0.308245,-1.14252 -0.672513,-2.50875 -0.809485,-3.03607 -0.7831,-3.01482 -1.169749,-3.98822 -1.999425,-5.03363 -1.056137,-1.33076 -1.952872,-2.04466 -3.275117,-2.60734 -1.875952,-0.79831 -3.860566,-0.74903 -5.745352,0.14268 -1.259812,0.59603 -5.436309,4.76892 -6.070508,6.06526 -0.565886,1.15671 -0.673666,2.78156 -0.403337,6.08055 0.425656,5.19453 1.896722,10.92422 3.948285,15.37825 0.296444,0.64359 0.53899,1.19294 0.53899,1.22078 0,0.0278 0.539596,1.03545 1.199102,2.23915 4.991763,9.11072 12.683974,16.1853 22.301718,20.51105 5.600987,2.51914 12.658963,4.04273 18.362051,3.96376 1.809856,-0.025 2.085518,-0.0688 2.937671,-0.4656 z' /%3E%3C/svg%3E%0A");
     background-position: left center;
     background-repeat: no-repeat;
@@ -3174,6 +3680,36 @@ table.ty-cart-content {
     > div:last-child {
         border: none;
     }
+    .ty-customization-wrapper {
+        padding-bottom: 0;
+    }
+}
+.ty-customization-image {
+    background-image: url("../../../media/images/addons/development/sd_m_strung2.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center center;
+    height: 70px;
+    width: 20%;
+    margin-right: 3%;
+    position: relative;
+    display: inline-block;
+}
+.ty-customization-block {
+    width: 350px;
+    font-size: 0;
+    padding: 15px 15px 15px 5px;
+    cursor: pointer;
+}
+.ty-customization-block:hover {
+    border: 1px solid @border_color;
+    padding: 14px 14px 14px 4px;
+}
+.ty-customization-blokc-descr {
+    display: inline-block;
+    font-size: 0.9rem;
+    width: 77%;
+    vertical-align: top;
 }
 .ty-product-variations__items {
     display: inline-block;
@@ -5003,6 +5539,22 @@ a.ty-password-forgot__a {
     .ty-accordion {
         text-align: left;
     }
+    .ty-discount-label__item {
+        background-size: 58px;
+        height: 35px;
+        width: 100px;
+        background-position: 14px 10px;
+        line-height: 33px;
+        .ty-discount-label__value {
+            font-size: 1rem;
+        }
+    }
+    .ty-free-string-tag {
+        background-size: 90px;
+        height: 100px;
+        width: 100px;
+        background-position: 6px 13px;
+    }
 }
 .ty-product-block__img-wrapper .ty-tennishouse-container {
     margin: 10px 5px 0;
@@ -5465,6 +6017,7 @@ a.ty-password-forgot__a {
     animation-name: notification-content-open;
     animation-duration: 0.2s;
     animation-timing-function: ease-in-out;
+    z-index: 1001;
 }
 .ui-widget-overlay {
     animation-name: notification-bg-open;
@@ -5871,13 +6424,28 @@ input.ty-value-changer__input {
 }
 .ty-discount-label__item {
     background-color: transparent;
-    background-size: contain;
+    background-size: 42px;
     background-repeat: no-repeat;
-    background-image:  url("../../../media/images/addons/development/discount.png");
+    background-image:  url("../../../media/images/addons/development/discount.svg");
     height: 28px;
     width: 70px;
     text-align: right;
     float: none;
+    background-position: 10px 10px;
+}
+.ty-free-string-tag {
+    background-color: #5cb5e5;
+    background-size: 63px;
+    background-repeat: no-repeat;
+    background-image:  url("../../../media/images/addons/development/free_strings.svg");
+    height: 74px;
+    width: 74px;
+    text-align: right;
+    float: none;
+    background-position: 6px 12px;
+    border-radius: 52px;
+/*     border: 2px solid #000; */
+    margin: auto;
 }
 .ty-grid-list__likes {
     right: 10px;
@@ -6311,6 +6879,20 @@ input.ty-rf_input-answer{
     color: lighten(@font, 20%);
     margin-top: 20px;
 }
+.ty-grid-list__item-selected {
+    background-image: url("../../../media/images/addons/development/sdcheckmark.svg");
+    background-color: hsla(0,0%,100%,.7);
+    background-repeat: no-repeat;
+    background-size: 100px;
+    background-position: center 100px;
+    height: 99%;
+    width: 99%;
+    position: absolute;
+    z-index: 1000;
+    top: 0;
+    border: 2px solid #1ac933;
+    left: 0;
+}
 .ty-grid-list__match {
     background-color: @top_menu_background;
     color: #fff;
@@ -6525,5 +7107,25 @@ a.ty-promo-descr-link{
         background-color: transparent;
         color: @links;
         box-shadow: none;
+    }
+}
+@media (max-width: 767px) {
+    .ty-product-notification__image, .ty-product-notification__body .ty-no-image {
+        width: 50%;
+    }
+    .ty-product-notification__item {
+        text-align: center;
+    }
+    .ty-product-notification__amount {
+        width: 100%;
+    }
+    .ty-product-notification__subtotal {
+        width: 100%;
+    }
+    .ty-product-notification__content {
+        width: 99% !important;
+    }
+    .ty-pc-product-notification .ty-product-notification__item {
+        margin-right: 1%;
     }
 }

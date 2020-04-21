@@ -1336,7 +1336,7 @@ function fn_seo_get_default_object_name($object_id, $object_type, $lang_code)
         }
         $object_name = db_get_field(
             "SELECT $_seo[description] FROM $_seo[table] ?p WHERE $_seo[table].$_seo[item] = ?i ?p ?p",
-            $_seo['join'], $object_id, $lang_condition, $_seo['condition']
+            (!empty($_seo['join']) ? $_seo['join'] : ''), $object_id, $lang_condition, $_seo['condition']
         );
     }
 

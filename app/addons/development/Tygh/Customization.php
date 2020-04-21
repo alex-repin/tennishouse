@@ -87,9 +87,13 @@ class Customization
             }
         }
         
+        $this->dialog_data['view'] = 'P';
         if (!empty($this->request['sd_change'])) {
             parse_str($this->request['sd_change'], $_params);
             if (!empty($_params)) {
+                if (isset($_params['brand']) || isset($_params['page']) || isset($_params['step']) || isset($_params['productAdd'])) {
+                    $this->dialog_data['view'] = 'L';
+                }
                 if (!empty($_params['step']) || !empty($_params['stepRemove'])) {
                     unset($this->dialog_data['page']);
                     unset($this->dialog_data['brand']);
@@ -216,7 +220,7 @@ class Customization
             }
         }
 
-        fn_gather_additional_products_data($products, array('get_icon' => false, 'get_detailed' => false, 'get_options' => true, 'get_discounts' => false, 'get_title_features' => true));
+        fn_gather_additional_products_data($products, array('get_icon' => false, 'get_detailed' => false, 'get_options' => true, 'get_discounts' => false, 'get_features' => true));
         $product = reset($products);
         
         if (!empty($product['selected_options'])) {
@@ -475,10 +479,24 @@ class Customization
             Registry::get('view')->assign('dialog_data', $customization->dialog_data);
             $msg = Registry::get('view')->fetch('addons/development/views/racket_customization/customization.tpl');
             if (!empty($customization->dialog_data['option']) && $customization->dialog_data['option'] == '3') {
-                fn_set_notification('I', __('racket_customization_dialog_title'), $msg, 'K', serialize(array('dialog_class' => 'notification-content-stringing notification-content-customization')));
+                if (fn_get_session_data('dmode') != 'M') {
+                    $window_size = 'notification-content-full-window-padded';
+                } else {
+                    $window_size = 'notification-content-full-window';
+                }
+                if (empty($customization->dialog_data['edit_configuration']) && empty($customization->racket['is_strung'])) {
+                    $title = '<div class="ty-customization-menu cm-sd-option" data-home="1" data-reload="true"></div><div class="ty-customization-title">' . __('racket_customization_dialog_title') . '</div>';
+                } else {
+                    $title = '<div class="ty-customization-title">' . __('racket_customization_dialog_title') . '</div>';
+                }
+                fn_set_notification('I', $title, $msg, 'K', serialize(array('dialog_class' => 'notification-content-stringing notification-content-customization ' . $window_size)));
+            } elseif (!empty($customization->dialog_data['option']) && $customization->dialog_data['option'] == '2') {
+                $title = '<div class="ty-customization-menu cm-sd-option" data-home="1" data-reload="true"></div><div class="ty-customization-title">' . __('racket_customization_dialog_title') . '</div>';
+                fn_set_notification('I', $title, $msg, 'K', serialize(array('dialog_class' => 'notification-content-stringing')));
             } else {
-                fn_set_notification('I', __('racket_unstrung_dialog_title'), $msg, 'K', serialize(array('dialog_class' => 'notification-content-stringing')));
+                fn_set_notification('I', '<div class="ty-customization-title">' . __('racket_unstrung_dialog_title') . '</div>', $msg, 'K', serialize(array('dialog_class' => 'notification-content-stringing')));
             }
+            Registry::get('view')->display('addons/development/views/racket_customization/customization.tpl');
         } else {
             Registry::get('view')->assign('dialog_data', $customization->dialog_data);
             Registry::get('view')->display('addons/development/views/racket_customization/customization.tpl');

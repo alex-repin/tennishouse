@@ -4,7 +4,7 @@
             {hook name="products:notification_product"}
             <div class="ty-product-notification__item clearfix">
                 <div class="ty-product-notification__image">
-                    {include file="common/image.tpl" image_width="100" image_height="100" images=$product.main_pair no_ids=true}
+                    {include file="common/image.tpl" images=$product.main_pair no_ids=true image_width=$settings.Thumbnails.product_cart_thumbnail_width image_height=$settings.Thumbnails.product_cart_thumbnail_height}
                 </div>
                 <div class="ty-product-notification__content clearfix">
                     <div class="ty-product-notification__content-name">

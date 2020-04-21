@@ -4471,19 +4471,25 @@ var Tygh = {
                         '</div>' +
                         '</div>');
 
-                    var notificationMaxHeight = w.view_height - 300;
+                    // FIXME I-type notifications are embedded directly into the body and not into a container, because a container has low z-index and get overlapped by modal dialogs.
+                    //container.append(notification);
+                    $(_.body).append(notification);
+
+                    if (notification.hasClass('notification-content-full-window')) {
+                        var notificationMaxHeight = w.view_height - $('.ty-popup-notification-title', notification).outerHeight(true) - $('.ty-product-notification__buttons', notification).outerHeight(true) - $('.ty-product-notification__body', notification).outerHeight() + $('.ty-product-notification__body', notification).height();
+                    } else if (notification.hasClass('notification-content-full-window-padded')) {
+                        var notificationMaxHeight = w.view_height - $('.ty-popup-notification-title', notification).outerHeight(true) - $('.ty-product-notification__buttons', notification).outerHeight(true) - $('.ty-product-notification__body', notification).outerHeight() + $('.ty-product-notification__body', notification).height() - 30;
+                    } else {
+                        var notificationMaxHeight = w.view_height - 300;
+                    }
 
                     $(notification).find('.cm-notification-max-height').css({
                         'max-height': notificationMaxHeight
                     });
                     
-                    // FIXME I-type notifications are embedded directly into the body and not into a container, because a container has low z-index and get overlapped by modal dialogs.
-                    //container.append(notification);
-                    $(_.body).append(notification);
-
                     if (attach.length > 0 && attach.is(':visible')) {
                         attach.after(
-                            '<div class="ui-widget-overlay" style="z-index:500" data-ca-notification-key="' + key + '"></div>'
+                            '<div class="ui-widget-overlay" style="z-index:1000" data-ca-notification-key="' + key + '"></div>'
                         );
                         attach.addClass('cm-button-ontop');
                         notification.addClass('cm-attached-notification');
@@ -4494,7 +4500,7 @@ var Tygh = {
                         });
                     } else {
                         $(_.body).append(
-                            '<div class="ui-widget-overlay" style="z-index:500" data-ca-notification-key="' + key + '"></div>'
+                            '<div class="ui-widget-overlay" style="z-index:1000" data-ca-notification-key="' + key + '"></div>'
                         );
                         notification.css({'top': w.view_height / 2 - (notification.outerHeight() / 2) + 'px', 'left': w.view_width / 2 - (notification.outerWidth() / 2) + 'px'});
                     }

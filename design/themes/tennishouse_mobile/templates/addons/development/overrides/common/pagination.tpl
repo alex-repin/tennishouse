@@ -14,7 +14,7 @@
 {/if}
 
     {if $settings.Appearance.top_pagination == "Y" && $smarty.capture.pagination_open != "Y" || $smarty.capture.pagination_open == "Y"}
-    {assign var="c_url" value=$config.current_url|fn_query_remove:"page"}
+    {assign var="c_url" value=$c_url|default:$config.current_url|fn_query_remove:"page"}
 
     {if ($ajax_pagination == 'Y' && !$config.tweaks.disable_dhtml) || $force_ajax}
         {assign var="ajax_class" value="cm-ajax"}

@@ -4,7 +4,7 @@
     {hook name="products:view_main_info"}
         {if $product}
             {assign var="obj_id" value=$product.product_id}
-            {include file="common/product_data.tpl" product=$product but_role="big" but_text=__("add_to_cart") hide_qty_label=true}
+            {include file="common/product_data.tpl" product=$product but_role="big" but_text=__("add_to_cart") hide_qty_label=true show_qty=false}
             {if !$hide_title}
                 {if $product.discussion.posts || $product.header_features}
                     <div class="ty-product-detail__before-title">
@@ -30,10 +30,13 @@
                         <div class="ty-product-block__img cm-reload-{$product.product_id}" id="product_images_{$product.product_id}_update">
 
                             <div class="ty-product-tags">
-                                {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
-                                {$smarty.capture.$discount_label nofilter}
                                 {if $product.tags.new}
                                     <div class="ty-new-item-tag"></div>
+                                {/if}
+                                {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
+                                {$smarty.capture.$discount_label nofilter}
+                                {if $product.free_strings}
+                                    <div class="ty-free-string-tag"></div>
                                 {/if}
                             </div>
                             {if $smarty.const.PROMOTION_TAG|in_array:$product.tags}
@@ -122,6 +125,9 @@
                         <div class="ty-product-block__field-group">
                             {assign var="product_amount" value="product_amount_`$obj_id`"}
                             {$smarty.capture.$product_amount nofilter}
+                        
+                            {assign var="qty" value="qty_`$obj_id`"}
+                            {$smarty.capture.$qty nofilter}
                         </div>
                         {if $capture_options_vs_qty}{/capture}{/if}
                     </div>
@@ -171,6 +177,16 @@
                 </div>
                 {/if}
                 
+                {if $product.customization_type}
+                    <div class="ty-customization-wrapper">
+                        <div class="ty-product-detail__info-title">{__("racket_customization_dialog_title")}</div>
+                        <div class="ty-customization-block cm-sd-option" data-option="{if $product.free_strings}0{else}3{/if}" data-step="{$smarty.const.STRINGING_GROUP_ID}" data-form="product_form_{$obj_id}" data-reload="1">
+                            <div class="ty-customization-image"></div>
+                            <div class="ty-customization-blokc-descr">{if $product.customization_type == 'S'}{__("prepare_racket_description")}{else}{__("prepare_racket_description_no_strings")}{/if}</div>
+                        </div>
+                    </div>
+                {/if}
+                    
                 {*<div class="ty-price-options">
                     {if $product.review_discount || $addons.development.review_reward_P > 0}
                     <div class="ty-get-discount-tooltip">
@@ -211,7 +227,9 @@
                             <div class="ty-consultation-email"><a href="mailto:{$settings.Company.company_users_department}">{$settings.Company.company_support_department}</a></div>
                         </div>
                         <div class="ty-consultation_column">
-                            <span class="ty-product-detail__info-title">{__("product_code")}: </span><span class="ty-product-detail__code">{$product.product_code}</span>
+                            <div class="ty-product-detail_code_wrapper">
+                                <span class="ty-product-detail__info-title">{__("product_code")}: </span><span class="ty-product-detail__code">{$product.product_code}</span>
+                            </div>
                         </div>
                     </div>
                 {*/if*}

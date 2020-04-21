@@ -1,7 +1,7 @@
 <div {if $microdata} itemprop="itemListElement" itemscope itemtype="http://schema.org/Product"{/if} class="ty-grid-list__item-wrapper">
 {hook name="products:product_multicolumns_list"}
 {/hook}
-<a {if $microdata} itemprop="url"{/if} href="{"products.view?product_id=`$product.product_id`{if $product.ohash}&`$product.ohash`{/if}"|fn_url}" class="ty-grid-list__item-link">
+<a {if $microdata} itemprop="url"{/if} {if !$no_link}href="{"products.view?product_id=`$product.product_id`{if $product.ohash}&`$product.ohash`{/if}"|fn_url}"{else}data-product-add="{$product.product_id}"{/if} class="ty-grid-list__item-link {if $no_link}cm-sd-option{/if}">
 <div class="ty-grid-list__item">
     {if $product.obj_prefix}
         {assign var="obj_id" value="`$product.obj_prefix`_`$product.product_id`"}
@@ -14,6 +14,9 @@
     {$smarty.capture.$form_open nofilter}
     {if $product.match_p}
         <div class="ty-grid-list__match">{__("match")} {$product.match_p}%</div>
+    {/if}
+    {if $product.is_selected}
+        <div class="ty-grid-list__item-selected"></div>
     {/if}
     <div class="ty-grid-list__image">
         {if $product.option_images && ($mode == 'R' || $mode  == 'S') && !$product.hide_icons && $product.option_images|count > 1}
@@ -67,10 +70,13 @@
         {/if}
         {if $mode == 'R'}
             <div class="ty-product-tags">
-                {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
-                {$smarty.capture.$discount_label nofilter}
                 {if $product.tags.new}
                     <div class="ty-new-item-tag"></div>
+                {/if}
+                {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
+                {$smarty.capture.$discount_label nofilter}
+                {if $product.free_strings}
+                    <div class="ty-free-string-tag"></div>
                 {/if}
             </div>
             <div class="ty-grid-list__item-icon-features">
