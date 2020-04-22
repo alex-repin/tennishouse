@@ -272,7 +272,7 @@ function fn_unisender_api($method, $post, &$response, $notify = true)
         $response = $error_text;
     }
 
-    if (empty($response)) {
+    if (empty($response) && !empty($_result['result'])) {
         $response = $_result['result'];
 
         return true;

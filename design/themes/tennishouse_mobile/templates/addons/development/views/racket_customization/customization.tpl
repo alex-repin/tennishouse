@@ -1,15 +1,13 @@
 <div id="rc_dialog">
 {capture name="buttons"}
-    {if $dialog_data.option}
+    {if $dialog_data.option && $dialog_data.option == '3'}
         <div class="ty-customization-footer" id="sd_buttons">
-            {if $dialog_data.option == '3'}
-                <div class="ty-customization-detail-link ty-customization-detail-link-right cm-customization-switch cm-customization" {if $dialog_data.view != 'L'}style="display: none;"{/if}>
-                    {__("show_customization_details")}
-                </div>
-                <div class="ty-customization-detail-link ty-customization-detail-link-left cm-customization-switch cm-customization" {if $dialog_data.view != 'P'}style="display: none;"{/if}>
-                    {__("go_to_products_list")}
-                </div>
-            {/if}
+            <div class="ty-customization-detail-link ty-customization-detail-link-right cm-customization-switch cm-customization" {if $dialog_data.view != 'L'}style="display: none;"{/if}>
+                {__("show_customization_details")}
+            </div>
+            <div class="ty-customization-detail-link ty-customization-detail-link-left cm-customization-switch cm-customization" {if $dialog_data.view != 'P'}style="display: none;"{/if}>
+                {__("go_to_products_list")}
+            </div>
         <!--sd_buttons--></div>
     {/if}
 {/capture}
@@ -272,15 +270,12 @@
                 <div class="ty-sd_subtitle">{__("sd_subtitle")}</div>
                 <div class="grid-list ty-grid-list__stringing">
                     {if !$racket.is_strung}
-                    <div class="ty-column3">
                         <div class="ty-grid-list__item-wrapper cm-sd-option" data-add="1">
                             <div class="ty-grid-list__item">
                                 <div class="ty-grid-list__item-sd-bg ty-grid-list__item-sd-u-bg"></div>
                                 <div class="ty-grid-list__item-sd-title">{__("keep_unstring")}</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="ty-column3">
                         <div class="ty-grid-list__item-wrapper cm-sd-option" data-option="2" data-step="{$smarty.const.STRINGING_TENSION_GROUP_ID}" data-product-add="{$smarty.const.STRINGING_PRODUCT_ID}" data-reload="true">
                             <div class="ty-grid-list__item">
                                 <div class="ty-grid-list__item-sd-bg ty-grid-list__item-sd-es-bg"></div>
@@ -295,21 +290,18 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
                     {/if}
-                    <div class="ty-column3">
-                        <div class="ty-grid-list__item-wrapper cm-sd-option cm-notification-close" data-step="{$smarty.const.STRINGING_GROUP_ID}" data-option="3" data-reload="true">
-                            <div class="ty-grid-list__item">
-                                <div class="ty-grid-list__item-sd-bg ty-grid-list__item-sd-m-bg"></div>
-                                <div class="ty-grid-list__item-sd-title">{__("manual_stringing_selection")}</div>
-                                <div class="ty-grid-list__item-sd-price">
-                                    {if $racket.free_strings}
-                                        <div>{__("string_discount")}</div>
-                                        <div>{__("stringing_service")}: <b>{__("free")}</b></div>
-                                    {else}
-                                        <div>{__("string_stringing_service_discount")}</div>
-                                    {/if}
-                                </div>
+                    <div class="ty-grid-list__item-wrapper cm-sd-option cm-notification-close" data-step="{$smarty.const.STRINGING_GROUP_ID}" data-option="3" data-reload="true">
+                        <div class="ty-grid-list__item">
+                            <div class="ty-grid-list__item-sd-bg ty-grid-list__item-sd-m-bg"></div>
+                            <div class="ty-grid-list__item-sd-title">{__("manual_stringing_selection")}</div>
+                            <div class="ty-grid-list__item-sd-price">
+                                {if $racket.free_strings}
+                                    <div>{__("string_discount")}</div>
+                                    <div>{__("stringing_service")}: <b>{__("free")}</b></div>
+                                {else}
+                                    <div>{__("string_stringing_service_discount")}</div>
+                                {/if}
                             </div>
                         </div>
                     </div>

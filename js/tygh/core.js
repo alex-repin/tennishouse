@@ -4479,6 +4479,12 @@ var Tygh = {
                         var notificationMaxHeight = w.view_height - $('.ty-popup-notification-title', notification).outerHeight(true) - $('.ty-product-notification__buttons', notification).outerHeight(true) - $('.ty-product-notification__body', notification).outerHeight() + $('.ty-product-notification__body', notification).height();
                     } else if (notification.hasClass('notification-content-full-window-padded')) {
                         var notificationMaxHeight = w.view_height - $('.ty-popup-notification-title', notification).outerHeight(true) - $('.ty-product-notification__buttons', notification).outerHeight(true) - $('.ty-product-notification__body', notification).outerHeight() + $('.ty-product-notification__body', notification).height() - 30;
+                    } else if (notification.hasClass('notification-content-condition-sized-window')) {
+                        if (container.outerWidth() < 600) {
+                            var notificationMaxHeight = w.view_height - $('.ty-popup-notification-title', notification).outerHeight(true) - $('.ty-product-notification__buttons', notification).outerHeight(true) - $('.ty-product-notification__body', notification).outerHeight() + $('.ty-product-notification__body', notification).height();
+                        } else {
+                            var notificationMaxHeight = w.view_height - 300;
+                        }
                     } else {
                         var notificationMaxHeight = w.view_height - 300;
                     }

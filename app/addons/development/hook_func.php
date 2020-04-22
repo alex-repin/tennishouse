@@ -1289,8 +1289,8 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                     } elseif ($product['type'] == 'TM') {
                         $product['subtitle'] = __("type") .  ' - ' .  reset($variants);
                     }
+                    $product['free_strings'] = fn_is_free_strings($product, $products_features[$product['product_id']]);
                 }
-                $product['free_strings'] = fn_is_free_strings($product, $products_features[$product['product_id']]);
             }
         }
 
