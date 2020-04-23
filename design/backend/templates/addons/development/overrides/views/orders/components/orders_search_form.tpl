@@ -49,6 +49,16 @@
     </div>
 </div>
 
+<div class="sidebar-field">
+    <label class="control-label">{__("store")}</label>
+    <div class="controls checkbox-list">
+    {html_checkboxes name="origin" options=["T" => $settings.Company.company_name, "M" => __("marketplace")] selected=$search.origin columns=1 assign=_html_checkboxes labels=false}
+    {foreach $_html_checkboxes as $item}
+        <label>{$item nofilter}</label>
+    {/foreach}
+    </div>
+</div>
+
 {/capture}
 
 {capture name="advanced_search"}

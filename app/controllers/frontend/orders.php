@@ -186,8 +186,8 @@ if ($mode == 'invoice') {
         $allowed_id = db_get_field(
             'SELECT user_id '
             . 'FROM ?:orders '
-            . 'WHERE user_id = ?i AND order_id = ?i AND is_parent_order != ?s' . $condition,
-            $auth['user_id'], $_REQUEST['track_data'], 'Y'
+            . 'WHERE user_id = ?i AND (order_id = ?i OR order_number = ?s) AND is_parent_order != ?s' . $condition,
+            $auth['user_id'], $_REQUEST['track_data'], $_REQUEST['track_data'], 'Y'
         );
 
         if (!empty($allowed_id)) {
@@ -206,7 +206,7 @@ if ($mode == 'invoice') {
                 $order_info = db_get_row("SELECT order_id, email, company_id, lang_code FROM ?:orders WHERE email = ?s $condition ORDER BY timestamp DESC LIMIT 1", $_REQUEST['track_data']);
             // Assume that this is order number
             } else {
-                $order_info = db_get_row("SELECT order_id, email, company_id, lang_code FROM ?:orders WHERE order_id = ?i $condition", $_REQUEST['track_data']);
+                $order_info = db_get_row("SELECT order_id, email, company_id, lang_code FROM ?:orders WHERE (order_id = ?i OR order_number = ?s) $condition", $_REQUEST['track_data'], $_REQUEST['track_data']);
             }
         }
 

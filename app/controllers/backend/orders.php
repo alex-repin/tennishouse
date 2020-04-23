@@ -349,6 +349,7 @@ if ($mode == 'delete') {
     if (fn_allowed_for('MULTIVENDOR')) {
         $params['company_name'] = true;
     }
+    $params['origin'] = !empty($params['origin']) ? $params['origin'] : array('T');
 
     list($orders, $search, $totals) = fn_get_orders($params, Registry::get('settings.Appearance.admin_orders_per_page'), true);
 

@@ -427,6 +427,13 @@ function fn_development_get_orders($params, &$fields, $sortings, &$condition, &$
     if (!empty($params['phone'])) {
         $condition .= db_quote(" AND ?:orders.phone = ?s", trim($params['phone']));
     }
+    if (!empty($params['origin']) && !empty(array_diff(array('T', 'M'), $params['origin']))) {
+        if (in_array('T', $params['origin'])) {
+            $condition .= db_quote(" AND ?:orders.phone != ''");
+        } elseif (in_array('M', $params['origin'])) {
+            $condition .= db_quote(" AND ?:orders.phone = ''");
+        }
+    }
     if (AREA == 'A') {
         $fields[] = "?:sms_statuses.sms_status";
         $join .= " LEFT JOIN ?:sms_statuses ON ?:sms_statuses.order_id = ?:orders.order_id AND ?:sms_statuses.timestamp = (SELECT MAX(?:sms_statuses.timestamp) FROM ?:sms_statuses WHERE ?:sms_statuses.order_id = ?:orders.order_id)";
