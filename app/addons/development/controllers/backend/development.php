@@ -1767,6 +1767,26 @@ if ($mode == 'calculate_balance') {
     }
     
     exit;
+} elseif ($mode == 'generate_descriptions') {
+    $cids = array(RACKETS_CATEGORY_ID);
+    $params = array(
+        'hide_out_of_stock' => 'Y',
+        'cid' => array(RACKETS_CATEGORY_ID)
+    );    
+    list($products, $search) = fn_get_products($params);
+    $product_ids = array();
+    foreach ($products as $i => $prod) {
+        if (!in_array($prod['product_id'], unserialize(EXC_PRODUCT_ITEMS))) {
+            $product_ids[] = $prod['product_id'];
+        }
+    }
+    $descriptions = fn_generate_product_features_descriptions($product_ids);
+    foreach ($descriptions as $prod_id => $descr) {
+        db_query("UPDATE ?:product_descriptions SET full_description = IF (full_description != '', full_description, ?s) WHERE product_id = ?i AND lang_code = ?s", '<p>' . $descr . '</p>', $prod_id, CART_LANGUAGE);
+    }
+    
+    exit;
+    
 }
 
 function fn_fill_image_common_description(&$images_alts, $detailed_id, $name)

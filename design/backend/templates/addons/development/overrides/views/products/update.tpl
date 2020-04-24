@@ -147,6 +147,15 @@
                             <textarea id="elm_product_full_descr" name="product_data[full_description]" cols="55" rows="8" class="cm-wysiwyg input-large">{$product_data.full_description}</textarea>
                         </div>
                     </div>
+                    <div class="control-group">
+                        <label class="control-label" for="elm_product_generate_description_out_of_features">{__("generate_description_out_of_features")}:</label>
+                        <div class="controls">
+                            <label class="checkbox">
+                                <input type="hidden" name="product_data[generate_description_out_of_features]" value="N" />
+                                <input type="checkbox" name="product_data[generate_description_out_of_features]" id="elm_product_generate_description_out_of_features" value="Y"/>
+                            </label>
+                        </div>
+                    </div>
                     <div class="control-group {$no_hide_input_if_shared_product}">
                         <label class="control-label" for="elm_product_short_descr">{__("short_description")}:</label>
                         <div class="controls">

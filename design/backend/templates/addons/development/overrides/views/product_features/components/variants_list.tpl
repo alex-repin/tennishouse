@@ -44,80 +44,93 @@
             </div>
         </td>
     </tr>
-    <tr {if $feature_type != "E" && !$id|fn_feature_has_size_chart && $seo_variants != 'Y'}class="hidden"{/if} id="extra_feature_{$id}_{$num}">
+    <tr {if !$feature_type|in_array:["E","N","S"] && !$id|fn_feature_has_size_chart && $seo_variants != 'Y'}class="hidden"{/if} id="extra_feature_{$id}_{$num}">
         <td colspan="7">
-            {if $feature_type == "E"}
-            <div class="control-group">
-                <label class="control-label" for="elm_image_{$id}_{$num}">{__("image")}</label>
-                <div class="controls">
-                    {include file="common/attach_images.tpl" image_name="variant_image" image_key=$num hide_titles=true no_detailed=true image_object_type="feature_variant" image_type="V" image_pair=$var.image_pair prefix=$id}
-                </div>
-            </div>
             <div id="extra_feature_variants_{$id}_{$num}" class="cm-ex-op hidden">
-                {if $id == $smarty.const.BRAND_FEATURE_ID}
+                {if $feature_type == "E"}
                     <div class="control-group">
-                        <label class="control-label" for="elm_mens_clothes_size_chart_{$id}_{$num}">{__("mens_clothes_size_chart")}</label>
+                        <label class="control-label" for="elm_image_{$id}_{$num}">{__("image")}</label>
                         <div class="controls">
-                        <textarea name="feature_data[variants][{$num}][mens_clothes_size_chart]" id="elm_mens_clothes_size_chart_{$id}_{$num}" cols="55" rows="2" class="cm-wysiwyg input-textarea-long">{$var.mens_clothes_size_chart}</textarea>
+                            {include file="common/attach_images.tpl" image_name="variant_image" image_key=$num hide_titles=true no_detailed=true image_object_type="feature_variant" image_type="V" image_pair=$var.image_pair prefix=$id}
                         </div>
                     </div>
-                    <div class="control-group">
-                        <label class="control-label" for="elm_mens_shoes_size_chart_{$id}_{$num}">{__("mens_shoes_size_chart")}</label>
-                        <div class="controls">
-                        <textarea name="feature_data[variants][{$num}][mens_shoes_size_chart]" id="elm_mens_shoes_size_chart_{$id}_{$num}" cols="55" rows="2" class="cm-wysiwyg input-textarea-long">{$var.mens_shoes_size_chart}</textarea>
+                    <div>
+                        {if $id == $smarty.const.BRAND_FEATURE_ID}
+                            <div class="control-group">
+                                <label class="control-label" for="elm_mens_clothes_size_chart_{$id}_{$num}">{__("mens_clothes_size_chart")}</label>
+                                <div class="controls">
+                                <textarea name="feature_data[variants][{$num}][mens_clothes_size_chart]" id="elm_mens_clothes_size_chart_{$id}_{$num}" cols="55" rows="2" class="cm-wysiwyg input-textarea-long">{$var.mens_clothes_size_chart}</textarea>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label" for="elm_mens_shoes_size_chart_{$id}_{$num}">{__("mens_shoes_size_chart")}</label>
+                                <div class="controls">
+                                <textarea name="feature_data[variants][{$num}][mens_shoes_size_chart]" id="elm_mens_shoes_size_chart_{$id}_{$num}" cols="55" rows="2" class="cm-wysiwyg input-textarea-long">{$var.mens_shoes_size_chart}</textarea>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label" for="elm_womens_clothes_size_chart_{$id}_{$num}">{__("womens_clothes_size_chart")}</label>
+                                <div class="controls">
+                                <textarea name="feature_data[variants][{$num}][womens_clothes_size_chart]" id="elm_womens_clothes_size_chart_{$id}_{$num}" cols="55" rows="2" class="cm-wysiwyg input-textarea-long">{$var.womens_clothes_size_chart}</textarea>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label" for="elm_womens_shoes_size_chart_{$id}_{$num}">{__("womens_shoes_size_chart")}</label>
+                                <div class="controls">
+                                <textarea name="feature_data[variants][{$num}][womens_shoes_size_chart]" id="elm_womens_shoes_size_chart_{$id}_{$num}" cols="55" rows="2" class="cm-wysiwyg input-textarea-long">{$var.womens_shoes_size_chart}</textarea>
+                                </div>
+                            </div>
+                        {/if}
+                        <div class="control-group">
+                            <label class="control-label" for="elm_page_title_{$id}_{$num}">{__("page_title")}</label>
+                            <div class="controls">
+                                <input type="text" name="feature_data[variants][{$num}][page_title]" id="elm_page_title_{$id}_{$num}" size="55" value="{$var.page_title}" />
+                            </div>
                         </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="elm_womens_clothes_size_chart_{$id}_{$num}">{__("womens_clothes_size_chart")}</label>
-                        <div class="controls">
-                        <textarea name="feature_data[variants][{$num}][womens_clothes_size_chart]" id="elm_womens_clothes_size_chart_{$id}_{$num}" cols="55" rows="2" class="cm-wysiwyg input-textarea-long">{$var.womens_clothes_size_chart}</textarea>
+                        <div class="control-group">
+                            <label class="control-label" for="elm_url_{$id}_{$num}">{__("url")}</label>
+                            <div class="controls">
+                            <input type="text" name="feature_data[variants][{$num}][url]" id="elm_url_{$id}_{$num}" size="55" value="{$var.url}"/>
+                            </div>
                         </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="elm_womens_shoes_size_chart_{$id}_{$num}">{__("womens_shoes_size_chart")}</label>
-                        <div class="controls">
-                        <textarea name="feature_data[variants][{$num}][womens_shoes_size_chart]" id="elm_womens_shoes_size_chart_{$id}_{$num}" cols="55" rows="2" class="cm-wysiwyg input-textarea-long">{$var.womens_shoes_size_chart}</textarea>
+                        <div class="control-group">
+                            <label class="control-label" for="elm_meta_description_{$id}_{$num}">{__("meta_description")}</label>
+                            <div class="controls">
+                            <textarea name="feature_data[variants][{$num}][meta_description]" id="elm_meta_description_{$id}_{$num}" cols="55" rows="2">{$var.meta_description}</textarea>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="elm_meta_keywords_{$id}_{$num}">{__("meta_keywords")}</label>
+                            <div class="controls">
+                            <textarea name="feature_data[variants][{$num}][meta_keywords]" id="elm_meta_keywords_{$id}_{$num}" cols="55" rows="2" class="input-textarea-long">{$var.meta_keywords}</textarea>
+                            </div>
                         </div>
                     </div>
                 {/if}
-                <div class="control-group">
-                    <label class="control-label" for="elm_page_title_{$id}_{$num}">{__("page_title")}</label>
-                    <div class="controls">
-                        <input type="text" name="feature_data[variants][{$num}][page_title]" id="elm_page_title_{$id}_{$num}" size="55" value="{$var.page_title}" />
+                {if $id|fn_feature_has_size_chart}
+                <div>
+                    <div class="control-group">
+                        <label class="control-label" for="elm_size_chart_{$id}_{$num}">{__("size_chart")}</label>
+                        <div class="controls">
+                        <textarea name="feature_data[variants][{$num}][size_chart]" id="elm_size_chart_{$id}_{$num}" cols="55" rows="2" class="cm-wysiwyg input-textarea-long">{$var.size_chart}</textarea>
+                        </div>
                     </div>
                 </div>
-                <div class="control-group">
-                    <label class="control-label" for="elm_url_{$id}_{$num}">{__("url")}</label>
-                    <div class="controls">
-                    <input type="text" name="feature_data[variants][{$num}][url]" id="elm_url_{$id}_{$num}" size="55" value="{$var.url}"/>
+                {/if}
+                {if $feature_type|in_array:["E","N","S"]}
+                <div>
+                    <div class="control-group">
+                        <label class="control-label" for="elm_description_templates_{$id}_{$num}">{__("description_templates")}</label>
+                        <div class="controls">
+                        <textarea name="feature_data[variants][{$num}][description_templates]" id="elm_description_templates_{$id}_{$num}" cols="55" rows="2" class="input-textarea-long">{$var.description_templates}</textarea>
+                        </div>
                     </div>
                 </div>
-                <div class="control-group">
-                    <label class="control-label" for="elm_meta_description_{$id}_{$num}">{__("meta_description")}</label>
-                    <div class="controls">
-                    <textarea name="feature_data[variants][{$num}][meta_description]" id="elm_meta_description_{$id}_{$num}" cols="55" rows="2">{$var.meta_description}</textarea>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="elm_meta_keywords_{$id}_{$num}">{__("meta_keywords")}</label>
-                    <div class="controls">
-                    <textarea name="feature_data[variants][{$num}][meta_keywords]" id="elm_meta_keywords_{$id}_{$num}" cols="55" rows="2" class="input-textarea-long">{$var.meta_keywords}</textarea>
-                    </div>
-                </div>
+                {/if}
             </div>
-            {/if}
+
             {hook name="product_features:extended_feature"}{/hook}
         </td>
-        {if $id == $smarty.const.CLOTHES_GENDER_FEATURE_ID || $id == $smarty.const.SHOES_GENDER_FEATURE_ID}
-        <td colspan="7">
-            <div class="control-group">
-                <label class="control-label" for="elm_size_chart_{$id}_{$num}">{__("size_chart")}</label>
-                <div class="controls">
-                <textarea name="feature_data[variants][{$num}][size_chart]" id="elm_size_chart_{$id}_{$num}" cols="55" rows="2" class="cm-wysiwyg input-textarea-long">{$var.size_chart}</textarea>
-                </div>
-            </div>
-        </td>
-        {/if}
     </tr>
     {/foreach}
     </tbody>

@@ -225,6 +225,7 @@ define('NO_EMAIL', 'noemail@tennishouse.ru');
 define('ORDER_COMPLETE_STATUSES', serialize(array('C', 'E', 'G')));
 define('TRY_ON_CAT_IDS', serialize(array(APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID)));
 define('SEO_VARIANTS_ALLOWED', serialize(array('S', 'M', 'E')));
+define('DESCRIPTION_FEATURE_TYPES', serialize(array('S', 'N', 'E')));
 define('EXC_PRODUCT_ITEMS', serialize(array(1615, 912, 778, 779, 780, 781, 782, 831, 1307, 1312, 1313, 1314, 1315, 1316, 1317, 1318, 1319, 851)));
 define('BIG_CITIES', serialize(array(
     array(

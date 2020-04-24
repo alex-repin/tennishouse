@@ -800,6 +800,9 @@
         <item>
             ALTER TABLE `cscart_products` ADD `ean` VARCHAR(13) NOT NULL, ADD `model` VARCHAR(64) NOT NULL;
         </item>
+        <item>
+            ALTER TABLE `cscart_product_feature_variant_descriptions` ADD `description_templates` TEXT NOT NULL;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -1550,5 +1553,6 @@
         <item lang="ru" id="show_customization_details">Собранный комплект</item>
         <item lang="ru" id="go_to_products_list">К cписку товаров</item>
         <item lang="ru" id="dampeners">Виброгасители</item>
+        <item lang="ru" id="generate_description_out_of_features">Сгенерировать описание из характеристик</item>
     </language_variables>
 </addon>

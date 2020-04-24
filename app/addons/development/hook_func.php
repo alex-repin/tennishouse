@@ -2198,6 +2198,13 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
                 db_query("UPDATE ?:products SET variation_ids = ?s WHERE product_id = ?i", implode(',', $nvrs), $pr_id);
             }
         }
+        if (!empty($product_data['generate_description_out_of_features']) && $product_data['generate_description_out_of_features'] == 'Y') {
+            $product_ids = array($product_id);
+            $description = fn_generate_product_features_descriptions($product_ids);
+            if (!empty($description[$product_id])) {
+                $product_data['full_description'] .= '<p>' . $description[$product_id] . '</p>';
+            }
+        }
     }
 }
 

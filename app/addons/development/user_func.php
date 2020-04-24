@@ -34,6 +34,27 @@ if (!function_exists('array_key_first')) {
     }
 }
 
+function fn_generate_product_features_descriptions($product_ids)
+{
+    $result = array();
+    $data = db_get_hash_multi_array("SELECT a.variant_id, a.product_id, a.feature_id, c.description_templates FROM ?:product_features_values AS a LEFT JOIN ?:product_features AS b ON a.feature_id = b.feature_id LEFT JOIN ?:product_feature_variant_descriptions AS c ON c.variant_id = a.variant_id AND c.lang_code = ?s WHERE a.product_id IN (?n) AND b.feature_type IN (?a) ORDER BY b.position ASC", array('product_id', 'feature_id'), CART_LANGUAGE, $product_ids, unserialize(DESCRIPTION_FEATURE_TYPES));
+    
+    if (!empty($data)) {
+        foreach ($data as $product_id => $features) {
+            $description = '';
+            foreach ($features as $feature_id => $f_data) {
+                if (!empty($f_data['description_templates'])) {
+                    $vars = explode(PHP_EOL, $f_data['description_templates']);
+                    $description .= ($description != '' && substr($description, -1) != '.' ? '.' : '') . ' ' . trim($vars[array_rand($vars)]);
+                }
+            }
+            $result[$product_id] = $description;
+        }
+    }
+    
+    return $result;
+}
+
 function fn_apply_selected_options(&$product, $options, $exceptions = array())
 {
     $product['selected_options'] = empty($product['selected_options']) ? array() : $product['selected_options'];
