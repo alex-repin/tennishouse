@@ -309,7 +309,10 @@ select {
 .notification-content-extended {
     border: 1px solid #d6d6d6;
     box-shadow: 0 1px 16px rgba(0, 0, 0, 1);
-    z-index: 1000;
+    animation-name: notification-content-open;
+    animation-duration: 0.2s;
+    animation-timing-function: ease-in-out;
+    z-index: 1001;
     margin: 0;
     width: 96%;
     h1 {
@@ -339,6 +342,8 @@ select {
     }
     .ty-product-notification__buttons {
         padding: 0;
+    }
+    .ty-customization-footer {
         height: 50px;
         border-top: 1px solid @border_color;
     }
@@ -387,6 +392,16 @@ select {
     .ty-grid-list__stringing {
         font-size: 0;
         margin-bottom: 10px;
+        .ty-grid-list__item-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 33.33%;
+        }
+        @media (max-width: 600px) {
+            .ty-grid-list__item-wrapper {
+                width: 100%;
+            }
+        }
     }
     .ty-grid-list__item {
         height: 400px;
@@ -478,6 +493,16 @@ select {
         font-size: 1.5rem;
         cursor: pointer;
         margin-top: 10px;
+    }
+}
+@media (max-width: 600px) {
+    .notification-content-condition-sized-window {
+        width: 100%;
+    }
+    .notification-content-stringing {
+        .ty-customization-menu ~ .ty-customization-title {
+            padding: 17px 30px 16px 0;
+        }
     }
 }
 .notification-content-customization {
@@ -5026,7 +5051,7 @@ a.ty-password-forgot__a {
         height: auto;
     }
     .ty-mainbox-title {
-        background-color: #5cb5e5;
+        background-color: #4c1e87;
         color: #fff;
         padding: 0 30px;
         margin: 0;
@@ -5555,6 +5580,10 @@ a.ty-password-forgot__a {
         width: 100px;
         background-position: 6px 13px;
     }
+    .ty-new-item-tag {
+        height: 37px;
+        width: 100px;
+    }
 }
 .ty-product-block__img-wrapper .ty-tennishouse-container {
     margin: 10px 5px 0;
@@ -6013,12 +6042,6 @@ a.ty-password-forgot__a {
     from   {opacity: 0.6}
     to   {opacity: 0}
 }
-.notification-content-extended {
-    animation-name: notification-content-open;
-    animation-duration: 0.2s;
-    animation-timing-function: ease-in-out;
-    z-index: 1001;
-}
 .ui-widget-overlay {
     animation-name: notification-bg-open;
     animation-duration: 0.2s;
@@ -6419,7 +6442,7 @@ input.ty-value-changer__input {
     color: #fff;
     height: 28px;
     width: 74px;
-    float: right;
+/*     float: right; */
     margin-bottom: 2px;
 }
 .ty-discount-label__item {

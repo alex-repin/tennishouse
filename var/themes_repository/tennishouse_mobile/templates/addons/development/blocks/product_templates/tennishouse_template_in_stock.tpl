@@ -182,7 +182,7 @@
                         <div class="ty-product-detail__info-title">{__("racket_customization_dialog_title")}</div>
                         <div class="ty-customization-block cm-sd-option" data-option="{if $product.free_strings}0{else}3{/if}" data-step="{$smarty.const.STRINGING_GROUP_ID}" data-form="product_form_{$obj_id}" data-reload="1">
                             <div class="ty-customization-image"></div>
-                            <div class="ty-customization-blokc-descr">{if $product.customization_type == 'S'}{__("prepare_racket_description")}{else}{__("prepare_racket_description_no_strings")}{/if}</div>
+                            <div class="ty-customization-blokc-descr">{if $product.customization_type == 'S'}{__("prepare_racket_description_no_strings")}{else}{__("prepare_racket_description")}{/if}</div>
                         </div>
                     </div>
                 {/if}
