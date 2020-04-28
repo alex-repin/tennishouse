@@ -2702,7 +2702,10 @@ input.ty-search-block__input:focus {
         padding: 6px 0;
         margin: 10px 0 0;
     }
-    > p, > a, > li, > div, > ul li, > .ty-table th, > .ty-table td, > .ty-table a {
+/*   > p, > a, > li, > div, > ul li, > .ty-table th, > .ty-table td, > .ty-table a, > div > p, > div > p > a {
+        font-size: 1.2rem;
+    }*/
+    p, a, li, div, ul li, .ty-table th, .ty-table td, .ty-table a {
         font-size: 1.2rem;
     }
     > p, > a, > li, > div {
@@ -2946,15 +2949,17 @@ input.ty-search-block__input:focus {
             font-size: 1.4rem;
         }
     }
-    .ty-free-string-tag {
-        background-size: 90px;
-        height: 100px;
-        width: 100px;
-        background-position: 6px 13px;
-    }
-    .ty-new-item-tag {
-        height: 37px;
-        width: 100px;
+    .ty-product-block__img-wrapper {
+        .ty-free-string-tag {
+            background-size: 90px;
+            height: 100px;
+            width: 100px;
+            background-position: 6px 13px;
+        }
+        .ty-new-item-tag {
+            height: 37px;
+            width: 100px;
+        }
     }
 }
 .ty-no-items {

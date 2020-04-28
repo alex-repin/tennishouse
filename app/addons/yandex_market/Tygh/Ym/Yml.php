@@ -196,6 +196,9 @@ class Yml implements IYml
                         $is_broken = true;
                     }
                 }
+                if (empty($product['full_description'])) {
+                    $product['full_description'] = $product['product'];
+                }
 
 //                 if ($product['tracking'] == 'O') {
 //                     $product['amount'] = db_get_field(

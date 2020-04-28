@@ -1768,6 +1768,7 @@ if ($mode == 'calculate_balance') {
     
     exit;
 } elseif ($mode == 'generate_descriptions') {
+
     $cids = array(RACKETS_CATEGORY_ID);
     $params = array(
         'hide_out_of_stock' => 'Y',
@@ -1780,9 +1781,11 @@ if ($mode == 'calculate_balance') {
             $product_ids[] = $prod['product_id'];
         }
     }
-    $descriptions = fn_generate_product_features_descriptions($product_ids);
+    list($descriptions, $features) = fn_generate_product_features_descriptions($product_ids);
     foreach ($descriptions as $prod_id => $descr) {
-        db_query("UPDATE ?:product_descriptions SET full_description = IF (full_description != '', full_description, ?s) WHERE product_id = ?i AND lang_code = ?s", '<p>' . $descr . '</p>', $prod_id, CART_LANGUAGE);
+        if (!empty($features[$prod_id][TYPE_FEATURE_ID]['variant_id']) && $features[$prod_id][TYPE_FEATURE_ID]['variant_id'] != KIDS_RACKET_FV_ID) {
+            db_query("UPDATE ?:product_descriptions SET features_description = ?s WHERE product_id = ?i AND lang_code = ?s", '<p>' . $descr . '</p>', $prod_id, CART_LANGUAGE);
+        }
     }
     
     exit;

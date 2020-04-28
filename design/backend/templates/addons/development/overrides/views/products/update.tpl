@@ -147,6 +147,13 @@
                             <textarea id="elm_product_full_descr" name="product_data[full_description]" cols="55" rows="8" class="cm-wysiwyg input-large">{$product_data.full_description}</textarea>
                         </div>
                     </div>
+                    <div class="control-group cm-no-hide-input">
+                        <label class="control-label" for="elm_product_features_description">{__("features_description")}:</label>
+                        <div class="controls">
+                            {include file="buttons/update_for_all.tpl" display=$show_update_for_all object_id='features_description' name="update_all_vendors[features_description]"}
+                            <textarea id="elm_product_features_description" name="product_data[features_description]" cols="55" rows="8" class="cm-wysiwyg input-large">{$product_data.features_description}</textarea>
+                        </div>
+                    </div>
                     <div class="control-group">
                         <label class="control-label" for="elm_product_generate_description_out_of_features">{__("generate_description_out_of_features")}:</label>
                         <div class="controls">

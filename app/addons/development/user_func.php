@@ -44,7 +44,7 @@ function fn_generate_product_features_descriptions($product_ids)
             $description = '';
             foreach ($features as $feature_id => $f_data) {
                 if (!empty($f_data['description_templates'])) {
-                    $vars = explode(PHP_EOL, $f_data['description_templates']);
+                    $vars = explode(PHP_EOL, trim($f_data['description_templates']));
                     $description .= ($description != '' && substr($description, -1) != '.' ? '.' : '') . ' ' . trim($vars[array_rand($vars)]);
                 }
             }
@@ -52,7 +52,7 @@ function fn_generate_product_features_descriptions($product_ids)
         }
     }
     
-    return $result;
+    return array($result, $data);
 }
 
 function fn_apply_selected_options(&$product, $options, $exceptions = array())

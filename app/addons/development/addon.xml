@@ -803,6 +803,9 @@
         <item>
             ALTER TABLE `cscart_product_feature_variant_descriptions` ADD `description_templates` TEXT NOT NULL;
         </item>
+        <item>
+            ALTER TABLE `cscart_product_descriptions` ADD `features_description` MEDIUMTEXT NOT NULL AFTER `full_description`;;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -1554,5 +1557,7 @@
         <item lang="ru" id="go_to_products_list">К cписку товаров</item>
         <item lang="ru" id="dampeners">Виброгасители</item>
         <item lang="ru" id="generate_description_out_of_features">Сгенерировать описание из характеристик</item>
+        <item lang="ru" id="description_templates">Шаблоны описания</item>
+        <item lang="ru" id="features_description">Описание характеристик</item>
     </language_variables>
 </addon>
