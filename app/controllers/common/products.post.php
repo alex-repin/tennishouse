@@ -38,7 +38,8 @@ if ($mode == 'options') {
         // Product data
         unset($_REQUEST['product_data']['custom_files']);
         $product_data = $_REQUEST;
-        list($product_id, $_data) = each($product_data['product_data']);
+        $product_id = key($product_data['product_data']);
+        $_data = $product_data['product_data'][$product_id];
 
         $product_id = isset($_data['product_id']) ? $_data['product_id'] : $product_id;
         $selected_options = empty($_data['product_options']) ? array() : $_data['product_options'];
@@ -271,7 +272,7 @@ if ($mode == 'options') {
                     $k = $product['object_id'];
                 }
 
-                $cart_products[$k]['changed_option'] = isset($product['object_id']) ? isset($_REQUEST['changed_option'][$product['object_id']]) ? $_REQUEST['changed_option'][$product['object_id']] : '' : isset($_REQUEST['changed_option'][$k]) ? $_REQUEST['changed_option'][$k] : '' ;
+                $cart_products[$k]['changed_option'] = isset($product['object_id']) ? (isset($_REQUEST['changed_option'][$product['object_id']]) ? $_REQUEST['changed_option'][$product['object_id']] : '') : (isset($_REQUEST['changed_option'][$k]) ? $_REQUEST['changed_option'][$k] : '');
             }
         }
 

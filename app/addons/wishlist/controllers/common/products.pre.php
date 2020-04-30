@@ -49,7 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             if (!empty($_REQUEST['changed_option'])) {
-                list($key, $option_id) = each($_REQUEST['changed_option']);
+                $key = key($_REQUEST['changed_option']);
+                $option_id = $_REQUEST['changed_option'][$key];
                 if (isset($products[$key])) {
                     $products[$key]['changed_option'] = $option_id;
                 }

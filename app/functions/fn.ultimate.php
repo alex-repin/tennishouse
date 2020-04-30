@@ -825,7 +825,8 @@ function fn_import_check_product_company_id(&$primary_object_id, &$object, &$pat
         }
 
         if (!empty($primary_object_id)) {
-            list($field, $value) = each($primary_object_id);
+            $field = key($primary_object_id);
+            $value = $primary_object_id[$field];
             $company_id = db_get_field('SELECT company_id FROM ?:products WHERE ' . $field . ' = ?s', $value);
 
             if ($company_id != Registry::get('runtime.company_id')) {
@@ -844,7 +845,8 @@ function fn_import_check_order_company_id(&$primary_object_id, &$object, &$patte
         }
 
         if (!empty($primary_object_id)) {
-            list($field, $value) = each($primary_object_id);
+            $field = key($primary_object_id);
+            $value = $primary_object_id[$field];
             $company_id = db_get_field('SELECT company_id FROM ?:orders WHERE ' . $field . ' = ?s', $value);
 
             if ($company_id != Registry::get('runtime.company_id')) {
@@ -896,7 +898,7 @@ function fn_ult_db_query_process(&$query)
             }
 
             $tables = array_unique($tables);
-            
+
             foreach ($tables as $table) {
 
                 $table = str_replace($table_prefix, '', $table);
@@ -1319,14 +1321,14 @@ function fn_ult_is_shared_product($product_id, $company_id = 0)
 {
     // [tennishouse]
     $return = false;
-    
+
     fn_set_hook('is_shared_product_pre', $product_id, $company_id, $return);
-    
+
     if (!empty($return)) {
         return $return;
     }
     // [tennishouse]
-    
+
     $company_condition = !empty($company_id) ? fn_get_company_condition('c.company_id', true, $company_id) : '';
     $companies = db_get_fields("SELECT c.company_id FROM ?:products_categories pc LEFT JOIN ?:categories c ON c.category_id = pc.category_id WHERE pc.product_id = ?i $company_condition GROUP BY c.company_id LIMIT 2", $product_id);
     $companies_count = count($companies);

@@ -1,7 +1,7 @@
 <input type="hidden" name="selected_fields[object]" value="product" />
 {math equation="ceil(n/c)" assign="rows" n=$selected_fields|count c=$columns|default:"5"}
 
-{split data=$selected_fields|sort_by:"text" size=$rows assign="splitted_selected_fields" vertical_delimition=false size_is_horizontal=true}
+{split data=$selected_fields size=$rows assign="splitted_selected_fields" vertical_delimition=false size_is_horizontal=true}
 
 <table cellpadding="10" width="100%">
 <tr valign="top">

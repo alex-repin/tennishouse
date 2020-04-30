@@ -304,7 +304,7 @@ class Shippings
 
             foreach ($package['products'] as $cart_id => $amount) {
                 $_weight = !empty($group['products'][$cart_id]['weight']) ? $group['products'][$cart_id]['weight'] : 0;
-                $price = !empty($group['products'][$cart_id]['price']) ? $group['products'][$cart_id]['price'] : !empty($group['products'][$cart_id]['base_price']) ? $group['products'][$cart_id]['base_price'] : 0;
+                $price = !empty($group['products'][$cart_id]['price']) ? $group['products'][$cart_id]['price'] : (!empty($group['products'][$cart_id]['base_price']) ? $group['products'][$cart_id]['base_price'] : 0);
                 $weight += $_weight * $amount;
                 $cost += $price * $amount;
             }

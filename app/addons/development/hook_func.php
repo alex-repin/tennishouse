@@ -1250,7 +1250,10 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
             if (!empty($params['get_title_features'])) {
                 if (!empty($products_features[$product['product_id']])) {
                     $series_feature = fn_get_subtitle_feature($products_features[$product['product_id']], $product['type']);
-                    $variants = explode(',', $series_feature['variants']);
+                    $variants = array();
+                    if (!empty($series_feature['variants'])) {
+                        $variants = explode(',', $series_feature['variants']);
+                    }
                     $brand = $products_features[$product['product_id']][BRAND_FEATURE_ID]['variants'];
                     $product['brand'] = $brands['variants'][$products_features[$product['product_id']][BRAND_FEATURE_ID]['variant_id']];
                     if ($product['type'] == 'R') {

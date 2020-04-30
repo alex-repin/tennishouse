@@ -199,7 +199,7 @@ function fn_print_r()
     if ($_SERVER['REMOTE_ADDR'] != DEBUGGING_IP && $_SERVER['REMOTE_ADDR'] != '127.0.0.1') {
         return true;
     }
-    
+
     if (defined('CONSOLE')) {
         $prefix = "\n";
         $suffix = "\n\n";
@@ -1415,7 +1415,7 @@ function fn_parse_queries(&$sql, $str)
 //                 } elseif ($char == '\\') {
 // //                     fn_print_r('ignore on');
 //                     $ignore = true;
-// 
+//
 //                 } elseif ($char == '"' || $char == "'" || $char == '`') {
 //                     if ($matches[0][strlen($matches[0]) - 2] != '\\') {
 //                         if ($quote == '') {
@@ -1467,7 +1467,7 @@ function fn_parse_queries(&$sql, $str)
         }
     }
 //     fn_print_r($sql, $query);
-//     
+//
 // fn_print_die(microtime());
     if (!empty($query)) {
         return $query;
@@ -1561,7 +1561,7 @@ function fn_print_die()
     if ($_SERVER['REMOTE_ADDR'] != DEBUGGING_IP && $_SERVER['REMOTE_ADDR'] != '127.0.0.1') {
         return true;
     }
-    
+
     $args = func_get_args();
     call_user_func_array('fn_print_r', $args);
     die();
@@ -1959,7 +1959,7 @@ function fn_needs_image_verification($scenario)
 function fn_array_key_intersect(&$a, &$b)
 {
     $array = array();
-    while (list($key, $value) = each($a)) {
+    foreach ($a as $key => $value) {
         if (isset($b[$key])) {
             $array[$key] = $value;
         }
@@ -3212,7 +3212,7 @@ function fn_url($url = '', $area = AREA, $protocol = 'current', $lang_code = CAR
      * @param  string $lang_code     2 letters language code
      * @param  bool   $override_area
      * @return bool   Always true
-     */ 
+     */
 //      speed optimization
 //     fn_set_hook('url_pre', $url, $area, $protocol, $lang_code, $override_area);
 
@@ -3335,7 +3335,7 @@ function fn_url($url = '', $area = AREA, $protocol = 'current', $lang_code = CAR
         $company_id_in_url = $company_id;
     }
     //  speed optimization
-    
+
     fn_seo_url_post($_url, $area, $url, $protocol, $company_id_in_url, $lang_code);
 
     if (!empty($prev_admin_index)) {
@@ -3469,19 +3469,20 @@ function fn_substr_in_array($what_str, $where_arr)
 
 function fn_return_bytes($val)
 {
-    $last = fn_strtolower($val{strlen($val)-1});
+    $last = fn_strtolower($val[strlen($val)-1]);
+    $_val = intval($val);
 
     switch ($last) {
         case 'g':
-            $val *= 1024;
+            $_val *= 1073741824;
         case 'm':
-            $val *= 1024;
+            $_val *= 1048576;
         case 'k':
-            $val *= 1024;
+            $_val *= 1024;
         break;
     }
 
-    return $val;
+    return $_val;
 }
 
 /**
@@ -5953,7 +5954,7 @@ function fn_show_numeric($number, $lang_var)
             $word = __($lang_var . '_5');
         }
     }
-    
+
     return $number . ' ' . $word;
 }
 
@@ -5988,6 +5989,6 @@ function fn_convert_case($string)
     if (function_exists('mb_convert_case')) {
         $result = mb_convert_case($string, MB_CASE_TITLE, "UTF-8");
     }
-    
+
     return $result;
 }

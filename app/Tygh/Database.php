@@ -747,7 +747,15 @@ class Database
      */
     private static function _intVal($int)
     {
-        return $int + 0;
+        if ($int === true) {
+            $int = 1;
+        }
+
+        if ($int == INF) {
+            $int = PHP_INT_MAX;
+        }
+
+        return (int) $int;
     }
 
     /**

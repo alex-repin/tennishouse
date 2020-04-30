@@ -146,7 +146,8 @@ function fn_import_check_product_combination_company_id(&$primary_object_id, &$o
         }
 
         if (!empty($primary_object_id)) {
-            list($field, $value) = each($primary_object_id);
+            $field = key($primary_object_id);
+            $value = $primary_object_id[$field];
             $company_id = db_get_field('SELECT company_id FROM ?:products WHERE ' . $field . ' = ?s', $value);
         } else {
             $company_id = db_get_field('SELECT company_id FROM ?:products WHERE product_id = ?i', $object['product_id']);

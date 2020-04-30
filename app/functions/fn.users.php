@@ -1153,13 +1153,13 @@ function fn_generate_password($length = USER_PASSWORD_LENGTH)
     $password = '';
     while ($i < $length) {
         if ($i%2) {
-            $password .= $chars {
+            $password .= $chars [
                 mt_rand(0, strlen($chars) - 1)
-            };
+            ];
         } else {
-            $password .= $nums {
+            $password .= $nums [
                 mt_rand(0, strlen($nums) - 1)
-            };
+            ];
         }
         $i++;
     }
@@ -1342,7 +1342,7 @@ function fn_update_user($user_id, $user_data, &$auth, $ship_to_another, $notify_
         if (empty($user_data['password1']) && $generate_password) {
             $user_data['password1'] = fn_generate_password();
         }
-        
+
         // Check the passwords
         if (!empty($user_data['password1'])) {
             $original_password = trim($user_data['password1']);
@@ -2660,7 +2660,7 @@ function fn_send_usergroup_status_notification($user_id, $usergroup_ids, $status
 function fn_get_mail_server($email)
 {
     $mail_server = substr($email, strpos($email, '@') + 1);
-    
+
     $servers = array(
         'mail.ru' => 'https://e.mail.ru/',
         'bk.ru' => 'https://e.mail.ru/',
@@ -2689,6 +2689,6 @@ function fn_get_mail_server($email)
         'inbox.lv' => 'https://www.inbox.lv/',
         'mail.kz' => 'http://mail.kz/'
     );
-    
+
     return (!empty($servers[$mail_server])) ? $servers[$mail_server] : false;
 }

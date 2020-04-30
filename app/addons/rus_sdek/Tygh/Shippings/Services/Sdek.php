@@ -169,7 +169,7 @@ class Sdek implements IService
                     $goods[$id]['length'] = $package_length;
                     $goods[$id]['width'] = $package_width;
                     $goods[$id]['height'] = $package_height;
-                    
+
                     // fix for stupid sdek api that cant handle multiple packages
                     break;
                 }
@@ -227,7 +227,7 @@ class Sdek implements IService
         $tmp = json_decode($response, true);
         $tmp['amount'] = $data['amount'];
         $response = json_encode($tmp);
-        
+
         return $response;
     }
 

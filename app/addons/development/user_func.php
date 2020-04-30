@@ -38,7 +38,7 @@ function fn_generate_product_features_descriptions($product_ids)
 {
     $result = array();
     $data = db_get_hash_multi_array("SELECT a.variant_id, a.product_id, a.feature_id, c.description_templates FROM ?:product_features_values AS a LEFT JOIN ?:product_features AS b ON a.feature_id = b.feature_id LEFT JOIN ?:product_feature_variant_descriptions AS c ON c.variant_id = a.variant_id AND c.lang_code = ?s WHERE a.product_id IN (?n) AND b.feature_type IN (?a) ORDER BY b.position ASC", array('product_id', 'feature_id'), CART_LANGUAGE, $product_ids, unserialize(DESCRIPTION_FEATURE_TYPES));
-    
+
     if (!empty($data)) {
         foreach ($data as $product_id => $features) {
             $description = '';
@@ -51,7 +51,7 @@ function fn_generate_product_features_descriptions($product_ids)
             $result[$product_id] = $description;
         }
     }
-    
+
     return array($result, $data);
 }
 
@@ -100,7 +100,7 @@ function fn_apply_selected_options(&$product, $options, $exceptions = array())
     $product['selected_options'] = $selected_options;
     if (empty($product['modifiers_price'])) {
         if (!isset($product['base_price'])) {
-            $product['base_price'] = $product['price']; 
+            $product['base_price'] = $product['price'];
         }
         $product['base_modifier'] = fn_apply_options_modifiers($selected_options, $product['base_price'], 'P', array(), array('product_data' => $product));
         $old_price = $product['price'];
@@ -132,13 +132,13 @@ function fn_is_free_strings($product, $features)
     } else {
         return false;
     }
-    
+
 }
 
 function fn_rebuild_inventory_codes($product_id)
 {
     $options = db_get_fields("SELECT a.option_id FROM ?:product_options as a LEFT JOIN ?:product_global_option_links as b ON a.option_id = b.option_id WHERE (a.product_id = ?i OR b.product_id = ?i) AND a.option_type IN ('S','R','C') AND a.inventory = 'Y' ORDER BY position", $product_id, $product_id);
-    
+
     if (empty($options)) {
         db_query("DELETE FROM ?:product_options_inventory WHERE product_id = ?i", $product_id);
         return false;
@@ -149,9 +149,9 @@ function fn_rebuild_inventory_codes($product_id)
         $variant_codes[$option_id] = db_get_hash_single_array("SELECT variant_id, code_suffix FROM ?:product_option_variants WHERE variant_id IN (?a)", array('variant_id', 'code_suffix'), $variants[$k]);
     }
     $product_code = db_get_field("SELECT product_code FROM ?:products WHERE product_id = ?i", $product_id);
-    
+
     $combinations = fn_get_options_combinations($options, $variants);
-    
+
     if (!empty($combinations)) {
         foreach ($combinations as $combination) {
 
@@ -165,7 +165,7 @@ function fn_rebuild_inventory_codes($product_id)
             db_query("UPDATE ?:product_options_inventory SET product_code = ?s WHERE combination_hash = ?i", $_product_code, $combination_hash);
         }
     }
-    
+
     return true;
 }
 
@@ -184,9 +184,9 @@ function fn_parse_catalog_promo(&$text, $prefix)
                 'coupon_code' => $values[0]
             );
             list($coupon) = fn_get_promotions($params);
-            
+
             if (in_array(strtolower(trim($values[0])), array_keys($_SESSION['coupons']))) {
-            
+
                 if (!empty($coupon)) {
                     $text = str_replace($matches[0][$i], '<div class="ty-catalog-promocode-block" id="catalog_promocode_' . $prefix . '">' . (!empty($values[2]) ? $values[2] : __('promo_applied')) .
                         ' <form action="' . fn_url() . '" method="post" name="form_link" class="cm-ajax cm-ajax-force cm-ajax-full-render">
@@ -225,7 +225,7 @@ function fn_is_free_shipping($product)
     if ($product['price'] < Registry::get('addons.development.free_shipping_cost')) {
         return false;
     }
-    
+
     $params = array(
         'active' => true,
         'expand' => true,
@@ -243,7 +243,7 @@ function fn_is_free_shipping($product)
             return false;
         }
     }
-    
+
     return true;
 }
 
@@ -257,7 +257,7 @@ function fn_save_cart_step($cart, $user_id)
     } elseif ($_SESSION['edit_step'] == 'step_four') {
         $step = 3;
     }
-    
+
     $user_type = 'R';
     if (empty($user_id)) {
         if (fn_get_session_data('cu_id')) {
@@ -268,9 +268,9 @@ function fn_save_cart_step($cart, $user_id)
         }
         $user_type = 'U';
     }
-    
+
     if (!empty($user_id)) {
-    
+
         $condition = db_quote(" AND user_id = ?i AND type = 'C' AND user_type = ?s", $user_id, $user_type);
         if (fn_allowed_for('ULTIMATE')) {
             $condition .= fn_get_company_condition('?:user_session_products.company_id');
@@ -319,14 +319,14 @@ function fn_update_competitive_prices()
         }
         fn_echo(' . ');
     }
-    
+
     if (!empty($to_update)) {
         db_query("REPLACE INTO ?:competitive_prices ?m", $to_update);
     }
     if (!empty($to_delete)) {
         db_query("DELETE FROM ?:competitive_prices WHERE item_id IN (?n)", $to_delete);
     }
-    
+
     return array(true, $errors);
 }
 
@@ -337,7 +337,7 @@ function fn_update_competitive_catalog()
     $cur_id = 1;
     $exist_ids = db_get_fields("SELECT object_id FROM ?:competitive_prices ORDER BY object_id DESC");
     $max_id = max($exist_ids);
-    
+
     while (true) {
         if (!in_array($cur_id, $exist_ids)) {
             if (list($price, $code, $name, $in_stock) = fn_parse_competitive_price($link . $cur_id)) {
@@ -359,19 +359,19 @@ function fn_update_competitive_catalog()
         } else {
             $real_id = $cur_id;
         }
-        
+
         if ($max_id < $cur_id && $real_id + 100 < $cur_id) {
             break;
         }
-        
+
         fn_echo(' . ');
         $cur_id++;
     }
-    
+
     if (!empty($data)) {
         db_query("REPLACE INTO ?:competitive_prices ?m", $data);
     }
-    
+
     return array(true, $errors);
 }
 
@@ -380,7 +380,7 @@ function fn_parse_competitive_price($link)
     $extra = array(
         'request_timeout' => 10
     );
-    
+
     $name = $price = $code = $in_stock = '';
     $response = Http::get($link, array(), $extra);
     if (!empty($response)) {
@@ -422,7 +422,7 @@ function fn_check_delivery_statuses()
 {
     $errors = array();
     $data = db_get_hash_array("SELECT ?:orders.order_id, GROUP_CONCAT(DISTINCT ?:shipment_items.shipment_id SEPARATOR ',') AS shipment_ids FROM ?:orders LEFT JOIN ?:shipment_items ON ?:shipment_items.order_id = ?:orders.order_id WHERE ?:orders.status = 'A' GROUP BY order_id", 'order_id');
-    
+
     if (!empty($data)) {
         $_shipment_ids = array();
         foreach ($data as $order_id => $order_data) {
@@ -454,7 +454,7 @@ function fn_check_delivery_statuses()
             }
         }
     }
-    
+
     return array(true, $errors);
 }
 
@@ -471,7 +471,7 @@ function fn_get_categories_subitems($cats)
             $subitems[$c_id] = !empty($c_data['menu_subitems']) ? unserialize($c_data['menu_subitems']) : array();
         }
     }
-    
+
     return $subitems;
 }
 
@@ -492,7 +492,7 @@ function fn_get_generate_categories_menu_subitems()
         ProductTracking::TRACK_WITHOUT_OPTIONS,
         ProductTracking::DO_NOT_TRACK
     );
-        
+
     $condition = db_quote(
         " AND (CASE ?:products.tracking
             WHEN ?s THEN warehouse_inventory.amount > 0
@@ -503,14 +503,14 @@ function fn_get_generate_categories_menu_subitems()
         ProductTracking::TRACK_WITHOUT_OPTIONS,
         ProductTracking::DO_NOT_TRACK
     );
-    
+
     $values_fields = array (
         'pfvl.feature_id',
         'COUNT(DISTINCT ?:products.product_id) as products',
         'pfvl.variant_id',
         'pfvd.variant'
     );
-        
+
     foreach ($cats as $c_id => $c_data) {
 
         $cats_subitems = $features = array();
@@ -520,7 +520,7 @@ function fn_get_generate_categories_menu_subitems()
         $limit = 2 - (!empty($subitems[$c_id]['subitems']) ? 1 : 0);
         $_condition .= db_quote(" AND pc.category_id IN (?n)", $category_ids);
         $features = db_get_hash_single_array("SELECT pf.feature_id, pfd.description FROM ?:product_features AS pf LEFT JOIN ?:product_features_descriptions AS pfd ON pf.feature_id = pfd.feature_id AND pfd.lang_code = ?s WHERE pf.feature_type IN (?a) AND pf.seo_variants = 'Y' AND (pf.categories_path = '' OR FIND_IN_SET(?i, pf.categories_path)) AND pf.parent_variant_id = '0' ORDER BY pf.position ASC LIMIT ?i", array('feature_id', 'description'), CART_LANGUAGE, unserialize(SEO_VARIANTS_ALLOWED), $c_id, $limit);
-        
+
         if (!empty($features)) {
             foreach ($features as $f_id => $f_name) {
                 $cats_subitems[$f_id] = db_get_hash_array("SELECT  " . implode(', ', $values_fields) . " FROM ?:product_features_values AS pfvl ?p WHERE pfvl.feature_id = ?i AND pfvl.lang_code = ?s AND ?:products.status IN ('A') ?p GROUP BY pfvl.variant_id ORDER BY pfv.position", 'variant_id', $join, $f_id, CART_LANGUAGE, $_condition);
@@ -557,7 +557,7 @@ function fn_get_generate_categories_menu_subitems()
         }
         db_query("UPDATE ?:categories SET menu_subitems = ?s WHERE category_id = ?i", serialize($subitems[$c_id]), $c_id);
     }
-    
+
     return array(true, $errors);
 }
 
@@ -570,14 +570,14 @@ function fn_get_features_by_variant($variant_id = 0, $params = array())
     );
     $params = array_merge($default_params, $params);
     list($features) = fn_get_product_features($params, 0, DESCR_SL);
-    
+
     if (!empty($variant_id)) {
         $feature_id = db_get_field("SELECT feature_id FROM ?:product_feature_variants WHERE variant_id = ?i", $variant_id);
         if (!empty($feature_id)) {
             $features[$feature_id]['selected'] = true;
         }
     }
-    
+
     return $features;
 }
 
@@ -611,7 +611,7 @@ function fn_delete_feature_seo($item_ids)
 function fn_get_feature_seo_data($fs_id)
 {
     $feature_seo_data = db_get_array("SELECT a.* FROM ?:category_feature_seo as a WHERE item_id = ?i ORDER BY a.position ASC", $fs_id);
-    
+
     return $feature_seo_data;
 }
 
@@ -629,7 +629,7 @@ function fn_get_feature_seos($params)
         $where .= db_quote(" AND a.status = 'A'");
     }
     $feature_seos = db_get_hash_array("SELECT a.* FROM ?:category_feature_seo as a WHERE 1 $where ORDER BY a.position ASC", 'item_id');
-    
+
     if (!empty($feature_seos)) {
         $feature_ids = $variant_ids = array();
         foreach ($feature_seos as $i => $fs) {
@@ -645,7 +645,7 @@ function fn_get_feature_seos($params)
         }
     }
     $result['data'] = $feature_seos;
-    
+
     return $result;
 }
 
@@ -660,7 +660,7 @@ function fn_clean_ranges_from_feature_hash($feature_hash, $ranges, $field_type =
             unset($hash[$key]);
         }
     }
-    
+
     return implode('.', $hash);
 }
 
@@ -691,7 +691,7 @@ function fn_get_location_by_ip()
         $data['state'] = $state['code'];
         $data['state_id'] = $state['state_id'];
     }
-    
+
     return $data;
 }
 
@@ -708,7 +708,7 @@ function fn_remove_condition(&$condition, $params)
             }
         }
     }
-    
+
     return false;
 }
 
@@ -722,7 +722,7 @@ function fn_find_cart_id($product_id, $list)
             }
         }
     }
-    
+
     return false;
 }
 
@@ -802,14 +802,14 @@ function fn_assign_user_posts($user_id)
 {
     if (!empty($_SESSION['post_ids'])) {
         $settings = Registry::get('addons.development');
-        
+
         list($post_ids, $review_ids) = fn_get_posts_object_ids($_SESSION['post_ids'], false);
         db_query("UPDATE ?:discussion_posts SET user_id = ?i WHERE post_id IN (?n)", $user_id, array_unique($post_ids));
         unset($_SESSION['post_ids']);
 
         if (!empty($review_ids)) {
             $exists = db_get_array("SELECT ?:discussion_posts.post_id, ?:discussion.object_id, ?:discussion.object_type FROM ?:discussion_posts LEFT JOIN ?:discussion ON ?:discussion.thread_id = ?:discussion_posts.thread_id WHERE ?:discussion_posts.post_id IN (?n) AND ?:discussion_posts.is_rewarded = 'Y'", array_unique($review_ids));
-            
+
             if (!empty($exists)) {
                 foreach ($exists as $i => $post_data) {
                     fn_change_user_points($settings['review_reward_' . $post_data['object_type']], $user_id, serialize(array('post_id' => $post_data['post_id'], 'object_id' => $post_data['object_id'], 'type' => $post_data['object_type'])), CHANGE_DUE_REVIEW);
@@ -828,12 +828,12 @@ function fn_count_new_reviews($user_id, $object_type)
         if (!empty($last_order)) {
             $condition .= db_quote("AND ?:discussion_posts.timestamp > ?i", $last_order);
         }
-        
+
         $reviews = db_get_field("SELECT COUNT(?:discussion_posts.post_id) FROM ?:discussion_posts LEFT JOIN ?:discussion ON ?:discussion.thread_id = ?:discussion_posts.thread_id LEFT JOIN ?:discussion_messages ON ?:discussion_messages.post_id = ?:discussion_posts.post_id WHERE ?:discussion_posts.user_id = ?i AND ?:discussion.object_type = ?s AND ?:discussion_messages.message != '' $condition ", $user_id, $object_type);
-        
+
     } elseif (!empty($_SESSION['post_ids'][$object_type])) {
         $settings = Registry::get('addons.development');
-        
+
         if (!empty($_SESSION['auth']['order_ids'])) {
             $lst_order = db_get_field("SELECT ?:orders.timestamp FROM ?:orders LEFT JOIN ?:status_data ON ?:status_data.status = ?:orders.status AND ?:status_data.type = 'O' WHERE ?:orders.order_id IN (?n) AND ?:status_data.param = 'inventory' AND ?:status_data.value = 'D' ORDER BY ?:orders.timestamp DESC", $_SESSION['auth']['order_ids']);
         }
@@ -882,7 +882,7 @@ function fn_promotion_validate_catalog_coupon(&$promotion, $product, $promotion_
     // Check already applied coupons
     if (!empty($_SESSION['coupons'])) {
         $coupons = array_keys($_SESSION['coupons']);
-        
+
         if ($promotion['operator'] == 'cont') {
             $codes = array();
             foreach ($coupons as $coupon_val) {
@@ -935,7 +935,7 @@ function fn_promotion_validate_no_catalog_discount(&$promotion, $cart, $cart_pro
 function fn_promotion_validate_free_strings(&$promotion, $cart, $cart_products, $promotion_id = 0)
 {
     static $features = array();
-    
+
     if ($cart['products'][$cart['promotion_item_id']]['product_id'] == STRINGING_PRODUCT_ID && !empty($cart['products'][$cart['promotion_item_id']]['extra']['parent']['configuration']) && !empty($cart_products[$cart['products'][$cart['promotion_item_id']]['extra']['parent']['configuration']])) {
         $product = $cart_products[$cart['products'][$cart['promotion_item_id']]['extra']['parent']['configuration']];
         if ($product['main_category'] == RACKETS_CATEGORY_ID && empty($product['list_discount'])) {
@@ -947,7 +947,7 @@ function fn_promotion_validate_free_strings(&$promotion, $cart, $cart_products, 
             }
         }
     }
-    
+
     return 'N';
 }
 
@@ -960,7 +960,7 @@ fn_print_r('1');
 function fn_promotion_validate_product_review(&$promotion, $auth, $promotion_id = 0)
 {
     static $reviews;
-    
+
     if (!isset($reviews)) {
         $reviews = fn_count_new_reviews($auth['user_id'], 'P');
     }
@@ -985,7 +985,7 @@ function fn_get_subscriber_statuses($lang_code = CART_LANGUAGE)
         'P' => __('pending'),
         'L' => __('declined'),
     );
-    
+
     return $statuses;
 }
 
@@ -1001,7 +1001,7 @@ function fn_email_exist($emails)
             if (substr($domain, -1) != '.') {
                 $domain .= '.';
             }
-            
+
             $mxRecordsAvailable = getmxrr($domain, $mxRecords, $mxWeight);
             if (!empty($mxRecordsAvailable)) {
                 $mxHosts = array_combine($mxRecords,$mxWeight);
@@ -1133,7 +1133,7 @@ function fn_get_posts_object_ids($posts, $keep_type = true)
             }
         }
     }
-    
+
     return array($post_ids, $review_ids);
 }
 
@@ -1152,7 +1152,7 @@ function fn_user_rated($discussion)
             }
         }
     }
-    
+
     return false;
 }
 
@@ -1192,7 +1192,7 @@ function fn_get_product_review_discount(&$products)
     if (!empty($one_product)) {
         $products = array_shift($products);
     }
-    
+
     return $result;
 }
 
@@ -1243,7 +1243,7 @@ function fn_allow_user_review_reward($user_id, $object_type)
     } else {
         $limit = db_get_field("SELECT COUNT(*) FROM ?:discussion_posts WHERE user_id = ?i AND is_rewarded = 'Y' AND timestamp >= ?i", $user_id, $time_limit);
     }
-    
+
     return ($limit < $settings['review_number_limit_' . $object_type]) ? true : false;
 }
 
@@ -1328,7 +1328,7 @@ function fn_get_approximate_shipping($location)
 
     $rates = Shippings::calculateRates($shippings);
     $est_ship = array();
-    
+
     if (!empty($rates)) {
         foreach ($rates as $i => $sh_r) {
             if ($sh_r['price'] !== false && !empty($sh_r['delivery_time']) && empty($sh_r['error'])) {
@@ -1344,7 +1344,7 @@ function fn_get_approximate_shipping($location)
             return reset($est_ship);
         }
     }
-    
+
     return false;
 }
 
@@ -1369,7 +1369,7 @@ function fn_get_similar_category_products($params)
         );
         $result = fn_get_products($_params);
     }
-    
+
     return $result;
 }
 
@@ -1407,7 +1407,7 @@ function fn_get_catalog_panel_categoies()
     );
     $menu_items = $menu[0]['subitems'];
     fn_format_submenu($menu_items);
-    
+
     return $menu_items;
 }
 
@@ -1495,7 +1495,7 @@ function fn_get_discounted_products($params, $items_per_page = 0)
     if (!empty($params['products_limit'])) {
         $_result = array_slice($_result, 0, $params['products_limit']);
     }
-    
+
     return array($_result, $params);
 }
 
@@ -1566,7 +1566,7 @@ function fn_get_news_feed($params)
     } elseif (!empty($params['rss_feed_link'])) {
         $news = fn_get_rss_news($params);
     }
-    
+
     return array($news, $params);
 }
 
@@ -1606,7 +1606,7 @@ function fn_get_rss_news($params)
             }
         }
     }
-    
+
     return $news_feed;
 }
 
@@ -1665,7 +1665,7 @@ function fn_set_store_gender_mode($mode)
     if (strlen($mode) != 1) {
         return false;
     }
-    
+
     $gender_mode = fn_get_store_gender_mode();
 
     if (empty($gender_mode) || (!(in_array($gender_mode, array('B', 'G')) && $mode == 'K') && !(in_array($gender_mode, array('M', 'F')) && $mode == 'A'))) {
@@ -1787,9 +1787,9 @@ function fn_check_player_data($player_data)
             'career_won' => 1,
             'career_lost' => 1
         )
-        
+
     );
-    
+
     foreach ($scheme as $key => $value) {
         if (!isset($player_data[$key]) || $player_data[$key] == 'n/a') {
             return false;
@@ -1801,7 +1801,7 @@ function fn_check_player_data($player_data)
             }
         }
     }
-    
+
     return true;
 }
 
@@ -1829,7 +1829,7 @@ function fn_update_rub_rate()
         fn_update_prices();
         fn_set_notification('N', __('notice'), __('currencies_updated_successfully'));
     }
-    
+
     return array(true, $errors);
 }
 
@@ -1906,7 +1906,7 @@ function fn_update_product_exceptions($product_id, $combinations)
         if (!empty($combination_options)) {
             foreach ($combination_options as $hash => $combination) {
                 $options_array = fn_get_product_options_by_combination($combination);
-                
+
                 db_query("DELETE FROM ?:product_options_exceptions WHERE product_id = ?i AND combination = ?s", $product_id, serialize($options_array));
                 if (!empty($combinations[$hash]) && $combinations[$hash]['amount'] < 1) {
                     $_data = array(
@@ -1945,15 +1945,17 @@ function fn_get_memcached_stats()
     if (class_exists('Memcached')) {
         $result['status'] = true;
         $stats = Memcache::instance()->call('stats');
-        $localhost = $stats['localhost:11211'];
-        if (!empty($localhost['limit_maxbytes'])) {
-            $result['used_prc'] = ceil($localhost['bytes'] / $localhost['limit_maxbytes'] * 100);
+        $localhost = !empty($stats['localhost:11211']) ? $stats['localhost:11211'] : false;
+        if (!empty($localhost)) {
+            if (!empty($localhost['limit_maxbytes'])) {
+                $result['used_prc'] = ceil($localhost['bytes'] / $localhost['limit_maxbytes'] * 100);
+            }
+            $result['used'] = ceil($localhost['bytes'] / 1024);
         }
-        $result['used'] = ceil($localhost['bytes'] / 1024);
     } else {
         $result['status'] = false;
     }
-    
+
     return $result;
 }
 
@@ -2009,7 +2011,7 @@ function fn_get_block_categories($category_id)
 
         list($categories, ) = fn_get_categories($params, CART_LANGUAGE);
     }
-    
+
     return $categories;
 }
 
@@ -2018,7 +2020,7 @@ function fn_get_brands()
     list($variants) = fn_get_product_feature_variants(array(
         'feature_id' => BRAND_FEATURE_ID
     ));
-    
+
     return $variants;
 }
 
@@ -2066,7 +2068,7 @@ function fn_get_subtitle_feature($features, $type = 'R')
             }
         }
     }
-    
+
     return false;
 }
 
@@ -2097,7 +2099,7 @@ function fn_get_product_cross_sales($params)
             }
         }
     }
-    
+
     return array($result, $params);
 }
 
@@ -2148,7 +2150,7 @@ function fn_get_cross_sales($params)
             $result = $categories;
         }
     }
-    
+
     return $result;
 }
 
@@ -2160,7 +2162,7 @@ function fn_get_result_products($params, $key, $param_array)
         list($prods,) = fn_get_products($params);
         $result = array_merge($result, $prods);
     }
-    
+
     return $result;
 }
 
@@ -2363,7 +2365,7 @@ function fn_get_product_global_data($product_data, $data_names, $categories_data
             $result[$dt_name] = Registry::get('addons.development.' . $dt_name);
         }
     }
-    
+
     return $result;
 }
 
@@ -2392,7 +2394,7 @@ function fn_get_category_global_data($category_data, $data_names)
             $result[$dt_name] = Registry::get('addons.development.' . $dt_name);
         }
     }
-    
+
     return $result;
 }
 
@@ -2405,7 +2407,7 @@ function fn_calculate_base_price($product_data)
 {
     $net_cost = $product_data['net_cost'] * Registry::get('currencies.' . $product_data['net_currency_code'] . '.coefficient');
     $base_price = $net_cost + $net_cost * $product_data['margin'] / 100;
-    
+
     return $base_price;
 }
 
@@ -2475,7 +2477,7 @@ function fn_process_update_prices($products)
             }
         }
     }
-    
+
     if (!empty($result)) {
         db_query("REPLACE INTO ?:product_prices ?m", $result);
     }
@@ -2522,7 +2524,7 @@ function fn_get_category_type($category_id)
         BALL_MACHINE_ACC_CATEGORY_ID => 'BA',
         TREADMILL_CATEGORY_ID => 'TM',
     );
-    
+
     return !empty($types[$category_id]) ? array($category_id, $types[$category_id]) : array('', '');
 }
 
@@ -2565,7 +2567,7 @@ function fn_identify_type_category_id($path)
             $type = TREADMILL_CATEGORY_ID;
         }
     }
-    
+
     return $type;
 }
 
@@ -2601,9 +2603,9 @@ function fn_get_player_data($player_id)
 {
     $field_list = "?:players.*";
     $join = '';
-    
+
     fn_set_hook('get_player_data', $player_id, $field_list, $join, $condition);
-    
+
     $player_data = db_get_row("SELECT $field_list FROM ?:players LEFT JOIN ?:players_gear ON ?:players.player_id = ?:players_gear.player_id ?p WHERE ?:players.player_id = ?i  ?p", $join, $player_id, $condition);
 
     if (!empty($player_data)) {
@@ -2684,11 +2686,11 @@ function fn_get_players($params)
     if (AREA == 'C') {
         $condition .= db_quote(' AND ?:players_gear.product_id IS NOT NULL');
     }
-    
+
     $limit = '';
 
     fn_set_hook('get_players', $params, $join, $condition, $fields);
-    
+
     if (!empty($params['limit'])) {
         $limit = db_quote(' LIMIT 0, ?i', $params['limit']);
     }
@@ -2710,7 +2712,7 @@ function fn_get_players($params)
     }
 
     fn_set_hook('get_players_post', $players, $params);
-    
+
     return array($players, $params);
 }
 
@@ -2735,9 +2737,9 @@ function fn_delete_player($player_id)
 
     // Deleting player images
     fn_delete_image_pairs($player_id, 'player');
-    
+
     fn_set_hook('delete_player', $player_id);
-    
+
     return true;
 }
 
@@ -2753,7 +2755,7 @@ function fn_update_player($player_data, $player_id = 0)
         $_data['ranking'] = db_get_field("SELECT max(ranking) FROM ?:players");
         $_data['ranking'] = $_data['ranking'] + 1;
     }
-    
+
     $variant_data = array();
     if (isset($player_data['player'])) {
         $variant_data['variant'] = $player_data['player'];
@@ -2768,7 +2770,7 @@ function fn_update_player($player_data, $player_id = 0)
 
         $player_id = db_query("INSERT INTO ?:players ?e", $_data);
         $existing_gear = array();
-        
+
     // update existing player
     } else {
 
@@ -2789,7 +2791,7 @@ function fn_update_player($player_data, $player_id = 0)
         fn_log_event('players', !empty($create) ? 'create' : 'update', array(
             'player_id' => $player_id,
         ));
-        
+
         $_data['gear'] = (empty($_data['gear'])) ? array() : explode(',', $_data['gear']);
         $to_delete = array_diff($existing_gear, $_data['gear']);
         $to_update = array_merge($existing_gear, $_data['gear']);
@@ -2816,7 +2818,7 @@ function fn_update_player($player_data, $player_id = 0)
                 db_query("REPLACE INTO ?:product_features_values ?e", $i_data);
             }
         }
-        
+
         if (!empty($to_update)) {
             foreach ($to_update as $i => $pr_id) {
                 $features = db_get_array("SELECT * FROM ?:product_features_values WHERE product_id = ?i", $pr_id);
@@ -2824,9 +2826,9 @@ function fn_update_player($player_data, $player_id = 0)
             }
         }
     }
-    
+
     fn_set_hook('update_player_post', $_data, $player_id);
-    
+
     return $player_id;
 
 }
@@ -2836,7 +2838,7 @@ function fn_get_technology_data($technology_id)
     $field_list = "?:technologies.*";
 
     fn_set_hook('get_technology_data', $technology_id, $field_list, $join, $condition);
-    
+
     $technology_data = db_get_row("SELECT $field_list FROM ?:technologies LEFT JOIN ?:product_technologies ON ?:technologies.technology_id = ?:product_technologies.technology_id ?p WHERE ?:technologies.technology_id = ?i  ?p", $join, $technology_id, $condition);
 
     if (!empty($technology_data)) {
@@ -2866,9 +2868,9 @@ function fn_delete_technology($technology_id)
 
     // Deleting technology images
     fn_delete_image_pairs($technology_id, 'technology');
-    
+
     fn_set_hook('delete_technology', $technology_id);
-    
+
     return true;
 }
 
@@ -2901,11 +2903,11 @@ function fn_get_technologies($params)
     if (AREA == 'C') {
         $condition .= db_quote(' AND ?:product_technologies.product_id IS NOT NULL');
     }
-    
+
     $limit = '';
 
     fn_set_hook('get_technologies', $params, $join, $condition, $fields);
-    
+
     if (!empty($params['limit'])) {
         $limit = db_quote(' LIMIT 0, ?i', $params['limit']);
     }
@@ -2939,7 +2941,7 @@ function fn_get_technologies($params)
     }
 
     fn_set_hook('get_technologies_post', $technologies, $params);
-    
+
     return array($technologies, $params);
 }
 
@@ -2954,7 +2956,7 @@ function fn_update_technology($technology_data, $technology_id = 0)
 
         $technology_id = db_query("INSERT INTO ?:technologies ?e", $_data);
         $existing_products = array();
-        
+
     // update existing technology
     } else {
 
@@ -2973,7 +2975,7 @@ function fn_update_technology($technology_data, $technology_id = 0)
         fn_log_event('technologies', !empty($create) ? 'create' : 'update', array(
             'technology_id' => $technology_id,
         ));
-        
+
         $_data['products'] = (empty($_data['products'])) ? array() : explode(',', $_data['products']);
         $to_delete = array_diff($existing_products, $_data['products']);
 
@@ -2992,9 +2994,9 @@ function fn_update_technology($technology_data, $technology_id = 0)
             }
         }
     }
-    
+
     fn_set_hook('update_technology_post', $_data, $technology_id);
-    
+
     return $technology_id;
 
 }
@@ -3007,7 +3009,7 @@ function fn_get_state_parts($state)
             unset($state_parts[$i]);
         }
     }
-    
+
     return $state_parts;
 }
 
@@ -3025,7 +3027,7 @@ function fn_find_state_match($state)
         arsort($match);
         return $states[key($match)];
     }
-    
+
     return false;
 }
 
@@ -3034,9 +3036,9 @@ function fn_get_warehouse_data($warehouse_id)
     $field_list = "?:warehouses.*, GROUP_CONCAT(?:warehouse_brands.brand_id SEPARATOR ',') AS brand_ids";
 
     fn_set_hook('get_warehouse_data', $warehouse_id, $field_list, $join, $condition);
-    
+
     $warehouse_data = db_get_row("SELECT $field_list FROM ?:warehouses LEFT JOIN ?:warehouse_brands ON ?:warehouse_brands.warehouse_id = ?:warehouses.warehouse_id ?p WHERE ?:warehouses.warehouse_id = ?i  ?p GROUP BY ?:warehouses.warehouse_id", $join, $warehouse_id, $condition);
-    
+
     if (!empty($warehouse_data['brand_ids'])) {
         $warehouse_data['brand_ids'] = explode(',', $warehouse_data['brand_ids']);
     }
@@ -3063,7 +3065,7 @@ function fn_delete_warehouse($warehouse_id)
     db_query("DELETE FROM ?:product_warehouses_inventory WHERE warehouse_id = ?i", $warehouse_id);
 
     fn_set_hook('delete_warehouse', $warehouse_id);
-    
+
     return true;
 }
 
@@ -3075,7 +3077,7 @@ function fn_get_product_warehouses($product_id)
         $warehouse_ids = unserialize($warehouse_ids);
         $warehouses = db_get_hash_array("SELECT warehouse_id, name FROM ?:warehouses WHERE warehouse_id IN (?n) ORDER BY priority ASC", 'warehouse_id', $warehouse_ids);
     }
-    
+
     return $warehouses;
 }
 
@@ -3092,7 +3094,7 @@ function fn_promotions_check_warehouses($promo, $product)
 function fn_get_simple_warehouses()
 {
     $warehouses = db_get_hash_single_array("SELECT warehouse_id, name FROM ?:warehouses WHERE 1 ORDER BY priority ASC", array('warehouse_id', 'name'));
-    
+
     return $warehouses;
 }
 
@@ -3119,7 +3121,7 @@ function fn_get_warehouses($params)
     $limit = '';
 
     fn_set_hook('get_warehouses', $params, $join, $condition, $fields);
-    
+
     if (!empty($params['limit'])) {
         $limit = db_quote(' LIMIT 0, ?i', $params['limit']);
     }
@@ -3131,7 +3133,7 @@ function fn_get_warehouses($params)
     }
 
     fn_set_hook('get_warehouses_post', $warehouses, $params);
-    
+
     return array($warehouses, $params);
 }
 
@@ -3145,7 +3147,7 @@ function fn_update_warehouse($warehouse_data, $warehouse_id = 0)
         $create = true;
 
         $warehouse_id = db_query("INSERT INTO ?:warehouses ?e", $_data);
-        
+
         $existing_brands = array();
     // update existing warehouse
     } else {
@@ -3182,11 +3184,11 @@ function fn_update_warehouse($warehouse_data, $warehouse_id = 0)
         fn_log_event('warehouses', !empty($create) ? 'create' : 'update', array(
             'warehouse_id' => $warehouse_id,
         ));
-        
+
     }
-    
+
     fn_set_hook('update_warehouse_post', $_data, $warehouse_id);
-    
+
     return $warehouse_id;
 
 }
@@ -3224,12 +3226,12 @@ function fn_rebuild_product_options_inventory_multi($product_ids, $products_opti
     }
 
     if (!empty($products_options)) {
-    
+
         if (empty($product_data)) {
             $product_data = db_get_hash_array("SELECT product_code, warehouse_ids FROM ?:products WHERE product_id IN (?n)", 'product_id', $product_ids);
         }
         $inventory_data = db_get_hash_multi_array("SELECT combination_hash, amount, product_code, product_id FROM ?:product_options_inventory WHERE product_id IN (?n)", array('product_id', 'combination_hash'), $product_ids);
-        
+
         $warehouse_data = db_get_hash_multi_array("SELECT * FROM ?:product_warehouses_inventory WHERE product_id IN (?n)", array('product_id', 'warehouse_hash'), $product_ids);
         db_query("DELETE FROM ?:product_warehouses_inventory WHERE product_id IN (?n) AND combination_hash != '0'", $product_ids);
 
@@ -3253,11 +3255,11 @@ function fn_rebuild_product_options_inventory_multi($product_ids, $products_opti
                 $variant_codes[$k] = $_codes;
             }
             fn_set_hook('look_through_variants_pre', $product_id, $amount, $options, $variants);
-        
+
             $position = 0;
             $hashes = array();
             $combinations = fn_get_options_combinations($options, $variants);
-            
+
             if (!empty($combinations)) {
                 foreach ($combinations as $combination) {
 
@@ -3308,7 +3310,7 @@ function fn_rebuild_product_options_inventory_multi($product_ids, $products_opti
             }
 
             fn_set_hook('look_through_variants_post', $combinations, $product_id, $amount, $options, $variants);
-            
+
             if (!empty($inventory_data[$product_id])) {
                 $delete_combinations = array_merge($delete_combinations, array_diff(array_keys($inventory_data[$product_id]), $hashes));
             }
@@ -3336,6 +3338,6 @@ function fn_get_state_names($state_ids, $state_name)
     foreach ($state_ids as $id) {
         $result[$id] = $state_name[$id];
     }
-    
+
     return $result;
 }

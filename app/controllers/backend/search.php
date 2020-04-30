@@ -25,12 +25,13 @@ if ($mode == 'results') {
     $params['objects'] = array_keys(fn_search_get_customer_objects());
     $params['short_info'] = true;
 
-    if (!empty($params['compact']) && $params['compact'] = 'Y') {
+    if (!empty($params['compact']) && $params['compact'] == 'Y') {
         list($objects, $search) = fn_search($params, Registry::get('settings.Appearance.products_per_page'));
         Registry::get('view')->assign('found_objects', $objects);
 
         if (count($objects) == 1 && !empty($search['detailed_links'][key($objects)])) {
-            list($object, $data) = each($objects);
+            $object = key($objects);
+            $data = $objects[$object];
             if ($data['count'] == 1) {
                 return array(CONTROLLER_STATUS_REDIRECT, str_replace('%id%', $data['id'], $search['detailed_links'][$object]));
             }

@@ -77,30 +77,32 @@ class RussianPostCalc implements IService
         $shipping_type = $this->_shipping_info['service_params']['shipping_type'];
         $response = json_decode($response, true);
 
-        if ($response['msg']['type'] == 'done') {
+        if (!empty($response)) {
+            if ($response['msg']['type'] == 'done') {
 
-            foreach ($response['calc'] as $calc) {
-                if ($calc['type'] == $shipping_type) {
+                foreach ($response['calc'] as $calc) {
+                    if ($calc['type'] == $shipping_type) {
 
-                    $cost = $calc['cost'];
-                    if (CART_PRIMARY_CURRENCY != 'RUB') {
-                        $cost = fn_rus_russianpost_format_price_down($cost, 'RUB');
+                        $cost = $calc['cost'];
+                        if (CART_PRIMARY_CURRENCY != 'RUB') {
+                            $cost = fn_rus_russianpost_format_price_down($cost, 'RUB');
+                        }
+
+                        $return['cost'] = $cost;
+                        $return['delivery_time'] = $calc['days'] . ' ' . __('days');
+                        $rates = array(
+                            'price' => $cost,
+                            'date' => $calc['days'] . ' ' . __('days')
+                        );
+                        break;
                     }
-
-                    $return['cost'] = $cost;
-                    $return['delivery_time'] = $calc['days'] . ' ' . __('days');
-                    $rates = array(
-                        'price' => $cost,
-                        'date' => $calc['days'] . ' ' . __('days')
-                    );
-                    break;
                 }
+
+                $this->_fillSessionData($rates);
+
+            } else {
+                $return['error'] = $this->processErrors($response);
             }
-
-            $this->_fillSessionData($rates);
-
-        } else {
-            $return['error'] = $this->processErrors($response);
         }
 
         return $return;
@@ -121,7 +123,7 @@ class RussianPostCalc implements IService
 
         return true;
     }
-    
+
     /**
      * Gets error message from shipping service server
      *

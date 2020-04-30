@@ -111,7 +111,10 @@ function fn_data_feeds_export($datafeed_id, $options = array(), $pattern = '')
 
         list($products, $search) = fn_get_products($params);
 
-        $pids = array_map(create_function('$product', '$pid = $product["product_id"]; return $pid;'), $products);
+        $pids = array_map(function($product){
+            $pid = $product["product_id"];
+            return $pid;
+        }, $products);
 
     } else {
         $pids = array();
@@ -128,7 +131,10 @@ function fn_data_feeds_export($datafeed_id, $options = array(), $pattern = '')
 
             list($products, $search) = fn_get_products($params);
 
-            $_pids = array_map(create_function('$product', '$pid = $product["product_id"]; return $pid;'), $products);
+            $pids = array_map(function($product){
+                $pid = $product["product_id"];
+                return $pid;
+            }, $products);
 
             $pids = array_merge($pids, $_pids);
             unset($_pids);

@@ -178,7 +178,7 @@ function fn_search($params, $items_per_page = 0, $lang_code = CART_LANGUAGE)
     fn_set_hook('search_by_objects', $search['conditions']['values'], $params);
 
     if (count($search['conditions']['values']) == 1	&& (!empty($params['compact']) && $params['compact'] == 'Y')) {
-        list ($object) = each($search['conditions']['values']);
+        $object = key($search['conditions']['values']);
 
         return fn_search_simple($params, $search, $object, $items_per_page, $lang_code);
 
