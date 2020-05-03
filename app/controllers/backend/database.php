@@ -26,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD']	== 'POST') {
     // Backup database
     if ($mode == 'backup') {
 
+        ini_set('memory_limit', '512M');
         $dbdump_filename = empty($_REQUEST['dbdump_filename']) ? 'dump_' . date('mdY') . '.sql' : fn_basename($_REQUEST['dbdump_filename']);
 
         if (!fn_mkdir(Registry::get('config.dir.database'))) {

@@ -251,7 +251,7 @@ class Logger implements LoggerInterface
         $record = array(
             'message' => (string) $message,
             'context' => $context,
-            'referer' => !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'NO REFERER',
+            'referer' => (defined('AJAX_REQUEST') ? ($_SERVER['HTTP_REFERER'] ?? 'NO REFERER') . ' ' : '')  . ($_SERVER['REQUEST_URI'] ?? ''),
             'level' => $level,
             'level_name' => $levelName,
             'channel' => $this->name,

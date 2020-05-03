@@ -35,3 +35,4 @@
 {/if}
 {/hook}
 {$location_data.custom_html nofilter}
+<meta name="yandex-verification" content="597256756fd89e2a" />

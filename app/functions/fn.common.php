@@ -5676,8 +5676,10 @@ function fn_format_long_string($str, $length)
 function fn_get_preview_url($uri, $object_data, $user_id)
 {
     if (fn_allowed_for('ULTIMATE')) {
-        $company_id = Registry::get('runtime.company_id') ? Registry::get('runtime.company_id') : $object_data['company_id'];
-        $uri = fn_link_attach($uri, 'company_id=' . $company_id);
+        $company_id = Registry::get('runtime.company_id') ? Registry::get('runtime.company_id') : ($object_data['company_id'] ?? false);
+        if (!empty($company_id)) {
+            $uri = fn_link_attach($uri, 'company_id=' . $company_id);
+        }
     }
 
     if ($object_data['status'] != 'A' || fn_allowed_for('MULTIVENDOR') || !empty($object_data['usergroup_ids'])) {

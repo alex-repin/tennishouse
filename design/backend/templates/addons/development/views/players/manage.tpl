@@ -57,6 +57,7 @@
     {capture name="tools_list"}
         {if $players}
             <li>{btn type="delete_selected" dispatch="dispatch[players.m_delete]" form="players_form"}</li>
+            <li>{btn type="list" text=__("update_ranking_selected") dispatch="dispatch[players.m_update]" form="players_form"}</li>
         {/if}
     {/capture}
     {dropdown content=$smarty.capture.tools_list}

@@ -124,7 +124,7 @@ class Gml implements IGml
 
         $cat_data = db_get_hash_array("SELECT category_id, id_path, gml_product_category FROM ?:categories", 'category_id');
         $params = array(
-            'gml_disable_product' => 'N'
+            'gml_disable_product' => 'N',
         );
         list($products, ) = fn_get_products($params);
 
@@ -137,10 +137,10 @@ class Gml implements IGml
             'get_discounts' => true,
             'get_features' => true,
             'features_display_on' => 'A',
-            'get_title_features' => false,
+//             'get_title_features' => false,
             'allow_duplication' => false
         ));
-        $brands = fn_get_product_feature_data(BRAND_FEATURE_ID, true, true);
+//         $brands = fn_get_product_feature_data(BRAND_FEATURE_ID, true, true);
 
         $offset = 0;
         $option_type = array();
@@ -151,12 +151,18 @@ class Gml implements IGml
             foreach ($prods_slice as $k => &$product) {
                 $new_product = array();
 
-                $brand = $product['product_features'][BRAND_FEATURE_ID]['variant'];
-                
+//                 $brand = $product['product_features'][BRAND_FEATURE_ID]['variant'];
+
 //              Basic product data
-                $new_product['g:id'] = $product['product_id'];
-                $new_product['g:title'] = $this->escape($product['product']);
-                $new_product['g:description'] = !empty($product['full_description']) ? $this->escape($product['full_description']) : (!empty($product['short_description']) ? $this->escape($product['short_description']) : '');
+                $new_product['g:id'] = fn_generate_cart_id($product['product_id'], array());
+                $new_product['g:title'] = ucfirst(strtolower($this->escape($product['product'])));
+                if ($product['full_description'] != '') {
+                    $new_product['g:description'] = $product['full_description'];
+                } elseif ($product['short_description'] != '') {
+                    $new_product['g:description'] = $product['short_description'];
+                } else {
+                   $new_product['g:description'] = ucfirst(strtolower($new_product['g:title']));
+                }
                 $new_product['g:link'] = fn_url('products.view?product_id=' . $product['product_id']);
                 $new_product['g:image_link'] = $product['main_pair']['detailed']['http_image_path'];
                 if (!empty($product['image_pairs'])) {
@@ -182,6 +188,7 @@ class Gml implements IGml
                 } else {
                     $new_product['g:price'] = $price = $this->formatPrice($product['price']);
                 }
+                
 //                 $new_product['g:sale_price_effective_date'] = '';
 //                 $new_product['g:unit_pricing_measure'] = '';
 //                 $new_product['g:unit_pricing_base_measure'] = '';
@@ -194,10 +201,14 @@ class Gml implements IGml
 //                 $new_product['g:product_type'] = '';
                 
 //              Product identifiers
-                $new_product['g:brand'] = $product['product_features'][BRAND_FEATURE_ID]['variant'];
-//                 $new_product['g:gtin'] = '';
+                $new_product['g:brand'] = $product['product_features'][BRAND_FEATURE_ID]['variant'] ?? 'NO BRAND';
+                if (!empty($product['ean'])) {
+                    $new_product['g:gtin'] = $product['ean'];
+                    $new_product['g:identifier_exists'] = 'yes';
+                } else {
+                    $new_product['g:identifier_exists'] = 'no';
+                }
 //                 $new_product['g:mpn'] = '';
-                $new_product['g:identifier_exists'] = 'no';
                 
 //              Detailed product description
                 $new_product['g:condition'] = 'new';
@@ -285,6 +296,7 @@ class Gml implements IGml
                     $item_groups = array();
                     foreach ($product['inventory'] as $combination) {
                         $options = fn_get_product_options_by_combination($combination['combination']);
+                        $item_groups[$iteration]['g:id'] = fn_generate_cart_id($product['product_id'], array('product_options' => $options), true);
                         foreach ($options as $opt_id => $vr_id) {
                             if (!empty($product['product_options'][$opt_id]) && !empty($product['product_options'][$opt_id]['variants'][$vr_id]['variant_name'])) {
                                 if (!array_key_exists($opt_id, $option_type)) {
@@ -339,7 +351,8 @@ class Gml implements IGml
     {
         $currencies = Registry::get('currencies');
         $currency = $currencies[$currency_code];
-        $result = fn_format_rate_value($price, 'F', $currency['decimals'], $currency['decimals_separator'], $currency['thousands_separator'], $currency['coefficient']);
+        
+        $result = fn_format_rate_value($price, 'F', $currency['decimals'], $currency['decimals_separator'], '', $currency['coefficient']);
         if ($currency['after'] == 'Y') {
             $result .= ' ' . $currency['currency_code'];
         } else {

@@ -4196,8 +4196,7 @@ function fn_check_amount_in_stock($product_id, $amount, $product_options, $cart_
                         // [tennishouse]
                         )
                     ) {
-//                         $org_amount = !empty($v['original_amount']) ? $v['original_amount'] : 0;
-                        $current_amount -= $v['amount'] - $org_amount;
+                        $current_amount -= $v['amount'];
                     }
                 } else {
                     $product_not_in_cart = false;

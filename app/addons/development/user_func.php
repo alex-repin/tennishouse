@@ -1351,22 +1351,17 @@ function fn_get_approximate_shipping($location)
 function fn_get_similar_category_products($params)
 {
     $result = array();
+    $_params = array (
+        'subcats' => 'Y',
+        'sort_by' => 'popularity',
+        'limit' => $params['limit']
+    );
     if (!empty($_SESSION['product_category'])) {
-        $_params = array (
-            'cid' => $_SESSION['product_category'],
-            'subcats' => 'Y',
-            'sort_by' => 'popularity',
-            'limit' => $params['limit']
-        );
+        $_params['cid'] = $_SESSION['product_category'];
         $result = fn_get_products($_params);
     }
     if (empty($result[0]) && !empty($_SESSION['main_product_category'])) {
-        $_params = array (
-            'cid' => $_SESSION['main_product_category'],
-            'subcats' => 'Y',
-            'sort_by' => 'popularity',
-            'limit' => $params['limit']
-        );
+        $_params['cid'] = $_SESSION['main_product_category'];
         $result = fn_get_products($_params);
     }
 
@@ -1710,6 +1705,8 @@ function fn_update_rankings($ids = array())
                     if (preg_match('/<div class="player-ranking-position">.*?(\d+).*?<\/div>/', preg_replace('/[\r\n\t]/', '', $result), $match)) {
                         if (preg_match('/>(\d+)</', preg_replace('/[\s\r\n\t]/', '', $match[0]), $_match)) {
                             $player_data['ranking'] = isset($_match['1']) ? $_match['1'] : 'n/a';
+                        } else {
+                            $player_data['ranking'] = 0;
                         }
                     }
                     if (preg_match('/id="playersStatsTable".*?>(.*?)<\/table>/', preg_replace('/[\r\n\t]/', '', $result), $match)) {
@@ -1728,7 +1725,7 @@ function fn_update_rankings($ids = array())
                     }
                     $update[] = $player_data;
                 } else {
-                    if (preg_match('/<span class="player-header-image-col__rank-pos.*?".*?data-single="(\d+)"/', preg_replace('/[\r\n\t]/', '', $result), $match)) {
+                    if (preg_match('/<span class="profile-header-image-col__rank-pos.*?".*?data-single="(\d+)"/', preg_replace('/[\r\n\t]/', '', $result), $match)) {
                         $player_data['ranking'] = isset($match['1']) ? $match['1'] : 'n/a';
                     }
                     if (preg_match('/data-single="Singles Titles".*?data-single="Singles Titles".*?data-single="(\d+)".*?<\/div>.*?Career<\/div>/', preg_replace('/[\r\n\t]/', '', $result), $match)) {
@@ -1791,7 +1788,7 @@ function fn_check_player_data($player_data)
     );
 
     foreach ($scheme as $key => $value) {
-        if (!isset($player_data[$key]) || $player_data[$key] == 'n/a') {
+        if (!isset($player_data[$key]) || $player_data[$key] === 'n/a') {
             return false;
         } elseif (is_array($value)) {
             foreach ($value as $_key => $_value) {
@@ -2323,7 +2320,10 @@ function fn_get_product_global_data($product_data, $data_names, $categories_data
         if (empty($categories_data)) {
             $paths = db_get_hash_single_array("SELECT category_id, id_path FROM ?:categories WHERE category_id IN (?n)", array('category_id', 'id_path'), $product_data['category_ids']);
         } else {
-            $paths = $categories_data;
+            $paths = array();
+            foreach ($categories_data as $c_id => $c_data) {
+                $paths[$c_id] = $c_data['id_path'] ?? '';
+            }
         }
         $all_ids = array();
         $use_order = array();

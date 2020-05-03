@@ -63,11 +63,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if ($mode == 'm_update') {
-        if (!empty($_REQUEST['players_data'])) {
-            foreach ($_REQUEST['players_data'] as $k => $v) {
-                fn_update_player($v, $k);
+    
+        if (isset($_REQUEST['player_ids'])) {
+            list($result, $errors) = fn_update_rankings($_REQUEST['player_ids']);
+            if ($result) {
+                fn_set_notification('N', __('notice'), __('text_player_info_update_succeeded'));
+            } else {
+                fn_set_notification('W', __('warning'), __('text_player_info_update_failed'));
             }
         }
+
+        unset($_SESSION['player_ids']);
         $suffix = ".manage";
     }
     

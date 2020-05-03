@@ -1982,7 +1982,8 @@ function fn_product_configurator_update_cart_products_post(&$cart, $product_data
                 }
                 $p_data['extra'] = $cart['products'][$i]['extra'];
                 $_product_data[$p_data['product_id']] = $p_data;
-                $ids = fn_add_product_to_cart($_product_data, $cart, !empty($_SESSION['customer_auth']) ? $_SESSION['customer_auth'] : fn_fill_auth(array(), array(), false, 'C'));
+                $_auth = !empty($_SESSION['customer_auth']) ? $_SESSION['customer_auth'] : fn_fill_auth(array(), array(), false, 'C');
+                $ids = fn_add_product_to_cart($_product_data, $cart, $_auth);
                 $new_key = array_search($p_data['product_id'], $ids);
                 if ($count > count($cart['products'][$new_key]['configuration'])) {
                     $cart = $org_cart;
