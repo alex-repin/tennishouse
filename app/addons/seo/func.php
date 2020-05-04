@@ -370,11 +370,11 @@ function fn_seo_get_route_request($uri, &$req, &$is_allowed_url, &$url_query = '
                     }
 
                     if ($_seo_valid == true) {
-                    
+
                         $req['sl'] = $objects['sl'];
 
                         $_seo_vars = fn_get_seo_vars($_seo['type']);
-                        
+
                         if (!empty($_seo_vars['is_particle'])) {
                             $base_uri = str_replace('/' . $_seo['name'], '', $uri);
                         }
@@ -382,7 +382,7 @@ function fn_seo_get_route_request($uri, &$req, &$is_allowed_url, &$url_query = '
                             $parent_url_query = '';
                             $_seo_vars = array_merge($_seo_vars, $_seo_vars['particle_options']);
                             fn_seo_get_route_request(str_replace('/' . $_seo['name'], '', $uri), $req, $is_allowed_url, $parent_url_query);
-                            
+
                             $url_query = $parent_url_query . '&' . $_seo_vars['item'] . '=' . (!empty($_seo_vars['value_prefix']) ? $_seo_vars['value_prefix'] : '') . $_seo['object_id'];
                             if (!empty($_seo['object_id'])) {
                                 $req[$_seo_vars['item']] = (!empty($req[$_seo_vars['item']]) ? $req[$_seo_vars['item']] . '.' : '') . (!empty($_seo_vars['value_prefix']) ? $_seo_vars['value_prefix'] : '') . $_seo['object_id'];
@@ -478,7 +478,7 @@ function fn_seo_get_route(&$req, &$result, &$area, &$is_allowed_url)
     if (!empty($_REQUEST['dispatch']) && $_REQUEST['dispatch'] == 'watermark.create') {
         return true;
     }
-    
+
     if (($area == 'C') && !$is_allowed_url) {
 
         $uri = fn_get_seo_request_uri($_SERVER['REQUEST_URI']);
@@ -515,9 +515,9 @@ function fn_seo_get_route(&$req, &$result, &$area, &$is_allowed_url)
                     }
                 }
             }
-            
+
             $range_data = db_get_array("SELECT object_id, c.parent_variant_id FROM ?:seo_names AS a LEFT JOIN ?:product_feature_variants AS b ON a.object_id = b.variant_id LEFT JOIN ?:product_features AS c ON b.feature_id = c.feature_id LEFT JOIN ?:product_features AS d ON c.parent_id = d.feature_id AND c.parent_id != '0' WHERE a.object_id IN (?n) AND a.type = 'e' AND a.lang_code = ?s ORDER BY d.position, c.position", $av_ids, !empty($req['sl']) ? $req['sl'] : Registry::get('settings.Appearance.frontend_default_language'));
-            
+
             if (!empty($range_data)) {
                 $range_order = array();
                 foreach ($range_data as $i => $r_data) {
@@ -1168,8 +1168,8 @@ function fn_seo_url_post(&$url, &$area, &$original_url, &$prefix, &$company_id_i
             $frst = microtime();
 
             foreach ($seo_vars as $type => $seo_var) {
-                if (!empty($seo_var['is_particle']) || (!$rewritten && (empty($seo_var['dispatch']) || (!empty($seo_var['dispatch']) && $seo_var['dispatch'] == $parsed_query['dispatch'] && !empty($parsed_query[$seo_var['item']]))))) {
-                    
+                if (!empty($seo_var['is_particle']) || (!$rewritten && (empty($seo_var['dispatch']) || (!empty($seo_var['dispatch']) && !empty($parsed_query['dispatch']) && $seo_var['dispatch'] == $parsed_query['dispatch'] && !empty($parsed_query[$seo_var['item']]))))) {
+
                     if (!empty($seo_var['is_particle'])) {
                         if (!empty($seo_var['particle_options'])) {
                             $seo_var = array_merge($seo_var, $seo_var['particle_options']);
@@ -2222,7 +2222,7 @@ function fn_seo_delete_promotions(&$promotion_ids)
     foreach ($promotion_ids as $promotion_id) {
         fn_delete_seo_name($promotion_id, 'm');
     }
-    
+
     return true;
 }
 

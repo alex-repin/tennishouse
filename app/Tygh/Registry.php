@@ -321,13 +321,13 @@ class Registry
 
             try {
                 self::$_cache = new $_cache_class(self::get('config'));
-            } catch (\Exception $e) {
+            } catch ($e) {
                 if ($_cache_class != 'file') {
                     $_cache_class = '\\Tygh\\Backend\\Cache\\' . ucfirst('file');
 
                     self::$_cache = new $_cache_class(self::get('config'));
                 }
-            }   
+            }
             self::$_cache_handlers = self::$_cache->getHandlers();
         }
 

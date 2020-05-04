@@ -175,7 +175,7 @@ class SecurityHelper
 
             return html_entity_decode($html_purify, ENT_QUOTES, 'UTF-8');
 
-        } catch (\Exception $e) {
+        } catch ($e) {
             throw new DeveloperException($e->getMessage());
         }
     }
@@ -268,7 +268,7 @@ class SecurityHelper
 
     /**
      * Checking that old string and new string are difference
-     * 
+     *
      * @param  string $old Old string
      * @param  string $new New string
      * @return bool
