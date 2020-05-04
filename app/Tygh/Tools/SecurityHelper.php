@@ -175,7 +175,7 @@ class SecurityHelper
 
             return html_entity_decode($html_purify, ENT_QUOTES, 'UTF-8');
 
-        } catch ($e) {
+        } catch (\Throwable $e) {
             throw new DeveloperException($e->getMessage());
         }
     }
