@@ -1,3 +1,5 @@
+<script src="https://api-maps.yandex.ru/2.1/?apikey={$addons.development.ymaps_api_key|escape:javascript nofilter}&lang=ru_RU" type="text/javascript"></script>
+
 <div class="ty-pickup-location-container">
     <div id="map" class="ty-pickup-location-container-map"></div>
     <div class="ty-pickup-location-container-list" id="ymaps_block">

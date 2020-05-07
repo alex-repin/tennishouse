@@ -1,3 +1,5 @@
+<script src="https://api-maps.yandex.ru/2.1/?apikey={$addons.development.ymaps_api_key|escape:javascript nofilter}&lang=ru_RU" type="text/javascript"></script>
+
 <div class="ty-pickup-location-container">
     <div class="ty-pickup-location-tools">
         <div class="ty-checkout-select-office-city" id="ymaps_select_city" data-callback="fn_reload_city_offices(true)">

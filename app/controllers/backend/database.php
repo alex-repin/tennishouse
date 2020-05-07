@@ -67,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD']	== 'POST') {
     // Restore
     if ($mode == 'restore') {
 
+        ini_set('memory_limit', '512M');
         if (!empty($_REQUEST['backup_files'])) {
             fn_restore_dump($_REQUEST['backup_files']);
         }
