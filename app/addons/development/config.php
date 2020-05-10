@@ -201,6 +201,7 @@ define('SIZE_CHART_TAB_ID', 10);
 
 define('TH_WAREHOUSE_ID', 1);
 define('BABOLAT_WAREHOUSE_ID', 2);
+define('DRIADA_WAREHOUSE_ID', 4);
 
 define('REVIEWS_THREAD_ID', 259);
 

@@ -144,7 +144,7 @@ if ($mode == 'manage') {
     }
 
     if (!empty($stored_cdn_data)) {
-        Registry::get('view')->assign('cdn_data', $stored_cdn_data);        
+        Registry::get('view')->assign('cdn_data', $stored_cdn_data);
     } else {
         Registry::get('view')->assign('cdn_data', Cdn::instance()->getOptions());
     }

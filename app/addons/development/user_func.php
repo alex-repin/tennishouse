@@ -22,16 +22,14 @@ use Tygh\Shippings\Shippings;
 use Tygh\Settings;
 use Tygh\Enum\ProductTracking;
 use Tygh\Shippings\RusSdek;
+use Tygh\Sync\Sync;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-if (!function_exists('array_key_first')) {
-    function array_key_first(array $arr) {
-        foreach($arr as $key => $unused) {
-            return $key;
-        }
-        return NULL;
-    }
+function fn_synchronize_agents()
+{
+    $driada = new Sync(DRIADA_WAREHOUSE_ID);
+    $driada->getFeed();
 }
 
 function fn_generate_product_features_descriptions($product_ids)

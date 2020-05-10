@@ -23,7 +23,7 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($mode == 'process_rrp') {
-    
+
     if ($_REQUEST['step'] == 'one') {
             $file = fn_filter_uploaded_data('csv_file');
             if (!empty($file) && file_exists($file[0]['path'])) {
@@ -200,7 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 $ignore_list = array_merge($ignore_list, unserialize($i_list));
                             }
                         }
-                        
+
                         $product_codes = array_diff(array_keys($total_data), $ignore_list);
                         $product_data = db_get_hash_array("SELECT product_id, net_cost, product_code, tracking, import_divider, warehouse_ids FROM ?:products WHERE product_id IN (?n)", 'product_id', $all_ids);
                         $product_codes_data = array();
@@ -210,13 +210,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             }
                         }
 
-                        
+
                         $products_options = fn_get_product_options($all_ids, DESCR_SL, true, true);
                         fn_rebuild_product_options_inventory_multi($all_ids, $products_options, $product_data);
                         $warehouse_inventories = db_get_hash_multi_array("SELECT ?:product_warehouses_inventory.*, ?:product_options_inventory.combination FROM ?:product_warehouses_inventory LEFT JOIN ?:product_options_inventory ON ?:product_options_inventory.combination_hash = ?:product_warehouses_inventory.combination_hash WHERE ?:product_warehouses_inventory.combination_hash != '0' AND ?:product_warehouses_inventory.warehouse_id = ?i AND ?:product_warehouses_inventory.product_id IN (?n)", array('product_id', 'combination_hash'), $_REQUEST['warehouse_id'], array_keys($product_data));
                         $other_inventories = db_get_hash_multi_array("SELECT SUM(amount) AS amount, combination_hash, product_id FROM ?:product_warehouses_inventory WHERE combination_hash != '0' AND warehouse_id != ?i AND product_id IN (?n) GROUP BY combination_hash", array('product_id', 'combination_hash'), $_REQUEST['warehouse_id'], array_keys($product_data));
                         $updated_warehouse_inventories = $new_warehouse_inventories = array();
-                        
+
 
                         foreach ($total_data as $product_code => $data) {
                             if (!empty($ignore_list) && in_array($product_code, $ignore_list)) {
@@ -224,7 +224,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             }
                             if (empty($data['data'])) {
                                 $missing_products[$product_code] = $data;
-                                
+
                             } elseif (empty($product_codes_data[$product_code])) {
                                 $combination_hash = db_get_array("SELECT combination_hash, product_id FROM ?:product_options_inventory WHERE product_code = ?s", $product_code);
                                 if (count($combination_hash) != 1 || count($data['data']) > 1 || empty($data['data'][0]['amount'])) {
@@ -241,7 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     $updated_by_combinations[$combination_hash[0]['product_id']] = (empty($updated_by_combinations[$combination_hash[0]['product_id']])) ? array() : $updated_by_combinations[$combination_hash[0]['product_id']];
                                     $updated_by_combinations[$combination_hash[0]['product_id']][] = $combination_hash[0]['combination_hash'];
                                 }
-                                
+
                             } else {
                                 $combinations_data = array();
                                 foreach ($data['data'] as $i => $variant) {
@@ -436,7 +436,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         if (!empty($new_warehouse_inventories)) {
                             db_query("REPLACE ?:product_warehouses_inventory ?m", $new_warehouse_inventories);
                         }
-                        
+
                         $option_exceptions = array();
                         if (!empty($updated_warehouse_inventories)) {
                             db_query("DELETE FROM ?:product_options_exceptions WHERE product_id IN (?n)", array_keys($updated_warehouse_inventories));
@@ -480,7 +480,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 }
                             }
                         }
-                        
+
                         $out_of_stock = array_diff($all_ids, $in_stock);
                         db_query("UPDATE ?:products SET updated_timestamp = ?i WHERE product_id IN (?n)", time(), $in_stock);
                         if (!empty($out_of_stock)) {
@@ -537,9 +537,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $ignored_products[$pcode] = !empty($total_data[$pcode]) ? $total_data[$pcode] : array('product' => __('missing'));
                 }
             }
-            
+
             FeaturesCache::generate(CART_LANGUAGE);
-            
+
             Registry::get('view')->assign('warehouse_id', $_REQUEST['warehouse_id']);
             Registry::get('view')->assign('out_of_stock', count($out_of_stock) + count($no_code));
             Registry::get('view')->assign('in_stock', count($in_stock));
@@ -554,12 +554,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Registry::get('view')->assign('broken_net_cost_products', $broken_net_cost);
             fn_set_notification('N', __('notice'), __('stocks_updated_successfully'));
         }
-        
+
         Registry::get('view')->assign('brands', fn_development_get_brands());
         Registry::get('view')->display('addons/development/components/supplier_stocks.tpl');
         exit;
     }
-    
+
     if ($mode == 'ignore_products') {
         if (!empty($_REQUEST['brand_ids'])) {
             $_REQUEST['brand_ids'] = explode(',', $_REQUEST['brand_ids']);
@@ -577,7 +577,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         exit;
     }
-    
+
     if ($mode == 'watch_products') {
         if (!empty($_REQUEST['brand_ids'])) {
             $_REQUEST['brand_ids'] = explode(',', $_REQUEST['brand_ids']);
@@ -601,7 +601,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         exit;
     }
-    
+
     if ($mode == 'update_savings_groups') {
         if (!empty($_REQUEST['savings_groups_data'])) {
             $groups = array();
@@ -628,10 +628,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 db_query("REPLACE INTO ?:savings_groups ?m", $groups);
             }
         }
-        
+
         $suffix = "development.saving_system";
     }
-    
+
     if ($mode == 'check_emails') {
         if (!empty($_REQUEST['subscriber_ids'])) {
             $subscribers = db_get_hash_single_array("SELECT email, subscriber_id FROM ?:subscribers WHERE subscriber_id IN (?n)", array('email', 'subscriber_id'), $_REQUEST['subscriber_ids']);
@@ -650,14 +650,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $suffix = "subscribers.manage";
         }
     }
-    
+
     if ($mode == 'find_state_match') {
         header('Content-Type: application/json');
         $state = fn_find_state_match($_REQUEST['state']);
         fn_echo(json_encode($state['code']));
         exit;
     }
-    
+
     if ($mode == 'eqialize_prices') {
         if (!empty($_REQUEST['product_ids'])) {
             $result = $data = array();
@@ -684,18 +684,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
             db_query("REPLACE INTO ?:product_prices ?m", $data);
         }
-        
+
         $suffix = "development.competitive_prices";
     }
-    
+
     if ($mode == 'autocomplete_cproducts') {
 
         if (!empty($_REQUEST['q']) && $_REQUEST['id']) {
-            
+
             $params['q'] = trim($_REQUEST['q']);
             $pieces = fn_explode(' ', $params['q']);
             $search_type = ' AND ';
-            
+
             foreach ($pieces as $piece) {
                 if (strlen($piece) == 0) {
                     continue;
@@ -705,18 +705,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             $_cond = implode($search_type, $_condition);
-            
+
             $products = db_get_array("SELECT * FROM ?:competitive_prices WHERE $_cond ORDER BY item_id DESC");
-            
+
             Registry::get('view')->assign('results', $products);
             Registry::get('view')->assign('product_id', $_REQUEST['id']);
             Registry::get('view')->display('addons/development/views/development/competitive_prices_results.tpl');
             exit();
         }
     }
-    
+
     if ($mode == 'add_competitive_pairs') {
-        
+
         if (!empty($_REQUEST['pairs'])) {
             $data = $to_delete = array();
             foreach ($_REQUEST['pairs'] as $product_id => $item_id) {
@@ -740,7 +740,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         $suffix = "development.competitive_prices?mode=" . $_REQUEST['mode'];
     }
-    
+
     return array(CONTROLLER_STATUS_OK, $suffix);
 }
 
@@ -764,7 +764,7 @@ if ($mode == 'calculate_balance') {
 } elseif ($mode == 'supplier_stocks') {
 
     Registry::get('view')->assign('brands', fn_development_get_brands());
-    
+
 } elseif ($mode == 'rebuild_combinations') {
     $product_ids = db_get_fields("SELECT DISTINCT(product_id) FROM ?:product_options_inventory");
     if (!empty($product_ids)) {
@@ -792,7 +792,7 @@ if ($mode == 'calculate_balance') {
 //                 }
 //             }
 //         }
-//         
+//
 //     }
 //     if (!empty($to_delete)) {
 //         foreach ($to_delete as $i => $d_data) {
@@ -943,7 +943,7 @@ if ($mode == 'calculate_balance') {
     exit;
 } elseif ($mode == 'clone_catalog') {
 //     $params = array();
-// 
+//
 //     list($products, $search) = fn_get_products(array());
 //     foreach ($products as $i => $product) {
 //         fn_clone_product($product['product_id']);
@@ -972,7 +972,7 @@ if ($mode == 'calculate_balance') {
 //             if ($reward > 0) {
 //                 $reason['order_id'] = $order_id;
 //                 fn_save_user_additional_data(POINTS, fn_get_user_additional_data(POINTS, $_dt['user_id']) + $reward, $_dt['user_id']);
-// 
+//
 //                 $change_points = array(
 //                     'user_id' => $_dt['user_id'],
 //                     'amount' => $reward,
@@ -980,7 +980,7 @@ if ($mode == 'calculate_balance') {
 //                     'action' => CHANGE_DUE_ORDER,
 //                     'reason' => serialize($reason)
 //                 );
-// 
+//
 //                 if ($reward > 0) {
 //                     $now = getdate($_dt['timestamp']);
 //                     $change_points['expire'] = mktime(0, 0, 0, $now['mon'], $now['mday'] + 1, $now['year'] + 1);
@@ -1115,13 +1115,13 @@ if ($mode == 'calculate_balance') {
     );
     $response = Http::get('http://kladr-api.ru/api.php', $data);
     fn_print_die($response);
-    
+
     exit;
 } elseif ($mode == 'generate_warehouse_inventory') {
 
     $products = db_get_array("SELECT product_id, amount FROM ?:products");
     $option_inventory = db_get_hash_multi_array("SELECT * FROM ?:product_options_inventory", array('product_id', 'combination_hash'));
-    
+
     $data = array();
     foreach ($products as $i => $prod) {
         $brand_warehouse_ids = array(TH_WAREHOUSE_ID);
@@ -1160,7 +1160,7 @@ if ($mode == 'calculate_balance') {
     if (!empty($data)) {
         db_query("REPLACE ?:product_warehouses_inventory ?m", $data);
     }
-    
+
     fn_echo('Done');
     exit;
 } elseif ($mode == 'fix_rp') {
@@ -1187,7 +1187,7 @@ if ($mode == 'calculate_balance') {
         } else {
             $add = true;
         }
-        
+
         if ($add) {
             $new = $o_dt;
             $new['rp'] = $rp[$o_dt['user_id']];
@@ -1198,7 +1198,7 @@ if ($mode == 'calculate_balance') {
     if (!empty($to_add)) {
         foreach ($to_add as $i => $_data) {
             $reward_points = fn_get_reward_points(0, GLOBAL_REWARD_POINTS, fn_define_usergroups(array('user_id' => $_data['user_id'], 'user_type' => 'C'), 'C'), 1);
-  
+
             if (isset($reward_points['amount'])) {
                 $reward_points['coefficient'] =(Registry::get('addons.reward_points.points_with_discounts') == 'Y' && $reward_points['amount_type'] == 'P' && isset($product['discounted_price'])) ? $product['discounted_price'] / $product['price'] : 1;
 
@@ -1216,7 +1216,7 @@ if ($mode == 'calculate_balance') {
             }
         }
     }
-    
+
     fn_echo('Done');
     exit;
 } elseif ($mode == 'enable_reviews') {
@@ -1326,7 +1326,7 @@ if ($mode == 'calculate_balance') {
 //     if (!empty($update)) {
 //         db_query("REPLACE ?:common_descriptions ?m", $update);
 //     }
-    
+
     fn_echo('Done');
     exit;
 } elseif ($mode == 'add_order_subscribers') {
@@ -1359,11 +1359,11 @@ if ($mode == 'calculate_balance') {
 } elseif ($mode == 'status_order_subscribers') {
     $ordered = db_get_fields("SELECT ?:subscribers.subscriber_id FROM ?:subscribers INNER JOIN ?:orders ON ?:orders.email = ?:subscribers.email AND ?:orders.email != ''");
     db_query("UPDATE ?:subscribers SET status = 'C' WHERE subscriber_id IN (?n)", $ordered);
-    
+
     $subs_ids = db_get_fields("SELECT ?:subscribers.subscriber_id FROM ?:subscribers WHERE email IN ('','noemail@tennishouse.ru')");
     db_query("DELETE FROM ?:subscribers WHERE subscriber_id IN (?n)", $subs_ids);
     db_query("DELETE FROM ?:user_mailing_lists WHERE subscriber_id IN (?n)", $subs_ids);
-    
+
     fn_echo('Done');
     exit;
 } elseif ($mode == 'add_user_subscribers') {
@@ -1411,7 +1411,7 @@ if ($mode == 'calculate_balance') {
     exit;
 } elseif ($mode == 'validate_email') {
     $subscribers = db_get_hash_single_array("SELECT email, subscriber_id FROM ?:subscribers WHERE status = 'P'", array('subscriber_id', 'email'));
-    
+
     foreach ($subscribers as $_id => $email) {
         $result = false;
         $mailSegments = explode('@', $email);
@@ -1420,7 +1420,7 @@ if ($mode == 'calculate_balance') {
             if (substr($domain, -1) != '.') {
                 $domain .= '.';
             }
-            
+
             $mxRecordsAvailable = getmxrr($domain, $mxRecords, $mxWeight);
             if (!empty($mxRecordsAvailable)) {
                 $mxHosts = array_combine($mxRecords,$mxWeight);
@@ -1468,7 +1468,7 @@ if ($mode == 'calculate_balance') {
 } elseif ($mode == 'generate_user_lkey' && !empty($_REQUEST['user_id'])) {
 
     fn_generate_ekey($_REQUEST['user_id'], 'L', SECONDS_IN_DAY * 90);
-    
+
     return array(CONTROLLER_STATUS_REDIRECT, "profiles.update?user_id=" . $_REQUEST['user_id']);
 } elseif ($mode == 'get_ppl') {
 
@@ -1476,9 +1476,9 @@ if ($mode == 'calculate_balance') {
     rsort($houses);
     fn_print_die($houses);
     $top = 807;
-    
+
     fn_subset_sums($houses, $top);
-    
+
     exit;
 } elseif ($mode == 'fix_alt') {
     $params['extend'] = array('categories', 'description');
@@ -1572,13 +1572,13 @@ if ($mode == 'calculate_balance') {
     }
     fn_echo('Done');
     exit;
-    
+
 } elseif ($mode == 'get_feature_variants') {
 
     list($feature_variants,) = fn_get_product_feature_variants(array(
         'feature_id' => $_REQUEST['feature_id']
     ), 0, CART_LANGUAGE);
-    
+
     Registry::get('view')->assign('feature_variants', $feature_variants);
     Registry::get('view')->assign('feature_id', $_REQUEST['feature_id']);
     Registry::get('view')->assign('data_name', $_REQUEST['data_name']);
@@ -1587,7 +1587,7 @@ if ($mode == 'calculate_balance') {
     Registry::get('view')->display('addons/development/components/select_feature_variant_id.tpl');
     exit;
 } elseif ($mode == 'move_to_root') {
-    
+
     $update_ids = $categories = array(RACKETS_CATEGORY_ID, BAGS_CATEGORY_ID, BALLS_CATEGORY_ID, STRINGS_CATEGORY_ID, APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, OVERGRIPS_CATEGORY_ID, BASEGRIPS_CATEGORY_ID, DAMPENERS_CATEGORY_ID, OTHER_CATEGORY_ID, BADMINTON_RACKETS_CATEGORY_ID, SHUTTLECOCKS_CATEGORY_ID, BADMINTON_SHOES_CATEGORY_ID, BADMINTON_BAGS_CATEGORY_ID, BADMINTON_STRINGS_CATEGORY_ID);
     $params = array(
         'subcats' => 'Y',
@@ -1627,7 +1627,7 @@ if ($mode == 'calculate_balance') {
         db_query("REPLACE ?:products_categories ?m", $update);
     }
     fn_update_product_count($update_ids);
-    
+
     fn_echo('Done');
     exit;
 } elseif ($mode == 'cleanup_category_seo') {
@@ -1641,7 +1641,7 @@ if ($mode == 'calculate_balance') {
 } elseif ($mode == 'fix_old_seo') {
     $objects = db_get_array("SELECT * FROM ?:seo_names1 WHERE type = 'p'");
     $cat_ids = db_get_hash_single_array("SELECT object_id, name FROM ?:seo_names1 WHERE type = 'c'", array('object_id', 'name'));
-    
+
     foreach ($objects as $i => $obj) {
         $src = '';
         if (!empty($obj['path'])) {
@@ -1664,7 +1664,7 @@ if ($mode == 'calculate_balance') {
 } elseif ($mode == 'competitive_prices') {
 
     $cp_mode = empty($_REQUEST['mode']) ? 'D' : $_REQUEST['mode'];
-    
+
     if ($cp_mode == 'N') {
         $params = array(
             'hide_out_of_stock' => 'Y',
@@ -1681,9 +1681,9 @@ if ($mode == 'calculate_balance') {
             'hide_out_of_stock' => 'Y'
         );
     }
-    
+
     list($products, $search) = fn_get_products($params);
-   
+
     $result = $_result = array();
     if (!empty($products)) {
         foreach ($products as $product) {
@@ -1697,10 +1697,10 @@ if ($mode == 'calculate_balance') {
             $_result[$cid] = $result[$cid];
         }
     }
-   
+
     Registry::get('view')->assign('mode', $cp_mode);
     Registry::get('view')->assign('competitive_prices', $_result);
-    
+
 } elseif ($mode == 'tst') {
     fn_check_sms();
     exit;
@@ -1727,7 +1727,7 @@ if ($mode == 'calculate_balance') {
     exit;
 } elseif ($mode == 'check_codes') {
     $res = db_get_hash_multi_array("SELECT a.product_id, a.product_code, b.product_code AS inventory_code, b.combination_hash FROM ?:products AS a LEFT JOIN ?:product_options_inventory AS b ON a.product_id = b.product_id WHERE b.product_code NOT LIKE CONCAT(a.product_code, '%')", array('product_id', 'combination_hash'));
-    
+
     if (!empty($res)) {
         foreach ($res as $product_id => $combs) {
             fn_rebuild_inventory_codes($product_id);
@@ -1737,7 +1737,7 @@ if ($mode == 'calculate_balance') {
 } elseif ($mode == 'clean_up_exceptions') {
     $exceptions = db_get_hash_multi_array("SELECT * FROM ?:product_options_exceptions", array('product_id', 'exception_id'));
     $product_options = fn_get_product_options(array_keys($exceptions), CART_LANGUAGE, true, false, false, false, false);
-    
+
     $delete = array();
     foreach ($exceptions as $product_id => $_exceptions) {
         if (count($product_options[$product_id]) > 0) {
@@ -1765,7 +1765,7 @@ if ($mode == 'calculate_balance') {
     if (!empty($delete)) {
         db_query("DELETE FROM ?:product_options_exceptions WHERE exception_id IN (?n)", array_keys($delete));
     }
-    
+
     exit;
 } elseif ($mode == 'generate_descriptions') {
 
@@ -1773,7 +1773,7 @@ if ($mode == 'calculate_balance') {
     $params = array(
         'hide_out_of_stock' => 'Y',
         'cid' => array(RACKETS_CATEGORY_ID)
-    );    
+    );
     list($products, $search) = fn_get_products($params);
     $product_ids = array();
     foreach ($products as $i => $prod) {
@@ -1787,9 +1787,13 @@ if ($mode == 'calculate_balance') {
             db_query("UPDATE ?:product_descriptions SET features_description = ?s WHERE product_id = ?i AND lang_code = ?s", '<p>' . $descr . '</p>', $prod_id, CART_LANGUAGE);
         }
     }
-    
+
     exit;
-    
+
+} elseif ($mode == 'sync') {
+    fn_synchronize_agents();
+    fn_print_die('finished');
+    exit;
 }
 
 function fn_fill_image_common_description(&$images_alts, $detailed_id, $name)
@@ -1810,11 +1814,11 @@ function fn_subset_sums($houses, $top, $sum = 0)
         if ($house > $top) {
             unset($houses[$i]);
         }
-        
+
     }
 
     foreach ($houses as $i => $house) {
-        
+
     }
     // Print current subset
     if ($l > $r || $sum >= $top)
@@ -1836,7 +1840,7 @@ function fn_normalize_string($string)
         $rplc = str_replace(',', '.', $matches[0]);
         $string = str_replace($matches[0], $rplc, $string);
     }
-    
+
     return $string;
 }
 
@@ -1900,7 +1904,7 @@ function fn_get_babolat_csv($file, $options)
                     continue;
                 }
                 $row = Bootstrap::stripSlashes($data);
-                
+
                 if (empty($row[0])) {
                     $trash_lines[] = array(
                         'line' => $line_it,
@@ -1925,7 +1929,7 @@ function fn_get_babolat_csv($file, $options)
                         'name' => $row[2],
                         'amount' => $row[count($row) - 1]
                     );
-                        
+
 //                     if (count($row) == 4) {
 //                         $item['price'] = str_replace(',', '.', $row[2]);
 //                     } elseif (count($row) == 5) {
