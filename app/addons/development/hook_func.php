@@ -2314,6 +2314,8 @@ function fn_development_get_product_data_post(&$product_data, $auth, $preview, $
 
             list($product_data['available_promotions']) = fn_get_promotions($params);
         }
+    } else {
+        $product_data['tags'] = array();
     }
     if (AREA == 'C') {
         $product_data['is_free_shipping'] = fn_is_free_shipping($product_data);

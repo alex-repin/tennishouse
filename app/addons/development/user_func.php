@@ -429,6 +429,7 @@ function fn_check_delivery_statuses()
         }
         $shipment_data = db_get_hash_array("SELECT shipment_id, shipping_id, timestamp FROM ?:shipments WHERE shipment_id IN (?n)", 'shipment_id', $_shipment_ids);
         foreach ($data as $order_id => $order_data) {
+            $change_status = false;
             foreach ($order_data['shipment_ids'] as $i => $shipment_id) {
                 if (!empty($shipment_data[$shipment_id])) {
                     $params_shipping = array(
@@ -440,15 +441,21 @@ function fn_check_delivery_statuses()
                         continue;
                     }
                     $date_status = RusSdek::orderStatusXml($data_auth, $order_id, $shipment_id);
-                    RusSdek::SdekAddStatusOrders($date_status);
-                    $last = array_pop($date_status);
-                    if ($last['status'] == 'Вручен') {
-                        unset($data[$order_id]['shipment_ids'][$i]);
+                    if (!empty($date_status)) {
+                        RusSdek::SdekAddStatusOrders($date_status);
+                        $last = array_pop($date_status);
+                        if ($last['status'] == 'Вручен') {
+                            $change_status = ORDER_STATUS_DELIVERED;
+                        } elseif ($last['status'] == 'Не вручен') {
+                            $change_status = ORDER_STATUS_NOT_DELIVERED;
+                        } elseif ($last['status'] == 'Принят на склад до востребования') {
+                            $change_status = ORDER_STATUS_WAITING_FOR_PICKUP;
+                        }
                     }
                 }
             }
-            if (empty($data[$order_id]['shipment_ids'])) {
-                fn_change_order_status($order_id, ORDER_STATUS_DELIVERED);
+            if (!empty($change_status)) {
+                fn_change_order_status($order_id, $change_status);
             }
         }
     }
@@ -1356,14 +1363,14 @@ function fn_get_similar_category_products($params)
     );
     if (!empty($_SESSION['product_category'])) {
         $_params['cid'] = $_SESSION['product_category'];
-        $result = fn_get_products($_params);
+        list($result,) = fn_get_products($_params);
     }
     if (empty($result[0]) && !empty($_SESSION['main_product_category'])) {
         $_params['cid'] = $_SESSION['main_product_category'];
-        $result = fn_get_products($_params);
+        list($result,) = fn_get_products($_params);
     }
 
-    return $result;
+    return array($result);
 }
 
 function fn_format_submenu(&$menu_items)

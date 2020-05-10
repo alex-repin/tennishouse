@@ -61,7 +61,7 @@ if (!empty($_REQUEST['order_id']) && strpos($_REQUEST['order_id'], '-') !== fals
     $_REQUEST['order_id'] = db_get_field("SELECT order_id FROM ?:orders WHERE order_number = ?s", $_REQUEST['order_id']);
 }
 if ($mode == 'checkout') {
-    $total = Registry::get('settings.General.min_order_amount_type') == 'products_with_shippings' ? $cart['total'] : $cart['subtotal'];
+    $total = Registry::get('settings.General.min_order_amount_type') == 'products_with_shippings' ? ($cart['total'] ?? 0) : ($cart['subtotal'] ?? 0);
     fn_set_hook('allow_place_order', $total, $cart);
 
     $cart['amount_failed'] = (Registry::get('settings.General.min_order_amount') > $total && floatval($total));
