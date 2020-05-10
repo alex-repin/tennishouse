@@ -529,7 +529,7 @@ function fn_seo_get_route(&$req, &$result, &$area, &$is_allowed_url)
                 foreach ($parsed_ranges[2] as $i => $part) {
                     $parent_id = $range_data[$f_iter]['parent_variant_id'] ?? false;
                     if (in_array($part, $range_order)) {
-                        if ($part != $range_order[$f_iter]) {
+                        if (!empty($range_order[$f_iter]) && $part != $range_order[$f_iter]) {
                             $parsed_ranges[2][$i] = $range_order[$f_iter];
                             $changed = true;
                         }
