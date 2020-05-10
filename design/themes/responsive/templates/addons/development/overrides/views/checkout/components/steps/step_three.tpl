@@ -31,6 +31,7 @@
                 
                 <div class="clearfix">
                     <div class="checkout__block">
+                    <div>{__("quarantine_shipping_delay")}</div>
                     {hook name="checkout:select_shipping"}
                         {if !$cart.shipping_failed}
                             {include file="views/checkout/components/shipping_rates.tpl" no_form=true display="radio"}

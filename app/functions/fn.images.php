@@ -915,13 +915,13 @@ function fn_image_to_display($images, $image_width = 0, $image_height = 0, $keep
 
     // single image passed only
     } else {
-        $original_width = $images['image_x'];
-        $original_height = $images['image_y'];
-        $image_path = $images['image_path'];
-        $alt = $images['alt'];
+        $original_width = $images['image_x'] ?? false;
+        $original_height = $images['image_y'] ?? false;
+        $image_path = $images['image_path'] ?? false;
+        $alt = $images['alt'] ?? false;
         $detailed_image_path = '';
-        $absolute_path = $images['absolute_path'];
-        $relative_path = $images['relative_path'];
+        $absolute_path = $images['absolute_path'] ?? false;
+        $relative_path = $images['relative_path'] ?? false;
     }
 
     if (!empty($image_height) && empty($image_width) && !empty($original_height)) {

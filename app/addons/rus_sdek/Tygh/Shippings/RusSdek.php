@@ -118,22 +118,24 @@ class RusSdek
         if (!empty($_result['Order'])) {
             $_result = empty($_result['Order']['@attributes']) ? $_result['Order'] : array($_result['Order']);
             foreach ($_result as $data_order) {
-                $order = explode('_', $data_order['@attributes']['Number']);
-                $d_status = !empty($data_order['Status']['State']) ? $data_order['Status']['State'] : $data_order['Status'];
-                if (!empty($d_status['@attributes'])) {
-                    unset($d_status['@attributes']);
-                }
-                foreach ($d_status as $state) {
-                    $data_status[$order[0] . '_' . $order[1] . '_' . $state['@attributes']['Code']] = array(
-                        'id' => $state['@attributes']['Code'],
-                        'order_id' => $order[0],
-                        'shipment_id' => $order[1],
-                        'timestamp' => strtotime($state['@attributes']['Date']),
-                        'status' => $state['@attributes']['Description'],
-                        'city_code' => $state['@attributes']['CityCode'],
-                        'city_name' => db_get_field("SELECT a.city FROM ?:rus_city_sdek_descriptions as a LEFT JOIN ?:rus_cities_sdek as b ON a.city_id=b.city_id WHERE b.city_code = ?s", $state['@attributes']['CityCode']),
-                        'date' => date("d-m-Y", strtotime($state['@attributes']['Date'])),
-                    );
+                if (empty($data_order['@attributes']['ErrorCode'])) {
+                    $order = explode('_', $data_order['@attributes']['Number']);
+                    $d_status = !empty($data_order['Status']['State']) ? $data_order['Status']['State'] : $data_order['Status'];
+                    if (!empty($d_status['@attributes'])) {
+                        unset($d_status['@attributes']);
+                    }
+                    foreach ($d_status as $state) {
+                        $data_status[$order[0] . '_' . $order[1] . '_' . $state['@attributes']['Code']] = array(
+                            'id' => $state['@attributes']['Code'],
+                            'order_id' => $order[0],
+                            'shipment_id' => $order[1],
+                            'timestamp' => strtotime($state['@attributes']['Date']),
+                            'status' => $state['@attributes']['Description'],
+                            'city_code' => $state['@attributes']['CityCode'],
+                            'city_name' => db_get_field("SELECT a.city FROM ?:rus_city_sdek_descriptions as a LEFT JOIN ?:rus_cities_sdek as b ON a.city_id=b.city_id WHERE b.city_code = ?s", $state['@attributes']['CityCode']),
+                            'date' => date("d-m-Y", strtotime($state['@attributes']['Date'])),
+                        );
+                    }
                 }
             }
         }

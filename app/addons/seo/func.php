@@ -527,7 +527,7 @@ function fn_seo_get_route(&$req, &$result, &$area, &$is_allowed_url)
                 $changed = false;
                 $req['features_hash'] = '';
                 foreach ($parsed_ranges[2] as $i => $part) {
-                    $parent_id = $range_data[$f_iter]['parent_variant_id'];
+                    $parent_id = $range_data[$f_iter]['parent_variant_id'] ?? false;
                     if (in_array($part, $range_order)) {
                         if ($part != $range_order[$f_iter]) {
                             $parsed_ranges[2][$i] = $range_order[$f_iter];
@@ -1199,7 +1199,7 @@ function fn_seo_url_post(&$url, &$area, &$original_url, &$prefix, &$company_id_i
                     } elseif (!empty($seo_var['dispatch'])) {
                         $part_name = fn_seo_get_name($type, $parsed_query[$seo_var['item']], '', $company_id_in_url, $lang_code);
                     } else {
-                        $part_name = fn_seo_get_name($type, 0, $parsed_query['dispatch'], $company_id_in_url, $lang_code);
+                        $part_name = fn_seo_get_name($type, 0, $parsed_query['dispatch'] ?? '', $company_id_in_url, $lang_code);
                     }
 
                     if (empty($part_name)) {

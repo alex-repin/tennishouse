@@ -119,7 +119,7 @@ class Yml implements IYml
 
         $this->buildCategories($yml_data);
 
-        if ($global_local_delivery == $this->options['global_local_delivery_cost']) {
+        if (!empty($global_local_delivery) && $global_local_delivery == $this->options['global_local_delivery_cost']) {
             $yml_data['local_delivery_cost'] = $global_local_delivery;
         }
 

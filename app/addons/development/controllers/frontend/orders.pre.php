@@ -14,6 +14,6 @@
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-if (strpos($_REQUEST['order_id'], '-') !== false) {
+if (!empty($_REQUEST['order_id']) && strpos($_REQUEST['order_id'], '-') !== false) {
     $_REQUEST['order_id'] = db_get_field("SELECT order_id FROM ?:orders WHERE order_number = ?s", $_REQUEST['order_id']);
 }

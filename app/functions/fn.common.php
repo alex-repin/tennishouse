@@ -535,7 +535,9 @@ function fn_get_notifications()
     foreach ($_SESSION['notifications'] as $k => $v) {
 
         if (!empty($v['extra'])) {
-            $extra = @unserialize($v['extra']);
+            if (!empty($v['extra'])) {
+                $extra = substr($v['extra'], 0, 2) == 'a:' ? @unserialize($v['extra']) : $v['extra'];
+            }
             if (!empty($v['init_message'])) {
                 $placeholders = array();
                 if (!empty($extra) && !empty($extra['placeholders'])) {

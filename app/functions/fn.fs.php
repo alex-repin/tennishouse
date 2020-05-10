@@ -150,7 +150,7 @@ function fn_compress_files($archive_name, $file_list, $dirname = '')
     $ext = fn_get_file_ext($archive_name);
 
     $_exts = explode('.', $archive_name);
-    array_shift($_exts);
+    $archive_name = array_shift($_exts);
 
     $first_dot_ext = '.' . implode('.', $_exts); // https://bugs.php.net/bug.php?id=58852. Phar gets ext from the first dot: 'test.1.2.3.tgz' -> ext = 1.2.3.tgz
 

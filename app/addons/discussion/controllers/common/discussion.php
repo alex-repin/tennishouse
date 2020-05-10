@@ -198,7 +198,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 if ($mode == 'view') {
-    $data = fn_discussion_get_object_by_thread($_REQUEST['thread_id']);
+    $data = fn_discussion_get_object_by_thread($_REQUEST['thread_id'] ?? false);
     if (empty($data)) {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }

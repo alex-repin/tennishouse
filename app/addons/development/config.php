@@ -219,6 +219,8 @@ define('FILTER_BLOCK_ID', 30);
 define('FILTER_SNAPPING_ID', 35);
 
 define('ORDER_STATUS_DELIVERED', 'H');
+define('ORDER_STATUS_NOT_DELIVERED', 'J');
+define('ORDER_STATUS_WAITING_FOR_PICKUP', 'X');
 
 define('NO_EMAIL', 'noemail@tennishouse.ru');
 
