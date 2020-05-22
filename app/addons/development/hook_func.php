@@ -623,19 +623,12 @@ function fn_development_cron_routine()
 
     if (!empty($scheme)) {
         foreach ($scheme as $type => $data) {
-            if ((!empty($data['wday']) && $data['wday'] != date('N')) || (!empty($data['H']) && $data['H'] != date('H'))) {
+            if ((!empty($data['wday']) && $data['wday'] != date('N')) || (!empty($data['H']) && $data['H'] != date('H')) || !function_exists($data['function'])) {
                 continue;
             }
-            $is_executed = db_get_field("SELECT log_id FROM ?:cron_logs WHERE type = ?s AND status = 'F' AND timestamp > ?i", $type, TIME - $data['frequency']);
-            if (empty($is_executed)) {
-                $action = array(
-                    'type' => $type,
-                    'status' => 'S',
-                    'timestamp' => TIME
-                );
-                $log_id = db_query("INSERT INTO ?:cron_logs ?e", $action);
-                list($result, $errors) = call_user_func($data['function']);
-                db_query("UPDATE ?:cron_logs SET status = ?s, errors = ?s WHERE log_id = ?i", ($result ? 'F' : 'S'), serialize($errors), $log_id);
+            $is_executed = db_get_field("SELECT log_id FROM ?:cron_logs WHERE type = ?s AND status IN (?a) AND timestamp > ?i", $type, array('F', 'S'), TIME - $data['frequency']);
+            if (empty($is_executed) ) {
+                fn_run_cron_script($type, $data);
             }
         }
     }
@@ -1654,6 +1647,9 @@ function fn_development_update_category_pre(&$category_data, $category_id, $lang
 
 function fn_development_get_products(&$params, &$fields, &$sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
 {
+    if (!empty($params['approval_status'])) {
+        $condition .= db_quote(" AND products.approval_status = ?s", $params['approval_status']);
+    }
     if (!empty($params['product_type'])) {
         $condition .= db_quote(" AND products.product_type = ?s", $params['product_type']);
     }
@@ -2104,23 +2100,28 @@ function fn_development_update_product_post($product_data, $product_id, $lang_co
         fn_image_to_display($main_pair, Registry::get('settings.Thumbnails.product_lists_thumbnail_width'), Registry::get('settings.Thumbnails.product_lists_thumbnail_height'));
     }
 
-    if ($product_data['old_product_code'] != $product_data['product_code']) {
-        fn_rebuild_inventory_codes($product_id);
+    $rebuild_model = false;
+    if (!empty($product_data['old_data'])) {
+
+        if ($product_data['old_data']['product_code'] != $product_data['product_code']) {
+            fn_rebuild_inventory_codes($product_id);
+        }
+
+        if ($product_data['old_data']['brand_id'] != $product_data['product_features'][BRAND_FEATURE_ID] || $product_data['old_data']['product'] != $product_data['product']) {
+            $rebuild_model = true;
+        }
     }
 
-    if ($product_data['old_brand_id'] != $product_data['product_features'][BRAND_FEATURE_ID] || $product_data['old_product'] != $product_data['product'] || empty($product_data['model'])) {
-        $data = array(
-            'product_id' => $product_id
-        );
-
+    if (!empty($rebuild_model) || empty($product_data['model'])) {
         $brand_name = db_get_field("SELECT b.variant FROM ?:product_features_values AS a LEFT JOIN ?:product_feature_variant_descriptions AS b ON b.variant_id = a.variant_id AND b.lang_code = ?s WHERE a.product_id = ?i AND a.feature_id = ?i", $lang_code, $product_id, BRAND_FEATURE_ID);
 
         if (!empty($brand_name)) {
-            $model = trim(preg_replace(array('/[а-яА-Я]/', '/' . $brand_name . '/i'), '', $product_data['product']));
-            if (!empty($model)) {
-                db_query("UPDATE ?:products SET model = ?s WHERE product_id = ?i", $model, $product_id);
-            }
+            $model = trim(preg_replace(array('/[а-яА-Я]/u', '/' . $brand_name . '/iu'), '', $product_data['product']));
+        } else {
+            $model = $product_data['product'];
         }
+
+        db_query("UPDATE ?:products SET model = ?s WHERE product_id = ?i", $model, $product_id);
     }
 }
 
@@ -2128,10 +2129,12 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
 {
     if (!empty($product_data['category_ids'])) { // to exclude products list update
         $id_path = explode('/', db_get_field("SELECT id_path FROM ?:categories WHERE category_id = ?i", $product_data['main_category']));
-        if ($product_data['product_type'] != 'P') {
-            $product_data['discussion_type'] = 'D';
-        } else {
-            $product_data['discussion_type'] = fn_check_category_discussion($id_path);
+        if (!empty($product_data['product_type'])) {
+            if ($product_data['product_type'] != 'P') {
+                $product_data['discussion_type'] = 'D';
+            } else {
+                $product_data['discussion_type'] = fn_check_category_discussion($id_path);
+            }
         }
         $product_data['feature_comparison'] = fn_check_category_comparison($id_path);
 
@@ -2167,12 +2170,13 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
             }
         }
 
-        $product_data['old_product_code'] = $old_data['product_code'];
-        $product_data['old_product'] = $old_data['product'];
-        $product_data['old_brand_id'] = $old_data['brand_id'];
-        if ($product_data['weight'] == 0 && !empty($global_data['shipping_weight'])) {
+        if (!empty($old_data)) {
+            $product_data['old_data'] = $old_data;
+        }
+        if (empty($product_data['weight']) && !empty($global_data['shipping_weight'])) {
             $product_data['weight'] = $global_data['shipping_weight'];
         }
+
         $product_data['warehouse_ids'] = array(TH_WAREHOUSE_ID);
         if (!empty($product_data['product_features'][BRAND_FEATURE_ID])) {
             $brand_warehouse_ids = db_get_fields("SELECT warehouse_id FROM ?:warehouse_brands WHERE brand_id = ?i", $product_data['product_features'][BRAND_FEATURE_ID]);
@@ -2364,7 +2368,7 @@ function fn_development_is_shared_product_pre($product_id, $company_id, &$return
 
 function fn_development_render_blocks($grid, &$block, $object, $content)
 {
-    if (!empty($block['properties']['capture_content']) && $block['properties']['capture_content'] == 'Y' && $block['object_type'] == 'products' && !empty($block['object_id'])) {
+    if (AREA == 'C' && !empty($block['properties']['capture_content']) && $block['properties']['capture_content'] == 'Y' && $block['object_type'] == 'products' && !empty($block['object_id'])) {
         $product = Registry::get('view')->getTemplateVars('product');
         if (!empty($product) && $product['tracking'] != 'D' && ($product['product_type'] != 'C' && $product['amount'] <= 0) || ($product['product_type'] == 'C' && empty($product['hide_stock_info']))) {
             $dmode = fn_get_session_data('dmode');

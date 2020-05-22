@@ -93,7 +93,7 @@
 
                             {*$smarty.capture.$clean_price nofilter}
                             {$smarty.capture.$list_discount nofilter*}
-                            
+
                             {if $smarty.capture.$price|trim}
                                 <div class="ty-price-options">
                                     {if $product.review_discount || $addons.development.review_reward_P > 0}
@@ -145,18 +145,18 @@
                     <div class="ty-product-block__field-group">
                         {assign var="product_amount" value="product_amount_`$obj_id`"}
                         {$smarty.capture.$product_amount nofilter}
-                        
+
                         {assign var="qty" value="qty_`$obj_id`"}
                         {$smarty.capture.$qty nofilter}
                     </div>
                     {if $capture_options_vs_qty}{/capture}{/if}
                 </div>
-                    
+
                 {if $capture_buttons}{capture name="buttons"}{/if}
                 <div class="ty-product-block__button">
                     {assign var="follow" value="follow_`$obj_id`"}
                     {$smarty.capture.$follow nofilter}
-                    
+
                     {if $show_details_button}
                         {include file="buttons/button.tpl" but_href="products.view?product_id=`$product.product_id`" but_text=__("view_details") but_role="submit"}
                     {/if}
@@ -195,7 +195,7 @@
                         </div>
                     </div>
                     {/if}
-                    
+
                     {if $product.customization_type}
                         <div class="ty-customization-wrapper">
                             <div class="ty-product-detail__info-title">{__("racket_customization_dialog_title")}</div>
@@ -205,7 +205,7 @@
                             </div>
                         </div>
                     {/if}
-                    
+
                     <div class="ty-product-detail_shipping">
                         <div class="ty-product-detail__info-title">{__("shipping")}</div>
                         {if $product.is_free_shipping}
@@ -213,14 +213,14 @@
                         {/if}
                         {include file="addons/development/common/product_shipping_estimation.tpl"}
                     </div>
-                    
+
                     <div class="ty-product-block__advanced-option">
                         {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
                         {assign var="advanced_options" value="advanced_options_`$obj_id`"}
                         {$smarty.capture.$advanced_options nofilter}
                         {if $capture_options_vs_qty}{/capture}{/if}
                     </div>
-                    
+
                     {*if $product.offer_help*}
                         <div class="ty-consultation">
                             <div class="ty-consultation_column">

@@ -50,7 +50,7 @@
                     {if "MULTIVENDOR"|fn_allowed_for && $mode != "add"}
                         {assign var="reload_form" value=true}
                     {/if}
-                    
+
                     {if "ULTIMATE"|fn_allowed_for}
                         {assign var="companies_tooltip" value=__("text_ult_product_store_field_tooltip")}
                     {/if}
@@ -88,7 +88,7 @@
                             {include file="buttons/update_for_all.tpl" display=$show_update_for_all object_id='price' name="update_all_vendors[price]"}
                         </div>
                     </div>
-                    
+
                     <div class="control-group">
                         <label class="control-label" for="elm_list_price">{__("list_price")} ({$currencies.$primary_currency.symbol nofilter}) :</label>
                         <div class="controls">
@@ -108,7 +108,7 @@
                             </select>
                         </div>
                     </div>
-                    
+
                     {if $auth.is_root == 'Y'}
                         <div class="control-group">
                             <label class="control-label" for="elm_product_auto_price">{__("auto_price_calculation")}:</label>
@@ -128,7 +128,7 @@
                             </div>
                         </div>
                         {/if}
-                        
+
                         <div class="control-group">
                             <label class="control-label" for="elm_product_update_with_currencies">{__("update_with_currencies")}:</label>
                             <div class="controls">
@@ -274,6 +274,16 @@
                     </div>
 
                     <div class="control-group">
+                        <label class="control-label" for="elm_show_stock">{__("show_stock")}:</label>
+                        <div class="controls">
+                            <label class="checkbox">
+                                <input type="hidden" name="product_data[show_stock]" value="N" />
+                                <input type="checkbox" name="product_data[show_stock]" id="elm_show_stock" value="Y" {if $product_data.show_stock == "Y"}checked="checked"{/if}/>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
                         <label class="control-label" for="elm_import_divider">{__("import_divider")}:</label>
                         <div class="controls">
                             <input type="text" name="product_data[import_divider]" id="elm_import_divider" size="10" value="{$product_data.import_divider|default:"1"}" class="input-small" />
@@ -381,6 +391,34 @@
                                 <option value="N" {if $product_data.out_of_stock_actions == "N"}selected="selected"{/if}>{__("none")}</option>
                                 <option value="B" {if $product_data.out_of_stock_actions == "B"}selected="selected"{/if}>{__("buy_in_advance")}</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="elm_approval_status">{__("approval_status")}:</label>
+                        <div class="controls">
+                            <select class="span3" name="product_data[approval_status]" id="elm_approval_status">
+                                <option value="S" {if $product_data.approval_status == "P"}selected="selected"{/if}>{__("product_pending")}</option>
+                                <option value="N" {if $product_data.approval_status == "D"}selected="selected"{/if}>{__("product_declined")}</option>
+                                <option value="B" {if $product_data.approval_status == "A"}selected="selected"{/if}>{__("product_approved")}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="elm_is_imported">{__("is_imported")}:</label>
+                        <div class="controls">
+                            <label class="checkbox">
+                                <input type="checkbox" id="elm_is_imported" {if $product_data.is_imported == "Y"}checked="checked"{/if} disabled="disabled"/>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="elm_referral_url" class="control-label">{__("referral_url")}</label>
+                        <div class="controls">
+                            <input type="text" name="product_data[referral_url]" id="elm_referral_url" value="{$product_data.referral_url}" class="input-large"/>
+                            {if $product_data.referral_url}<a href="{$product_data.referral_url}" target="_blank">{$product_data.referral_url}</a>{/if}
                         </div>
                     </div>
                 </div>

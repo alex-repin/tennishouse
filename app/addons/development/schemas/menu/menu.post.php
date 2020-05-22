@@ -23,32 +23,16 @@ $schema['top']['administration']['items']['development'] = array(
             'href' => 'development.calculate_balance',
             'position' => 200,
         ),
-        'update_exchange_rates' => array(
-            'href' => fn_url('development.update_rub_rate', 'C'),
-            'ajax' => true,
-            'position' => 100,
-        ),
         'update_rrp' => array(
             'href' => 'development.update_rrp',
             'position' => 120,
         ),
-        'generate_menu' => array(
-            'href' => 'development.generate_menu',
-            'position' => 130,
-        ),
-        'update_rankings' => array(
-            'href' => 'development.update_rankings',
-            'position' => 110,
-        ),
     ),
 );
-$stats = fn_get_memcached_stats();
-if ($stats['status']) {
-    $schema['top']['administration']['items']['development']['subitems']['cache_features'] = array(
-        'href' => fn_url('development.generate_features_cache', 'C'),
-        'position' => 200,
-    );
-}
+$schema['top']['administration']['items']['cron_scripts'] = array(
+    'href' => 'cron.manage',
+    'position' => 800,
+);
 
 $schema['central']['products']['items']['players'] = array(
     'href' => 'players.manage',
@@ -73,7 +57,7 @@ $schema['central']['products']['items']['competitive_prices'] = array(
 //     'href' => 'development.supplier_stocks',
 //     'position' => 1000,
 // );
-// 
+//
 $schema['central']['marketing']['items']['saving_system'] = array(
     'attrs' => array(
         'class'=>'is-addon'

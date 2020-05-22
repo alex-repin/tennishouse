@@ -215,7 +215,7 @@ function fn_print_r()
             if (defined('CONSOLE')) {
                 fn_echo(print_r($v, true));
             } else {
-                fn_echo('<li><pre>' . htmlspecialchars(print_r($v, true)) . "\n" . '</pre></li>');
+                fn_echo('<li><pre>' . print_r($v, true) . "\n" . '</pre></li>');
             }
         }
         fn_echo($suffix);

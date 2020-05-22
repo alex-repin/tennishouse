@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit;
         }
     }
-    
+
     if ($mode == 'delete_coupon') {
         fn_trusted_vars('catalog_coupon');
 
@@ -79,13 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-if ($mode == 'update_rub_rate') {
-    fn_update_rub_rate();
-    exit;
-} elseif ($mode == 'generate_features_cache') {
-    FeaturesCache::generate(CART_LANGUAGE);
-    exit;
-} elseif ($mode == 'cron_routine') {
+if ($mode == 'cron_routine') {
     fn_set_hook('cron_routine');
     exit;
 } elseif ($mode == 'hide_anouncement') {
@@ -157,7 +151,7 @@ if ($mode == 'find_state_match') {
 }
 if ($mode == 'find_state_data') {
     header('Content-Type: application/json');
-    
+
     $state_code = db_get_field("SELECT a.state_code FROM ?:rus_cities_sdek AS a LEFT JOIN ?:rus_city_sdek_descriptions AS b ON a.city_id = b.city_id AND b.lang_code = 'ru' WHERE b.city = ?s", $_REQUEST['city']);
     fn_echo(json_encode($state_code));
     exit;
@@ -168,7 +162,7 @@ if ($mode == 'switch_dmode') {
             fn_set_session_data('dmode', $_REQUEST['dmode']);
         }
     }
-    
+
     return array(CONTROLLER_STATUS_REDIRECT, !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "index.index");
 }
 if ($mode == 'redirect') {

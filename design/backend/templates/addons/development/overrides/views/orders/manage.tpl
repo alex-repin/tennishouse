@@ -193,10 +193,10 @@
     {capture name="tools_list"}
         {if $orders}
             <li>{btn type="list" text={__("bulk_print_invoice")} dispatch="dispatch[orders.bulk_print]" form="orders_list_form" class="cm-new-window"}</li>
-            <li>{btn type="list" text="{__("bulk_print_pdf")}" dispatch="dispatch[orders.bulk_print..pdf]" form="orders_list_form"}</li>            
+            <li>{btn type="list" text="{__("bulk_print_pdf")}" dispatch="dispatch[orders.bulk_print..pdf]" form="orders_list_form"}</li>
             <li>{btn type="list" text="{__("bulk_print_packing_slip")}" dispatch="dispatch[orders.packing_slip]" form="orders_list_form" class="cm-new-window"}</li>
             <li>{btn type="list" text={__("view_purchased_products")} dispatch="dispatch[orders.products_range]" form="orders_list_form"}</li>
-            
+
             <li class="divider"></li>
             <li>{btn type="list" text={__("export_selected")} dispatch="dispatch[orders.export_range]" form="orders_list_form"}</li>
             {if $incompleted_view}

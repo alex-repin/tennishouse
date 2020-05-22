@@ -106,7 +106,7 @@
             <input type="hidden" name="enable" value="Y"  />
             <input type="hidden" name="product_id" value="{$product.product_id}"  />
             <input type="hidden" name="combination_hash" value="{$follow_combination}"  />
-            
+
             <label id="product_notify_email_label" for="product_notify_email_{$obj_prefix}{$obj_id}" class="cm-required cm-email hidden">{__("email")}</label>
             <input type="text" name="email" id="product_notify_email_{$obj_prefix}{$obj_id}" size="20" value="{$product.inventory_notification_email|default:__("enter_email")}" class="ty-product-notify-email__input cm-hint" title="{__("enter_email")}" />
 
@@ -147,7 +147,7 @@
         {else}
             {if $extra_button}{$extra_button nofilter}&nbsp;{/if}
                 {include file="buttons/add_to_cart.tpl" but_id="button_cart_`$obj_prefix``$obj_id`" but_name="dispatch[checkout.add..`$obj_id`]" but_role=$but_role block_width=$block_width obj_id=$obj_id product=$product but_meta=$add_to_cart_meta but_text=$smarty.capture.button_name}
-                
+
                 {if $auto_process}
                 <script type="text/javascript">
                 (function(_, $) {
@@ -169,7 +169,7 @@
                 {$smarty.capture.buttons_product nofilter}
             {/if}
         {/if}
-        
+
     {elseif ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "ProductTracking::DO_NOT_TRACK"|enum) && $product.is_edp != "Y")}
         {assign var="show_qty" value=false}
         {if !$details_page}
@@ -361,7 +361,7 @@
 {if $show_product_amount && $product.is_edp != "Y" && $settings.General.inventory_tracking == "Y"}
     <div class="cm-reload-{$obj_prefix}{$obj_id} stock-wrap" id="product_amount_update_{$obj_prefix}{$obj_id}">
         <input type="hidden" name="appearance[show_product_amount]" value="{$show_product_amount}" />
-        {if !$product.hide_stock_info}
+        {if !$product.hide_stock_info && $product.show_stock == 'Y'}
             {if $settings.Appearance.in_stock_field == "Y"}
                 {if $product.tracking != "ProductTracking::DO_NOT_TRACK"|enum || $product.product_type == 'C'}
                     {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y" || $details_page}

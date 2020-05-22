@@ -429,7 +429,7 @@
         </item>
         <item>
             ALTER TABLE `cscart_payments` ADD `min_limit` MEDIUMINT( 8 ) NOT NULL ,
-            ADD `max_limit` MEDIUMINT( 8 ) NOT NULL ;            
+            ADD `max_limit` MEDIUMINT( 8 ) NOT NULL ;
         </item>
         <item>
             ALTER TABLE `cscart_destinations` ADD `shipping_ids` TEXT NOT NULL ;
@@ -438,16 +438,17 @@
             ALTER TABLE `cscart_players` ADD `link` VARCHAR( 255 ) NOT NULL ;
         </item>
         <item>
+            DROP TABLE IF EXISTS `cscart_cron_logs`;
+        </item>
+        <item>
             CREATE TABLE IF NOT EXISTS `cscart_cron_logs` (
                 `log_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
                 `type` char(1) NOT NULL,
                 `status` char(1) NOT NULL DEFAULT 'S',
                 `timestamp` int(11) unsigned NOT NULL,
+                `results` TEXT NOT NULL,
                 PRIMARY KEY (`log_id`)
-            ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-        </item>
-        <item>
-            ALTER TABLE `cscart_cron_logs` ADD `errors` TEXT NOT NULL ;
+            ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
         </item>
         <item>
             ALTER TABLE `cscart_players` ADD `website` VARCHAR( 255 ) NOT NULL ,
@@ -535,7 +536,7 @@
             `usergroup_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
             PRIMARY KEY (`group_id`),
             UNIQUE KEY `amount` (`amount`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;            
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
         </item>
         <item>
             ALTER TABLE `cscart_categories` ADD `cross_categories` TEXT NOT NULL ;
@@ -697,7 +698,7 @@
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
         </item>
         <item>
-            REPLACE INTO `cscart_product_tabs` (`tab_id`, `tab_type`, `block_id`, `template`, `addon`, `position`, `status`, `is_primary`, `product_ids`, `company_id`, `show_in_popup`) VALUES 
+            REPLACE INTO `cscart_product_tabs` (`tab_id`, `tab_type`, `block_id`, `template`, `addon`, `position`, `status`, `is_primary`, `product_ids`, `company_id`, `show_in_popup`) VALUES
             (9, 'T', 0, 'blocks/product_tabs/technologies.tpl', '', 22, 'A', 'Y', '', 1, 'N'),
             (10, 'T', 0, 'blocks/product_tabs/size_chart.tpl', '', 21, 'D', 'Y', '', 1, 'N'),
             (11, 'T', 0, 'blocks/product_tabs/promotion.tpl', '', 23, 'A', 'Y', '', 1, 'N');
@@ -736,7 +737,7 @@
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
         </item>
         <item>
-            ALTER TABLE `cscart_product_features` ADD `parent_variant_id` MEDIUMINT(8) UNSIGNED NOT NULL DEFAULT '0'; 
+            ALTER TABLE `cscart_product_features` ADD `parent_variant_id` MEDIUMINT(8) UNSIGNED NOT NULL DEFAULT '0';
         </item>
         <item>
             ALTER TABLE `cscart_categories` ADD `menu_subitems` TEXT NOT NULL;
@@ -804,7 +805,19 @@
             ALTER TABLE `cscart_product_feature_variant_descriptions` ADD `description_templates` TEXT NOT NULL;
         </item>
         <item>
-            ALTER TABLE `cscart_product_descriptions` ADD `features_description` MEDIUMTEXT NOT NULL AFTER `full_description`;;
+            ALTER TABLE `cscart_product_descriptions` ADD `features_description` MEDIUMTEXT NOT NULL AFTER `full_description`;
+        </item>
+        <item>
+            ALTER TABLE `cscart_products` ADD `is_imported` CHAR(1) NOT NULL DEFAULT 'N';
+        </item>
+        <item>
+            ALTER TABLE `cscart_products` ADD `referral_url` VARCHAR(255) NOT NULL;
+        </item>
+        <item>
+            ALTER TABLE `cscart_products` ADD `approval_status` CHAR(1) NOT NULL DEFAULT 'A';
+        </item>
+        <item>
+            ALTER TABLE `cscart_products` ADD `show_stock` CHAR(1) NOT NULL DEFAULT 'Y';
         </item>
     </queries>
     <language_variables>
@@ -1560,5 +1573,26 @@
         <item lang="ru" id="description_templates">Шаблоны описания</item>
         <item lang="ru" id="features_description">Описание характеристик</item>
         <item lang="ru" id="quarantine_shipping_delay">ВНИМАНИЕ! Для службы доставки СДЭК указаны стандартные сроки доставки, в связи с карантином и отмене авиасообщения происходят большие задержки абсолютно по всем направлениям по России. Поэтому при заказе, пожалуйста, учитывайте, что посылка не будет доставлена в указанный срок.</item>
+        <item lang="ru" id="is_imported">Импортирован</item>
+        <item lang="ru" id="referral_url">Источник</item>
+        <item lang="ru" id="approval_status">Статус подтверждения</item>
+        <item lang="ru" id="imported_products_need_approval"><![CDATA[Были созданы новые товары ([number]). <a href="[products_link]">Проверить</a>]]></item>
+        <item lang="ru" id="show_stock">Показывать кол-во</item>
+        <item lang="ru" id="cron_logs">Журнал cron</item>
+        <item lang="ru" id="cron_scripts">Cron-скрипты</item>
+        <item lang="ru" id="cron_in_progress">В процессе</item>
+        <item lang="ru" id="check_expired_points">Проверить бонусные баллы</item>
+        <item lang="ru" id="check_delivery_statuses">Обновить статусы доставки</item>
+        <item lang="ru" id="update_competitive_prices">Обновить цены конкурентов</item>
+        <item lang="ru" id="update_competitive_catalog">Обновить каталог конкурентов</item>
+        <item lang="ru" id="check_sms_statuses">Обновить статусы sms</item>
+        <item lang="ru" id="catalog_synchronization">Синхронизировать каталог</item>
+        <item lang="ru" id="cron_log_details">Результаты выполнения cron</item>
+        <item lang="ru" id="run_cron_script">Запустить скрипт</item>
+        <item lang="ru" id="run">Запуск</item>
+        <item lang="ru" id="product_pending">Ожидает проверки</item>
+        <item lang="ru" id="product_declined">Отклонен</item>
+        <item lang="ru" id="product_approved">Подтвержден</item>
+        <item lang="ru" id="run_script">Запустить скрипт</item>
     </language_variables>
 </addon>

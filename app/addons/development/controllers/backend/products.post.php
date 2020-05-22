@@ -18,16 +18,31 @@ use Tygh\BlockManager\SchemesManager;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($mode == 'm_approve') {
+        if (isset($_REQUEST['product_ids'])) {
+            db_query("UPDATE ?:products SET approval_status = 'A', status = 'A' WHERE product_id IN (?n)", $_REQUEST['product_ids']);
+        }
+        return array(CONTROLLER_STATUS_OK, "products.manage?approval_status=P");
+    }
+    if ($mode == 'm_decline') {
+        if (isset($_REQUEST['product_ids'])) {
+            db_query("UPDATE ?:products SET approval_status = 'D', status = 'H' WHERE product_id IN (?n)", $_REQUEST['product_ids']);
+        }
+        return array(CONTROLLER_STATUS_OK, "products.manage?approval_status=P");
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] != 'POST' && $mode == 'update') {
 
     $tabs = Registry::get('navigation.tabs');
-    
+
     $players_tab = array (
         'title' => __('players'),
         'js' => true
     );
     $tabs = fn_insert_before_key($tabs, 'seo', 'players', $players_tab);
-    
+
     if (!empty($tabs['features'])) {
         $features_tab = $tabs['features'];
         unset($tabs['features']);
@@ -56,12 +71,12 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST' && $mode == 'update') {
 //     $options_tab = $tabs['options'];
 //     unset($tabs['options']);
 //     $tabs['options'] = $options_tab;
-    
-    
+
+
     // [/Product tabs]
     Registry::set('navigation.tabs', $tabs);
     // [/Page sections]
-    
+
     $product_options = Registry::get('view')->gettemplatevars('product_options');
     $product_data = Registry::get('view')->gettemplatevars('product_data');
     $product_data['hide_features'] = array(PLAYER_FEATURE_ID);

@@ -126,6 +126,11 @@
             <li>{btn type="list" text=__("export_selected") dispatch="dispatch[products.export_range]" form="manage_products_form"}</li>
             <li>{btn type="delete_selected" dispatch="dispatch[products.m_delete]" form="manage_products_form"}</li>
         {/if}
+        {if $search.approval_status == 'P'}
+            <li class="divider"></li>
+            <li>{btn type="list" text=__("approve_selected") dispatch="dispatch[products.m_approve]" form="manage_products_form"}</li>
+            <li>{btn type="list" text=__("decline_selected") dispatch="dispatch[products.m_decline]" form="manage_products_form"}</li>
+        {/if}
         {/hook}
     {/capture}
     {dropdown content=$smarty.capture.tools_list}

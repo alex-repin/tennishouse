@@ -2439,6 +2439,8 @@ function fn_update_product($product_data, $product_id = 0, $lang_code = CART_LAN
                 'product_id' => $product_id,
             ));
 
+            fn_update_product_categories($product_id, $product_data);
+
             // Update product features value
             $product_data['product_features'] = !empty($product_data['product_features']) ? $product_data['product_features'] : array();
             $product_data['add_new_variant'] = !empty($product_data['add_new_variant']) ? $product_data['add_new_variant'] : array();
@@ -2455,8 +2457,6 @@ function fn_update_product($product_data, $product_id = 0, $lang_code = CART_LAN
 
                 db_query("INSERT INTO ?:product_popularity ?e ON DUPLICATE KEY UPDATE total = ?i", $_data, $product_data['popularity']);
             }
-
-            fn_update_product_categories($product_id, $product_data);
 
             $alt_text = $product_data['product'] . (!empty($product_data['product_code']) ? ' ' . $product_data['product_code'] : '');
 

@@ -49,6 +49,8 @@ define('BADMINTON_BAGS_CATEGORY_ID', 484);
 define('BADMINTON_STRINGS_CATEGORY_ID', 494);
 define('ACCESSORIES_CATEGORY_ID', 267);
 define('TREADMILL_CATEGORY_ID', 502);
+define('INDOOR_CYCLE_CATEGORY_ID', 503);
+define('ELLIPTICAL_CATEGORY_ID', 504);
 
 define('HYBRID_MATERIAL_CATEGORY_ID', 421);
 define('NATURAL_GUT_MATERIAL_CATEGORY_ID', 420);
@@ -87,7 +89,11 @@ define('BAG_SIZE_FEATURE_ID', 58);
 define('STRING_TYPE_FEATURE_ID', 60);
 define('BALLS_TYPE_FEATURE_ID', 64);
 define('OG_TYPE_FEATURE_ID', 66);
+
 define('TM_TYPE_FEATURE_ID', 166);
+define('TM_FEATURE_GROUP_ID', 164);
+define('ELLIPTICAL_FEATURE_GROUP_ID', 203);
+define('INDOOR_BC_FEATURE_GROUP_ID', 204);
 
 define('BRAND_FEATURE_TYPE', 'V');
 
@@ -97,6 +103,7 @@ define('S_MATERIAL_FEATURE_ID', 77);
 define('CLOTHES_MATERIAL_FEATURE_ID', 75);
 define('R_MATERIAL_FEATURE_ID', 28);
 /*Material features*/
+
 /*Features*/
 
 /*Profile fields*/
@@ -226,6 +233,7 @@ define('ORDER_STATUS_WAITING_FOR_PICKUP', 'X');
 define('NO_EMAIL', 'noemail@tennishouse.ru');
 
 define('ORDER_COMPLETE_STATUSES', serialize(array('C', 'E', 'G')));
+define('ORDER_CHECK_STATUSES', serialize(array('A', 'X')));
 define('TRY_ON_CAT_IDS', serialize(array(APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID)));
 define('SEO_VARIANTS_ALLOWED', serialize(array('S', 'M', 'E')));
 define('DESCRIPTION_FEATURE_TYPES', serialize(array('S', 'N', 'E')));

@@ -23,13 +23,114 @@ use Tygh\Settings;
 use Tygh\Enum\ProductTracking;
 use Tygh\Shippings\RusSdek;
 use Tygh\Sync\Sync;
+use Tygh\Navigation\LastView;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_print_tpl()
+{
+    $args = func_get_args();
+
+    $prefix = '<ol style="font-family: Courier; font-size: 12px; border: 1px solid #dedede; background-color: #efefef; float: left; padding-right: 20px;">';
+    $suffix = '</ol><div style="clear:left;"></div>';
+
+    if (!empty($args)) {
+        echo($prefix);
+        foreach ($args as $k => $v) {
+            echo('<li><pre>' . print_r($v, true) . "\n" . '</pre></li>');
+        }
+        echo($suffix);
+    }
+}
+
+function fn_get_cron_log_types()
+{
+    $scheme = fn_get_schema('cron', 'schema');
+
+    $types = array();
+    if (!empty($scheme)) {
+        foreach ($scheme as $type => $data) {
+            $types[$type] = __($data['name']);
+        }
+    }
+
+    return $types;
+}
+
+function fn_run_cron_script($type, $data)
+{
+    if (function_exists($data['function'])) {
+        $action = array(
+            'type' => $type,
+            'status' => 'P',
+            'timestamp' => TIME
+        );
+        $log_id = db_query("INSERT INTO ?:cron_logs ?e", $action);
+        list($result, $results) = call_user_func($data['function']);
+        db_query("UPDATE ?:cron_logs SET status = ?s, results = ?s WHERE log_id = ?i", ($result ? 'S' : 'F'), serialize($results), $log_id);
+    }
+
+    return true;
+}
+
+function fn_get_cron_logs($params, $items_per_page = 0)
+{
+    // Init filter
+    $params = LastView::instance()->update('cron_logs', $params);
+
+    $default_params = array (
+        'page' => 1,
+        'items_per_page' => $items_per_page
+    );
+
+    $params = array_merge($default_params, $params);
+
+    $sortings = array (
+        'timestamp' => array ('?:cron_logs.timestamp', '?:cron_logs.log_id'),
+        'type' => array ('?:cron_logs.type', '?:cron_logs.log_id'),
+    );
+
+    $fields = array (
+        '?:cron_logs.*',
+    );
+
+    $sorting = db_sort($params, $sortings, 'timestamp', 'desc');
+
+    $join = "";
+
+    $condition = '';
+
+    if (!empty($params['period']) && $params['period'] != 'A') {
+        list($time_from, $time_to) = fn_create_periods($params);
+
+        $condition .= db_quote(" AND (?:cron_logs.timestamp >= ?i AND ?:cron_logs.timestamp <= ?i)", $time_from, $time_to);
+    }
+
+    if (!empty($params['type'])) {
+        $condition .= db_quote(" AND ?:cron_logs.type = ?s", $params['type']);
+    }
+
+    $limit = '';
+    if (!empty($params['items_per_page'])) {
+        $params['total_items'] = db_get_field("SELECT COUNT(DISTINCT(?:cron_logs.log_id)) FROM ?:cron_logs ?p WHERE 1 ?p", $join, $condition);
+        $limit = db_paginate($params['page'], $params['items_per_page']);
+    }
+
+    $data = db_get_array("SELECT " . join(', ', $fields) . " FROM ?:cron_logs ?p WHERE 1 ?p $sorting $limit", $join, $condition);
+
+    foreach ($data as $k => $v) {
+        $data[$k]['results'] = !empty($v['results']) ? unserialize($v['results']) : array();
+    }
+
+    return array($data, $params);
+}
+
 function fn_synchronize_agents()
 {
-    $driada = new Sync(DRIADA_WAREHOUSE_ID);
-    $driada->getFeed();
+    $results = $status = array();
+    list($status[DRIADA_WAREHOUSE_ID], $results[DRIADA_WAREHOUSE_ID]) = Sync::Synchronize(DRIADA_WAREHOUSE_ID);
+
+    return array($status, $results);
 }
 
 function fn_generate_product_features_descriptions($product_ids)
@@ -419,7 +520,7 @@ function fn_parse_competitive_price($link)
 function fn_check_delivery_statuses()
 {
     $errors = array();
-    $data = db_get_hash_array("SELECT ?:orders.order_id, GROUP_CONCAT(DISTINCT ?:shipment_items.shipment_id SEPARATOR ',') AS shipment_ids FROM ?:orders LEFT JOIN ?:shipment_items ON ?:shipment_items.order_id = ?:orders.order_id WHERE ?:orders.status = 'A' GROUP BY order_id", 'order_id');
+    $data = db_get_hash_array("SELECT ?:orders.order_id, GROUP_CONCAT(DISTINCT ?:shipment_items.shipment_id SEPARATOR ',') AS shipment_ids FROM ?:orders LEFT JOIN ?:shipment_items ON ?:shipment_items.order_id = ?:orders.order_id WHERE ?:orders.status IN (?a) GROUP BY order_id", 'order_id', unserialize(ORDER_CHECK_STATUSES));
 
     if (!empty($data)) {
         $_shipment_ids = array();
@@ -958,7 +1059,6 @@ function fn_promotion_validate_free_strings(&$promotion, $cart, $cart_products, 
 
 function fn_promotion_validate_store_review(&$promotion, $auth, $promotion_id = 0)
 {
-fn_print_r('1');
     return fn_count_new_reviews($auth['user_id'], 'E');
 }
 
@@ -1270,7 +1370,7 @@ function fn_is_icon_feature($feature_id)
 
 function fn_check_category_discussion($id_path)
 {
-    $enable_discussion = array(RACKETS_CATEGORY_ID, BALLS_CATEGORY_ID, STRINGS_CATEGORY_ID, SHOES_CATEGORY_ID, OVERGRIPS_CATEGORY_ID, BALL_MACHINE_CATEGORY_ID, STR_MACHINE_CATEGORY_ID);
+    $enable_discussion = array(RACKETS_CATEGORY_ID, BALLS_CATEGORY_ID, STRINGS_CATEGORY_ID, SHOES_CATEGORY_ID, OVERGRIPS_CATEGORY_ID, BALL_MACHINE_CATEGORY_ID, STR_MACHINE_CATEGORY_ID, TREADMILL_CATEGORY_ID, INDOOR_CYCLE_CATEGORY_ID, ELLIPTICAL_CATEGORY_ID);
     $disable_discussion = array(BALL_MACHINE_ACC_CATEGORY_ID);
     if (!empty(array_intersect($id_path, $enable_discussion)) && empty(array_intersect($id_path, $disable_discussion))) {
         return 'B';
@@ -1687,7 +1787,10 @@ function fn_format_categorization(&$category_data, $ctz_data, $type)
 
 function fn_generate_features_cash()
 {
-    FeaturesCache::generate(CART_LANGUAGE);
+    $stats = fn_get_memcached_stats();
+    if ($stats['status']) {
+        FeaturesCache::generate(CART_LANGUAGE);
+    }
     return array(true, array());
 }
 
@@ -3322,6 +3425,7 @@ function fn_rebuild_product_options_inventory_multi($product_ids, $products_opti
 
             fn_set_hook('rebuild_product_options_inventory_post', $product_id);
         }
+        
         if (!empty($delete_combinations)) {
             db_query("DELETE FROM ?:product_options_inventory WHERE combination_hash IN (?n)", $delete_combinations);
             foreach ($delete_combinations as $v) {

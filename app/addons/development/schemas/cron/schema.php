@@ -17,46 +17,60 @@ return array(
     'F' => array(
         'frequency' => 60 * 60 * 24,
         'function' => 'fn_generate_features_cash',
-        'H' => '02'
+        'H' => '02',
+        'name' => 'cache_features'
     ),
     'R' => array(
         'frequency' => 60 * 60 * 24,
         'function' => 'fn_update_rankings',
         'wday' => '2',
-        'H' => '02'
+        'H' => '02',
+        'name' => 'update_rankings'
     ),
     'E' => array(
         'frequency' => 60 * 60 * 24,
         'function' => 'fn_check_expired_points',
-        'H' => '02'
+        'H' => '02',
+        'name' => 'check_expired_points'
     ),
     'P' => array(
         'frequency' => 60 * 60 * 24,
         'function' => 'fn_update_rub_rate',
-        'H' => '02'
+        'H' => '02',
+        'name' => 'update_exchange_rates'
     ),
     'M' => array(
         'frequency' => 60 * 60 * 24,
         'function' => 'fn_get_generate_categories_menu_subitems',
-        'H' => '02'
+        'H' => '02',
+        'name' => 'generate_menu'
     ),
     'S' => array(
         'frequency' => 60 * 60 * 24,
         'function' => 'fn_check_delivery_statuses',
-        'H' => '02'
+        'H' => '02',
+        'name' => 'check_delivery_statuses'
     ),
     'I' => array(
         'frequency' => 60 * 60 * 24,
         'function' => 'fn_update_competitive_prices',
-        'H' => '02'
+        'H' => '02',
+        'name' => 'update_competitive_prices'
     ),
     'C' => array(
         'frequency' => 60 * 60 * 24 * 7,
         'function' => 'fn_update_competitive_catalog',
-        'H' => '02'
+        'H' => '02',
+        'name' => 'update_competitive_catalog'
     ),
     'T' => array(
         'frequency' => 60 * 60,
-        'function' => 'fn_check_sms'
+        'function' => 'fn_check_sms',
+        'name' => 'check_sms_statuses'
+    ),
+    'Y' => array(
+        'frequency' => 60 * 60 * 12,
+        'function' => 'fn_synchronize_agents',
+        'name' => 'catalog_synchronization'
     ),
 );

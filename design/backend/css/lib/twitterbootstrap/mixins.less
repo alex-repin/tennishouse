@@ -407,10 +407,12 @@
 // Gradient Bar Colors for buttons and alerts
 .gradientBar(@primaryColor, @secondaryColor, @textColor: #fff, @textShadow: 0 -1px 0 rgba(0,0,0,.25)) {
   color: @textColor;
-  text-shadow: @textShadow;
-  #gradient > .vertical(@primaryColor, @secondaryColor);
-  border-color: @secondaryColor @secondaryColor darken(@secondaryColor, 15%);
-  border-color: rgba(0,0,0,.1) rgba(0,0,0,.1) fadein(rgba(0,0,0,.1), 15%);
+  // text-shadow: @textShadow;
+  // #gradient > .vertical(@primaryColor, @secondaryColor);
+  // border-color: @secondaryColor @secondaryColor darken(@secondaryColor, 15%);
+  // border-color: rgba(0,0,0,.1) rgba(0,0,0,.1) fadein(rgba(0,0,0,.1), 15%);
+  background-color: @secondaryColor;
+  border-color: @secondaryColor;
 }
 
 // Gradients
@@ -520,6 +522,7 @@
   &:hover, &:focus, &:active, &.active, &.disabled, &[disabled] {
     color: @textColor;
     background-color: @endColor;
+    box-shadow: 0 0 12px -2px #888888;
     *background-color: darken(@endColor, 5%);
   }
 

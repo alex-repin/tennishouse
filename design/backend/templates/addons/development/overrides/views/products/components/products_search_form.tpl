@@ -152,6 +152,17 @@
                 <input type="checkbox" value="Y"{if $search.subcats == "Y" || !$search.subcats} checked="checked"{/if} name="subcats"  id="subcats" />
             </div>
         </div>
+        <div class="control-group">
+            <label class="control-label" for="approval_status">{__("approval_status")}</label>
+            <div class="controls">
+            <select name="approval_status">
+                <option value="">--</option>
+                <option value="P" {if $search.approval_status == "P"}selected="selected"{/if}>{__("product_pending")}</option>
+                <option value="D" {if $search.approval_status == "D"}selected="selected"{/if}>{__("product_declined")}</option>
+                <option value="A" {if $search.approval_status == "A"}selected="selected"{/if}>{__("product_approved")}</option>
+            </select>
+            </div>
+        </div>
     </div>
 </div>
 

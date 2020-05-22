@@ -23,7 +23,6 @@
 {script src="js/addons/development/recaptcha.js"}
 <script src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoaded&render=explicit"></script>
 {/if}
-<script src="https://api-maps.yandex.ru/2.1/?apikey={$addons.development.ymaps_api_key|escape:javascript nofilter}&lang=ru_RU" type="text/javascript"></script>
 
 {script src="js/addons/development/jquery.mobile-1.4.5.min.js"}
 {script src="js/addons/development/jquery.kladr.min.js"}

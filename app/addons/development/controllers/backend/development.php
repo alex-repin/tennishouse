@@ -1459,12 +1459,6 @@ if ($mode == 'calculate_balance') {
 } elseif ($mode == 'update_rrp') {
     Registry::get('view')->assign('step', 'one');
     Registry::get('view')->assign('brands', fn_development_get_brands());
-} elseif ($mode == 'generate_menu') {
-    fn_get_generate_categories_menu_subitems();
-    exit;
-} elseif ($mode == 'update_rankings') {
-    fn_update_rankings();
-    exit;
 } elseif ($mode == 'generate_user_lkey' && !empty($_REQUEST['user_id'])) {
 
     fn_generate_ekey($_REQUEST['user_id'], 'L', SECONDS_IN_DAY * 90);
@@ -1791,8 +1785,26 @@ if ($mode == 'calculate_balance') {
     exit;
 
 } elseif ($mode == 'sync') {
-    fn_synchronize_agents();
-    fn_print_die('finished');
+
+    // fn_delete_product_feature_variants(0, db_get_fields("SELECT a.variant_id FROM ?:product_feature_variants AS a LEFT JOIN ?:product_features AS b ON a.feature_id = b.feature_id WHERE b.parent_id = ?i", TM_FEATURE_GROUP_ID));
+
+    // $params = array(
+    //     'features_hash' => 'V' . DFC_BRAND_ID,
+    // );
+    // list($products,$search) = fn_get_products($params);
+    // $_data = array();
+    // foreach ($products as $product) {
+    //     $_data[] = array(
+    //         'warehouse_hash' => fn_generate_cart_id($product['product_id'], array('warehouse_id' => DRIADA_WAREHOUSE_ID)),
+    //         'warehouse_id' => DRIADA_WAREHOUSE_ID,
+    //         'product_id' => $product['product_id'],
+    //         'amount' => 0
+    //     );
+    //     db_query("UPDATE ?:products SET warehouse_ids = ?s, tracking = 'B', show_stock = 'N' WHERE product_id = ?i", TH_WAREHOUSE_ID . ',' . DRIADA_WAREHOUSE_ID, $product['product_id']);
+    // }
+    // db_query("REPLACE ?:product_warehouses_inventory ?m", $_data);
+    // fn_print_die($_data);
+
     exit;
 }
 
