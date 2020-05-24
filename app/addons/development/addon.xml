@@ -438,9 +438,6 @@
             ALTER TABLE `cscart_players` ADD `link` VARCHAR( 255 ) NOT NULL ;
         </item>
         <item>
-            DROP TABLE IF EXISTS `cscart_cron_logs`;
-        </item>
-        <item>
             CREATE TABLE IF NOT EXISTS `cscart_cron_logs` (
                 `log_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
                 `type` char(1) NOT NULL,
