@@ -133,9 +133,31 @@ class Driada extends Agent
                             }
                         } elseif ($d_features[$s_features[$d_key]]['feature_type'] == 'M') {
                             $variants = array_map('trim', explode(',', mb_convert_case($d_val, MB_CASE_LOWER)));
-                            foreach ($d_features[$s_features[$d_key]]['variants'] as $feature_variant) {
-                                if (in_array(mb_convert_case($feature_variant['variant'], MB_CASE_LOWER), $variants)) {
-                                    $product_features[$s_features[$d_key]][$feature_variant['variant_id']] = $feature_variant['variant_id'];
+                            if (!empty($variants)) {
+                                $existing = $add_new = array();
+                                foreach ($d_features[$s_features[$d_key]]['variants'] as $feature_variant) {
+                                    $existing[$feature_variant['variant_id']] = mb_convert_case($feature_variant['variant'], MB_CASE_LOWER);
+                                }
+                                foreach ($variants as $f_var) {
+                                    if (($key = array_search($f_var, $existing)) !== false) {
+                                        $product_features[$s_features[$d_key]][$key] = $key;
+                                    } else {
+                                        $add_new[] = array(
+                                            'variant' => $f_var
+                                        );
+                                    }
+                                }
+                                if (!empty($add_new)) {
+                                    foreach ($add_new as $new_var) {
+                                        $new_key = fn_add_feature_variant($s_features[$d_key], $new_var);
+                                        if (!empty($new_key)) {
+                                            $product_features[$s_features[$d_key]][$new_key] = $new_key;
+                                            $d_features[$s_features[$d_key]]['variants'][] = array(
+                                                'variant_id' => $new_key,
+                                                'variant' => $new_var
+                                            );
+                                        }
+                                    }
                                 }
                             }
                         } elseif ($d_features[$s_features[$d_key]]['feature_type'] == 'C') {
