@@ -1591,5 +1591,7 @@
         <item lang="ru" id="product_declined">Отклонен</item>
         <item lang="ru" id="product_approved">Подтвержден</item>
         <item lang="ru" id="run_script">Запустить скрипт</item>
+        <item lang="ru" id="wh_net_total">Общая себестоимость</item>
+        <item lang="ru" id="wh_rrp_total">Общая РРЦ</item>
     </language_variables>
 </addon>

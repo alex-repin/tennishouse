@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         $suffix = ".manage";
     }
-    
+
     return array(CONTROLLER_STATUS_OK, "warehouses$suffix");
 }
 
@@ -103,6 +103,30 @@ if ($mode == 'add') {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
 
+    $params = array(
+        'warehouse_id' => $warehouse_id,
+        'hide_out_of_stock' => 'Y'
+    );
+    list($products,) = fn_get_products($params);
+
+    $net_ttl = 0;
+    $rrp_total = 0;
+    foreach ($products as $prod) {
+        if (!empty($prod['net_cost']) && $prod['net_cost'] > 0) {
+            $wh_inv = explode('|', $prod['wh_inventory']);
+            $amount = 0;
+            foreach ($wh_inv as $kk => $amnt) {
+                $tmp = explode('_', $amnt);
+                if (count($tmp) == 3 && $tmp[0] == $warehouse_id) {
+                    $amount += $tmp[2];
+                }
+            }
+
+            $net_ttl += $prod['net_cost'] * Registry::get('currencies.' . $prod['net_currency_code'] . '.coefficient') * $amount;
+            $rrp_total += $prod['price'] * $amount;
+        }
+    }
+
     // [Page sections]
     $tabs = array (
         'detailed' => array (
@@ -121,6 +145,7 @@ if ($mode == 'add') {
 
     Registry::set('navigation.tabs', $tabs);
     // [/Page sections]
+    Registry::get('view')->assign('total', array('net' => $net_ttl, 'rrp' => $rrp_total));
     Registry::get('view')->assign('warehouse_data', $warehouse_data);
     Registry::get('view')->assign('brands', fn_development_get_brands());
 
@@ -148,7 +173,7 @@ elseif ($mode == 'delete') {
 
     Registry::get('view')->assign('warehouses', $warehouses);
     Registry::get('view')->assign('search', $search);
-    
+
 }
 
 //

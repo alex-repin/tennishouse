@@ -73,4 +73,9 @@ return array(
         'function' => 'fn_synchronize_agents',
         'name' => 'catalog_synchronization'
     ),
+    'D' => array(
+        'frequency' => 60 * 60 * 3,
+        'function' => 'fn_update_xml_feed',
+        'name' => 'update_xml_feed'
+    ),
 );

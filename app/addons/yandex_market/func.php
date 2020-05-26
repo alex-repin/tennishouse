@@ -48,36 +48,36 @@ function fn_yandex_market_tools_change_status(&$params, &$result)
         && in_array($params['table'], array('products', 'categories'))
         && $result
     ) {
-        Yml::clearCaches();
+        // Yml::clearCaches();
     }
 }
 
 function fn_yandex_market_update_product_post(&$product_data, &$product_id, &$lang_code, &$create)
 {
-    Yml::clearCaches();
+    // Yml::clearCaches();
 }
 
 function fn_yandex_market_delete_product_post(&$product_id, &$product_deleted)
 {
     if ($product_deleted) {
-        Yml::clearCaches();
+        // Yml::clearCaches();
     }
 }
 
 function fn_yandex_market_update_category_post(&$category_data, &$category_id, &$lang_code)
 {
     $company_id = isset($category_data['company_id']) ? $category_data['company_id'] : 0;
-    Yml::clearCaches($company_id);
+    // Yml::clearCaches($company_id);
 }
 
 function fn_yandex_market_delete_category_post(&$category_id, &$recurse, &$category_ids)
 {
-    Yml::clearCaches();
+    // Yml::clearCaches();
 }
 
 function fn_yandex_market_change_order_status(&$status_to, &$status_from, &$order_info, &$force_notification, &$order_statuses, &$place_order)
 {
-    Yml::clearCaches($order_info['company_id']);
+    // Yml::clearCaches($order_info['company_id']);
 
     if (!empty($order_info['yandex_market'])) {
         if ($place_order) {

@@ -24,9 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 if ($mode == 'view') {
 
 //     $user_data = fn_yandex_auth();
-// 
+//
     $company_id = Registry::get('runtime.company_id');
-// 
+//
 //     if (fn_allowed_for('MULTIVENDOR')) {
 //         $company_id = 0;
 //         if ($user_data['user_type'] == 'V') {

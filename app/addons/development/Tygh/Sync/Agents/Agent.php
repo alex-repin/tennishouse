@@ -72,7 +72,8 @@ class Agent
 
                 $params = array(
                     'features_hash' => 'V' . implode('.V', $this->brand_ids),
-                    'warehouse_id' => $this->agent
+                    'warehouse_id' => $this->agent,
+                    'area' => 'A'
                     //'force_get_by_ids' => 'Y',
                 );
 

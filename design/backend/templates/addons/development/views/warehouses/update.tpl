@@ -46,6 +46,18 @@
             <input type="text" name="warehouse_data[priority]" id="elm_warehouse_priority" size="10" value="{$warehouse_data.priority}" class="input-text-short" />
         </div>
     </div>
+    <div class="control-group">
+        <label class="control-label" for="elm_net_total">{__("wh_net_total")}:</label>
+        <div class="controls" style="padding-top: 5px;">
+            {include file="common/price.tpl" value=$total.net}
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="elm_net_total">{__("wh_rrp_total")}:</label>
+        <div class="controls" style="padding-top: 5px;">
+            {include file="common/price.tpl" value=$total.rrp}
+        </div>
+    </div>
     {if $id}
     <div class="control-group">
         <a href="{"development.check_inventory?warehouse_id=`$id`"|fn_url}" target="_blank">{__("check_inventory")}</a>
@@ -72,7 +84,7 @@
         {include file="buttons/save_cancel.tpl" but_name="dispatch[warehouses.update]" but_role="submit-link" but_target_form="warehouses_form" save=$id but_meta="cm-save-buttons"}
     {/if}
 {/capture}
-    
+
 {/capture}
 {include file="common/tabsbox.tpl" content=$smarty.capture.tabsbox active_tab=$smarty.request.selected_section track=true}
 

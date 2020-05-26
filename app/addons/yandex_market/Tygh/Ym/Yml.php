@@ -75,10 +75,10 @@ class Yml implements IYml
             }
         }
 
-//         foreach ((array) $company_ids as $company_id) {
-//             $self = new self($company_id);
-//             $self->clearCache();
-//         }
+        foreach ((array) $company_ids as $company_id) {
+            $self = new self($company_id);
+            $self->clearCache();
+        }
     }
 
     public function generate($filename)
@@ -180,11 +180,10 @@ class Yml implements IYml
                 }
 
                 $product['product'] = $this->escape($product['product']);
-                $product['full_description'] = $this->escape($product['full_description']);
+                $product['full_description'] = !empty($product['full_description']) ? $this->escape($product['full_description']) : '';
                 $product['product_features'] = $this->getProductFeatures($product);
 
                 if (!empty($product['product_features'])) {
-                    $product['full_description'] = '';
                     foreach ($product['product_features'] as $i => $f_data) {
                         $product['full_description'] .= (empty($product['full_description']) ? '' : '; ') . $f_data['description'] . ':' . $f_data['value'];
                     }
@@ -263,8 +262,10 @@ class Yml implements IYml
                 $offered[$key] = $value;
             }
 
-            fwrite($file, fn_yandex_market_array_to_yml($offered));
-            unset($offered);
+            if (!empty($offered)) {
+                fwrite($file, fn_yandex_market_array_to_yml($offered));
+                unset($offered);
+            }
 
         }
     }

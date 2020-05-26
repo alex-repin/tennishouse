@@ -24,8 +24,26 @@ use Tygh\Enum\ProductTracking;
 use Tygh\Shippings\RusSdek;
 use Tygh\Sync\Sync;
 use Tygh\Navigation\LastView;
+use Tygh\Ym\Yml;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
+
+function fn_update_xml_feed()
+{
+    $errors = array();
+    Yml::clearCaches();
+
+    $company_id = 1;
+    $options = Registry::get('addons.yandex_market');
+
+    $yml = new Yml($company_id, $options);
+    $filename = $yml->getFileName();
+    if (!file_exists($filename)) {
+        $yml->generate($filename);
+    }
+
+    return array(true, $errors);
+}
 
 function fn_print_tpl()
 {
@@ -3425,7 +3443,7 @@ function fn_rebuild_product_options_inventory_multi($product_ids, $products_opti
 
             fn_set_hook('rebuild_product_options_inventory_post', $product_id);
         }
-        
+
         if (!empty($delete_combinations)) {
             db_query("DELETE FROM ?:product_options_inventory WHERE combination_hash IN (?n)", $delete_combinations);
             foreach ($delete_combinations as $v) {
