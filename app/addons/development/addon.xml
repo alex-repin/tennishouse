@@ -57,6 +57,13 @@
                             <item lang="ru">Новый подписчки (сколько дней без заказов)</item>
                         </translations>
                     </item>
+                    <item id="free_strings_cond">
+                        <type>input</type>
+                        <default_value>15</default_value>
+                        <translations>
+                            <item lang="ru">Бесплатная натяжка если скидка меньше (%)</item>
+                        </translations>
+                    </item>
                 </items>
             </section>
             <section id="vk">
@@ -1351,7 +1358,7 @@
         <item lang="ru" id="create_profile_checkout_text">Сохранить адрес для следующих заказов</item>
         <item lang="ru" id="personal_area">Личный кабинет</item>
         <item lang="ru" id="subscribe_to_store_newsletters">Получать уведомления о скидках, акциях и новых поступлениях</item>
-        <item lang="ru" id="write_product_review_email_text">Вы можете поделиться своим мнением о купленном товаре и также получить бонусные рубли</item>
+        <item lang="ru" id="write_product_review_email_text">Вы также можете поделиться своим мнением о купленном товаре с другими покупателями и получить за это скидку</item>
         <item lang="ru" id="write_review_about_product">Написать отзыв о "[product_name]"</item>
         <item lang="ru" id="firstname_lastname">Имя Фамилия</item>
         <item lang="ru" id="call_requests.quick_order">Быстрый заказ</item>
@@ -1593,5 +1600,6 @@
         <item lang="ru" id="run_script">Запустить скрипт</item>
         <item lang="ru" id="wh_net_total">Общая себестоимость</item>
         <item lang="ru" id="wh_rrp_total">Общая РРЦ</item>
+        <item lang="ru" id="ask_for_review_text"><![CDATA[<p>Мы будем рады оставленному отзыву о магазине на <a href="[write_review_link]" target="_blank">нашем сайте</a>. Ваше мнение послужит нам ориентиром для дальнейшего развития. За оставленный отзыв мы дарим [order_review_bonus] бонусных рублей, которые можно будет использовать при следующей покупке.</p><p>Заранее спасибо!</p>]]></item>
     </language_variables>
 </addon>

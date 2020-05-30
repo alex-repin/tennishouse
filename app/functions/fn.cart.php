@@ -81,12 +81,12 @@ function fn_get_cart_product_data($hash, &$product, $skip_promotion, &$cart, &$a
         );
 
         $join  = db_quote("LEFT JOIN ?:product_descriptions ON ?:product_descriptions.product_id = ?:products.product_id AND ?:product_descriptions.lang_code = ?s", CART_LANGUAGE);
-        $join .= db_quote(" LEFT JOIN ?:product_warehouses_inventory AS warehouse_inventory ON warehouse_inventory.product_id = ?:products.product_id 
+        $join .= db_quote(" LEFT JOIN ?:product_warehouses_inventory AS warehouse_inventory ON warehouse_inventory.product_id = ?:products.product_id
             AND warehouse_inventory.amount > 0 AND (CASE ?:products.tracking
                 WHEN ?s THEN warehouse_inventory.combination_hash != '0'
                 WHEN ?s THEN warehouse_inventory.combination_hash = '0'
                 WHEN ?s THEN 1
-            END)", 
+            END)",
             ProductTracking::TRACK_WITH_OPTIONS,
             ProductTracking::TRACK_WITHOUT_OPTIONS,
             ProductTracking::DO_NOT_TRACK
@@ -95,7 +95,7 @@ function fn_get_cart_product_data($hash, &$product, $skip_promotion, &$cart, &$a
 //                 WHEN ?s THEN ?:product_warehouses_inventory.combination_hash != '0'
 //                 WHEN ?s THEN ?:product_warehouses_inventory.combination_hash = '0'
 //                 WHEN ?s THEN 1
-//             END) GROUP BY product_id) AS warehouse_inventory ON warehouse_inventory.product_id = ?:products.product_id", 
+//             END) GROUP BY product_id) AS warehouse_inventory ON warehouse_inventory.product_id = ?:products.product_id",
 //             ProductTracking::TRACK_WITH_OPTIONS,
 //             ProductTracking::TRACK_WITHOUT_OPTIONS,
 //             ProductTracking::DO_NOT_TRACK
@@ -121,7 +121,7 @@ function fn_get_cart_product_data($hash, &$product, $skip_promotion, &$cart, &$a
 
             return false;
         }
-        
+
         if (!empty($_pdata['wh_inventory'])) {
             $amounts = explode('|', $_pdata['wh_inventory']);
             $amount = 0;
@@ -355,7 +355,7 @@ function fn_update_cart_data(&$cart, &$cart_products)
             }
         }
     }
-    
+
     fn_set_hook('update_cart_data_post', $cart, $cart_products);
 
     return true;
@@ -667,7 +667,7 @@ function fn_get_ordered_products_amount($product_id, $user_id)
 function fn_update_product_amount($product_id, $amount, $product_options, $sign, $order_warehouses = array())
 {
     fn_set_hook('update_product_amount_pre', $product_id, $amount, $product_options, $sign);
-    
+
     if (Registry::get('settings.General.inventory_tracking') != 'Y') {
         return true;
     }
@@ -689,9 +689,9 @@ function fn_update_product_amount($product_id, $amount, $product_options, $sign,
     } else {
         $cart_id = fn_generate_cart_id($product_id, array('product_options' => $product_options), true);
         $product_code = db_get_field("SELECT product_code FROM ?:product_options_inventory WHERE combination_hash = ?i", $cart_id);
-        
+
         $stock_warehouses = db_get_hash_array("SELECT ?:product_warehouses_inventory.* FROM ?:product_warehouses_inventory LEFT JOIN ?:warehouses ON ?:warehouses.warehouse_id = ?:product_warehouses_inventory.warehouse_id WHERE ?:product_warehouses_inventory.combination_hash = ?i ORDER BY ?:warehouses.priority ASC", 'warehouse_hash', $cart_id);
-        
+
         foreach ($stock_warehouses as $wh_hash => $wh_data) {
             $total_amount += $wh_data['amount'];
         }
@@ -769,7 +769,7 @@ function fn_update_product_amount($product_id, $amount, $product_options, $sign,
             }
         }
     }
-        
+
     fn_set_hook('update_product_amount', $new_amount, $product_id, $cart_id, $tracking);
 
     if (!empty($stock_warehouses)) {
@@ -1056,7 +1056,7 @@ function fn_create_order_details($order_id, $cart)
             );
 
             fn_set_hook('create_order_details', $order_details, $k, $order_id, $cart);
-            
+
             db_query("INSERT INTO ?:order_details ?e", $order_details);
 
             // Increase product popularity
@@ -2789,7 +2789,7 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
     if (isset($cart['products']) && is_array($cart['products'])) {
 
         fn_set_hook('calculate_cart_items_pre', $cart, $cart_products, $auth);
-        
+
         fn_update_original_amount($cart);
         $amount_totals = array();
         if (Registry::get('settings.General.disregard_options_for_discounts') == 'Y') {
@@ -2836,6 +2836,9 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
         // Apply cart promotions
         if (/*$apply_cart_promotions == true && */$cart['subtotal'] >= 0) {
             list($cart['applied_promotions'], $cart['potential_promotions']) = fn_promotion_apply('cart', $cart, $auth, $cart_products);
+            if (!empty($cart['applied_promotions'])) {
+                $cart['use_discount'] = true;
+            }
             if (!empty($cart['stored_subtotal_discount'])) {
                 $cart['subtotal_discount'] = $prev_discount;
             }
@@ -2847,7 +2850,7 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
         fn_check_promotion_notices();
 
         fn_set_hook('calculate_cart_items_after_promotions', $cart, $cart_products, $auth);
-        
+
         if (Registry::get('settings.Shippings.disable_shipping') == 'Y') {
             $cart['shipping_required'] = false;
         }
@@ -2977,7 +2980,7 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
                 }
                 // [tennishouse]
             }
-            
+
             $cart['product_groups'] = $product_groups;
         }
 
@@ -4201,7 +4204,7 @@ function fn_check_amount_in_stock($product_id, $amount, $product_options, $cart_
                 } else {
                     $product_not_in_cart = false;
                 }
-                
+
                 if (!empty($v['configuration'])) {
                     foreach ($v['configuration'] as $_k => $_v) {
                         if (!isset($_v['product_id'])) {
@@ -4364,7 +4367,7 @@ function fn_generate_cart_id($product_id, $extra, $only_selectable = false)
         } else {
             $inventories = $extra['inventories'];
         }
-        
+
         foreach ($extra['product_options'] as $k => $v) {
             if ($only_selectable == true && ((string) intval($v) != $v || $inventories[$k] != 'Y')) {
                 continue;
@@ -4604,7 +4607,7 @@ function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false, 
         fn_set_hook('pre_add_to_cart', $product_data, $cart, $auth, $update);
 
         fn_restore_original_product_data($product_data, $cart);
-        
+
         foreach ($product_data as $key => $data) {
             if (empty($key)) {
                 continue;
@@ -5815,14 +5818,20 @@ function fn_order_notification(&$order_info, $edp_data = array(), $force_notific
             $order_info['office_info'] = $order_info['shipping'][0]['office_data'];
         }
         // [tennishouse]
-        
+
         // Notify customer
         if ($notify_user == true) {
             $ekey_sfx = '';
+            $is_rewarded = false;
             if (!empty($order_info['user_id'])) {
                 $ekey_sfx = '&lkey=' . fn_generate_ekey($order_info['user_id'], 'L', SECONDS_IN_DAY * 90);
+                $is_rewarded = db_get_field("SELECT post_id FROM ?:discussion_posts WHERE user_id = ?i AND thread_id = ?i AND status = 'A'", $order_info['user_id'], REVIEWS_THREAD_ID);
             }
-            $order_status['email_header'] = str_replace('[write_review_link]', fn_url('discussion.view?thread_id=' . REVIEWS_THREAD_ID . $ekey_sfx, 'C'), $order_status['email_header']);
+            if (!empty($is_rewarded)) {
+                $order_status['email_header'] = str_replace('[ask_for_review]', '', $order_status['email_header']);
+            } else {
+                $order_status['email_header'] = str_replace('[ask_for_review]', __('ask_for_review_text', ['[write_review_link]' => fn_url('discussion.view?thread_id=' . REVIEWS_THREAD_ID . $ekey_sfx, 'C'), '[order_review_bonus]' => Registry::get('addons.development.review_reward_E')]), $order_status['email_header']);
+            }
             Mailer::sendMail(array(
                 'to' => $order_info['email'],
                 'from' => 'company_orders_department',
@@ -6742,7 +6751,7 @@ function fn_update_payment_surcharge(&$cart, $auth, $lang_code = CART_LANGUAGE)
             }
         }
     }
-    
+
     fn_set_hook('update_payment_surcharge', $cart, $auth, $lang_code);
 
     if (!empty($cart['payment_surcharge'])) {
@@ -7437,4 +7446,3 @@ function fn_get_online_payment_methods()
 
     return $payment_methods;
 }
-

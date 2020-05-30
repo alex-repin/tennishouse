@@ -48,7 +48,7 @@ return array(
     'S' => array(
         'frequency' => 60 * 60 * 24,
         'function' => 'fn_check_delivery_statuses',
-        'H' => '02',
+        'H' => '10',
         'name' => 'check_delivery_statuses'
     ),
     'I' => array(

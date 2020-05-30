@@ -9532,22 +9532,24 @@ function fn_get_product_prices($product_id, &$product_data, $auth, $company_id =
             if (!empty($auth['usergroup_ids'])) {
                 foreach ($auth['usergroup_ids'] as $ug_id) {
                     if (!empty($_prices[$ug_id]) && sizeof($_prices[$ug_id]) > 0) {
-                        if (empty($product_data['prices'])) {
-                            $product_data['prices'] = $_prices[$ug_id];
-                        } else {
-                            foreach ($_prices[$ug_id] as $comp_data) {
-                                $add_elm = true;
-                                foreach ($product_data['prices'] as $price_id => $price_data) {
-                                    if ($price_data['lower_limit'] == $comp_data['lower_limit']) {
-                                        $add_elm = false;
-                                        if ($price_data['price'] > $comp_data['price']) {
-                                            $product_data['prices'][$price_id] = $comp_data;
-                                        }
-                                        break;
-                                    }
-                                }
-                                if ($add_elm) {
+                        foreach ($_prices[$ug_id] as $comp_data) {
+                            if ($product_data['price'] > $comp_data['price'] && $product_data['amount'] >= $comp_data['lower_limit']) {
+                                if (empty($product_data['prices'])) {
                                     $product_data['prices'][] = $comp_data;
+                                } else {
+                                    $add_elm = true;
+                                    foreach ($product_data['prices'] as $price_id => $price_data) {
+                                        if ($price_data['lower_limit'] == $comp_data['lower_limit']) {
+                                            $add_elm = false;
+                                            if ($price_data['price'] > $comp_data['price']) {
+                                                $product_data['prices'][$price_id] = $comp_data;
+                                            }
+                                            break;
+                                        }
+                                    }
+                                    if ($add_elm) {
+                                        $product_data['prices'][] = $comp_data;
+                                    }
                                 }
                             }
                         }
@@ -9565,7 +9567,11 @@ function fn_get_product_prices($product_id, &$product_data, $auth, $company_id =
 
         // else, get prices for not members
         if (empty($product_data['prices']) && !empty($_prices[0]) && sizeof($_prices[0]) > 0) {
-            $product_data['prices'] = $_prices[0];
+            foreach ($_prices[0] as $comp_data) {
+                if ($product_data['price'] > $comp_data['price'] && $product_data['amount'] >= $comp_data['lower_limit']) {
+                    $product_data['prices'] = $_prices[0];
+                }
+            }
         }
     // Other - get all
     } else {

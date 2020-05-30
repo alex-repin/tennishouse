@@ -242,16 +242,6 @@ function fn_apply_selected_options(&$product, $options, $exceptions = array())
     }
 }
 
-function fn_is_free_strings($product, $features)
-{
-    if ($product['main_category'] == RACKETS_CATEGORY_ID && !empty($features[R_STRINGS_FEATURE_ID]['value']) && $features[R_STRINGS_FEATURE_ID]['value'] == 'N' && empty($product['list_discount']) && (empty($product['list_price']) || $product['list_price'] < $product['price']) && in_array($features[TYPE_FEATURE_ID]['variant_id'], array(PRO_RACKET_FV_ID, CLUB_RACKET_FV_ID, POWER_RACKET_FV_ID, JUNIOR_RACKET_FV_ID))) {
-        return true;
-    } else {
-        return false;
-    }
-
-}
-
 function fn_rebuild_inventory_codes($product_id)
 {
     $options = db_get_fields("SELECT a.option_id FROM ?:product_options as a LEFT JOIN ?:product_global_option_links as b ON a.option_id = b.option_id WHERE (a.product_id = ?i OR b.product_id = ?i) AND a.option_type IN ('S','R','C') AND a.inventory = 'Y' ORDER BY position", $product_id, $product_id);
@@ -564,7 +554,7 @@ function fn_check_delivery_statuses()
                         RusSdek::SdekAddStatusOrders($date_status);
                         $last = array_pop($date_status);
                         if ($last['status'] == 'Вручен') {
-                            $change_status = ORDER_STATUS_DELIVERED;
+                            $change_status = ORDER_STATUS_COMPLETED;
                         } elseif ($last['status'] == 'Не вручен') {
                             $change_status = ORDER_STATUS_NOT_DELIVERED;
                         } elseif ($last['status'] == 'Принят на склад до востребования') {
@@ -1056,18 +1046,29 @@ function fn_promotion_validate_no_catalog_discount(&$promotion, $cart, $cart_pro
     }
 }
 
+function fn_is_free_strings($product, $features)
+{
+    if ($product['main_category'] == RACKETS_CATEGORY_ID && !empty($features[R_STRINGS_FEATURE_ID]['value']) && $features[R_STRINGS_FEATURE_ID]['value'] == 'N' && in_array($features[TYPE_FEATURE_ID]['variant_id'], array(PRO_RACKET_FV_ID, CLUB_RACKET_FV_ID, POWER_RACKET_FV_ID, JUNIOR_RACKET_FV_ID))
+        && (empty($product['discount_prc']) || $product['discount_prc'] < Registry::get('addons.development.free_strings_cond'))) {
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
 function fn_promotion_validate_free_strings(&$promotion, $cart, $cart_products, $promotion_id = 0)
 {
     static $features = array();
 
     if ($cart['products'][$cart['promotion_item_id']]['product_id'] == STRINGING_PRODUCT_ID && !empty($cart['products'][$cart['promotion_item_id']]['extra']['parent']['configuration']) && !empty($cart_products[$cart['products'][$cart['promotion_item_id']]['extra']['parent']['configuration']])) {
         $product = $cart_products[$cart['products'][$cart['promotion_item_id']]['extra']['parent']['configuration']];
-        if ($product['main_category'] == RACKETS_CATEGORY_ID && empty($product['list_discount'])) {
+        if ($product['main_category'] == RACKETS_CATEGORY_ID) {
             if (!isset($features[$product['product_id']])) {
                 $features[$product['product_id']] = db_get_hash_array("SELECT feature_id, variant_id, value, value_int FROM ?:product_features_values WHERE product_id = ?i AND feature_id IN (?n) AND lang_code = ?s", 'feature_id', $product['product_id'], array(R_STRINGS_FEATURE_ID, TYPE_FEATURE_ID), CART_LANGUAGE);
             }
-            if (!empty($features[$product['product_id']][R_STRINGS_FEATURE_ID]['value']) && $features[$product['product_id']][R_STRINGS_FEATURE_ID]['value'] == 'N' && in_array($features[$product['product_id']][TYPE_FEATURE_ID]['variant_id'], array(PRO_RACKET_FV_ID, CLUB_RACKET_FV_ID, POWER_RACKET_FV_ID, JUNIOR_RACKET_FV_ID))) {
-                return true;
+            if (!empty($features[$product['product_id']])) {
+                return fn_is_free_strings($product, $features[$product['product_id']]);
             }
         }
     }
