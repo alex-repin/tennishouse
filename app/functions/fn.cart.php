@@ -5818,17 +5818,14 @@ function fn_order_notification(&$order_info, $edp_data = array(), $force_notific
             $order_info['office_info'] = $order_info['shipping'][0]['office_data'];
         }
         $is_rewarded = db_get_field("SELECT post_id FROM ?:discussion_posts WHERE user_id = ?i AND thread_id = ?i AND status = 'A'", $order_info['user_id'], REVIEWS_THREAD_ID);
-        if (!empty($is_rewarded)) {
-            $order_status['email_header'] = str_replace('[ask_for_review]', '', $order_status['email_header']);
-        } else {
-            $order_status['email_header'] = str_replace('[ask_for_review]', __('ask_for_review_text', ['[write_review_link]' => fn_url('discussion.view?thread_id=' . REVIEWS_THREAD_ID . $ekey_sfx, 'C'), '[order_review_bonus]' => Registry::get('addons.development.review_reward_E')]), $order_status['email_header']);
+        if (empty($is_rewarded)) {
+            $order_status['email_header'] .= __('ask_for_review_text', ['[write_review_link]' => fn_url('discussion.view?thread_id=' . REVIEWS_THREAD_ID . $ekey_sfx, 'C'), '[order_review_bonus]' => Registry::get('addons.development.review_reward_E')]);
         }
         // [tennishouse]
 
         // Notify customer
         if ($notify_user == true) {
             $ekey_sfx = '';
-            $is_rewarded = false;
             if (!empty($order_info['user_id'])) {
                 $ekey_sfx = '&lkey=' . fn_generate_ekey($order_info['user_id'], 'L', SECONDS_IN_DAY * 90);
             }
@@ -5911,7 +5908,7 @@ function fn_order_notification(&$order_info, $edp_data = array(), $force_notific
                     'order_info' => $order_info,
                     'shipments' => $shipments,
                     'use_shipments' => $use_shipments,
-                    'order_status' => fn_get_status_data($order_info['status'], STATUSES_ORDER, $order_info['order_id'], Registry::get('settings.Appearance.backend_default_language')),
+                    'order_status' => $order_status,
                     'payment_method' => $payment_method,
                     'status_settings' => $status_settings,
                     'profile_fields' => fn_get_profile_fields('I', '', Registry::get('settings.Appearance.backend_default_language')),

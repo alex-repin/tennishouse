@@ -528,7 +528,7 @@ function fn_parse_competitive_price($link)
 function fn_check_delivery_statuses()
 {
     $errors = array();
-    $data = db_get_hash_array("SELECT ?:orders.order_id, GROUP_CONCAT(DISTINCT ?:shipment_items.shipment_id SEPARATOR ',') AS shipment_ids FROM ?:orders LEFT JOIN ?:shipment_items ON ?:shipment_items.order_id = ?:orders.order_id WHERE ?:orders.status IN (?a) GROUP BY order_id", 'order_id', unserialize(ORDER_CHECK_STATUSES));
+    $data = db_get_hash_array("SELECT ?:orders.order_id, ?:orders.status, GROUP_CONCAT(DISTINCT ?:shipment_items.shipment_id SEPARATOR ',') AS shipment_ids FROM ?:orders LEFT JOIN ?:shipment_items ON ?:shipment_items.order_id = ?:orders.order_id WHERE ?:orders.status IN (?a) GROUP BY order_id", 'order_id', unserialize(ORDER_CHECK_STATUSES));
 
     if (!empty($data)) {
         $_shipment_ids = array();
@@ -563,7 +563,7 @@ function fn_check_delivery_statuses()
                     }
                 }
             }
-            if (!empty($change_status)) {
+            if (!empty($change_status) && $change_status != $order_data['status']) {
                 fn_change_order_status($order_id, $change_status);
             }
         }

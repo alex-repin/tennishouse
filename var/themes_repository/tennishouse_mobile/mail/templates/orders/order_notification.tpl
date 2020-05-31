@@ -16,7 +16,7 @@
         <div><a href="{"products.view?product_id=`$prod.product_id``$ekey_sfx`"|fn_url:'C':'http'}" target="_blank">{__("write_review_about_product", ["[product_name]" => $prod.product])}</a></div>
     {/foreach}
 {/if}
-{if $order_info.tracking_number}
+{if $order_info.tracking_number && $order_info.status|in_array:$smarty.const.ORDER_DELIVERY_STATUSES}
     <p>
     {__("tracking_number")}: {$order_info.tracking_number}
     </p>
