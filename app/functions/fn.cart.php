@@ -5817,6 +5817,12 @@ function fn_order_notification(&$order_info, $edp_data = array(), $force_notific
         if ($order_info['status'] == 'A' && !empty($order_info['shipping'][0]['office_data'])) {
             $order_info['office_info'] = $order_info['shipping'][0]['office_data'];
         }
+        $is_rewarded = db_get_field("SELECT post_id FROM ?:discussion_posts WHERE user_id = ?i AND thread_id = ?i AND status = 'A'", $order_info['user_id'], REVIEWS_THREAD_ID);
+        if (!empty($is_rewarded)) {
+            $order_status['email_header'] = str_replace('[ask_for_review]', '', $order_status['email_header']);
+        } else {
+            $order_status['email_header'] = str_replace('[ask_for_review]', __('ask_for_review_text', ['[write_review_link]' => fn_url('discussion.view?thread_id=' . REVIEWS_THREAD_ID . $ekey_sfx, 'C'), '[order_review_bonus]' => Registry::get('addons.development.review_reward_E')]), $order_status['email_header']);
+        }
         // [tennishouse]
 
         // Notify customer
@@ -5825,12 +5831,6 @@ function fn_order_notification(&$order_info, $edp_data = array(), $force_notific
             $is_rewarded = false;
             if (!empty($order_info['user_id'])) {
                 $ekey_sfx = '&lkey=' . fn_generate_ekey($order_info['user_id'], 'L', SECONDS_IN_DAY * 90);
-                $is_rewarded = db_get_field("SELECT post_id FROM ?:discussion_posts WHERE user_id = ?i AND thread_id = ?i AND status = 'A'", $order_info['user_id'], REVIEWS_THREAD_ID);
-            }
-            if (!empty($is_rewarded)) {
-                $order_status['email_header'] = str_replace('[ask_for_review]', '', $order_status['email_header']);
-            } else {
-                $order_status['email_header'] = str_replace('[ask_for_review]', __('ask_for_review_text', ['[write_review_link]' => fn_url('discussion.view?thread_id=' . REVIEWS_THREAD_ID . $ekey_sfx, 'C'), '[order_review_bonus]' => Registry::get('addons.development.review_reward_E')]), $order_status['email_header']);
             }
             Mailer::sendMail(array(
                 'to' => $order_info['email'],

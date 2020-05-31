@@ -36,3 +36,4 @@
 {/hook}
 {$location_data.custom_html nofilter}
 <meta name="yandex-verification" content="597256756fd89e2a" />
+<meta name="google-site-verification" content="nQeXw-29ma0tSQyhHhH3XWpTGUS9cQ1lI7o-RYkyiQk" />
