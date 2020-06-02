@@ -41,9 +41,11 @@ class Driada extends Agent
             }
 
             foreach($shop->offers->offer as $offer) {
-                $product_data = $this->parseProduct($offer);
-                if (!empty($product_data['product_code'])) {
-                    $result['products'][$product_data['product_code']] = $product_data;
+                if ((string)$offer->attributes()['available'] == 'true') {
+                    $product_data = $this->parseProduct($offer);
+                    if (!empty($product_data['product_code'])) {
+                        $result['products'][$product_data['product_code']] = $product_data;
+                    }
                 }
             }
         }
