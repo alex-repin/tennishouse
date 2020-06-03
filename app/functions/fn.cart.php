@@ -5814,11 +5814,11 @@ function fn_order_notification(&$order_info, $edp_data = array(), $force_notific
         if (!empty($order_info['delivery_time']) && in_array($order_info['status'], array('O', 'A', 'P'))) {
             $order_info['destination_delivery_info'] = __("destination_delivery_time", array('[city]' => $order_info['s_city'])) . ': ' . $order_info['delivery_time'] . ' ' . __("workdays");
         }
-        if ($order_info['status'] == 'A' && !empty($order_info['shipping'][0]['office_data'])) {
+        if (in_array($order_info['status'], ORDER_DELIVERY_STATUSES) && !empty($order_info['shipping'][0]['office_data'])) {
             $order_info['office_info'] = $order_info['shipping'][0]['office_data'];
         }
         $is_rewarded = db_get_field("SELECT post_id FROM ?:discussion_posts WHERE user_id = ?i AND thread_id = ?i AND status = 'A'", $order_info['user_id'], REVIEWS_THREAD_ID);
-        if (empty($is_rewarded)) {
+        if (in_array($order_info['status'], ORDER_COMPLETE_STATUSES) && empty($is_rewarded)) {
             $order_status['email_header'] .= __('ask_for_review_text', ['[write_review_link]' => fn_url('discussion.view?thread_id=' . REVIEWS_THREAD_ID . $ekey_sfx, 'C'), '[order_review_bonus]' => Registry::get('addons.development.review_reward_E')]);
         }
         // [tennishouse]
