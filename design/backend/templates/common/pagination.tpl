@@ -34,7 +34,7 @@
             {foreach from=$pagination.navi_pages item="pg" name="f_pg"}
             <li {if $pg == $pagination.current_page}class="active" {/if}>
                 {if $smarty.foreach.f_pg.first && $pg > 1 }
-                <a data-ca-scroll=".cm-pagination-container" class="cm-ajax{$history_class}" href="{"`$c_url`&page=1`"|fn_url}" data-ca-page="1" data-ca-target-id="{$id}">1</a>
+                <a data-ca-scroll=".cm-pagination-container" class="cm-ajax{$history_class}" href="{"`$c_url`&page=1"|fn_url}" data-ca-page="1" data-ca-target-id="{$id}">1</a>
                 {if $pg != 2}<a data-ca-scroll=".cm-pagination-container" class="{if $pagination.prev_range}cm-ajax{/if} prev-range{$history_class}" {if $pagination.prev_range}href="{"`$c_url`&page=`$pagination.prev_range`"|fn_url}" data-ca-page="{$pagination.prev_range}" data-ca-target-id="{$id}"{/if}>&nbsp;...&nbsp;</a>{/if}
                 {/if}
                 {if $pg != $pagination.current_page}<a data-ca-scroll=".cm-pagination-container" class="cm-ajax{$history_class}" href="{"`$c_url`&page=`$pg`"|fn_url}" data-ca-page="{$pg}" data-ca-target-id="{$id}">{$pg}</a>{else}<a href="#">{$pg}</a>{/if}

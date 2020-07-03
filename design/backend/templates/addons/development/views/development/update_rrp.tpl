@@ -12,6 +12,7 @@
                 <option value="">{__("none")}</option>
                 <option value="rrp">{__("rrp")}</option>
                 <option value="ean">{__("ean")}</option>
+                <option value="net">{__("net_prices")}</option>
             </select>
         </div>
     </div>

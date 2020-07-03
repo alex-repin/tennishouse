@@ -278,7 +278,7 @@
                         <div class="controls">
                             <label class="checkbox">
                                 <input type="hidden" name="product_data[show_stock]" value="N" />
-                                <input type="checkbox" name="product_data[show_stock]" id="elm_show_stock" value="Y" {if $product_data.show_stock == "Y"}checked="checked"{/if}/>
+                                <input type="checkbox" name="product_data[show_stock]" id="elm_show_stock" value="Y" {if $product_data.show_stock == "Y" || !$product_data.show_stock}checked="checked"{/if}/>
                             </label>
                         </div>
                     </div>

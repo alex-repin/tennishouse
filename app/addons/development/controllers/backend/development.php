@@ -90,6 +90,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     }
                                 }
                             }
+                        } elseif ($_REQUEST['type'] == 'net') {
+                            $net_cost = $data[1];
+                            if (!empty($code) && !empty($net_cost)) {
+                                $codes[] = $code;
+                                $product_ids = db_get_array("SELECT product_id, import_divider FROM ?:products WHERE product_code = ?s", $code);
+                                if (!empty($product_ids)) {
+                                    foreach ($product_ids as $i => $p_data) {
+                                        db_query("UPDATE ?:products SET net_currency_code = 'RUB', net_cost = ?d WHERE product_id = ?i", $p_data['import_divider'] * $net_cost, $p_data['product_id']);
+                                    }
+                                }
+                            }
                         }
                     }
                     if ($_REQUEST['type'] == 'rrp') {

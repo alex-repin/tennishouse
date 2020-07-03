@@ -2048,18 +2048,20 @@ function fn_development_update_product_post($product_data, $product_id, $lang_co
     }
 
     if (isset($product_data['warehouse_inventory']) && isset($product_data['warehouse_ids'])) { // to exclude products list update
-        if ($create) {
-            $_data = array(
-                'warehouse_hash' => fn_generate_cart_id($product_id, array('warehouse_id' => TH_WAREHOUSE_ID)),
-                'warehouse_id' => TH_WAREHOUSE_ID,
-                'product_id' => $product_id,
-                'amount' => $product_data['warehouse_inventory']
-            );
-            db_query("REPLACE ?:product_warehouses_inventory ?e", $_data);
+        if (isset($product_data['warehouse_inventory'])) {
+            if ($create) {
+                $_data = array(
+                    'warehouse_hash' => fn_generate_cart_id($product_id, array('warehouse_id' => TH_WAREHOUSE_ID)),
+                    'warehouse_id' => TH_WAREHOUSE_ID,
+                    'product_id' => $product_id,
+                    'amount' => $product_data['warehouse_inventory']
+                );
+                db_query("REPLACE ?:product_warehouses_inventory ?e", $_data);
 
-        } elseif (isset($product_data['warehouse_inventory'])) {
-            foreach ($product_data['warehouse_inventory'] as $wh_hash => $wh_data) {
-                db_query("UPDATE ?:product_warehouses_inventory SET ?u WHERE warehouse_hash = ?i", $wh_data, $wh_hash);
+            } elseif (isset($product_data['warehouse_inventory'])) {
+                foreach ($product_data['warehouse_inventory'] as $wh_hash => $wh_data) {
+                    db_query("UPDATE ?:product_warehouses_inventory SET ?u WHERE warehouse_hash = ?i", $wh_data, $wh_hash);
+                }
             }
         }
 
