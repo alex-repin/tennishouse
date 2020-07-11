@@ -1601,6 +1601,6 @@
         <item lang="ru" id="wh_net_total">Общая себестоимость</item>
         <item lang="ru" id="wh_rrp_total">Общая РРЦ</item>
         <item lang="ru" id="ask_for_review_text"><![CDATA[<p>Мы будем рады оставленному отзыву о магазине на <a href="[write_review_link]" target="_blank">нашем сайте</a>. Ваше мнение послужит нам ориентиром для дальнейшего развития. За оставленный отзыв мы дарим [order_review_bonus] бонусных рублей, которые можно будет использовать при следующей покупке.</p><p>Заранее спасибо!</p>]]></item>
-        <item lang="ru" id="yml_gift_free_stringing">Бесплатная натяжка струн</item>
+        <item lang="ru" id="yml_gift_free_stringing">Сертификат на бесплатные струны и натяжку</item>
     </language_variables>
 </addon>

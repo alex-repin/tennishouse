@@ -142,10 +142,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $order_for_sdek['Number'] = $params['order_id'] . '_' . $shipment_id;
                 $order_for_sdek['DateInvoice'] = date("Y-m-d", $shipment['shipment_timestamp']);
                 $order_for_sdek['RecipientEmail'] = $order_info['email'];
-                if ($order_info['status'] != 'P' && $sdek_info['is_partial'] == 'Y' && $order_info['total'] > Registry::get('addons.development.free_shipping_cost')) {
-                    if (floatval($order_info['display_shipping_cost']) == 0 && !empty($order_info['original_shipping_cost']) && $order_info['original_shipping_cost'] > $order_info['display_shipping_cost']) {
+                if ($order_info['status'] != 'P' && $sdek_info['is_partial'] == 'Y' && $order_info['total'] > Registry::get('addons.development.free_shipping_cost') && !empty($order_info['original_shipping_cost']) && $order_info['original_shipping_cost'] > $order_info['display_shipping_cost']) {
+                    if (floatval($order_info['display_shipping_cost']) == 0) {
                         $order_for_sdek['Comment'] .= ' ' . __("try_on_shipping_comment", ["[amount]" => Registry::get('addons.development.free_shipping_cost')]);
-                    } elseif (floatval($order_info['display_shipping_cost']) > 0 && !empty($order_info['original_shipping_cost']) && $order_info['original_shipping_cost'] > $order_info['display_shipping_cost']) {
+                    } elseif (floatval($order_info['display_shipping_cost']) > 0) {
                         $order_for_sdek['Comment'] .= ' ' . __("try_on_shipping_comment_2", ["[amount]" => Registry::get('addons.development.free_shipping_cost')]);
                     }
                 }
@@ -154,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $order_for_sdek['SellerAddress'] = Registry::get('settings.Company.company_address');
                     $order_for_sdek['ShipperAddress'] = Registry::get('settings.Company.company_address');
                     if (!empty($order_info['s_currency'])) {
-                        if ((floatval($order_info['display_shipping_cost']) == 0 && $sdek_info['is_partial'] == 'Y') || $order_info['status'] == 'P') {
+                        if (($sdek_info['is_partial'] == 'Y' && $order_info['total'] > Registry::get('addons.development.free_shipping_cost') && !empty($order_info['original_shipping_cost']) && $order_info['original_shipping_cost'] > $order_info['display_shipping_cost']) || $order_info['status'] == 'P') {
                             $order_for_sdek['DeliveryRecipientCost'] = 0;
                         } else {
                             $order_for_sdek['DeliveryRecipientCost'] = fn_format_price_by_currency($order_for_sdek['DeliveryRecipientCost'], $order_info['s_currency']);
@@ -163,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 //                         $order_for_sdek['ItemsCurrency'] = $order_info['s_currency'];
                     }
                 } else {
-                    if ((floatval($order_info['display_shipping_cost']) == 0 && $sdek_info['is_partial'] == 'Y') || $order_info['status'] == 'P') {
+                    if (($sdek_info['is_partial'] == 'Y' && $order_info['total'] > Registry::get('addons.development.free_shipping_cost') && !empty($order_info['original_shipping_cost']) && $order_info['original_shipping_cost'] > $order_info['display_shipping_cost']) || $order_info['status'] == 'P') {
                         $order_for_sdek['DeliveryRecipientCost'] = 0;
                     } else {
                         $order_for_sdek['DeliveryRecipientCost'] = $order_for_sdek['DeliveryRecipientCost'];
@@ -227,8 +227,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             } elseif (floatval($order_info['display_shipping_cost']) > 0 && !empty($order_info['original_shipping_cost']) && $order_info['original_shipping_cost'] > $order_info['display_shipping_cost']) {
                                 $product_for_xml = array (
                                     'WareKey' => 'SHPNG',
-                                    'Cost' => $order_info['display_shipping_cost'],
-                                    'Payment' => $order_info['display_shipping_cost'],
+                                    'Cost' => $order_info['original_shipping_cost'],
+                                    'Payment' => $order_info['original_shipping_cost'],
                                     'Weight' => 0,
                                     'Amount' => 1,
                                     'Comment' => __("shipping_sdek_item") . ' 1',
@@ -236,8 +236,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 $xml .= '            ' . RusSdek::arraySimpleXml('Item', $product_for_xml);
                                 $product_for_xml = array (
                                     'WareKey' => 'SHPNG2',
-                                    'Cost' => $order_info['original_shipping_cost'],
-                                    'Payment' => $order_info['original_shipping_cost'],
+                                    'Cost' => $order_info['display_shipping_cost'],
+                                    'Payment' => $order_info['display_shipping_cost'],
                                     'Weight' => 0,
                                     'Amount' => 1,
                                     'Comment' => __("shipping_sdek_item") . ' 2',
