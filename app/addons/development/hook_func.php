@@ -1298,7 +1298,7 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
         }
 
         if (!empty($params['get_options']) && Registry::get('settings.Appearance.catalog_options_mode') == 'Y' && !empty($params['allow_duplication']) && !empty($color_ids)) {
-            $color_prod_image_pairs_add = fn_get_image_pairs($color_ids, 'variant_additional', 'Z', false, false, CART_LANGUAGE);
+            $color_prod_image_pairs_add = fn_get_image_pairs($color_ids, 'variant_additional', 'Z', false, $params['display_variant_additional_pairs'], CART_LANGUAGE);
             $new_products = array();
             foreach ($products as $i => &$product) {
                 $found = false;
@@ -1322,6 +1322,10 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                                         $new_product = $product;
                                     }
                                     if (!empty($new_product)) {
+                                        $new_product['duplicated_data'] = array(
+                                            'option_id' => $opt_data['option_id'],
+                                            'variant_id'=> $v_data['variant_id']
+                                        );
                                         if (!empty($new_product['sizes']) && !empty($new_product['sizes']['color_variants'][$v_data['variant_id']])) {
                                             $filter_passed = empty($params['av_ids'][$new_product['sizes']['feature_id']]) ? true : false;
                                             foreach ($new_product['sizes']['variants'] as $v_id => $v_name) {

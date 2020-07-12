@@ -3255,7 +3255,7 @@ function fn_get_product_warehouses($product_id)
     $warehouses = array();
     $warehouse_ids = db_get_field("SELECT warehouse_ids FROM ?:products WHERE product_id = ?i", $product_id);
     if (!empty($warehouse_ids)) {
-        $warehouse_ids = unserialize($warehouse_ids);
+        $warehouse_ids = explode(',', $warehouse_ids);
         $warehouses = db_get_hash_array("SELECT warehouse_id, name FROM ?:warehouses WHERE warehouse_id IN (?n) ORDER BY priority ASC", 'warehouse_id', $warehouse_ids);
     }
 
