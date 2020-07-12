@@ -15,3 +15,10 @@
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 define('YM_CATEGORIES_MAX_COUNT', 25);
+define('YM_APPAREL_KIDS_SIZE_VARIANTS', array(
+        1909 => '110',
+        1910 => '128',
+        1911 => '140',
+        1912 => '164'
+    )
+);

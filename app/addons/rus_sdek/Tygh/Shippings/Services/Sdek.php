@@ -278,7 +278,7 @@ class Sdek implements IService
             $amount = !empty($response['amount']) ? $response['amount'] : 1;
             $rates['price'] = $response['result']['price'] * $amount;
             if (!empty($response['result']['deliveryPeriodMin']) && !empty($response['result']['deliveryPeriodMax'])) {
-                $plus = 0/*$this->_shipping_info['service_params']['dateexecute']*/;
+                $plus = $this->_shipping_info['service_params']['dateexecute'];
                 $min_time = $plus + $response['result']['deliveryPeriodMin'];
                 $max_time = $plus + $response['result']['deliveryPeriodMax'];
                 $date = $min_time . (($min_time != $max_time) ? '-' . $max_time . ' ' : ' ' ) . __('days');

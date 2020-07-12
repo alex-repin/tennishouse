@@ -1647,6 +1647,9 @@ function fn_development_update_category_pre(&$category_data, $category_id, $lang
 
 function fn_development_get_products(&$params, &$fields, &$sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
 {
+    if (!empty($params['price_mode'])) {
+        $condition .= db_quote(" AND products.price_mode = ?s", $params['price_mode']);
+    }
     if (!empty($params['approval_status'])) {
         $condition .= db_quote(" AND products.approval_status = ?s", $params['approval_status']);
     }
@@ -1800,7 +1803,7 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
             $condition .= db_quote(' AND ?:competitive_prices.item_id IS NULL AND ?:competitive_pairs.competitive_id IS NULL');
         } elseif ($params['competition'] == 'D') {
             $join .= db_quote(" LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = products.product_id LEFT JOIN ?:competitive_prices AS cp2 ON cp2.code = products.product_code LEFT JOIN ?:competitive_prices AS cp1 ON cp1.item_id = ?:competitive_pairs.competitive_id");
-            $condition .= db_quote(' AND ((cp1.item_id IS NOT NULL AND cp1.price != prices.price) OR (cp2.item_id IS NOT NULL AND cp2.price != prices.price))');
+            $condition .= db_quote(" AND IF (cp1.item_id IS NOT NULL, cp1.price != prices.price, (IF (cp2.item_id IS NOT NULL, cp2.price != prices.price, '')))");
             $fields[] = 'IF (cp1.item_id IS NOT NULL, cp1.name, cp2.name) AS c_name';
             $fields[] = 'IF (cp1.item_id IS NOT NULL, cp1.price, cp2.price) AS c_price';
             $fields[] = 'IF (cp1.item_id IS NOT NULL, cp1.code, cp2.code) AS c_code';
@@ -2048,18 +2051,20 @@ function fn_development_update_product_post($product_data, $product_id, $lang_co
     }
 
     if (isset($product_data['warehouse_inventory']) && isset($product_data['warehouse_ids'])) { // to exclude products list update
-        if ($create) {
-            $_data = array(
-                'warehouse_hash' => fn_generate_cart_id($product_id, array('warehouse_id' => TH_WAREHOUSE_ID)),
-                'warehouse_id' => TH_WAREHOUSE_ID,
-                'product_id' => $product_id,
-                'amount' => $product_data['warehouse_inventory']
-            );
-            db_query("REPLACE ?:product_warehouses_inventory ?e", $_data);
+        if (isset($product_data['warehouse_inventory'])) {
+            if ($create) {
+                $_data = array(
+                    'warehouse_hash' => fn_generate_cart_id($product_id, array('warehouse_id' => TH_WAREHOUSE_ID)),
+                    'warehouse_id' => TH_WAREHOUSE_ID,
+                    'product_id' => $product_id,
+                    'amount' => $product_data['warehouse_inventory']
+                );
+                db_query("REPLACE ?:product_warehouses_inventory ?e", $_data);
 
-        } elseif (isset($product_data['warehouse_inventory'])) {
-            foreach ($product_data['warehouse_inventory'] as $wh_hash => $wh_data) {
-                db_query("UPDATE ?:product_warehouses_inventory SET ?u WHERE warehouse_hash = ?i", $wh_data, $wh_hash);
+            } elseif (isset($product_data['warehouse_inventory'])) {
+                foreach ($product_data['warehouse_inventory'] as $wh_hash => $wh_data) {
+                    db_query("UPDATE ?:product_warehouses_inventory SET ?u WHERE warehouse_hash = ?i", $wh_data, $wh_hash);
+                }
             }
         }
 
@@ -2152,9 +2157,9 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
             fn_get_product_margin($product_data);
         }
 
-        $old_data = db_get_row("SELECT auto_price, margin, net_cost, net_currency_code, product_code, product, variant_id AS brand_id FROM ?:products LEFT JOIN ?:product_descriptions ON ?:product_descriptions.product_id = ?:products.product_id AND ?:product_descriptions.lang_code = ?s LEFT JOIN ?:product_features_values ON ?:product_features_values.product_id = ?:products.product_id AND ?:product_features_values.feature_id = ?i WHERE ?:products.product_id = ?i", $lang_code, BRAND_FEATURE_ID, $product_id);
+        $old_data = db_get_row("SELECT price_mode, margin, net_cost, net_currency_code, product_code, product, variant_id AS brand_id FROM ?:products LEFT JOIN ?:product_descriptions ON ?:product_descriptions.product_id = ?:products.product_id AND ?:product_descriptions.lang_code = ?s LEFT JOIN ?:product_features_values ON ?:product_features_values.product_id = ?:products.product_id AND ?:product_features_values.feature_id = ?i WHERE ?:products.product_id = ?i", $lang_code, BRAND_FEATURE_ID, $product_id);
 
-        if (!empty($product_data['auto_price']) && $product_data['auto_price'] == 'Y' && $product_data['net_cost'] > 0 && $product_data['margin'] > 0 && !empty($product_data['net_currency_code']) && (empty($old_data['auto_price']) || $product_data['auto_price'] != $old_data['auto_price'] || $product_data['margin'] != $old_data['margin'] || $product_data['net_cost'] != $old_data['net_cost'] || $product_data['net_currency_code'] != $old_data['net_currency_code'])) {
+        if (!empty($product_data['price_mode']) && $product_data['price_mode'] == 'D' && $product_data['net_cost'] > 0 && $product_data['margin'] > 0 && !empty($product_data['net_currency_code']) && (empty($old_data['price_mode']) || $product_data['price_mode'] != $old_data['price_mode'] || $product_data['margin'] != $old_data['margin'] || $product_data['net_cost'] != $old_data['net_cost'] || $product_data['net_currency_code'] != $old_data['net_currency_code'])) {
             $base_price = fn_calculate_base_price($product_data);
             $product_data['price'] = fn_round_price($base_price);
             if (!empty($product_data['prices'])) {
@@ -2226,7 +2231,7 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
 
 function fn_development_update_category_post($category_data, $category_id, $lang_code)
 {
-    if (!empty($category_data['override_shipping_weight']) && $category_data['override_shipping_weight'] == 'Y') {
+    if ((!empty($category_data['override_shipping_weight']) && $category_data['override_shipping_weight'] == 'Y') || (!empty($category_data['recalculate_margins']) && $category_data['recalculate_margins'] == 'Y') || !empty($category_data['products_price_mode'])) {
         $products = array();
         $_params = array (
             'cid' => $category_id,
@@ -2234,39 +2239,41 @@ function fn_development_update_category_post($category_data, $category_id, $lang
         );
         list($prods,) = fn_get_products($_params);
         if (!empty($prods)) {
-            foreach ($prods as $i => $prod) {
-                $products[] = $prod['product_id'];
-            }
-        }
-        if (!empty($products)) {
-            db_query("UPDATE ?:products SET weight = ?d WHERE product_id IN (?n)", $category_data['shipping_weight'], $products);
-        }
-    }
-    if (!empty($category_data['recalculate_margins']) && $category_data['recalculate_margins'] == 'Y') {
-        $products = array();
-        $_params = array (
-            'cid' => $category_id,
-            'subcats' => 'Y'
-        );
-        list($prods,) = fn_get_products($_params);
-        if (!empty($prods)) {
-            foreach ($prods as $i => $prod) {
-                if ($prod['auto_price'] == 'Y' && $prod['net_cost'] > 0) {
-                    unset($prod['margin']);
-                    $products[$prod['product_id']] = $prod;
+            if (!empty($category_data['override_shipping_weight']) && $category_data['override_shipping_weight'] == 'Y') {
+                foreach ($prods as $i => $prod) {
+                    $products[] = $prod['product_id'];
+                }
+                if (!empty($products)) {
+                    db_query("UPDATE ?:products SET weight = ?d WHERE product_id IN (?n)", $category_data['shipping_weight'], $products);
                 }
             }
-        }
-        if (!empty($products)) {
-            fn_process_update_prices($products);
+            if (!empty($category_data['recalculate_margins']) && $category_data['recalculate_margins'] == 'Y') {
+                foreach ($prods as $i => $prod) {
+                    if (!empty($prod['price_mode']) && $prod['price_mode'] == 'D' && $prod['net_cost'] > 0) {
+                        unset($prod['margin']);
+                        $products[$prod['product_id']] = $prod;
+                    }
+                }
+                if (!empty($products)) {
+                    fn_process_update_prices($products);
+                }
+            }
+            if (!empty($category_data['products_price_mode'])) {
+                foreach ($prods as $i => $prod) {
+                    $products[] = $prod['product_id'];
+                }
+                if (!empty($products)) {
+                    db_query("UPDATE ?:products SET price_mode = ?s WHERE product_id IN (?n)", $category_data['products_price_mode'], $products);
+                }
+            }
         }
     }
 }
 
 function fn_development_get_product_data($product_id, &$field_list, &$join, $auth, $lang_code, $condition)
 {
-    $join .= db_quote(" LEFT JOIN ?:product_tags ON ?:product_tags.product_id = ?:products.product_id LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = ?:products.product_id LEFT JOIN ?:competitive_prices ON ?:competitive_prices.code = ?:products.product_code OR ?:competitive_pairs.competitive_id = ?:competitive_prices.item_id");
-    $field_list .= ", GROUP_CONCAT(DISTINCT CONCAT_WS('_', ?:product_tags.promotion_id, ?:product_tags.tag) SEPARATOR ',') AS tags, ?:competitive_prices.price AS c_price, ?:competitive_prices.link AS c_link, ?:competitive_prices.name AS c_name, ?:competitive_prices.in_stock AS c_in_stock";
+    $join .= db_quote(" LEFT JOIN ?:product_tags ON ?:product_tags.product_id = ?:products.product_id LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = ?:products.product_id LEFT JOIN ?:competitive_prices AS cp2 ON cp2.code = ?:products.product_code LEFT JOIN ?:competitive_prices AS cp1 ON ?:competitive_pairs.competitive_id = cp1.item_id");
+    $field_list .= ", GROUP_CONCAT(DISTINCT CONCAT_WS('_', ?:product_tags.promotion_id, ?:product_tags.tag) SEPARATOR ',') AS tags, IF (cp1.item_id IS NOT NULL, cp1.price, cp2.price) AS c_price, IF (cp1.item_id IS NOT NULL, cp1.link, cp2.link) AS c_link, IF (cp1.item_id IS NOT NULL, cp1.name, cp2.name) AS c_name, IF (cp1.item_id IS NOT NULL, cp1.in_stock, cp2.in_stock) AS c_in_stock";
 }
 
 function fn_development_get_product_data_post(&$product_data, $auth, $preview, $lang_code)

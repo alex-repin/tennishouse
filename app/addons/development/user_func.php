@@ -391,10 +391,11 @@ function fn_save_cart_step($cart, $user_id)
 
 function fn_update_competitive_prices()
 {
-    $data = db_get_hash_array("SELECT * FROM ?:competitive_prices ORDER BY object_id DESC", 'object_id');
     $errors = array();
+    $data = db_get_hash_array("SELECT * FROM ?:competitive_prices ORDER BY object_id DESC", 'object_id');
 
-    $to_delete = $to_update = array();
+    $to_delete = $to_update = $updated_ids = array();
+    $count = 0;
     foreach ($data as $_dt) {
         if (list($price, $code, $name, $in_stock) = fn_parse_competitive_price($_dt['link'])) {
             $upd_item = array(
@@ -413,6 +414,13 @@ function fn_update_competitive_prices()
                 $upd_item['old_price'] = $_dt['old_price'];
             }
             $to_update[] = $upd_item;
+            if ($in_stock == 'Y') {
+                $updated_ids[] = $_dt['item_id'];
+                $count++;
+                if ($count > 5) {
+                    break;
+                }
+            }
         } else {
             $to_delete[] = $_dt['item_id'];
         }
@@ -422,6 +430,7 @@ function fn_update_competitive_prices()
         }
         if (count($to_delete) == 50) {
             db_query("DELETE FROM ?:competitive_prices WHERE item_id IN (?n)", $to_delete);
+            db_query("DELETE FROM ?:competitive_pairs WHERE competitive_id IN (?n)", $to_delete);
             $to_delete = array();
         }
         fn_echo(' . ');
@@ -432,9 +441,54 @@ function fn_update_competitive_prices()
     }
     if (!empty($to_delete)) {
         db_query("DELETE FROM ?:competitive_prices WHERE item_id IN (?n)", $to_delete);
+        db_query("DELETE FROM ?:competitive_pairs WHERE competitive_id IN (?n)", $to_delete);
     }
 
+    // if (!empty($updated_ids)) {
+    //     $updated_ids = array(3534, 15717);
+    // }
+
     return array(true, $errors);
+}
+
+function fn_actualize_prices()
+{
+    $details = array();
+
+    $params = array(
+        'hide_out_of_stock' => 'Y',
+        'competition' => 'D',
+        'price_mode' => 'M'
+    );
+    list($products, $search) = fn_get_products($params);
+
+    if (!empty($products)) {
+        $data = array();
+        foreach ($products as $product) {
+            if ($product['c_in_stock'] == 'Y' && (($product['price'] > $product['c_price'] && in_array($product['competitor_price_action'], array('B', 'D'))) || ($product['price'] < $product['c_price'] && in_array($product['competitor_price_action'], array('B', 'U'))))) {
+                $data[] = array(
+                    'product_id' => $product['product_id'],
+                    'price' => $product['c_price'],
+                    'lower_limit' => 1,
+                    'usergroup_id' => 0
+                );
+                $link = '<a href="' . fn_url('products.update?product_id=' . $product['product_id'], 'A') . '" target="_blank">' . $product['product'] . '</a>';
+                $details[$link] = array(
+                    'price' => fn_format_price($product['price']) . ' -> ' . fn_format_price($product['c_price'])
+                );
+                if (empty($product['list_price']) || $product['list_price'] < $product['price']) {
+                    db_query("UPDATE ?:products SET list_price = ?i WHERE product_id = ?i", $product['price'], $product['product_id']);
+                    $details[$link]['list_price'] = fn_format_price($product['list_price']) . ' -> ' . fn_format_price($product['price']);
+                }
+            }
+        }
+
+        if (!empty($data)) {
+            db_query("REPLACE INTO ?:product_prices ?m", $data);
+        }
+    }
+
+    return array(true, $details);
 }
 
 function fn_update_competitive_catalog()
@@ -1068,7 +1122,7 @@ function fn_promotion_validate_free_strings(&$promotion, $cart, $cart_products, 
                 $features[$product['product_id']] = db_get_hash_array("SELECT feature_id, variant_id, value, value_int FROM ?:product_features_values WHERE product_id = ?i AND feature_id IN (?n) AND lang_code = ?s", 'feature_id', $product['product_id'], array(R_STRINGS_FEATURE_ID, TYPE_FEATURE_ID), CART_LANGUAGE);
             }
             if (!empty($features[$product['product_id']])) {
-                return fn_is_free_strings($product, $features[$product['product_id']]);
+                return fn_is_free_strings($product, $features[$product['product_id']]) ? 'Y' : 'N';
             }
         }
     }
@@ -2612,7 +2666,7 @@ function fn_process_update_prices($products)
 
 function fn_update_prices()
 {
-    $products = db_get_hash_array("SELECT prods.product_id, prods.margin, prods.net_cost, prods.net_currency_code, prods.auto_price, cats.category_id AS main_category FROM ?:products AS prods LEFT JOIN ?:products_categories AS cats ON prods.product_id = cats.product_id AND cats.link_type = 'M' WHERE prods.auto_price = 'Y' AND prods.net_cost > 0 AND update_with_currencies = 'Y'", 'product_id');
+    $products = db_get_hash_array("SELECT prods.product_id, prods.margin, prods.net_cost, prods.net_currency_code, prods.price_mode, cats.category_id AS main_category FROM ?:products AS prods LEFT JOIN ?:products_categories AS cats ON prods.product_id = cats.product_id AND cats.link_type = 'M' WHERE prods.price_mode = 'D' AND prods.net_cost > 0 AND update_with_currencies = 'Y'", 'product_id');
     $result = fn_process_update_prices($products);
 }
 

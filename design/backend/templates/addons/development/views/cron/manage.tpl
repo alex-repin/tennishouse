@@ -70,6 +70,7 @@
 {capture name="sidebar"}
     {include file="common/saved_search.tpl" dispatch="cron.manage" view_type="cron_logs"}
     {include file="addons/development/views/cron/components/logs_search_form.tpl"}
+    <hr/>
     {include file="addons/development/views/cron/components/run.tpl"}
 {/capture}
 

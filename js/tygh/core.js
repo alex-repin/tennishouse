@@ -3720,6 +3720,7 @@ var Tygh = {
 
                 // Check the email field
                 if (lbl.hasClass('cm-email')) {
+                    elm.val($.trim(elm.val()));
                     if ($.is.email(elm.val()) == false) {
                         if (lbl.hasClass('cm-required') || $.is.blank(elm.val()) == false) {
                             _formMessage(_.tr('error_validator_email'), lbl);

@@ -88,6 +88,17 @@
                 </select>
             </div>
         </div>
+        <div class="control-group">
+            <label class="control-label" for="elm_category_update_products_price_mode">{__("price_mode")}:</label>
+            <div class="controls">
+                <select class="span3" name="category_data[products_price_mode]">
+                    <option value="">{__("update_product_values_to")}</option>
+                    <option value="S">{__("static_price")}</option>
+                    <option value="D">{__("dynamic_price")}</option>
+                    <option value="M">{__("competitor_price")}</option>
+                </select>
+            </div>
+        </div>
     {/if}
 
     <div class="control-group">
@@ -96,14 +107,14 @@
             <textarea id="elm_category_descr" name="category_data[description]" cols="55" rows="8" class="input-large cm-wysiwyg input-textarea-long">{$category_data.description}</textarea>
         </div>
     </div>
-    
+
     <div class="control-group">
         <label class="control-label" for="elm_category_descr">{__("full_description")}:</label>
         <div class="controls">
             <textarea id="elm_category_descr" name="category_data[full_description]" cols="55" rows="8" class="input-large cm-wysiwyg input-textarea-long">{$category_data.full_description}</textarea>
         </div>
     </div>
-    
+
     <div class="control-group">
         <label class="control-label" for="elm_category_brand_id">{__("brand")}:</label>
 
@@ -176,7 +187,7 @@
             second_data=$section_features}
         </div>
     </div>
-    
+
     <div class="control-group">
         <label class="control-label" for="elm_category_ajax_pagination">{__("ajax_pagination")}:</label>
         <div class="controls">
@@ -286,7 +297,7 @@
             <textarea name="category_data[meta_keywords]" id="elm_category_meta_keywords" cols="55" rows="4" class="input-large">{$category_data.meta_keywords}</textarea>
         </div>
     </div>
-    
+
     <div class="control-group">
         <label class="control-label" for="elm_category_noindex">{__("tag_noindex")}:</label>
         <div class="controls">
@@ -311,7 +322,7 @@
             </div>
         </div>
     </div>
-    
+
     </div>
     <hr />
     {if !"ULTIMATE:FREE"|fn_allowed_for}
@@ -466,5 +477,3 @@
 {else}
     {include file="common/mainbox.tpl" sidebar=$smarty.capture.sidebar sidebar_position="left" title="{__("editing_category")}: `$category_data.category`" content=$smarty.capture.mainbox select_languages=true buttons=$smarty.capture.buttons adv_buttons=$smarty.capture.adv_buttons}
 {/if}
-
-

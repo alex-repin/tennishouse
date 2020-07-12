@@ -32,12 +32,12 @@ class Customization
 
         $this->request = $params;
         $this->auth = $_SESSION['auth'];
-        
+
         if (!empty($this->request['cart_id']) && !empty($_SESSION['cart']['products'][$this->request['cart_id']])) {
-            
+
             $this->product_id = $_SESSION['cart']['products'][$this->request['cart_id']]['product_id'];
 //             $this->racket = &$_SESSION['add_product_request'][$this->product_id]['product'];
-            
+
             $this->racket = array(
                 'product_id' => $this->product_id,
                 'amount' => $_SESSION['cart']['products'][$this->request['cart_id']]['amount']
@@ -45,7 +45,7 @@ class Customization
             if (!empty($_SESSION['cart']['products'][$this->request['cart_id']]['product_options'])) {
                 $this->racket['product_options'] = $_SESSION['cart']['products'][$this->request['cart_id']]['product_options'];
             }
-            
+
             $option = 3;
             if (!empty($_SESSION['cart']['products'][$this->request['cart_id']]['configuration'])) {
                 if (count($_SESSION['cart']['products'][$this->request['cart_id']]['configuration']) == 1 && reset($_SESSION['cart']['products'][$this->request['cart_id']]['configuration'])['product_id'] == STRINGING_PRODUCT_ID) {
@@ -57,7 +57,7 @@ class Customization
             }
 
 //             $this->dialog_data = &$_SESSION['add_product_request'][$this->product_id]['dialog_data'];
-            
+
             $this->dialog_data = array(
                 'option' => $option,
                 'step' => STRINGING_GROUP_ID,
@@ -65,19 +65,19 @@ class Customization
                 'edit_configuration' => $this->request['cart_id'],
             );
         } else {
-        
+
             $this->product_id = !empty($this->request['product_id']) ? $this->request['product_id'] : array_key_first($this->request['product_data']);
-            
+
             $this->racket = &$_SESSION['add_product_request'][$this->product_id]['product'];
             if (empty($this->racket)) {
                 $this->racket = array();
             }
-            
+
             $this->dialog_data = &$_SESSION['add_product_request'][$this->product_id]['dialog_data'];
             if (empty($this->dialog_data)) {
                 $this->dialog_data = array();
             }
-            
+
         }
 
         if (!empty($this->request['sd_data'])) {
@@ -86,7 +86,7 @@ class Customization
                 $this->dialog_data = array_merge($this->dialog_data, $_params);
             }
         }
-        
+
         $this->dialog_data['view'] = 'P';
         if (!empty($this->request['sd_change'])) {
             parse_str($this->request['sd_change'], $_params);
@@ -103,7 +103,7 @@ class Customization
             }
         }
     }
-    
+
     public function addProduct()
     {
         if (!empty($this->dialog_data['productAdd']) && !empty($this->dialog_data['step']) && !empty($this->dialog_data['option'])) {
@@ -128,7 +128,7 @@ class Customization
             unset($this->dialog_data['productAdd']);
         }
     }
-    
+
     public function removeProduct()
     {
         if (!empty($this->dialog_data['stepRemove']) && !empty($this->dialog_data['option'])) {
@@ -158,7 +158,7 @@ class Customization
                 DAMPENER_GROUP_ID => true,
                 OVERGRIP_GROUP_ID => true
             );
-            
+
             if (!empty($configuration) && !empty($this->dialog_data['option'])) {
                 foreach ($configuration as $gr_id => $opts) {
                     unset($steps[$gr_id]);
@@ -220,9 +220,9 @@ class Customization
             }
         }
 
-        fn_gather_additional_products_data($products, array('get_icon' => false, 'get_detailed' => false, 'get_options' => true, 'get_discounts' => false, 'get_features' => true, 'get_title_features' => true));
+        fn_gather_additional_products_data($products, array('get_icon' => false, 'get_detailed' => false, 'get_options' => true, 'get_discounts' => true, 'get_features' => true, 'get_title_features' => true));
         $product = reset($products);
-        
+
         if (!empty($product['selected_options'])) {
             $this->racket['product_options'] = $product['selected_options'];
         }
@@ -275,7 +275,7 @@ class Customization
             }
         }
     }
-    
+
     public function getGroupRef()
     {
         $group_ref = array();
@@ -293,13 +293,13 @@ class Customization
 
         return $group_ref;
     }
-    
+
     public function resetState()
     {
         $this->racket = array();
         $this->dialog_data = array();
     }
-    
+
     public function calculateCart()
     {
         $add_product = array(
@@ -308,7 +308,7 @@ class Customization
         if (!empty($add_product[$this->product_id]['configuration'])) {
             $add_product[$this->product_id]['configuration'] = !empty($add_product[$this->product_id]['configuration'][$this->dialog_data['option']]) ? $add_product[$this->product_id]['configuration'][$this->dialog_data['option']] : array();
         }
-        
+
         $prev_cart_products = array();
         if (!empty($this->dialog_data['add'])) {
             $this->cart = & $_SESSION['cart'];
@@ -322,14 +322,14 @@ class Customization
             $this->cart = array();
             fn_clear_cart($this->cart);
         }
-        
+
         fn_add_product_to_cart($add_product, $this->cart, $this->auth, false, true);
 
         if (!empty($this->dialog_data['add'])) {
             $previous_state = md5(serialize($this->cart['products']));
             $this->cart['change_cart_products'] = true;
         }
-        
+
         $this->cart['calculate_shipping'] = false;
         list ($this->cart_products, $product_groups) = fn_calculate_cart_content($this->cart, $this->auth, 'S', true, 'F', true);
         if (empty($this->dialog_data['add'])) {
@@ -344,15 +344,15 @@ class Customization
             unset($this->cart['skip_notification']);
         }
     }
-    
-    
+
+
     public static function displayCustomization($request)
     {
         $customization = new Customization($request);
 
         // Add new product to conf
         $customization->addProduct();
-        
+
         // Remove product from conf
         $customization->removeProduct();
 
@@ -363,7 +363,7 @@ class Customization
             unset($customization->dialog_data['home']);
             $customization->dialog_data['option'] = 0;
         }
-        
+
         if (!empty($customization->racket)) {
 
             $customization->initOptions();
@@ -380,7 +380,7 @@ class Customization
                     unset($customization->request['redirect_url']);
                     return array(CONTROLLER_STATUS_OK, "checkout.cart");
                 }
-                
+
                 if (defined('AJAX_REQUEST')) {
                     if (!empty($customization->dialog_data['edit_configuration'])) {
                         Registry::get('view')->assign('cart_products', $customization->cart_products);
@@ -403,7 +403,7 @@ class Customization
                     }
                 }
                 $customization->resetState();
-                
+
                 exit;
             } else {
                 $group_ref = $customization->getGroupRef();
@@ -418,7 +418,7 @@ class Customization
             $params = $customization->dialog_data;
             unset($params['page']);
             $params['extend'] = array('categories', 'description');
-            
+
             if ($customization->dialog_data['step'] == STRINGING_GROUP_ID) {
                 $params['cid'] = STRINGS_CATEGORY_ID;
             } elseif ($customization->dialog_data['step'] == DAMPENER_GROUP_ID) {
@@ -427,7 +427,7 @@ class Customization
                 $params['cid'] = OVERGRIPS_CATEGORY_ID;
             }
             list($products, $search) = fn_get_products($params);
-            
+
             fn_gather_additional_products_data($products, array(
                 'get_icon' => false,
                 'get_detailed' => false,
@@ -447,7 +447,7 @@ class Customization
                     $selected_products = array_merge($selected_products, $conf['product_ids']);
                 }
             }
-            
+
             $brands = array();
             foreach ($products as $i => $product) {
                 if (in_array($product['product_id'], $selected_products)) {
@@ -464,12 +464,12 @@ class Customization
             $search['total_items'] = count($products);
             $search['page'] = !empty($customization->dialog_data['page']) ? $customization->dialog_data['page'] : 1;
             $products = array_slice($products, $search['items_per_page'] * ($search['page'] - 1), $search['items_per_page']);
-            
+
             Registry::get('view')->assign('brands', $brands);
             Registry::get('view')->assign('search', $search);
             Registry::get('view')->assign('products', $products);
             Registry::get('view')->assign('current_url', fn_url('racket_customization.view?product_id=' . $customization->product_id));
-            
+
         }
         Registry::get('view')->assign('product_id', $customization->product_id);
         Registry::get('view')->assign('racket', $customization->racket);

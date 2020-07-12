@@ -51,17 +51,23 @@ return array(
         'H' => '10',
         'name' => 'check_delivery_statuses'
     ),
+    'C' => array(
+        'frequency' => 60 * 60 * 24 * 7,
+        'function' => 'fn_update_competitive_catalog',
+        'H' => '02',
+        'name' => 'update_competitive_catalog'
+    ),
     'I' => array(
         'frequency' => 60 * 60 * 24,
         'function' => 'fn_update_competitive_prices',
         'H' => '02',
         'name' => 'update_competitive_prices'
     ),
-    'C' => array(
-        'frequency' => 60 * 60 * 24 * 7,
-        'function' => 'fn_update_competitive_catalog',
+    'A' => array(
+        'frequency' => 60 * 60 * 24,
+        'function' => 'fn_actualize_prices',
         'H' => '02',
-        'name' => 'update_competitive_catalog'
+        'name' => 'actualize_prices'
     ),
     'T' => array(
         'frequency' => 60 * 60,

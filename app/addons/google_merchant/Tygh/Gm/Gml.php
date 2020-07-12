@@ -111,7 +111,7 @@ class Gml implements IGml
         );
 
         $this->getDisabledCategories();
-        
+
         fwrite($file, implode(PHP_EOL, $gml_header) . PHP_EOL);
         fwrite($file, fn_array_to_xml($gml_data));
     }
@@ -125,6 +125,7 @@ class Gml implements IGml
         $cat_data = db_get_hash_array("SELECT category_id, id_path, gml_product_category FROM ?:categories", 'category_id');
         $params = array(
             'gml_disable_product' => 'N',
+            'extend' => array('description', 'full_description')
         );
         list($products, ) = fn_get_products($params);
 
@@ -157,11 +158,11 @@ class Gml implements IGml
                 $new_product['g:id'] = fn_generate_cart_id($product['product_id'], array());
                 $new_product['g:title'] = ucfirst(strtolower($this->escape($product['product'])));
                 if ($product['full_description'] != '') {
-                    $new_product['g:description'] = $product['full_description'];
+                    $new_product['g:description'] = $this->escape($product['full_description']);
                 } elseif ($product['short_description'] != '') {
-                    $new_product['g:description'] = $product['short_description'];
+                    $new_product['g:description'] = $this->escape($product['short_description']);
                 } else {
-                   $new_product['g:description'] = ucfirst(strtolower($new_product['g:title']));
+                   $new_product['g:description'] = $new_product['g:title'];
                 }
                 $new_product['g:link'] = fn_url('products.view?product_id=' . $product['product_id']);
                 $new_product['g:image_link'] = $product['main_pair']['detailed']['http_image_path'];
@@ -174,7 +175,7 @@ class Gml implements IGml
                     }
                 }
 //                 $new_product['g:mobile_link'] = '';
-                
+
 //              Price & availability
                 $new_product['g:availability'] = $product['amount'] > 0 ? 'in stock' : 'out of stock';
 //                 $new_product['g:availability_date'] = '';
@@ -188,7 +189,7 @@ class Gml implements IGml
                 } else {
                     $new_product['g:price'] = $price = $this->formatPrice($product['price']);
                 }
-                
+
 //                 $new_product['g:sale_price_effective_date'] = '';
 //                 $new_product['g:unit_pricing_measure'] = '';
 //                 $new_product['g:unit_pricing_base_measure'] = '';
@@ -199,7 +200,7 @@ class Gml implements IGml
                 $global = fn_get_product_global_data($product, array('gml_product_category'), $cat_data);
                 $new_product['g:google_product_category'] = !empty($product['gml_product_category']) ? $product['gml_product_category'] : (!empty($global['gml_product_category']) ? $global['gml_product_category'] : false);
 //                 $new_product['g:product_type'] = '';
-                
+
 //              Product identifiers
                 $new_product['g:brand'] = $product['product_features'][BRAND_FEATURE_ID]['variant'] ?? 'NO BRAND';
                 if (!empty($product['ean'])) {
@@ -209,7 +210,7 @@ class Gml implements IGml
                     $new_product['g:identifier_exists'] = 'no';
                 }
 //                 $new_product['g:mpn'] = '';
-                
+
 //              Detailed product description
                 $new_product['g:condition'] = 'new';
                 $new_product['g:adult'] = 'no';
@@ -218,7 +219,7 @@ class Gml implements IGml
 //                 $new_product['g:energy_efficiency_class'] = '';
 //                 $new_product['g:min_energy_efficiency_class'] = '';
 //                 $new_product['g:max_energy_efficiency_class'] = '';
-                
+
                 if (!empty($product['product_features'][CLOTHES_GENDER_FEATURE_ID])) {
                     if (in_array($product['product_features'][CLOTHES_GENDER_FEATURE_ID]['variant_id'], array(C_GENDER_M_FV_ID, C_GENDER_W_FV_ID, C_GENDER_U_FV_ID))) {
                         $new_product['g:age_group'] = 'adult';
@@ -351,17 +352,17 @@ class Gml implements IGml
     {
         $currencies = Registry::get('currencies');
         $currency = $currencies[$currency_code];
-        
+
         $result = fn_format_rate_value($price, 'F', $currency['decimals'], $currency['decimals_separator'], '', $currency['coefficient']);
         if ($currency['after'] == 'Y') {
             $result .= ' ' . $currency['currency_code'];
         } else {
             $result = $currency['currency_code'] . $result;
         }
-    
+
         return $result;
     }
-    
+
     protected function getDisabledCategories()
     {
         if (!isset($this->disabled_category_ids)) {

@@ -372,9 +372,6 @@
             ALTER TABLE `cscart_products` ADD `margin` DECIMAL( 4, 1 ) UNSIGNED NOT NULL ;
         </item>
         <item>
-            ALTER TABLE `cscart_products` ADD `auto_price` CHAR( 1 ) NOT NULL DEFAULT 'Y';
-        </item>
-        <item>
             ALTER TABLE `cscart_categories` ADD `margin` DECIMAL( 4, 1 ) UNSIGNED NOT NULL ;
         </item>
         <item>
@@ -822,6 +819,15 @@
         </item>
         <item>
             ALTER TABLE `cscart_products` ADD `show_stock` CHAR(1) NOT NULL DEFAULT 'Y';
+        </item>
+        <item>
+            ALTER TABLE `cscart_products` ADD `price_mode` CHAR(1) NOT NULL DEFAULT 'S';
+        </item>
+        <item>
+            ALTER TABLE `cscart_products` ADD `competitor_price_action` CHAR(1) NOT NULL DEFAULT 'B';
+        </item>
+        <item>
+            ALTER TABLE `cscart_products` CHANGE `yml_pickup` `yml_pickup` CHAR(1) NOT NULL DEFAULT 'Y';
         </item>
     </queries>
     <language_variables>
@@ -1601,5 +1607,17 @@
         <item lang="ru" id="wh_net_total">Общая себестоимость</item>
         <item lang="ru" id="wh_rrp_total">Общая РРЦ</item>
         <item lang="ru" id="ask_for_review_text"><![CDATA[<p>Мы будем рады оставленному отзыву о магазине на <a href="[write_review_link]" target="_blank">нашем сайте</a>. Ваше мнение послужит нам ориентиром для дальнейшего развития. За оставленный отзыв мы дарим [order_review_bonus] бонусных рублей, которые можно будет использовать при следующей покупке.</p><p>Заранее спасибо!</p>]]></item>
+        <item lang="ru" id="price_mode">Ценообразование</item>
+        <item lang="ru" id="static_price">Статическое</item>
+        <item lang="ru" id="dynamic_price">Динамическое</item>
+        <item lang="ru" id="competitor_price">Конкурентное</item>
+        <item lang="ru" id="competitor_price_action">Действие</item>
+        <item lang="ru" id="competitor_price_action_both">Понижение и повышение</item>
+        <item lang="ru" id="competitor_price_action_up">Только повышение</item>
+        <item lang="ru" id="competitor_price_action_down">Только понижение</item>
+        <item lang="ru" id="update_product_values_to">Обновить значение у товаров на</item>
+        <item lang="ru" id="actualize_prices">Актуализировать цены</item>
+        <item lang="ru" id="update_xml_feed">Обновить XML-feed</item>
+        <item lang="ru" id="ajax">Ajax</item>
     </language_variables>
 </addon>

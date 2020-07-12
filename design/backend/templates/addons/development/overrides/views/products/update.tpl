@@ -110,34 +110,47 @@
                     </div>
 
                     {if $auth.is_root == 'Y'}
-                        <div class="control-group">
-                            <label class="control-label" for="elm_product_auto_price">{__("auto_price_calculation")}:</label>
+                        <div class="control-group {$promo_class}">
+                            <label class="control-label" for="elm_price_mode">{__("price_mode")}:</label>
                             <div class="controls">
-                                <label class="checkbox">
-                                    <input type="hidden" name="product_data[auto_price]" value="N" />
-                                    <input type="checkbox" name="product_data[auto_price]" id="elm_product_auto_price" value="Y" {if !$product_data.auto_price || $product_data.auto_price == "Y"}checked="checked"{/if} onclick="Tygh.$('#margin').toggleBy();"/>
-                                </label>
+                                <select class="span3" name="product_data[price_mode]" id="elm_price_mode" onchange="Tygh.$('#price_mode_options_D').toggleBy((this.value != 'D'));Tygh.$('#price_mode_options_M').toggleBy((this.value != 'M'));">
+                                    <option value="S" {if $product_data.price_mode == "S"}selected="selected"{/if}>{__("static_price")}</option>
+                                    <option value="D" {if $product_data.price_mode == "D"}selected="selected"{/if}>{__("dynamic_price")}</option>
+                                    <option value="M" {if $product_data.price_mode == "M"}selected="selected"{/if}>{__("competitor_price")}</option>
+                                </select>
                             </div>
                         </div>
-
                         {if $runtime.mode != 'add'}
-                        <div class="control-group {if $product_data.auto_price != "Y"}hidden{/if}" id="margin">
-                            <label class="control-label" for="elm_product_margin">{__("price_margin")}(%):</label>
-                            <div class="controls">
-                                <input type="text" name="product_data[margin]" id="elm_margin" size="10" value="{$product_data.margin|default:"0.0"}" class="input-long" />
+                            <div class="{if $product_data.price_mode != 'M'}hidden{/if}" id="price_mode_options_M">
+                                <div class="control-group">
+                                    <label class="control-label" for="elm_competitor_price_action">{__("competitor_price_action")}:</label>
+                                    <div class="controls">
+                                        <select class="span3" name="product_data[competitor_price_action]" id="elm_competitor_price_action">
+                                            <option value="B" {if $product_data.competitor_price_action == "B"}selected="selected"{/if}>{__("competitor_price_action_both")}</option>
+                                            <option value="U" {if $product_data.competitor_price_action == "U"}selected="selected"{/if}>{__("competitor_price_action_up")}</option>
+                                            <option value="D" {if $product_data.competitor_price_action == "D"}selected="selected"{/if}>{__("competitor_price_action_down")}</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                            <div class="{if $product_data.price_mode != 'D'}hidden{/if}" id="price_mode_options_D">
+                                <div class="control-group">
+                                    <label class="control-label" for="elm_product_margin">{__("price_margin")}(%):</label>
+                                    <div class="controls">
+                                        <input type="text" name="product_data[margin]" id="elm_margin" size="10" value="{$product_data.margin|default:"0.0"}" class="input-long" />
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" for="elm_product_update_with_currencies">{__("update_with_currencies")}:</label>
+                                    <div class="controls">
+                                        <label class="checkbox">
+                                            <input type="hidden" name="product_data[update_with_currencies]" value="N" />
+                                            <input type="checkbox" name="product_data[update_with_currencies]" id="elm_product_auto_price" value="Y" {if $product_data.update_with_currencies == "Y"}checked="checked"{/if}/>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         {/if}
-
-                        <div class="control-group">
-                            <label class="control-label" for="elm_product_update_with_currencies">{__("update_with_currencies")}:</label>
-                            <div class="controls">
-                                <label class="checkbox">
-                                    <input type="hidden" name="product_data[update_with_currencies]" value="N" />
-                                    <input type="checkbox" name="product_data[update_with_currencies]" id="elm_product_auto_price" value="Y" {if $product_data.update_with_currencies == "Y"}checked="checked"{/if}/>
-                                </label>
-                            </div>
-                        </div>
                     {/if}
 
                     <div class="control-group cm-no-hide-input">
@@ -278,7 +291,7 @@
                         <div class="controls">
                             <label class="checkbox">
                                 <input type="hidden" name="product_data[show_stock]" value="N" />
-                                <input type="checkbox" name="product_data[show_stock]" id="elm_show_stock" value="Y" {if $product_data.show_stock == "Y"}checked="checked"{/if}/>
+                                <input type="checkbox" name="product_data[show_stock]" id="elm_show_stock" value="Y" {if $product_data.show_stock == "Y" || !$product_data.show_stock}checked="checked"{/if}/>
                             </label>
                         </div>
                     </div>

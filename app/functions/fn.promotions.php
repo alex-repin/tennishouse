@@ -74,7 +74,7 @@ function fn_update_promotion($data, $promotion_id, $lang_code = DESCR_SL)
 
     $data['tagged_products'] = (empty($data['tagged_products'])) ? array() : explode(',', $data['tagged_products']);
     db_query("DELETE FROM ?:product_tags WHERE promotion_id = ?i", $promotion_id);
-    
+
     if (!empty($data['tagged_products'])) {
         $_data = array();
         foreach ($data['tagged_products'] as $pr_id) {
@@ -86,9 +86,9 @@ function fn_update_promotion($data, $promotion_id, $lang_code = DESCR_SL)
         }
         db_query("REPLACE INTO ?:product_tags ?m", $_data);
     }
-    
+
     fn_set_hook('update_promotion_post', $data, $promotion_id);
-    
+
     return $promotion_id;
 }
 
@@ -252,7 +252,7 @@ function fn_get_promotions($params, $items_per_page = 0, $lang_code = CART_LANGU
     }
 
     fn_set_hook('get_promotions_post', $promotions, $params);
-    
+
     return array($promotions, $params);
 }
 
@@ -285,7 +285,7 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
         }
         list($promotions[$zone]) = fn_get_promotions($params);
     }
-    
+
     // If we're in cart, set flag that promotions available
     if ($zone == 'cart') {
         $_promotion_ids = !empty($data['promotions']) ? array_keys($data['promotions']) : array();
@@ -368,7 +368,7 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
             }
         }
     }
-    
+
     $ordered_promotions = array(
         'item_no_sum_up' => array(),
         'item_sum_up' => array(),
@@ -446,7 +446,7 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
                     $cart_products[$k] = $cproduct_vars[$prom_key];
                     if ($prom_key != 'item_disc') {
                         $applied_promotions[$prom_key] = !empty($promotions[$zone][$prom_key]) ? $promotions[$zone][$prom_key] : (!empty($promotions['catalog'][$prom_key]) ? $promotions['catalog'][$prom_key] : '');
-                        
+
                         if (empty($data['promotions'][$prom_key]['bonuses'])) {
                             foreach ($applied_promotions[$prom_key]['bonuses'] as $bonus) {
                                 if (!isset($data['promotions'][$prom_key]['bonuses'])) {
@@ -863,7 +863,7 @@ function fn_promotion_apply_cart_rule($bonus, &$cart, &$auth, &$cart_products)
                     }
                 }
             }
-            
+
             // Restore object_id if needed
             if (!empty($cart['saved_object_ids'][$bonus['promotion_id'] . '_' . $p_data['product_id']])) {
                 $product_data[$p_data['product_id']]['saved_object_id'] = $cart['saved_object_ids'][$bonus['promotion_id'] . '_' . $p_data['product_id']];
@@ -1508,7 +1508,7 @@ function fn_promotion_check_coupon(&$cart, $initial_check, $applied_promotions =
     // Pre-check: find if coupon is already used or only single coupon is allowed
     if ($initial_check == true) {
         fn_set_hook('pre_promotion_check_coupon', $cart['pending_coupon'], $cart);
-        
+
         if (!empty($cart['coupons'][$cart['pending_coupon']])) {
             $_SESSION['promotion_notices']['promotion']['messages'][] = 'coupon_already_used';
             unset($cart['pending_coupon']);
@@ -1868,7 +1868,7 @@ function fn_get_promotion_data($promotion_id, $lang_code = DESCR_SL)
     $join = '';
 
     fn_set_hook('get_promotion_data', $promotion_id, $field_list, $join, $extra_condition);
-    
+
     $promotion_data = db_get_row("SELECT $field_list FROM ?:promotions as p LEFT JOIN ?:promotion_descriptions as d ON p.promotion_id = d.promotion_id AND d.lang_code = ?s LEFT JOIN ?:product_tags AS t ON t.promotion_id = p.promotion_id ?p WHERE p.promotion_id = ?i ?p GROUP BY p.promotion_id", $lang_code, $join, $promotion_id, $extra_condition);
 
     if (!empty($promotion_data)) {
@@ -2009,7 +2009,7 @@ function fn_get_promotion_features($product_ids)
             }
         }
     }
-    
+
     return $result;
 }
 
@@ -2023,7 +2023,7 @@ function fn_get_promotion_features($product_ids)
 function fn_promotions_check_features($promotion, $product)
 {
     static $features = array();
-    
+
     if (!isset($features[$product['product_id']])) {
         if (!empty($product['promotion_features'])) {
             $features[$product['product_id']] = $product['promotion_features'];
@@ -2178,9 +2178,9 @@ function fn_delete_promotions($promotion_ids)
         db_query("DELETE FROM ?:promotions WHERE promotion_id = ?i", $pr_id);
         db_query("DELETE FROM ?:promotion_descriptions WHERE promotion_id = ?i", $pr_id);
     }
-    
+
     fn_set_hook('delete_promotions', $promotion_ids);
-    
+
 }
 
 

@@ -55,9 +55,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 if (!empty($product_ids)) {
                                     foreach ($product_ids as $i => $p_data) {
                                         if (!empty($net_cost)) {
-                                            db_query("UPDATE ?:products SET auto_price = 'N', update_with_currencies = 'N', list_price = '0', net_cost = ?d WHERE product_id = ?s", $p_data['import_divider'] * $net_cost, $p_data['product_id']);
+                                            db_query("UPDATE ?:products SET price_mode = IF(price_mode = 'D', 'S', price_mode), update_with_currencies = 'N', list_price = '0', net_cost = ?d WHERE product_id = ?s", $p_data['import_divider'] * $net_cost, $p_data['product_id']);
                                         } else {
-                                            db_query("UPDATE ?:products SET auto_price = 'N', update_with_currencies = 'N', list_price = '0' WHERE product_id = ?s", $p_data['product_id']);
+                                            db_query("UPDATE ?:products SET price_mode = IF(price_mode = 'D', 'S', price_mode), update_with_currencies = 'N', list_price = '0' WHERE product_id = ?s", $p_data['product_id']);
                                         }
                                         if ($p_data['import_divider'] == '1') {
                                             $product_data = array(
@@ -87,6 +87,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 if (!empty($product_ids)) {
                                     foreach ($product_ids as $i => $p_data) {
                                         db_query("UPDATE ?:products SET ean = ?s WHERE product_id = ?i", $ean, $p_data['product_id']);
+                                    }
+                                }
+                            }
+                        } elseif ($_REQUEST['type'] == 'net') {
+                            $net_cost = $data[1];
+                            if (!empty($code) && !empty($net_cost)) {
+                                $codes[] = $code;
+                                $product_ids = db_get_array("SELECT product_id, import_divider FROM ?:products WHERE product_code = ?s", $code);
+                                if (!empty($product_ids)) {
+                                    foreach ($product_ids as $i => $p_data) {
+                                        db_query("UPDATE ?:products SET net_currency_code = 'RUB', net_cost = ?d WHERE product_id = ?i", $p_data['import_divider'] * $net_cost, $p_data['product_id']);
                                     }
                                 }
                             }
@@ -1662,7 +1673,9 @@ if ($mode == 'calculate_balance') {
     if ($cp_mode == 'N') {
         $params = array(
             'hide_out_of_stock' => 'Y',
-            'competition' => 'N'
+            'competition' => 'N',
+            'sort_by' => 'price',
+            'sort_order' => 'desc'
         );
     } elseif ($cp_mode == 'D') {
         $params = array(
@@ -1805,6 +1818,15 @@ if ($mode == 'calculate_balance') {
 //     }
     // db_query("REPLACE ?:product_warehouses_inventory ?m", $_data);
     // fn_print_die($_data);
+
+    exit;
+} elseif ($mode == 'clean_cp') {
+
+    db_query("UPDATE ?:products SET price_mode = IF (auto_price = 'Y', 'D', 'S'), yml_pickup = 'Y'");
+
+    $deleted = db_get_fields("SELECT competitive_id FROM ?:competitive_pairs LEFT JOIN ?:competitive_prices ON ?:competitive_pairs.competitive_id = ?:competitive_prices.item_id WHERE item_id IS NULL");
+
+    db_query("DELETE FROM ?:competitive_pairs WHERE competitive_id IN (?n)", $deleted);
 
     exit;
 }

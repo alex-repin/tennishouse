@@ -24,7 +24,7 @@ if ($mode == 'view') {
 
     $player_data = !empty($_REQUEST['player_id']) ? fn_get_player_data($_REQUEST['player_id']) : array();
 
-    if (empty($player_data) || empty($player_data['status']) || !empty($player_data['status']) && $player_data['status'] != 'A') {
+    if (empty($player_data) || empty($player_data['status']) || (!empty($player_data['status']) && $player_data['status'] == 'D')) {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
 

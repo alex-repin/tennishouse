@@ -63,8 +63,8 @@ $scheme[DRIADA_WAREHOUSE_ID] = array(
         'value' => 'N',
         'type' => 'const'
     ),
-    'auto_price' => array(
-        'value' => 'N',
+    'price_mode' => array(
+        'value' => 'S',
         'type' => 'const'
     ),
 );

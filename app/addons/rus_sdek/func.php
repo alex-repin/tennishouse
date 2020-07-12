@@ -131,8 +131,7 @@ function fn_rus_sdek_calculate_cart_taxes_pre(&$cart, $cart_products, &$product_
                     $module = $shipping['module'];
 
                     if ($module == 'sdek' && !empty($cart['shippings_extra']['data'][$group_key][$shipping_id])) {
-                        $shipping_extra = $cart['shippings_extra']['data'][$group_key][$shipping_id];
-                        $product_groups[$group_key]['chosen_shippings'][$shipping_key]['data'] = $shipping_extra;
+                        $product_groups[$group_key]['chosen_shippings'][$shipping_key]['data'] = $cart['shippings_extra']['data'][$group_key][$shipping_id];
                     }
                 }
             }

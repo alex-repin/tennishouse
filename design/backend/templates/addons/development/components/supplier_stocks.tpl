@@ -64,7 +64,7 @@
         {include file="common/subheader.tpl" title="{__("update_stock_updated")}: `$updated_products|count`" target="#res_updated"}
         <div id="res_updated" class="collapse">
             {if $updated_products}
-                {$updated_products|fn_print_r}
+                {$updated_products|fn_print_tpl}
             {/if}
         </div>
         {include file="common/subheader.tpl" title="{__("update_stock_missed")}: `$missing_products|count`" target="#res_missed"}
@@ -89,19 +89,19 @@
         {include file="common/subheader.tpl" title="{__("update_stock_broken_options")}: `$broken_options_products|count`" target="#res_broken_options"}
         <div id="res_broken_options" class="collapse">
             {if $broken_options_products}
-                {$broken_options_products|fn_print_r}
+                {$broken_options_products|fn_print_tpl}
             {/if}
         </div>
         {include file="common/subheader.tpl" title="{__("update_stock_broken_net_cost")}: `$broken_net_cost_products|count`" target="#res_broken_net_cost"}
         <div id="res_broken_net_cost" class="collapse">
             {if $broken_net_cost_products}
-                {$broken_net_cost_products|fn_print_r}
+                {$broken_net_cost_products|fn_print_tpl}
             {/if}
         </div>
         {include file="common/subheader.tpl" title="{__("update_stock_trash")}: `$trash|count`" target="#res_trash"}
         <div id="res_trash" class="collapse">
             {if $trash}
-                {$trash|fn_print_r}
+                {$trash|fn_print_tpl}
             {/if}
         </div>
     </div>
