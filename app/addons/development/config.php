@@ -218,6 +218,8 @@ define('SDEK_DOOR_SH_ID', 13);
 define('RU_POST_SH_ID', 9);
 define('EMS_SH_ID', 7);
 
+define('PAY_ON_DELIVERY_P_ID', 18);
+
 define('REVIEW_PROMO_ID', 43);
 define('FREE_SHIPPING_PROMO_ID', 16);
 

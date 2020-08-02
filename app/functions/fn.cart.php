@@ -2770,12 +2770,13 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
     $shipping_rates = array();
     $product_groups = array();
     $cart_products = array();
-    $cart['subtotal'] = $cart['display_subtotal'] = $cart['original_subtotal'] = $cart['amount'] = $cart['total'] = $cart['discount'] = $cart['tax_subtotal'] = $cart['net_subtotal'] = $cart['net_total'] = 0;
+    $cart['subtotal'] = $cart['display_subtotal'] = $cart['original_subtotal'] = $cart['amount'] = $cart['total'] = $cart['discount'] = $cart['tax_subtotal'] = $cart['net_subtotal'] = 0;
 
     $cart['use_discount'] = false;
     $cart['shipping_required'] = $cart['try_on'] = false;
     $cart['shipping_failed'] = $cart['company_shipping_failed'] = false;
     $cart['stored_taxes'] = empty($cart['stored_taxes']) ? 'N': $cart['stored_taxes'];
+    $cart['stored_net_total'] = empty($cart['stored_net_total']) ? 'N': $cart['stored_net_total'];
     $cart['display_shipping_cost'] = $cart['shipping_cost'] = 0;
     $cart['coupons'] = empty($cart['coupons']) ? array() : $cart['coupons'];
     $cart['recalculate'] = isset($cart['recalculate']) ? $cart['recalculate'] : false;
@@ -7122,6 +7123,13 @@ function fn_update_cart_by_data(&$cart, $new_cart_data, $auth)
      */
     fn_set_hook('update_cart_by_data_post', $cart, $new_cart_data, $auth);
 
+    if (!empty($new_cart_data['stored_net_total']) && $new_cart_data['stored_net_total'] == 'Y') {
+        $cart['stored_net_total'] = 'Y';
+        $cart['net_total'] = $new_cart_data['net_total'];
+    } else {
+        $cart['stored_net_total'] = 'N';
+    }
+    
     return true;
 }
 

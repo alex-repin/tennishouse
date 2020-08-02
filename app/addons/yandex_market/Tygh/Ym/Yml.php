@@ -109,6 +109,7 @@ class Yml implements IYml
             'name' => $this->getShopName(),
             'company' => Registry::get('settings.Company.company_name'),
             'url' => Registry::get('config.http_location'),
+            'enable_auto_discounts' => 1,
             'platform' => 'Tennis-Cart',
             'version' => '1.0',
             'agency' => 'Agency',
@@ -141,10 +142,12 @@ class Yml implements IYml
         $params = array(
             'yml_export_yes' => 'Y',
             'extend' => array('description', 'full_description'),
-//             'pid' => 1218
+//             'pid' => 1887
         );
         list($products, ) = fn_get_products($params);
 
+        $pay_on_delivery_limits = db_get_row("SELECT min_limit, max_limit FROM ?:payments WHERE payment_id = ?i", PAY_ON_DELIVERY_P_ID);
+        
         fn_gather_additional_products_data($products, array(
             'get_icon' => false,
             'get_detailed' => true,
@@ -236,7 +239,7 @@ class Yml implements IYml
                 // Images
                 $images = array_merge(
                     array($product['main_pair']),
-                    $product['image_pairs']
+                    $product['image_pairs'] ?? array()
                 );
                 $product['images'] = array_slice($images, 0, self::IMAGES_LIMIT);
 
@@ -284,11 +287,18 @@ class Yml implements IYml
                 $product['pickup-options'] = array(
                     'option@cost=0@days=0-1' => ''
                 );
+                
+                $product['yml_sales_notes'] .= ($product['yml_sales_notes'] != '' ? ' ' : '') . __('found_cheaper');
+                
+                if ((empty($pay_on_delivery_limits['min_limit']) || (!empty($pay_on_delivery_limits['min_limit']) && $pay_on_delivery_limits['min_limit'] <= $product['price'])) && (empty($pay_on_delivery_limits['max_limit']) || (!empty($pay_on_delivery_limits['max_limit']) && $pay_on_delivery_limits['max_limit'] >= $product['price']))) {
+                    $product['yml_sales_notes'] .= ($product['yml_sales_notes'] != '' ? ' ' : '') . __('payment_on_delivery');
+                }
+                
                 $use_group_id = false;
-                if (in_array($product['main_category'], array(APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID))) {
+                if (in_array($product['main_category'], array(APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID, BADMINTON_SHOES_CATEGORY_ID))) {
                     $use_group_id = true;
                 }
-
+                
                 if (!empty($product['inventory'])) {
                     $iteration = 0;
                     $item_groups = array();
@@ -323,7 +333,7 @@ class Yml implements IYml
                                     }
                                 }
                                 if ($option_type[$opt_id] == 'S') {
-                                    if ($product['main_category'] == SHOES_CATEGORY_ID) {
+                                    if (in_array($product['main_category'], array(SHOES_CATEGORY_ID, BADMINTON_SHOES_CATEGORY_ID))) {
                                         $unit = 'EU';
                                     } elseif ($opt_id == APPAREL_KIDS_SIZE_OPT_ID) {
                                         $unit = 'Height';
@@ -400,7 +410,8 @@ class Yml implements IYml
             $promo = array(
                 'gifts' => array(
                     'gift@id=1' => array(
-                        'name' => __('yml_gift_free_stringing')
+                        'name' => __('yml_gift_free_stringing'),
+                        'picture' => 'https://www.tennishouse.ru/images/watermarked/1/detailed/46/SONIC16-BK-12.jpg'
                     )
                 ),
                 'promos' => array(

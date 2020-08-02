@@ -535,13 +535,15 @@ function fn_development_calculate_cart_post(&$cart, $auth, $calculate_shipping, 
     } else {
         unset($cart['review_discount']);
     }
-    $cart['net_total'] = $cart['net_subtotal'];
-    if (!empty($cart['org_payment_surcharge'])) {
+    $cart['net_total'] = $cart['stored_net_total'] != 'Y' ? $cart['net_subtotal'] : $cart['net_total'];
+    if (!empty($cart['org_payment_surcharge']) && $cart['stored_net_total'] != 'Y') {
         $cart['net_total'] += $cart['org_payment_surcharge'];
     }
     if (!empty($cart['shipping'])) {
         foreach ($cart['shipping'] as $i => $shp) {
-            $cart['net_total'] += $shp['original_rate'];
+            if ($cart['stored_net_total'] != 'Y') {
+                $cart['net_total'] += $shp['original_rate'];
+            }
             if (!empty($shp['delivery_time'])) {
                 $cart['delivery_time'] = preg_replace('/[^\-0-9]/', '', $shp['delivery_time']);
             }

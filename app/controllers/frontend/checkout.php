@@ -635,7 +635,7 @@ if (((true == fn_cart_is_empty($cart) && !isset($force_redirection)) || empty($p
     if (empty($payment_methods)) {
         fn_set_notification('W', __('notice'),  __('cannot_proccess_checkout_without_payment_methods'), 'K', 'no_payment_notification');
     } else {
-        fn_set_notification('W', __('cart_is_empty'),  __('cannot_proccess_checkout'));
+//         fn_set_notification('W', __('cart_is_empty'),  __('cannot_proccess_checkout'));
     }
     $force_redirection = "checkout.cart";
     if (defined('AJAX_REQUEST')) {
@@ -1217,7 +1217,7 @@ if ($mode == 'cart') {
 }
 
 if (fn_cart_is_empty($cart) && !isset($force_redirection) && !in_array($mode, array('clear', 'delete', 'cart', 'update', 'apply_coupon', 'shipping_estimation', 'update_shipping', 'complete'))) {
-    fn_set_notification('W', __('cart_is_empty'),  __('cannot_proccess_checkout'));
+//     fn_set_notification('W', __('cart_is_empty'),  __('cannot_proccess_checkout'));
 
     return array(CONTROLLER_STATUS_REDIRECT, 'checkout.cart');
 }
