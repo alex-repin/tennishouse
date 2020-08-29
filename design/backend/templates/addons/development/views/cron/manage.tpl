@@ -23,7 +23,7 @@
     <td class="left">
         <input type="checkbox" name="log_ids[]" value="{$log.log_id}" class="cm-item " /></td>
     <td>
-        <span class="nowrap">{$log.timestamp|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"}</span>
+        <span class="nowrap">{$log.timestamp|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"}{if $log.timestamp_finish && $log.timestamp|date_format:"`$settings.Appearance.time_format`" != $log.timestamp_finish|date_format:"`$settings.Appearance.time_format`"} - {$log.timestamp_finish|date_format:"`$settings.Appearance.time_format`"}{/if}</span>
     </td>
     <td>
         {$log_types[$log.type]}

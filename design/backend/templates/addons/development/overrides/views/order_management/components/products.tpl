@@ -13,7 +13,7 @@
         <th width="50%">{__("product")}</th>
         <th width="20%" colspan="2">{__("price")}</th>
         {if $cart.use_discount}
-        <th width="10%">{__("discount")}</th>
+        <th width="10%" colspan="2">{__("discount")}</th>
         {/if}
         <th class="center">{__("quantity")}</th>
         <th class="center">{__("subtotal")}</th>
@@ -56,13 +56,23 @@
     {/if}
     </td>
     {if $cart.use_discount}
+    <td width="3%">
+        {if $cp.exclude_from_calculate}
+            {__("free")}
+        {else}
+            <input type="hidden" name="cart_products[{$key}][stored_discount]" value="N" />
+            <input class="inline" type="checkbox" name="cart_products[{$key}][stored_discount]" value="Y" {if $cp.stored_discount == "Y"}checked="checked"{/if} onchange="Tygh.$('#db_discount_{$key},#manual_discount_{$key}').toggle();"/>
+        {/if}
+    </td>
     <td class="no-padding nowrap">
     {if $cp.exclude_from_calculate}
         {include file="common/price.tpl" value=""}
     {else}
         {if $cart.order_id && !$cp.product_configurator_groups}
-        <input type="hidden" name="cart_products[{$key}][stored_discount]" value="Y" />
-        <input type="text" class="input-hidden input-mini cm-numeric" size="5" name="cart_products[{$key}][discount]" value="{$cp.discount}" data-a-dec="," data-a-sep="." />
+        <span class="{if $cp.stored_discount == "Y"}hidden{/if}" id="db_discount_{$key}">{include file="common/price.tpl" value=$cp.discount}</span>
+        <div class="{if $cp.stored_discount != "Y"}hidden{/if}" id="manual_discount_{$key}">
+            {include file="common/price.tpl" value=$cp.discount view="input" input_name="cart_products[`$key`][discount]" class="input-hidden input-mini" }
+        </div>
         {else}
         {include file="common/price.tpl" value=$cp.discount}
         {/if}
@@ -90,7 +100,7 @@
 {if $cp.product_options}
 <tr id="product_options_{$key}_{$cp.product_id}" class="cm-ex-op row-more row-gray">
     <td>&nbsp;</td>
-    <td colspan="{if $cart.use_discount}7{else}6{/if}">
+    <td colspan="{if $cart.use_discount}8{else}7{/if}">
         {include file="views/products/components/select_product_options.tpl" product_options=$cp.product_options name="cart_products" id=$key use_exceptions="Y" product=$cp additional_class="option-item"}
         <div id="warning_{$key}" class="pull-left notification-title-e hidden">&nbsp;&nbsp;&nbsp;{__("nocombination")}</div>
     </td>
@@ -100,7 +110,7 @@
 {foreachelse}
     {if $smarty.capture.extra_items|trim == ""}
         <tr>
-            <td colspan="{if $cart.use_discount}7{else}6{/if}" class="center">
+            <td colspan="{if $cart.use_discount}8{else}7{/if}" class="center">
                 <p class="muted">
                     {__("section_is_not_completed")}</br>
                     {__("orders_no_items")}

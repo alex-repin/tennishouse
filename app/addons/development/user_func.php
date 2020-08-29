@@ -81,11 +81,11 @@ function fn_run_cron_script($type, $data)
         $action = array(
             'type' => $type,
             'status' => 'P',
-            'timestamp' => TIME
+            'timestamp' => time()
         );
         $log_id = db_query("INSERT INTO ?:cron_logs ?e", $action);
         list($result, $results) = call_user_func($data['function']);
-        db_query("UPDATE ?:cron_logs SET status = ?s, results = ?s WHERE log_id = ?i", ($result ? 'S' : 'F'), serialize($results), $log_id);
+        db_query("UPDATE ?:cron_logs SET status = ?s, results = ?s, timestamp_finish = ?i WHERE log_id = ?i", ($result ? 'S' : 'F'), serialize($results), time(), $log_id);
     }
 
     return true;
@@ -391,11 +391,10 @@ function fn_save_cart_step($cart, $user_id)
 
 function fn_update_competitive_prices()
 {
-    $errors = array();
+    $details = array();
     $data = db_get_hash_array("SELECT * FROM ?:competitive_prices ORDER BY object_id DESC", 'object_id');
 
     $to_delete = $to_update = $updated_ids = array();
-    $count = 0;
     foreach ($data as $_dt) {
         if (list($price, $code, $name, $in_stock) = fn_parse_competitive_price($_dt['link'])) {
             $upd_item = array(
@@ -416,16 +415,13 @@ function fn_update_competitive_prices()
             $to_update[] = $upd_item;
             if ($in_stock == 'Y') {
                 $updated_ids[] = $_dt['item_id'];
-                $count++;
-                if ($count > 5) {
-                    break;
-                }
             }
         } else {
             $to_delete[] = $_dt['item_id'];
         }
         if (count($to_update) == 50) {
             db_query("REPLACE INTO ?:competitive_prices ?m", $to_update);
+            $details = array_merge($details, $to_update);
             $to_update = array();
         }
         if (count($to_delete) == 50) {
@@ -437,6 +433,7 @@ function fn_update_competitive_prices()
     }
 
     if (!empty($to_update)) {
+        $details = array_merge($details, $to_update);
         db_query("REPLACE INTO ?:competitive_prices ?m", $to_update);
     }
     if (!empty($to_delete)) {
@@ -444,11 +441,7 @@ function fn_update_competitive_prices()
         db_query("DELETE FROM ?:competitive_pairs WHERE competitive_id IN (?n)", $to_delete);
     }
 
-    // if (!empty($updated_ids)) {
-    //     $updated_ids = array(3534, 15717);
-    // }
-
-    return array(true, $errors);
+    return array(true, $details);
 }
 
 function fn_actualize_prices()
@@ -2404,7 +2397,6 @@ function fn_get_checkout_cross_sales($params)
                 'limit' => $limit,
                 'subcats' => 'Y'
             );
-            $start = microtime();
             foreach ($show_cat_ids as $id) {
                 $_params['cid'] = $id;
                 list($prods,) = fn_get_products($_params);

@@ -625,10 +625,33 @@ function fn_development_cron_routine()
 
     if (!empty($scheme)) {
         foreach ($scheme as $type => $data) {
-            if ((!empty($data['wday']) && $data['wday'] != date('N')) || (!empty($data['H']) && $data['H'] != date('H')) || !function_exists($data['function'])) {
+        
+            $run = true;
+            if (!empty($data['frequency'])) {
+                foreach ($data['frequency'] as $param => $vals) {
+                    $vals = explode(',', $vals);
+                    $cond = false;
+                    foreach ($vals as $val) {
+                        if (date($param) == $val) {
+                            $cond = true;
+                            break;
+                        }
+                    }
+                    if (empty($cond)) {
+                        $run = false;
+                        break;
+                    }
+                }
+            }
+            if (empty($run) || !function_exists($data['function'])) {
                 continue;
             }
-            $is_executed = db_get_field("SELECT log_id FROM ?:cron_logs WHERE type = ?s AND status IN (?a) AND timestamp > ?i", $type, array('F', 'S'), TIME - $data['frequency']);
+            
+            $now = getdate(time());
+            $time_from = mktime($now['hours'], 0, 0, $now['mon'], $now['mday'], $now['year']);
+            $time_to = mktime($now['hours'] + 1, 0, 0, $now['mon'], $now['mday'], $now['year']);
+            
+            $is_executed = db_get_field("SELECT log_id FROM ?:cron_logs WHERE type = ?s AND status IN (?a) AND timestamp >= ?i AND timestamp <= ?i", $type, array('F', 'S'), $time_from, $time_to);
             if (empty($is_executed) ) {
                 fn_run_cron_script($type, $data);
             }

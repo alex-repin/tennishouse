@@ -386,7 +386,7 @@ function fn_promotion_apply($zone, &$data, &$auth = NULL, &$cart_products = NULL
     if ($zone == 'cart') {
         if (empty($data['order_id']) || !empty($data['recalculate_catalog_promotions'])) {
             foreach ($cart_products as $k => $cproduct) {
-                if (isset($cproduct['exclude_from_calculate']) || (!floatval($cproduct['base_price']) && $cproduct['base_price'] != 0) || (empty($ordered_promotions['item_no_sum_up']) && !floatval($cart_products[$k]['list_price']) && empty($cart_products[$k]['qty_discount_price']))) {
+                if (isset($cproduct['exclude_from_calculate']) || (!floatval($cproduct['base_price']) && $cproduct['base_price'] != 0) || (empty($ordered_promotions['item_no_sum_up']) && !floatval($cart_products[$k]['list_price']) && empty($cart_products[$k]['qty_discount_price'])) || $cproduct['stored_discount'] == 'Y') {
                     continue;
                 }
                 $data['promotion_item_id'] = $k;

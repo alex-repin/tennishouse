@@ -104,6 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // update products quantity and etc.
     if ($mode == 'update_totals') {
+        $cart['recalculate_catalog_promotions'] = true;
         fn_update_cart_by_data($cart, $_REQUEST, $customer_auth);
     }
 

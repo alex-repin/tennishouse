@@ -142,7 +142,7 @@ class Yml implements IYml
         $params = array(
             'yml_export_yes' => 'Y',
             'extend' => array('description', 'full_description'),
-//             'pid' => 1887
+//             'pid' => 1655
         );
         list($products, ) = fn_get_products($params);
 
@@ -317,7 +317,7 @@ class Yml implements IYml
                         }
                         $name_suffix = array();
                         foreach ($options as $opt_id => $vr_id) {
-                            if (!empty($product['product_options'][$opt_id]) && !empty($product['product_options'][$opt_id]['variants'][$vr_id]['variant_name'])) {
+                            if (!empty($product['product_options'][$opt_id]) && $product['product_options'][$opt_id]['variants'][$vr_id]['variant_name'] !== false) {
                                 if (empty($product['duplicated_data']) || $product['duplicated_data']['option_id'] != $opt_id) {
                                     $name_suffix[] = $product['product_options'][$opt_id]['option_name'] . ': ' . $product['product_options'][$opt_id]['variants'][$vr_id]['variant_name'];
                                 }
@@ -887,7 +887,7 @@ class Yml implements IYml
             foreach ($product['product_features'] as $feature) {
                 $attr = '';
                 foreach ($feature as $f_p => $f_v) {
-                    if (!in_array($f_p, array('feature_id', 'value')) && !empty($f_v)) {
+                    if (!in_array($f_p, array('feature_id', 'value')) && $f_v !== false) {
                         $attr .= '@' . $f_p . '=' . $this->escape($f_v);
                     }
                 }

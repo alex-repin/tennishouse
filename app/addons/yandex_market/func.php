@@ -383,7 +383,7 @@ function fn_yandex_market_array_to_yml($data, $level = 0)
         $tab = str_repeat('    ', $level);
 
         if (empty($value)) {
-            if ($key == 'local_delivery_cost') {
+            if ($key == 'local_delivery_cost' || reset($data) == 'name=Размер') {
                 $return .= $tab . "<" . $key . $attr . ">" . fn_yandex_market_array_to_yml($value, $level + 1) . '</' . $key . ">\n";
             } else {
                 $return .= $tab . "<" . $key . $attr . "/>\n";

@@ -447,6 +447,7 @@
                 `type` char(1) NOT NULL,
                 `status` char(1) NOT NULL DEFAULT 'S',
                 `timestamp` int(11) unsigned NOT NULL,
+                `timestamp_finish` INT(11) unsigned NOT NULL,
                 `results` TEXT NOT NULL,
                 PRIMARY KEY (`log_id`)
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
