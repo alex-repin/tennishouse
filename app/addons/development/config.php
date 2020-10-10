@@ -206,6 +206,8 @@ define('HEAD_GRIP_OPT_ID', 547);
 
 define('SIZE_CHART_TAB_ID', 10);
 
+define('INTERNATIONAL_PAYMENT_ID', 23);
+
 define('TH_WAREHOUSE_ID', 1);
 define('BABOLAT_WAREHOUSE_ID', 2);
 define('DRIADA_WAREHOUSE_ID', 4);
