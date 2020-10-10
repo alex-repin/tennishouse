@@ -11,7 +11,7 @@
                 </span>
                 {/hook}
             {/if}
-            
+
             {hook name="checkout:edit_link_title"}
             {if $complete && !$edit}
                 <a class="ty-step__title-txt cm-ajax" href="{"checkout.checkout?edit_step=step_three&from_step=`$edit_step`"|fn_url}" data-ca-target-id="checkout_*">{__("shipping_options")}</a>
@@ -28,12 +28,12 @@
                 <input type="hidden" name="update_step" value="step_three" />
                 <input type="hidden" name="next_step" value="step_four" />
                 <input type="hidden" name="result_ids" value="checkout*" />
-                
+
                 <div class="clearfix">
                     <div class="checkout__block">
-                    <div>{__("quarantine_shipping_delay")}</div>
                     {hook name="checkout:select_shipping"}
                         {if !$cart.shipping_failed}
+                            <div>{__("quarantine_shipping_delay")}</div>
                             {include file="views/checkout/components/shipping_rates.tpl" no_form=true display="radio"}
                             {if $edit}
                                 <div class="ty-checkout__shipping-tips">
@@ -47,7 +47,7 @@
                     {/hook}
                     </div>
                 </div>
-                
+
                 <div class="ty-checkout-buttons">
                     {include file="buttons/button.tpl" but_meta="ty-btn__secondary" but_name="dispatch[checkout.update_steps]" but_text=$but_text but_id="step_three_but"}
                 </div>

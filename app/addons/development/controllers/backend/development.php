@@ -1769,11 +1769,13 @@ if ($mode == 'calculate_balance') {
             $delete += $_exceptions;
         }
     }
+    
     if (!empty($delete)) {
         db_query("DELETE FROM ?:product_options_exceptions WHERE exception_id IN (?n)", array_keys($delete));
     }
 
     exit;
+
 } elseif ($mode == 'generate_descriptions') {
 
     $cids = array(RACKETS_CATEGORY_ID);
@@ -1829,6 +1831,7 @@ if ($mode == 'calculate_balance') {
     db_query("DELETE FROM ?:competitive_pairs WHERE competitive_id IN (?n)", $deleted);
 
     exit;
+
 }
 
 function fn_fill_image_common_description(&$images_alts, $detailed_id, $name)

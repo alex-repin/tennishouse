@@ -244,7 +244,6 @@ function fn_get_cart_product_data($hash, &$product, $skip_promotion, &$cart, &$a
         $_pdata['price'] = $_pdata['original_price'] = fn_format_price($product['price']);
 
         $_pdata['stored_price'] = $product['stored_price'];
-        $_pdata['stored_discount'] = $product['stored_discount'];
 
         if ($cart['options_style'] == 'F') {
             $_pdata['product_options'] = fn_get_selected_product_options($product['product_id'], $product['product_options'], CART_LANGUAGE);
@@ -289,24 +288,19 @@ function fn_get_cart_product_data($hash, &$product, $skip_promotion, &$cart, &$a
                 }
             }
 
-        } else {
-            if ($product['stored_discount'] == 'Y') {
-                $_pdata['discount'] = $product['discount'];
-                $_pdata['price'] -= $product['discount'];
+            // apply discount to the product
+            if (!empty($_pdata['discount'])) {
+                $cart['use_discount'] = true;
             }
         }
 
-        // apply discount to the product
-        if (!empty($_pdata['discount'])) {
-            $cart['use_discount'] = true;
-        }
-            
         if (!empty($product['object_id'])) {
             $_pdata['object_id'] = $product['object_id'];
         }
 
         $_pdata['shipping_params'] = empty($_pdata['shipping_params']) ? array() : unserialize($_pdata['shipping_params']);
 
+        $_pdata['stored_discount'] = $product['stored_discount'];
         $cart['products'][$hash]['modifiers_price'] = $product['modifiers_price'];
 
         $_pdata['subtotal'] = $_pdata['price'] * $product['amount'];
@@ -7135,7 +7129,7 @@ function fn_update_cart_by_data(&$cart, $new_cart_data, $auth)
     } else {
         $cart['stored_net_total'] = 'N';
     }
-    
+
     return true;
 }
 

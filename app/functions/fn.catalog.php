@@ -6704,9 +6704,9 @@ function fn_clone_options_exceptions(&$exceptions, $old_opt_id, $old_var_id, $ne
                     $exceptions[$key]['combination'][$new_opt_id] = $new_var_id;
                 }
             }
-            if ($variant == $old_var_id) {
-                $exceptions[$key]['combination'][$option] = $new_var_id;
-            }
+            // if ($variant == $old_var_id) {
+            //     $exceptions[$key]['combination'][$option] = $new_var_id;
+            // }
         }
     }
 
@@ -6892,7 +6892,7 @@ function fn_clone_options_inventory($from_product_id, $to_product_id, $options, 
         $_data['product_id'] = $to_product_id;
         $_data['combination_hash'] = fn_generate_cart_id($to_product_id, array('product_options' => $new_variants));
         $_data['combination'] = rtrim($inventory[$key]['combination'], "|");
-        $_data['amount'] = $value['amount'];
+        $_data['amount'] = 0;
         $_data['product_code'] = $value['product_code'];
         $_data['position'] = $value['position'];
         db_query("INSERT INTO ?:product_options_inventory ?e", $_data);

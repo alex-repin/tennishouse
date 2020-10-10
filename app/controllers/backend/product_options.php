@@ -100,7 +100,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
             $new_amount = 0;
             foreach ($_REQUEST['inventory'] as $k => $v) {
-                db_query("UPDATE ?:product_options_inventory SET ?u WHERE combination_hash = ?s", $v, $k);
                 $wh_total = 0;
                 foreach ($_REQUEST['inventory'][$k]['warehouse_inventory'] as $wh_hash => $w) {
                     if (empty($w['amount'])) {
@@ -110,6 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $wh_total += $w['amount'];
                 }
                 $_REQUEST['inventory'][$k]['amount'] = $wh_total;
+                db_query("UPDATE ?:product_options_inventory SET ?u WHERE combination_hash = ?s", $_REQUEST['inventory'][$k], $k);
                 $new_amount += $wh_total;
             }
             if ($total_amount <= 0 && $new_amount > 0) {

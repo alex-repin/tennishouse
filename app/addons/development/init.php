@@ -36,7 +36,7 @@ fn_register_hooks(
     'get_categories',
     'top_menu_form',
     'get_products',
-    
+
     'get_lang_var_post',
     'get_products_pre',
     'gather_additional_product_data_post',
@@ -121,5 +121,6 @@ fn_register_hooks(
     'delete_category_post',
     'update_promotion_post',
     'gather_additional_product_data_before_options',
-    'dispatch_before_display'
+    'dispatch_before_display',
+    'clone_product_options_post'
 );

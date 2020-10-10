@@ -23,10 +23,10 @@ $imported = db_get_field("SELECT COUNT(product_id) FROM ?:products WHERE is_impo
 
 if (!empty($imported) && !($_REQUEST['dispatch'] == 'products.manage' && !empty($_REQUEST['approval_status']) && $_REQUEST['approval_status'] == 'P')) {
     if (!fn_notification_exists('extra', 'approve_imported')) {
-        fn_set_notification('N', __('notice'), __('imported_products_need_approval', array(
-            '[number]' => $imported,
-            '[products_link]' => fn_url('products.manage?approval_status=P', 'A')
-        )), 'S', 'approve_imported');
+        // fn_set_notification('N', __('notice'), __('imported_products_need_approval', array(
+        //     '[number]' => $imported,
+        //     '[products_link]' => fn_url('products.manage?approval_status=P', 'A')
+        // )), 'S', 'approve_imported');
     }
 } else {
     fn_delete_notification('approve_imported');

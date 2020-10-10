@@ -60,24 +60,6 @@
 
     {if $auth.is_root == 'Y'}
         <div class="control-group">
-            <label class="control-label" for="elm_shipping_weight">{__("shipping_weight")}:</label>
-            <div class="controls">
-                <input type="text" name="category_data[shipping_weight]" id="elm_category_shipping_weight" size="10" value="{$category_data.shipping_weight}" class="input-long" />
-                <div class="checkbox" style="display: inline-block;">
-                    {__("override_shipping_weight")} <input type="checkbox" name="category_data[override_shipping_weight]" id="elm_category_override_shipping_weight" value="Y" />
-                </div>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="elm_category_margin">{__("price_margin")}(%):</label>
-            <div class="controls">
-                <input type="text" name="category_data[margin]" id="elm_category_margin" size="10" value="{$category_data.margin}" class="input-long" />
-                <div class="checkbox" style="display: inline-block;">
-                    {__("recalculate_margins")} <input type="checkbox" name="category_data[recalculate_margins]" id="elm_category_recalculate_margins" value="Y" />
-                </div>
-            </div>
-        </div>
-        <div class="control-group">
             <label class="control-label" for="elm_category_net_currency_code">{__("net_currency_code")}:</label>
             <div class="controls">
                 <select class="span3" name="category_data[net_currency_code]">
@@ -85,17 +67,6 @@
                     {foreach from=$currencies item="cur"}
                         <option value="{$cur.currency_code}" {if $category_data.net_currency_code == $cur.currency_code}selected="selected"{/if}>{$cur.description}</option>
                     {/foreach}
-                </select>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="elm_category_update_products_price_mode">{__("price_mode")}:</label>
-            <div class="controls">
-                <select class="span3" name="category_data[products_price_mode]">
-                    <option value="">{__("update_product_values_to")}</option>
-                    <option value="S">{__("static_price")}</option>
-                    <option value="D">{__("dynamic_price")}</option>
-                    <option value="M">{__("competitor_price")}</option>
                 </select>
             </div>
         </div>

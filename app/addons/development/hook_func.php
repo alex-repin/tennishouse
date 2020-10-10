@@ -17,6 +17,11 @@ use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_development_clone_product_options_post($from_product_id, $to_product_id, $from_global_option_id)
+{
+    fn_update_product_exceptions($to_product_id);
+}
+
 function fn_development_dispatch_before_display()
 {
     if (empty($_SESSION['hide_anouncement'])) {
@@ -625,7 +630,7 @@ function fn_development_cron_routine()
 
     if (!empty($scheme)) {
         foreach ($scheme as $type => $data) {
-        
+
             $run = true;
             if (!empty($data['frequency'])) {
                 foreach ($data['frequency'] as $param => $vals) {
@@ -646,11 +651,11 @@ function fn_development_cron_routine()
             if (empty($run) || !function_exists($data['function'])) {
                 continue;
             }
-            
+
             $now = getdate(time());
             $time_from = mktime($now['hours'], 0, 0, $now['mon'], $now['mday'], $now['year']);
             $time_to = mktime($now['hours'] + 1, 0, 0, $now['mon'], $now['mday'], $now['year']);
-            
+
             $is_executed = db_get_field("SELECT log_id FROM ?:cron_logs WHERE type = ?s AND status IN (?a) AND timestamp >= ?i AND timestamp <= ?i", $type, array('F', 'S'), $time_from, $time_to);
             if (empty($is_executed) ) {
                 fn_run_cron_script($type, $data);
@@ -956,8 +961,11 @@ function fn_development_get_category_data_post($category_id, $field_list, $get_m
     if (!empty($category_data['qty_discounts'])) {
         $category_data['prices'] = unserialize($category_data['qty_discounts']);
     }
-    if (!empty($category_data['cross_categories'])) {
-        $category_data['cross_categories'] = unserialize($category_data['cross_categories']);
+    if (!empty($category_data['qty_discounts'])) {
+        $category_data['prices'] = unserialize($category_data['qty_discounts']);
+    }
+    if (!empty($category_data['shipping_params'])) {
+        $category_data = array_merge(unserialize($category_data['shipping_params']), $category_data);
     }
     if (!empty($category_data['id_path'])) {
         list($category_data['type_id'], $category_data['type']) = fn_identify_category_type($category_data['id_path']);
@@ -1672,6 +1680,25 @@ function fn_development_update_category_pre(&$category_data, $category_id, $lang
     if (!empty($category_data['cross_categories'])) {
         $category_data['cross_categories'] = serialize($category_data['cross_categories']);
     }
+
+    $shipping_params = array();
+    if (!empty($category_id)) {
+        $shipping_params = db_get_field('SELECT shipping_params FROM ?:categories WHERE category_id = ?i', $category_id);
+        if (!empty($shipping_params)) {
+            $shipping_params = unserialize($shipping_params);
+        }
+    }
+
+    // Save the product shipping params
+    $_shipping_params = array(
+        'min_items_in_box' => isset($category_data['min_items_in_box']) ? intval($category_data['min_items_in_box']) : (!empty($shipping_params['min_items_in_box']) ? $shipping_params['min_items_in_box'] : 0),
+        'max_items_in_box' => isset($category_data['max_items_in_box']) ? intval($category_data['max_items_in_box']) : (!empty($shipping_params['max_items_in_box']) ? $shipping_params['max_items_in_box'] : 0),
+        'box_length' => isset($category_data['box_length']) ? intval($category_data['box_length']) : (!empty($shipping_params['box_length']) ? $shipping_params['box_length'] : 0),
+        'box_width' => isset($category_data['box_width']) ? intval($category_data['box_width']) : (!empty($shipping_params['box_width']) ? $shipping_params['box_width'] : 0),
+        'box_height' => isset($category_data['box_height']) ? intval($category_data['box_height']) : (!empty($shipping_params['box_height']) ? $shipping_params['box_height'] : 0),
+    );
+
+    $category_data['shipping_params'] = serialize($_shipping_params);
 }
 
 function fn_development_get_products(&$params, &$fields, &$sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
@@ -2260,23 +2287,21 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
 
 function fn_development_update_category_post($category_data, $category_id, $lang_code)
 {
-    if ((!empty($category_data['override_shipping_weight']) && $category_data['override_shipping_weight'] == 'Y') || (!empty($category_data['recalculate_margins']) && $category_data['recalculate_margins'] == 'Y') || !empty($category_data['products_price_mode'])) {
-        $products = array();
+    if (!empty($category_data['apply_to_products'])) {
+        $products = $prod_ids = array();
         $_params = array (
             'cid' => $category_id,
             'subcats' => 'Y'
         );
         list($prods,) = fn_get_products($_params);
+        foreach ($prods as $i => $prod) {
+            $prod_ids[] = $prod['product_id'];
+        }
         if (!empty($prods)) {
-            if (!empty($category_data['override_shipping_weight']) && $category_data['override_shipping_weight'] == 'Y') {
-                foreach ($prods as $i => $prod) {
-                    $products[] = $prod['product_id'];
-                }
-                if (!empty($products)) {
-                    db_query("UPDATE ?:products SET weight = ?d WHERE product_id IN (?n)", $category_data['shipping_weight'], $products);
-                }
+            if (!empty($category_data['apply_to_products']['shipping_weight']) && $category_data['apply_to_products']['shipping_weight'] == 'Y' && !empty($prod_ids)) {
+                db_query("UPDATE ?:products SET weight = ?d WHERE product_id IN (?n)", $category_data['shipping_weight'], $prod_ids);
             }
-            if (!empty($category_data['recalculate_margins']) && $category_data['recalculate_margins'] == 'Y') {
+            if (!empty($category_data['apply_to_products']['margin']) && $category_data['apply_to_products']['margin'] == 'Y') {
                 foreach ($prods as $i => $prod) {
                     if (!empty($prod['price_mode']) && $prod['price_mode'] == 'D' && $prod['net_cost'] > 0) {
                         unset($prod['margin']);
@@ -2287,13 +2312,11 @@ function fn_development_update_category_post($category_data, $category_id, $lang
                     fn_process_update_prices($products);
                 }
             }
-            if (!empty($category_data['products_price_mode'])) {
-                foreach ($prods as $i => $prod) {
-                    $products[] = $prod['product_id'];
-                }
-                if (!empty($products)) {
-                    db_query("UPDATE ?:products SET price_mode = ?s WHERE product_id IN (?n)", $category_data['products_price_mode'], $products);
-                }
+            if (!empty($category_data['apply_to_products']['products_price_mode']) && !empty($prod_ids)) {
+                db_query("UPDATE ?:products SET price_mode = ?s WHERE product_id IN (?n)", $category_data['products_price_mode'], $prod_ids);
+            }
+            if (!empty($category_data['apply_to_products']['shipping_params'])) {
+                db_query("UPDATE ?:products SET shipping_params = ?s WHERE product_id IN (?n)", $category_data['shipping_params'], $prod_ids);
             }
         }
     }

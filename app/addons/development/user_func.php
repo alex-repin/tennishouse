@@ -2070,8 +2070,11 @@ function fn_update_combinations($product_id)
     }
 }
 
-function fn_update_product_exceptions($product_id, $combinations)
+function fn_update_product_exceptions($product_id, $combinations = array())
 {
+    if (empty($combinations)) {
+        $combinations = db_get_hash_array("SELECT combination_hash, amount FROM ?:product_options_inventory WHERE product_id = ?i", 'combination_hash', $product_id);
+    }
     if (!empty($combinations)) {
         $combination_options = db_get_hash_single_array("SELECT combination, combination_hash FROM ?:product_options_inventory WHERE combination_hash IN (?n)", array('combination_hash', 'combination'), array_keys($combinations));
         if (!empty($combination_options)) {

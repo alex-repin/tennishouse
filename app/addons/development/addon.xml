@@ -830,6 +830,9 @@
         <item>
             ALTER TABLE `cscart_products` CHANGE `yml_pickup` `yml_pickup` CHAR(1) NOT NULL DEFAULT 'Y';
         </item>
+        <item>
+            ALTER TABLE `cscart_categories` ADD `shipping_params` TEXT NOT NULL; 
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>

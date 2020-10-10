@@ -29,7 +29,7 @@
         &nbsp;-&nbsp;
         <input type="text" name="product_data[max_items_in_box]" size="5" value="{$product_data.max_items_in_box|default:"0"}" class="input-micro" onkeyup="fn_product_shipping_settings(this);" />
     </div>
-    
+
     {if $product_data.min_items_in_box > 0 || $product_data.max_items_in_box}
         {assign var="box_settings" value=true}
     {/if}
@@ -55,23 +55,3 @@
         <input type="text" name="product_data[box_height]" id="product_box_height" size="10" value="{$product_data.box_height|default:"0"}" class="input-long shipping-dependence" {if !$box_settings}disabled="disabled"{/if} />
     </div>
 </div>
-
-<script type="text/javascript">
-{literal}
-function fn_product_shipping_settings(elm)
-{
-    var jelm = Tygh.$(elm);
-    var available = false;
-    
-    Tygh.$('input', jelm.parent()).each(function() {
-        if (parseInt(Tygh.$(this).val()) > 0) {
-            available = true;
-        }
-    });
-    
-    Tygh.$('input.shipping-dependence').prop('disabled', (available ? false : true));
-    
-}
-
-{/literal}
-</script>

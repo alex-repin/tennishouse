@@ -48,10 +48,10 @@ if ($mode == 'update' || $mode == 'add') {
         }
         $category_data['sections_categorization'] = $f_ids;
     }
-    
+
     fn_get_schema('settings', 'variants.functions', 'php', true);
     $category_data['sortings'] = fn_settings_variants_appearance_available_product_list_sortings();
-    
+
     $params = array(
         'category_id' => $category_data['category_id'],
         'get_descriptions' => true
@@ -60,13 +60,17 @@ if ($mode == 'update' || $mode == 'add') {
 
     Registry::get('view')->assign('category_data', $category_data);
     Registry::get('view')->assign('section_features', $section_features);
-    
+
     $tabs = Registry::get('navigation.tabs');
-    $cross_tab = array (
+    $update_products_tab = array (
+        'title' => __('update_products'),
+        'js' => true
+    );
+    $tabs = fn_insert_before_key($tabs, 'addons', 'update_products', $update_products_tab);
+    $tabs['cross_categories'] = array (
         'title' => __('cross_categories'),
         'js' => true
     );
-    $tabs = fn_insert_before_key($tabs, 'addons', 'cross_categories', $cross_tab);
     $tabs['qty_discounts'] = array (
         'title' => __('qty_discounts'),
         'js' => true
