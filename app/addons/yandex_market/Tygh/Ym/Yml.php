@@ -139,6 +139,9 @@ class Yml implements IYml
             $visible_categories = $this->getVisibleCategories();
         }
 
+        $free_ship = fn_get_promotion_data(FREE_SHIPPING_PROMO_ID);
+        $free_ship_cat = fn_get_promotion_condition($free_ship, 'categories');
+        
         $params = array(
             'yml_export_yes' => 'Y',
             'extend' => array('description', 'full_description'),
@@ -277,10 +280,10 @@ class Yml implements IYml
                 if ($product['yml_cost'] != 0) {
                     $product['delivery-options']['option@cost=' . $product['yml_cost'] . '@days=2-3@order-before=24'] = '';
                 } else {
-                    if ($product['price'] < Registry::get('addons.development.free_shipping_cost')) {
+                    if ($product['price'] < Registry::get('addons.development.free_shipping_cost') || (!empty($free_ship_cat) && !in_array($product['main_category'], $free_ship_cat))) {
                         $product['delivery-options']['option@cost=' . $this->options['global_local_delivery_cost'] . '@days=2-3@order-before=24'] = '';
                     } else {
-                        $product['delivery-options']['option@cost=0@days=2-3@order-before=24'] = '';
+                        $product['delivery-options']['option@cost=300@days=2-3@order-before=24'] = '';
                     }
                     $product['delivery-options']['option@cost=500@days=0-1@order-before=24'] = '';
                 }

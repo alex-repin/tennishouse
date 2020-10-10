@@ -28,6 +28,26 @@ use Tygh\Ym\Yml;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_get_promotion_condition($conditions, $condition)
+{
+    if (!empty($conditions['condition'])) {
+        if ($conditions['condition'] == $condition) {
+            return explode(',', $conditions['value']);
+        }
+    } elseif (is_array($conditions)) {
+        foreach ($conditions as $conds) {
+            $val = fn_get_promotion_condition($conds, $condition);
+            if (!empty($val)) {
+                return $val;
+            }
+        }
+    } elseif (!empty($conditions['conditions'])) {
+        return fn_get_promotion_condition($conditions['conditions'], $condition);
+    }
+    
+    return false;
+}
+
 function fn_update_xml_feed()
 {
     $errors = array();

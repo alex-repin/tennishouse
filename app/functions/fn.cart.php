@@ -6786,10 +6786,11 @@ function fn_prepare_checkout_payment_methods(&$cart, &$auth, $lang_code = CART_L
     }
 
     // Check if payment method has surcharge rates
+    $b_country = !empty($cart['b_country']) ? $cart['b_country'] : (!empty($cart['user_data']['b_country']) ? $cart['user_data']['b_country'] : false);
     foreach ($payment_methods as $k => $v) {
 
         // [tennishouse]
-        if ($payment_methods[$k]['processor_type'] == 'C' || (!empty($payment_methods[$k]['min_limit']) && !empty($cart['total']) && $payment_methods[$k]['min_limit'] > $cart['total']) || (!empty($payment_methods[$k]['max_limit']) && !empty($cart['total']) && $payment_methods[$k]['max_limit'] < $cart['total'])) {
+        if ($payment_methods[$k]['processor_type'] == 'C' || (!empty($payment_methods[$k]['min_limit']) && !empty($cart['total']) && $payment_methods[$k]['min_limit'] > $cart['total']) || (!empty($payment_methods[$k]['max_limit']) && !empty($cart['total']) && $payment_methods[$k]['max_limit'] < $cart['total']) || (!empty($b_country) && $b_country != 'RU' && $v['payment_id'] != INTERNATIONAL_PAYMENT_ID) || (($b_country == 'RU' || empty($b_country)) && $v['payment_id'] == INTERNATIONAL_PAYMENT_ID)) {
             continue;
         }
         // [tennishouse]
