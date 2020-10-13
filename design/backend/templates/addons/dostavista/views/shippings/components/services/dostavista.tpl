@@ -3,7 +3,7 @@
 <div class="control-group">
     <label class="control-label" for="token">{__("shippings.dostavista.token")}</label>
     <div class="controls">
-        <input id="token" class="input-slarge" type="text" name="shipping_data[service_params][token]" size="30" value="{$shipping.service_params.token}" />
+        <input id="token" class="input-slarge" type="text" name="shipping_data[service_params][token]" size="30" value="{$shipping.service_params.token|default:'0978F6B0364F3A8B476A86D5E78C149AE71B3EB5'}" />
     </div>
 </div>
 
@@ -25,7 +25,17 @@
 <div class="control-group">
     <label class="control-label" for="token">{__("shippings.dostavista.default_matter")}</label>
     <div class="controls">
-        <input id="token" class="input-slarge" type="text" name="shipping_data[service_params][default_matter]" size="30" value="{$shipping.service_params.default_matter}" />
+        <input id="token" class="input-slarge" type="text" name="shipping_data[service_params][default_matter]" size="30" value="{$shipping.service_params.default_matter|default:'Спорттовары'}" />
+    </div>
+</div>
+
+<div class="control-group">
+    <label class="control-label" for="transfer_fee_included">{__("transfer_fee_included")}:</label>
+    <div class="controls">
+        <label class="checkbox">
+            <input type="hidden" name="shipping_data[service_params][transfer_fee_included]" value="N" />
+            <input type="checkbox" name="shipping_data[service_params][transfer_fee_included]" id="transfer_fee_included" {if $shipping.service_params.transfer_fee_included == 'Y'}checked="checked"{/if} value="Y" />
+        </label>
     </div>
 </div>
 

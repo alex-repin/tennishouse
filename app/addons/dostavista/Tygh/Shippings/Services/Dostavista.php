@@ -99,9 +99,9 @@ class Dostavista implements IService
         if (empty($shipping_settings['token'])) {
             $this->_internalError(__('shippings.dostavista.token_error'));
         }
-        if ($location['state'] != $origination['state']) {
-            $this->_internalError(__('shippings.dostavista.different_regions'));
-        }
+        // if ($location['state'] != $origination['state']) {
+        //     $this->_internalError(__('shippings.dostavista.different_regions'));
+        // }
         $post = array(
             'matter' => $shipping_settings['default_matter'],
             'vehicle_type_id' => $shipping_settings['vehicle_type'],
@@ -224,13 +224,15 @@ class Dostavista implements IService
         $result = json_decode($response);
         $result_array = json_decode(json_encode($result), true);
 
-        if (empty($this->_error_stack) && !empty($result_array['order'])) {
+        $return['error'] = $this->processErrors($result_array);
+
+        if (empty($this->_error_stack) && empty($return['error'])) {
 
             $rates = $this->_getRates($result_array);
 
             $this->_fillSessionData($rates);
 
-            if (empty($this->_error_stack) && !empty($rates['price'])) {
+            if (!empty($rates['price'])) {
                 $return['cost'] = $rates['price'];
                 $return['delivery_time'] = $rates['date'];
                 $return['available_payments'] = $rates['available_payments'];
@@ -239,8 +241,6 @@ class Dostavista implements IService
                 $return['error'] = $this->processErrors($result_array);
             }
 
-        } else {
-            $return['error'] = $this->processErrors($result_array);
         }
 
         return $return;
@@ -250,7 +250,10 @@ class Dostavista implements IService
     {
         $rates = array();
         if (!empty($response['order']['payment_amount'])) {
-            $rates['price'] = $response['order']['payment_amount'] - $response['order']['money_transfer_fee_amount'];
+            $rates['price'] = $response['order']['payment_amount'];
+            if ($this->_shipping_info['service_params']['transfer_fee_included'] == 'N') {
+                $rates['price'] -= $response['order']['money_transfer_fee_amount'];
+            }
             $rates['date'] = '0-1' .  __('days');
             $rates['available_payments'] = array(
                 'payment_on_delivery' => 'Y'
@@ -287,13 +290,11 @@ class Dostavista implements IService
         // Parse JSON message returned by the sdek post server.
         $return = false;
 
-        if (empty($result_array['is_successful']) && !empty($result_array['errors'])) {
-            $status_code = $result_array['error'][0];
-            if (empty($result_array['parameter_errors'])) {
-                $return = !empty(self::$_error_descriptions[$status_code]) ? self::$_error_descriptions[$status_code] : $status_code;
-            } else {
-                $return = array_key_first($result_array['parameter_errors']) . ': ' . $result_array['parameter_errors'][array_key_first($result_array['parameter_errors'])][0];
-            }
+        if (!empty($result_array['errors'])) {
+            $return .= $this->parseParameters($result_array, 'errors');
+        }
+        if (!empty($result_array['warnings'])) {
+            $return .= $this->parseParameters($result_array, 'warnings');
         }
 
         if (!empty($this->_error_stack)) {
@@ -304,4 +305,26 @@ class Dostavista implements IService
 
         return $return;
     }
+
+    private function parseParameters($result_array, $type)
+    {
+        $return = '';
+        foreach ($result_array[$type] as $i => $wrng) {
+            $return .= (!empty($return) ? '; ' : '') . $wrng;
+            if ($wrng == 'invalid_parameters' && !empty($result_array['parameter_' . $type])) {
+                $info = '';
+                foreach ($result_array['parameter_' . $type] as $i => $par_wrngs) {
+                    foreach ($par_wrngs as $wrngs) {
+                        $info .= (!empty($info) ? '; ' : '') . $i . ': ' . (is_array($wrngs) ? (array_key_first($wrngs) . ' - ' . $wrngs[array_key_first($wrngs)][0]) : $wrngs);
+                    }
+                }
+                if ($info != '') {
+                    $return .= '(' . $info . ')';
+                }
+            }
+        }
+
+        return $return;
+    }
+
 }
