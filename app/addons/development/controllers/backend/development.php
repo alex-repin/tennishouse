@@ -1742,6 +1742,7 @@ if ($mode == 'calculate_balance') {
     }
     exit;
 } elseif ($mode == 'clean_up_exceptions') {
+
     $exceptions = db_get_hash_multi_array("SELECT * FROM ?:product_options_exceptions", array('product_id', 'exception_id'));
     $product_options = fn_get_product_options(array_keys($exceptions), CART_LANGUAGE, true, false, false, false, false);
 

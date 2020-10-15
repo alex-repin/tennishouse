@@ -1196,10 +1196,10 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                             if (!empty($show_opt_id) && !empty($options[$show_opt_id])) {
                                 $color_ids[] = $options[$show_opt_id];
                             }
-                            if (!empty($size_id) && !empty($options[$size_id])) {
+                            if (!empty($size_id) && !empty($options[$size_id]) && !empty($product['product_options'][$size_id]['variants'][$options[$size_id]])) {
                                 $products[$i]['sizes']['variants'][$product['product_options'][$size_id]['variants'][$options[$size_id]]['variant_id']] = $product['product_options'][$size_id]['variants'][$options[$size_id]]['variant_name'];
                                 $products[$i]['sizes']['feature_variants'][$product['product_options'][$size_id]['variants'][$options[$size_id]]['variant_id']] = $product['product_options'][$size_id]['variants'][$options[$size_id]]['feature_variant_id'];
-                                if (!empty($show_opt_id) && !empty($options[$show_opt_id])) {
+                                if (!empty($show_opt_id) && !empty($options[$show_opt_id]) && !empty($product['product_options'][$show_opt_id]['variants'][$options[$show_opt_id]])) {
                                     $products[$i]['sizes']['color_variants'][$product['product_options'][$show_opt_id]['variants'][$options[$show_opt_id]]['variant_id']][$options[$size_id]] = 1;
                                 }
                             }
@@ -1359,7 +1359,7 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
                                             'option_id' => $opt_data['option_id'],
                                             'variant_id'=> $v_data['variant_id']
                                         );
-                                        if (!empty($new_product['sizes']) && !empty($new_product['sizes']['color_variants'][$v_data['variant_id']])) {
+                                        if (!empty($new_product['sizes']) && !empty($new_product['sizes']['variants']) && !empty($new_product['sizes']['color_variants'][$v_data['variant_id']])) {
                                             $filter_passed = empty($params['av_ids'][$new_product['sizes']['feature_id']]) ? true : false;
                                             foreach ($new_product['sizes']['variants'] as $v_id => $v_name) {
                                                 if (empty($new_product['sizes']['color_variants'][$v_data['variant_id']][$v_id])) {
