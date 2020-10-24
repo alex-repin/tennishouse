@@ -1777,6 +1777,19 @@ if ($mode == 'calculate_balance') {
 
     exit;
 
+} elseif ($mode == 'rebuild_exceptions') {
+
+    $ids = db_get_fields("SELECT DISTINCT product_id FROM ?:product_warehouses_inventory WHERE amount > 0");
+    $product_options = fn_get_product_options($ids, CART_LANGUAGE, true, false, false, false, false);
+    
+    foreach ($ids as $product_id) {
+        if (count($product_options[$product_id]) > 0) {
+            fn_update_product_exceptions($product_id);
+        }
+    }
+    
+    
+    exit;
 } elseif ($mode == 'generate_descriptions') {
 
     $cids = array(RACKETS_CATEGORY_ID);

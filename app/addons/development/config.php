@@ -178,6 +178,7 @@ define('RACKET_FINDER_MENU_ITEM_ID', 9999);
 define('KIRSCHBAUM_BRAND_ID', 340);
 define('SLAZENGER_BRAND_ID', 1020);
 define('DFC_BRAND_ID', 6932);
+define('SIS_BRAND_ID', 7613);
 
 define('RACKETS_QTY_DSC_PRC', 5);
 
