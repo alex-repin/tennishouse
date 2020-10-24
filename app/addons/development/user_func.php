@@ -44,7 +44,7 @@ function fn_get_promotion_condition($conditions, $condition)
     } elseif (!empty($conditions['conditions'])) {
         return fn_get_promotion_condition($conditions['conditions'], $condition);
     }
-    
+
     return false;
 }
 
@@ -485,7 +485,7 @@ function fn_actualize_prices()
                     'lower_limit' => 1,
                     'usergroup_id' => 0
                 );
-                $link = '<a href="' . fn_url('products.update?product_id=' . $product['product_id'], 'A') . '" target="_blank">' . $product['product'] . '</a>';
+                $link = '<a href="' . fn_url('products.update?product_id=' . $product['product_id'], 'A', 'current', CART_LANGUAGE, true) . '" target="_blank">' . $product['product'] . '</a>';
                 $details[$link] = array(
                     'price' => fn_format_price($product['price']) . ' -> ' . fn_format_price($product['c_price'])
                 );

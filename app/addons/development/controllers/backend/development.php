@@ -669,89 +669,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
 
-    if ($mode == 'eqialize_prices') {
-        if (!empty($_REQUEST['product_ids'])) {
-            $result = $data = array();
-            foreach ($_REQUEST['product_ids'] as $pair) {
-                $_pair = explode(',', $pair);
-                $result[$_pair[0]] = $_pair[1];
-            }
-            if (!empty($action) && $action == 'discounts') {
-                $prices = db_get_hash_single_array("SELECT product_id, price FROM ?:product_prices WHERE product_id IN (?n) AND lower_limit = '1'", array('product_id', 'price'), array_keys($result));
-                if (!empty($prices)) {
-                    foreach ($prices as $prod_id => $prc) {
-                        db_query("UPDATE ?:products SET list_price = IF (list_price > ?i, list_price, ?i) WHERE product_id = ?i", $prc, $prc, $prod_id);
-                    }
-                }
-            }
-            $price = db_get_hash_single_array("SELECT item_id, price FROM ?:competitive_prices WHERE item_id IN (?n)", array('item_id', 'price'), array_values($result));
-            foreach ($result as $product_id => $item_id) {
-                $data[] = array(
-                    'product_id' => $product_id,
-                    'price' => $price[$item_id],
-                    'lower_limit' => 1,
-                    'usergroup_id' => 0
-                );
-            }
-            db_query("REPLACE INTO ?:product_prices ?m", $data);
-        }
-
-        $suffix = "development.competitive_prices";
-    }
-
-    if ($mode == 'autocomplete_cproducts') {
-
-        if (!empty($_REQUEST['q']) && $_REQUEST['id']) {
-
-            $params['q'] = trim($_REQUEST['q']);
-            $pieces = fn_explode(' ', $params['q']);
-            $search_type = ' AND ';
-
-            foreach ($pieces as $piece) {
-                if (strlen($piece) == 0) {
-                    continue;
-                }
-
-                $_condition[] = db_quote("name LIKE ?l", '%' . $piece . '%');
-            }
-
-            $_cond = implode($search_type, $_condition);
-
-            $products = db_get_array("SELECT * FROM ?:competitive_prices WHERE $_cond ORDER BY item_id DESC");
-
-            Registry::get('view')->assign('results', $products);
-            Registry::get('view')->assign('product_id', $_REQUEST['id']);
-            Registry::get('view')->display('addons/development/views/development/competitive_prices_results.tpl');
-            exit();
-        }
-    }
-
-    if ($mode == 'add_competitive_pairs') {
-
-        if (!empty($_REQUEST['pairs'])) {
-            $data = $to_delete = array();
-            foreach ($_REQUEST['pairs'] as $product_id => $item_id) {
-                if (!empty($item_id)) {
-                    if ($item_id == '-') {
-                        $to_delete[] = $product_id;
-                    } else {
-                        $data[] = array(
-                            'competitive_id' => $item_id,
-                            'product_id' => $product_id
-                        );
-                    }
-                }
-            }
-            if (!empty($to_delete)) {
-                db_query("DELETE FROM ?:competitive_pairs WHERE product_id IN (?n)", $to_delete);
-            }
-            if (!empty($data)) {
-                db_query("REPLACE INTO ?:competitive_pairs ?m", $data);
-            }
-        }
-        $suffix = "development.competitive_prices?mode=" . $_REQUEST['mode'];
-    }
-
     return array(CONTROLLER_STATUS_OK, $suffix);
 }
 
@@ -1666,48 +1583,6 @@ if ($mode == 'calculate_balance') {
     }
     exit;
 
-} elseif ($mode == 'competitive_prices') {
-
-    $cp_mode = empty($_REQUEST['mode']) ? 'D' : $_REQUEST['mode'];
-
-    if ($cp_mode == 'N') {
-        $params = array(
-            'hide_out_of_stock' => 'Y',
-            'competition' => 'N',
-            'sort_by' => 'price',
-            'sort_order' => 'desc'
-        );
-    } elseif ($cp_mode == 'D') {
-        $params = array(
-            'hide_out_of_stock' => 'Y',
-            'competition' => 'D'
-        );
-    } else {
-        $params = array(
-            'competition' => 'A',
-            'hide_out_of_stock' => 'Y'
-        );
-    }
-
-    list($products, $search) = fn_get_products($params);
-
-    $result = $_result = array();
-    if (!empty($products)) {
-        foreach ($products as $product) {
-            if (empty($result[$product['main_category']])) {
-                $result[$product['main_category']]['category_id'] = $product['main_category'];
-            }
-            $result[$product['main_category']]['products'][] = $product;
-        }
-        $sorting = db_get_fields("SELECT category_id FROM ?:categories WHERE category_id IN (?n) ORDER BY parent_id, position", array_keys($result));
-        foreach ($sorting as $cid) {
-            $_result[$cid] = $result[$cid];
-        }
-    }
-
-    Registry::get('view')->assign('mode', $cp_mode);
-    Registry::get('view')->assign('competitive_prices', $_result);
-
 } elseif ($mode == 'tst') {
     fn_check_sms();
     exit;
@@ -1770,7 +1645,7 @@ if ($mode == 'calculate_balance') {
             $delete += $_exceptions;
         }
     }
-    
+
     if (!empty($delete)) {
         db_query("DELETE FROM ?:product_options_exceptions WHERE exception_id IN (?n)", array_keys($delete));
     }

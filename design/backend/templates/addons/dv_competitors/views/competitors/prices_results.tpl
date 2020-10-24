@@ -7,7 +7,7 @@
             </div>
         {/foreach}
     {/if}
-    
+
 <script type="text/javascript">
 {literal}
     (function (_, $) {

@@ -745,29 +745,6 @@
             ALTER TABLE `cscart_categories` ADD `menu_subitems` TEXT NOT NULL;
         </item>
         <item>
-            CREATE TABLE IF NOT EXISTS `cscart_competitive_prices` (
-                `item_id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT,
-                `link` varchar(255) NOT NULL,
-                `code` varchar(32) NOT NULL,
-                `name` varchar(2555) NOT NULL,
-                `price` decimal(12,2) NOT NULL DEFAULT '0.00',
-                `old_price` DECIMAL(12,2) NOT NULL DEFAULT '0.00',
-                `object_id` mediumint(8) UNSIGNED NOT NULL,
-                `timestamp` INT(11) UNSIGNED NOT NULL DEFAULT '0',
-                `in_stock` CHAR(1) NOT NULL DEFAULT 'N',
-                PRIMARY KEY (`item_id`),
-                INDEX(`code`),
-                UNIQUE(`link`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-        </item>
-        <item>
-            CREATE TABLE IF NOT EXISTS `cscart_competitive_pairs` (
-                `competitive_id` mediumint(8) NOT NULL,
-                `product_id` mediumint(8) NOT NULL,
-                PRIMARY KEY (`product_id`)
-            );
-        </item>
-        <item>
             ALTER TABLE `cscart_user_session_products` ADD `step` TINYINT(1) NOT NULL;
         </item>
         <item>
@@ -825,13 +802,10 @@
             ALTER TABLE `cscart_products` ADD `price_mode` CHAR(1) NOT NULL DEFAULT 'S';
         </item>
         <item>
-            ALTER TABLE `cscart_products` ADD `competitor_price_action` CHAR(1) NOT NULL DEFAULT 'B';
-        </item>
-        <item>
             ALTER TABLE `cscart_products` CHANGE `yml_pickup` `yml_pickup` CHAR(1) NOT NULL DEFAULT 'Y';
         </item>
         <item>
-            ALTER TABLE `cscart_categories` ADD `shipping_params` TEXT NOT NULL; 
+            ALTER TABLE `cscart_categories` ADD `shipping_params` TEXT NOT NULL;
         </item>
     </queries>
     <language_variables>
@@ -1540,13 +1514,9 @@
         <item lang="ru" id="zoom_out_to_see_more_offices">Уменьшите масштаб, чтобы увидеть больше пунктов в этом городе</item>
         <item lang="ru" id="ymaps_display_as_list">Показать списком</item>
         <item lang="ru" id="ymaps_display_as_map">Показать на карте</item>
-        <item lang="ru" id="competitive_prices">Цены конкурентов</item>
-        <item lang="ru" id="competitive_prices_menu_description">Обновить цены товаров с учетом цен конкурентов</item>
         <item lang="ru" id="cprices_out_of_stock">Нет</item>
         <item lang="ru" id="step">Шаг</item>
-        <item lang="ru" id="cprices_no_competitor">Конкурент не найден</item>
         <item lang="ru" id="cprices_differ">Цены отличаются</item>
-        <item lang="ru" id="cprices_no_competitor_all">Все товары</item>
         <item lang="ru" id="promotion_bonus_cart_product_discount">Скидка на все товары в корзине</item>
         <item lang="ru" id="promotion_cond_no_catalog_discount">Нет скидки каталога</item>
         <item lang="ru" id="promotion_cond_free_strings">Условие бесплатной натяжки</item>
@@ -1597,8 +1567,6 @@
         <item lang="ru" id="cron_in_progress">В процессе</item>
         <item lang="ru" id="check_expired_points">Проверить бонусные баллы</item>
         <item lang="ru" id="check_delivery_statuses">Обновить статусы доставки</item>
-        <item lang="ru" id="update_competitive_prices">Обновить цены конкурентов</item>
-        <item lang="ru" id="update_competitive_catalog">Обновить каталог конкурентов</item>
         <item lang="ru" id="check_sms_statuses">Обновить статусы sms</item>
         <item lang="ru" id="catalog_synchronization">Синхронизировать каталог</item>
         <item lang="ru" id="cron_log_details">Результаты выполнения cron</item>
@@ -1614,11 +1582,6 @@
         <item lang="ru" id="price_mode">Ценообразование</item>
         <item lang="ru" id="static_price">Статическое</item>
         <item lang="ru" id="dynamic_price">Динамическое</item>
-        <item lang="ru" id="competitor_price">Конкурентное</item>
-        <item lang="ru" id="competitor_price_action">Действие</item>
-        <item lang="ru" id="competitor_price_action_both">Понижение и повышение</item>
-        <item lang="ru" id="competitor_price_action_up">Только повышение</item>
-        <item lang="ru" id="competitor_price_action_down">Только понижение</item>
         <item lang="ru" id="update_product_values_to">Обновить значение у товаров на</item>
         <item lang="ru" id="actualize_prices">Актуализировать цены</item>
         <item lang="ru" id="update_xml_feed">Обновить XML-feed</item>

@@ -17,6 +17,7 @@ use Tygh\Registry;
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 if ($mode == 'view') {
+    
     $category_data = Registry::get('view')->gettemplatevars('category_data');
     if (!empty($category_data['parent_id'])) {
         $cat_ids = explode('/', $category_data['id_path']);

@@ -6,13 +6,13 @@
 <div class="cm-j-tabs cm-track tabs tabs-with-conf">
     <ul class="nav nav-tabs">
         <li id="group_different" class="{if $mode == 'D'} active extra-tab{/if}">
-            <a href="{"development.competitive_prices?mode=D"|fn_url}">{__("cprices_differ")}</a>
+            <a href="{"competitors.prices?mode=D"|fn_url}">{__("cprices_differ")}</a>
         </li>
         <li id="group_no_competitor" class="{if $mode == 'N'} active extra-tab{/if}">
-            <a href="{"development.competitive_prices?mode=N"|fn_url}">{__("cprices_no_competitor")}</a>
+            <a href="{"competitors.prices?mode=N"|fn_url}">{__("cprices_no_competitor")}</a>
         </li>
         <li id="group_no_competitor_all" class="{if $mode == 'A'} active extra-tab{/if}">
-            <a href="{"development.competitive_prices?mode=A"|fn_url}">{__("cprices_no_competitor_all")}</a>
+            <a href="{"competitors.prices?mode=A"|fn_url}">{__("cprices_no_competitor_all")}</a>
         </li>
     </ul>
 </div>
@@ -40,12 +40,20 @@
                         <div class="ty-cp-cell ty-cp-code">{$product.product_code}</div>
                         <div class="ty-cp-cell ty-cp-price">{include file="common/price.tpl" value=$product.price}</div>
                         <div class="ty-cp-cell ty-cp-item-id">
-                            <input type="text" name="pairs[{$product.product_id}]" size="55" value="{if $product.c_item_id}{$product.c_item_id}{/if}" class="ty-cp-item-id-input" id="cp_item_id_{$product.product_id}"/>
+                            <input type="text" name="pairs[{$product.product_id}][obj_id]" size="55" value="{if $product.c_item_id}{$product.c_item_id}{/if}" class="ty-cp-item-id-input" id="cp_item_id_{$product.product_id}"/>
+                        </div>
+                        <div class="ty-cp-cell ty-cp-c-id">
+                            <select name="pairs[{$product.product_id}][c_id]" onchange="fn_set_competitor_id({$product.product_id}, $(this).val());" style="width: 100%">
+                                <option value=""> - </option>
+                                {foreach from=$competitors item="comp"}
+                                    <option value="{$comp.competitor_id}">{$comp.name}</option>
+                                {/foreach}
+                            </select>
                         </div>
                         <div class="ty-cp-cell ty-cp-input">
                             {$product_id = $product.product_id}
-                            <input type="text" size="55" value="{$product.product}" data-product-id="{$product.product_id}" class="input-large cm-competitor-products" />
-                            {include file="addons/development/views/development/competitive_prices_results.tpl" product_id=$product.product_id}
+                            <input type="text" size="55" value="{$product.product}" data-product-id="{$product.product_id}" class="input-large cm-competitor-products" id="input_{$product.product_id}" />
+                            {include file="addons/dv_competitors/views/competitors/prices_results.tpl" product_id=$product.product_id}
                         </div>
                     </div>
                 {/if}
@@ -61,33 +69,13 @@
         }, function(){
             $(this).removeClass('is-hover');
         });
-        $('.cm-competitor-products').each(function(){
-            $(this).focus(function(){
-                $('#cp_variants_' + $(this).data('productId')).show();
-            }).blur(function(){
-                if (!$(this).parents('.ty-cp-input').hasClass('is-hover')) {
-                    $('#cp_variants_' + $(this).data('productId')).hide();
-                }
-            }).keyup(function(){
-                if ($(this).val().length > 2) {
-                    function fn_ajax_search(obj, val)
-                    {
-                        if (val == obj.val()) {
-                            $.ceAjax('request', fn_url('development.autocomplete_cproducts'), {
-                                method: 'post',
-                                hidden: true,
-                                force_exec: true,
-                                result_ids: 'cp_variants_' + obj.data('productId'),
-                                data: {q: obj.val(), id: obj.data('productId')}
-                            });
-                        }
-                    }
-                    var val = $(this).val();
-                    setTimeout(fn_ajax_search, 500, $(this), val);
-                }
-            });
-        });
     }(Tygh, Tygh.$));
+
+    function fn_set_competitor_id(id, value)
+    {
+        $('#input_' + id).attr('data-competitor-id', value);
+    }
+
 {/literal}
 </script>
 {else}
@@ -98,12 +86,12 @@
 {capture name="buttons"}
     {if $competitive_prices}
         {capture name="tools_list"}
-            <li>{btn type="list" text=__("equalize_prices") dispatch="dispatch[development.eqialize_prices]" form="c_prices_form"}</li>
-            <li>{btn type="list" text=__("equalize_prices_as_discounts") dispatch="dispatch[development.eqialize_prices.discounts]" form="c_prices_form"}</li>
+            <li>{btn type="list" text=__("equalize_prices") dispatch="dispatch[competitors.eqialize_prices]" form="c_prices_form"}</li>
+            <li>{btn type="list" text=__("equalize_prices_as_discounts") dispatch="dispatch[competitors.eqialize_prices.discounts]" form="c_prices_form"}</li>
         {/capture}
         {dropdown content=$smarty.capture.tools_list}
     {/if}
-    {include file="buttons/save.tpl" but_role="submit-link" but_name="dispatch[development.add_competitive_pairs]" but_target_form="c_prices_form"}
+    {include file="buttons/save.tpl" but_role="submit-link" but_name="dispatch[competitors.add_pairs]" but_target_form="c_prices_form"}
 {/capture}
 </form>
 {/capture}
