@@ -231,6 +231,7 @@ define('PROMOTION_TAG', 'P');
 define('FILTER_BLOCK_ID', 30);
 define('FILTER_SNAPPING_ID', 35);
 
+define('ORDER_STATUS_PAID', 'P');
 define('ORDER_STATUS_COMPLETED', 'C');
 define('ORDER_STATUS_DELIVERED', 'H');
 define('ORDER_STATUS_NOT_DELIVERED', 'J');

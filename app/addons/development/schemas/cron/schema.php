@@ -93,11 +93,11 @@ return array(
         'function' => 'fn_synchronize_agents',
         'name' => 'catalog_synchronization'
     ),
-//     'D' => array(
-//         'frequency' => array(
-//             'H' => '04,07,10,13,16,19,22,01'
-//         ),
-//         'function' => 'fn_update_xml_feed',
-//         'name' => 'update_xml_feed'
-//     ),
+    'D' => array(
+        'frequency' => array(
+            'H' => '04,07,10,13,16,19,22,01'
+        ),
+        'function' => 'fn_update_xml_feed',
+        'name' => 'update_xml_feed'
+    ),
 );

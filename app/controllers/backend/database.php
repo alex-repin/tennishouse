@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD']	== 'POST') {
     // Backup database
     if ($mode == 'backup') {
 
-        ini_set('memory_limit', '512M');
+        ini_set('memory_limit', '1024M');
         $dbdump_filename = empty($_REQUEST['dbdump_filename']) ? 'dump_' . date('mdY') . '.sql' : fn_basename($_REQUEST['dbdump_filename']);
 
         if (!fn_mkdir(Registry::get('config.dir.database'))) {
@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD']	== 'POST') {
     // Restore
     if ($mode == 'restore') {
 
-        ini_set('memory_limit', '512M');
+        ini_set('memory_limit', '1024M');
         if (!empty($_REQUEST['backup_files'])) {
             fn_restore_dump($_REQUEST['backup_files']);
         }

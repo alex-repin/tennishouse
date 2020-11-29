@@ -293,6 +293,11 @@ class RusSdek
                 'request_timeout' => 2,
                 'timeout' => 1
             );
+        } else {
+            $extra = array(
+                'request_timeout' => 3,
+                'timeout' => 3
+            );
         }
         $result = Http::get('https://integration.cdek.ru/pvzlist/v1/xml', $city, $extra);
         $xml = simplexml_load_string($result);

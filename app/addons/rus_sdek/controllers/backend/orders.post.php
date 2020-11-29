@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         'product' => $data_product['product'],
                         'price' => $price,
                         'amount' => $amount,
-                        'total' => ($order_info['status'] == 'P') ? 0 : $price,
+                        'total' => /*($order_info['status'] == 'P') ? 0 : */$price,
                         'weight' => /*$amount * */$product_weight,
                         'order_id' => $params['order_id'],
                         'shipment_id' => $shipment_id,
@@ -191,17 +191,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         );
                         $xml .= '            ' . RusSdek::arraySimpleXml('Package', $package_for_xml, 'open');
                         
-                        foreach ($p_data['products'] as $item_key => $amount) {
-                            if (empty($amount)) {
+                        foreach ($p_data['products'] as $item_key => $item_data) {
+                            if (empty($item_data['amount'])) {
                                 unset($sdek_info['Order']['Packages'][$num]['products'][$item_key]);
                                 continue;
                             }
                             $product_for_xml = array (
                                 'WareKey' => $sdek_products[$item_key]['ware_key'],
                                 'Cost' => $sdek_products[$item_key]['price'],
-                                'Payment' => $sdek_products[$item_key]['total'],
-                                'Weight' => $sdek_products[$item_key]['weight'] * 1000 * $amount,
-                                'Amount' => $amount,
+                                'Payment' => ($item_data['is_paid'] == 'Y') ? 0 : $sdek_products[$item_key]['total'],
+                                'Weight' => $sdek_products[$item_key]['weight'] * 1000 * $item_data['amount'],
+                                'Amount' => $item_data['amount'],
                                 'Comment' => $sdek_products[$item_key]['product'],
                             );
                             

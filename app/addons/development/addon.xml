@@ -1624,5 +1624,6 @@
         <item lang="ru" id="update_xml_feed">Обновить XML-feed</item>
         <item lang="ru" id="ajax">Ajax</item>
         <item lang="ru" id="yml_gift_free_stringing">Струны и натяжка</item>
+        <item lang="ru" id="is_paid">Оплачено</item>
     </language_variables>
 </addon>
