@@ -1853,29 +1853,6 @@ function fn_development_get_products(&$params, &$fields, &$sortings, &$condition
     $join .= db_quote(" LEFT JOIN ?:product_tags ON ?:product_tags.product_id = products.product_id");
     $fields[] = 'GROUP_CONCAT(DISTINCT(?:product_tags.tag)) AS tags';
 
-    if (!empty($params['competition'])) {
-        if ($params['competition'] == 'N') {
-            $join .= db_quote(" LEFT JOIN ?:competitive_prices ON ?:competitive_prices.code = products.product_code LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = products.product_id");
-            $condition .= db_quote(' AND ?:competitive_prices.item_id IS NULL AND ?:competitive_pairs.competitive_id IS NULL');
-        } elseif ($params['competition'] == 'D') {
-            $join .= db_quote(" LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = products.product_id LEFT JOIN ?:competitive_prices AS cp2 ON cp2.code = products.product_code LEFT JOIN ?:competitive_prices AS cp1 ON cp1.item_id = ?:competitive_pairs.competitive_id");
-            $condition .= db_quote(" AND IF (cp1.item_id IS NOT NULL, cp1.price != prices.price, (IF (cp2.item_id IS NOT NULL, cp2.price != prices.price, '')))");
-            $fields[] = 'IF (cp1.item_id IS NOT NULL, cp1.name, cp2.name) AS c_name';
-            $fields[] = 'IF (cp1.item_id IS NOT NULL, cp1.price, cp2.price) AS c_price';
-            $fields[] = 'IF (cp1.item_id IS NOT NULL, cp1.code, cp2.code) AS c_code';
-            $fields[] = 'IF (cp1.item_id IS NOT NULL, cp1.item_id, cp2.item_id) AS c_item_id';
-            $fields[] = 'IF (cp1.item_id IS NOT NULL, cp1.link, cp2.link) AS c_link';
-            $fields[] = 'IF (cp1.item_id IS NOT NULL, cp1.in_stock, cp2.in_stock) AS c_in_stock';
-        } elseif ($params['competition'] == 'A') {
-            $join .= db_quote(" LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = products.product_id LEFT JOIN ?:competitive_prices ON ?:competitive_prices.item_id = ?:competitive_pairs.competitive_id");
-            $fields[] = '?:competitive_prices.name AS c_name';
-            $fields[] = '?:competitive_prices.price AS c_price';
-            $fields[] = '?:competitive_prices.code AS c_code';
-            $fields[] = '?:competitive_prices.item_id AS c_item_id';
-            $fields[] = '?:competitive_prices.link AS c_link';
-            $fields[] = '?:competitive_prices.in_stock AS c_in_stock';
-        }
-    }
     if (in_array('description', $params['extend'])) {
 //         $fields['short_description'] = 'descr1.short_description';
 
@@ -2332,8 +2309,8 @@ function fn_development_update_category_post($category_data, $category_id, $lang
 
 function fn_development_get_product_data($product_id, &$field_list, &$join, $auth, $lang_code, $condition)
 {
-    $join .= db_quote(" LEFT JOIN ?:product_tags ON ?:product_tags.product_id = ?:products.product_id LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = ?:products.product_id LEFT JOIN ?:competitive_prices AS cp2 ON cp2.code = ?:products.product_code LEFT JOIN ?:competitive_prices AS cp1 ON ?:competitive_pairs.competitive_id = cp1.item_id");
-    $field_list .= ", GROUP_CONCAT(DISTINCT CONCAT_WS('_', ?:product_tags.promotion_id, ?:product_tags.tag) SEPARATOR ',') AS tags, IF (cp1.item_id IS NOT NULL, cp1.price, cp2.price) AS c_price, IF (cp1.item_id IS NOT NULL, cp1.link, cp2.link) AS c_link, IF (cp1.item_id IS NOT NULL, cp1.name, cp2.name) AS c_name, IF (cp1.item_id IS NOT NULL, cp1.in_stock, cp2.in_stock) AS c_in_stock";
+    $join .= db_quote(" LEFT JOIN ?:product_tags ON ?:product_tags.product_id = ?:products.product_id");
+    $field_list .= ", GROUP_CONCAT(DISTINCT CONCAT_WS('_', ?:product_tags.promotion_id, ?:product_tags.tag) SEPARATOR ',') AS tags";
 }
 
 function fn_development_get_product_data_post(&$product_data, $auth, $preview, $lang_code)
@@ -2397,6 +2374,9 @@ function fn_development_get_product_data_post(&$product_data, $auth, $preview, $
                 $product_data['short_description'] .= $product_data['features_description'];
             }
         }
+    }
+    if (AREA == 'A') {
+        $product_data['price_history'] = db_get_array("SELECT * FROM ?:price_history WHERE product_id = ?i ORDER BY timestamp ASC", $product_data['product_id']);
     }
 }
 

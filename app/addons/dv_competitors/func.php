@@ -1,8 +1,178 @@
 <?php
 
 use Tygh\Registry;
+use Tygh\CmpUpdater\CmpUpdater;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
+
+function fn_update_competitive_catalog()
+{
+    $competitors = db_get_fields("SELECT competitor_id FROM ?:competitors WHERE status = 'A'");
+    $results = $status = array();
+    foreach ($competitors as $cmp_id) {
+        list($status[$cmp_id], $results[$cmp_id]) = CmpUpdater::Update($cmp_id);
+    }
+
+    return array($status, $results);
+}
+
+function fn_update_competitive_prices($data = array())
+{
+    $details = array();
+    if (empty($data)) {
+        $data = db_get_hash_array("SELECT * FROM ?:competitive_prices ORDER BY object_id DESC", 'object_id');
+    }
+
+    $to_delete = $to_update = $updated_ids = array();
+    foreach ($data as $_dt) {
+        if (list($price, $code, $name, $in_stock) = fn_parse_competitive_price($_dt['link'])) {
+            $upd_item = array(
+                'item_id' => $_dt['item_id'],
+                'link' => $_dt['link'],
+                'code' => $code,
+                'name' => $name,
+                'price' => $price,
+                'in_stock' => $in_stock,
+                'object_id' => $_dt['object_id'],
+                'timestamp' => TIME,
+                'competitor_id' => $_dt['competitor_id']
+            );
+            if ($price != $_dt['price']) {
+                $upd_item['old_price'] = $_dt['price'];
+            } else {
+                $upd_item['old_price'] = $_dt['old_price'];
+            }
+            $to_update[] = $upd_item;
+            if ($in_stock == 'Y') {
+                $updated_ids[] = $_dt['item_id'];
+            }
+        } else {
+            $to_delete[] = $_dt['item_id'];
+        }
+        if (count($to_update) == 50) {
+            db_query("REPLACE INTO ?:competitive_prices ?m", $to_update);
+            $details = array_merge($details, $to_update);
+            $to_update = array();
+        }
+        if (count($to_delete) == 50) {
+            db_query("DELETE FROM ?:competitive_prices WHERE item_id IN (?n)", $to_delete);
+            db_query("DELETE FROM ?:competitive_pairs WHERE competitive_id IN (?n)", $to_delete);
+            $to_delete = array();
+        }
+        fn_echo(' . ');
+    }
+
+    if (!empty($to_update)) {
+        $details = array_merge($details, $to_update);
+        db_query("REPLACE INTO ?:competitive_prices ?m", $to_update);
+    }
+    if (!empty($to_delete)) {
+        db_query("DELETE FROM ?:competitive_prices WHERE item_id IN (?n)", $to_delete);
+        db_query("DELETE FROM ?:competitive_pairs WHERE competitive_id IN (?n)", $to_delete);
+    }
+
+    return array(true, $details);
+}
+
+function fn_update_competitive_catalog_()
+{
+    $errors = $data = array();
+    $link = 'https://racketlon.ru/index.php?dispatch=products.view&product_id=';
+    $cur_id = 1;
+    $exist_ids = db_get_fields("SELECT object_id FROM ?:competitive_prices ORDER BY object_id DESC");
+    $max_id = max($exist_ids);
+
+    while (true) {
+        if (!in_array($cur_id, $exist_ids)) {
+            if (list($price, $code, $name, $in_stock) = fn_parse_competitive_price($link . $cur_id)) {
+                $data[] = array(
+                    'link' => $link . $cur_id,
+                    'code' => $code,
+                    'name' => $name,
+                    'price' => $price,
+                    'in_stock' => $in_stock,
+                    'object_id' => $cur_id,
+                    'timestamp' => TIME
+                );
+                $real_id = $cur_id;
+            }
+            if (count($data) == 50) {
+                db_query("REPLACE INTO ?:competitive_prices ?m", $data);
+                $data = array();
+            }
+        } else {
+            $real_id = $cur_id;
+        }
+
+        if ($max_id < $cur_id && $real_id + 100 < $cur_id) {
+            break;
+        }
+
+        fn_echo(' . ');
+        $cur_id++;
+    }
+
+    if (!empty($data)) {
+        db_query("REPLACE INTO ?:competitive_prices ?m", $data);
+    }
+
+    return array(true, $errors);
+}
+
+function fn_actualize_prices()
+{
+    $details = array();
+
+    $params = array(
+        'hide_out_of_stock' => 'Y',
+        'competition' => array(
+            'mode' => 'A',
+            'status' => 'A',
+            // 'in_stock' => 'Y'
+        ),
+        // 'pid' => 1708,
+        'price_mode' => 'M'
+    );
+    list($products, $search) = fn_get_products($params);
+
+    if (!empty($products)) {
+        $data = array();
+        foreach ($products as $product) {
+            if (!empty($product['main_competitor'])) {
+                $new_price = $product['main_competitor']['price'];
+            } else {
+                $competitors = $product['competitors'] ?? array();
+                $new_price = max($product['price'], $product['list_price'], reset($competitors)['price'] ?? 0);
+            }
+            $link = '<a href="' . fn_url('products.update?product_id=' . $product['product_id'], 'A', 'current', CART_LANGUAGE, true) . '" target="_blank">' . $product['product'] . '</a>';
+            if (!empty($new_price) && (($product['price'] > $new_price && in_array($product['competitor_price_action'], array('B', 'D'))) || ($product['price'] < $new_price && in_array($product['competitor_price_action'], array('B', 'U'))))) {
+                $data[] = array(
+                    'product_id' => $product['product_id'],
+                    'price' => $new_price,
+                    'lower_limit' => 1,
+                    'type' => 'A',
+                    'usergroup_id' => 0
+                );
+                $details[$link] = array(
+                    'price' => fn_format_price($product['price']) . ' -> ' . fn_format_price($new_price)
+                );
+            }
+            $list_price = max($new_price ?? 0, $product['price']);
+            if (empty($product['list_price']) || $product['list_price'] == 0 || $product['list_price'] < $list_price) {
+                db_query("UPDATE ?:products SET list_price = ?i WHERE product_id = ?i", $list_price, $product['product_id']);
+                $details[$link]['list_price'] = fn_format_price($product['list_price']) . ' -> ' . fn_format_price($list_price);
+            }
+        }
+
+        if (!empty($data)) {
+            foreach ($data as $prices) {
+                fn_update_product_prices($prices['product_id'], $prices);
+            }
+        }
+    }
+
+    return array(true, $details);
+}
 
 function fn_get_competitors($params = array())
 {
@@ -33,6 +203,13 @@ function fn_get_competitors($params = array())
     }
 
     return array($competitors, $params);
+}
+
+function fn_get_competitors_list()
+{
+    list($competitors,) = fn_get_competitors();
+
+    return $competitors;
 }
 
 function fn_update_competitor($competitor_data, $competitor_id = 0)
@@ -96,4 +273,123 @@ function fn_delete_competitor($competitor_id)
     db_query("DELETE FROM ?:competitive_prices WHERE competitor_id = ?i", $competitor_id);
 
     return true;
+}
+
+function fn_dv_competitors_get_product_data($product_id, &$field_list, &$join, $auth, $lang_code, $condition)
+{
+    if (AREA == 'A') {
+        $join .= db_quote(" LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = ?:products.product_id LEFT JOIN ?:competitive_prices AS cp ON cp.code = ?:products.product_code LEFT JOIN ?:competitive_prices AS cp1 ON cp1.item_id = ?:competitive_pairs.competitive_id LEFT JOIN ?:competitors AS cmp ON cmp.competitor_id = cp.competitor_id LEFT JOIN ?:competitors AS cmp1 ON cmp1.competitor_id = cp1.competitor_id");
+        $field_list .= ", GROUP_CONCAT(CONCAT_WS('|', CONCAT_WS('_', cp.item_id, cp.price, cp.competitor_id, cp.in_stock, cmp.status, 0), CONCAT_WS('_', cp1.item_id, cp1.price, cp1.competitor_id, cp1.in_stock, cmp1.status, 1)) SEPARATOR '|') AS competitors";
+    }
+}
+
+function fn_explode_competitors(&$products, $competition_params = array())
+{
+    if (!empty($products)) {
+        $item_ids = array();
+        foreach ($products as $i => &$product) {
+            if (!empty($product['competitors'])) {
+                $pairs = explode('|', $product['competitors']);
+                $comp = $sorting = $sorted = array();
+                foreach ($pairs as $pair) {
+                    $p_data = explode('_', $pair);
+                    if (count($p_data) == 6) {
+                        $keys = array('item_id', 'price', 'competitor_id', 'in_stock', 'status', 'pair_id');
+                        $_pr = array_combine($keys, $p_data);
+                        $passed = true;
+                        if (!empty($competition_params)) {
+                            $conditions = array_intersect(array_keys($competition_params), $keys);
+                            if (!empty($conditions)) {
+                                foreach ($conditions as $cnd) {
+                                    if ($_pr[$cnd] != $competition_params[$cnd]) {
+                                        $passed = false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if (!empty($passed)) {
+                            if (empty($comp[$_pr['competitor_id']])) {
+                                $comp[$_pr['competitor_id']] = $_pr;
+                                $sorting[$_pr['competitor_id']] = $_pr['price'];
+                                $item_ids[] = $_pr['item_id'];
+                            } elseif ((empty($comp[$_pr['competitor_id']]['pair_id']) && !empty($_pr['pair_id'])) || $comp[$_pr['competitor_id']]['price'] > $_pr['price']) {
+                                $comp[$_pr['competitor_id']] = $_pr;
+                                $sorting[$_pr['competitor_id']] = $_pr['price'];
+                                $item_ids[] = $_pr['item_id'];
+                            }
+                        }
+                    }
+                }
+                asort($sorting);
+                foreach ($sorting as $key => $price) {
+                    $sorted[$key] = $comp[$key];
+                }
+                $product['competitors'] = $sorted;
+            }
+        }
+        if (!empty($item_ids)) {
+            $item_data = db_get_hash_array("SELECT cp.item_id, cp.name, cp.code, cp.link, cmp.name as competitor_name FROM ?:competitive_prices AS cp LEFT JOIN ?:competitors AS cmp ON cmp.competitor_id = cp.competitor_id WHERE cp.item_id IN (?n)", 'item_id', $item_ids);
+        }
+        foreach ($products as $j => &$product) {
+            if (!empty($product['competitors'])) {
+                $result = array();
+                foreach ($product['competitors'] as $i => &$_cmp) {
+                    if (!empty($item_data[$_cmp['item_id']])) {
+                        $_cmp = array_merge($_cmp, $item_data[$_cmp['item_id']]);
+                    }
+                    if ($_cmp['in_stock'] == 'Y' && (empty($result) || $result['price'] > $_cmp['price'])) {
+                        $result = $_cmp;
+                    }
+                }
+                if (!empty($result)) {
+                    $product['main_competitor'] = $result;
+                }
+            }
+            if (!empty($competition_params['mode'])) {
+                if ($competition_params['mode'] == 'D' && (empty($product['main_competitor']) || $product['main_competitor']['price'] == $product['price'])) {
+                    unset($products[$j]);
+                }
+                if ($competition_params['mode'] == 'N' && !empty($product['competitors'])) {
+                    unset($products[$j]);
+                }
+            }
+        }
+    }
+}
+
+function fn_dv_competitors_get_product_data_post(&$product_data, $auth, $preview, $lang_code)
+{
+    if (!empty($product_data['competitors'])) {
+        $products = array($product_data);
+        fn_explode_competitors($products);
+        $product_data = reset($products);
+    }
+}
+
+function fn_dv_competitors_update_product_post($product_data, $product_id, $lang_code, $create)
+{
+    if (!empty($product_data['competitor_pair']['c_id'])) {
+        if (!empty($product_data['competitor_pair']['obj_id'])) {
+            $data = array(
+                'competitive_id' => $product_data['competitor_pair']['obj_id'],
+                'product_id' => $product_id,
+                'competitor_id' => $product_data['competitor_pair']['c_id']
+            );
+            db_query("REPLACE INTO ?:competitive_pairs ?e", $data);
+        } else {
+            db_query("DELETE FROM ?:competitive_pairs WHERE product_id = ?i AND competitor_id = ?i", $product_id, $product_data['competitor_pair']['c_id']);
+        }
+    }
+}
+function fn_dv_competitors_get_products(&$params, &$fields, &$sortings, &$condition, &$join, $sorting, &$group_by, $lang_code, $having)
+{
+    if (!empty($params['competition'])) {
+        $join .= db_quote(" LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = products.product_id LEFT JOIN ?:competitive_prices AS cp ON cp.code = products.product_code LEFT JOIN ?:competitive_prices AS cp1 ON cp1.item_id = ?:competitive_pairs.competitive_id LEFT JOIN ?:competitors AS cmp ON cmp.competitor_id = cp.competitor_id LEFT JOIN ?:competitors AS cmp1 ON cmp1.competitor_id = cp1.competitor_id");
+        $fields[] = "GROUP_CONCAT(CONCAT_WS('|', CONCAT_WS('_', cp.item_id, cp.price, cp.competitor_id, cp.in_stock, cmp.status, 0), CONCAT_WS('_', cp1.item_id, cp1.price, cp1.competitor_id, cp1.in_stock, cmp1.status, 1)) SEPARATOR '|') AS competitors";
+    }
+}
+function fn_dv_competitors_get_products_post(&$products, &$params, $lang_code)
+{
+    fn_explode_competitors($products, $params['competition']);
 }

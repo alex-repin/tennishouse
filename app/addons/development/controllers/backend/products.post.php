@@ -63,6 +63,14 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST' && $mode == 'update') {
         'js' => true
     );
     $tabs = fn_insert_before_key($tabs, 'seo', 'variations', $variations_tab);
+    $product_data = Registry::get('view')->gettemplatevars('product_data');
+    if (!empty($product_data['price_history'])) {
+        $price_history_tab = array (
+            'title' => __('price_history'),
+            'js' => true
+        );
+        $tabs = fn_insert_before_key($tabs, 'files', 'price_history', $price_history_tab);
+    }
 //     $warehouses_tab = array (
 //         'title' => __('warehouses'),
 //         'js' => true
@@ -78,7 +86,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST' && $mode == 'update') {
     // [/Page sections]
 
     $product_options = Registry::get('view')->gettemplatevars('product_options');
-    $product_data = Registry::get('view')->gettemplatevars('product_data');
     $product_data['hide_features'] = array(PLAYER_FEATURE_ID);
     if (!empty($product_options)) {
         foreach ($product_options as $i => $opt_data) {

@@ -273,8 +273,8 @@ function fn_get_cart_product_data($hash, &$product, $skip_promotion, &$cart, &$a
             }
         }
 
-        if ($skip_promotion == false) {
-            if (empty($cart['order_id']) || !empty($cart['recalculate_catalog_promotions'])) {
+        if ($skip_promotion == false || $product['stored_discount'] == 'Y') {
+            if ($product['stored_discount'] != 'Y' && (empty($cart['order_id']) || !empty($cart['recalculate_catalog_promotions']))) {
                 fn_promotion_apply('catalog', $_pdata, $auth);
             } else {
                 if (isset($product['discount'])) {
@@ -1994,6 +1994,12 @@ function fn_change_order_status($order_id, $status_to, $status_from = '', $force
                     $_updated_ids[] = $k;
                 }
             } elseif ($order_statuses[$status_to]['params']['inventory'] == 'I' && $order_statuses[$status_from]['params']['inventory'] == 'D') {
+
+                if ($status_from == ORDER_STATUS_NOT_DELIVERED && !empty($wrhs)) {
+                    foreach ($wrhs as $item_id => $wh_id) {
+                        $wrhs[$item_id] = TH_WAREHOUSE_ID;
+                    }
+                }
                 // increase amount
                 $order_info['products'][$k]['extra']['warehouses'] = fn_update_product_amount($v['product_id'], $v['amount'], @$v['extra']['product_options'], '+', $wrhs);
             }

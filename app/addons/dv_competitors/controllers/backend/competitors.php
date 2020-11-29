@@ -95,17 +95,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             db_query("REPLACE INTO ?:product_prices ?m", $data);
         }
 
-        $suffix = ".prices";
+        $suffix = ".prices?mode=" . $_REQUEST['mode'] . (!empty($_REQUEST['c_id']) ? '&c_id=' . $_REQUEST['c_id'] : '') . (!empty($_REQUEST['cid']) ? '&cid=' . $_REQUEST['cid'] : '');
     }
 
     if ($mode == 'add_pairs') {
-
         if (!empty($_REQUEST['pairs'])) {
             $data = $to_delete = array();
             foreach ($_REQUEST['pairs'] as $product_id => $_dt) {
-                if (!empty($_dt['obj_id'])) {
-                    if ($item_id == '-') {
-                        $to_delete[] = $product_id;
+                if (!empty($_dt['c_id'])) {
+                    if (empty($_dt['obj_id'])) {
+                        $to_delete[$_dt['c_id']][] = $product_id;
                     } elseif (!empty($_dt['c_id'])) {
                         $data[] = array(
                             'competitive_id' => $_dt['obj_id'],
@@ -116,13 +115,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }
             if (!empty($to_delete)) {
-                db_query("DELETE FROM ?:competitive_pairs WHERE product_id IN (?n)", $to_delete);
+                foreach ($to_delete as $c_id => $ids) {
+                    db_query("DELETE FROM ?:competitive_pairs WHERE product_id IN (?n) AND competitor_id = ?i", $ids, $c_id);
+                }
             }
             if (!empty($data)) {
                 db_query("REPLACE INTO ?:competitive_pairs ?m", $data);
             }
         }
-        $suffix = ".prices?mode=" . $_REQUEST['mode'];
+        $suffix = ".prices?mode=" . $_REQUEST['mode'] . (!empty($_REQUEST['c_id']) ? '&c_id=' . $_REQUEST['c_id'] : '') . (!empty($_REQUEST['cid']) ? '&cid=' . $_REQUEST['cid'] : '');
     }
 
     if ($mode == 'autocomplete_cproducts') {
@@ -149,8 +150,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Registry::get('view')->assign('results', $products);
             Registry::get('view')->assign('product_id', $_REQUEST['id']);
             Registry::get('view')->display('addons/dv_competitors/views/competitors/prices_results.tpl');
-            exit();
         }
+        exit;
+    }
+
+    if ($mode == 'check_pair') {
+
+        if (!empty($_REQUEST['p_id']) && !empty($_REQUEST['c_id'])) {
+
+            $pair = db_get_row("SELECT a.competitive_id, b.name FROM ?:competitive_pairs AS a LEFT JOIN ?:competitive_prices AS b ON a.competitive_id = b.item_id WHERE a.product_id = ?i AND a.competitor_id = ?i", $_REQUEST['p_id'], $_REQUEST['c_id']);
+
+            $product = array(
+                'product_id' => $_REQUEST['p_id'],
+                'product' => fn_get_product_name($_REQUEST['p_id'])
+            );
+
+            Registry::get('view')->assign('input', $_REQUEST['input']);
+            Registry::get('view')->assign('pair', $pair);
+            Registry::get('view')->assign('product', $product);
+            Registry::get('view')->assign('c_id', $_REQUEST['c_id']);
+            Registry::get('view')->display('addons/dv_competitors/common/add_pair.tpl');
+        }
+        exit;
     }
 
     return array(CONTROLLER_STATUS_OK, "competitors$suffix");
@@ -228,23 +249,43 @@ elseif ($mode == 'delete') {
     if ($cp_mode == 'N') {
         $params = array(
             'hide_out_of_stock' => 'Y',
-            'competition' => 'N',
+            'competition' => array(
+                'mode' => 'N'
+            ),
             'sort_by' => 'price',
-            'sort_order' => 'desc'
+            'sort_order' => 'desc',
+            // 'pid' => 1285,
         );
+        if (!empty($_REQUEST['c_id'])) {
+            $params['competition']['competitor_id'] = $_REQUEST['c_id'];
+        }
+        list($products, $search) = fn_get_products($params);
     } elseif ($cp_mode == 'D') {
         $params = array(
             'hide_out_of_stock' => 'Y',
-            'competition' => 'D'
+            'competition' => array(
+                'mode' => 'D',
+            ),
+            // 'pid' => 1285,
+            // 'pid' => 787,
         );
-    } else {
+        if (!empty($_REQUEST['c_id'])) {
+            $params['competition']['competitor_id'] = $_REQUEST['c_id'];
+        }
+        list($products, $search) = fn_get_products($params);
+    } elseif ($cp_mode == 'A' && !empty($_REQUEST['cid']) && !empty($_REQUEST['c_id'])) {
         $params = array(
-            'competition' => 'A',
-            'hide_out_of_stock' => 'Y'
+            'competition' => array(
+                'mode' => 'A',
+                'competitor_id' => $_REQUEST['c_id']
+            ),
+            'hide_out_of_stock' => 'Y',
+            'cid' => $_REQUEST['cid'],
+            // 'pid' => 1285,
         );
+        list($products, $search) = fn_get_products($params);
     }
 
-    list($products, $search) = fn_get_products($params);
 
     $result = $_result = array();
     if (!empty($products)) {
@@ -261,8 +302,17 @@ elseif ($mode == 'delete') {
     }
     list($competitors,) = fn_get_competitors();
 
+    Registry::get('view')->assign('search', $search);
     Registry::get('view')->assign('mode', $cp_mode);
+    Registry::get('view')->assign('c_id', $_REQUEST['c_id']);
     Registry::get('view')->assign('competitive_prices', $_result);
     Registry::get('view')->assign('competitors', $competitors);
 
+} elseif ($mode == 'update_competitors' && !empty($_REQUEST['product_id'])) {
+
+    $competitors = db_get_array("SELECT cp.* FROM ?:products LEFT JOIN ?:competitive_prices AS cp ON ?:products.product_code = cp.code LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.competitive_id = cp.item_id WHERE ?:products.product_id = ?i OR ?:competitive_pairs.product_id = ?i", $_REQUEST['product_id'], $_REQUEST['product_id']);
+
+    fn_update_competitive_prices($competitors);
+
+    return array(CONTROLLER_STATUS_REDIRECT, "products.update?product_id=" . $_REQUEST['product_id']);
 }

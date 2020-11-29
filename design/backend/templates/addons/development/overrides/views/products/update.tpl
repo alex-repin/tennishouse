@@ -83,9 +83,18 @@
                     <div class="control-group {$no_hide_input_if_shared_product}">
                         <label for="elm_price_price" class="control-label">{__("price")} ({$currencies.$primary_currency.symbol nofilter}):</label>
                         <div class="controls">
-                            <input type="text" name="product_data[price]" id="elm_price_price" size="10" value="{$product_data.price|default:"0.00"|fn_format_price:$primary_currency:null:false}" class="input-long" />
-                            {if $product_data.c_price && $product_data.c_name && $product_data.c_link}<span style="margin-left: 10px;">{include file="common/price.tpl" value=$product_data.c_price} <a target="_blank" href="{$product_data.c_link}">{$product_data.c_name}</a>{if $product_data.c_in_stock != 'Y'}  {__("cprices_out_of_stock")}{/if}</span>{/if}
+                            <div class="ty-product-price">
+                                <input type="text" name="product_data[price]" id="elm_price_price" size="10" value="{$product_data.price|default:"0.00"|fn_format_price:$primary_currency:null:false}" class="input-long" />
+                            </div>
+                            {include file="addons/dv_competitors/common/product_competitors.tpl"}
                             {include file="buttons/update_for_all.tpl" display=$show_update_for_all object_id='price' name="update_all_vendors[price]"}
+                        </div>
+                    </div>
+
+                    <div class="control-group {$no_hide_input_if_shared_product}">
+                        <label for="elm_add_competitor_pair" class="control-label">{__("add_competitor_pair")}:</label>
+                        <div class="controls">
+                            {include file="addons/dv_competitors/common/add_pair.tpl" product=$product_data input="product_data[competitor_pair]"}
                         </div>
                     </div>
 
@@ -651,6 +660,29 @@
                 {include file="views/products/components/products_update_options.tpl"}
             </div>
             {** /Product options section **}
+
+            <div id="content_price_history" class="cm-hide-save-button hidden">
+                {if $product_data.price_history}
+                <table width="100%" class="table table-middle">
+                <tbody>
+                    {foreach from=$product_data.price_history item="ph"}
+                    <tr>
+                        <td width="10%">
+                            {include file="common/price.tpl" value=$ph.price}
+                        </td>
+                        <td class="nowrap" width="15%">
+                            {$ph.timestamp|date_format:"`$settings.Appearance.date_format`"}, {$ph.timestamp|date_format:"`$settings.Appearance.time_format`"}
+                        </td>
+                        <td width="75%">
+                        </td>
+                    </tr>
+                    {/foreach}
+                </tbody>
+                </table>
+                {else}
+                    <p class="no-items">{__("no_data")}</p>
+                {/if}
+            </div>
 
             {** Products files section **}
             <div id="content_files" class="cm-hide-save-button hidden">

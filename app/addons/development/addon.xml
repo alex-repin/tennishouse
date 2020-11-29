@@ -807,6 +807,15 @@
         <item>
             ALTER TABLE `cscart_categories` ADD `shipping_params` TEXT NOT NULL;
         </item>
+        <item>
+            CREATE TABLE IF NOT EXISTS `cscart_price_history` (
+                `product_id` mediumint(8) UNSIGNED NOT NULL,
+                `price` decimal(12,2) NOT NULL DEFAULT '0.00',
+                `timestamp` int(11) UNSIGNED NOT NULL,
+                UNIQUE KEY `product_id` (`product_id`,`timestamp`),
+                KEY `product_id_2` (`product_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
@@ -1556,7 +1565,7 @@
         <item lang="ru" id="generate_description_out_of_features">Сгенерировать описание из характеристик</item>
         <item lang="ru" id="description_templates">Шаблоны описания</item>
         <item lang="ru" id="features_description">Описание характеристик</item>
-        <item lang="ru" id="quarantine_shipping_delay"><![CDATA[<p>ВНИМАНИЕ! Для службы доставки СДЭК указаны стандартные сроки доставки, в связи с карантином и отмене авиасообщения могут происходить задержки по всем направлениям по России. Поэтому при заказе, пожалуйста, учитывайте, что посылка, возможно, не будет доставлена в указанный срок.</p><p>Если есть возможность, то можно забрать заказ со склада по адресу г. Москва, ул. Средняя Первомайская 44 (предварительно позвонить) или заказать доставку нашим курьером TennisHouse.</p>]]></item>
+        <item lang="ru" id="quarantine_shipping_delay"><![CDATA[<p>	ВНИМАНИЕ! Для службы доставки СДЭК указаны стандартные сроки доставки, в связи с пандемией и сокращением авиасообщения могут происходить задержки по всем направлениям по России. Поэтому при заказе, пожалуйста, учитывайте, что посылка, возможно, не будет доставлена в указанный срок.</p><p>	Если есть возможность, то можно забрать заказ со склада по адресу г. Москва, ул. Средняя Первомайская 44 (предварительно позвонить) или заказать доставку по Москве Яндекс курьером или Dostavista.</p>]]></item>
         <item lang="ru" id="is_imported">Импортирован</item>
         <item lang="ru" id="referral_url">Источник</item>
         <item lang="ru" id="approval_status">Статус подтверждения</item>
@@ -1587,5 +1596,6 @@
         <item lang="ru" id="update_xml_feed">Обновить XML-feed</item>
         <item lang="ru" id="ajax">Ajax</item>
         <item lang="ru" id="yml_gift_free_stringing">Струны и натяжка</item>
+        <item lang="ru" id="price_history">История цен</item>
     </language_variables>
 </addon>

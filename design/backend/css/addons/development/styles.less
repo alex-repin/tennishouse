@@ -217,6 +217,9 @@ a[class*="o-status-"] {
 .ty-cp-input {
     width: 40%;
 }
+.ty-cp-competitor {
+    width: 58%;
+}
 .ty-cp-item-id {
     width: 6%;
 }
@@ -355,6 +358,46 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 /*.sdek-packages-table {
     width: 50%;
 }*/
+.ty-product-competitors {
+    position: relative;
+    display: block;
+}
+.ty-main-competitor {
+    margin-left: 10px;
+}
+.ty-other-competitor {
+    margin: 5px;
+    display: block;
+}
+.ty-other-competitors {
+    position: absolute;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+    border: 1px solid #d6d6d6;
+    background: #fff;
+    display: none;
+    left: 0;
+    position: absolute;
+    top: -11px;
+    z-index: 10;
+}
+.ty-product-competitors:hover .ty-other-competitors {
+    display: block;
+}
+.ty-add-cpair {
+    display: inline;
+}
+.ty-product-price {
+    display: inline-block;
+    width: 22%;
+    vertical-align: top;
+}
+.ty-product-price-cmp {
+    display: inline-block;
+    width: 100%;
+}
+.product-manage .ty-product-price-cmp {
+    width: 77%;
+}
 /* KLADR */
 .kladr-error {
     color: #cb3e27;

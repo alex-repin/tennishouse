@@ -88,7 +88,12 @@
             var sub_menu = $('ul', sub_tab);
             var sub_width = sub_tab.outerWidth();
             // set custom width
-            var max_width = $(tabs_elm).data('caWidth') ? $(tabs_elm).data('caWidth') : 960;
+            if ($('#elm_sidebar').length) {
+                var m_width = 960;
+            } else {
+                var m_width = 1300;
+            }
+            var max_width = $(tabs_elm).data('caWidth') ? $(tabs_elm).data('caWidth') : m_width;
             var total_width = 0;
             var total_items = list.length;
             var is_sub = false;

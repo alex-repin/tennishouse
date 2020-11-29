@@ -38,7 +38,9 @@
             CREATE TABLE IF NOT EXISTS `cscart_competitive_pairs` (
                 `competitive_id` mediumint(8) NOT NULL,
                 `product_id` mediumint(8) NOT NULL,
-                PRIMARY KEY (`product_id`)
+                `competitor_id` MEDIUMINT(8) UNSIGNED NOT NULL,
+                UNIQUE( `product_id`, `competitor_id`),
+                INDEX(`product_id`)
             );
         </item>
         <item>
@@ -51,7 +53,29 @@
             ALTER TABLE `cscart_competitive_prices` ADD INDEX(`competitor_id`);
         </item>
         <item>
-            ALTER TABLE `cscart_competitive_pairs` ADD `competitor_id` MEDIUMINT(8) UNSIGNED NOT NULL; 
+            ALTER TABLE `cscart_competitive_pairs` ADD `competitor_id` MEDIUMINT(8) UNSIGNED NOT NULL;
+        </item>
+        <item>
+            ALTER TABLE `cscart_competitive_pairs` DROP PRIMARY KEY;
+        </item>
+        <item>
+            ALTER TABLE `cscart_competitive_pairs` ADD UNIQUE( `product_id`, `competitor_id`);
+        </item>
+        <item>
+            ALTER TABLE `cscart_competitive_pairs` ADD INDEX(`product_id`);"
+        </item>
+        <item>
+            ALTER TABLE `cscart_competitive_prices` CHANGE `object_id` `object_id` MEDIUMINT(8) NULL DEFAULT NULL;
+        </item>
+        <item>
+            REPLACE INTO `cscart_competitors` (`competitor_id`, `name`, `link`, `status`) VALUES
+            (1, 'Ракетлон', 'https://racketlon.ru/', 'A');
+        </item>
+        <item>
+            UPDATE `cscart_competitive_prices` SET `competitor_id`='1';
+        </item>
+        <item>
+            UPDATE `cscart_competitive_pairs` SET `competitor_id`='1';
         </item>
     </queries>
     <language_variables>
@@ -61,6 +85,7 @@
         <item lang="ru" id="editing_competitor">Редактирование конкурента</item>
         <item lang="ru" id="competitors_menu_description">Конкуренты и их цены</item>
         <item lang="ru" id="competitor_name">Имя</item>
+        <item lang="ru" id="add_competitor_pair">Привязать пару</item>
         <item lang="ru" id="competitor_link">Ссылка</item>
         <item lang="ru" id="text_competitors_have_been_deleted">Конкуренты удалены</item>
         <item lang="ru" id="text_competitor_has_been_deleted">Конкурент удален</item>

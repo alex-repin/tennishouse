@@ -9443,6 +9443,7 @@ function fn_update_product_prices($product_id, $product_data, $company_id = 0)
     $_product_data = $product_data;
     $skip_price_delete = false;
     // Update product prices
+    // fn_print_die($product_data);
     if (isset($_product_data['price'])) {
         $_price = array (
             'price' => abs($_product_data['price']),
@@ -9460,6 +9461,7 @@ function fn_update_product_prices($product_id, $product_data, $company_id = 0)
     }
 
     if (!empty($_product_data['prices'])) {
+        $old_price = db_get_field("SELECT price FROM ?:product_prices WHERE product_id = ?i AND lower_limit = '1' AND usergroup_id = '0'", $product_id);
         if (fn_allowed_for('ULTIMATE') && $company_id) {
             $table_name = '?:ult_product_prices';
             $condition = db_quote(' AND company_id = ?i', $company_id);
@@ -9489,6 +9491,17 @@ function fn_update_product_prices($product_id, $product_data, $company_id = 0)
                     $v['price'] = $_product_data['price'];
                 }
                 unset($v['type']);
+
+                if ($v['lower_limit'] == 1) {
+                    if ($old_price != $v['price']) {
+                        $history = array(
+                            'product_id' => $product_id,
+                            'price' => $v['price'],
+                            'timestamp' => TIME
+                        );
+                        db_query("REPLACE INTO ?:price_history ?e", $history);
+                    }
+                }
 
                 if (count($_product_data['prices']) == 1 && $skip_price_delete && empty($_product_data['create'])) {
                     $data = array(
