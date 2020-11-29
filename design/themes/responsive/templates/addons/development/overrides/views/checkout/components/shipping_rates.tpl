@@ -113,7 +113,7 @@ function fn_calculate_total_shipping_cost(obj) {
                             {assign var="rate" value="`$rate``$inc_tax_lang`)"}
                         {/if}
                     {else}
-                        {assign var="rate" value=__("free_shipping")}
+                        {assign var="rate" value=__("free")}
                     {/if}
 
                     <div class="ty-shipping-options__method">

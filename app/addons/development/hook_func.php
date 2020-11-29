@@ -1331,7 +1331,7 @@ function fn_development_gather_additional_products_data_post($product_ids, $para
         }
 
         if (!empty($params['get_options']) && Registry::get('settings.Appearance.catalog_options_mode') == 'Y' && !empty($params['allow_duplication']) && !empty($color_ids)) {
-            $color_prod_image_pairs_add = fn_get_image_pairs($color_ids, 'variant_additional', 'Z', false, $params['display_variant_additional_pairs'], CART_LANGUAGE);
+            $color_prod_image_pairs_add = fn_get_image_pairs($color_ids, 'variant_additional', 'Z', false, $params['display_variant_additional_pairs'] ?? false, CART_LANGUAGE);
             $new_products = array();
             foreach ($products as $i => &$product) {
                 $found = false;

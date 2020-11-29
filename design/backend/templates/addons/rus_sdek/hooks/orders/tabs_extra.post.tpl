@@ -113,24 +113,24 @@
                         <th width="10%">{__("height")}</th>
                         <th width="10%">{__("length")}</th>
                         <th width="50%">{__("products")}</th>
-                        <th width="15%">&nbsp;</th>
+                        <th width="10%">&nbsp;</th>
                     </tr>
                     </thead>
                     <tbody>
                     {if !empty($shipment.register_id)}
                         {foreach from=$shipment.packages item="package"}
                             <tr class="{cycle values="table-row , " reset=1}" id="box_add_package">
-                                <td width="10%">
+                                <td width="7%">
                                     {$package.Weight}</td>
-                                <td width="10%">
+                                <td width="7%">
                                     {$package.Size_A}</td>
-                                <td width="10%">
+                                <td width="7%">
                                     {$package.Size_B}</td>
-                                <td width="10%">
+                                <td width="7%">
                                     {$package.Size_C}</td>
                                 <td width="50%">
-                                    {foreach from=$package.products key="product_id" item="amount"}
-                                        {$order_info.products.$product_id.product} X {$amount} {__("items")}</br>
+                                    {foreach from=$package.products key="product_id" item="it_data"}
+                                        {$order_info.products.$product_id.product} X {$it_data.amount} {__("items")} {if $it_data.is_paid == 'Y'}{__("is_paid")}{/if}</br>
                                     {/foreach}
                                 <td width="15%" class="right">
                                     
@@ -140,18 +140,31 @@
                     {else}
                         {math equation="x+1" x=$_key|default:0 assign="new_key"}
                         <tr class="{cycle values="table-row , " reset=1}" id="box_add_package">
-                            <td width="10%">
+                            <td width="7%">
                                 <input type="text" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][Weight]" value="" class="input-mini" size="6" /></td>
-                            <td width="10%">
+                            <td width="7%">
                                 <input type="text" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][Size_A]" value="" class="input-mini" size="6" /></td>
-                            <td width="10%">
+                            <td width="7%">
                                 <input type="text" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][Size_B]" value="" class="input-mini" size="6" /></td>
-                            <td width="10%">
+                            <td width="7%">
                                 <input type="text" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][Size_C]" value="" class="input-mini" size="6" /></td>
                             <td width="50%">
+                                <table width="100%" class="table table-middle">
+                                <thead class="cm-first-sibling">
+                                <tr>
+                                    <th width="50%">{__("name")}</th>
+                                    <th width="20%">{__("quantity")}</th>
+                                    <th width="20%">{__("is_paid")}</th>
+                                </tr>
+                                </thead>
                                 {foreach from=$sdek_shipments.$shipment_id.products item="nth" key="product_id"}
-                                    <div class="ty-sdek-package-item">{$order_info.products.$product_id.product}<input type="text" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][products][{$product_id}]" value="{$order_info.products.$product_id.amount}" class="input-mini" size="6" /></div>
+                                    <tr>
+                                        <td>{$order_info.products.$product_id.product}</td>
+                                        <td><input type="text" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][products][{$product_id}][amount]" value="{$order_info.products.$product_id.amount}" class="input-mini" size="6" /></td>
+                                        <td><input type="hidden" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][products][{$product_id}][is_paid]" value="N" /><input type="checkbox" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][products][{$product_id}][is_paid]" value="Y" {if $order_info.status == $smarty.const.ORDER_STATUS_PAID}checked="checked"{/if} /></td>
+                                    <tr>
                                 {/foreach}
+                                </table>
                             <td width="15%" class="right">
                                 {include file="buttons/multiple_buttons.tpl" item_id="add_package" tag_level="3"}
                             </td>

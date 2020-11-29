@@ -360,6 +360,7 @@ function fn_is_free_shipping($product)
     );
 
     list($promotions,) = fn_get_promotions($params);
+    
     if (!empty($promotions[FREE_SHIPPING_PROMO_ID]['conditions'])) {
         $params = array(
             'ex_condition_name' => 'categories'
@@ -369,9 +370,11 @@ function fn_is_free_shipping($product)
         if (!fn_promotion_check(FREE_SHIPPING_PROMO_ID, $promotions[FREE_SHIPPING_PROMO_ID]['conditions'], $product, $_SESSION['auth'], $cart_products)) {
             return false;
         }
+        
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 function fn_save_cart_step($cart, $user_id)
