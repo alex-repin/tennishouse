@@ -22,6 +22,77 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+
+    if ($mode == 'complete_orders') {
+
+        if ($action == 'clear') {
+        
+            unset($_SESSION['complete_orders']);
+            $_SESSION['complete_orders']['step'] = 'one';
+            
+        } elseif ($action == 'finish') {
+        
+            if (!empty($_REQUEST['order_ids'])) {
+                foreach ($_REQUEST['order_ids'] as $id) {
+                    fn_change_order_status($id, ORDER_STATUS_FINISHED, '', fn_get_notification_rules(array(), true));
+                }
+            }
+        
+            $_SESSION['complete_orders']['step'] = 'two';
+
+        } elseif ($action == 'search') {
+        
+            $file = fn_filter_uploaded_data('csv_file');
+            
+            $order_statuses = array();
+            if (!empty($file) && file_exists($file[0]['path'])) {
+                $f = false;
+                if ($file[0]['path'] !== false) {
+                    $f = fopen($file[0]['path'], 'rb');
+                }
+
+                if ($f) {
+                    $max_line_size = 65536; // 64 Кб
+                    $result = array();
+
+                    $delimiter = ',';
+                    $codes = array();
+                    $order_id_column = $order_status_column = 0;
+                    while (($data = fn_fgetcsv($f, $max_line_size, $delimiter)) !== false) {
+                    
+                        if (empty($order_id_column)) {
+                            foreach ($data as $key => $column) {
+                                if ($column == '№ накладной ИМ') {
+                                    $order_id_column = $key;
+                                }
+                                if ($column == 'Статус') {
+                                    $order_status_column = $key;
+                                }
+                            }
+                        } elseif (!empty($data[$order_id_column]) && !empty($data[$order_status_column])) {
+                            $order_id = explode('_', $data[$order_id_column]);
+                            $order_id = $order_id[0];
+                            if ($data[$order_status_column] == 'Вручен') {
+                                $order_statuses[$order_id] = 'E';
+                            } else {
+                                $order_statuses[$order_id] = 'N';
+                            }
+                        }
+                    }
+                    
+                }
+            }
+            $_SESSION['complete_orders'] = array(
+                'step' => 'two',
+                'order_d_statuses' => $order_statuses
+            );
+        }
+        
+        fn_prepare_coplete_orders();
+        Registry::get('view')->display('addons/development/views/development/complete_orders.tpl');
+        exit;
+    }
+    
     if ($mode == 'process_rrp') {
 
     if ($_REQUEST['step'] == 'one') {
@@ -1384,6 +1455,15 @@ if ($mode == 'calculate_balance') {
     }
     fn_echo('Done');
     exit;
+    
+} elseif ($mode == 'complete_orders') {
+
+    if (!empty($_SESSION['complete_orders'])) {
+        fn_prepare_coplete_orders();
+    } else {
+        Registry::get('view')->assign('step', 'one');
+    }
+    
 } elseif ($mode == 'update_rrp') {
     Registry::get('view')->assign('step', 'one');
     Registry::get('view')->assign('brands', fn_development_get_brands());
@@ -1721,6 +1801,24 @@ if ($mode == 'calculate_balance') {
 
     exit;
 
+}
+
+function fn_prepare_coplete_orders()
+{
+    if (!empty($_SESSION['complete_orders'])) {
+        foreach ($_SESSION['complete_orders'] as $k => $v) {
+            Registry::get('view')->assign($k, $v);
+        }
+        if ($_SESSION['complete_orders']['step'] == 'two' && !empty($_SESSION['complete_orders']['order_d_statuses'])) {
+            
+            $params = array(
+                'order_id' => array_keys($_SESSION['complete_orders']['order_d_statuses'])
+            );
+
+            list($orders, $search, $totals) = fn_get_orders($params, 0, true);
+            Registry::get('view')->assign('orders', $orders);
+        }
+    }
 }
 
 function fn_fill_image_common_description(&$images_alts, $detailed_id, $name)
