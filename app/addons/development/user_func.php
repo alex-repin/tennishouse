@@ -360,7 +360,7 @@ function fn_is_free_shipping($product)
     );
 
     list($promotions,) = fn_get_promotions($params);
-    
+
     if (!empty($promotions[FREE_SHIPPING_PROMO_ID]['conditions'])) {
         $params = array(
             'ex_condition_name' => 'categories'
@@ -370,7 +370,7 @@ function fn_is_free_shipping($product)
         if (!fn_promotion_check(FREE_SHIPPING_PROMO_ID, $promotions[FREE_SHIPPING_PROMO_ID]['conditions'], $product, $_SESSION['auth'], $cart_products)) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -410,49 +410,6 @@ function fn_save_cart_step($cart, $user_id)
             db_query("UPDATE ?:user_session_products SET step = ?s WHERE item_id IN (?n) AND user_id = ?i AND type = 'C' AND user_type = ?s", $step, array_keys($cart['products']), $user_id, $user_type);
         }
     }
-}
-
-function fn_parse_competitive_price($link)
-{
-    $extra = array(
-        'request_timeout' => 10
-    );
-
-    $name = $price = $code = $in_stock = '';
-    $response = Http::get($link, array(), $extra);
-    if (!empty($response)) {
-        preg_match('/<title>(.*?)<\/title>/', preg_replace('/[\r\n\t]/', '', $response), $_name);
-        if (!empty($_name['1']) && $_name['1'] != 'Страница не найдена') {
-            preg_match('/<h1 class="ty-product-block-title".*?>.*?>([^>]*?)<\/.*?<\/h1>/', preg_replace('/[\r\n\t]/', '', $response), $_name);
-            if (!empty($_name['1'])) {
-                $name = $_name['1'];
-            }
-        } else {
-            return false;
-        }
-        preg_match('/id="sku_update_\d+".*?>(.*?)<\/div>/', preg_replace('/[\r\n\t]/', '', $response), $_code);
-        if (!empty($_code[1])) {
-            preg_match('/<span class="ty-control-group__item (.*?)>(.*?)</', preg_replace('/[\r\n\t]/', '', $_code[1]), $__code);
-            if (!empty($__code[2])) {
-                $code = $__code[2];
-            }
-        }
-        preg_match('/id="sec_discounted_price_\d+".*?>(.*?)<\/span>/', preg_replace('/[\r\n\t]/', '', $response), $_price);
-        if (!empty($_price[1])) {
-            $price = floatval(str_replace('&nbsp;', '', $_price[1]));
-        }
-        preg_match('/id="(in|out_of)_stock_info_\d+".*?>(.*?)<\/span>/', preg_replace('/[\r\n\t]/', '', $response), $_in_stock);
-        if (!empty($_in_stock[2])) {
-            $in_stock_trim = trim($_in_stock[2]);
-            if ($in_stock_trim == 'В наличии') {
-                $in_stock = 'Y';
-            } else {
-                $in_stock = 'N';
-            }
-        }
-    }
-
-    return array($price, $code, $name, $in_stock);
 }
 
 function fn_check_delivery_statuses()

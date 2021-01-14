@@ -13,6 +13,7 @@
 ****************************************************************************/
 
 use Tygh\Registry;
+use Tygh\CmpUpdater\CmpUpdater;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
@@ -174,6 +175,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
 
+    if ($mode == 'parse') {
+
+        if (!empty($_REQUEST['link']) && !empty($_REQUEST['competitor_id'])) {
+
+            list($status, $result) = CmpUpdater::call($_REQUEST['competitor_id'], 'parsePage', array($_REQUEST['link']));
+
+            Registry::get('view')->assign('result', $result['product']);
+            Registry::get('view')->assign('competitor_id', $_REQUEST['competitor_id']);
+            Registry::get('view')->assign('link', $_REQUEST['link']);
+            Registry::get('view')->display('addons/dv_competitors/common/parse_link.tpl');
+        }
+        exit;
+    }
+
     return array(CONTROLLER_STATUS_OK, "competitors$suffix");
 }
 
@@ -211,7 +226,17 @@ if ($mode == 'add') {
             'title' => __('general'),
             'js' => true
         ),
+        'parsing' => array(
+            'title' => __('parsing'),
+            'js' => true
+        )
     );
+    if (!empty($competitor_data['update_log'])) {
+        $tabs['update_log'] = array(
+            'title' => __('update_log'),
+            'js' => true
+        );
+    }
 
     Registry::set('navigation.tabs', $tabs);
     // [/Page sections]
@@ -262,7 +287,7 @@ elseif ($mode == 'delete') {
         list($products, $search) = fn_get_products($params);
     } elseif ($cp_mode == 'D') {
         $params = array(
-            'hide_out_of_stock' => 'Y',
+            // 'hide_out_of_stock' => 'Y',
             'competition' => array(
                 'mode' => 'D',
             ),
@@ -308,11 +333,21 @@ elseif ($mode == 'delete') {
     Registry::get('view')->assign('competitive_prices', $_result);
     Registry::get('view')->assign('competitors', $competitors);
 
+} elseif ($mode == 'update_competitor') {
+
+        if (!empty($_REQUEST['competitor_id'])) {
+            list($status, $results) = CmpUpdater::call($_REQUEST['competitor_id'], 'updateCompetitor');
+        }
+
+        return array(CONTROLLER_STATUS_REDIRECT, "competitors.update?competitor_id=" . $_REQUEST['competitor_id']);
+
 } elseif ($mode == 'update_competitors' && !empty($_REQUEST['product_id'])) {
 
-    $competitors = db_get_array("SELECT cp.* FROM ?:products LEFT JOIN ?:competitive_prices AS cp ON ?:products.product_code = cp.code LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.competitive_id = cp.item_id WHERE ?:products.product_id = ?i OR ?:competitive_pairs.product_id = ?i", $_REQUEST['product_id'], $_REQUEST['product_id']);
+    $competitors = db_get_hash_multi_array("SELECT cp.* FROM ?:products LEFT JOIN ?:competitive_prices AS cp ON ?:products.product_code = cp.code LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.competitive_id = cp.item_id WHERE ?:products.product_id = ?i OR ?:competitive_pairs.product_id = ?i", array('competitor_id', 'item_id'), $_REQUEST['product_id'], $_REQUEST['product_id']);
 
-    fn_update_competitive_prices($competitors);
+    foreach ($competitors as $comp_id => $cmts) {
+        list($status, $results) = CmpUpdater::call($comp_id, 'updatePrices', array($cmts));
+    }
 
     return array(CONTROLLER_STATUS_REDIRECT, "products.update?product_id=" . $_REQUEST['product_id']);
 }

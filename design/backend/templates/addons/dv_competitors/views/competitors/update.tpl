@@ -24,6 +24,16 @@
         <div class="controls">
         <input type="text" name="competitor_data[link]" id="elm_competitor_link" value="{$competitor_data.link}" class="input-large" /></div>
     </div>
+    <div class="control-group">
+        <label for="elm_last_update" class="control-label">{__("last_update")}</label>
+        <div class="controls">
+            {if $competitor_data.last_update}
+                {$competitor_data.last_update|date_format:"`$settings.Appearance.date_format`"}, {$competitor_data.last_update|date_format:"`$settings.Appearance.time_format`"}
+            {else}
+                -
+            {/if}
+        </div>
+    </div>
     {if !$competitor_data}
         {$competitor_data.status = 'D'}
     {/if}
@@ -33,7 +43,7 @@
     <div class="control-group">
         <label for="elm_competitor_link" class="control-label">{__("products")}</label>
         <div class="controls">
-            <div class="ty-cp-cell ty-cp-input">
+            <div class="ty-cp-cell ty-cp-input-full">
                 <input type="text" size="55" value="{$product.product}" data-product-id="" data-competitor-id="{$id}" class="input-large cm-competitor-products" />
                 {include file="addons/dv_competitors/views/competitors/prices_results.tpl"}
             </div>
@@ -44,13 +54,24 @@
 
 </form>
 
+<div id="content_parsing">
+    {include file="addons/dv_competitors/common/parse_link.tpl" competitor_id=$id}
+</div>
+
+{if $competitor_data.update_log}
+    <div id="content_update_log">
+        <div class="cron-log-results">{$competitor_data.update_log|fn_print_tpl}</div>
+    </div>
+{/if}
+
 {capture name="buttons"}
     {if !$id}
         {include file="buttons/save_cancel.tpl" but_name="dispatch[competitors.update]" but_role="submit-link" but_target_form="competitors_form" but_meta="cm-save-buttons"}
     {else}
 
         {capture name="tools_list"}
-            <li>{btn type="list" text=__("delete") class="cm-confirm" href="competitors.delete?competitor_id=`$id`"}</li>
+        <li>{btn type="list" text=__("update_catalog") href="competitors.update_competitor?competitor_id=`$id`"}</li>
+        <li>{btn type="list" text=__("delete") class="cm-confirm" href="competitors.delete?competitor_id=`$id`"}</li>
         {/capture}
         {dropdown content=$smarty.capture.tools_list}
 

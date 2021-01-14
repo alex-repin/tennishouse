@@ -14,6 +14,8 @@
               `competitor_id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT,
               `name` varchar(255) NOT NULL,
               `link` varchar(255) NOT NULL,
+              `last_update` INT(11) UNSIGNED NOT NULL,
+              `update_log` TEXT NOT NULL,
               `status` char(1) NOT NULL DEFAULT 'A',
               PRIMARY KEY (`competitor_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -26,7 +28,6 @@
                 `name` varchar(2555) NOT NULL,
                 `price` decimal(12,2) NOT NULL DEFAULT '0.00',
                 `old_price` DECIMAL(12,2) NOT NULL DEFAULT '0.00',
-                `object_id` mediumint(8) UNSIGNED NOT NULL,
                 `timestamp` INT(11) UNSIGNED NOT NULL DEFAULT '0',
                 `in_stock` CHAR(1) NOT NULL DEFAULT 'N',
                 PRIMARY KEY (`item_id`),
@@ -65,11 +66,8 @@
             ALTER TABLE `cscart_competitive_pairs` ADD INDEX(`product_id`);"
         </item>
         <item>
-            ALTER TABLE `cscart_competitive_prices` CHANGE `object_id` `object_id` MEDIUMINT(8) NULL DEFAULT NULL;
-        </item>
-        <item>
-            REPLACE INTO `cscart_competitors` (`competitor_id`, `name`, `link`, `status`) VALUES
-            (1, 'Ракетлон', 'https://racketlon.ru/', 'A');
+            REPLACE INTO `cscart_competitors` (`competitor_id`, `name`, `link`, `last_update`, `update_log`, `status`) VALUES
+            (1, 'Ракетлон', 'https://racketlon.ru/', '0', '', 'A');
         </item>
         <item>
             UPDATE `cscart_competitive_prices` SET `competitor_id`='1';
@@ -80,6 +78,7 @@
     </queries>
     <language_variables>
         <item lang="ru" id="competitors">Конкуренты</item>
+        <item lang="ru" id="competitor">Конкурент</item>
         <item lang="ru" id="add_competitor">Добавить конкурента</item>
         <item lang="ru" id="new_competitor">Новый конкурент</item>
         <item lang="ru" id="editing_competitor">Редактирование конкурента</item>
@@ -100,5 +99,8 @@
         <item lang="ru" id="competitor_price_action_both">Понижение и повышение</item>
         <item lang="ru" id="competitor_price_action_up">Только повышение</item>
         <item lang="ru" id="competitor_price_action_down">Только понижение</item>
+        <item lang="ru" id="last_update">Последнее обновление</item>
+        <item lang="ru" id="parsing">Парсинг</item>
+        <item lang="ru" id="parse">Извлечь</item>
     </language_variables>
 </addon>

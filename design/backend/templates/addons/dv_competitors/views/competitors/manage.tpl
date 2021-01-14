@@ -9,8 +9,9 @@
 <tr>
     <th width="5%" class="left">
         {include file="common/check_items.tpl" class="cm-no-hide-input"}</th>
-    <th>{__("competitor")}</th>
+    <th>{__("name")}</th>
     <th>{__("link")}</th>
+    <th>{__("last_update")}</th>
     <th width="6%">&nbsp;</th>
     <th width="10%" class="right">{__("status")}</th>
 </tr>
@@ -24,6 +25,11 @@
     </td>
     <td>
         <a class="row-status" target="_blank" href="{"`$competitor.link`"}">{$competitor.link}</a>
+    </td>
+    <td>
+        {if $competitor.last_update}
+            {$competitor.last_update|date_format:"`$settings.Appearance.date_format`"}, {$competitor.last_update|date_format:"`$settings.Appearance.time_format`"}
+        {/if}
     </td>
     <td>
         {capture name="tools_list"}

@@ -5,126 +5,79 @@ use Tygh\CmpUpdater\CmpUpdater;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-function fn_update_competitive_catalog()
+function fn_update_cmp($mode)
 {
     $competitors = db_get_fields("SELECT competitor_id FROM ?:competitors WHERE status = 'A'");
     $results = $status = array();
+    $func = 'update' . $mode;
     foreach ($competitors as $cmp_id) {
-        list($status[$cmp_id], $results[$cmp_id]) = CmpUpdater::Update($cmp_id);
+        list($status[$cmp_id], $results[$cmp_id]) = CmpUpdater::call($cmp_id, $func);
     }
 
     return array($status, $results);
 }
 
+function fn_update_competitive_catalog()
+{
+    return fn_update_cmp('Competitor');
+}
+
 function fn_update_competitive_prices($data = array())
 {
-    $details = array();
-    if (empty($data)) {
-        $data = db_get_hash_array("SELECT * FROM ?:competitive_prices ORDER BY object_id DESC", 'object_id');
-    }
-
-    $to_delete = $to_update = $updated_ids = array();
-    foreach ($data as $_dt) {
-        if (list($price, $code, $name, $in_stock) = fn_parse_competitive_price($_dt['link'])) {
-            $upd_item = array(
-                'item_id' => $_dt['item_id'],
-                'link' => $_dt['link'],
-                'code' => $code,
-                'name' => $name,
-                'price' => $price,
-                'in_stock' => $in_stock,
-                'object_id' => $_dt['object_id'],
-                'timestamp' => TIME,
-                'competitor_id' => $_dt['competitor_id']
-            );
-            if ($price != $_dt['price']) {
-                $upd_item['old_price'] = $_dt['price'];
-            } else {
-                $upd_item['old_price'] = $_dt['old_price'];
-            }
-            $to_update[] = $upd_item;
-            if ($in_stock == 'Y') {
-                $updated_ids[] = $_dt['item_id'];
-            }
-        } else {
-            $to_delete[] = $_dt['item_id'];
-        }
-        if (count($to_update) == 50) {
-            db_query("REPLACE INTO ?:competitive_prices ?m", $to_update);
-            $details = array_merge($details, $to_update);
-            $to_update = array();
-        }
-        if (count($to_delete) == 50) {
-            db_query("DELETE FROM ?:competitive_prices WHERE item_id IN (?n)", $to_delete);
-            db_query("DELETE FROM ?:competitive_pairs WHERE competitive_id IN (?n)", $to_delete);
-            $to_delete = array();
-        }
-        fn_echo(' . ');
-    }
-
-    if (!empty($to_update)) {
-        $details = array_merge($details, $to_update);
-        db_query("REPLACE INTO ?:competitive_prices ?m", $to_update);
-    }
-    if (!empty($to_delete)) {
-        db_query("DELETE FROM ?:competitive_prices WHERE item_id IN (?n)", $to_delete);
-        db_query("DELETE FROM ?:competitive_pairs WHERE competitive_id IN (?n)", $to_delete);
-    }
-
-    return array(true, $details);
+    return fn_update_cmp('Prices');
 }
 
-function fn_update_competitive_catalog_()
-{
-    $errors = $data = array();
-    $link = 'https://racketlon.ru/index.php?dispatch=products.view&product_id=';
-    $cur_id = 1;
-    $exist_ids = db_get_fields("SELECT object_id FROM ?:competitive_prices ORDER BY object_id DESC");
-    $max_id = max($exist_ids);
-
-    while (true) {
-        if (!in_array($cur_id, $exist_ids)) {
-            if (list($price, $code, $name, $in_stock) = fn_parse_competitive_price($link . $cur_id)) {
-                $data[] = array(
-                    'link' => $link . $cur_id,
-                    'code' => $code,
-                    'name' => $name,
-                    'price' => $price,
-                    'in_stock' => $in_stock,
-                    'object_id' => $cur_id,
-                    'timestamp' => TIME
-                );
-                $real_id = $cur_id;
-            }
-            if (count($data) == 50) {
-                db_query("REPLACE INTO ?:competitive_prices ?m", $data);
-                $data = array();
-            }
-        } else {
-            $real_id = $cur_id;
-        }
-
-        if ($max_id < $cur_id && $real_id + 100 < $cur_id) {
-            break;
-        }
-
-        fn_echo(' . ');
-        $cur_id++;
-    }
-
-    if (!empty($data)) {
-        db_query("REPLACE INTO ?:competitive_prices ?m", $data);
-    }
-
-    return array(true, $errors);
-}
+// function fn_update_competitive_catalog_()
+// {
+//     $errors = $data = array();
+//     $link = 'https://racketlon.ru/index.php?dispatch=products.view&product_id=';
+//     $cur_id = 1;
+//     $exist_ids = db_get_fields("SELECT object_id FROM ?:competitive_prices ORDER BY object_id DESC");
+//     $max_id = max($exist_ids);
+//
+//     while (true) {
+//         if (!in_array($cur_id, $exist_ids)) {
+//             if (list($price, $code, $name, $in_stock) = fn_parse_competitive_price($link . $cur_id)) {
+//                 $data[] = array(
+//                     'link' => $link . $cur_id,
+//                     'code' => $code,
+//                     'name' => $name,
+//                     'price' => $price,
+//                     'in_stock' => $in_stock,
+//                     'object_id' => $cur_id,
+//                     'timestamp' => TIME
+//                 );
+//                 $real_id = $cur_id;
+//             }
+//             if (count($data) == 50) {
+//                 db_query("REPLACE INTO ?:competitive_prices ?m", $data);
+//                 $data = array();
+//             }
+//         } else {
+//             $real_id = $cur_id;
+//         }
+//
+//         if ($max_id < $cur_id && $real_id + 100 < $cur_id) {
+//             break;
+//         }
+//
+//         fn_echo(' . ');
+//         $cur_id++;
+//     }
+//
+//     if (!empty($data)) {
+//         db_query("REPLACE INTO ?:competitive_prices ?m", $data);
+//     }
+//
+//     return array(true, $errors);
+// }
 
 function fn_actualize_prices()
 {
     $details = array();
 
     $params = array(
-        'hide_out_of_stock' => 'Y',
+        // 'hide_out_of_stock' => 'Y',
         'competition' => array(
             'mode' => 'A',
             'status' => 'A',
@@ -252,6 +205,9 @@ function fn_get_competitor_data($competitor_id)
     $field_list = "?:competitors.*";
 
     $competitor_data = db_get_row("SELECT $field_list FROM ?:competitors ?p WHERE ?:competitors.competitor_id = ?i ?p", $join, $competitor_id, $condition);
+    if (!empty($competitor_data['update_log'])) {
+        $competitor_data['update_log'] = unserialize($competitor_data['update_log']);
+    }
 
     return (!empty($competitor_data) ? $competitor_data : false);
 }

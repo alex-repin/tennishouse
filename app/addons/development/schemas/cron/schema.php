@@ -57,20 +57,6 @@ return array(
         'function' => 'fn_check_delivery_statuses',
         'name' => 'check_delivery_statuses'
     ),
-    'I' => array(
-        'frequency' => array(
-            'H' => '02'
-        ),
-        'function' => 'fn_update_competitive_prices',
-        'name' => 'update_competitive_prices'
-    ),
-    'A' => array(
-        'frequency' => array(
-            'H' => '04'
-        ),
-        'function' => 'fn_actualize_prices',
-        'name' => 'actualize_prices'
-    ),
     'T' => array(
         'frequency' => array(
             'i' => '00'
@@ -78,13 +64,13 @@ return array(
         'function' => 'fn_check_sms',
         'name' => 'check_sms_statuses'
     ),
-    'Y' => array(
-        'frequency' => array(
-            'H' => '04,16'
-        ),
-        'function' => 'fn_synchronize_agents',
-        'name' => 'catalog_synchronization'
-    ),
+    // 'Y' => array(
+    //     'frequency' => array(
+    //         'H' => '04,16'
+    //     ),
+    //     'function' => 'fn_synchronize_agents',
+    //     'name' => 'catalog_synchronization'
+    // ),
     'D' => array(
         'frequency' => array(
             'H' => '04,07,10,13,16,19,22,01'
