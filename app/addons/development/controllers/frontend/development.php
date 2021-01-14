@@ -113,6 +113,9 @@ if ($mode == 'product_shipping_estimation') {
         if (empty($approx_shipping['time']) && !empty($approx_shipping['country']) && !empty($approx_shipping['state']) && !empty($approx_shipping['city'])) {
             $approx_shipping['time'] = fn_get_approximate_shipping($approx_shipping);
         }
+        if ($approx_shipping['city'] == 'Москва') {
+            $approx_shipping['time'] = '0-2';
+        }
         $approx_shipping['is_complete'] = true;
         Registry::get('view')->display('addons/development/common/product_shipping_estimation.tpl');
     }

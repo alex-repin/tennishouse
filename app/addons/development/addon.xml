@@ -1625,5 +1625,9 @@
         <item lang="ru" id="ajax">Ajax</item>
         <item lang="ru" id="yml_gift_free_stringing">Струны и натяжка</item>
         <item lang="ru" id="is_paid">Оплачено</item>
+        <item lang="ru" id="complete_orders">Завершить заказы</item>
+        <item lang="ru" id="delivery_status">Статус доставки</item>
+        <item lang="ru" id="delivered">Вручен</item>
+        <item lang="ru" id="not_delivered">Не вручен</item>
     </language_variables>
 </addon>

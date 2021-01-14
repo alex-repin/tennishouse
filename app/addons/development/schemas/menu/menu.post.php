@@ -27,6 +27,10 @@ $schema['top']['administration']['items']['development'] = array(
             'href' => 'development.update_rrp',
             'position' => 120,
         ),
+        'complete_orders' => array(
+            'href' => 'development.complete_orders',
+            'position' => 130,
+        ),
     ),
 );
 $schema['top']['administration']['items']['cron_scripts'] = array(
