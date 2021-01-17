@@ -32,10 +32,10 @@ class Competitor
     protected $current_link;
     protected $pages_number = 0;
 
-    private static $parse_page_limit = 10;
+    private static $parse_page_limit = 0;
     private static $parse_page_step = 10;
     private static $update_price_frequency = 60 * 60 * 10;
-    private static $update_duration_limit = 60 * 60 * 2;
+    private static $update_duration_limit = 60 * 60 * 3;
 
     private $log = array(
         'total' => 0,
@@ -184,6 +184,7 @@ class Competitor
     {
         $success = false;
 
+        $this->log['update_status'] = 'Started';
         $this->parsePages($this->competitor['link']);
 
         $this->saveProducts();
@@ -191,6 +192,7 @@ class Competitor
         $this->log['total'] = $this->pages_number;
         $this->log['statuses'] = $this->checked_statuses;
         $this->log['links'] = $this->checked_links;
+        $this->log['update_status'] = 'Finished';
 
         db_query("UPDATE ?:competitors SET last_update = ?i, update_log = ?s WHERE competitor_id = ?i", TIME, serialize($this->log), $this->competitor['competitor_id']);
 
@@ -235,7 +237,7 @@ class Competitor
                 $to_delete = array();
             }
             fn_echo(' . ');
-            if (!empty(self::$update_duration_limit) && TIME + self::$update_duration_limit < time()) {
+            if (!empty($_SESSION['cmp_update_start']) && !empty(self::$update_duration_limit) && $_SESSION['cmp_update_start'] + self::$update_duration_limit < time()) {
                 break;
             }
         }

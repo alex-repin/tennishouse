@@ -10,9 +10,11 @@ function fn_update_cmp($mode)
     $competitors = db_get_fields("SELECT competitor_id FROM ?:competitors WHERE status = 'A'");
     $results = $status = array();
     $func = 'update' . $mode;
+    $_SESSION['cmp_update_start'] = time();
     foreach ($competitors as $cmp_id) {
         list($status[$cmp_id], $results[$cmp_id]) = CmpUpdater::call($cmp_id, $func);
     }
+    unset($_SESSION['cmp_update_start']);
 
     return array($status, $results);
 }
