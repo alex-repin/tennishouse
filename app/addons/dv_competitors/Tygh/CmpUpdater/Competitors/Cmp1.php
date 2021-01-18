@@ -103,7 +103,9 @@ class Cmp1 extends Competitor
 
     private function findCode($words)
     {
-        $sort_by_strlen = create_function('$a, $b', 'return (strlen($a) < strlen($b)) ? -1 : 1;');
+        $sort_by_strlen = function($a, $b) {
+            return (strlen($a) < strlen($b)) ? -1 : 1;
+        };
         usort($words, $sort_by_strlen);
 
         $common_substring = '';

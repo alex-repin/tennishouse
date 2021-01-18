@@ -38,7 +38,9 @@ class Competitor
     private static $update_duration_limit = 60 * 60 * 3;
 
     private $log = array(
+        'update_status' => '',
         'total' => 0,
+        'memory_usage' => 0,
         'products_total' => 0,
         'statuses' => array(),
         'links' => array(),
@@ -94,7 +96,7 @@ class Competitor
         $result = array();
         foreach ($links as $link) {
             $parsed_link = parse_url($link);
-            if (empty($parsed_link) || empty($parsed_link['path']) || $parsed_link['path'] == '/' || (!empty($parsed_link['host']) && $parsed_link['host'] != $parsed_home['host']) || (!empty($parsed_link['scheme']) && !in_array($parsed_link['scheme'], array('http', 'https')))) {
+            if (empty($parsed_link) || empty($parsed_link['path']) || $parsed_link['path'] == '/' || (!empty($parsed_link['host']) && $parsed_link['host'] != $parsed_home['host']) || (!empty($parsed_link['scheme']) && !in_array($parsed_link['scheme'], array('http', 'https'))) || substr($parsed_link['path'], -4, 4 ) == '.jpg') {
                 continue;
             }
             $result[] = $domain . $parsed_link['path'];
@@ -150,6 +152,13 @@ class Competitor
         $this->checked_links[$link] = $status;
         $this->checked_statuses[Http::getStatus()]++;
         $this->pages_number++;
+        
+        $this->log['total'] = $this->pages_number;
+        $this->log['statuses'] = $this->checked_statuses;
+        $this->log['links'] = $this->checked_links;
+        $this->log['memory_usage'] = memory_get_usage();
+        db_query("UPDATE ?:competitors SET update_log = ?s WHERE competitor_id = ?i", serialize($this->log), $this->competitor['competitor_id']);
+        
         fn_echo(' . ');
 
         if (!empty(self::$parse_page_step) && count($this->products) == self::$parse_page_step) {

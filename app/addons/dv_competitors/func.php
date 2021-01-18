@@ -205,8 +205,10 @@ function fn_update_competitor($competitor_data, $competitor_id = 0)
 function fn_get_competitor_data($competitor_id)
 {
     $field_list = "?:competitors.*";
+    $join = $condition = '';
 
     $competitor_data = db_get_row("SELECT $field_list FROM ?:competitors ?p WHERE ?:competitors.competitor_id = ?i ?p", $join, $competitor_id, $condition);
+    
     if (!empty($competitor_data['update_log'])) {
         $competitor_data['update_log'] = unserialize($competitor_data['update_log']);
     }
@@ -349,5 +351,5 @@ function fn_dv_competitors_get_products(&$params, &$fields, &$sortings, &$condit
 }
 function fn_dv_competitors_get_products_post(&$products, &$params, $lang_code)
 {
-    fn_explode_competitors($products, $params['competition']);
+    fn_explode_competitors($products, $params['competition'] ?? array());
 }

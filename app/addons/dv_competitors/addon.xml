@@ -15,7 +15,7 @@
               `name` varchar(255) NOT NULL,
               `link` varchar(255) NOT NULL,
               `last_update` INT(11) UNSIGNED NOT NULL,
-              `update_log` TEXT NOT NULL,
+              `update_log` LONGTEXT NOT NULL,
               `status` char(1) NOT NULL DEFAULT 'A',
               PRIMARY KEY (`competitor_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -23,6 +23,7 @@
         <item>
             CREATE TABLE IF NOT EXISTS `cscart_competitive_prices` (
                 `item_id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `competitor_id` MEDIUMINT(8) UNSIGNED NOT NULL,
                 `link` varchar(255) NOT NULL,
                 `code` varchar(32) NOT NULL,
                 `name` varchar(2555) NOT NULL,
@@ -31,7 +32,7 @@
                 `timestamp` INT(11) UNSIGNED NOT NULL DEFAULT '0',
                 `in_stock` CHAR(1) NOT NULL DEFAULT 'N',
                 PRIMARY KEY (`item_id`),
-                INDEX(`code`),
+                INDEX(`code`, `competitor_id`),
                 UNIQUE(`link`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
         </item>
@@ -46,34 +47,6 @@
         </item>
         <item>
             ALTER TABLE `cscart_products` ADD `competitor_price_action` CHAR(1) NOT NULL DEFAULT 'B';
-        </item>
-        <item>
-            ALTER TABLE `cscart_competitive_prices` ADD `competitor_id` MEDIUMINT(8) UNSIGNED NOT NULL;
-        </item>
-        <item>
-            ALTER TABLE `cscart_competitive_prices` ADD INDEX(`competitor_id`);
-        </item>
-        <item>
-            ALTER TABLE `cscart_competitive_pairs` ADD `competitor_id` MEDIUMINT(8) UNSIGNED NOT NULL;
-        </item>
-        <item>
-            ALTER TABLE `cscart_competitive_pairs` DROP PRIMARY KEY;
-        </item>
-        <item>
-            ALTER TABLE `cscart_competitive_pairs` ADD UNIQUE( `product_id`, `competitor_id`);
-        </item>
-        <item>
-            ALTER TABLE `cscart_competitive_pairs` ADD INDEX(`product_id`);"
-        </item>
-        <item>
-            REPLACE INTO `cscart_competitors` (`competitor_id`, `name`, `link`, `last_update`, `update_log`, `status`) VALUES
-            (1, 'Ракетлон', 'https://racketlon.ru/', '0', '', 'A');
-        </item>
-        <item>
-            UPDATE `cscart_competitive_prices` SET `competitor_id`='1';
-        </item>
-        <item>
-            UPDATE `cscart_competitive_pairs` SET `competitor_id`='1';
         </item>
     </queries>
     <language_variables>
