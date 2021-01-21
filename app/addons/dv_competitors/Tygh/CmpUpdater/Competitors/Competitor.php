@@ -32,7 +32,7 @@ class Competitor
     protected $current_link;
     protected $pages_number = 0;
 
-    private static $parse_page_limit = 0;
+    private static $parse_page_limit = 20;
     private static $parse_page_step = 10;
     private static $update_price_frequency = 60 * 60 * 10;
     private static $update_duration_limit = 60 * 60 * 3;
