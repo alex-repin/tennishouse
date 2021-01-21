@@ -114,7 +114,7 @@ class Competitor
         }
     }
 
-    public function parsePage($link)
+    private function parsePage($link)
     {
         $extra = array(
             'request_timeout' => 10
@@ -124,23 +124,12 @@ class Competitor
 
         if (Http::getStatus() == Http::STATUS_OK && !empty($response)) {
             $product = $this->prsProduct($response);
-        }
+            $product['link'] = $link;
+            $this->products[] = $product;
 
-        return array(Http::getStatus(), array('response' => $response, 'product' => $product));
-    }
-
-    private function parsePages($link)
-    {
-        $this->current_link = $link;
-        list($status, $result) = $this->parsePage($link);
-        if (!empty($result['product'])) {
-            $result['product']['link'] = $link;
-            $this->products[] = $result['product'];
-        }
-        if (!empty($result['response'])) {
             // $links = $this->prsLinksDom($result);
             // $links = $this->prsLinksExp($result);
-            $links = $this->prsLinksReg($result['response']);
+            $links = $this->prsLinksReg($response);
             // fn_print_r(microtime());
             $this->trimLinks($links);
             // fn_print_r(microtime());
@@ -148,17 +137,25 @@ class Competitor
             // fn_print_r(microtime());
         }
 
+        return Http::getStatus();
+    }
+
+    private function parsePages($link)
+    {
+        $this->current_link = $link;
+        $status = $this->parsePage($link);
+
         unset($this->new_links[$link]);
         $this->checked_links[$link] = $status;
-        $this->checked_statuses[Http::getStatus()]++;
+        $this->checked_statuses[$status]++;
         $this->pages_number++;
-        
+
         $this->log['total'] = $this->pages_number;
         $this->log['statuses'] = $this->checked_statuses;
         $this->log['links'] = $this->checked_links;
         $this->log['memory_usage'] = memory_get_usage();
         db_query("UPDATE ?:competitors SET update_log = ?s WHERE competitor_id = ?i", serialize($this->log), $this->competitor['competitor_id']);
-        
+
         fn_echo(' . ');
 
         if (!empty(self::$parse_page_step) && count($this->products) == self::$parse_page_step) {
