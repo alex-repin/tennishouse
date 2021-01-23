@@ -22,13 +22,9 @@ class Cmp1 extends Competitor
     public function __construct()
     {
         parent::__construct(RACKETLON_COMPETITOR_ID);
-        // $this->new_links = array(
-        //     // 'https://racketlon.ru/tennis/racket/head/tennis-racket-head-graphene-360-extreme-s/?variation_id=26293' => true
-        //     // 'https://racketlon.ru/tennis/racket/babolat/pure-aero/babolat-pure-aero-lite-2019/' => true,
-        //     // 'https://racketlon.ru/tennis/products/tennis-court-equipment/baskets-and-carts/korzina-wilson-tennis-teaching-cart-150-black/' => true,
-        //     // 'https://racketlon.ru/tennis/racket/babolat/pure-strike-ru/pure-control/' => true,
-        //     // 'https://racketlon.ru/tennis/racket/junior/babolat/21/tennisnaya-raketka-babolat-pure-drive-junior-black-blue-21/' => true,
-        // );
+//         $this->new_links = array(
+//             'https://racketlon.ru/tennis/racket/babolat/pure-aero/vs/?variation_id=30467' => true
+//         );
     }
 
     private function prsVariations($content)
@@ -63,7 +59,8 @@ class Cmp1 extends Competitor
         }
 
         if (!empty($product['name']) && !empty($product['code']) && !empty($product['price']) && !empty($product['in_stock'])) {
-
+        
+            $product['link'] = $this->current_link;
             if (!empty($check_variations)) {
                 $variations = $this->prsVariations($content);
                 if (!empty($variations)) {
@@ -83,6 +80,9 @@ class Cmp1 extends Competitor
                                     }
                                     if ($_product['price'] < $product['price']) {
                                         $product['price'] = $_product['price'];
+                                    }
+                                    if (strlen($v_link) < strlen($product['link'])) {
+                                        $product['link'] = $v_link;
                                     }
                                 }
                             }

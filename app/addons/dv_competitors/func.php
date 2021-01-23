@@ -29,51 +29,6 @@ function fn_update_competitive_prices($data = array())
     return fn_update_cmp('Prices');
 }
 
-// function fn_update_competitive_catalog_()
-// {
-//     $errors = $data = array();
-//     $link = 'https://racketlon.ru/index.php?dispatch=products.view&product_id=';
-//     $cur_id = 1;
-//     $exist_ids = db_get_fields("SELECT object_id FROM ?:competitive_prices ORDER BY object_id DESC");
-//     $max_id = max($exist_ids);
-//
-//     while (true) {
-//         if (!in_array($cur_id, $exist_ids)) {
-//             if (list($price, $code, $name, $in_stock) = fn_parse_competitive_price($link . $cur_id)) {
-//                 $data[] = array(
-//                     'link' => $link . $cur_id,
-//                     'code' => $code,
-//                     'name' => $name,
-//                     'price' => $price,
-//                     'in_stock' => $in_stock,
-//                     'object_id' => $cur_id,
-//                     'timestamp' => TIME
-//                 );
-//                 $real_id = $cur_id;
-//             }
-//             if (count($data) == 50) {
-//                 db_query("REPLACE INTO ?:competitive_prices ?m", $data);
-//                 $data = array();
-//             }
-//         } else {
-//             $real_id = $cur_id;
-//         }
-//
-//         if ($max_id < $cur_id && $real_id + 100 < $cur_id) {
-//             break;
-//         }
-//
-//         fn_echo(' . ');
-//         $cur_id++;
-//     }
-//
-//     if (!empty($data)) {
-//         db_query("REPLACE INTO ?:competitive_prices ?m", $data);
-//     }
-//
-//     return array(true, $errors);
-// }
-
 function fn_actualize_prices()
 {
     $details = array();
@@ -85,7 +40,7 @@ function fn_actualize_prices()
             'status' => 'A',
             // 'in_stock' => 'Y'
         ),
-        // 'pid' => 1708,
+//         'pid' => 2230,
         'price_mode' => 'M'
     );
     list($products, $search) = fn_get_products($params);
@@ -298,7 +253,7 @@ function fn_explode_competitors(&$products, $competition_params = array())
                     if (!empty($item_data[$_cmp['item_id']])) {
                         $_cmp = array_merge($_cmp, $item_data[$_cmp['item_id']]);
                     }
-                    if ($_cmp['in_stock'] == 'Y' && (empty($result) || $result['price'] > $_cmp['price'])) {
+                    if ($_cmp['in_stock'] == 'Y' && $_cmp['price'] > $product['net_cost'] * Registry::get('currencies.' . $product['net_currency_code'] . '.coefficient') && (empty($result) || $result['price'] > $_cmp['price'])) {
                         $result = $_cmp;
                     }
                 }

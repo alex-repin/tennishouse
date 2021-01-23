@@ -48,6 +48,7 @@ class Cmp2 extends Competitor
         }
 
         if (!empty($product['name']) && !empty($product['code']) && !empty($product['price']) && !empty($product['in_stock'])) {
+            $product['link'] = $this->current_link;
             return $product;
         }
 

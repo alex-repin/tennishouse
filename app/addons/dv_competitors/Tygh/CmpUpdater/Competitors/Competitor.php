@@ -32,13 +32,12 @@ class Competitor
     protected $current_link;
     protected $pages_number = 0;
 
-    private static $parse_page_limit = 20;
+    private static $parse_page_limit = 0;
     private static $parse_page_step = 10;
     private static $update_price_frequency = 60 * 60 * 10;
     private static $update_duration_limit = 60 * 60 * 3;
 
     private $log = array(
-        'update_status' => '',
         'total' => 0,
         'memory_usage' => 0,
         'products_total' => 0,
@@ -70,12 +69,12 @@ class Competitor
     {
         $result = array();
         $links = explode('<a',$content);
-		unset($links[0]);
-		foreach ($links as $hrefsItem) {
-			$arHref = explode('href="', $hrefsItem);
-			$arHref = explode('"', $arHref[1]);
-			$result[] = $arHref[0];
-		}
+            unset($links[0]);
+            foreach ($links as $hrefsItem) {
+                $arHref = explode('href="', $hrefsItem);
+                $arHref = explode('"', $arHref[1]);
+                $result[] = $arHref[0];
+            }
 
         return $result;
     }
@@ -96,7 +95,7 @@ class Competitor
         $result = array();
         foreach ($links as $link) {
             $parsed_link = parse_url($link);
-            if (empty($parsed_link) || empty($parsed_link['path']) || $parsed_link['path'] == '/' || (!empty($parsed_link['host']) && $parsed_link['host'] != $parsed_home['host']) || (!empty($parsed_link['scheme']) && !in_array($parsed_link['scheme'], array('http', 'https'))) || substr($parsed_link['path'], -4, 4 ) == '.jpg') {
+            if (empty($parsed_link) || empty($parsed_link['path']) || $parsed_link['path'] == '/' || (!empty($parsed_link['host']) && $parsed_link['host'] != $parsed_home['host']) || (!empty($parsed_link['scheme']) && !in_array($parsed_link['scheme'], array('http', 'https'))) || fn_strtolower(substr($parsed_link['path'], -4, 4 )) == '.jpg' || fn_strtolower(substr($parsed_link['path'], -4, 4 )) == '.png' || fn_strtolower(substr($parsed_link['path'], -5, 5 )) == '.jpeg') {
                 continue;
             }
             $result[] = $domain . $parsed_link['path'];
@@ -124,8 +123,9 @@ class Competitor
 
         if (Http::getStatus() == Http::STATUS_OK && !empty($response)) {
             $product = $this->prsProduct($response);
-            $product['link'] = $link;
-            $this->products[] = $product;
+            if (!empty($product)) {
+                $this->products[] = $product;
+            }
 
             // $links = $this->prsLinksDom($result);
             // $links = $this->prsLinksExp($result);
@@ -173,6 +173,12 @@ class Competitor
         if (!empty($this->products)) {
             $data = array();
             foreach ($this->products as $product) {
+                if (!empty($this->old_products[$product['link']])) {
+                    if ($this->old_products[$product['link']]['price'] != $product['price']) {
+                        $product['old_price'] = $this->old_products[$product['link']]['price'];
+                    }
+                    $product = array_merge($this->old_products[$product['link']], $product);
+                }
                 $data[] = array_merge($product, array(
                     'timestamp' => TIME,
                     'competitor_id' => $this->competitor['competitor_id']
@@ -190,7 +196,7 @@ class Competitor
     {
         $success = false;
 
-        $this->log['update_status'] = 'Started';
+        $this->old_products = db_get_hash_array("SELECT * FROM ?:competitive_prices WHERE competitor_id = ?i", 'link', $this->competitor['competitor_id']);
         $this->parsePages($this->competitor['link']);
 
         $this->saveProducts();
@@ -198,7 +204,6 @@ class Competitor
         $this->log['total'] = $this->pages_number;
         $this->log['statuses'] = $this->checked_statuses;
         $this->log['links'] = $this->checked_links;
-        $this->log['update_status'] = 'Finished';
 
         db_query("UPDATE ?:competitors SET last_update = ?i, update_log = ?s WHERE competitor_id = ?i", TIME, serialize($this->log), $this->competitor['competitor_id']);
 
@@ -220,7 +225,8 @@ class Competitor
         foreach ($data as $_dt) {
 
             $result = Http::get($_dt['link'], array(), $extra);
-            $this->log['statuses'][$_dt['link']] = Http::getStatus();
+            $this->log['links'][$_dt['link']] = Http::getStatus();
+            $this->log['statuses'][Http::getStatus()]++;
 
             if (Http::getStatus() == Http::STATUS_OK && !empty($result) && $product = $this->prsProduct($result)) {
                 $product['item_id'] = $_dt['item_id'];
@@ -253,6 +259,8 @@ class Competitor
             db_query("DELETE FROM ?:competitive_prices WHERE item_id IN (?n)", $to_delete);
             db_query("DELETE FROM ?:competitive_pairs WHERE competitive_id IN (?n)", $to_delete);
         }
+        $this->log['memory_usage'] = memory_get_usage();
+        $this->log['total'] = count($data);
 
         return array($success, $this->log);
     }
