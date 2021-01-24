@@ -1320,7 +1320,7 @@ EOU;
 */
 function fn_validate_email($email, $show_error = false)
 {
-    $email_regular_expression = "^([\d\w-+=_][.\d\w-+=_]*)?[-\d\w]@([-!#\$%&*+\\/=?\w\d^_`{|}~]+\.)+[a-zA-Z]{2,6}$";
+    $email_regular_expression = "^([\d\w\-+=_][.\d\w\-+=_]*)?[-\d\w]@([-!#\$%&*+\\/=?\w\d^_`{|}~]+\.)+[a-zA-Z]{2,6}$";
 
     if (preg_match("/" . $email_regular_expression . "/i", stripslashes($email))) {
         return true;
