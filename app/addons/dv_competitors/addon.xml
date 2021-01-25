@@ -75,5 +75,8 @@
         <item lang="ru" id="last_update">Последнее обновление</item>
         <item lang="ru" id="parsing">Парсинг</item>
         <item lang="ru" id="parse">Извлечь</item>
+        <item lang="ru" id="update_log">Логи обновления</item>
+        <item lang="ru" id="update_competitors">Обновить конкурентов</item>
+        <item lang="ru" id="no_match">Нет совпадениий</item>
     </language_variables>
 </addon>

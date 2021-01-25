@@ -149,6 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $products = db_get_array("SELECT * FROM ?:competitive_prices WHERE $_cond ORDER BY item_id DESC");
 
             Registry::get('view')->assign('results', $products);
+            Registry::get('view')->assign('ac_done', true);
             Registry::get('view')->assign('product_id', $_REQUEST['id']);
             Registry::get('view')->display('addons/dv_competitors/views/competitors/prices_results.tpl');
         }

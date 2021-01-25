@@ -6,6 +6,8 @@
                 <a href="{$result.link}" target="_blank" class="ty-cp-search-results-item-link">></a>
             </div>
         {/foreach}
+    {elseif $ac_done}
+        <div class="ty-cp-search-no-results">{__("no_match")}</div>
     {/if}
 
 <script type="text/javascript">

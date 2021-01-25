@@ -163,6 +163,17 @@
             </select>
             </div>
         </div>
+        <div class="control-group">
+            <label class="control-label" for="price_mode">{__("price_mode")}</label>
+            <div class="controls">
+            <select name="price_mode">
+                <option value="">--</option>
+                <option value="S" {if $search.price_mode == "S"}selected="selected"{/if}>{__("static_price")}</option>
+                <option value="D" {if $search.price_mode == "D"}selected="selected"{/if}>{__("dynamic_price")}</option>
+                <option value="M" {if $search.price_mode == "M"}selected="selected"{/if}>{__("competitor_price")}</option>
+            </select>
+            </div>
+        </div>
     </div>
 </div>
 

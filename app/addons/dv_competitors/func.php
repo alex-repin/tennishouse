@@ -40,7 +40,7 @@ function fn_actualize_prices()
             'status' => 'A',
             // 'in_stock' => 'Y'
         ),
-//         'pid' => 2230,
+        // 'pid' => 2230,
         'price_mode' => 'M'
     );
     list($products, $search) = fn_get_products($params);
@@ -50,12 +50,9 @@ function fn_actualize_prices()
         foreach ($products as $product) {
             if (!empty($product['main_competitor'])) {
                 $new_price = $product['main_competitor']['price'];
-            } else {
-                $competitors = $product['competitors'] ?? array();
-                $new_price = max($product['price'], $product['list_price'], reset($competitors)['price'] ?? 0);
             }
             $link = '<a href="' . fn_url('products.update?product_id=' . $product['product_id'], 'A', 'current', CART_LANGUAGE, true) . '" target="_blank">' . $product['product'] . '</a>';
-            if (!empty($new_price) && (($product['price'] > $new_price && in_array($product['competitor_price_action'], array('B', 'D'))) || ($product['price'] < $new_price && in_array($product['competitor_price_action'], array('B', 'U'))))) {
+            if (!empty($new_price) && (($product['price'] > $new_price && in_array($product['competitor_price_action'], array('B', 'D'))) || ($product['price'] < $new_price && in_array($product['competitor_price_action'], array('B', 'U')) && $product['amount'] > 0))) {
                 $data[] = array(
                     'product_id' => $product['product_id'],
                     'price' => $new_price,
@@ -163,7 +160,7 @@ function fn_get_competitor_data($competitor_id)
     $join = $condition = '';
 
     $competitor_data = db_get_row("SELECT $field_list FROM ?:competitors ?p WHERE ?:competitors.competitor_id = ?i ?p", $join, $competitor_id, $condition);
-    
+
     if (!empty($competitor_data['update_log'])) {
         $competitor_data['update_log'] = unserialize($competitor_data['update_log']);
     }
