@@ -16,12 +16,12 @@ $schema['I'] = array(
     'function' => 'fn_update_competitive_prices',
     'name' => 'update_competitive_prices'
 );
-// $schema['A'] = array(
-//     'frequency' => array(
-//         'H' => '05'
-//     ),
-//     'function' => 'fn_actualize_prices',
-//     'name' => 'actualize_prices'
-// );
+$schema['A'] = array(
+    'frequency' => array(
+        'H' => '05'
+    ),
+    'function' => 'fn_actualize_prices',
+    'name' => 'actualize_prices'
+);
 
 return $schema;

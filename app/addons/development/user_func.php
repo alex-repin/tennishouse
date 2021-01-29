@@ -28,6 +28,37 @@ use Tygh\Ym\Yml;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_install_cron_settings()
+{
+
+    $schema = fn_get_schema('cron', 'schema', 'php', true);
+    $section_ids = db_get_hash_single_array("SELECT section_id, name FROM ?:settings_sections WHERE name IN ('cron', 'development')", array('name', 'section_id'));
+
+    $position = 0;
+    foreach ($schema as $type => $data) {
+        $_data = array(
+            'name' => 'cron_script_' . $type,
+            'section_id' => $section_ids['development'],
+            'section_tab_id' => $section_ids['cron'],
+            'type' => 'C',
+            'value' => 'Y',
+            'position' => $position,
+            'is_global' => 'N'
+        );
+        $id = db_query("REPLACE INTO ?:settings_objects ?e", $_data);
+        foreach (fn_get_translation_languages() as $lang_code => $_v) {
+            $__data = array(
+                'object_id' => $id,
+                'object_type' => 'O',
+                'lang_code' => $lang_code,
+                'value' => __($data['name'])
+            );
+            db_query("REPLACE INTO ?:settings_descriptions ?e", $__data);
+        }
+        $position++;
+    }
+}
+
 function fn_get_promotion_condition($conditions, $condition)
 {
     if (!empty($conditions['condition'])) {

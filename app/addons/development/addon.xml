@@ -296,6 +296,13 @@
                     </item>
                 </items>
             </section>
+            <section id="cron">
+                <translations>
+                    <item lang="ru">Планировщик</item>
+                </translations>
+                <items>
+                </items>
+            </section>
         </sections>
     </settings>
     <compatibility>
@@ -306,6 +313,7 @@
             CREATE TABLE IF NOT EXISTS `cscart_players` (
             `player_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
             `player` varchar(128) NOT NULL,
+            `player_en` VARCHAR( 128 ) NOT NULL,
             `status` char(1) NOT NULL DEFAULT 'A',
             `ranking` smallint(5) unsigned NOT NULL,
             `gender` char(1) NOT NULL DEFAULT 'M',
@@ -319,6 +327,11 @@
             `coach` varchar(128) NOT NULL,
             `titles` smallint(5) unsigned NOT NULL,
             `rss_link` varchar(255) NOT NULL,
+            `feature_variant_id` MEDIUMINT( 8 ) UNSIGNED NOT NULL,
+            `link` VARCHAR( 255 ) NOT NULL,
+            `website` VARCHAR( 255 ) NOT NULL,
+            `data` TEXT NOT NULL,
+            `description` MEDIUMTEXT NOT NULL,
             PRIMARY KEY (`player_id`)
             ) DEFAULT CHARSET=utf8 ;
         </item>
@@ -361,9 +374,6 @@
             ADD `play_level` SMALLINT( 5 ) UNSIGNED NOT NULL ,
             ADD `surface` SMALLINT( 5 ) NOT NULL ,
             ADD `configuration` VARCHAR( 256 ) NOT NULL ;
-        </item>
-        <item>
-            ALTER TABLE `cscart_players` ADD `feature_variant_id` MEDIUMINT( 8 ) UNSIGNED NOT NULL ;
         </item>
         <item>
             ALTER TABLE `cscart_products` ADD `net_currency_code` VARCHAR( 10 ) NOT NULL DEFAULT 'USD';
@@ -439,9 +449,6 @@
             ALTER TABLE `cscart_destinations` ADD `shipping_ids` TEXT NOT NULL ;
         </item>
         <item>
-            ALTER TABLE `cscart_players` ADD `link` VARCHAR( 255 ) NOT NULL ;
-        </item>
-        <item>
             CREATE TABLE IF NOT EXISTS `cscart_cron_logs` (
                 `log_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
                 `type` char(1) NOT NULL,
@@ -451,10 +458,6 @@
                 `results` LONGTEXT NOT NULL,
                 PRIMARY KEY (`log_id`)
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-        </item>
-        <item>
-            ALTER TABLE `cscart_players` ADD `website` VARCHAR( 255 ) NOT NULL ,
-            ADD `data` TEXT NOT NULL ;
         </item>
         <item>
             ALTER TABLE `cscart_product_options` ADD `show_on_catalog` CHAR( 1 ) NOT NULL DEFAULT 'N';
@@ -481,9 +484,6 @@
         </item>
         <item>
             ALTER TABLE `cscart_shippings` ADD `available_payments` TEXT NOT NULL ;
-        </item>
-        <item>
-            ALTER TABLE `cscart_players` ADD `player_en` VARCHAR( 128 ) NOT NULL AFTER `player` ;
         </item>
         <item>
             ALTER TABLE `cscart_orders` ADD `net_total` DECIMAL(12,2) NOT NULL ;
@@ -613,9 +613,6 @@
         </item>
         <item>
             ALTER TABLE `cscart_views` ADD `timestamp` INT(11) UNSIGNED NOT NULL DEFAULT '0';
-        </item>
-        <item>
-            ALTER TABLE `cscart_players` ADD `description` MEDIUMTEXT NOT NULL;
         </item>
         <item>
             ALTER TABLE `cscart_product_options` ADD `parent_option_id` MEDIUMINT(8) UNSIGNED NOT NULL;
@@ -817,6 +814,9 @@
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
         </item>
     </queries>
+    <functions>
+        <item for="install">fn_install_cron_settings</item>
+    </functions>
     <language_variables>
         <item lang="ru" id="tennishouse_template">Шаблон TennisHouse</item>
         <item lang="ru" id="calculate_racket_balance">Посчитать баланс ракетки</item>
@@ -1571,14 +1571,14 @@
         <item lang="ru" id="approval_status">Статус подтверждения</item>
         <item lang="ru" id="imported_products_need_approval"><![CDATA[Были созданы новые товары ([number]). <a href="[products_link]">Проверить</a>]]></item>
         <item lang="ru" id="show_stock">Показывать кол-во</item>
-        <item lang="ru" id="cron_logs">Журнал cron</item>
-        <item lang="ru" id="cron_scripts">Cron-скрипты</item>
+        <item lang="ru" id="cron_logs">Журнал планировщика</item>
+        <item lang="ru" id="cron">Планировщик</item>
         <item lang="ru" id="cron_in_progress">В процессе</item>
         <item lang="ru" id="check_expired_points">Проверить бонусные баллы</item>
         <item lang="ru" id="check_delivery_statuses">Обновить статусы доставки</item>
         <item lang="ru" id="check_sms_statuses">Обновить статусы sms</item>
         <item lang="ru" id="catalog_synchronization">Синхронизировать каталог</item>
-        <item lang="ru" id="cron_log_details">Результаты выполнения cron</item>
+        <item lang="ru" id="cron_log_details">Результаты выполнения скрипта</item>
         <item lang="ru" id="run_cron_script">Запустить скрипт</item>
         <item lang="ru" id="run">Запуск</item>
         <item lang="ru" id="product_pending">Ожидает проверки</item>

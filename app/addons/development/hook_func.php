@@ -631,6 +631,9 @@ function fn_development_cron_routine()
     if (!empty($scheme)) {
         foreach ($scheme as $type => $data) {
 
+            if (Registry::get('addons.development.cron_script_' . $type) != 'Y') {
+                continue;
+            }
             $run = true;
             if (!empty($data['frequency'])) {
                 foreach ($data['frequency'] as $param => $vals) {

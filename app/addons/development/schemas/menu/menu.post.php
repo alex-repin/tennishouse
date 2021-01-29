@@ -33,7 +33,7 @@ $schema['top']['administration']['items']['development'] = array(
         ),
     ),
 );
-$schema['top']['administration']['items']['cron_scripts'] = array(
+$schema['top']['administration']['items']['cron_logs'] = array(
     'href' => 'cron.manage',
     'position' => 800,
 );
