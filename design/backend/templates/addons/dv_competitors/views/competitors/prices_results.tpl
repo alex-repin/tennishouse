@@ -15,6 +15,12 @@
     (function (_, $) {
         $('.cm-competitor-products-result').click(function(){
             $('#cp_item_id_' + $(this).data('productId')).val($(this).data('itemId'));
+            if (typeof($('#cp_item_id_' + $(this).data('productId')).data('originalId')) == 'undefined' || $('#cp_item_id_' + $(this).data('productId')).data('originalId') != $(this).data('itemId')) {
+                $('#cp_action_' + $(this).data('productId')).val('T');
+            } else {
+                $('#cp_action_' + $(this).data('productId')).val('U');
+            }
+            $('#cp_action_' + $(this).data('productId')).prop('disabled', false);
             $('#cp_variants_' + $(this).data('productId')).hide();
         });
     }(Tygh, Tygh.$));

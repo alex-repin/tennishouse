@@ -48,6 +48,9 @@
         <item>
             ALTER TABLE `cscart_products` ADD `competitor_price_action` CHAR(1) NOT NULL DEFAULT 'B';
         </item>
+        <item>
+            ALTER TABLE `cscart_competitive_pairs` ADD `action` CHAR(1) NOT NULL DEFAULT 'T';
+        </item>
     </queries>
     <language_variables>
         <item lang="ru" id="competitors">Конкуренты</item>
@@ -78,5 +81,7 @@
         <item lang="ru" id="update_log">Логи обновления</item>
         <item lang="ru" id="update_competitors">Обновить конкурентов</item>
         <item lang="ru" id="no_match">Нет совпадениий</item>
+        <item lang="ru" id="tie">Связать</item>
+        <item lang="ru" id="untie">Отвязать</item>
     </language_variables>
 </addon>

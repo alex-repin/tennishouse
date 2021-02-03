@@ -64,13 +64,13 @@ return array(
         'function' => 'fn_check_sms',
         'name' => 'check_sms_statuses'
     ),
-    // 'Y' => array(
-    //     'frequency' => array(
-    //         'H' => '04,16'
-    //     ),
-    //     'function' => 'fn_synchronize_agents',
-    //     'name' => 'catalog_synchronization'
-    // ),
+    'Y' => array(
+        'frequency' => array(
+            'H' => '04,16'
+        ),
+        'function' => 'fn_synchronize_agents',
+        'name' => 'catalog_synchronization'
+    ),
     'D' => array(
         'frequency' => array(
             'H' => '04,07,10,13,16,19,22,01'

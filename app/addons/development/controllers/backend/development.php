@@ -26,24 +26,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($mode == 'complete_orders') {
 
         if ($action == 'clear') {
-        
+
             unset($_SESSION['complete_orders']);
             $_SESSION['complete_orders']['step'] = 'one';
-            
+
         } elseif ($action == 'finish') {
-        
+
             if (!empty($_REQUEST['order_ids'])) {
                 foreach ($_REQUEST['order_ids'] as $id) {
                     fn_change_order_status($id, ORDER_STATUS_FINISHED, '', fn_get_notification_rules(array(), true));
                 }
             }
-        
+
             $_SESSION['complete_orders']['step'] = 'two';
 
         } elseif ($action == 'search') {
-        
+
             $file = fn_filter_uploaded_data('csv_file');
-            
+
             $order_statuses = array();
             if (!empty($file) && file_exists($file[0]['path'])) {
                 $f = false;
@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $codes = array();
                     $order_id_column = $order_status_column = 0;
                     while (($data = fn_fgetcsv($f, $max_line_size, $delimiter)) !== false) {
-                    
+
                         if (empty($order_id_column)) {
                             foreach ($data as $key => $column) {
                                 if ($column == '№ накладной ИМ') {
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             }
                         }
                     }
-                    
+
                 }
             }
             $_SESSION['complete_orders'] = array(
@@ -87,12 +87,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 'order_d_statuses' => $order_statuses
             );
         }
-        
+
         fn_prepare_coplete_orders();
         Registry::get('view')->display('addons/development/views/development/complete_orders.tpl');
         exit;
     }
-    
+
     if ($mode == 'process_rrp') {
 
     if ($_REQUEST['step'] == 'one') {
@@ -1455,7 +1455,7 @@ if ($mode == 'calculate_balance') {
     }
     fn_echo('Done');
     exit;
-    
+
 } elseif ($mode == 'complete_orders') {
 
     if (!empty($_SESSION['complete_orders'])) {
@@ -1463,7 +1463,7 @@ if ($mode == 'calculate_balance') {
     } else {
         Registry::get('view')->assign('step', 'one');
     }
-    
+
 } elseif ($mode == 'update_rrp') {
     Registry::get('view')->assign('step', 'one');
     Registry::get('view')->assign('brands', fn_development_get_brands());
@@ -1472,6 +1472,19 @@ if ($mode == 'calculate_balance') {
     fn_generate_ekey($_REQUEST['user_id'], 'L', SECONDS_IN_DAY * 90);
 
     return array(CONTROLLER_STATUS_REDIRECT, "profiles.update?user_id=" . $_REQUEST['user_id']);
+
+} elseif ($mode == 'add_user' && !empty($_REQUEST['order_id'])) {
+
+    $user_data = fn_get_order_info($_REQUEST['order_id'], false, true, true, true);
+    $user_data['status'] = 'A';
+    $res = fn_update_user(0, $user_data, $auth, false, false, false, true);
+    if (!empty($res)) {
+        list($user_id, $profile_id) = $res;
+        db_query("UPDATE ?:orders SET user_id = ?i WHERE order_id = ?i", $user_id, $_REQUEST['order_id']);
+    }
+
+    return array(CONTROLLER_STATUS_REDIRECT, "orders.details?order_id=" . $_REQUEST['order_id']);
+
 } elseif ($mode == 'get_ppl') {
 
     $houses = array(14, 22, 27, 32, 73, 44, 111, 67, 94, 205, 123, 207, 155, 259, 380, 474, 285, 680, 510, 1087, 900, 1380, 1330, 1040, 2120, 1150, 1810, 1400, 2800);
@@ -1736,14 +1749,14 @@ if ($mode == 'calculate_balance') {
 
     $ids = db_get_fields("SELECT DISTINCT product_id FROM ?:product_warehouses_inventory WHERE amount > 0");
     $product_options = fn_get_product_options($ids, CART_LANGUAGE, true, false, false, false, false);
-    
+
     foreach ($ids as $product_id) {
         if (count($product_options[$product_id]) > 0) {
             fn_update_product_exceptions($product_id);
         }
     }
-    
-    
+
+
     exit;
 } elseif ($mode == 'generate_descriptions') {
 
@@ -1810,7 +1823,7 @@ function fn_prepare_coplete_orders()
             Registry::get('view')->assign($k, $v);
         }
         if ($_SESSION['complete_orders']['step'] == 'two' && !empty($_SESSION['complete_orders']['order_d_statuses'])) {
-            
+
             $params = array(
                 'order_id' => array_keys($_SESSION['complete_orders']['order_d_statuses'])
             );

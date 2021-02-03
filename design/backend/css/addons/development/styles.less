@@ -215,15 +215,23 @@ a[class*="o-status-"] {
     width: 6%;
 }
 .ty-cp-input {
-    width: 40%;
+    width: 31%;
+    font-size: 13px;
 }
 .ty-cp-input-full {
     width: 100%;
 }
 #content_detailed {
     .ty-cp-input {
-        width: 83%;
+        width: 72%;
+        margin: 0 0.1%;
     }
+    .ty-add-cpair {
+        font-size: 13px;
+    }
+}
+.ty-cp-action {
+    width: 10%;
 }
 .ty-cp-competitor {
     width: 58%;
@@ -264,7 +272,7 @@ a[class*="o-status-"] {
     text-decoration: none;
 }
 .ty-cp-search-results-item-select {
-    height: 40px;
+    min-height: 40px;
     line-height: 20px;
     padding: 5px 10px;
 }
@@ -373,6 +381,9 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 .ty-main-competitor {
     margin-left: 10px;
 }
+.ty-bold-competitor {
+    font-weight: bold;
+}
 .ty-other-competitor {
     margin: 5px;
     display: block;
@@ -393,6 +404,13 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 }
 .ty-add-cpair {
     display: inline;
+    font-size: 0;
+    .ty-cp-cell {
+        margin: 0 0.1%;
+    }
+    .ty-cp-input {
+        margin: 0 1% 0 0.5%;
+    }
 }
 .ty-product-price {
     display: inline-block;

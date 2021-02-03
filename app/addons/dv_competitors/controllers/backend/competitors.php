@@ -160,7 +160,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (!empty($_REQUEST['p_id']) && !empty($_REQUEST['c_id'])) {
 
-            $pair = db_get_row("SELECT a.competitive_id, b.name FROM ?:competitive_pairs AS a LEFT JOIN ?:competitive_prices AS b ON a.competitive_id = b.item_id WHERE a.product_id = ?i AND a.competitor_id = ?i", $_REQUEST['p_id'], $_REQUEST['c_id']);
+            $pair = db_get_row("SELECT a.competitive_id, b.name FROM ?:competitive_pairs AS a LEFT JOIN ?:competitive_prices AS b ON a.competitive_id = b.item_id WHERE a.product_id = ?i AND a.competitor_id = ?i AND a.action = 'T'", $_REQUEST['p_id'], $_REQUEST['c_id']);
+
+            if (empty($pair)) {
+                $pair = db_get_row("SELECT a.item_id as competitive_id, a.name FROM ?:competitive_prices AS a LEFT JOIN ?:products AS b ON a.code = b.product_code LEFT JOIN ?:competitive_pairs AS c ON c.competitive_id = a.item_id WHERE b.product_id = ?i AND a.competitor_id = ?i AND (c.competitive_id IS NULL OR c.action != 'U')", $_REQUEST['p_id'], $_REQUEST['c_id']);
+            }
 
             $product = array(
                 'product_id' => $_REQUEST['p_id'],
@@ -292,7 +296,7 @@ elseif ($mode == 'delete') {
             'competition' => array(
                 'mode' => 'D',
             ),
-            // 'pid' => 1285,
+            // 'pid' => 1838,
             // 'pid' => 787,
         );
         if (!empty($_REQUEST['c_id'])) {

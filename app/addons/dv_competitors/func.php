@@ -187,11 +187,12 @@ function fn_delete_competitor($competitor_id)
     return true;
 }
 
-function fn_dv_competitors_get_product_data($product_id, &$field_list, &$join, $auth, $lang_code, $condition)
+function fn_dv_competitors_get_product_data($product_id, &$field_list, &$join, $auth, $lang_code, &$condition)
 {
     if (AREA == 'A') {
-        $join .= db_quote(" LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = ?:products.product_id LEFT JOIN ?:competitive_prices AS cp ON cp.code = ?:products.product_code LEFT JOIN ?:competitive_prices AS cp1 ON cp1.item_id = ?:competitive_pairs.competitive_id LEFT JOIN ?:competitors AS cmp ON cmp.competitor_id = cp.competitor_id LEFT JOIN ?:competitors AS cmp1 ON cmp1.competitor_id = cp1.competitor_id");
+        $join .= db_quote(" LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = ?:products.product_id AND ?:competitive_pairs.action = 'T' LEFT JOIN ?:competitive_prices AS cp1 ON cp1.item_id = ?:competitive_pairs.competitive_id LEFT JOIN ?:competitors AS cmp1 ON cmp1.competitor_id = cp1.competitor_id LEFT JOIN ?:competitive_prices AS cp ON cp.code = ?:products.product_code LEFT JOIN ?:competitive_pairs AS cpr ON cpr.competitive_id = cp.item_id LEFT JOIN ?:competitors AS cmp ON cmp.competitor_id = cp.competitor_id");
         $field_list .= ", GROUP_CONCAT(CONCAT_WS('|', CONCAT_WS('_', cp.item_id, cp.price, cp.competitor_id, cp.in_stock, cmp.status, 0), CONCAT_WS('_', cp1.item_id, cp1.price, cp1.competitor_id, cp1.in_stock, cmp1.status, 1)) SEPARATOR '|') AS competitors";
+        $condition .= " AND (cpr.competitive_id IS NULL OR cpr.action != 'U')";
     }
 }
 
@@ -250,12 +251,15 @@ function fn_explode_competitors(&$products, $competition_params = array())
                     if (!empty($item_data[$_cmp['item_id']])) {
                         $_cmp = array_merge($_cmp, $item_data[$_cmp['item_id']]);
                     }
-                    if ($_cmp['in_stock'] == 'Y' && $_cmp['price'] > $product['net_cost'] * Registry::get('currencies.' . $product['net_currency_code'] . '.coefficient') && (empty($result) || $result['price'] > $_cmp['price'])) {
-                        $result = $_cmp;
+                    if ($_cmp['in_stock'] == 'Y' && ($_cmp['price'] > $product['net_cost'] * Registry::get('currencies.' . $product['net_currency_code'] . '.coefficient') || !empty($_cmp['pair_id'])) && (empty($result) || $result['price'] > $_cmp['price'])) {
+                        $result = $i;
                     }
                 }
                 if (!empty($result)) {
-                    $product['main_competitor'] = $result;
+                    $product['competitors'][$result]['is_main'] = true;
+                    $product['main_competitor'] = $product['competitors'][$result];
+                    unset($product['competitors'][$result]);
+                    array_unshift($product['competitors'], $product['main_competitor']);
                 }
             }
             if (!empty($competition_params['mode'])) {
@@ -281,24 +285,38 @@ function fn_dv_competitors_get_product_data_post(&$product_data, $auth, $preview
 
 function fn_dv_competitors_update_product_post($product_data, $product_id, $lang_code, $create)
 {
-    if (!empty($product_data['competitor_pair']['c_id'])) {
-        if (!empty($product_data['competitor_pair']['obj_id'])) {
-            $data = array(
-                'competitive_id' => $product_data['competitor_pair']['obj_id'],
-                'product_id' => $product_id,
-                'competitor_id' => $product_data['competitor_pair']['c_id']
-            );
-            db_query("REPLACE INTO ?:competitive_pairs ?e", $data);
-        } else {
+    if (!empty($product_data['competitor_pair']['c_id']) && !empty($product_data['competitor_pair']['action']) && !empty($product_data['competitor_pair']['obj_id'])) {
             db_query("DELETE FROM ?:competitive_pairs WHERE product_id = ?i AND competitor_id = ?i", $product_id, $product_data['competitor_pair']['c_id']);
-        }
+
+            $code = db_get_field("SELECT code FROM ?:competitive_prices WHERE item_id = ?i", $product_data['competitor_pair']['obj_id']);
+            if ($product_data['competitor_pair']['action'] == 'T') {
+                $data = array(
+                    'competitive_id' => $product_data['competitor_pair']['obj_id'],
+                    'product_id' => $product_id,
+                    'competitor_id' => $product_data['competitor_pair']['c_id'],
+                    'action' => 'T'
+                );
+                db_query("REPLACE INTO ?:competitive_pairs ?e", $data);
+            } elseif ($product_data['competitor_pair']['action'] == 'U' && !empty($code) && $code == $product_data['product_code']) {
+                $data = array(
+                    'competitive_id' => $product_data['competitor_pair']['obj_id'],
+                    'product_id' => $product_id,
+                    'competitor_id' => $product_data['competitor_pair']['c_id'],
+                    'action' => 'U'
+                );
+                db_query("REPLACE INTO ?:competitive_pairs ?e", $data);
+            }
+        // } else {
+        //     db_query("DELETE FROM ?:competitive_pairs WHERE product_id = ?i AND competitor_id = ?i", $product_id, $product_data['competitor_pair']['c_id']);
+        // }
     }
 }
 function fn_dv_competitors_get_products(&$params, &$fields, &$sortings, &$condition, &$join, $sorting, &$group_by, $lang_code, $having)
 {
     if (!empty($params['competition'])) {
-        $join .= db_quote(" LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = products.product_id LEFT JOIN ?:competitive_prices AS cp ON cp.code = products.product_code LEFT JOIN ?:competitive_prices AS cp1 ON cp1.item_id = ?:competitive_pairs.competitive_id LEFT JOIN ?:competitors AS cmp ON cmp.competitor_id = cp.competitor_id LEFT JOIN ?:competitors AS cmp1 ON cmp1.competitor_id = cp1.competitor_id");
+        $join .= db_quote(" LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = products.product_id AND ?:competitive_pairs.action = 'T' LEFT JOIN ?:competitive_prices AS cp1 ON cp1.item_id = ?:competitive_pairs.competitive_id LEFT JOIN ?:competitors AS cmp1 ON cmp1.competitor_id = cp1.competitor_id LEFT JOIN ?:competitive_prices AS cp ON cp.code = products.product_code LEFT JOIN ?:competitive_pairs AS cpr ON cpr.competitive_id = cp.item_id LEFT JOIN ?:competitors AS cmp ON cmp.competitor_id = cp.competitor_id");
         $fields[] = "GROUP_CONCAT(CONCAT_WS('|', CONCAT_WS('_', cp.item_id, cp.price, cp.competitor_id, cp.in_stock, cmp.status, 0), CONCAT_WS('_', cp1.item_id, cp1.price, cp1.competitor_id, cp1.in_stock, cmp1.status, 1)) SEPARATOR '|') AS competitors";
+        $condition .= " AND (cpr.competitive_id IS NULL OR cpr.action != 'U')";
     }
 }
 function fn_dv_competitors_get_products_post(&$products, &$params, $lang_code)

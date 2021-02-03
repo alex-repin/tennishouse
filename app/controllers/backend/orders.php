@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $user_id = fn_is_user_exists(0, $order_info);
             db_query("UPDATE ?:orders SET user_id = ?s WHERE order_id = ?i", $user_id, $_REQUEST['order_id']);
         }
-        
+
         // Update customer's email if its changed in customer's account
         if (!empty($_REQUEST['update_customer_details']) && $_REQUEST['update_customer_details'] == 'Y') {
             $current_email = db_get_field("SELECT email FROM ?:users WHERE user_id = ?i", $order_info['user_id']);
@@ -290,6 +290,8 @@ if ($mode == 'delete') {
     // Check if customer's email is changed
     if (!empty($order_info['user_id'])) {
         $current_email = db_get_field("SELECT email FROM ?:users WHERE user_id = ?i", $order_info['user_id']);
+        $orders_count = db_get_field("SELECT COUNT(*) FROM ?:orders WHERE user_id = ?i", $order_info['user_id']);
+        Registry::get('view')->assign('orders_count', $orders_count);
         if (!empty($current_email) && $current_email != $order_info['email']) {
             Registry::get('view')->assign('current_email', $current_email);
         }

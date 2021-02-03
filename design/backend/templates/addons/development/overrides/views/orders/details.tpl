@@ -225,7 +225,7 @@
             {/hook}
 
             <!--{***** /Customer note, Staff note & Statistics *****}-->
-    
+
     {hook name="orders:staff_only_note"}
     {/hook}
 
@@ -325,7 +325,7 @@
                                     {$shipping.shipping}
                                 </div>
                         </div>
-                        
+
                         <div class="control-group">
                             <label class="control-label" for="elm_delivery_time">{__("delivery_time")} ({__("days")}) :</label>
                             <div class="controls">
@@ -449,7 +449,7 @@
                     {__("time_unlimited_download")}
                 {elseif $file.ekey}
                 <p><label>{__("download_key_expiry")}: </label><span>{$file.ttl|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"|default:"n/a"}</span></p>
-                
+
                 <p><label>{__("prolongate_download_key")}: </label>{include file="common/calendar.tpl" date_id="prolongate_date_`$file.file_id`" date_name="prolongate_data[`$file.ekey`]" date_val=$file.ttl|default:$smarty.const.TIME start_year=$settings.Company.company_start_year}</p>
                 {else}{__("file_doesnt_have_key")}{/if}
             </td>
@@ -512,7 +512,7 @@
     {include file="views/order_management/components/profiles_info.tpl" user_data=$order_info location="I"}
 {/capture}
 
-{capture name="buttons"}  
+{capture name="buttons"}
     {include file="common/view_tools.tpl" url="orders.details?order_id="}
 
     {if $status_settings.appearance_type == "C" && $order_info.doc_ids[$status_settings.appearance_type]}
@@ -532,6 +532,9 @@
             <li>{btn type="list" text=__("print_packing_slip") href="orders.print_packing_slip?order_id=`$order_info.order_id`" class="cm-new-window"}</li>
             <li>{btn type="list" text=__("print_pdf_packing_slip") href="orders.print_packing_slip?order_id=`$order_info.order_id`&format=pdf" class="cm-new-window"}</li>
             <li>{btn type="list" text=__("edit_order") href="order_management.edit?order_id=`$order_info.order_id`"}</li>
+            {if !$order_info.user_id}
+                <li>{btn type="list" text=__("add_user") href="development.add_user?order_id=`$order_info.order_id`"}</li>
+            {/if}
             {$smarty.capture.adv_tools nofilter}
         {/hook}
     {/capture}

@@ -11,7 +11,7 @@ function fn_check_pair(id, value, input)
         data: {p_id: id, c_id: value, input: input}
     });
 }
-function fn_init_cmp_products_search()
+function fn_init_cmp_products_search(obj)
 {
     function fn_ajax_search(obj, val)
     {
@@ -26,22 +26,20 @@ function fn_init_cmp_products_search()
         }
     }
 
-    $('.cm-competitor-products').each(function(){
-        $(this).focus(function(){
-            $('#cp_variants_' + $(this).data('productId')).show();
-            if ($(this).val().length > 2) {
-                fn_ajax_search($(this), $(this).val());
-            }
-        }).blur(function(){
-            if (!$(this).parents('.ty-cp-input').hasClass('is-hover')) {
-                $('#cp_variants_' + $(this).data('productId')).hide();
-            }
-        }).keyup(function(){
-            if ($(this).val().length > 2) {
-                var val = $(this).val();
-                setTimeout(fn_ajax_search, 500, $(this), val);
-            }
-        });
+    obj.focus(function(){
+        $('#cp_variants_' + $(this).data('productId')).show();
+        if ($(this).val().length > 2) {
+            fn_ajax_search($(this), $(this).val());
+        }
+    }).blur(function(){
+        if (!$(this).parents('.ty-cp-input').hasClass('is-hover')) {
+            $('#cp_variants_' + $(this).data('productId')).hide();
+        }
+    }).keyup(function(){
+        if ($(this).val().length > 2) {
+            var val = $(this).val();
+            setTimeout(fn_ajax_search, 500, $(this), val);
+        }
     });
 }
 

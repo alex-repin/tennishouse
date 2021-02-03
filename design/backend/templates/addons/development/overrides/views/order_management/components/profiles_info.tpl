@@ -91,7 +91,7 @@
             {$user_full_name = "`$user_data.firstname` `$user_data.lastname`"|trim}
             {if $user_full_name}
                 {if $user_data.user_id}
-                    <a href="{"profiles.update?user_id=`$user_data.user_id`"|fn_url}">{$user_full_name}</a>,
+                    <a href="{"profiles.update?user_id=`$user_data.user_id`"|fn_url}">{$user_full_name}</a>{if $orders_count} (<a href="{"orders.manage?user_id=`$user_data.user_id`"|fn_url}">{$orders_count}</a>){/if},
                 {else if $user_full_name}
                     {$user_full_name},
                 {/if}
