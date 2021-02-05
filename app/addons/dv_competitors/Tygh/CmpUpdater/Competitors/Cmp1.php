@@ -44,6 +44,8 @@ class Cmp1 extends Competitor
             }
             if (preg_match('/id="sku_update_\d+".*?>.*?<span class="ty-control-group__item.*?>(.*?)<.*?<\/div>/', $section[1], $match)) {
                 $product['code'] = $match[1];
+            } else {
+                $product['code'] = '';
             }
             if (preg_match('/id="sec_discounted_price_\d+".*?>(.*?)<\/span>/', $section[1], $match)) {
                 $product['price'] = floatval(str_replace('&nbsp;', '', $match[1]));

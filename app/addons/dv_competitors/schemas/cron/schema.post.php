@@ -2,7 +2,7 @@
 
 $schema['C'] = array(
     'frequency' => array(
-        'N' => '3',
+        'N' => '6',
         'H' => '02',
     ),
     'function' => 'fn_update_competitive_catalog',

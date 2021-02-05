@@ -16,6 +16,7 @@
 namespace Tygh\CmpUpdater\Competitors;
 
 use Tygh\Http;
+use Tygh\Registry;
 
 class Competitor
 {
@@ -38,6 +39,7 @@ class Competitor
     private static $update_duration_limit = 60 * 60 * 3;
 
     private $log = array(
+        'time' => 0,
         'total' => 0,
         'memory_usage' => 0,
         'products_total' => 0,
@@ -150,6 +152,7 @@ class Competitor
         $this->checked_statuses[$status]++;
         $this->pages_number++;
 
+        $this->log['time'] = fn_date_format(time(), Registry::get('settings.Appearance.date_format')) . ' ' . fn_date_format(time(), Registry::get('settings.Appearance.time_format'));
         $this->log['total'] = $this->pages_number;
         $this->log['statuses'] = $this->checked_statuses;
         $this->log['links'] = $this->checked_links;
@@ -201,6 +204,7 @@ class Competitor
 
         $this->saveProducts();
 
+        $this->log['time'] = fn_date_format(time(), Registry::get('settings.Appearance.date_format')) . ' ' . fn_date_format(time(), Registry::get('settings.Appearance.time_format'));
         $this->log['total'] = $this->pages_number;
         $this->log['statuses'] = $this->checked_statuses;
         $this->log['links'] = $this->checked_links;
@@ -225,6 +229,7 @@ class Competitor
         foreach ($data as $_dt) {
 
             $result = Http::get($_dt['link'], array(), $extra);
+            $this->log['time'] = fn_date_format(time(), Registry::get('settings.Appearance.date_format')) . ' ' . fn_date_format(time(), Registry::get('settings.Appearance.time_format'));
             $this->log['links'][$_dt['link']] = Http::getStatus();
             $this->log['statuses'][Http::getStatus()]++;
 

@@ -36,7 +36,10 @@ class Cmp2 extends Competitor
             }
             if (preg_match('/<p class="card__code">(.*?)<\/p>/', $section[1], $match)) {
                 $product['code'] = trim(preg_replace('/Артикул/', '', $match[1]));
+            } else {
+                $product['code'] = '';
             }
+            
             if (preg_match('/<p class="card__price">(.*?)<\/p>/', $section[1], $match)) {
                 $product['price'] = (int)$match[1];
             }
