@@ -10,7 +10,7 @@ $schema['C'] = array(
 );
 $schema['I'] = array(
     'frequency' => array(
-        'N' => '1,2,4,5,6,7',
+        'N' => '1,2,3,4,5,7',
         'H' => '02'
     ),
     'function' => 'fn_update_competitive_prices',

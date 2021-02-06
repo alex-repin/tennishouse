@@ -89,11 +89,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $data[] = array(
                     'product_id' => $product_id,
                     'price' => $price[$item_id],
+                    'type' => 'A',
                     'lower_limit' => 1,
                     'usergroup_id' => 0
                 );
             }
-            db_query("REPLACE INTO ?:product_prices ?m", $data);
+            if (!empty($data)) {
+                foreach ($data as $prices) {
+                    fn_update_product_prices($prices['product_id'], $prices);
+                }
+            }
         }
 
         $suffix = ".prices?mode=" . $_REQUEST['mode'] . (!empty($_REQUEST['c_id']) ? '&c_id=' . $_REQUEST['c_id'] : '') . (!empty($_REQUEST['cid']) ? '&cid=' . $_REQUEST['cid'] : '');
