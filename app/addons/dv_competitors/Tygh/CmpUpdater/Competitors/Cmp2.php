@@ -20,11 +20,9 @@ class Cmp2 extends Competitor
     public function __construct()
     {
         parent::__construct(SALETENNIS_COMPETITOR_ID);
-        // $this->new_links = array(
-        //     'https://www.saletennis.com/catalog/product/tiennisnaia-rakietka-babolat-pure-drive-team-2021-10777/' => true,
-        //     'https://www.saletennis.com/catalog/product/tiennisnaia-rakietka-babolat-pure-drive-super-lite-7113/' => true,
-        //     'https://www.saletennis.com/catalog/product/tiennisnaia-rakietka-babolat-pure-aero-tour-2019-9823/' => true,
-        // );
+        $this->new_links = array(
+            'https://www.saletennis.com/catalog/product/tiennisnaia-rakietka-babolat-aero-gamer-yellow-black-10400/' => true,
+        );
     }
 
     protected function prsProduct($content)
@@ -36,10 +34,17 @@ class Cmp2 extends Competitor
             }
             if (preg_match('/<p class="card__code">(.*?)<\/p>/', $section[1], $match)) {
                 $product['code'] = trim(preg_replace('/Артикул/', '', $match[1]));
+
+                if (strpos($product['code'], '-') !== false) {
+                    $code = explode('-', $product['code']);
+                    if (!empty($this->codes[$code[0]])) {
+                        $product['code'] = $code[0];
+                    }
+                }
             } else {
                 $product['code'] = '';
             }
-            
+
             if (preg_match('/<p class="card__price">(.*?)<\/p>/', $section[1], $match)) {
                 $product['price'] = (int)$match[1];
             }

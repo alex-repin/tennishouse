@@ -32,7 +32,9 @@ class Competitor
     protected $products = array();
     protected $current_link;
     protected $pages_number = 0;
+    protected $codes = array();
 
+    private $old_products = array();
     private static $parse_page_limit = 0;
     private static $parse_page_step = 10;
     private static $update_price_frequency = 60 * 60 * 10;
@@ -43,6 +45,7 @@ class Competitor
         'total' => 0,
         'memory_usage' => 0,
         'products_total' => 0,
+        'deleted' => 0,
         'statuses' => array(),
         'links' => array(),
         'products' => array()
@@ -51,6 +54,8 @@ class Competitor
     public function __construct($competitor_id)
     {
         $this->competitor = db_get_row("SELECT * FROM ?:competitors WHERE competitor_id = ?i", $competitor_id);
+        $this->old_products = db_get_hash_array("SELECT * FROM ?:competitive_prices WHERE competitor_id = ?i", 'link', $competitor_id);
+        $this->codes = db_get_hash_single_array("SELECT product_code, product_id FROM ?:products", array('product_code', 'product_id'));
     }
 
     private function prsLinksDom($content)
@@ -117,13 +122,14 @@ class Competitor
 
     public function testParse($link)
     {
-        $status = $this->parsePage($link);
+        list($status, $is_product) = $this->parsePage($link, false);
 
         return array($status, $this->products);
     }
 
-    private function parsePage($link)
+    private function parsePage($link, $parse_links = true)
     {
+        $is_product = false;
         $this->current_link = $link;
         $extra = array(
             'request_timeout' => 10
@@ -135,24 +141,27 @@ class Competitor
             $product = $this->prsProduct($response);
             if (!empty($product)) {
                 $this->products[] = $product;
+                $is_product = true;
             }
 
-            // $links = $this->prsLinksDom($result);
-            // $links = $this->prsLinksExp($result);
-            $links = $this->prsLinksReg($response);
-            // fn_print_r(microtime());
-            $this->trimLinks($links);
-            // fn_print_r(microtime());
-            $this->sortLinks($links);
-            // fn_print_r(microtime());
+            if (!empty($parse_links)) {
+                // $links = $this->prsLinksDom($result);
+                // $links = $this->prsLinksExp($result);
+                $links = $this->prsLinksReg($response);
+                // fn_print_r(microtime());
+                $this->trimLinks($links);
+                // fn_print_r(microtime());
+                $this->sortLinks($links);
+                // fn_print_r(microtime());
+            }
         }
 
-        return Http::getStatus();
+        return array(Http::getStatus(), $is_product);
     }
 
     private function parsePages($link)
     {
-        $status = $this->parsePage($link);
+        list($status, $is_product) = $this->parsePage($link);
 
         unset($this->new_links[$link]);
         $this->checked_links[$link] = $status;
@@ -186,6 +195,8 @@ class Competitor
                 if (!empty($this->old_products[$product['link']])) {
                     if ($this->old_products[$product['link']]['price'] != $product['price']) {
                         $product['old_price'] = $this->old_products[$product['link']]['price'];
+                    } else {
+                        $product['old_price'] = $this->old_products[$product['link']]['old_price'];
                     }
                     $product = array_merge($this->old_products[$product['link']], $product);
                 }
@@ -206,7 +217,6 @@ class Competitor
     {
         $success = false;
 
-        $this->old_products = db_get_hash_array("SELECT * FROM ?:competitive_prices WHERE competitor_id = ?i", 'link', $this->competitor['competitor_id']);
         $this->parsePages($this->competitor['link']);
 
         $this->saveProducts();
@@ -235,22 +245,14 @@ class Competitor
         $to_delete = array();
         foreach ($data as $_dt) {
 
-            $result = Http::get($_dt['link'], array(), $extra);
+            list($status, $is_product) = $this->parsePage($_dt['link'], false);
             $this->log['time'] = fn_date_format(time(), Registry::get('settings.Appearance.date_format')) . ' ' . fn_date_format(time(), Registry::get('settings.Appearance.time_format'));
-            $this->log['links'][$_dt['link']] = Http::getStatus();
-            $this->log['statuses'][Http::getStatus()]++;
+            $this->log['links'][$_dt['link']] = $status;
+            $this->log['statuses'][$status]++;
 
-            if (Http::getStatus() == Http::STATUS_OK && !empty($result) && $product = $this->prsProduct($result)) {
-                $product['item_id'] = $_dt['item_id'];
-                $product['link'] = $_dt['link'];
-                if ($product['price'] != $_dt['price']) {
-                    $product['old_price'] = $_dt['price'];
-                } else {
-                    $product['old_price'] = $_dt['old_price'];
-                }
-                $this->products[] = $product;
-            } else {
+            if ($status != Http::STATUS_OK || empty($is_product)) {
                 $to_delete[] = $_dt['item_id'];
+                $this->log['deleted']++;
             }
             if (!empty(self::$parse_page_step) && count($this->products) == self::$parse_page_step) {
                 $this->saveProducts();
