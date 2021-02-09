@@ -189,9 +189,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (!empty($_REQUEST['link']) && !empty($_REQUEST['competitor_id'])) {
 
-            list($status, $result) = CmpUpdater::call($_REQUEST['competitor_id'], 'parsePage', array($_REQUEST['link']));
+            list($status, $result) = CmpUpdater::call($_REQUEST['competitor_id'], 'testParse', array($_REQUEST['link']));
 
-            Registry::get('view')->assign('result', $result['product']);
+            Registry::get('view')->assign('result', $result[0]);
             Registry::get('view')->assign('competitor_id', $_REQUEST['competitor_id']);
             Registry::get('view')->assign('link', $_REQUEST['link']);
             Registry::get('view')->display('addons/dv_competitors/common/parse_link.tpl');

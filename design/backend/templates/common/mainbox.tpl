@@ -31,13 +31,13 @@ var menu_content = {$data|unescape|default:"''" nofilter};
         <h2 title="{$title_alt|default:$title|strip_tags|strip}">{$title|default:"&nbsp;" nofilter}</h2>
     </div>
     <div class="{if isset($main_buttons_meta)}{$main_buttons_meta}{else}btn-bar btn-toolbar{/if} dropleft pull-right" {if $content_id}id="tools_{$content_id}_buttons"{/if}>
-        
+
         {if $adv_buttons}
         <div class="adv-buttons" {if $content_id}id="tools_{$content_id}_adv_buttons"{/if}>
         {$adv_buttons nofilter}
         {if $content_id}<!--tools_{$content_id}_adv_buttons-->{/if}</div>
         {/if}
-        
+
         {if $navigation.dynamic.actions}
             {capture name="tools_list"}
                 {foreach from=$navigation.dynamic.actions key=title item=m name="actions"}

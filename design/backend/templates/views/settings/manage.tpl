@@ -33,4 +33,3 @@
 {/capture}
 
 {include file="common/mainbox.tpl" title="{__("settings")}: `$settings_title`" buttons=$smarty.capture.buttons content=$smarty.capture.mainbox sidebar_position="left"}
-

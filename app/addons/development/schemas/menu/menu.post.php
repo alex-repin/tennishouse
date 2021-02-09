@@ -71,5 +71,11 @@ $schema['central']['website']['items']['anouncements'] = array(
     'href' => 'anouncements.manage',
     'position' => 110
 );
+$schema['top']['settings']['items']['Cron'] = array(
+    'href' => 'settings.manage?section_id=Cron',
+    'position' => 1401,
+    'type' => 'setting',
+);
+
 
 return $schema;

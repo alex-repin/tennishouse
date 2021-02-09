@@ -40,7 +40,7 @@ function fn_actualize_prices()
             'status' => 'A',
             // 'in_stock' => 'Y'
         ),
-        // 'pid' => 2230,
+        // 'pid' => 1607,
         'price_mode' => 'M'
     );
     list($products, $search) = fn_get_products($params);
@@ -61,6 +61,7 @@ function fn_actualize_prices()
                     'usergroup_id' => 0
                 );
                 $details[$link] = array(
+                    $product['main_competitor']['item_id'] => '<a href="' . $product['main_competitor']['link'] . '" target="_blank">' . $product['main_competitor']['name'] . '</a>',
                     'price' => fn_format_price($product['price']) . ' -> ' . fn_format_price($new_price)
                 );
             }

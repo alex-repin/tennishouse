@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if (empty($data_auth)) {
                     continue;
-                } 
+                }
 
                 $order_for_sdek = $sdek_info['Order'];
 
@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     } else {
                         $product_weight = 0.01;
                     }
- 
+
                     $price = $data_product['price'] - $order_info['subtotal_discount'] * $data_product['price'] / $order_info['subtotal'];
                     $sdek_product = array(
                         'ware_key' => $data_product['item_id'],
@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         'link' => fn_url("products.view&product_id=" . $data_product['product_id'], 'C')
                     );
                     $weight = $weight + ($amount * $product_weight);
-                    
+
                     if (!empty($data_product['extra']['configuration_data'])) {
                         $sdek_product['product'] .= ' (';
                         $iter = 0;
@@ -121,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         }
                         $sdek_product['product'] .= ')';
                     }
-                    
+
                     $sdek_products[$data_product['item_id']] = $sdek_product;
                 }
 
@@ -142,9 +142,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $order_for_sdek['Number'] = $params['order_id'] . '_' . $shipment_id;
                 $order_for_sdek['DateInvoice'] = date("Y-m-d", $shipment['shipment_timestamp']);
                 $order_for_sdek['RecipientEmail'] = $order_info['email'];
-                
+
                 $partial_condition = $sdek_info['is_partial'] == 'Y' && $order_info['total'] > Registry::get('addons.development.free_shipping_cost') && !empty($order_info['original_shipping_cost']) && $order_info['original_shipping_cost'] > $order_info['display_shipping_cost'];
-                
+
                 if ($order_info['status'] != 'P' && $partial_condition) {
                     if (floatval($order_info['display_shipping_cost']) == 0) {
                         $order_for_sdek['Comment'] .= ' ' . __("try_on_shipping_comment", ["[amount]" => Registry::get('addons.development.free_shipping_cost')]);
@@ -190,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             'SizeC' => $p_data['Size_C'],
                         );
                         $xml .= '            ' . RusSdek::arraySimpleXml('Package', $package_for_xml, 'open');
-                        
+
                         foreach ($p_data['products'] as $item_key => $item_data) {
                             if (empty($item_data['amount'])) {
                                 unset($sdek_info['Order']['Packages'][$num]['products'][$item_key]);
@@ -204,7 +204,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 'Amount' => $item_data['amount'],
                                 'Comment' => $sdek_products[$item_key]['product'],
                             );
-                            
+
                             if (!empty($order_info['s_currency'])) {
                                 $product_for_xml['CostEx'] = fn_format_price_by_currency($sdek_products[$item_key]['price'], $order_info['s_currency']);
                                 $product_for_xml['PaymentEx'] = fn_format_price_by_currency($sdek_products[$item_key]['price'], $order_info['s_currency']);
@@ -212,10 +212,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 $product_for_xml['CommentEx'] = preg_replace('/[а-яА-Я]/ui', '', $sdek_products[$item_key]['product']);
                                 $product_for_xml['Link'] = $sdek_products[$item_key]['link'];
                             }
-                            
+
                             $xml .= '            ' . RusSdek::arraySimpleXml('Item', $product_for_xml);
                         }
-                        
+
 //                         if ($order_info['status'] != 'P' && $sdek_info['is_partial'] == 'Y' && $order_info['total'] > Registry::get('addons.development.free_shipping_cost') && $num == 1) {
 //                             if (floatval($order_info['display_shipping_cost']) == 0 && !empty($order_info['original_shipping_cost']) && $order_info['original_shipping_cost'] > $order_info['display_shipping_cost']) {
 //                                 $product_for_xml = array (
@@ -375,13 +375,13 @@ if ($mode == 'details') {
     $params = $_REQUEST;
     $order_info = Registry::get('view')->getTemplateVars('order_info');
 
-    $sdek_info = $sdek_pvz = false; 
+    $sdek_info = $sdek_pvz = false;
     if (!empty($order_info['shipping'])) {
         foreach ($order_info['shipping'] as $shipping) {
             if ($shipping['module'] == 'sdek') {
                 $sdek_pvz = !empty($shipping['office_id']) ? $shipping['office_id'] : '';
             }
-        }        
+        }
     }
 
     list($all_shipments) = fn_get_shipments_info(array('order_id' => $params['order_id'], 'advanced_info' => true));
@@ -451,7 +451,7 @@ if ($mode == 'details') {
                         foreach ($shipment['products'] as $item_id => $amount) {
                             $package_weight += $amount * $weights[$prod_ids[$item_id]];
                         }
-                        
+
                         $data_shipments[$shipment['shipment_id']] = array(
                             'order_id' => $shipment['order_id'],
                             'shipping' => $shipment['shipping'],
@@ -473,7 +473,7 @@ if ($mode == 'details') {
                     if ($order_info['status'] != 'P') {
                         foreach ($shipment['products'] as $item_id => $k) {
                             $category_ids = db_get_fields("SELECT category_id FROM ?:products_categories WHERE product_id = ?i ORDER BY link_type DESC", $order_info['products'][$item_id]['product_id']);
-                            if (in_array(APPAREL_CATEGORY_ID, $category_ids) || in_array(SHOES_CATEGORY_ID, $category_ids)) {
+                            if (in_array(APPAREL_CATEGORY_ID, $category_ids) || in_array(SHOES_CATEGORY_ID, $category_ids) ||  in_array(BADMINTON_SHOES_CATEGORY_ID, $category_ids)) {
                                 $sdek_shipments[$shipment['shipment_id']]['try_on'] = true;
                                 $sdek_shipments[$shipment['shipment_id']]['is_partial'] = true;
                                 break;

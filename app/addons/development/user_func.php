@@ -32,30 +32,66 @@ function fn_install_cron_settings()
 {
 
     $schema = fn_get_schema('cron', 'schema', 'php', true);
-    $section_ids = db_get_hash_single_array("SELECT section_id, name FROM ?:settings_sections WHERE name IN ('cron', 'development')", array('name', 'section_id'));
-
-    $position = 0;
-    foreach ($schema as $type => $data) {
-        $_data = array(
-            'name' => 'cron_script_' . $type,
-            'section_id' => $section_ids['development'],
-            'section_tab_id' => $section_ids['cron'],
-            'type' => 'C',
-            'value' => 'Y',
-            'position' => $position,
-            'is_global' => 'N'
+    $section_id = db_get_field("SELECT section_id FROM ?:settings_sections WHERE name = 'cron'");
+    if (empty($section_id)) {
+        $s_data = array(
+            'parent_id' => 0,
+            'edition_type' => 'ROOT',
+            'name' => 'Cron',
+            'position' => '100',
+            'type' => 'CORE'
         );
-        $id = db_query("REPLACE INTO ?:settings_objects ?e", $_data);
+        $section_id = db_query("REPLACE INTO ?:settings_sections ?e", $s_data);
         foreach (fn_get_translation_languages() as $lang_code => $_v) {
-            $__data = array(
-                'object_id' => $id,
-                'object_type' => 'O',
+            $s__data = array(
+                'object_id' => $section_id,
+                'object_type' => 'S',
                 'lang_code' => $lang_code,
-                'value' => __($data['name'])
+                'value' => 'Планировщик'
             );
-            db_query("REPLACE INTO ?:settings_descriptions ?e", $__data);
+            db_query("REPLACE INTO ?:settings_descriptions ?e", $s__data);
         }
-        $position++;
+    }
+    if (!empty($section_id)) {
+
+        $objects = db_get_hash_single_array("SELECT object_id, name FROM ?:settings_objects WHERE section_id = ?i", array('name', 'object_id'), $section_id);
+
+        $position = 0;
+        $installed = array();
+        foreach ($schema as $type => $data) {
+
+            $installed[] = 'cron_script_' . $type;
+            if (empty($objects['cron_script_' . $type])) {
+                $_data = array(
+                    'name' => 'cron_script_' . $type,
+                    'section_id' => $section_id,
+                    'section_tab_id' => '0',
+                    'type' => 'C',
+                    'value' => 'Y',
+                    'position' => $position,
+                    'is_global' => 'N'
+                );
+                $id = db_query("REPLACE INTO ?:settings_objects ?e", $_data);
+                foreach (fn_get_translation_languages() as $lang_code => $_v) {
+                    $__data = array(
+                        'object_id' => $id,
+                        'object_type' => 'O',
+                        'lang_code' => $lang_code,
+                        'value' => __($data['name'])
+                    );
+                    db_query("REPLACE INTO ?:settings_descriptions ?e", $__data);
+                }
+            }
+            $position++;
+        }
+
+        $to_delete = array_diff(array_keys($objects), $installed);
+        if (!empty($to_delete)) {
+            foreach ($to_delete as $name) {
+                db_query("DELETE FROM ?:settings_objects WHERE object_id = ?i", $objects[$name]);
+                db_query("DELETE FROM ?:settings_descriptions WHERE object_id = ?i", $objects[$name]);
+            }
+        }
     }
 }
 

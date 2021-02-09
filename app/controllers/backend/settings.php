@@ -152,5 +152,5 @@ if ($mode == 'manage') {
             Settings::instance()->updateValueById($option, $value);
         }
     }
-    exit;    
+    exit;
 }

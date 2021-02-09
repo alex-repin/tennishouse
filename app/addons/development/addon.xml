@@ -296,13 +296,6 @@
                     </item>
                 </items>
             </section>
-            <section id="cron">
-                <translations>
-                    <item lang="ru">Планировщик</item>
-                </translations>
-                <items>
-                </items>
-            </section>
         </sections>
     </settings>
     <compatibility>

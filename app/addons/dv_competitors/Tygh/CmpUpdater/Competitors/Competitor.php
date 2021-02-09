@@ -115,8 +115,16 @@ class Competitor
         }
     }
 
+    public function testParse($link)
+    {
+        $status = $this->parsePage($link);
+
+        return array($status, $this->products);
+    }
+
     private function parsePage($link)
     {
+        $this->current_link = $link;
         $extra = array(
             'request_timeout' => 10
         );
@@ -144,7 +152,6 @@ class Competitor
 
     private function parsePages($link)
     {
-        $this->current_link = $link;
         $status = $this->parsePage($link);
 
         unset($this->new_links[$link]);
