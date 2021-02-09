@@ -14,6 +14,7 @@
 
 use Tygh\FeaturesCache;
 use Tygh\Registry;
+use Tygh\Settings;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
@@ -631,7 +632,7 @@ function fn_development_cron_routine()
     if (!empty($scheme)) {
         foreach ($scheme as $type => $data) {
 
-            if (Registry::get('addons.development.cron_script_' . $type) != 'Y') {
+            if (Settings::instance()->getValue('cron_script_' . $type, 'Cron') != 'Y') {
                 continue;
             }
             $run = true;

@@ -32,7 +32,7 @@ function fn_install_cron_settings()
 {
 
     $schema = fn_get_schema('cron', 'schema', 'php', true);
-    $section_id = db_get_field("SELECT section_id FROM ?:settings_sections WHERE name = 'cron'");
+    $section_id = db_get_field("SELECT section_id FROM ?:settings_sections WHERE name = 'Cron'");
     if (empty($section_id)) {
         $s_data = array(
             'parent_id' => 0,
