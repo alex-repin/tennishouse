@@ -50,6 +50,8 @@ function fn_actualize_prices()
         foreach ($products as $product) {
             if (!empty($product['main_competitor'])) {
                 $new_price = $product['main_competitor']['price'];
+            } else {
+                $new_price = 0;
             }
             $link = '<a href="' . fn_url('products.update?product_id=' . $product['product_id'], 'A', 'current', CART_LANGUAGE, true) . '" target="_blank">' . $product['product'] . '</a>';
             if (!empty($new_price) && (($product['price'] > $new_price && in_array($product['competitor_price_action'], array('B', 'D'))) || ($product['price'] < $new_price && in_array($product['competitor_price_action'], array('B', 'U')) && $product['amount'] > 0))) {
