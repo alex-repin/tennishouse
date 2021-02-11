@@ -35,6 +35,7 @@ function fn_actualize_prices()
 
     $params = array(
         // 'hide_out_of_stock' => 'Y',
+        'show_out_of_stock' => true,
         'competition' => array(
             'mode' => 'A',
             'status' => 'A',
@@ -68,7 +69,7 @@ function fn_actualize_prices()
                 );
             }
             $list_price = max($new_price ?? 0, $product['price']);
-            if (empty($product['list_price']) || $product['list_price'] == 0 || $product['list_price'] < $list_price) {
+            if (!empty($list_price) && $list_price > 0 && (empty($product['list_price']) || $product['list_price'] == 0 || $product['list_price'] < $list_price)) {
                 db_query("UPDATE ?:products SET list_price = ?i WHERE product_id = ?i", $list_price, $product['product_id']);
                 $details[$link]['list_price'] = fn_format_price($product['list_price']) . ' -> ' . fn_format_price($list_price);
             }
@@ -194,8 +195,7 @@ function fn_dv_competitors_get_product_data($product_id, &$field_list, &$join, $
 {
     if (AREA == 'A') {
         $join .= db_quote(" LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = ?:products.product_id AND ?:competitive_pairs.action = 'T' LEFT JOIN ?:competitive_prices AS cp1 ON cp1.item_id = ?:competitive_pairs.competitive_id LEFT JOIN ?:competitors AS cmp1 ON cmp1.competitor_id = cp1.competitor_id LEFT JOIN ?:competitive_prices AS cp ON cp.code = ?:products.product_code LEFT JOIN ?:competitive_pairs AS cpr ON cpr.competitive_id = cp.item_id AND cpr.product_id = ?:products.product_id LEFT JOIN ?:competitors AS cmp ON cmp.competitor_id = cp.competitor_id");
-        $field_list .= ", GROUP_CONCAT(CONCAT_WS('|', CONCAT_WS('_', cp.item_id, cp.price, cp.competitor_id, cp.in_stock, cmp.status, cpr.action, 0), CONCAT_WS('_', cp1.item_id, cp1.price, cp1.competitor_id, cp1.in_stock, cmp1.status, 1)) SEPARATOR '|') AS competitors";
-        $condition .= " AND (cpr.competitive_id IS NULL OR cpr.action != 'U')";
+        $field_list .= ", GROUP_CONCAT(CONCAT_WS('|', CONCAT_WS('_', cp.item_id, cp.price, cp.competitor_id, cp.in_stock, cmp.status, IF(cpr.action IS NULL, 'T', cpr.action), 0), CONCAT_WS('_', cp1.item_id, cp1.price, cp1.competitor_id, cp1.in_stock, cmp1.status, ?:competitive_pairs.action, 1)) SEPARATOR '|') AS competitors";
     }
 }
 
@@ -209,9 +209,12 @@ function fn_explode_competitors(&$products, $competition_params = array())
                 $comp = $sorting = $sorted = array();
                 foreach ($pairs as $pair) {
                     $p_data = explode('_', $pair);
-                    if (count($p_data) == 6) {
-                        $keys = array('item_id', 'price', 'competitor_id', 'in_stock', 'status', 'pair_id');
+                    if (count($p_data) == 7) {
+                        $keys = array('item_id', 'price', 'competitor_id', 'in_stock', 'status', 'action', 'pair_id');
                         $_pr = array_combine($keys, $p_data);
+                        if ($_pr['action'] == 'U') {
+                            continue;
+                        }
                         $passed = true;
                         if (!empty($competition_params)) {
                             $conditions = array_intersect(array_keys($competition_params), $keys);
@@ -318,8 +321,7 @@ function fn_dv_competitors_get_products(&$params, &$fields, &$sortings, &$condit
 {
     if (!empty($params['competition'])) {
         $join .= db_quote(" LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = products.product_id AND ?:competitive_pairs.action = 'T' LEFT JOIN ?:competitive_prices AS cp1 ON cp1.item_id = ?:competitive_pairs.competitive_id LEFT JOIN ?:competitors AS cmp1 ON cmp1.competitor_id = cp1.competitor_id LEFT JOIN ?:competitive_prices AS cp ON cp.code = products.product_code LEFT JOIN ?:competitive_pairs AS cpr ON cpr.competitive_id = cp.item_id AND cpr.product_id = products.product_id LEFT JOIN ?:competitors AS cmp ON cmp.competitor_id = cp.competitor_id");
-        $fields[] = "GROUP_CONCAT(CONCAT_WS('|', CONCAT_WS('_', cp.item_id, cp.price, cp.competitor_id, cp.in_stock, cmp.status, 0), CONCAT_WS('_', cp1.item_id, cp1.price, cp1.competitor_id, cp1.in_stock, cmp1.status, 1)) SEPARATOR '|') AS competitors";
-        $condition .= " AND (cpr.competitive_id IS NULL OR cpr.action != 'U')";
+        $fields[] = "GROUP_CONCAT(CONCAT_WS('|', CONCAT_WS('_', cp.item_id, cp.price, cp.competitor_id, cp.in_stock, cmp.status, IF(cpr.action IS NULL, 'T', cpr.action), 0), CONCAT_WS('_', cp1.item_id, cp1.price, cp1.competitor_id, cp1.in_stock, cmp1.status, ?:competitive_pairs.action, 1)) SEPARATOR '|') AS competitors";
     }
 }
 function fn_dv_competitors_get_products_post(&$products, &$params, $lang_code)

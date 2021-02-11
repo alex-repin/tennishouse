@@ -806,6 +806,13 @@
                 KEY `product_id_2` (`product_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
         </item>
+        <item>
+            CREATE TABLE IF NOT EXISTS `cscart_calendar` (
+                `year` smallint(5) UNSIGNED NOT NULL,
+                `calendar` text NOT NULL,
+                PRIMARY KEY (`year`);
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </item>
     </queries>
     <functions>
         <item for="install">fn_install_cron_settings</item>
