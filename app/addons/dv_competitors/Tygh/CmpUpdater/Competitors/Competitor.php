@@ -199,6 +199,9 @@ class Competitor
                         $product['old_price'] = $this->old_products[$product['link']]['old_price'];
                     }
                     $product = array_merge($this->old_products[$product['link']], $product);
+                } else {
+                    $product['item_id'] = NULL;
+                    $product['old_price'] = 0;
                 }
                 $data[] = array_merge($product, array(
                     'timestamp' => TIME,
