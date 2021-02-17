@@ -28,6 +28,74 @@ use Tygh\Ym\Yml;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_get_working_date($number, $tmstp = TIME)
+{
+    $tfh = 60 * 60 * 24;
+
+    $_calendar = db_get_hash_single_array("SELECT * FROM ?:calendar", array('year', 'calendar'));
+    $calendar = array();
+    foreach ($_calendar as $i => $y_data) {
+        $year = unserialize($y_data);
+        foreach ($year as $j => $m_data) {
+            $days = explode(',', $m_data['days']);
+            foreach ($days as $day) {
+                if (strpos($day, '*') === false) {
+                    $calendar[$i][$m_data['month']][$day] = 'H';
+                } else {
+                    $calendar[$i][$m_data['month']][(int)$day] = 'W';
+                }
+            }
+
+        }
+    }
+
+    $date = getdate($tmstp);
+    while ($number > 0) {
+        $tmstp += $tfh;
+        $date = getdate($tmstp);
+        if (empty($calendar[$date['year']][$date['mon']])) {
+            return false;
+        }
+        $is_workday = true;
+        if ((in_array($date['wday'], array('6', '0')) &&
+        (empty($calendar[$date['year']][$date['mon']][$date['mday']]) || $calendar[$date['year']][$date['mon']][$date['mday']] != 'W')) ||
+        (!in_array($date['wday'], array('6', '0')) &&
+        !empty($calendar[$date['year']][$date['mon']][$date['mday']]) && $calendar[$date['year']][$date['mon']][$date['mday']] == 'H')) {
+            $is_workday = false;
+        }
+
+        if (!empty($is_workday)) {
+            $number--;
+        }
+    }
+
+    return mktime(23, 59, 59, $date['mon'], $date['mday'], $date['year']);
+}
+
+function fn_download_calendar()
+{
+    $extra = array(
+        'request_timeout' => 2,
+        'timeout' => 1,
+    );
+    $year = date("Y");
+    $year++;
+    $response = Http::get('http://xmlcalendar.ru/data/ru/' . $year . '/calendar.json', array(), $extra);
+
+    if (Http::getStatus() == Http::STATUS_OK && !empty($response)) {
+        $json = json_decode($response, true);
+        if (!empty($json['months'])) {
+            $data = array(
+                'year' => $year,
+                'calendar' => serialize($json['months'])
+            );
+            db_query("REPLACE INTO ?:calendar ?e", $data);
+        }
+    }
+
+    return array(true, array());
+}
+
 function fn_install_cron_settings()
 {
 
@@ -481,8 +549,8 @@ function fn_save_cart_step($cart, $user_id)
 
 function fn_check_delivery_statuses()
 {
-    $errors = array();
-    $data = db_get_hash_array("SELECT ?:orders.order_id, ?:orders.status, GROUP_CONCAT(DISTINCT ?:shipment_items.shipment_id SEPARATOR ',') AS shipment_ids FROM ?:orders LEFT JOIN ?:shipment_items ON ?:shipment_items.order_id = ?:orders.order_id WHERE ?:orders.status IN (?a) GROUP BY order_id", 'order_id', unserialize(ORDER_CHECK_STATUSES));
+    $errors = $delivery_dates = array();
+    $data = db_get_hash_array("SELECT ?:orders.order_id, ?:orders.status, GROUP_CONCAT(DISTINCT ?:shipment_items.shipment_id SEPARATOR ',') AS shipment_ids, delivery_date FROM ?:orders LEFT JOIN ?:shipment_items ON ?:shipment_items.order_id = ?:orders.order_id WHERE ?:orders.status IN (?a) GROUP BY order_id", 'order_id', unserialize(ORDER_CHECK_STATUSES));
 
     if (!empty($data)) {
         $_shipment_ids = array();
@@ -506,6 +574,14 @@ function fn_check_delivery_statuses()
                     $date_status = RusSdek::orderStatusXml($data_auth, $order_id, $shipment_id);
                     if (!empty($date_status)) {
                         RusSdek::SdekAddStatusOrders($date_status);
+                        if (empty($order_data['delivery_date'])) {
+                            foreach ($date_status as $s_id => $s_data) {
+                                if (in_array($s_data['status'], array('Вручен', 'Не вручен', 'Принят на склад до востребования'))) {
+                                    $delivery_dates[$order_id] = $s_data['timestamp'];
+                                    break;
+                                }
+                            }
+                        }
                         $last = array_pop($date_status);
                         if ($last['status'] == 'Вручен') {
                             $change_status = ORDER_STATUS_COMPLETED;
@@ -519,6 +595,12 @@ function fn_check_delivery_statuses()
             }
             if (!empty($change_status) && $change_status != $order_data['status']) {
                 fn_change_order_status($order_id, $change_status);
+            }
+        }
+
+        if (!empty($delivery_dates)) {
+            foreach ($delivery_dates as $o_id => $d_timestamp) {
+                db_query("UPDATE ?:orders SET delivery_date = ?i WHERE order_id = ?i", $d_timestamp, $o_id);
             }
         }
     }

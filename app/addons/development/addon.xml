@@ -810,8 +810,14 @@
             CREATE TABLE IF NOT EXISTS `cscart_calendar` (
                 `year` smallint(5) UNSIGNED NOT NULL,
                 `calendar` text NOT NULL,
-                PRIMARY KEY (`year`);
+                PRIMARY KEY (`year`)
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </item>
+        <item>
+            ALTER TABLE `cscart_orders` ADD `est_delivery_date` INT(11) UNSIGNED NOT NULL DEFAULT '0';
+        </item>
+        <item>
+            ALTER TABLE `cscart_orders` ADD `delivery_date` INT(11) UNSIGNED NOT NULL DEFAULT '0';
         </item>
     </queries>
     <functions>
@@ -1602,5 +1608,10 @@
         <item lang="ru" id="delivery_status">Статус доставки</item>
         <item lang="ru" id="delivered">Вручен</item>
         <item lang="ru" id="not_delivered">Не вручен</item>
+        <item lang="ru" id="download_calendar">Скачать календарь</item>
+        <item lang="ru" id="est_delivery_date">Планируемая дата доставки</item>
+        <item lang="ru" id="delivery_date">Дата доставки</item>
+        <item lang="ru" id="overdue_delivery">Просроченная доставка</item>
+        <item lang="ru" id="text_overdue_delivery_orders"><![CDATA[Заказы с просроченной доставкой: <a href="[link]">[number]</a>]]></item>
     </language_variables>
 </addon>

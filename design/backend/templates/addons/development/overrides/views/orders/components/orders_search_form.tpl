@@ -146,7 +146,11 @@
     <div class="control-group">
         <label class="checkbox" for="a_uid"><input type="checkbox" name="admin_user_id" id="a_uid" value="{$auth.user_id}" {if $search.admin_user_id}checked="checked"{/if} />{__("new_orders")}</label>
     </div>
+    <div class="control-group">
+        <label class="checkbox"><input type="checkbox" name="overdue_delivery" id="overdue_delivery" value="Y"{if $search.overdue_delivery} checked="checked"{/if} />{__("overdue_delivery")}</label>
+    </div>
 </div>
+
 <div class="group">
 <div class="control-group">
     <label class="control-label">{__("shipping")}</label>

@@ -326,17 +326,35 @@
                                 </div>
                         </div>
 
+                        {if $order_info.delivery_date}
+                            <div class="control-group">
+                                <label class="control-label">{__("delivery_date")} :</label>
+                                <div class="controls">
+                                    {$order_info.delivery_date|date_format:"`$settings.Appearance.date_format`"}
+                                </div>
+                            </div>
+                        {/if}
+
+                        {if $order_info.est_delivery_date}
+                            <div class="control-group">
+                                <label class="control-label">{__("est_delivery_date")} :</label>
+                                <div class="controls">
+                                    {$order_info.est_delivery_date|date_format:"`$settings.Appearance.date_format`"}
+                                </div>
+                            </div>
+                        {/if}
+
                         <div class="control-group">
                             <label class="control-label" for="elm_delivery_time">{__("delivery_time")} ({__("days")}) :</label>
                             <div class="controls">
-                                <input type="text" name="update_order[delivery_time]" id="elm_list_price" size="10" value="{$order_info.delivery_time}" class="input-small" />
+                                <input type="text" name="update_order[delivery_time]" id="elm_delivery_time" size="10" value="{$order_info.delivery_time}" class="input-small" />
                             </div>
                         </div>
 
                         <div class="control-group">
-                            <label class="control-label" for="elm_delivery_time">{__("tracking_number")} :</label>
+                            <label class="control-label" for="elm_tracking_number">{__("tracking_number")} :</label>
                             <div class="controls">
-                                <input type="text" name="update_order[tracking_number]" id="elm_list_price" size="10" value="{$order_info.tracking_number}" class="input-small" />
+                                <input type="text" name="update_order[tracking_number]" id="elm_tracking_number" size="10" value="{$order_info.tracking_number}" class="input-small" />
                             </div>
                         </div>
 

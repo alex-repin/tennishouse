@@ -364,6 +364,9 @@ function fn_development_update_user_pre($user_id, &$user_data, $auth, $ship_to_a
 
 function fn_development_change_order_status_post($status_to, $status_from, $order_info, $force_notification, $order_statuses, $place_order)
 {
+    if (empty($order_info['delivery_date']) && in_array($status_to, ORDER_COMPLETE_STATUSES)) {
+        db_query("UPDATE ?:orders SET delivery_date = ?i WHERE order_id = ?i", TIME, $order_info['order_id']);
+    }
     $saving_data = db_get_hash_array("SELECT * FROM ?:savings_groups ORDER BY amount ASC", 'group_id');
     if (!empty($saving_data) && !empty($order_info['user_id'])) {
         $orders_total = db_get_field("SELECT SUM(total) FROM ?:orders WHERE user_id = ?i AND status IN (?a)", $order_info['user_id'], ORDER_COMPLETE_STATUSES);
@@ -395,6 +398,10 @@ function fn_development_create_order(&$order)
     $ord_numbs = db_get_fields("SELECT order_number FROM ?:orders WHERE timestamp >= ?i AND timestamp <= ?i", $time_from, $time_to);
 
     while (in_array($order['order_number'] = $date . '-' . fn_generate_rand(), $ord_numbs)) {}
+
+    if (!empty($order['delivery_time'])) {
+        $order['est_delivery_date'] = fn_get_working_date($order['delivery_time']);
+    }
 }
 
 function fn_development_pre_place_order($cart, &$allow, $product_groups)
@@ -433,6 +440,9 @@ function fn_development_get_orders($params, &$fields, $sortings, &$condition, &$
     if (!empty($params['phone'])) {
         $condition .= db_quote(" AND ?:orders.phone = ?s", trim($params['phone']));
     }
+    if (!empty($params['overdue_delivery']) && $params['overdue_delivery'] == 'Y') {
+        $condition .= db_quote(" AND ?:orders.est_delivery_date != '0' AND ?:orders.delivery_date = '0' AND ?:orders.est_delivery_date < ?i AND ?:orders.status NOT IN (?a)", TIME, ORDER_COMPLETE_STATUSES);
+    }
     if (!empty($params['origin']) && !empty(array_diff(array('T', 'M'), $params['origin']))) {
         if (in_array('T', $params['origin'])) {
             $condition .= db_quote(" AND ?:orders.phone != ''");
@@ -441,6 +451,8 @@ function fn_development_get_orders($params, &$fields, $sortings, &$condition, &$
         }
     }
     if (AREA == 'A') {
+        $fields[] = "?:orders.delivery_date";
+        $fields[] = "?:orders.est_delivery_date";
         $fields[] = "?:sms_statuses.sms_status";
         $join .= " LEFT JOIN ?:sms_statuses ON ?:sms_statuses.order_id = ?:orders.order_id AND ?:sms_statuses.timestamp = (SELECT MAX(?:sms_statuses.timestamp) FROM ?:sms_statuses WHERE ?:sms_statuses.order_id = ?:orders.order_id)";
     }

@@ -54,7 +54,7 @@
 </thead>
 {foreach from=$orders item="o"}
 {hook name="orders:order_row"}
-<tr>
+<tr {if !$o.delivery_date && $o.est_delivery_date && $o.est_delivery_date < $smarty.const.TIME && !$o.status|in_array:$smarty.const.ORDER_COMPLETE_STATUSES}class="ty-overdue-delivery"{/if}>
     <td class="left">
         <input type="checkbox" name="order_ids[]" value="{$o.order_id}" class="cm-item cm-item-status-{$o.status|lower}" /></td>
     <td>

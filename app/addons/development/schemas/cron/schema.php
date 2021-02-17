@@ -78,4 +78,13 @@ return array(
         'function' => 'fn_update_xml_feed',
         'name' => 'update_xml_feed'
     ),
+    'L' => array(
+        'frequency' => array(
+            'm' => '12',
+            'd' => '01',
+            'H' => '02'
+        ),
+        'function' => 'fn_download_calendar',
+        'name' => 'download_calendar'
+    ),
 );
