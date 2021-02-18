@@ -15,25 +15,27 @@
 
 namespace Tygh\CmpUpdater\Competitors;
 
-class Cmp2 extends Competitor
+class Cmp3 extends Competitor
 {
     public function __construct()
     {
-        parent::__construct(SALETENNIS_COMPETITOR_ID);
+        parent::__construct(TEN_NIS_COMPETITOR_ID);
         $this->new_links = array(
-            'https://www.saletennis.com/catalog/product/tiennisnaia-rakietka-babolat-aero-gamer-yellow-black-10400/' => true,
+            // 'https://www.saletennis.com/catalog/product/tiennisnaia-rakietka-babolat-aero-gamer-yellow-black-10400/' => true,
         );
     }
 
     protected function prsProduct($content)
     {
         $product = array();
-        if (preg_match('/<section class="card">(.*?)<\/section>/', preg_replace('/[\r\n\t]/', '', $content), $section)) {
-            if (preg_match('/<h1 class="card__title">(.*?)<\/h1>/', $section[1], $match)) {
+
+        if (preg_match('/<section id="main" itemscope itemtype="https:\/\/schema\.org\/Product">(.*?)<\/main>/', preg_replace(array('/[\r\n\t]/', '/\>\s+\</m'), array('', '><'), $content), $section)) {
+
+            if (preg_match('/<h1 class="h1 productpage_title" itemprop="name">(.*?)<\/h1>/', $section[1], $match)) {
                 $product['name'] = $match[1];
             }
-            if (preg_match('/<p class="card__code">(.*?)<\/p>/', $section[1], $match)) {
-                $product['code'] = trim(preg_replace('/Артикул/', '', $match[1]));
+            if (preg_match('/<div class="product-availability-date">.*<\/label><span>(.*?)<\/span><\/div>/', $section[1], $match)) {
+                $product['code'] = $match[1];
 
                 if (preg_match('/(.*)U[0-9]?$/', $product['code'], $code)) {
                     $product['code'] = $code[1];
@@ -48,15 +50,16 @@ class Cmp2 extends Competitor
                         $product['code'] = $code[0];
                     }
                 }
-                
+
             } else {
                 $product['code'] = '';
             }
 
-            if (preg_match('/<p class="card__price">(.*?)<\/p>/', $section[1], $match)) {
+            if (preg_match('/<div class="current-price"><span itemprop="price" content="(.*?)">/', $section[1], $match)) {
                 $product['price'] = (int)$match[1];
             }
-            if (preg_match('/<span class="card__button-cart-label">(.*?)<\/span>/', $section[1], $match)) {
+
+            if (preg_match('/<span id="product-availability"><a class="stockcount_product_front" href="#stockcount_product_front">(.*?)<\/a><\/span>/', $section[1], $match)) {
                 $product['in_stock'] = 'Y';
             } else {
                 $product['in_stock'] = 'N';

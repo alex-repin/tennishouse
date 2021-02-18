@@ -44,8 +44,10 @@ class Cmp1 extends Competitor
             }
             if (preg_match('/id="sku_update_\d+".*?>.*?<span class="ty-control-group__item.*?>(.*?)<.*?<\/div>/', $section[1], $match)) {
                 $product['code'] = $match[1];
-                
-                if (strpos($product['code'], '-') !== false) {
+
+                if (preg_match('/(.*)U[0-9]?$/', $product['code'], $code)) {
+                    $product['code'] = $code[1];
+                } elseif (strpos($product['code'], '-') !== false) {
                     $code = explode('-', $product['code']);
                     if (!empty($this->codes[$code[0]])) {
                         $product['code'] = $code[0];
@@ -56,7 +58,7 @@ class Cmp1 extends Competitor
                         $product['code'] = $code[0];
                     }
                 }
-                
+
             } else {
                 $product['code'] = '';
             }
