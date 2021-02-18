@@ -400,7 +400,13 @@ function fn_development_create_order(&$order)
     while (in_array($order['order_number'] = $date . '-' . fn_generate_rand(), $ord_numbs)) {}
 
     if (!empty($order['delivery_time'])) {
-        $order['est_delivery_date'] = fn_get_working_date($order['delivery_time']);
+        if (strpos($order['delivery_time'], '-') !== false) {
+            $dt = explode('-', $order['delivery_time']);
+            $days = array_pop($dt);
+        } else {
+            $days = $order['delivery_time'];
+        }
+        $order['est_delivery_date'] = fn_get_working_date($days);
     }
 }
 
