@@ -54,9 +54,11 @@
 
 </form>
 
+{if $competitor_data.competitor_id}
 <div id="content_parsing">
     {include file="addons/dv_competitors/common/parse_link.tpl" competitor_id=$id}
 </div>
+{/if}
 
 {if $competitor_data.update_log}
     <div id="content_update_log">

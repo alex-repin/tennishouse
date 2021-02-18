@@ -17,3 +17,4 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 define('RACKETLON_COMPETITOR_ID', 1);
 define('SALETENNIS_COMPETITOR_ID', 2);
 define('TEN_NIS_COMPETITOR_ID', 3);
+define('RACKETS_COMPETITOR_ID', 4);

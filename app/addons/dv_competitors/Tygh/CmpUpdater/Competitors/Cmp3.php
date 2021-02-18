@@ -21,7 +21,6 @@ class Cmp3 extends Competitor
     {
         parent::__construct(TEN_NIS_COMPETITOR_ID);
         $this->new_links = array(
-            // 'https://www.saletennis.com/catalog/product/tiennisnaia-rakietka-babolat-aero-gamer-yellow-black-10400/' => true,
         );
     }
 
