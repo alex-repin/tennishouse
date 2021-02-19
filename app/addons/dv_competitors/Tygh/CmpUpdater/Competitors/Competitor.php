@@ -94,7 +94,7 @@ class Competitor
         return $result[1];
     }
 
-    private function trimLinks(&$links)
+    protected function trimLinks(&$links)
     {
         $links = array_unique($links);
         $domain = ($this->competitor['link'][-1] == '/') ? mb_substr($this->competitor['link'], 0, -1) : $this->competitor['link'];

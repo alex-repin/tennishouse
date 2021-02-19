@@ -292,7 +292,7 @@ function fn_dv_competitors_get_product_data_post(&$product_data, $auth, $preview
 function fn_dv_competitors_update_product_post($product_data, $product_id, $lang_code, $create)
 {
     if (!empty($product_data['competitor_pair']['c_id']) && !empty($product_data['competitor_pair']['action']) && !empty($product_data['competitor_pair']['obj_id'])) {
-            db_query("DELETE FROM ?:competitive_pairs WHERE product_id = ?i AND competitor_id = ?i", $product_id, $product_data['competitor_pair']['c_id']);
+            db_query("DELETE FROM ?:competitive_pairs WHERE product_id = ?i AND competitive_id = ?i", $product_id, $product_data['competitor_pair']['obj_id']);
 
             $code = db_get_field("SELECT code FROM ?:competitive_prices WHERE item_id = ?i", $product_data['competitor_pair']['obj_id']);
             if ($product_data['competitor_pair']['action'] == 'T') {

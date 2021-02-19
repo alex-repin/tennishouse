@@ -41,15 +41,13 @@
                 `competitive_id` mediumint(8) NOT NULL,
                 `product_id` mediumint(8) NOT NULL,
                 `competitor_id` MEDIUMINT(8) UNSIGNED NOT NULL,
-                UNIQUE( `product_id`, `competitor_id`),
+                `action` CHAR(1) NOT NULL DEFAULT 'T',
+                UNIQUE( `product_id`, `competitive_id`),
                 INDEX(`product_id`)
             );
         </item>
         <item>
             ALTER TABLE `cscart_products` ADD `competitor_price_action` CHAR(1) NOT NULL DEFAULT 'B';
-        </item>
-        <item>
-            ALTER TABLE `cscart_competitive_pairs` ADD `action` CHAR(1) NOT NULL DEFAULT 'T';
         </item>
     </queries>
     <language_variables>

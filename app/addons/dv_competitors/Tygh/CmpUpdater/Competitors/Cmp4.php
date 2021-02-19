@@ -21,7 +21,42 @@ class Cmp4 extends Competitor
     {
         parent::__construct(RACKETS_COMPETITOR_ID);
         $this->new_links = array(
+            // 'http://rackets.ru/rackets-shop/tennis-rackets.html' => true
         );
+    }
+
+    protected function trimLinks(&$links)
+    {
+        $links = array_unique($links);
+        $domain = ($this->competitor['link'][-1] == '/') ? mb_substr($this->competitor['link'], 0, -1) : $this->competitor['link'];
+        $parsed_home = parse_url($domain);
+        $result = array();
+        foreach ($links as $link) {
+            $parsed_link = parse_url($link);
+            if (empty($parsed_link) || empty($parsed_link['path']) || $parsed_link['path'] == '/' ||
+            (!empty($parsed_link['host']) && $parsed_link['host'] != $parsed_home['host']) ||
+            (!empty($parsed_link['scheme']) && !in_array($parsed_link['scheme'], array('http', 'https'))) ||
+            fn_strtolower(substr($parsed_link['path'], -4, 4 )) == '.jpg' ||
+            fn_strtolower(substr($parsed_link['path'], -4, 4 )) == '.png' ||
+            fn_strtolower(substr($parsed_link['path'], -5, 5 )) == '.jpeg') {
+                continue;
+            }
+
+            $query = '';
+            if (!empty($parsed_link['query'])) {
+                $pts = explode('&', $parsed_link['query']);
+                foreach ($pts as $pt) {
+                    if (strpos($pt, 'start=') === 0) {
+                        $query = $pt;
+                        break;
+                    }
+                }
+            }
+
+            $result[] = $domain . $parsed_link['path'] . '?' . $query;
+        }
+
+        $links = array_unique($result);
     }
 
     protected function prsProduct($content)
