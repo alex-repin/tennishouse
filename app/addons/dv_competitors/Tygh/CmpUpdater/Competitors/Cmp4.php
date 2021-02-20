@@ -47,13 +47,13 @@ class Cmp4 extends Competitor
                 $pts = explode('&', $parsed_link['query']);
                 foreach ($pts as $pt) {
                     if (strpos($pt, 'start=') === 0) {
-                        $query = $pt;
+                        $query = '?' . $pt;
                         break;
                     }
                 }
             }
 
-            $result[] = $domain . $parsed_link['path'] . '?' . $query;
+            $result[] = $domain . $parsed_link['path'] . $query;
         }
 
         $links = array_unique($result);
