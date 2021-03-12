@@ -447,7 +447,7 @@ function fn_development_get_orders($params, &$fields, $sortings, &$condition, &$
         $condition .= db_quote(" AND ?:orders.phone = ?s", trim($params['phone']));
     }
     if (!empty($params['overdue_delivery']) && $params['overdue_delivery'] == 'Y') {
-        $condition .= db_quote(" AND ?:orders.est_delivery_date != '0' AND ?:orders.delivery_date = '0' AND ?:orders.est_delivery_date < ?i AND ?:orders.status NOT IN (?a)", TIME, ORDER_COMPLETE_STATUSES);
+        $condition .= " AND " . fn_get_overdue_delivery_condition('?:orders');
     }
     if (!empty($params['origin']) && !empty(array_diff(array('T', 'M'), $params['origin']))) {
         if (in_array('T', $params['origin'])) {
@@ -460,6 +460,7 @@ function fn_development_get_orders($params, &$fields, $sortings, &$condition, &$
         $fields[] = "?:orders.delivery_date";
         $fields[] = "?:orders.est_delivery_date";
         $fields[] = "?:sms_statuses.sms_status";
+        $fields[] = db_quote("IF (" . fn_get_overdue_delivery_condition('?:orders') . ", 1, 0) AS delivery_overdue");
         $join .= " LEFT JOIN ?:sms_statuses ON ?:sms_statuses.order_id = ?:orders.order_id AND ?:sms_statuses.timestamp = (SELECT MAX(?:sms_statuses.timestamp) FROM ?:sms_statuses WHERE ?:sms_statuses.order_id = ?:orders.order_id)";
     }
 
@@ -543,6 +544,10 @@ function fn_development_get_cart_product_data_post($hash, $product, $skip_promot
 //             $net_cost_rub += $nc * $pc['step'];
 //         }
 //     }
+    if (empty($_pdata['net_currency_code'])) {
+        $global_data = fn_get_product_global_data($_pdata, array('net_currency_code'));
+        $_pdata['net_currency_code'] = !empty($global_data['net_currency_code']) ? $global_data['net_currency_code'] : CART_PRIMARY_CURRENCY;
+    }
     $net_cost = (!empty($_pdata['net_cost']) && !empty($_pdata['net_currency_code'])) ? $_pdata['net_cost'] * Registry::get('currencies.' . $_pdata['net_currency_code'] . '.coefficient') : $_pdata['price'];
     $_pdata['net_cost_rub'] = ($net_cost + $net_cost_rub) * $product['amount'];
     $cart['net_subtotal'] += $_pdata['net_cost_rub'];

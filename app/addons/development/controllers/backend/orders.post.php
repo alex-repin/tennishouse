@@ -23,7 +23,7 @@ $params = $_REQUEST;
 
 if ($mode == 'manage') {
 
-    $od_orders = db_get_field("SELECT COUNT(*) FROM ?:orders WHERE ?:orders.est_delivery_date != '0' AND ?:orders.delivery_date = '0' AND ?:orders.est_delivery_date < ?i AND ?:orders.status NOT IN (?a)", TIME, ORDER_COMPLETE_STATUSES);
+    $od_orders = db_get_field("SELECT COUNT(*) FROM ?:orders WHERE " . fn_get_overdue_delivery_condition('?:orders'));
 
     if (!empty($od_orders)) {
         fn_set_notification('W', __('important'), __('text_overdue_delivery_orders', array(

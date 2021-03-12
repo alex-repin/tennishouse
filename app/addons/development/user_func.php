@@ -28,6 +28,11 @@ use Tygh\Ym\Yml;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_get_overdue_delivery_condition($table)
+{
+    return db_quote("$table.est_delivery_date != '0' AND $table.delivery_date = '0' AND $table.est_delivery_date < ?i AND $table.status IN (?a)", TIME, ORDER_DELIVERY_STATUSES);
+}
+
 function fn_get_working_date($number, $tmstp = TIME)
 {
     $tfh = 60 * 60 * 24;

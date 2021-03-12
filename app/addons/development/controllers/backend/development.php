@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         if (empty($order_id_column)) {
                             foreach ($data as $key => $column) {
-                                if ($column == '№ накладной ИМ') {
+                                if ($column == '№ накладной ИМ' || $column == '№ отправления ИМ') {
                                     $order_id_column = $key;
                                 }
                                 if ($column == 'Статус') {

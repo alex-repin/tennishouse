@@ -105,7 +105,7 @@ if ($mode == 'add') {
 
     $params = array(
         'warehouse_id' => $warehouse_id,
-        'hide_out_of_stock' => 'Y'
+        'hide_out_of_stock' => 'Y',
     );
     list($products,) = fn_get_products($params);
 
@@ -122,6 +122,10 @@ if ($mode == 'add') {
                 }
             }
 
+            if (empty($prod['net_currency_code'])) {
+                $global_data = fn_get_product_global_data($prod, array('net_currency_code'));
+                $prod['net_currency_code'] = !empty($global_data['net_currency_code']) ? $global_data['net_currency_code'] : CART_PRIMARY_CURRENCY;
+            }
             $net_ttl += $prod['net_cost'] * Registry::get('currencies.' . $prod['net_currency_code'] . '.coefficient') * $amount;
             $rrp_total += $prod['price'] * $amount;
         }
