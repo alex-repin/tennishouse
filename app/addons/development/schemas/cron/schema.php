@@ -87,4 +87,11 @@ return array(
         'function' => 'fn_download_calendar',
         'name' => 'download_calendar'
     ),
+    'B' => array(
+        'frequency' => array(
+            'H' => '00'
+        ),
+        'function' => 'fn_archieve_order_data',
+        'name' => 'archieve_order_data'
+    ),
 );

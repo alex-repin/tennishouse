@@ -64,6 +64,20 @@
                             <item lang="ru">Бесплатная натяжка если скидка меньше (%)</item>
                         </translations>
                     </item>
+                    <item id="archive_orders_time">
+                        <type>input</type>
+                        <default_value>365</default_value>
+                        <translations>
+                            <item lang="ru">Время архивирования заказов (дней)</item>
+                        </translations>
+                    </item>
+                    <item id="cron_logs_delete_time">
+                        <type>input</type>
+                        <default_value>14</default_value>
+                        <translations>
+                            <item lang="ru">Время очистки журнала планировщика (дней)</item>
+                        </translations>
+                    </item>
                 </items>
             </section>
             <section id="vk">
@@ -818,6 +832,9 @@
         </item>
         <item>
             ALTER TABLE `cscart_orders` ADD `delivery_date` INT(11) UNSIGNED NOT NULL DEFAULT '0';
+        </item>
+        <item>
+            ALTER TABLE `cscart_orders` ADD `is_archieved` CHAR(1) NOT NULL DEFAULT 'N';
         </item>
     </queries>
     <functions>
@@ -1613,5 +1630,6 @@
         <item lang="ru" id="delivery_date">Дата доставки</item>
         <item lang="ru" id="overdue_delivery">Просроченная доставка</item>
         <item lang="ru" id="text_overdue_delivery_orders"><![CDATA[Заказы с просроченной доставкой: <a href="[link]">[number]</a>]]></item>
+        <item lang="ru" id="archieve_order_data">Архивировать заказы</item>
     </language_variables>
 </addon>

@@ -28,6 +28,29 @@ use Tygh\Ym\Yml;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_archieve_order_data()
+{
+    $details = array();
+
+    ini_set('memory_limit', '1024m');
+    $orders_data = db_get_hash_multi_array("SELECT od.*, o.timestamp FROM ?:order_data AS od INNER JOIN ?:orders AS o ON o.order_id = od.order_id WHERE o.is_archieved = 'N' AND o.timestamp < ?i AND o.status IN (?a)", array('order_id', 'type'), TIME - SECONDS_IN_DAY * Registry::get('addons.development.archive_orders_time'), ORDER_BACKUP_STATUSES);
+
+    foreach ($orders_data as $o_id => $types) {
+        $content = array();
+        foreach ($types as $type => $o_data) {
+            $content[$type] = $o_data['data'];
+            $year = date('Y', $o_data['timestamp']);
+        }
+        fn_put_contents(DIR_ROOT . '/var/order_data/' . $year . '/' . $o_id . '.txt', serialize($content), '', 0777);
+        $details[] = $o_id;
+    }
+
+    db_query("DELETE FROM ?:order_data WHERE order_id IN (?a)", array_keys($orders_data));
+    db_query("UPDATE ?:orders SET is_archieved = 'Y' WHERE order_id IN (?a)", array_keys($orders_data));
+
+    return array(true, $details);
+}
+
 function fn_get_overdue_delivery_condition($table)
 {
     return db_quote("$table.est_delivery_date != '0' AND $table.delivery_date = '0' AND $table.est_delivery_date < ?i AND $table.status IN (?a)", TIME, ORDER_DELIVERY_STATUSES);

@@ -1613,7 +1613,11 @@ function fn_get_order_info($order_id, $native_language = false, $format_info = t
             }
 
             // Get additional data
-            $additional_data = db_get_hash_single_array("SELECT type, data FROM ?:order_data WHERE order_id = ?i", array('type', 'data'), $order_id);
+            if ($order['is_archieved'] == 'N') {
+                $additional_data = db_get_hash_single_array("SELECT type, data FROM ?:order_data WHERE order_id = ?i", array('type', 'data'), $order_id);
+            } else {
+                $additional_data = unserialize(fn_get_contents(DIR_ROOT . '/var/order_data/' . date('Y', $order['timestamp']) . '/' . $order_id . '.txt'));
+            }
 
             $order['taxes'] = array();
             $order['tax_subtotal'] = $order['original_shipping_cost'] = 0;
@@ -2099,6 +2103,7 @@ function fn_delete_order($order_id)
 
     db_query("DELETE FROM ?:new_orders WHERE order_id = ?i", $order_id);
     db_query("DELETE FROM ?:order_data WHERE order_id = ?i", $order_id);
+    fn_rm(DIR_ROOT . '/var/order_data/' . date('Y', db_get_field("SELECT timestamp FROM ?:orders WHERE order_id = ?i", $order_id)) . '/' . $order_id . '.txt');
     db_query("DELETE FROM ?:order_details WHERE order_id = ?i", $order_id);
     $result = db_query("DELETE FROM ?:orders WHERE order_id = ?i", $order_id);
     db_query("DELETE FROM ?:product_file_ekeys WHERE order_id = ?i", $order_id);

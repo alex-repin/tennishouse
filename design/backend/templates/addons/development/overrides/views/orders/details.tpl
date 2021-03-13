@@ -23,11 +23,13 @@
 {capture name="mainbox"}
 {capture name="tabsbox"}
 
-<form action="{""|fn_url}" method="post" name="order_info_form" class="form-horizontal form-edit form-table">
-<input type="hidden" name="order_id" value="{$smarty.request.order_id}" />
-<input type="hidden" name="order_status" value="{$order_info.status}" />
-<input type="hidden" name="result_ids" value="content_general" />
-<input type="hidden" name="selected_section" value="{$smarty.request.selected_section}" />
+{if $order_info.is_archieved == 'N'}
+    <form action="{""|fn_url}" method="post" name="order_info_form" class="form-horizontal form-edit form-table">
+    <input type="hidden" name="order_id" value="{$smarty.request.order_id}" />
+    <input type="hidden" name="order_status" value="{$order_info.status}" />
+    <input type="hidden" name="result_ids" value="content_general" />
+    <input type="hidden" name="selected_section" value="{$smarty.request.selected_section}" />
+{/if}
 <div id="content_general">
     <div class="row-fluid">
         <div class="span8">
@@ -251,7 +253,12 @@
 
                             {$statuses = []}
                             {assign var="order_statuses" value=$smarty.const.STATUSES_ORDER|fn_get_statuses:$statuses:$get_additional_statuses:true}
-                            {include file="common/select_popup.tpl" suffix="o" id=$order_info.order_id status=$order_info.status items_status=$order_status_descr update_controller="orders" notify=true notify_sms=true notify_department=true notify_vendor=$notify_vendor status_target_id="content_downloads" extra="&return_url=`$extra_status`" statuses=$order_statuses popup_additional_class="dropleft"}
+                            {if $order_info.is_archieved == 'N'}
+                                {$non_editable = false}
+                            {else}
+                                {$non_editable = true}
+                            {/if}
+                            {include file="common/select_popup.tpl" suffix="o" id=$order_info.order_id status=$order_info.status items_status=$order_status_descr update_controller="orders" notify=true notify_sms=true notify_department=true notify_vendor=$notify_vendor status_target_id="content_downloads" extra="&return_url=`$extra_status`" statuses=$order_statuses popup_additional_class="dropleft" non_editable=$non_editable}
                         {/hook}
                     </div>
                 </div>
@@ -501,7 +508,9 @@
 {hook name="orders:tabs_content"}
 {/hook}
 
-</form>
+{if $order_info.is_archieved == 'N'}
+    </form>
+{/if}
 
 {hook name="orders:tabs_extra"}{/hook}
 
@@ -549,7 +558,9 @@
             <li>{btn type="list" text=$print_pdf_order href="orders.print_invoice?order_id=`$order_info.order_id`&format=pdf"}</li>
             <li>{btn type="list" text=__("print_packing_slip") href="orders.print_packing_slip?order_id=`$order_info.order_id`" class="cm-new-window"}</li>
             <li>{btn type="list" text=__("print_pdf_packing_slip") href="orders.print_packing_slip?order_id=`$order_info.order_id`&format=pdf" class="cm-new-window"}</li>
-            <li>{btn type="list" text=__("edit_order") href="order_management.edit?order_id=`$order_info.order_id`"}</li>
+            {if $order_info.is_archieved == 'N'}
+                <li>{btn type="list" text=__("edit_order") href="order_management.edit?order_id=`$order_info.order_id`"}</li>
+            {/if}
             {if !$order_info.user_id}
                 <li>{btn type="list" text=__("add_user") href="development.add_user?order_id=`$order_info.order_id`"}</li>
             {/if}
@@ -558,6 +569,7 @@
     {/capture}
     {dropdown content=$smarty.capture.tools_list}
 
+    {if $order_info.is_archieved == 'N'}
     <div class="btn-group btn-hover dropleft">
         {include file="buttons/save_changes.tpl" but_meta="cm-no-ajax dropdown-toggle" but_role="submit-link" but_target_form="order_info_form" but_name="dispatch[orders.update_details]" save=true}
         <ul class="dropdown-menu">
@@ -575,6 +587,7 @@
             {/hook}
         </ul>
     </div>
+    {/if}
 {/capture}
 
 {include file="common/mainbox.tpl" title=$smarty.capture.mainbox_title content=$smarty.capture.mainbox buttons=$smarty.capture.buttons adv_buttons=$smarty.capture.adv_buttons sidebar=$smarty.capture.sidebar sidebar_position="left"}

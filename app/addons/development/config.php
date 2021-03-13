@@ -242,6 +242,7 @@ define('NO_EMAIL', 'noemail@tennishouse.ru');
 
 define('ORDER_DELIVERY_STATUSES', array('X', 'W', 'A'));
 define('ORDER_COMPLETE_STATUSES', array('C', 'E', 'G'));
+define('ORDER_BACKUP_STATUSES', array('C', 'E', 'I'));
 define('ORDER_CHECK_STATUSES', serialize(array('A', 'X')));
 define('TRY_ON_CAT_IDS', serialize(array(APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID)));
 define('SEO_VARIANTS_ALLOWED', serialize(array('S', 'M', 'E')));

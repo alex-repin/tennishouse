@@ -650,6 +650,8 @@ function fn_development_get_filters_products_count_before_select($filters, $view
 
 function fn_development_cron_routine()
 {
+    db_query("DELETE FROM ?:cron_logs WHERE timestamp < ?i", TIME - SECONDS_IN_DAY * Registry::get('addons.development.cron_logs_delete_time'));
+    
     $scheme = fn_get_schema('cron', 'schema');
 
     if (!empty($scheme)) {

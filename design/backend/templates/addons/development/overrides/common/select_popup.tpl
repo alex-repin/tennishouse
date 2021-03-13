@@ -1,15 +1,19 @@
 {if $non_editable || $display == "text"}
     <span class="view-status">
-        {if $status == "A"}
-            {__("active")}
-        {elseif $status == "H"}
-            {__("hidden")}
-        {elseif $status == "D"}
-            {__("disabled")}
-        {elseif $status == "P"}
-            {__("pending")}
-        {elseif $status == "N"}
-            {__("new")}
+        {if $items_status}
+            {$items_status.$status|default:$default_status_text}
+        {else}
+            {if $status == "A"}
+                {__("active")}
+            {elseif $status == "H"}
+                {__("hidden")}
+            {elseif $status == "D"}
+                {__("disabled")}
+            {elseif $status == "P"}
+                {__("pending")}
+            {elseif $status == "N"}
+                {__("new")}
+            {/if}
         {/if}
     </span>
 {else}
@@ -89,7 +93,7 @@
             {/hook}
 
             {/capture}
-            
+
             {if $smarty.capture.list_items|trim}
                 {$smarty.capture.list_items nofilter}
             {/if}
