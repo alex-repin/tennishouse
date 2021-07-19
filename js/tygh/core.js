@@ -333,13 +333,13 @@ var Tygh = {
                     } else {
                         return false;
                     }
-                    
+
                     holder.siblings('tbody.cm-row-item').each(function(){
                         $(this).find('.cm-delete-row').click();
                     });
                 }
                 // [tennishouse]
-                
+
                 if (jelm.hasClass('cm-save-and-close')) {
                     jelm.parents('form:first').append('<input type="hidden" name="return_to_list" value="Y" />');
                 }
@@ -372,7 +372,7 @@ var Tygh = {
                         need_scroll: true,
                         jelm: _e
                     };
-                    
+
                     $.ceEvent('trigger', 'ce.needScroll', [opt]);
 
                     if (_e.data('caScroll') && opt.need_scroll) {
@@ -463,7 +463,7 @@ var Tygh = {
                     }
 
                 } else if (jelm.hasClass('cm-promo-popup') || jelm.parents('.cm-promo-popup').length) {
-                    
+
                     $.ceNotification('show', {
                         type: 'I',
                         title: _.promo_data.title,
@@ -736,7 +736,7 @@ var Tygh = {
                     var form_elm = $('<form class="cm-ajax hidden" name="instant_upload_form" action="' + href + '" method="post" enctype="multipart/form-data"><input type="hidden" name="result_ids" value="' + result_ids + '"><input type="file" name="upload" value=""><input type="submit"></form>');
                     var clicked_elm = form_elm.find('input[type=submit]');
                     var file_elm = form_elm.find('input[type=file]');
-                    
+
                     file_elm.on('change', function() {
                         clicked_elm.click();
                     });
@@ -1085,13 +1085,13 @@ var Tygh = {
                 _.isTouch = true;
                 $('#' + _.container).addClass('touch');
             }
-            
+
             if ((_.area == 'A') || (_.area == 'C')) {
                 if($.fn.autoNumeric) {
                     $('.cm-numeric', context).autoNumeric("init");
                 }
             }
-            
+
             if ($.fn.ceTabs) {
                 $('.cm-j-tabs', context).ceTabs();
             }
@@ -1133,9 +1133,23 @@ var Tygh = {
 
             $('.cm-accordion', context).ceAccordion();
 
-            var countryElms = $('select.cm-country', context);
+            if (_.area == 'C') {
+                if (!$.mobile) {
+                    $('.cm-dropdown', context).each(function() {
+                        $(this).selectbox();
+                    });
+                }
+                $('.cm-autocomplete-form', context).each(function(){
+                    fn_init_autocomplete($(this));
+                });
+                fn_init_auto_save(context);
+                fn_init_sd_option(context);
+                fn_init_placeholder(context);
+            }
+
+            var countryElms = $('.cm-country', context);
             if (countryElms.length) {
-                $('select.cm-country', context).ceRebuildStates();
+                $('.cm-country', context).ceRebuildStates();
             } else {
                 $('select.cm-state', context).ceRebuildStates();
             }
@@ -1460,7 +1474,7 @@ var Tygh = {
 
                 obj = $.ceDialog('get_last').find('.object-container');
                 elm = $.ceDialog('get_last').find(elm);
-                
+
                 if(obj.length !== 0 && typeof elm.length !== 0) {
                     elm_offset = elm.offset().top;
 
@@ -1520,7 +1534,7 @@ var Tygh = {
         },
 
         loadCss: function(css, show_status, prepend)
-        {   
+        {
             prepend = typeof prepend !== 'undefined' ? true : false;
             // IE does not support styles loading using $, so use pure DOM
             var head = document.getElementsByTagName("head")[0];
@@ -1586,7 +1600,7 @@ var Tygh = {
                         elms.each(function() {
                             var self = $(this);
 
-                            // Do not process old links. 
+                            // Do not process old links.
                             if (self.data('caAction') == '' && self.data('caAction') != '0') {
                                 return true;
                             }
@@ -1852,7 +1866,7 @@ var Tygh = {
             }
 
             return false;
-        }         
+        }
     });
 
     $.fn.extend({
@@ -1997,7 +2011,7 @@ var Tygh = {
                         if (elm.next().hasClass('cm-field-suffix')) {
                             value += elm.next().text();
                             elm.next().remove();
-                        }                        
+                        }
 
                         elm.wrap('<span class="shift-input' + hidden_class + '">' + value + '</span>');
                         elm.remove();
@@ -2325,7 +2339,7 @@ var Tygh = {
                 $('body').addClass('dialog-is-open');
 
                 var res = container.dialog('open');
-                
+
                 var s_elm = params.scroll ? $('#' + params.scroll , container) : false;
                 if (s_elm && s_elm.length) {
                     $.scrollToElm(s_elm);
@@ -2336,20 +2350,20 @@ var Tygh = {
 
             _is_empty: function() {
                 var container = $(this);
-                
+
                 var content = $.trim(container.html());
 
                 if (content) {
                     content = content.replace(/<!--(.*?)-->/g, '');
                 }
-                
+
                 if (!$.trim(content)) {
                     return true;
                 }
-               
+
                 return false;
             },
-            
+
             _load_content: function(params) {
                 var container = $(this);
 
@@ -2508,7 +2522,7 @@ var Tygh = {
                 }
 
                 var ws = $.getWindowSizes();
-                
+
                 var container_parent = container.parent();
 
                 if (!container.find('form').length && !container.parents('.object-container').length && !container.data('caKeepInPlace')) {
@@ -2582,7 +2596,7 @@ var Tygh = {
                         $.ceEvent('trigger', 'ce.dialogshow', [d]);
 
                         $('textarea.cm-wysiwyg', d).ceEditor('recover');
-                        
+
                         if (params.switch_avail) {
                             d.switchAvailability(false, false);
                         }
@@ -2600,7 +2614,7 @@ var Tygh = {
                         }
 
                         $('body').removeClass('dialog-is-open');
-                        // correct stack here to prevent 
+                        // correct stack here to prevent
                         // treating dialog as opened in 'dialogclose' handlers
                         stack.pop();
                         if (params.switch_avail) {
@@ -2724,7 +2738,7 @@ var Tygh = {
                 if (!$('.object-container', dlg).length) {
                     dlg.wrapInner('<div class="object-container" />');
                 }
-                
+
                 if (dlg.length && dlg.is(':visible')) {
                     var reload = true;
                     if ('resizable' in params) {
@@ -2778,7 +2792,7 @@ var Tygh = {
                 if (typeof(params.data('caCallRequestId')) != 'undefined' && $('#' + params.data('caCallRequestId')).length && $('#call_request_product_block').length) {
                     $('#call_request_product_block').html($('#' + params.data('caCallRequestId')).html());
                 }
-                
+
                 if (params.prop('href') && params.data('caViewId')) {
                     dialog_params['view_id'] = params.data('caViewId');
                 }
@@ -2955,7 +2969,7 @@ var Tygh = {
             changed: function(html) {
                 var onchange = this.data('ceeditor_onchange') || [];
                 for (var i = 0; i < onchange.length; i++) {
-                    onchange[i](html);                  
+                    onchange[i](html);
                 };
             }
         };
@@ -3171,7 +3185,7 @@ var Tygh = {
                 }
             },
 
-            load: function(url, params) 
+            load: function(url, params)
             {
                 var _params, current_url;
 
@@ -3204,7 +3218,7 @@ var Tygh = {
 
                 url = fn_query_remove(url, ['result_ids']);
                 url = '!/' + url;
-                
+
                 return url;
             },
 
@@ -3407,7 +3421,7 @@ var Tygh = {
 
             init: function(params) {
 
-                
+
                 var default_params = {
                     events: {
                         def: 'mouseover, mouseout',
@@ -3467,8 +3481,8 @@ var Tygh = {
                         right: {},
                         left: {}
                     });
-                    
-                    //hide tooltip before remove 
+
+                    //hide tooltip before remove
                     elm.on("remove", function() {
                         $(this).trigger('mouseout');
                     });
@@ -3876,7 +3890,7 @@ var Tygh = {
                                 alert(lbl.data('ca-default-text'));
                             } else {
                                 if (!elm.hasClass('cm-no-failed-msg')) {
-                                    lbl.next().after('<span id="' + elm_id + '_error_message" class="help-inline">' + _getMessage(elm_id) + '</span>');
+                                    lbl.parent().find('.ui-input-text').after('<span id="' + elm_id + '_error_message" class="help-inline">' + _getMessage(elm_id) + '</span>').end().find('.ui-select').addClass('cm-failed-field').after('<span id="' + elm_id + '_error_message" class="help-inline">' + _getMessage(elm_id) + '</span>');
                                 }
                             }
                             if (lbl.next().hasClass('ui-select')) {
@@ -3941,7 +3955,7 @@ var Tygh = {
                     }
                     var new_block = $('<div>' + '<span class="cm-ac-notification-label"style="margin-right: 50px;">' + _.tr('define_option') + '</span>').append(block.find('.cm-notification-note').clone()).append('</div>').append(result).html();
                     $.ceNotification('show', {
-                        type: 'I', 
+                        type: 'I',
                         message: new_block,
                         attach: clicked_elm
                     });
@@ -3953,7 +3967,7 @@ var Tygh = {
                     }
                     break;
                 }
-                
+
                 // Resize dialog if we have errors
                 var dlg = $.ceDialog('get_last');
                 var dlg_target = $('.cm-dialog-auto-size[data-ca-target-id="'+ dlg.attr('id') +'"]');
@@ -3995,7 +4009,7 @@ var Tygh = {
             var form_result = true;
             var check_fields_result = true;
 
-            if (!clicked_elm.hasClass('cm-skip-validation')) {
+            if (!clicked_elm.hasClass('cm-skip-validation') && !form.hasClass('cm-skip-validation')) {
 
                 var requirements = _fillRequirements(form, clicked_elm.data('caCheckFilter'))
 
@@ -4057,7 +4071,7 @@ var Tygh = {
                     if (collection.hasClass('cm-form-dialog-closer') || collection.hasClass('cm-form-dialog-opener')) {
 
                         $.ceEvent('one', 'ce.formajaxpost_' + form.prop('name'), function(response_data, params) {
-                            
+
                             if (collection.hasClass('cm-form-dialog-closer')) {
                                 $.popupStack.last_close();
                                 $.ceNotification('close', form.parents('.cm-notification-content:first'), false);
@@ -4071,7 +4085,7 @@ var Tygh = {
                             }
                         });
                     }
-                    
+
                     return $.ceAjax('submitForm', form, clicked_elm);
                 }
 
@@ -4203,6 +4217,8 @@ var Tygh = {
         {
             elm = elm || $('.cm-state.cm-location-' + section).prop('id');
             var sbox = $('#' + elm).is('select') ? $('#' + elm) : $('#' + elm + '_d');
+            var sb_id = $('#' + elm).attr('sb');
+            var msbox = $('#sbHolder_' + sb_id);
             var inp = $('#' + elm).is('input') ? $('#' + elm) : $('#' + elm + '_d');
             var default_state = inp.val();
             var cntr = $('.cm-country.cm-location-' + section);
@@ -4218,29 +4234,41 @@ var Tygh = {
             var tag_switched = false;
             var pkey = '';
 
-            sbox.prop('id', elm).prop('disabled', false).removeClass('hidden cm-skip-avail-switch');
-            inp.prop('id', elm + '_d').prop('disabled', true).addClass('hidden cm-skip-avail-switch').val('');
+            sbox.prop('id', elm).prop('disabled', false).removeClass('hidden cm-skip-avail-switch').closest('.ui-select').removeClass('ui-state-hidden');
+            inp.prop('id', elm + '_d').prop('disabled', true).addClass('hidden cm-skip-avail-switch').val('').closest('.ui-input-text').addClass('ui-state-hidden ui-state-disabled');
+            if (msbox.length) {
+                msbox.remove();
+                $('#' + elm).data('selectbox', null);
+            }
 
             if (!inp.hasClass('disabled')) {
                 sbox.removeClass('disabled');
             }
 
             if (options.states && options.states[country_code]) { // Populate selectbox with states
-                sbox.prop('length', 1);
+                sbox.prop('length', 0);
+
                 for (var i = 0; i < options.states[country_code].length; i++) {
                     sbox.append('<option value="' + options.states[country_code][i]['code'] + '"' + (options.states[country_code][i]['code'] == default_state ? ' selected' : '') + '>' + options.states[country_code][i]['state'] + '</option>');
+                }
+                if ($.mobile) {
+                    sbox.selectmenu('refresh');
                 }
 
                 sbox.prop('id', elm).prop('disabled', false).removeClass('cm-skip-avail-switch');
                 inp.prop('id', elm + '_d').prop('disabled', true).addClass('cm-skip-avail-switch');
+
+                if ($('#' + elm).hasClass('cm-dropdown')) {
+                    $('#' + elm).selectbox();
+                }
 
                 if (!inp.hasClass('disabled')) {
                     sbox.removeClass('disabled');
                 }
 
             } else { // Disable states
-                sbox.prop('id', elm + '_d').prop('disabled', true).addClass('hidden cm-skip-avail-switch');
-                inp.prop('id', elm).prop('disabled', false).removeClass('hidden cm-skip-avail-switch').val(default_state);
+                sbox.prop('id', elm + '_d').prop('disabled', true).addClass('hidden cm-skip-avail-switch').closest('.ui-select').addClass('ui-state-hidden');
+                inp.prop('id', elm).prop('disabled', false).removeClass('hidden cm-skip-avail-switch').val(default_state).closest('.ui-input-text').removeClass('ui-state-hidden ui-state-disabled');
 
                 if (!sbox.hasClass('disabled')) {
                     inp.removeClass('disabled');
@@ -4255,8 +4283,9 @@ var Tygh = {
 
         function _rebuildStatesInLocation() {
             var location_elm = $(this).prop('class').match(/cm-location-([^\s]+)/i);
+
             if (location_elm) {
-                _rebuildStates(location_elm[1], $('.cm-state.cm-location-' + location_elm[1]).not(':disabled').prop('id'));
+                _rebuildStates(location_elm[1], $('.cm-state.cm-location-' + location_elm[1]).not(':disabled,span').prop('id'));
             }
         }
 
@@ -4264,7 +4293,7 @@ var Tygh = {
             init: function() {
                 if ($(this).hasClass('cm-country')) {
                     if (init == false) {
-                        $(_.doc).on('change', 'select.cm-country', _rebuildStatesInLocation);
+                        $(_.doc).on('change', '.cm-country', _rebuildStatesInLocation);
                         init = true;
                     }
                     $(this).trigger('change');
@@ -4363,7 +4392,7 @@ var Tygh = {
                     clearTimeout(timers[key]);
                     methods.close(dups, true);
                 }
-                
+
                 return true;
             }
 
@@ -4406,7 +4435,7 @@ var Tygh = {
 
             return text;
         }
-        
+
         function _pickFromDialog(event) {
             var nt = $('.cm-notification-content', $(event.target));
             if (nt.length) {
@@ -4416,7 +4445,7 @@ var Tygh = {
             }
             return true;
         }
-        
+
         function _addToDialog(notification)
         {
             var dlg = $.ceDialog('get_last');
@@ -4464,7 +4493,7 @@ var Tygh = {
                     } else {
                         title = '<div class="ty-popup-notification-title">' + data.title + '<span class="cm-notification-close close"></span></div>';
                     }
-                    
+
                     var notification = $('<div class="cm-notification-content cm-notification-content-extended notification-content-extended ' + (dialog_class != '' ? ' ' + dialog_class : '') + (data.message_state == "I" ? ' cm-auto-hide' : '') + (attach.length > 0 ? ' cm-notification-content__add-to-cart' : '') + '" data-ca-notification-key="' + key + '">' +
                         title +
                         '<div class="notification-body-extended">' +
@@ -4493,7 +4522,7 @@ var Tygh = {
                     $(notification).find('.cm-notification-max-height').css({
                         'max-height': notificationMaxHeight
                     });
-                    
+
                     if (attach.length > 0 && attach.is(':visible')) {
                         attach.after(
                             '<div class="ui-widget-overlay" style="z-index:1000" data-ca-notification-key="' + key + '"></div>'
@@ -4764,7 +4793,7 @@ var Tygh = {
     if (!_.embedded && location.hash && unescape(location.hash).indexOf('#!/') === 0) {
         var components = $.parseUrl(location.href)
         var uri = $.ceHistory('parseHash', location.hash);
-        
+
         //FIXME: Remove this code when support for Internet Explorer 8 and 9 is dropped
         if($.browser.msie && $.browser.version >= 9) {
             $.redirect(components.protocol + '://' + components.host + uri);

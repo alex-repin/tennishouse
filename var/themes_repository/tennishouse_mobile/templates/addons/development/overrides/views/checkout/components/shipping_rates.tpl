@@ -2,29 +2,35 @@
 <script type="text/javascript">
 function fn_calculate_total_shipping_cost(obj) {
 
-    if (obj.attr('checked') == 'checked') {
-        return true;
-    }
-    params = [];
-    parents = Tygh.$('#shipping_rates_list');
-    radio = Tygh.$('input[type=radio]:checked', parents);
-
-    Tygh.$.each(radio, function(id, elm) {
-        params.push({name: elm.name, value: elm.value});
-    });
-
-    url = fn_url('checkout.checkout');
-
-    for (i in params) {
-        url += '&' + params[i]['name'] + '=' + escape(params[i]['value']);
+    var auto_form = obj.closest('form');
+    if (auto_form.length) {
+        auto_form.addClass('cm-skip-validation');
+        auto_form.submit();
     }
 
-    obj.attr('checked', 'checked');
-    Tygh.$.ceAjax('request', url, {
-        result_ids: 'shipping_rates_list,checkout_info_summary_*,checkout_order_info_*',
-        method: 'get',
-        full_render: true
-    });
+    // if (obj.attr('checked') == 'checked') {
+    //     return true;
+    // }
+    // params = [];
+    // parents = Tygh.$('#shipping_rates_list');
+    // radio = Tygh.$('input[type=radio]:checked', parents);
+    //
+    // Tygh.$.each(radio, function(id, elm) {
+    //     params.push({name: elm.name, value: elm.value});
+    // });
+    //
+    // url = fn_url('checkout.checkout');
+    //
+    // for (i in params) {
+    //     url += '&' + params[i]['name'] + '=' + escape(params[i]['value']);
+    // }
+    //
+    // obj.attr('checked', 'checked');
+    // Tygh.$.ceAjax('request', url, {
+    //     result_ids: 'shipping_rates_list,checkout_info_summary_*,checkout_order_info_*',
+    //     method: 'get',
+    //     full_render: true
+    // });
 }
 </script>
 {/literal}
@@ -176,9 +182,9 @@ function fn_calculate_total_shipping_cost(obj) {
                     <p>
                 {/if}
 
-                {if $smarty.foreach.spg.last && !$group.all_edp_free_shipping && !($group.all_free_shipping || $group.free_shipping)}
+                {*if $smarty.foreach.spg.last && !$group.all_edp_free_shipping && !($group.all_free_shipping || $group.free_shipping)}
                     <p class="ty-shipping-options__total">{__("total")}:&nbsp;<strong>{include file="common/price.tpl" value=$cart.display_shipping_cost class="ty-price"}</strong>{if $cart.original_shipping_cost && $cart.try_on && $cart.original_shipping_cost > $cart.shipping_cost} {__("try_on_shipping_cost", ["[cost]" => {include file="common/price.tpl" value=$cart.original_shipping_cost class="ty-price"}, "[amount]" => {include file="common/price.tpl" value=$addons.development.free_shipping_cost class="ty-price"}])}{/if}</p>
-                {/if}
+                {/if*}
 
             {else}
                 {if $group.all_free_shipping}

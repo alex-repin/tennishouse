@@ -294,7 +294,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $user_profile = array();
 
         if (!empty($_REQUEST['user_data'])) {
-        
+
             $user_data = $_REQUEST['user_data'];
 
             unset($user_data['user_type']);
@@ -353,7 +353,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (empty($cart['user_data']['email'])) {
             return array(CONTROLLER_STATUS_DENIED);
         }
-        
+
         if (empty($auth['user_id']) && !empty($_REQUEST['create_profile']) && $_REQUEST['create_profile'] == 'Y') {
             $user_data = $cart['user_data'];
             fn_fill_user_fields($user_data);
@@ -455,88 +455,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_suffix = ".checkout";
         unset($user_data['user_type']);
 
-        if (!empty($auth['user_id'])) {
-            if (isset($user_data['profile_id'])) {
-                if (empty($user_data['profile_id'])) {
-                    $user_data['profile_type'] = 'S';
-                }
-                $profile_id = $user_data['profile_id'];
-
-            } elseif (!empty($cart['profile_id'])) {
-                $profile_id = $cart['profile_id'];
-
-            } else {
-                $profile_id = db_get_field("SELECT profile_id FROM ?:user_profiles WHERE user_id = ?i AND profile_type = 'P'", $auth['user_id']);
-            }
-
-            $user_data['user_id'] = $auth['user_id'];
-            $current_user_data = fn_get_user_info($auth['user_id'], true, $profile_id);
-            if ($profile_id != NULL) {
-                $cart['profile_id'] = $profile_id;
-            }
-
-            $errors = false;
-
-            // Update billing/shipping information
-            if ($_REQUEST['update_step'] == 'step_three' || $_REQUEST['update_step'] == 'step_two' || $_REQUEST['update_step'] == 'step_one' && !$errors) {
-                if (!empty($user_data)) {
-                    $user_data = fn_array_merge($current_user_data, $user_data);
-                    $user_data['user_type'] = !empty($current_user_data['user_type']) ? $current_user_data['user_type'] : AREA;
-
-                    $user_data = fn_fill_contact_info_from_address($user_data);
-                }
-
-                $user_data = fn_array_merge($current_user_data, $user_data);
-
-                if (empty($_REQUEST['ship_to_another'])) {
-                    $profile_fields = fn_get_profile_fields('O');
-                    fn_fill_address($user_data, $profile_fields);
-                }
-
-                // Check if we need to send notification with new email to customer
-                $email = db_get_field('SELECT email FROM ?:users WHERE user_id = ?i', $auth['user_id']);
-
-                $send_notification = false;
-                if (isset($user_data['email']) && $user_data['email'] != $email) {
-                    $send_notification = true;
-                }
-
-                list($user_id, $profile_id) = fn_update_user($auth['user_id'], $user_data, $auth, !empty($_REQUEST['ship_to_another']), $send_notification, false);
-
-                fn_delete_notification('update');
-                $cart['profile_id'] = $profile_id;
-            }
-
-            // Add/Update additional fields
-            if (!empty($user_data['fields'])) {
-                fn_store_profile_fields($user_data, array('U' => $auth['user_id'], 'P' => $profile_id), 'UP'); // FIXME
-            }
-
-        } elseif (Registry::get('settings.General.disable_anonymous_checkout') != 'Y') {
-
-            if (isset($user_data['fields'])) {
-                $fields = fn_array_merge(isset($cart['user_data']['fields']) ? $cart['user_data']['fields'] : array(), $user_data['fields']);
-            }
-
-            if ($_REQUEST['update_step'] == 'step_two' && !empty($user_data)) {
-                $user_data = fn_fill_contact_info_from_address($user_data);
-            }
-
-            $cart['user_data'] = fn_array_merge($cart['user_data'], $user_data);
-
-            // Fill shipping info with billing if needed
-            if (empty($_REQUEST['ship_to_another']) && $_REQUEST['update_step'] == 'step_two') {
-                $profile_fields = fn_get_profile_fields('O');
-                fn_fill_address($cart['user_data'] , $profile_fields);
-            }
-            if ($_REQUEST['update_step'] == 'step_two') {
-                fn_save_cart_content($cart, $auth['user_id']);
-            }
-        }
-
-        if (!empty($_REQUEST['next_step'])) {
-            $_suffix .= '?edit_step=' . $_REQUEST['next_step'];
-        }
+        fn_save_checkout_user_data($user_data, $auth, $cart, $_REQUEST['ship_to_another']);
 
         if (!empty($_REQUEST['shipping_ids'])) {
             fn_checkout_update_shipping($cart, $_REQUEST['shipping_ids']);
@@ -559,10 +478,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Recalculate the cart
         $cart['recalculate'] = true;
-
-        if (!empty($_REQUEST['next_step']) && ($_REQUEST['next_step'] == 'step_three' || $_REQUEST['next_step'] == 'step_four')) {
-            $cart['calculate_shipping'] = true;
-        }
+        $cart['calculate_shipping'] = true;
 
         $shipping_calculation_type = (Registry::get('settings.General.estimate_shipping_cost') == 'Y' || !empty($completed_steps['step_two'])) ? 'A' : 'S';
 
@@ -570,13 +486,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $shipping_hash = fn_get_shipping_hash($cart['product_groups']);
 
-        if (!empty($_SESSION['shipping_hash']) && $_SESSION['shipping_hash'] != $shipping_hash && $_REQUEST['next_step'] == 'step_four' && $cart['shipping_required']) {
+        if (!empty($_SESSION['shipping_hash']) && $_SESSION['shipping_hash'] != $shipping_hash && $cart['shipping_required']) {
 //             if (!empty($cart['chosen_shipping'])) {
 //                 fn_set_notification('W', __('important'), __('text_shipping_rates_changed'));
 //             }
             $cart['chosen_shipping'] = array();
 
-            return array(CONTROLLER_STATUS_REDIRECT, 'checkout.checkout?edit_step=step_three');
+            return array(CONTROLLER_STATUS_REDIRECT, 'checkout.checkout');
         }
     }
 
@@ -767,10 +683,10 @@ if ($mode == 'cart') {
     );
 
     // Array responsible for what step has editing status
-    $edit_step = !empty($_REQUEST['edit_step']) ? $_REQUEST['edit_step'] : (!empty($_SESSION['edit_step']) ? $_SESSION['edit_step'] : '');
-    if ($edit_step == 'step_one') {
-        $edit_step = 'step_two';
-    }
+    // $edit_step = !empty($_REQUEST['edit_step']) ? $_REQUEST['edit_step'] : (!empty($_SESSION['edit_step']) ? $_SESSION['edit_step'] : 'step_one');
+    // if ($edit_step == 'step_one') {
+    //     $edit_step = 'step_two';
+    // }
     $next_step = !empty($_REQUEST['next_step']) ? $_REQUEST['next_step'] : '';
 
     $cart['user_data'] = !empty($cart['user_data']) ? $cart['user_data'] : array();
@@ -826,6 +742,8 @@ if ($mode == 'cart') {
         $cart['payment_info'] = array_merge($cart['payment_info'], $cart['extra_payment_info']);
     }
 
+    fn_check_user_session_data($cart['user_data']);
+
     Registry::get('view')->assign('user_data', !empty($_user_data) ? $_user_data : $cart['user_data']);
     $contact_info_population = fn_check_profile_fields_population($cart['user_data'], 'E', $profile_fields);
     Registry::get('view')->assign('contact_info_population', $contact_info_population);
@@ -834,39 +752,35 @@ if ($mode == 'cart') {
     Registry::get('view')->assign('contact_fields_filled', $contact_fields_filled);
 
     // Check fields population on first and second steps
-    if (($contact_info_population == true || Registry::get('runtime.action') == 'guest_checkout') && empty($_SESSION['failed_registration'])) {
-        if ($edit_step != 'step_one' && !fn_check_profile_fields_population($cart['user_data'], 'C', $profile_fields) && empty($_SESSION['guest_checkout'])) {
-            fn_set_notification('W', __('notice'), __('text_fill_the_mandatory_fields'));
-
-            return array(CONTROLLER_STATUS_REDIRECT, "checkout.checkout?edit_step=step_one");
-        }
-
-        $completed_steps['step_one'] = true;
-
-        // All mandatory Billing address data exist.
-        $billing_population = fn_check_profile_fields_population($cart['user_data'], 'B', $profile_fields);
-        Registry::get('view')->assign('billing_population', $billing_population);
-
-        if ($billing_population == true || empty($profile_fields['B'])) {
-            // All mandatory Shipping address data exist.
-            $shipping_population = fn_check_profile_fields_population($cart['user_data'], 'S', $profile_fields);
-            Registry::get('view')->assign('shipping_population', $shipping_population);
-
-            if ($shipping_population == true || empty($profile_fields['S'])) {
-                $completed_steps['step_two'] = true;
-            }
-        }
-    } elseif (Registry::get('runtime.action') == 'guest_checkout' && !empty($_SESSION['failed_registration'])) {
-        $completed_steps['step_one'] = true;
-    }
+    // if (($contact_info_population == true || Registry::get('runtime.action') == 'guest_checkout') && empty($_SESSION['failed_registration'])) {
+    //     if ($edit_step != 'step_one' && !fn_check_profile_fields_population($cart['user_data'], 'C', $profile_fields) && empty($_SESSION['guest_checkout'])) {
+    //         fn_set_notification('W', __('notice'), __('text_fill_the_mandatory_fields'));
+    //
+    //         return array(CONTROLLER_STATUS_REDIRECT, "checkout.checkout?edit_step=step_one");
+    //     }
+    //
+    //     $completed_steps['step_one'] = true;
+    //
+    //     // All mandatory Billing address data exist.
+    //     $billing_population = fn_check_profile_fields_population($cart['user_data'], 'B', $profile_fields);
+    //     Registry::get('view')->assign('billing_population', $billing_population);
+    //
+    //     if ($billing_population == true || empty($profile_fields['B'])) {
+    //         // All mandatory Shipping address data exist.
+    //         $shipping_population = fn_check_profile_fields_population($cart['user_data'], 'S', $profile_fields);
+    //         Registry::get('view')->assign('shipping_population', $shipping_population);
+    //
+    //         if ($shipping_population == true || empty($profile_fields['S'])) {
+    //             $completed_steps['step_two'] = true;
+    //         }
+    //     }
+    // } elseif (Registry::get('runtime.action') == 'guest_checkout' && !empty($_SESSION['failed_registration'])) {
+    //     $completed_steps['step_one'] = true;
+    // }
 
     // Define the variable only if the profiles have not been changed and settings.General.user_multiple_profiles == Y.
     if (fn_need_shipping_recalculation($cart) == false && (!empty($cart['product_groups']) && (Registry::get('settings.General.user_multiple_profiles') != "Y" || (Registry::get('settings.General.user_multiple_profiles') == "Y" && ((isset($user_data['profile_id']) && empty($user_data['profile_id'])) || (!empty($user_data['profile_id']) && $user_data['profile_id'] == $cart['profile_id'])))) || (empty($cart['product_groups']) && Registry::get('settings.General.user_multiple_profiles') == "Y" && isset($user_data['profile_id']) && empty($user_data['profile_id'])))) {
         define('CACHED_SHIPPING_RATES', true);
-    }
-
-    if ($edit_step == 'step_three' || $edit_step == 'step_four' || (empty($edit_step) && !empty($completed_steps['step_two']))) {
-        $cart['calculate_shipping'] = true;
     }
 
     if (!empty($_REQUEST['active_tab'])) {
@@ -895,7 +809,8 @@ if ($mode == 'cart') {
         $first_method = false;
     }
 
-    if ($edit_step == 'step_four' || $next_step == 'step_four') {
+    if (!empty($cart['chosen_shipping'])) {
+        // $completed_steps['step_three'] = true;
         if ($first_method != false && empty($cart['payment_id']) && floatval($cart['total']) != 0) {
             $cart['payment_id'] = $first_method['payment_id'];
             // recalculate cart after payment method update
@@ -904,19 +819,19 @@ if ($mode == 'cart') {
     }
 
     // if address step is completed, check if shipping step is completed
-    if (!empty($completed_steps['step_two'])) {
-        $completed_steps['step_three'] = true;
-    }
+    // if (!empty($completed_steps['step_two'])) {
+    //     $completed_steps['step_three'] = true;
+    // }
 
     // If shipping step is completed, assume that payment step is completed too
-    if (!empty($completed_steps['step_three'])) {
-        $completed_steps['step_four'] = true;
-    }
+    // if (!empty($completed_steps['step_three'])) {
+    //     $completed_steps['step_four'] = true;
+    // }
 
 //     if ((!empty($cart['shipping_failed']) || !empty($cart['company_shipping_failed'])) && !empty($completed_steps['step_three'])) {
 //         $completed_steps['step_four'] = false;
 //         $checkout_style = Registry::get('settings.General.checkout_style');
-// 
+//
 //         if ((defined('AJAX_REQUEST') && $checkout_style != 'multi_page') || ($checkout_style == 'multi_page' && !defined('AJAX_REQUEST'))) {
 //             fn_set_notification('W', __('warning'), __('text_no_shipping_methods'));
 //         }
@@ -925,14 +840,14 @@ if ($mode == 'cart') {
     // If shipping methods changed and shipping step is completed, display notification
     $shipping_hash = fn_get_shipping_hash($cart['product_groups']);
 
-    if (!empty($_SESSION['shipping_hash']) && $_SESSION['shipping_hash'] != $shipping_hash && !empty($completed_steps['step_three']) && $cart['shipping_required']) {
-        $_SESSION['chosen_shipping'] = array();
-//         fn_set_notification('W', __('important'), __('text_shipping_rates_changed'));
-
-        if ($edit_step == 'step_four') {
-            return array(CONTROLLER_STATUS_REDIRECT, 'checkout.checkout?edit_step=step_three');
-        }
-    }
+//     if (!empty($_SESSION['shipping_hash']) && $_SESSION['shipping_hash'] != $shipping_hash && !empty($completed_steps['step_three']) && $cart['shipping_required']) {
+//         $_SESSION['chosen_shipping'] = array();
+// //         fn_set_notification('W', __('important'), __('text_shipping_rates_changed'));
+//
+//         if ($edit_step == 'step_four') {
+//             return array(CONTROLLER_STATUS_REDIRECT, 'checkout.checkout?edit_step=step_three');
+//         }
+//     }
 
     $_SESSION['shipping_hash'] = $shipping_hash;
 
@@ -945,6 +860,7 @@ if ($mode == 'cart') {
     fn_set_hook('checkout_select_default_payment_method', $cart, $payment_methods, $completed_steps);
 
     if (!empty($cart['payment_id'])) {
+        // $completed_steps['step_four'] = true;
         $payment_info = fn_get_payment_method_data($cart['payment_id']);
         Registry::get('view')->assign('payment_info', $payment_info);
 
@@ -979,9 +895,9 @@ if ($mode == 'cart') {
 
     fn_checkout_summary($cart);
 
-    if ($edit_step == 'step_two' && !empty($completed_steps['step_one']) && empty($profile_fields['B']) && empty($profile_fields['S'])) {
-        $edit_step = 'step_four';
-    }
+    // if ($edit_step == 'step_two' && !empty($completed_steps['step_one']) && empty($profile_fields['B']) && empty($profile_fields['S'])) {
+    //     $edit_step = 'step_four';
+    // }
 
     // If we're on shipping step and shipping is not required, switch to payment step
     //FIXME
@@ -989,21 +905,29 @@ if ($mode == 'cart') {
         $edit_step = 'step_four';
     }*/
 
-    if (empty($edit_step) || empty($completed_steps[$edit_step])) {
-        // If we don't pass step to edit, open default (from settings)
-        if (!empty($completed_steps['step_three'])) {
-            $edit_step = 'step_three';
-        } else {
-            $edit_step = !empty($completed_steps['step_one']) ? 'step_two' : 'step_one';
-        }
-    }
+    // if (empty($edit_step) || empty($completed_steps[$edit_step])) {
+    //     // If we don't pass step to edit, open default (from settings)
+    //     if (!empty($completed_steps['step_three'])) {
+    //         $edit_step = 'step_three';
+    //     } else {
+    //         $edit_step = !empty($completed_steps['step_one']) ? 'step_two' : 'step_one';
+    //     }
+    // }
+
+    // if (!empty($completed_steps)) {
+    //     if (!empty($completed_steps['step_two'])) {
+    //         $edit_step = 'step_two';
+    //         if (!empty($completed_steps['step_three'])) {
+    //             $edit_step = 'step_three';
+    //         }
+    //     }
+    // }
 
     if (!empty($_REQUEST['expand_cart'])) {
         $_SESSION['expand_cart'] = ($_REQUEST['expand_cart'] == 'Y') ? true : false;
     }
     Registry::get('view')->assign('expand_cart', !isset($_SESSION['expand_cart']) ? false : $_SESSION['expand_cart']);
-    $_SESSION['edit_step'] = $edit_step;
-    fn_save_cart_step($cart, $auth['user_id']);
+    fn_save_checkout_step($cart, $auth['user_id'], $_SESSION['edit_step']);
     Registry::get('view')->assign('use_ajax', 'true');
     Registry::get('view')->assign('edit_step', $edit_step);
     Registry::get('view')->assign('completed_steps', $completed_steps);

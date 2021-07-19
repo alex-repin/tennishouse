@@ -238,6 +238,8 @@ define('ORDER_STATUS_DELIVERED', 'H');
 define('ORDER_STATUS_NOT_DELIVERED', 'J');
 define('ORDER_STATUS_WAITING_FOR_PICKUP', 'X');
 
+define('ONLINE_PAYMENT_IDS', array(21, 23));
+
 define('NO_EMAIL', 'noemail@tennishouse.ru');
 
 define('ORDER_DELIVERY_STATUSES', array('X', 'W', 'A'));
@@ -248,85 +250,4 @@ define('TRY_ON_CAT_IDS', serialize(array(APPAREL_CATEGORY_ID, SHOES_CATEGORY_ID)
 define('SEO_VARIANTS_ALLOWED', serialize(array('S', 'M', 'E')));
 define('DESCRIPTION_FEATURE_TYPES', serialize(array('S', 'N', 'E')));
 define('EXC_PRODUCT_ITEMS', serialize(array(1615, 912, 778, 779, 780, 781, 782, 831, 1307, 1312, 1313, 1314, 1315, 1316, 1317, 1318, 1319, 851)));
-define('BIG_CITIES', serialize(array(
-    array(
-        'city' => 'Москва',
-        'state' => 'MOW',
-        'city_id' => '7700000000000'
-    ),
-    array(
-        'city' => 'Санкт-Петербург',
-        'state' => 'SPE',
-        'city_id' => '7800000000000'
-    ),
-    array(
-        'city' => 'Новосибирск',
-        'state' => 'NVS',
-        'city_id' => '5400000100000'
-    ),
-    array(
-        'city' => 'Екатеринбург',
-        'state' => 'SVE',
-        'city_id' => '6600000100000'
-    ),
-    array(
-        'city' => 'Нижний Новгород',
-        'state' => 'NIZ',
-        'city_id' => '5200000100000'
-    ),
-    array(
-        'city' => 'Казань',
-        'state' => 'TA',
-        'city_id' => '1600000100000'
-    ),
-    array(
-        'city' => 'Челябинск',
-        'state' => 'CHE',
-        'city_id' => '7400000100000'
-    ),
-    array(
-        'city' => 'Омск',
-        'state' => 'OMS',
-        'city_id' => '5500000100000'
-    ),
-    array(
-        'city' => 'Самара',
-        'state' => 'SAM',
-        'city_id' => '6300000100000'
-    ),
-    array(
-        'city' => 'Ростов-на-Дону',
-        'state' => 'ROS',
-        'city_id' => '6100000100000'
-    ),
-    array(
-        'city' => 'Уфа',
-        'state' => 'BA',
-        'city_id' => '0200000100000'
-    ),
-    array(
-        'city' => 'Красноярск',
-        'state' => 'KIA',
-        'city_id' => '2400000100000'
-    ),
-    array(
-        'city' => 'Пермь',
-        'state' => 'PER',
-        'city_id' => '5900000100000'
-    ),
-    array(
-        'city' => 'Воронеж',
-        'state' => 'VOR',
-        'city_id' => '3600000100000'
-    ),
-    array(
-        'city' => 'Волгоград',
-        'state' => 'VGG',
-        'city_id' => '3400000100000'
-    ),
-    array(
-        'city' => 'Краснодар',
-        'state' => 'KDA',
-        'city_id' => '2300000100000'
-    ),
-)));
+define('BIG_CITIES_SDEK', serialize(array('44', '137', '270', '250', '414', '424', '259', '268', '430', '438', '256', '278', '248', '506', '426', '435')));

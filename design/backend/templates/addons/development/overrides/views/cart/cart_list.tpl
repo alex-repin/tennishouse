@@ -78,7 +78,7 @@
 <tbody id="{$user_js_id}" class="hidden row-more">
 <tr class="no-border">
     <td>&nbsp;</td>
-    <td colspan="4" class="row-more-body top row-gray">
+    <td colspan="6" class="row-more-body top row-gray">
         {assign var="cart_products_js_id" value="cart_products_`$customer.user_id`"}
         {if "ULTIMATE"|fn_allowed_for}
             {assign var="cart_products_js_id" value="`$cart_products_js_id`_`$customer.company_id`"}
@@ -138,7 +138,7 @@
                 <h4>{__("user_info")}</h4>
                 <dl>
                     <dt>{__("email")}</dt>
-                    <dd>{$user_data.email}</dd>            
+                    <dd>{$user_data.email}</dd>
                     <dt>{__("first_name")}</dt>
                     <dd>{$user_data.firstname}</dd>
                     <dt>{__("last_name")}</dt>
@@ -148,7 +148,7 @@
                 <h4>{__("billing_address")}</h4>
                 <dl>
                     <dt>{__("first_name")}</dt>
-                    <dd>{$user_data.b_firstname}</dd>            
+                    <dd>{$user_data.b_firstname}</dd>
                     <dt>{__("last_name")}</dt>
                     <dd>{$user_data.b_lastname}</dd>
                     <dt>{__("address")}</dt>
@@ -168,7 +168,7 @@
                 <h4>{__("shipping_address")}</h4>
                 <dl>
                     <dt>{__("first_name")}</dt>
-                    <dd>{$user_data.s_firstname}</dd>            
+                    <dd>{$user_data.s_firstname}</dd>
                     <dt>{__("last_name")}</dt>
                     <dd>{$user_data.s_lastname}</dd>
                     <dt>{__("address")}</dt>
@@ -186,6 +186,34 @@
                 </dl>
 
             <!--{$user_info_js_id}--></div>
+        {/if}
+        {if $customer.shipping}
+            {assign var="shipping_js_id" value="shipping_`$customer.user_id`"}
+            {if "ULTIMATE"|fn_allowed_for}
+                {assign var="shipping_js_id" value="`$shipping_js_id`_`$customer.company_id`"}
+            {/if}
+            <div id="{$shipping_js_id}" style="margin-bottom: 15px;">
+
+                <h4>{__("shipping")}</h4>
+                <div>
+                    {foreach $customer.shipping item="shp"}
+                        <div>{$shp}</div>
+                    {/foreach}
+                </div>
+            </div>
+        {/if}
+        {if $customer.payment}
+            {assign var="payment_js_id" value="payment_`$customer.user_id`"}
+            {if "ULTIMATE"|fn_allowed_for}
+                {assign var="payment_js_id" value="`$payment_js_id`_`$customer.company_id`"}
+            {/if}
+            <div id="{$payment_js_id}" style="margin-bottom: 15px;">
+
+                <h4>{__("payment")}</h4>
+                <div>
+                    {$customer.payment.payment}
+                </div>
+            </div>
         {/if}
     </td>
     {hook name="cart:items_list_row"}

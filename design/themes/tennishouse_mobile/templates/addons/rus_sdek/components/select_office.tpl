@@ -1,23 +1,20 @@
 <script src="https://api-maps.yandex.ru/2.1/?apikey={$addons.development.ymaps_api_key|escape:javascript nofilter}&lang=ru_RU" type="text/javascript"></script>
 
-<div class="ty-pickup-location-container">
+<div id="map" class="ty-pickup-location-container-map"></div>
+<div class="ty-pickup-location-container" id="ymaps_block">
     <div class="ty-pickup-location-tools">
-        <div class="ty-checkout-select-office-city" id="ymaps_select_city" data-callback="fn_reload_city_offices(true)">
-            <div>{__("locality")}</div>
-            <div class="ty-product-shipping-input">
-                <input type="hidden" id="s_country" data-autocompletetype="country" value="{$country}" autocomplete="off"/>
-                <input type="hidden" id="s_state" data-autocompletetype="state" value="{$state}" autocomplete="off"/>
-                <input type="hidden" id="s_city_id" data-autocompletetype="city_id" value="{$city_id}" autocomplete="off"/>
-                <input data-autocompletetype="city" id="s_city" type="text" size="32" value="{$city}" class="ty-input-text" tabindex="-1" autocomplete="off"/>
+        <div class="ty-checkout-select-office-city" id="ymaps_select_city">
+            <div class="ty-control-group ty-profile-field__item">
+                <input data-autocompletetype="city" id="s_city" type="text" size="32" value="{$city}" class="ty-input-text" tabindex="-1" autocomplete="nope" data-autocomplete-extra="map" />
+                <label class="ty-control-group__title cm-profile-field">{__("locality")}</label>
             </div>
-        </div>
+        <!--ymaps_select_city--></div>
         <div class="ty-pickup-location-view">
             <div class="ty-pickup-location-view-map" id="view_as_map" onclick="fn_toggle_ymaps_view()">{__("ymaps_display_as_map")}</div>
             <div class="ty-pickup-location-view-list" id="view_as_list" onclick="fn_toggle_ymaps_view()">{__("ymaps_display_as_list")}</div>
         </div>
     </div>
     <div class="ty-pickup-location-container-list">
-        <div id="map" class="ty-pickup-location-container-map"></div>
         <div class="ty-checkout-select-office" id="office_list">
             {foreach from=$offices item=office}
                 <div class="ty-one-office" id="office_{$office.Code}" onclick="fn_ymaps_show_office($(this).data('ymapsCode'));" data-ymaps-coord-x="{$office.coordX}" data-ymaps-coord-y="{$office.coordY}" data-ymaps-code="{$office.Code}">
@@ -33,10 +30,10 @@
             {/foreach}
         <!--office_list--></div>
     </div>
-    <div class="ty-checkout-select-office-details" id="office_details_list">
-        {if $offices}
+    {if $offices}
+        <div class="ty-checkout-select-office-details" id="office_details_list">
             <div onclick="fn_ymaps_hide_office();" class="ty-office-details-back"><div>{__('back_to_list')}</div></div>
-            <div id="office_details_list_block">
+            <div id="office_details_list_block" class="ty-office-details-block">
                 {foreach from=$offices item=office}
                     <div class="ty-one-office-details" id="office_{$office.Code}_details">
                         <div class="ty-one-office__name" id="office_name_{$office.Code}">{$office.Name}</div>
@@ -59,6 +56,6 @@
                     </div>
                 {/foreach}
             </div>
-        {/if}
-    <!--office_details_list--></div>
-</div>
+        <!--office_details_list--></div>
+    {/if}
+<!--ymaps_block--></div>

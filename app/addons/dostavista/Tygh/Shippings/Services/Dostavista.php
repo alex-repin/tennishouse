@@ -149,7 +149,7 @@ class Dostavista implements IService
                     // 'longitude' => ,
                     // 'required_start_datetime' => ,
                     // 'required_finish_datetime' => ,
-                    'taking_amount' => $this->_shipping_info['package_info']['C'],
+                    // 'taking_amount' => $this->_shipping_info['package_info']['C'],
                     // 'buyout_amount' => ,
                     // 'note' => ,
                     // 'is_order_payment_here' => true,
@@ -189,7 +189,6 @@ class Dostavista implements IService
 
         $key = md5($data['data']);
         $dostavista_data = fn_get_session_data($key);
-        $data_string = json_encode($data['data']);
 
         if (empty($dostavista_data)) {
             $extra = array(

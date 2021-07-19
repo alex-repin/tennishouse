@@ -54,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
     }
-    
 }
 
 if (!empty($_REQUEST['order_id']) && strpos($_REQUEST['order_id'], '-') !== false) {
@@ -75,17 +74,7 @@ if ($mode == 'auto_save_user') {
     $user_data = !empty($_REQUEST['user_data']) ? $_REQUEST['user_data'] : array();
     unset($user_data['user_type']);
 
-    if (!empty($user_data)) {
-        $user_data = fn_fill_contact_info_from_address($user_data);
-
-        $cart['user_data'] = fn_array_merge($cart['user_data'], $user_data);
-
-        // Fill shipping info with billing if needed
-        if (empty($_REQUEST['ship_to_another'])) {
-            $profile_fields = fn_get_profile_fields('O');
-            fn_fill_address($cart['user_data'], $profile_fields);
-        }
-        fn_save_cart_content($cart, $auth['user_id']);
-    }
+    fn_save_checkout_user_data($user_data, $auth, $cart, $_REQUEST['ship_to_another']);
+    fn_save_checkout_step($cart, $auth['user_id'], $_SESSION['edit_step']);
     exit;
 }

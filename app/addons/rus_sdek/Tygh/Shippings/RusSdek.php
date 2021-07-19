@@ -52,7 +52,7 @@ class RusSdek
 
         if (empty($xml_result)) {
             $result['error'] = true;
-            
+
             return $result;
         }
         $attribut = $xml_result->children()->getName();
@@ -147,8 +147,11 @@ class RusSdek
     {
         // [tennishouse]
         $_result = '';
-        
-        if (!empty($location['country']) && !empty($location['city'])) {
+
+        if (!empty($location['city_id']) && !empty($location['city_id_type']) && $location['city_id_type'] == 'sdek') {
+            $_result = $location['city_id'];
+
+        } elseif (!empty($location['country']) && !empty($location['city'])) {
         // [tennishouse]
             if (preg_match('/^[a-zA-Z]+$/',$location['city'])) {
                 $lang_code = 'en';
@@ -163,13 +166,13 @@ class RusSdek
                     $lang_code = 'ru';
                 }
             }
-            
+
             $condition = db_quote(" d.lang_code = ?s AND d.city LIKE ?l AND c.status = ?s", $lang_code , $location['city'] . "%", 'A');
             if (!empty($location['country'])) {
                 $condition .= db_quote(" AND c.country_code = ?s", $location['country']);
             }
 
-            $result = db_get_hash_array("SELECT c.city_code, c.state_code, d.city FROM ?:rus_city_sdek_descriptions as d LEFT JOIN ?:rus_cities_sdek as c ON c.city_id = d.city_id WHERE ?p", 'city_code', $condition);
+            $result = db_get_hash_array("SELECT c.city_code, c.state_code, d.city FROM ?:rus_city_sdek_descriptions as d LEFT JOIN ?:rus_cities_sdek as c ON c.city_id = d.city_id WHERE ?p ORDER BY city_code ASC", 'city_code', $condition);
 
             if (count($result) == 1) {
                 reset($result);
@@ -182,11 +185,13 @@ class RusSdek
                         }
                     }
                 }
+
                 if (count($result) == 1) {
                     reset($result);
                     $_result = key($result);
                 } elseif (count($result) > 1) {
                     $max_match = $city_id = 0;
+                    ksort($result);
                     foreach ($result as $c_code => $c_data) {
                         $prc = round(strlen($location['city'])/strlen($c_data['city']), 2) * 100;
                         if ($prc > $max_match) {
@@ -264,9 +269,9 @@ class RusSdek
 
     public static function SdekXmlRequest($url, $xml, $params_request)
     {
-        $url = $url 
-            . '?account=' . $params_request['Account'] 
-            . '&secure=' . $params_request['Secure'] 
+        $url = $url
+            . '?account=' . $params_request['Account']
+            . '&secure=' . $params_request['Secure']
             . '&datefirst=' . $params_request['Date'];
 
         $xml_request = array(
@@ -285,37 +290,72 @@ class RusSdek
         return $response;
     }
 
-    public static function SdekPvzOffices($city)
+    public static function SdekPvzOffices($city, $cache_only = false, $packages = array())
     {
-        $extra = array();
-        if (AREA == 'C') {
-            $extra = array(
-                'request_timeout' => 2,
-                'timeout' => 1
-            );
-        } else {
-            $extra = array(
-                'request_timeout' => 3,
-                'timeout' => 3
-            );
-        }
-        $result = Http::get('https://integration.cdek.ru/pvzlist/v1/xml', $city, $extra);
-        $xml = simplexml_load_string($result);
-        if (!empty($xml)) {
-            $count = count($xml->Pvz);
-            if ($count != 0) {
-                $offices = array();
-                if ($count == 1) {
-                    foreach($xml->Pvz->attributes() as $_key => $_value){
-                        $code = (string) $xml->Pvz['Code'];
-                        $offices[$code][$_key] = (string) $_value;
-                    }
-                } else {
-                    foreach($xml->Pvz as $key => $office) {
-                        $code = (string) $office['Code'];
-                        foreach($office->attributes() as $_key => $_value){
+        $_offices = fn_get_session_data('sdek_offices');
+        $offices = array();
+
+        if (!empty($_offices[$city['cityid']])) {
+            $offices = $_offices[$city['cityid']];
+        } elseif (empty($cache_only)) {
+            $extra = array();
+            if (AREA == 'C') {
+                $extra = array(
+                    'request_timeout' => 5,
+                    'timeout' => 5
+                );
+            } else {
+                $extra = array(
+                    'request_timeout' => 3,
+                    'timeout' => 3
+                );
+            }
+            $result = Http::get('https://integration.cdek.ru/pvzlist/v1/xml', $city, $extra);
+            $xml = simplexml_load_string($result);
+            if (!empty($xml)) {
+                $count = count($xml->Pvz);
+                if ($count != 0) {
+                    $offices = array();
+                    if ($count == 1) {
+                        foreach($xml->Pvz->attributes() as $_key => $_value){
+                            $code = (string) $xml->Pvz['Code'];
                             $offices[$code][$_key] = (string) $_value;
                         }
+                    } else {
+                        foreach($xml->Pvz as $key => $office) {
+                            $code = (string) $office['Code'];
+                            foreach($office->attributes() as $_key => $_value){
+                                $offices[$code][$_key] = (string) $_value;
+                            }
+                        }
+                    }
+                }
+            }
+            $_offices[$city['cityid']] = $offices;
+            fn_set_session_data('sdek_offices', $_offices);
+        }
+
+        if (!empty($offices) && !empty($packages)) {
+            $postomat_allowed = true;
+            foreach ($packages as $pcg) {
+                if (!empty($pcg['shipping_params']['box_length']) || !empty($pcg['shipping_params']['box_width']) || !empty($pcg['shipping_params']['box_height'])) {
+                    $box = array_filter(array($pcg['shipping_params']['box_length'], 0, $pcg['shipping_params']['box_width'], $pcg['shipping_params']['box_height']));
+                    rsort($box);
+                    $allowed = array_filter(array(Registry::get('addons.rus_sdek.max_length'), Registry::get('addons.rus_sdek.max_width'), Registry::get('addons.rus_sdek.max_height')));
+                    rsort($allowed);
+                    foreach ($box as $dim) {
+                        $_dim = array_shift($allowed);
+                        if (empty($_dim) || $dim >= $_dim) {
+                            $postomat_allowed = false;
+                            break 2;
+                        }
+                    }
+                }
+            }
+            if (empty($postomat_allowed)) {
+                foreach ($offices as $i => $office) {
+                    if ($office['Type'] == 'POSTAMAT') {
+                        unset($offices[$i]);
                     }
                 }
             }
@@ -352,4 +392,156 @@ class RusSdek
 
         return $data_auth;
     }
+
+    public static function GetAccessToken()
+    {
+        if (!empty($_SESSION['auth']['sdek_auth']) && $_SESSION['auth']['sdek_auth']['expires_in'] >= time()) {
+            return $_SESSION['auth']['sdek_auth']['token'];
+        } else {
+            unset($_SESSION['auth']['sdek_auth']);
+            $data = array(
+                'grant_type' => 'client_credentials',
+                'client_id' => Registry::get('addons.rus_sdek.client_id'),
+                'client_secret' => Registry::get('addons.rus_sdek.client_secret')
+            );
+            $extra = array(
+                'request_timeout' => 2,
+                'timeout' => 1
+            );
+            $result = json_decode(Http::post('https://api.cdek.ru/v2/oauth/token?parameters', $data, $extra), true);
+
+            if (!empty($result['access_token'])) {
+                $_SESSION['auth']['sdek_auth'] = array(
+                    'token' => $result['access_token'],
+                    'expires_in' => time() + $result['expires_in']
+                );
+
+                return $result['access_token'];
+            }
+        }
+
+        return false;
+    }
+
+    public static function PullCities($country_code)
+    {
+        $token = RusSdek::GetAccessToken();
+        $cities_total = array(
+            'received' => 0,
+            'saved' => 0,
+            'deleted' => 0
+        );
+        if (!empty($token)) {
+            $data = array(
+                'country_codes' => $country_code,
+                'size' => 1000,
+                'page' => 0
+            );
+            $extra = array(
+                'request_timeout' => 2,
+                'timeout' => 1,
+                'headers' => array('Authorization: Bearer ' . $token),
+            );
+            $cities = db_get_hash_array("SELECT a.*, b.* FROM ?:rus_cities_sdek AS a LEFT JOIN ?:rus_city_sdek_descriptions AS b ON b.city_id = a.city_id WHERE a.country_code = ?s", 'city_code', $country_code);
+
+            $state_codes = $reveived_codes = array();
+            $last_code = '';
+
+            while (true) {
+                $response = false;
+                while (!is_array($response) || (!empty($response[0]) && $last_code != '' && $last_code != $response[$data['page'] - 1]['code'])) {
+                    $response = json_decode(Http::get('https://api.cdek.ru/v2/location/cities', $data, $extra), true);
+                }
+
+                if (!empty($response) && empty($response['errors'])) {
+                    foreach ($response as $city) {
+
+                        $last_code = $city['code'];
+                        if (in_array($city['code'], $reveived_codes)) {
+                            continue;
+                        }
+                        $cities_total['received']++;
+                        $reveived_codes[] = $city['code'];
+                        $_data = array(
+                            'country_code' => $country_code,
+                            'city_code' => $city['code'],
+                            'state' => 'A'
+                        );
+                        if (!empty($city['region_code'])) {
+                            if ($city['country_code'] == 'RU') {
+                                if (isset($state_codes[$city['region_code']])) {
+                                    $_data['state_code'] = $state_codes[$city['region_code']];
+                                } else {
+                                    $res = fn_find_state_match($city['region']);
+                                    if (!empty($res['code'])) {
+                                        $state_codes[$city['region_code']] = $_data['state_code'] = $res['code'];
+                                    } else {
+                                        $state_codes[$city['region_code']] = $_data['state_code'] = '';
+                                    }
+                                }
+                            }
+                            $_data['region_code'] = $city['region_code'];
+                            $_data['region'] = $city['region'];
+                        } elseif ($city['country_code'] == 'RU') {
+                            continue;
+                        }
+
+                        if (!empty($cities[$city['code']])) {
+                            $_data['city_id'] = $cities[$city['code']]['city_id'];
+                            unset($cities[$city['code']]);
+                        }
+                        $_data['city_id'] = db_query("REPLACE INTO ?:rus_cities_sdek ?e", $_data);
+
+                        if (!empty($_data['city_id'])) {
+                            $cities_total['saved']++;
+                            $_data['city'] = $city['city'];
+                            $_data['lang_code'] = 'ru';
+                            db_query("REPLACE INTO ?:rus_city_sdek_descriptions ?e", $_data);
+                        }
+
+                    }
+                }
+
+                if (empty($response)) {
+                    break;
+                }
+                $data['page']++;
+                $data['size']--;
+            }
+
+            if (!empty($cities)) {
+
+                $cities_total['deleted'] = $cities;
+                $to_delete = array();
+                foreach ($cities as $ct) {
+                    $to_delete[] = $ct['city_id'];
+                }
+
+                db_query("DELETE FROM ?:rus_cities_sdek WHERE city_id IN (?n)", $to_delete);
+                db_query("DELETE FROM ?:rus_city_sdek_descriptions WHERE city_id IN (?n)", $to_delete);
+            }
+        }
+
+        return $cities_total;
+    }
+
+    public static function PullAllCities()
+    {
+
+        $trash = db_get_fields("SELECT city_id FROM ?:rus_cities_sdek WHERE country_code = ''");
+        if (!empty($trash)) {
+            db_query("DELETE FROM ?:rus_cities_sdek WHERE city_id IN (?n)", $trash);
+            db_query("DELETE FROM ?:rus_city_sdek_descriptions WHERE city_id IN (?n)", $trash);
+        }
+
+        $countries = db_get_fields("SELECT code FROM ?:countries WHERE status = 'A'");
+
+        $cities_total = array();
+        foreach ($countries as $code) {
+            $cities_total[$code] = RusSdek::PullCities($code);
+        }
+
+        return $cities_total;
+    }
+
 }

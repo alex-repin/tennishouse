@@ -10,11 +10,13 @@
         {/capture}
     {/if}
     {capture append="store_advantages"}
+    <a href="{"pages.view?page_id=`$smarty.const.SHIPPING_PAGE_ID`"|fn_url}">
     <div class="ty-product-tabs-advantages-item">
         <div class="ty-advantage-air-delivery-icon"></div>
         <div class="ty-product-tabs-advantages-item-title">{__("advantage_air_delivery_title")}</div>
         <div class="ty-product-tabs-advantages-item-text">{__("advantage_air_delivery_text")}</div>
     </div>
+    </a>
     {/capture}
     {capture append="store_advantages"}
     <div class="ty-product-tabs-advantages-item">

@@ -2,11 +2,11 @@
 
 {if $runtime.mode == "add" && $settings.General.quick_registration == "Y"}
     <div class="ty-account">
-    
+
         <form name="profiles_register_form" action="{""|fn_url}" method="post" class="cm-label-placeholder">
             {*include file="views/profiles/components/profile_fields.tpl" section="C" nothing_extra="Y"*}
             {include file="views/profiles/components/profiles_account.tpl" nothing_extra="Y" location="checkout"}
-        
+
             {hook name="checkout:checkout_steps"}{/hook}
 
             {include file="common/image_verification.tpl" option="register" align="left" assign="image_verification"}
@@ -26,7 +26,7 @@
 
     {capture name="tabsbox"}
         <div class="ty-profile-field form-wrap" id="content_general">
-            <form name="profile_form" action="{""|fn_url}" method="post" class="cm-label-placeholder">
+            <form name="profile_form" action="{""|fn_url}" method="post" class="cm-label-placeholder cm-autocomplete-form">
                 <input id="selected_section" type="hidden" value="general" name="selected_section"/>
                 <input id="default_card_id" type="hidden" value="" name="default_cc"/>
                 <input type="hidden" name="profile_id" value="{$user_data.profile_id}" />
@@ -35,7 +35,7 @@
                         <div class="ty-contact-address">
                         {if $settings.General.user_multiple_profiles == "Y" && $runtime.mode == "update"}
                             <p>{__("text_multiprofile_notice")}</p>
-                            {include file="views/profiles/components/multiple_profiles.tpl" profile_id=$user_data.profile_id}    
+                            {include file="views/profiles/components/multiple_profiles.tpl" profile_id=$user_data.profile_id}
                         {/if}
 
                         {if $settings.General.address_position == "billing_first"}
@@ -51,12 +51,12 @@
                             {assign var="sec_section_text" value=__("billing_address")}
                             {assign var="body_id" value="ba"}
                         {/if}
-                        
+
                         {include file="views/profiles/components/profile_fields.tpl" section=$first_section body_id="" ship_to_another=true title=$first_section_text}
                         {include file="views/profiles/components/profile_fields.tpl" section=$sec_section body_id=$body_id ship_to_another=true title=$sec_section_text address_flag=$profile_fields|fn_compare_shipping_billing ship_to_another=$ship_to_another}
                         </div>
                     {/if}
-                    
+
                     <div class="ty-contact-info-column">
                         {include file="views/profiles/components/profiles_account.tpl"}
                         {include file="views/profiles/components/profile_fields.tpl" section="C" title=__("additional_information")}
@@ -64,9 +64,9 @@
 
                     {hook name="profiles:account_update"}
                     {/hook}
-    
+
                     {include file="common/image_verification.tpl" option="register" align="center"}
-            
+
                 {/capture}
                 {$smarty.capture.group nofilter}
 
@@ -91,7 +91,7 @@
                 </div>
             </form>
         </div>
-        
+
         {capture name="additional_tabs"}
             {if $runtime.mode == "update"}
                 {if !"ULTIMATE:FREE"|fn_allowed_for}

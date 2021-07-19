@@ -332,6 +332,7 @@ class Customization
 
         $this->cart['calculate_shipping'] = false;
         list ($this->cart_products, $product_groups) = fn_calculate_cart_content($this->cart, $this->auth, 'S', true, 'F', true);
+        fn_save_cart_content($this->cart, $this->auth['user_id']);
         if (empty($this->dialog_data['add'])) {
             unset($_SESSION['notifications']);
         }

@@ -399,10 +399,12 @@ if ($mode == 'details') {
         if (!empty($sdek_shipments)) {
 
             $offices = array();
-            $rec_city = (!empty($order_info['s_city'])) ? $order_info['s_city'] : $order_info['b_city'];
-            $rec_state = (!empty($order_info['s_state'])) ? $order_info['s_state'] : $order_info['b_state'];
-            $rec_country = (!empty($order_info['s_country'])) ? $order_info['s_country'] : $order_info['b_country'];
-            $rec_city_code = db_get_field("SELECT b.city_code FROM ?:rus_city_sdek_descriptions as a LEFT JOIN ?:rus_cities_sdek as b ON a.city_id = b.city_id WHERE a.city LIKE ?l AND b.state_code = ?s AND b.country_code = ?s", "$rec_city%", $rec_state, $rec_country);
+            $location = array(
+                'country' => (!empty($order_info['s_country'])) ? $order_info['s_country'] : $order_info['b_country'],
+                'state' => (!empty($order_info['s_state'])) ? $order_info['s_state'] : $order_info['b_state'],
+                'city' => (!empty($order_info['s_city'])) ? $order_info['s_city'] : $order_info['b_city']
+            );
+            $rec_city_code = RusSdek::SdekCityId($location);
 
             if (!empty($rec_city_code)) {
                 $offices = RusSdek::SdekPvzOffices(array('cityid' => $rec_city_code));

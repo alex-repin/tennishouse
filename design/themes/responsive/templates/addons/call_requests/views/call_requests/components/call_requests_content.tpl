@@ -54,9 +54,11 @@
     *}
 
     <div class="ty-control-group">
-        <input type="hidden" data-autocompletetype="country" name="call_data[country]" value="{$settings.General.default_country}" />
-        <input type="hidden" data-autocompletetype="city_id" name="city_id" value="" />
+        <input type="hidden" data-autocompletetype="country_code" name="call_data[country]" value="{$smarty.session.auth.user_data.s_country}" />
+        <input type="hidden" data-autocompletetype="city_id" name="call_data[city_id]" value="{$smarty.session.auth.user_data.s_city_id}" />
+        <input type="hidden" data-autocompletetype="city_id_type" name="call_data[city_id_type]" value="{$smarty.session.auth.user_data.s_city_id_type}" />
         <input type="hidden" data-autocompletetype="state" name="call_data[state]" value="{$smarty.session.auth.user_data.s_state}" />
+        <input type="hidden" data-autocompletetype="state_raw" name="call_data[state_raw]" value="{$smarty.session.auth.user_data.s_state_raw}" />
         <input  data-autocompletetype="city" id="call_data_{$id}_city" class="ty-input-text-full" size="50" type="text" name="call_data[city]" value="{$smarty.session.auth.user_data.s_city}" />
         <label for="call_data_{$id}_city" class="ty-control-group__title">{__("city")}</label>
     </div>

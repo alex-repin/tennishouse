@@ -78,6 +78,13 @@
                             <item lang="ru">Время очистки журнала планировщика (дней)</item>
                         </translations>
                     </item>
+                    <item id="kladr_token">
+                        <type>input</type>
+                        <default_value>44nDQrSdsFreS8iA5D7QS86iQEzYf54s</default_value>
+                        <translations>
+                            <item lang="ru">ФИАС токен</item>
+                        </translations>
+                    </item>
                 </items>
             </section>
             <section id="vk">
@@ -579,6 +586,12 @@
             ALTER TABLE `cscart_user_profiles` ADD `b_city_kladr_id` BIGINT UNSIGNED NOT NULL AFTER `profile_name`, ADD `s_city_kladr_id` BIGINT UNSIGNED NOT NULL AFTER `b_city_kladr_id`;
         </item>
         <item>
+            ALTER TABLE `cscart_user_profiles` CHANGE `b_city_kladr_id` `b_city_id` BIGINT(20) UNSIGNED NOT NULL, CHANGE `s_city_kladr_id` `s_city_id` BIGINT(20) UNSIGNED NOT NULL;
+        </item>
+        <item>
+            ALTER TABLE `cscart_user_profiles` ADD `s_city_id_type` VARCHAR(16) NOT NULL AFTER `s_city_id`, ADD `b_city_id_type` VARCHAR(16) NOT NULL AFTER `s_city_id_type`;
+        </item>
+        <item>
             ALTER TABLE `cscart_categories` ADD `is_nofollow` CHAR(1) NOT NULL DEFAULT 'N', ADD `is_noindex` CHAR(1) NOT NULL DEFAULT 'N', ADD `canonical` VARCHAR(255) NOT NULL;
         </item>
         <item>
@@ -835,6 +848,12 @@
         </item>
         <item>
             ALTER TABLE `cscart_orders` ADD `is_archieved` CHAR(1) NOT NULL DEFAULT 'N';
+        </item>
+        <item>
+            ALTER TABLE `cscart_rus_city_sdek_descriptions` ADD INDEX(`city`);
+        </item>
+        <item>
+            ALTER TABLE `cscart_user_session_products` ADD `shipping_id` TEXT NOT NULL, ADD `payment_id` MEDIUMINT(8) UNSIGNED NOT NULL; 
         </item>
     </queries>
     <functions>
@@ -1273,7 +1292,7 @@
         <item lang="ru" id="full_age">полных лет</item>
         <item lang="ru" id="product_shipping_estimation_text"><![CDATA[Время доставки до города [city] составляет <b>[ship_time]</b> раб. дн.]]></item>
         <item lang="ru" id="your_city">Ваш город: [city]</item>
-        <item lang="ru" id="enter_another_city">Или укажите в поле</item>
+        <item lang="ru" id="enter_another_city">Или укажите в этом поле</item>
         <item lang="ru" id="select_other_city">Выберите другой населенный пункт</item>
         <item lang="ru" id="racket_finder_page_title">Подобрать ракетку для большого тенниса - Тест TennisHouse</item>
         <item lang="ru" id="ajax_block_content">AJAX загрузка</item>
@@ -1631,5 +1650,9 @@
         <item lang="ru" id="overdue_delivery">Просроченная доставка</item>
         <item lang="ru" id="text_overdue_delivery_orders"><![CDATA[Заказы с просроченной доставкой: <a href="[link]">[number]</a>]]></item>
         <item lang="ru" id="archieve_order_data">Архивировать заказы</item>
+        <item lang="ru" id="submit_pay_my_order">Разместить и оплатить заказ</item>
+        <item lang="ru" id="shipping_options_text">Способ доставки</item>
+        <item lang="ru" id="billing_options_text">Способ оплаты</item>
+        <item lang="ru" id="update_sdek_cities">Обновить города СДЭК</item>
     </language_variables>
 </addon>

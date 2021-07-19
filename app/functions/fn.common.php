@@ -5807,9 +5807,18 @@ function fn_get_object_by_ekey($ekey, $type, $keep_the_key = false)
     return $return;
 }
 
-function fn_ekey_exists($ekey, $type)
+function fn_ekey_exists($object_id, $type)
 {
-    $exists = db_get_field("SELECT ekey FROM ?:ekeys WHERE object_id = ?i AND object_type = ?s", $ekey, $type);
+    // Cleanup expired keys
+    db_query("DELETE FROM ?:ekeys WHERE ttl > 0 AND ttl < ?i", time());
+
+    if (is_numeric($object_id)) {
+        $field_name = 'object_id';
+    } else {
+        $field_name = 'object_string';
+    }
+
+    $exists = db_get_field("SELECT ekey FROM ?:ekeys WHERE $field_name = ?i AND object_type = ?s", $object_id, $type);
 
     return (empty($exists)) ? false : true;
 }

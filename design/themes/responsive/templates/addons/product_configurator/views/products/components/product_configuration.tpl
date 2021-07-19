@@ -107,7 +107,7 @@
                         <td>&nbsp;</td>
                     </tr>
                     {/if}
-                    
+
                     <tr>
                         <td><input type="radio" class="radio cm-no-change {if $disable_product}cm-configurator-disabled{/if}" id="group_{$po.group_id}_product_{$group_product.product_id}" name="product_data[{$product.product_id}][configuration][{$po.group_id}][product_ids]" value="{$group_product.product_id}" onclick="fn_change_options('{$obj_id|default:$product.product_id}', '{$obj_id|default:$product.product_id}', '0');" {if $group_product.selected == "Y" && false == $disable_product}checked="checked"{/if} {if $group_product.disabled == true || $disable_product}disabled="disabled"{/if} /></td>
                         <td style="width: 100%">{if $group_product.is_accessible}{include file="common/popupbox.tpl" id="description_`$po.group_id`_`$group_product.product_id`" link_text=$group_product.product text=$group_product.product href="products.configuration_product?group_id=`$po.group_id`&product_id=`$group_product.product_id`" content=""}{else}{$group_product.product}{/if}{if $group_product.recommended == "Y"} <span>({__("recommended")})</span>{/if}</td>
@@ -122,7 +122,7 @@
                 {if $po.products}
                     <tbody id="group_{$po.group_id}">
                     {foreach from=$po.products item="group_product"}
-                    
+
                     {if ($group_product.is_edp != "Y" && $group_product.tracking != "D" && ($group_product.amount <= 0 || $group_product.amount < $group_product.min_qty) && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y") || ($group_product.zero_price_action != "P" && !$group_product.price|floatval)}
                         {assign var="disable_product" value=true}
                     {else}
@@ -152,9 +152,6 @@
             {/if}
             <script type="text/javascript">
             (function(_, $) {
-                $('#pc_{$po.group_id}').find('.cm-dropdown').each(function() {
-                    $(this).selectbox();
-                });
                 {foreach from=$po.products item="group_product"}
                     if ($('#product_info_{$po.group_id}_{$group_product.product_id}').length && $('#tygh_main_container').hasClass('no-touch')) {
                         $('#opt_product_{$po.group_id}_{$group_product.product_id}').addClass('cm-tooltip');

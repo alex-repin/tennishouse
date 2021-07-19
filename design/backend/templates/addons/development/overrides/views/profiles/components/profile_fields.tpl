@@ -7,7 +7,7 @@
 {if $shipping_flag}
     <div class="shipping-flag">
         <input class="hidden" id="elm_ship_to_another" type="checkbox" name="ship_to_another" value="1" {if $ship_to_another}checked="checked"{/if} />
-        
+
         <span class="shipping-flag-title">
             {if $section == "S"}
                 {__("shipping_same_as_billing")}
@@ -20,13 +20,13 @@
             <input class="cm-switch-availability cm-switch-visibility cm-switch-inverse " type="radio" name="ship_to_another" value="0" id="sw_{$body_id}_suffix_yes" {if !$ship_to_another}checked="checked"{/if} />
             {__("yes")}
         </label>
-        
+
         <label class="radio inline">
             <input class=" cm-switch-availability cm-switch-visibility" type="radio" name="ship_to_another" value="1" id="sw_{$body_id}_suffix_no" {if $ship_to_another}checked="checked"{/if} />
             {__("no")}
         </label>
     </div>
-    
+
 {elseif $section == "S"}
     {assign var="ship_to_another" value=true}
     <input type="hidden" name="ship_to_another" value="1" />
@@ -39,7 +39,7 @@
     {assign var="disabled_param" value=""}
 {/if}
 
-<div class="clearfix {if $section == "S" || $section == "B"}cm-autocomplete-block{/if}">
+<div class="clearfix">
 {if $body_id}
     <div id="{$body_id}" class="{if $hide_fields}hidden{/if}">
 {/if}
@@ -82,7 +82,7 @@
     {if $field.field_type == "A"}  {* State selectbox *}
 
         {$_country = $settings.General.default_country}
-        {$_state = $value|default:$settings.General.default_state}
+        {$_state = $value}
 
         <select {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} class="cm-state {if $section == "S"}cm-location-shipping{else}cm-location-billing{/if}" id="{$id_prefix}elm_{$field.field_id}" name="{$data_name}[{$data_id}]" {$disabled_param nofilter}>
             <option value="">- {__("select_state")} -</option>
@@ -91,18 +91,24 @@
                     <option {if $_state == $state.code}selected="selected"{/if} value="{$state.code}">{$state.state}</option>
                 {/foreach}
             {/if}
-        </select><input {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} type="text" id="elm_{$field.field_id}_d" name="{$data_name}[{$data_id}]" size="32" maxlength="64" value="{$_state}" disabled="disabled" class="cm-state {if $section == "S"}cm-location-shipping{else}cm-location-billing{/if} input-large hidden cm-skip-avail-switch" />
+        </select>
+        <input type="hidden" {if $field.autocomplete_type}data-autocompletetype="state_raw"{/if} name="{$data_name}[{$data_id}_raw]" value="" />
+        <input {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} type="text" id="elm_{$field.field_id}_d" name="{$data_name}[{$data_id}]" size="32" maxlength="64" value="{$_state}" disabled="disabled" class="cm-state {if $section == "S"}cm-location-shipping{else}cm-location-billing{/if} input-large hidden cm-skip-avail-switch" />
 
     {elseif $field.field_type == "O"}  {* Countries selectbox *}
-        {assign var="_country" value=$value|default:$settings.General.default_country}
-        <select {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} id="{$id_prefix}elm_{$field.field_id}" class="cm-country {if $section == "S"}cm-location-shipping{else}cm-location-billing{/if}" name="{$data_name}[{$data_id}]" {$disabled_param nofilter}>
+        {assign var="_country" value=$value}
+        <input {if $field.autocomplete_type}data-autocompletetype="country_code"{/if} type="hidden" id="{$id_prefix}elm_{$field.field_id}" name="{$data_name}[{$data_id}]" size="32" maxlength="64" value="{$_country}" class="ty-input-text cm-country {if $section == "S"}cm-location-shipping{else}cm-location-billing{/if}"/>
+
+        <input {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} type="text" id="{$id_prefix}elm_{$field.field_id}_f" name="{$data_name}[{$data_id}_f]" size="32" value="{if $data_id == 's_country' || $data_id == 'b_country'}{$countries.$value}{else}{$value}{/if}" class="ty-input-text {if !$skip_field}{$_class}{else}cm-skip-avail-switch{/if}" {if !$skip_field}{$disabled_param nofilter}{/if} {if $data_id == 's_country' || $data_id == 'b_country'}placeholder="{__('just_name')}" onblur="" onkeydown=""{/if} />
+
+        {*<select {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} id="{$id_prefix}elm_{$field.field_id}_f" class="cm-country {if $section == "S"}cm-location-shipping{else}cm-location-billing{/if}" name="{$data_name}[{$data_id}]" {$disabled_param nofilter}>
             {hook name="profiles:country_selectbox_items"}
             <option value="">- {__("select_country")} -</option>
             {foreach from=$countries item="country" key="code"}
             <option {if $_country == $code}selected="selected"{/if} value="{$code}">{$country}</option>
             {/foreach}
             {/hook}
-        </select>
+        </select>*}
 
     {elseif $field.field_type == "C"}  {* Checkbox *}
         <input type="hidden" name="{$data_name}[{$data_id}]" value="N" {$disabled_param nofilter} />
@@ -138,17 +144,19 @@
 
     {else}  {* Simple input *}
         {if $data_id == 's_city' || $data_id == 'b_city'}
-            {$kladr_name = "`$data_id`_kladr_id"}
-            <input type="hidden" {if $field.autocomplete_type}data-autocompletetype="city_id"{/if} name="{$data_name}[{$data_id}_kladr_id]" value="{$user_data.$kladr_name|default:$session_city_id}" />
+            {$city_id = "`$data_id`_id"}
+            {$city_id_type = "`$data_id`_id_type"}
+            <input type="hidden" {if $field.autocomplete_type}data-autocompletetype="city_id"{/if} name="{$data_name}[{$city_id}]" value="{$user_data.$city_id}" {if $is_checkout}data-submitonchange="true"{/if} />
+            <input type="hidden" {if $field.autocomplete_type}data-autocompletetype="city_id_type"{/if} name="{$data_name}[{$city_id_type}]" value="{$user_data.$city_id_type}" />
         {/if}
-        <input {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} type="text" id="{$id_prefix}elm_{$field.field_id}" name="{$data_name}[{$data_id}]" size="32" value="{$value}" class="input-large{if $field.class == 'shipping-phone' || $field.class == 'billing-phone'} cm-cr-mask-phone{/if}" {$disabled_param nofilter}  {if $data_id == 's_city' || $data_id == 'b_city'}placeholder="{__('just_name')}" onblur="fn_check_city($(this), true);" onkeydown="fn_city_change($(this));"{/if}/>
+        <input {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} type="text" id="{$id_prefix}elm_{$field.field_id}" name="{$data_name}[{$data_id}]" size="32" value="{$value}" class="input-large{if $field.class == 'shipping-phone' || $field.class == 'billing-phone'} cm-cr-mask-phone{/if}" {$disabled_param nofilter}  {if $data_id == 's_city' || $data_id == 'b_city'}placeholder="{__('just_name')}" onblur="fn_check_city($(this), false);" onchange="fn_city_change($(this).closest('.cm-autocomplete-form'));" onkeydown="fn_city_keydown($(this).closest('.cm-autocomplete-form'));"{/if}/>
     {/if}
     </div>
 </div>
 {/foreach}
 <script type="text/javascript" class="cm-ajax-force">
 (function(_, $) {
-    $('.cm-autocomplete-block').each(function() {
+    $('.cm-autocomplete-form').each(function(){
         fn_init_autocomplete($(this));
     });
 }(Tygh, Tygh.$));

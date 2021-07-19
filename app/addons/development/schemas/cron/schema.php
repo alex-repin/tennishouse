@@ -94,4 +94,12 @@ return array(
         'function' => 'fn_archieve_order_data',
         'name' => 'archieve_order_data'
     ),
+    'O' => array(
+        'frequency' => array(
+            'd' => '01',
+            'H' => '02'
+        ),
+        'function' => 'fn_update_sdek_cities',
+        'name' => 'update_sdek_cities'
+    ),
 );

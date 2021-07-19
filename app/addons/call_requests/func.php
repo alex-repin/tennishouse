@@ -183,11 +183,11 @@ function fn_do_call_request($params, &$cart, &$auth, $product_data)
     $result = array();
 
     preg_match('/[^\d\+\(\)\-]/u', $params['phone'], $match);
-    
-    if (!empty($match[0]) || empty($params['state'])) {
+
+    if (!empty($match[0]) || empty($params['city_id'])) {
         return false;
     }
-    
+
     $params['cart_products'] = fn_call_request_get_cart_products($cart);
 
     if ((!empty($product_data) || !empty($params['product_id'])) && (!empty($params['email']) || !empty($params['phone']))) {
@@ -261,6 +261,12 @@ function fn_call_requests_place_order($params, &$cart, &$auth, $product_data)
     $cart['user_data']['b_phone'] = $params['phone'];
     $cart['user_data']['s_phone'] = $params['phone'];
     $cart['user_data']['b_address'] = $cart['user_data']['s_address'] = $params['address'];
+    if (!empty($params['state_raw'])) {
+        $state = fn_find_state_match($params['state_raw'], $params['country']);
+        if (!empty($state['code'])) {
+            $params['state'] = $state['code'];
+        }
+    }
     $cart['user_data']['b_state'] = $cart['user_data']['s_state'] = $params['state'];
     $cart['user_data']['b_city'] = $cart['user_data']['s_city'] = $params['city'];
     $cart['user_data']['b_country'] = $cart['user_data']['s_country'] = $params['country'];

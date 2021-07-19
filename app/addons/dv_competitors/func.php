@@ -191,9 +191,9 @@ function fn_delete_competitor($competitor_id)
     return true;
 }
 
-function fn_dv_competitors_get_product_data($product_id, &$field_list, &$join, $auth, $lang_code, &$condition)
+function fn_dv_competitors_get_product_data($product_id, &$field_list, &$join, $auth, $lang_code, &$condition, $get_add_pairs, $get_main_pair, $get_taxes, $get_qty_discounts, $preview, $features, $skip_company_condition)
 {
-    if (AREA == 'A') {
+    if (AREA == 'A' && !empty($get_add_pairs) && !empty($get_main_pair)) {
         $join .= db_quote(" LEFT JOIN ?:competitive_pairs ON ?:competitive_pairs.product_id = ?:products.product_id AND ?:competitive_pairs.action = 'T' LEFT JOIN ?:competitive_prices AS cp1 ON cp1.item_id = ?:competitive_pairs.competitive_id LEFT JOIN ?:competitors AS cmp1 ON cmp1.competitor_id = cp1.competitor_id LEFT JOIN ?:competitive_prices AS cp ON cp.code = ?:products.product_code LEFT JOIN ?:competitive_pairs AS cpr ON cpr.competitive_id = cp.item_id AND cpr.product_id = ?:products.product_id LEFT JOIN ?:competitors AS cmp ON cmp.competitor_id = cp.competitor_id");
         $field_list .= ", GROUP_CONCAT(CONCAT_WS('|', CONCAT_WS('_', cp.item_id, cp.price, cp.competitor_id, cp.in_stock, cmp.status, IF(cpr.action IS NULL, 'T', cpr.action), 0), CONCAT_WS('_', cp1.item_id, cp1.price, cp1.competitor_id, cp1.in_stock, cmp1.status, ?:competitive_pairs.action, 1)) SEPARATOR '|') AS competitors";
     }

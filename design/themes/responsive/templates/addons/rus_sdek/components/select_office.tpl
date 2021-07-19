@@ -3,14 +3,12 @@
 <div class="ty-pickup-location-container">
     <div id="map" class="ty-pickup-location-container-map"></div>
     <div class="ty-pickup-location-container-list" id="ymaps_block">
+        {assign var="office_count" value=$offices|count}
         <div class="ty-checkout-select-office" id="office_list">
-            <div class="ty-checkout-select-office-city" id="ymaps_select_city" data-callback="fn_reload_city_offices(true)">
-                <div>{__("locality")}</div>
-                <div class="ty-product-shipping-input">
-                    <input type="hidden" id="s_country" data-autocompletetype="country" value="{$country}" autocomplete="off"/>
-                    <input type="hidden" id="s_state" data-autocompletetype="state" value="{$state}" autocomplete="off"/>
-                    <input type="hidden" id="s_city_id" data-autocompletetype="city_id" value="{$city_id}" autocomplete="off"/>
-                    <input data-autocompletetype="city" id="s_city" type="text" size="32" value="{$city}" class="ty-input-text" tabindex="-1" autocomplete="off"/>
+            <div class="ty-checkout-select-office-city" id="ymaps_select_city">
+                <div class="ty-control-group ty-profile-field__item">
+                    <input data-autocompletetype="city" id="s_city" type="text" size="32" value="{$city}" class="ty-input-text" tabindex="-1" autocomplete="nope" data-autocomplete-extra="map"/>
+                    <label class="ty-control-group__title cm-profile-field">{__("locality")}</label>
                 </div>
             </div>
             {foreach from=$offices item=office}
@@ -29,9 +27,9 @@
                 <div class="ty-checkout-select-office-zoom" id="no_offices_zoom_tip">{__("zoom_out_to_see_offices")}</div>
                 <div class="ty-checkout-select-office-zoom" id="more_offices_zoom_tip">{__("zoom_out_to_see_more_offices")}</div>
             {/if}
-        </div>
-        <div class="ty-checkout-select-office-details" id="office_details_list">
-            {if $offices}
+        <!--office_list--></div>
+        {if $offices}
+            <div class="ty-checkout-select-office-details" id="office_details_list">
                 <div onclick="fn_ymaps_hide_office();" class="ty-office-details-back"><div>{__('back_to_list')}</div></div>
                 <div id="office_details_list_block">
                     {foreach from=$offices item=office}
@@ -56,7 +54,7 @@
                         </div>
                     {/foreach}
                 </div>
-            {/if}
-        </div>
+            </div>
+        {/if}
     <!--ymaps_block--></div>
 </div>

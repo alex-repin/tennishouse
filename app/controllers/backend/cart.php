@@ -93,9 +93,15 @@ if ($mode == 'cart_list') {
                     $carts_list[$key]['cart_products'] = $all_cart_products[$key]['count'];
                     $carts_list[$key]['cart_all_products'] = $all_cart_products[$key]['sum'];
                     $carts_list[$key]['total'] = $all_cart_products[$key]['total'];
+                    if (!empty($cart_data['shipping_id'])) {
+                        $carts_list[$key]['shipping'] = db_get_hash_single_array("SELECT * FROM ?:shipping_descriptions WHERE shipping_id IN (?n) AND lang_code = ?s", array('shipping_id', 'shipping'), unserialize($cart_data['shipping_id']), DESCR_SL);
+                    }
+                    if (!empty($cart_data['payment_id'])) {
+                        $carts_list[$key]['payment'] = db_get_row("SELECT * FROM ?:payment_descriptions WHERE payment_id = ?i AND lang_code = ?s", $cart_data['payment_id'], DESCR_SL);
+                    }
                     if (!empty($cart_data['user_data'])) {
                         $carts_list[$key]['user_data'] =  unserialize($cart_data['user_data']);
-                        
+
                         $is_exist = fn_get_user_info($cart_data['user_id']);
                         if (empty($is_exist)) {
                             $carts_list[$key]['pending_user'] =  true;
@@ -161,6 +167,8 @@ function fn_get_carts($params, $items_per_page = 0)
     $fields = array (
         '?:user_session_products.user_id',
         '?:user_session_products.user_data',
+        '?:user_session_products.shipping_id',
+        '?:user_session_products.payment_id',
         '?:user_session_products.step',
         '?:users.firstname',
         '?:users.lastname',
@@ -208,7 +216,7 @@ function fn_get_carts($params, $items_per_page = 0)
     if (!empty($params['online_only'])) {
         $sessions = Session::getOnline('C');
         if (!empty($sessions)) {
-            $condition .= db_quote(" AND ?:user_session_products.session_id IN (?a)", $sessions);    
+            $condition .= db_quote(" AND ?:user_session_products.session_id IN (?a)", $sessions);
         } else {
             $condition .= db_quote(" AND 0");
         }

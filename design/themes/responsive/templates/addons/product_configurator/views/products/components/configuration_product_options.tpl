@@ -1,6 +1,6 @@
 <div class="cm-picker-product-options ty-product-options" id="opt_{$obj_prefix}{$id}">
     {foreach name="product_options" from=$product_options item="po"}
-    
+
     {assign var="selected_variant" value=""}
     <div class="ty-control-group ty-product-options__item{if !$capture_options_vs_qty} product-list-field{/if} clearfix" id="opt_{$obj_prefix}{$id}_{$po.option_id}">
         {if !("SRC"|strpos:$po.option_type !== false && !$po.variants && $po.missing_variants_handling == "H")}
@@ -29,7 +29,7 @@
                     <ul id="option_{$obj_prefix}{$id}_{$po.option_id}_group" class="ty-product-options__elem">
                         {if !$po.disabled && !$disabled}
                             <li class="hidden"><input type="hidden" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$po.value}" id="option_{$obj_prefix}{$id}_{$po.option_id}" /></li>
-                            
+
                             {foreach from=$po.variants item="vr" name="vars"}
                                 <li><label id="option_description_{$obj_prefix}{$id}_{$po.option_id}_{$vr.variant_id}" class="ty-product-options__box option-items"><input type="radio" class="radio" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$vr.variant_id}" {if $po.value == $vr.variant_id }{assign var="selected_variant" value=$vr.variant_id}checked="checked"{/if} onclick="{if $product.options_update}fn_change_options('{$request_obj_prefix}{$request_obj_id}', '{$request_change_id}', '{$po.option_id}');{else} fn_change_variant_image('{$obj_prefix}{$id}', '{$po.option_id}', '{$vr.variant_id}');{/if}" {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}disabled="disabled"{/if} />
                                 {$vr.variant_name}&nbsp;{if  $show_modifiers}{hook name="products:options_modifiers"}{if $vr.modifier|floatval}({include file="common/modifier.tpl" mod_type=$vr.modifier_type mod_value=$vr.modifier display_sign=true}){/if}{/hook}{/if}</label></li>
@@ -103,7 +103,7 @@
                 {/foreach}
             {/if}
         {/capture}
-        
+
         {if $smarty.capture.variant_images|trim}
             <script type="text/javascript">
             (function(_, $) {
@@ -117,8 +117,5 @@
 </div>
 <script type="text/javascript">
 (function(_, $) {
-    $('#opt_{$obj_prefix}{$id} .cm-dropdown').each(function() {
-        $(this).selectbox();
-    });
 }(Tygh, Tygh.$));
 </script>

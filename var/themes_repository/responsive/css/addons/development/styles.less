@@ -153,7 +153,7 @@ input[type="text"], input[type="password"] {
 select {
     min-width: 2em;
 }
-.ty-shipping-country, .ty-billing-country, .ty-shipping-zip-code, .ty-billing-zip-code, .ty-shipping-state, .ty-billing-state {
+.ty-shipping-zip-code, .ty-billing-zip-code, .ty-shipping-state, .ty-billing-state, .ty-shipping-country, .ty-billing-country {
     display: none;
 }
 .ty-billing-country + .ty-billing-state, .ty-shipping-country + .ty-shipping-state {
@@ -1210,6 +1210,13 @@ input:focus::placeholder, textarea:focus::placeholder {
 }
 .ty-store-phone__call_back {
     margin: -2px 0;
+}
+.ty-place-order {
+    font-weight: bold;
+    width: 100%;
+}
+.ty-place-order:hover {
+    background-color: darken(@primary_button, 5%);
 }
 .ty-order-call_back {
     input {
@@ -4074,9 +4081,6 @@ input.ty-search-block__input:focus {
 .ty-product-shipping-estimation a {
     font-size: 1.1rem;
 }
-.ui-autocomplete {
-    z-index: 1101;
-}
 .ty-product-shipping-link {
     background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8' %3F%3E%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 249.40463 431.62491' preserveAspectRatio='xMinYMid'%3E%3Cpath style='fill:%235a5a5a;' d='M 65.942261,301.62278 C 34.343941,229.71325 7.3038909,167.27819 5.8532509,162.87819 0.11821086,145.48301 -1.5409791,123.32382 1.4915609,104.62571 9.8659609,52.990504 49.851841,11.933418 101.70803,1.724496 c 11.84637,-2.33219299 35.73426,-2.29196699 46.77488,0.07877 26.03225,5.58986 46.39679,16.500741 64.53215,34.574931 13.87956,13.832737 23.30366,28.759087 29.81667,47.225117 4.88909,13.86181 6.55368,24.314896 6.57274,41.274876 0.0186,16.51084 -1.50976,26.16968 -6.32921,40 -2.7521,7.89769 -117.53915,265.30253 -118.95201,266.74459 -0.40124,0.40952 -26.582679,-58.09048 -58.180989,-130 z M 138.4256,177.39285 c 10.08375,-2.57899 17.62781,-6.93379 25.05731,-14.4643 10.63586,-10.78047 15.84819,-23.66886 15.79276,-39.05036 -0.0557,-15.44919 -5.75614,-28.107006 -17.65699,-39.207116 -6.76497,-6.3098 -14.39137,-10.61094 -22.76719,-12.84024 -7.08406,-1.88549 -20.97165,-1.83728 -28.40402,0.0986 -22.853829,5.95266 -40.364899,28.915096 -40.447199,53.038786 -0.023,6.7426 3.26367,19.31416 6.71079,25.66887 3.79027,6.98731 11.60275,15.33529 18.58141,19.85507 12.862159,8.33027 28.045649,10.75941 43.133129,6.90068 z' /%3E%3C/svg%3E%0A");
     background-position: left top;
@@ -4185,6 +4189,9 @@ input.ty-search-block__input:focus {
     position: relative;
     .ty-list-price {
         margin-left: 4px;
+    }
+    .ty-rub {
+        font-size: 80%;
     }
 }
 .ty-product-block-title {
@@ -4455,7 +4462,7 @@ input.ty-search-block__input:focus {
     padding: 1rem 2rem;
     .ty-step__title-txt {
         color: @font;
-        margin-left: 3rem;
+        margin-left: 0;
     }
 }
 .ty-step__title-active {
@@ -4464,7 +4471,7 @@ input.ty-search-block__input:focus {
     margin: 0;
     .ty-step__title-txt {
         color: @font;
-        margin-left: 3rem;
+        margin-left: 0;
     }
     .ty-step__title-left {
         color: @font;
@@ -4474,7 +4481,7 @@ input.ty-search-block__input:focus {
     padding: 0.5rem 2rem;
     .ty-step__title-txt {
         color: @font;
-        margin-left: 3rem;
+        margin-left: 0;
     }
     .ty-step__title-right .ty-btn {
         margin-top: -4px;
@@ -5248,10 +5255,16 @@ input.ty-search-block__input:focus {
             top: 4px;
         }
     }
-    select, input.cm-state {
+    div.sbHolder ~ label {
+        font-size: 1rem;
+        top: 4px;
+    }
+    select, input.cm-state:visible {
         ~ label {
-            font-size: 1rem;
+            font-size: 1.3rem;
         }
+    }
+    select, input.cm-state {
         + .sbHolder {
             height: 48px;
             .sbSelector {
@@ -5367,6 +5380,10 @@ input.ty-search-block__input:focus {
             }
         }
     }
+}
+.ty-billing-state .sbSelector, .ty-shipping-state .sbSelector {
+    width: 300px;
+    padding-left: 15px;
 }
 .ty-additional-info {
     margin-top: 30px;
@@ -6512,13 +6529,10 @@ and (max-device-width : 480px) {
     color: lighten(@font, 35%);
     font-size: 1.1rem;
 }
-.ty-rub {
-    font-size: 80%;
-}
 .product-list-field-rp {
-    .ty-rub {
-        font-size: 100%;
-    }
+    // .ty-rub {
+    //     font-size: 100%;
+    // }
     span {
 /*         font-weight: bold; */
         font-size: 1.1rem;
@@ -7341,8 +7355,64 @@ input.ty-rf_input-answer{
 .ty-line-through {
     text-decoration: line-through;
 }
+.ui-autocomplete {
+    position: absolute;
+    display: block;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #c4c4c4;
+    background-color: white;
+    z-index: 9999;
+    overflow-x: hidden;
+    overflow-y: auto;
+    min-width: 200px;
+/*     max-height: 420px; */
+    color: #313131;
+    li {
+        display: list-item;
+        list-style-type: none;
+        margin: 0;
+        padding: 0 !important;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        line-height: 35px;
+    }
+    li + li {
+        border-top: 1px solid #ededed;
+    }
+    li:hover {
+        background-color: #f2f2f2;
+        cursor: pointer;
+    }
+    li.active {
+        background-color: #e9e9e9;
+    }
+    a {
+        text-decoration: none;
+        color: @font;
+        padding: 1px 7px;
+        width: 100%;
+        font-size: 1.3rem;
+    }
+}
+.ui-autocomplete-loading {
+    background: url('./images/spinner.gif') no-repeat right center #fff !important;
+    transition: none !important;
+}
+.ui-autocomplete-term {
+    font-weight: bold;
+}
+.ui-menu-item div {
+    text-decoration: none;
+    color: @font;
+    padding: 1px 7px;
+    width: 100%;
+    font-size: 1.3rem;
+}
+
 /* KLADR */
-.kladr-error {
+.kladr-error, .cm-failed-field {
     color: #cb3e27;
 }
 
@@ -7533,6 +7603,16 @@ a.ty-promo-descr-link{
 }
 .ty-success-registration__text {
     padding: 7px @content_padding_size 40px;
+}
+.ty-order-products__item:last-child {
+    border-bottom: 1px solid #ecf0f1;
+    padding: 14px 0;
+}
+.ty-order-products__list {
+    margin-bottom: 15px;
+}
+.ty-checkout-summary__item {
+    padding-bottom: 7px;
 }
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
     .ty-add-to-compare {

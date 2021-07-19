@@ -1,7 +1,7 @@
 {include file="views/profiles/components/profiles_scripts.tpl"}
 
 <div title="{__("customer_info")}" id="customer_info">
-<form action="{""|fn_url}" method="post" enctype="multipart/form-data" class="form-horizontal form-edit cm-ajax cm-form-dialog-closer" name="om_customer_info_form">
+<form action="{""|fn_url}" method="post" enctype="multipart/form-data" class="form-horizontal form-edit cm-ajax cm-form-dialog-closer cm-autocomplete-form" name="om_customer_info_form">
 
 <input type="hidden" name="result_ids" value="customer_info,{$result_ids}" />
 

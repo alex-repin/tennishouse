@@ -1403,10 +1403,19 @@ function fn_save_cart_content(&$cart, $user_id, $type = 'C', $user_type = 'R')
                 $_cart_prods[$_item_id]['amount'] = empty($_cart_prods[$_item_id]['amount']) ? 1 : $_cart_prods[$_item_id]['amount'];
                 $_cart_prods[$_item_id]['session_id'] = Session::getId();
                 // TennisHouse
-                $_cart_prods[$_item_id]['step'] = !empty($_SESSION['edit_step']) ? ($_SESSION['edit_step'] == 'step_two' ? 1 : ($_SESSION['edit_step'] == 'step_three' ? 2 : ($_SESSION['edit_step'] == 'step_four' ? 3 : 0))) : 0;
+                $_cart_prods[$_item_id]['step'] = !empty($_SESSION['edit_step']) ? (($_SESSION['edit_step'] == 'step_one' || $_SESSION['edit_step'] == 'step_two') ? 1 : ($_SESSION['edit_step'] == 'step_three' ? 2 : ($_SESSION['edit_step'] == 'step_four' ? 3 : 0))) : 0;
                 if (!empty($cart['user_data'])) {
                     $_cart_prods[$_item_id]['user_data'] = serialize($cart['user_data']);
                 }
+                if (!empty($cart['chosen_shipping'])) {
+                    // $_cart_prods[$_item_id]['step'] = 2;
+                    $_cart_prods[$_item_id]['shipping_id'] = serialize($cart['chosen_shipping']);
+                }
+                if (!empty($cart['payment_id'])) {
+                    // $_cart_prods[$_item_id]['step'] = 3;
+                    $_cart_prods[$_item_id]['payment_id'] = $cart['payment_id'];
+                }
+
                 // TennisHouse
 
                 $ip = fn_get_ip();
@@ -2867,6 +2876,20 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
             $cart['shipping_required'] = false;
         }
 
+        if (empty($cart['user_data']['s_country']) || empty($cart['user_data']['s_city_id'])) {
+            $cart['hide_shipping_payment'] = true;
+        } else {
+            $cart['hide_shipping_payment'] = false;
+        }
+
+        if (!empty($cart['user_data']['s_country']) && !empty($cart['user_data']['s_city_id'])) {
+            $cart['calculate_shipping'] = true;
+        } elseif (!empty($cart['product_groups'])) {
+            $cart['calculate_shipping'] = false;
+            $cart['shipping_failed'] = true;
+            fn_reset_shipping($cart['product_groups']);
+        }
+
         if (!empty($cart['change_cart_products'])) {
             $location = fn_get_customer_location($auth, $cart);
             $product_groups = Shippings::groupProductsList($cart_products, $location);
@@ -2889,6 +2912,7 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
 
         if (!empty($cart['calculate_shipping']) || empty($cart['product_groups'])) {
             $location = fn_get_customer_location($auth, $cart);
+            // fn_print_die($location, $cart);
             $product_groups = Shippings::groupProductsList($cart_products, $location);
             $shippings = array();
 
@@ -7463,4 +7487,86 @@ function fn_get_online_payment_methods()
     }
 
     return $payment_methods;
+}
+
+function fn_save_checkout_user_data($user_data, $auth, &$cart, $ship_to_another = false)
+{
+    fn_check_state($user_data);
+
+    if (!empty($auth['user_id'])) {
+        if (isset($user_data['profile_id'])) {
+            if (empty($user_data['profile_id'])) {
+                $user_data['profile_type'] = 'S';
+            }
+            $profile_id = $user_data['profile_id'];
+
+        } elseif (!empty($cart['profile_id'])) {
+            $profile_id = $cart['profile_id'];
+
+        } else {
+            $profile_id = db_get_field("SELECT profile_id FROM ?:user_profiles WHERE user_id = ?i AND profile_type = 'P'", $auth['user_id']);
+        }
+
+        $user_data['user_id'] = $auth['user_id'];
+        $current_user_data = fn_get_user_info($auth['user_id'], true, $profile_id);
+        if ($profile_id != NULL) {
+            $cart['profile_id'] = $profile_id;
+        }
+
+        $errors = false;
+
+        // Update billing/shipping information
+        if (!empty($user_data)) {
+            $user_data = fn_array_merge($current_user_data, $user_data);
+            $user_data['user_type'] = !empty($current_user_data['user_type']) ? $current_user_data['user_type'] : AREA;
+
+            $user_data = fn_fill_contact_info_from_address($user_data);
+        }
+
+        $user_data = fn_array_merge($current_user_data, $user_data);
+
+        if (empty($ship_to_another)) {
+            $profile_fields = fn_get_profile_fields('O');
+            fn_fill_address($user_data, $profile_fields);
+        }
+
+        $cart['user_data'] = $user_data;
+
+        // Check if we need to send notification with new email to customer
+        $email = db_get_field('SELECT email FROM ?:users WHERE user_id = ?i', $auth['user_id']);
+
+        $send_notification = false;
+        if (isset($user_data['email']) && $user_data['email'] != $email) {
+            $send_notification = true;
+        }
+
+        list($user_id, $profile_id) = fn_update_user($auth['user_id'], $user_data, $auth, !empty($ship_to_another), $send_notification, false);
+
+        fn_delete_notification('update');
+        $cart['profile_id'] = $profile_id;
+
+        // Add/Update additional fields
+        if (!empty($user_data['fields'])) {
+            fn_store_profile_fields($user_data, array('U' => $auth['user_id'], 'P' => $profile_id), 'UP'); // FIXME
+        }
+
+    } elseif (Registry::get('settings.General.disable_anonymous_checkout') != 'Y') {
+
+        if (isset($user_data['fields'])) {
+            $fields = fn_array_merge(isset($cart['user_data']['fields']) ? $cart['user_data']['fields'] : array(), $user_data['fields']);
+        }
+
+        if (!empty($user_data)) {
+            $user_data = fn_fill_contact_info_from_address($user_data);
+        }
+
+        $cart['user_data'] = fn_array_merge($cart['user_data'], $user_data);
+
+        // Fill shipping info with billing if needed
+        if (empty($ship_to_another)) {
+            $profile_fields = fn_get_profile_fields('O');
+            fn_fill_address($cart['user_data'] , $profile_fields);
+        }
+    }
+    fn_save_cart_content($cart, $auth['user_id']);
 }

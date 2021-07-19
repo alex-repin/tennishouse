@@ -28,6 +28,180 @@ use Tygh\Ym\Yml;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_save_checkout_step($cart, $user_id = 0, &$edit_step)
+{
+    $_edit_step = 'step_one';
+
+    $profile_fields = fn_get_profile_fields('O');
+    $billing_population = fn_check_profile_fields_population($cart['user_data'], 'B', $profile_fields);
+    if ($billing_population == true || empty($profile_fields['B'])) {
+        $shipping_population = fn_check_profile_fields_population($cart['user_data'], 'S', $profile_fields);
+        if ($shipping_population == true || empty($profile_fields['S'])) {
+            $_edit_step = 'step_two';
+        }
+    }
+
+    if ($_edit_step == 'step_two' && !empty($cart['chosen_shipping'])) {
+        $_edit_step = 'step_three';
+    }
+    if ($_edit_step == 'step_three' && !empty($cart['payment_id'])) {
+        $_edit_step = 'step_four';
+    }
+    $edit_step = $_edit_step;
+
+    $step = 0;
+    if ($edit_step == 'step_one' || $edit_step == 'step_two') {
+        $step = 1;
+    } elseif ($edit_step == 'step_three') {
+        $step = 2;
+    } elseif ($edit_step == 'step_four') {
+        $step = 3;
+    }
+
+    $user_type = 'R';
+    if (empty($user_id)) {
+        if (fn_get_session_data('cu_id')) {
+            $user_id = fn_get_session_data('cu_id');
+        } else {
+            $user_id = fn_crc32(uniqid(TIME));
+            fn_set_session_data('cu_id', $user_id, COOKIE_ALIVE_TIME);
+        }
+        $user_type = 'U';
+    }
+
+    if (!empty($user_id)) {
+
+        $condition = db_quote(" AND user_id = ?i AND type = 'C' AND user_type = ?s", $user_id, $user_type);
+        if (fn_allowed_for('ULTIMATE')) {
+            $condition .= fn_get_company_condition('?:user_session_products.company_id');
+        }
+
+        if (!empty($cart['products']) && is_array($cart['products'])) {
+            db_query("UPDATE ?:user_session_products SET step = ?s WHERE item_id IN (?n) AND user_id = ?i AND type = 'C' AND user_type = ?s", $step, array_keys($cart['products']), $user_id, $user_type);
+        }
+    }
+
+}
+
+function fn_approximate_shipping(&$approx_shipping)
+{
+    if (empty($approx_shipping['time']) && (!empty($approx_shipping['city_id']) || (!empty($approx_shipping['country']) && !empty($approx_shipping['city'])))) {
+        $approx_shipping['time'] = fn_get_approximate_shipping($approx_shipping);
+    }
+    if ($approx_shipping['city'] == 'Москва') {
+        $approx_shipping['time'] = '0-2';
+    }
+    $approx_shipping['is_complete'] = true;
+}
+
+function fn_request_kladr($query)
+{
+    $result = array();
+    $data = array(
+        'token' => Registry::get('addons.development.kladr_token'),
+        'query' => $query,
+        'contentType' => 'city',
+        'withParent' => '1',
+        'limit' => '10'
+    );
+    $extra = array(
+        'request_timeout' => 1,
+        'timeout' => 1,
+    );
+
+    $response = json_decode(Http::get('https://kladr-api.ru/api.php', $data, $extra), true);
+
+    if (empty($response)) {
+        return false;
+    }
+
+    if (!empty($response['result'])) {
+        foreach ($response['result'] as $i => $city) {
+            if ($city['id'] == 'Free') {
+                continue;
+            }
+            $variant = array(
+                'city_id' => $city['id'],
+                'city_id_type' => 'kladr',
+                'city' => $city['name'],
+                'value' => $city['name'],
+                'zip' => $city['zip'],
+                'label' => (!empty($city['typeShort']) ? $city['typeShort'] . '. ' : '') . $city['name'],
+                'country_code' => 'RU',
+                'state' => '',
+                'country' => 'Россия'
+            );
+            if (!empty($city['parents'])) {
+                foreach (array_reverse($city['parents']) as $pnt) {
+                    $variant['label'] .= ', ' . $pnt['name'] . (!empty($pnt['typeShort']) ? ' ' . $pnt['typeShort'] : '');
+
+                    if ($pnt['contentType'] == 'region') {
+                        $variant['state_raw'] = $pnt['name'];
+                    }
+                }
+            } else {
+                $variant['state_raw'] = $city['name'];
+            }
+            $variant['label'] .= ', Россия';
+            $result[] = $variant;
+        }
+    }
+
+    return $result;
+}
+
+function fn_update_sdek_cities()
+{
+    $details = RusSdek::PullAllCities();
+
+    return array(true, $details);
+}
+
+function fn_reset_shipping(&$product_groups)
+{
+    foreach ($product_groups as &$group) {
+        unset($group['shippings']);
+    }
+}
+
+function fn_check_user_session_data(&$user_data)
+{
+    if (!empty($_SESSION['approx_shipping'])) {
+        if (!empty($_SESSION['approx_shipping']['country'])) {
+            if (empty($user_data['b_country'])) {
+                $user_data['b_country'] = $_SESSION['approx_shipping']['country'];
+            }
+            if (empty($user_data['s_country'])) {
+                $user_data['s_country'] = $_SESSION['approx_shipping']['country'];
+            }
+        }
+        if (!empty($_SESSION['approx_shipping']['state'])) {
+            if (empty($user_data['b_state']) && $user_data['b_country'] == $_SESSION['approx_shipping']['country']) {
+                $user_data['b_state'] = $_SESSION['approx_shipping']['state'];
+            }
+            if (empty($user_data['s_state']) && $user_data['s_country'] == $_SESSION['approx_shipping']['country']) {
+                $user_data['s_state'] = $_SESSION['approx_shipping']['state'];
+            }
+        }
+        if (!empty($_SESSION['approx_shipping']['city'])) {
+            if (empty($user_data['b_city']) && empty($user_data['b_city_id']) && $user_data['b_country'] == $_SESSION['approx_shipping']['country'] && $user_data['b_state'] == $_SESSION['approx_shipping']['state']) {
+                $user_data['b_city'] = $_SESSION['approx_shipping']['city'];
+                if (!empty($_SESSION['approx_shipping']['city_id']) && !empty($_SESSION['approx_shipping']['city_id_type'])) {
+                    $user_data['b_city_id'] = $_SESSION['approx_shipping']['city_id'];
+                    $user_data['b_city_id_type'] = $_SESSION['approx_shipping']['city_id_type'];
+                }
+            }
+            if (empty($user_data['s_city']) && empty($user_data['s_city_id']) && $user_data['s_country'] == $_SESSION['approx_shipping']['country'] && $user_data['s_state'] == $_SESSION['approx_shipping']['state']) {
+                $user_data['s_city'] = $_SESSION['approx_shipping']['city'];
+                if (!empty($_SESSION['approx_shipping']['city_id']) && !empty($_SESSION['approx_shipping']['city_id_type'])) {
+                    $user_data['s_city_id'] = $_SESSION['approx_shipping']['city_id'];
+                    $user_data['s_city_id_type'] = $_SESSION['approx_shipping']['city_id_type'];
+                }
+            }
+        }
+    }
+}
+
 function fn_archieve_order_data()
 {
     $details = array();
@@ -540,14 +714,30 @@ function fn_is_free_shipping($product)
     return false;
 }
 
-function fn_save_cart_step($cart, $user_id)
+function fn_check_state(&$user_data)
+{
+    if (!empty($user_data['s_state_raw'])) {
+        $state = fn_find_state_match($user_data['s_state_raw'], $user_data['s_country']);
+        if (!empty($state['code'])) {
+            $user_data['s_state'] = $state['code'];
+        }
+    }
+    if (!empty($user_data['b_state_raw'])) {
+        $state = fn_find_state_match($user_data['b_state_raw'], $user_data['b_country']);
+        if (!empty($state['code'])) {
+            $user_data['b_state'] = $state['code'];
+        }
+    }
+}
+
+function fn_save_cart_step($cart, $user_id, $edit_step)
 {
     $step = 0;
-    if ($_SESSION['edit_step'] == 'step_two') {
+    if ($edit_step == 'step_two') {
         $step = 1;
-    } elseif ($_SESSION['edit_step'] == 'step_three') {
+    } elseif ($edit_step == 'step_three') {
         $step = 2;
-    } elseif ($_SESSION['edit_step'] == 'step_four') {
+    } elseif ($edit_step == 'step_four') {
         $step = 3;
     }
 
@@ -845,29 +1035,45 @@ function fn_clean_ranges_from_feature_hash($feature_hash, $ranges, $field_type =
 function fn_get_location_by_ip()
 {
     $data = array();
-    $data['ip'] = $_SERVER['REMOTE_ADDR'] == '127.0.0.1' ? '95.83.46.99' : $_SERVER['REMOTE_ADDR'];
+    $data['ip'] = $_SERVER['REMOTE_ADDR'] == '127.0.0.1' ? '178.45.22.0' : $_SERVER['REMOTE_ADDR'];
+
+    // $extra = array(
+    //     'request_timeout' => 2,
+    //     'timeout' => 1,
+    //     'headers' => array('Accept: application/json',  'Authorization: Token 103a9bfee0f97140574ab8adbcbbf75e9e98a28c')
+    // );
+    // $response = Http::get('https://suggestions.dadata.ru/suggestions/api/4_1/rs/detectAddressByIp',
+    //     array('ip' => $data['ip']),
+    //     $extra
+    // );
+    // $json = json_decode($response);
+    // if (!empty($json->location->data)) {
+    //     $data['city'] = strval($json->location->data->city);
+    //     $data['city_id'] = strval($json->location->data->city_kladr_id);
+    //     $data['city_id_type'] = 'kladr';
+    //     $data['country'] = strval($json->location->data->country_iso_code);
+    //     if (!empty($json->location->data->region) && $state = fn_find_state_match($json->location->data->region)) {
+    //         $data['state'] = $state['code'];
+    //         $data['state_id'] = $state['state_id'];
+    //     }
+    // }
     $extra = array(
         'request_timeout' => 2,
         'timeout' => 1,
-        'headers' => array('Accept: application/json',  'Authorization: Token 103a9bfee0f97140574ab8adbcbbf75e9e98a28c')
     );
-//     $response = Http::get('http://ipgeobase.ru:7020/geo',
-//         array('ip' => $data['ip']),
-//         $extra
-//     );
-
-    $response = Http::get('https://suggestions.dadata.ru/suggestions/api/4_1/rs/detectAddressByIp',
-        array('ip' => $data['ip']),
+    $response = Http::get('http://ip-api.com/json/' . $data['ip'],
+        array('lang' => 'ru'),
         $extra
     );
     $json = json_decode($response);
-    if (!empty($json->location->data->city)) {
-        $data['city'] = strval($json->location->data->city);
-    }
-    if (!empty($json->location->data->region) && $state = fn_find_state_match($json->location->data->region)) {
-        $data['country'] = 'RU';
-        $data['state'] = $state['code'];
-        $data['state_id'] = $state['state_id'];
+    if (!empty($json->status) && $json->status == 'success') {
+        $data['city'] = strval($json->city);
+        $data['country'] = strval($json->countryCode);
+        if (!empty($json->region)) {
+            $data['state'] = strval($json->region);
+        } elseif (!empty($json->regionName) && $state = fn_find_state_match(strval($json->regionName))) {
+            $data['state'] = $state['code'];
+        }
     }
 
     return $data;
@@ -1475,7 +1681,16 @@ function fn_check_category_comparison($id_path)
 
 function fn_get_big_cities()
 {
-    return unserialize(BIG_CITIES);
+    $result = array();
+    $city_codes = unserialize(BIG_CITIES_SDEK);
+    $cities = db_get_hash_array("SELECT a.*, b.city FROM ?:rus_cities_sdek AS a LEFT JOIN ?:rus_city_sdek_descriptions AS b ON a.city_id = b.city_id AND b.lang_code = ?s WHERE city_code IN (?n)", 'city_code', CART_LANGUAGE, $city_codes);
+
+    foreach ($city_codes as $code) {
+        $result[$code] = $cities[$code];
+        $result[$code]['city_id_type'] = 'sdek';
+    }
+
+    return $result;
 }
 
 function fn_get_approximate_shipping($location)
@@ -1492,11 +1707,7 @@ function fn_get_approximate_shipping($location)
                 'country' => Registry::get('settings.Company.company_country'),
                 'state' => Registry::get('settings.Company.company_state'),
             ),
-            'location' => array(
-                'city' => $location['city'],
-                'country' => $location['country'],
-                'state' => $location['state'],
-            )
+            'location' => $location
         ),
         'company_id' => 1
     );
@@ -3206,11 +3417,11 @@ function fn_get_state_parts($state)
     return $state_parts;
 }
 
-function fn_find_state_match($state)
+function fn_find_state_match($state, $country_code = 'RU')
 {
     $state_parts = fn_get_state_parts($state);
 
-    list($states,) = fn_get_states(array('country_code' => 'RU'));
+    list($states,) = fn_get_states(array('country_code' => $country_code));
     $match = array();
     foreach ($states as $i => $st_dt) {
         $_state_parts = fn_get_state_parts($st_dt['state']);

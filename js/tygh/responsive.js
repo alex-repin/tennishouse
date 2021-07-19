@@ -67,21 +67,21 @@
                     }
 
                 } else {
-                    
+
                     $('.cm-accordion').accordion('destroy');
-                    
+
                     $('.cm-accordion > div').each(function(index) {
                         $(this).hide();
                         $(this).appendTo($('.cm-tabs-content'));
                     });
 
                     $('.cm-accordion').remove();
-                    
+
                     // remove prefix
                     $('.cm-j-tabs>ul>li').each(function(){
                         var id = $(this).attr('id').replace('hidden_tab_','');
                         $(this).attr('id', id);
-                        
+
                         if($(this).hasClass('active')) {
                             $('#content_' + $(this).attr('id')).show();
                         }
@@ -92,7 +92,7 @@
             },
 
             responsiveMenu: function() {
-                
+
                 var whichEvent = ('ontouchstart' in document.documentElement ? "touchstart" : "click");;
 
                 // FIXME Windows IE 8 doesn't have touch event
@@ -152,12 +152,12 @@
             detectMenuWidth: function(e) {
                 var elm = $(e.target);
                 var menuElm = elm.parents(".cm-responsive-menu");
-                
+
                 if(menuElm.hasClass("ty-menu-vertical") == false) {
                     var menuWidth = menuElm.width();
                     var menuItemElm = elm.closest('.cm-menu-item-responsive');
                     $('.ty-menu__submenu-to-right').removeClass('ty-menu__submenu-to-right');
-                    
+
                     if(menuItemElm) {
                         var submenu = $('.cm-responsive-menu-submenu', menuItemElm);
                         if(submenu.length) {
@@ -166,19 +166,19 @@
                                 submenu.parent().addClass('ty-menu__submenu-to-right');
                             }
                         }
-                        
+
                     }
                 }
             },
 
             responsiveTables: function(e) {
-                
+
                 var tables = $('.ty-table');
                 var objSize = function(obj) {
                     var count = 0;
-                    
+
                     if (typeof obj == "object") {
-                    
+
                         if (Object.keys) {
                             count = Object.keys(obj).length;
                         } else if (window._) {
@@ -188,9 +188,9 @@
                         } else {
                             for (var key in obj) if (obj.hasOwnProperty(key)) count++;
                         }
-                        
+
                     }
-                    
+
                     return count;
                 };
 
@@ -257,25 +257,25 @@
 //                             thTexts.push($(this).text());
 //                             $(this).remove();
 //                         });
-// 
+//
 //                         $(this).find('tr:not(.ty-table__no-items)').each(function() {
 //                             if (!$.trim($(this).html())) {
 //                                 $(this).remove();
 //                             }
 //                             $(this).find('td:not(.ty-table-disable-convertation)').each(function(index) {
 //                                 var $elm = $(this);
-//                                 
+//
 //                                 if($elm.find('.ty-table__responsive-content').length == 0) {
 //                                     $elm.wrapInner('<div class="ty-table__responsive-content"></div>');
 //                                     $elm.prepend('<div class="ty-table__responsive-header">' + thTexts[index] + '</div>');
 //                                 }
 //                             });
-// 
+//
 //                         });
 
                         $(this).find('[data-ca-has-sub-table]').each(function() {
                             $(this).append(sbTables[$(this).data('caHasSubTable')]);
-                            
+
                             $(this).removeAttr('data-ca-has-sub-table');
                         });
 
@@ -331,7 +331,7 @@
                     }
                     $('body,html').scrollTop($(dlg).offset().top - 10);
                     // TennisHouse
-                    
+
                     // calculate title width
                     $(dlg).find('.ui-dialog-title').css({
                         'width': $(window).width() - 80
@@ -341,10 +341,10 @@
                         'height': 'auto',
                         'max-height': 'none'
                     });
-                    
-                    $(dlg).find('.object-container').css({
-                        'height': 'auto'
-                    });
+
+                    // $(dlg).find('.object-container').css({
+                    //     'height': 'auto'
+                    // });
 
                     $(dlg).find('.buttons-container').css({
                         'position':'relative',

@@ -110,39 +110,29 @@ if ($mode == 'product_shipping_estimation') {
                 $approx_shipping = fn_get_location_by_ip();
             }
         }
-        if (empty($approx_shipping['time']) && !empty($approx_shipping['country']) && !empty($approx_shipping['state']) && !empty($approx_shipping['city'])) {
-            $approx_shipping['time'] = fn_get_approximate_shipping($approx_shipping);
-        }
-        if ($approx_shipping['city'] == 'Москва') {
-            $approx_shipping['time'] = '0-2';
-        }
-        $approx_shipping['is_complete'] = true;
+        fn_approximate_shipping($approx_shipping);
         Registry::get('view')->display('addons/development/common/product_shipping_estimation.tpl');
     }
     exit;
 }
 if ($mode == 'update_user_city') {
-    unset($approx_shipping['time']);
-    if (!empty($_REQUEST['city_id'])) {
-        $approx_shipping['city_id'] = $_REQUEST['city_id'];
-    }
-    if (!empty($_REQUEST['user_city'])) {
-        $approx_shipping['city'] = $_REQUEST['user_city'];
-        $approx_shipping['state'] = $_REQUEST['state'];
-        $approx_shipping['country'] = 'RU';
-    } elseif (!empty($_REQUEST['city'])) {
-        $approx_shipping['city'] = $_REQUEST['city'];
-        $approx_shipping['country'] = 'RU';
-        if (!empty($_REQUEST['state'])) {
-            $approx_shipping['state'] = $_REQUEST['state'];
-        } else {
-            $approx_shipping['state'] = db_get_field("SELECT a.state_code FROM ?:rus_cities_sdek AS a LEFT JOIN ?:rus_city_sdek_descriptions AS b ON a.city_id = b.city_id AND b.lang_code = 'ru' WHERE b.city = ?s", $_REQUEST['city']);
+    if (!empty($_REQUEST['state_raw'])) {
+        $state = fn_find_state_match($_REQUEST['state_raw'], $_REQUEST['country_code']);
+        if (!empty($state['code'])) {
+            $_REQUEST['state'] = $state['code'];
         }
     }
-    if (empty($approx_shipping['time']) && !empty($approx_shipping['country']) && !empty($approx_shipping['state']) && !empty($approx_shipping['city'])) {
-        $approx_shipping['time'] = fn_get_approximate_shipping($approx_shipping);
+    if ($approx_shipping['city_id'] != $_REQUEST['city_id']) {
+        unset($approx_shipping['is_complete']);
+        unset($approx_shipping['time']);
     }
-    $approx_shipping['is_complete'] = true;
+    $approx_shipping['city'] = $_REQUEST['city'];
+    $approx_shipping['city_id'] = $_REQUEST['city_id'];
+    $approx_shipping['city_id_type'] = $_REQUEST['city_id_type'];
+    $approx_shipping['state'] = $_REQUEST['state'];
+    $approx_shipping['country_code'] = $_REQUEST['country_code'];
+
+    fn_approximate_shipping($approx_shipping);
     Registry::get('view')->display('addons/development/common/product_shipping_estimation.tpl');
     exit;
 }

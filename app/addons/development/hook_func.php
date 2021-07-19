@@ -296,6 +296,8 @@ function fn_development_get_user_info($user_id, $get_profile, $profile_id, &$use
 
 function fn_development_update_user_pre($user_id, &$user_data, $auth, $ship_to_another, $notify_user, $send_password)
 {
+    fn_check_state($user_data);
+
     $names = array(
         'р-н',
         'район',
@@ -355,10 +357,10 @@ function fn_development_update_user_pre($user_id, &$user_data, $auth, $ship_to_a
         'зимовье',
     );
     if (!empty($user_data['s_city'])) {
-        $user_data['s_city'] = str_replace($names, '', $user_data['s_city']);
+        $user_data['s_city'] = str_replace($names . ' ', '', $user_data['s_city']);
     }
     if (!empty($user_data['b_city'])) {
-        $user_data['b_city'] = str_replace($names, '', $user_data['b_city']);
+        $user_data['b_city'] = str_replace($names . ' ', '', $user_data['b_city']);
     }
 }
 
@@ -651,7 +653,7 @@ function fn_development_get_filters_products_count_before_select($filters, $view
 function fn_development_cron_routine()
 {
     db_query("DELETE FROM ?:cron_logs WHERE timestamp < ?i", TIME - SECONDS_IN_DAY * Registry::get('addons.development.cron_logs_delete_time'));
-    
+
     $scheme = fn_get_schema('cron', 'schema');
 
     if (!empty($scheme)) {

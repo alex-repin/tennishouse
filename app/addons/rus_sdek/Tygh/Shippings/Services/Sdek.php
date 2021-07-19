@@ -297,10 +297,12 @@ class Sdek implements IService
                 $params = array(
                     'cityid' => $rec_city_code
                 );
-                $offices = RusSdek::SdekPvzOffices($params);
+                $offices = RusSdek::SdekPvzOffices($params, (AREA == 'C') ? true : false, $this->_shipping_info['package_info']['packages']);
+
                 if (!empty($offices)) {
                     $rates['offices'] = $offices;
                 } else {
+                    $rates['get_offices'] = true;
                     $rates['clear'] = true;
                 }
             }
@@ -316,6 +318,12 @@ class Sdek implements IService
         if (isset($shipping_info['keys']['group_key']) && !empty($shipping_info['keys']['shipping_id'])) {
             $group_key = $shipping_info['keys']['group_key'];
             $shipping_id = $shipping_info['keys']['shipping_id'];
+
+            if (!empty($rates['get_offices'])) {
+                $_SESSION['cart']['shippings_extra']['data'][$group_key][$shipping_id]['get_offices'] = true;
+            } else {
+                $_SESSION['cart']['shippings_extra']['data'][$group_key][$shipping_id]['get_offices'] = false;
+            }
 
             if (!empty($rates['offices'])) {
                 $_SESSION['cart']['shippings_extra']['data'][$group_key][$shipping_id]['offices'] = $rates['offices'];

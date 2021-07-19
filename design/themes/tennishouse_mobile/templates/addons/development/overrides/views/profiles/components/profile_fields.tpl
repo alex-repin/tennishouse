@@ -26,7 +26,7 @@
     {assign var="_class" value=""}
 {/if}
 
-<div class="clearfix {if $section == 'C'}ty-additional-info{/if} {if $section == "S" || $section == "B"}cm-autocomplete-block{/if}">
+<div class="clearfix {if $section == 'C'}ty-additional-info{/if}">
 {if $body_id || $grid_wrap}
     <div id="{$body_id}" class="{if $hide_fields}hidden{/if}">
         <div class="{$grid_wrap}">
@@ -59,19 +59,13 @@
         {assign var="skip_field" value=true}
     {/if}
 {/if}
-{if $smarty.session.approx_shipping.state && $smarty.session.approx_shipping.city}
-    {assign var="session_city" value=$smarty.session.approx_shipping.city}    
-    {assign var="session_state" value=$smarty.session.approx_shipping.state}   
-    {if $user_data.s_city == '' && $user_data.s_state == '' && $smarty.session.approx_shipping.city_id}
-        {assign var="session_city_id" value=$smarty.session.approx_shipping.city_id}    
-    {/if}
-{/if}
 
 {hook name="profiles:profile_fields"}
 <div class="ty-control-group ty-profile-field__item ty-{$field.class}">
+
     {if $field.field_type == "A"}  {* State selectbox *}
         {$_country = $settings.General.default_country}
-        {$_state = $value|default:$session_state|default:$settings.General.default_state}
+        {$_state = $value}
 
         <select {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} id="{$id_prefix}elm_{$field.field_id}" class="ty-profile-field__select-state cm-state  {if $section == "S"}cm-location-shipping{else}cm-location-billing{/if} {if !$skip_field}{$_class}{/if}" name="{$data_name}[{$data_id}]" {if !$skip_field}{$disabled_param nofilter}{/if}>
             {*<option value="" class="ty-select__default-value">- {__("select_state")} -</option>*}
@@ -80,26 +74,34 @@
                     <option {if $_state == $state.code}selected="selected"{/if} value="{$state.code}">{$state.state}</option>
                 {/foreach}
             {/if}
-        </select><input {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} type="text" id="elm_{$field.field_id}_d" name="{$data_name}[{$data_id}]" size="32" maxlength="64" value="{$_state}" disabled="disabled" class="cm-state {if $section == "S"}cm-location-shipping{else}cm-location-billing{/if} ty-input-text hidden {if $_class}disabled{/if}"/>
+        </select>
+        <input type="hidden" {if $field.autocomplete_type}data-autocompletetype="state_raw"{/if} name="{$data_name}[{$data_id}_raw]" value="" />
+        <input {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} type="text" id="elm_{$field.field_id}_d" name="{$data_name}[{$data_id}]" size="32" maxlength="64" value="{$_state}" disabled="disabled" class="cm-state {if $section == "S"}cm-location-shipping{else}cm-location-billing{/if} ty-input-text hidden {if $_class}disabled{/if}"/>
 
     {elseif $field.field_type == "O"}  {* Countries selectbox *}
-        {assign var="_country" value=$value|default:$settings.General.default_country}
+        {assign var="_country" value=$value}
+        <input {if $field.autocomplete_type}data-autocompletetype="country_code"{/if} type="hidden" id="{$id_prefix}elm_{$field.field_id}" name="{$data_name}[{$data_id}]" size="32" maxlength="64" value="{$_country}" class="ty-input-text cm-country {if $section == "S"}cm-location-shipping{else}cm-location-billing{/if}"/>
+
+        <input {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} type="text" id="{$id_prefix}elm_{$field.field_id}_f" name="{$data_name}[{$data_id}_f]" size="32" value="{if $data_id == 's_country' || $data_id == 'b_country'}{$countries.$value}{else}{$value}{/if}" class="ty-input-text {if !$skip_field}{$_class}{else}cm-skip-avail-switch{/if}" {if !$skip_field}{$disabled_param nofilter}{/if} {if $data_id == 's_country' || $data_id == 'b_country'}placeholder="{__('just_name')}" onblur="" onkeydown=""{/if} />
+
+        {*
         <select {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} id="{$id_prefix}elm_{$field.field_id}" class="ty-profile-field__select-country cm-country  {if $section == "S"}cm-location-shipping{else}cm-location-billing{/if} {if !$skip_field}{$_class}{else}cm-skip-avail-switch{/if}" name="{$data_name}[{$data_id}]" {if !$skip_field}{$disabled_param nofilter}{/if}>
             {hook name="profiles:country_selectbox_items"}
-            {*<option value="">- {__("select_country")} -</option>*}
+            <option value="">- {__("select_country")} -</option>
             {foreach from=$countries item="country" key="code"}
             <option {if $_country == $code}selected="selected"{/if} value="{$code}">{$country}</option>
             {/foreach}
             {/hook}
         </select>
-    
+        *}
+
     {elseif $field.field_type == "C"}  {* Checkbox *}
         <input type="hidden" name="{$data_name}[{$data_id}]" value="N" {if !$skip_field}{$disabled_param nofilter}{/if} />
         <input type="checkbox" id="{$id_prefix}elm_{$field.field_id}" name="{$data_name}[{$data_id}]" value="Y" {if $value == "Y"}checked="checked"{/if} class="checkbox {if !$skip_field}{$_class}{else}cm-skip-avail-switch{/if}" {if !$skip_field}{$disabled_param nofilter}{/if} />
 
     {elseif $field.field_type == "T"}  {* Textarea *}
         <textarea {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} class="ty-input-textarea {if !$skip_field}{$_class}{else}cm-skip-avail-switch{/if}" id="{$id_prefix}elm_{$field.field_id}" name="{$data_name}[{$data_id}]" cols="32" rows="3" {if !$skip_field}{$disabled_param nofilter}{/if}>{$value}</textarea>
-    
+
     {elseif $field.field_type == "D"}  {* Date *}
         {if !$skip_field}
             {include file="common/calendar.tpl" date_id="`$id_prefix`elm_`$field.field_id`" date_name="`$data_name`[`$data_id`]" date_val=$value start_year="1902" end_year="0" extra=$disabled_param placeholder=$field.description}
@@ -116,7 +118,7 @@
             <option {if $value == $k}selected="selected"{/if} value="{$k}">{$v}</option>
             {/foreach}
         </select>
-    
+
     {elseif $field.field_type == "R"}  {* Radiogroup *}
         <div id="{$id_prefix}elm_{$field.field_id}">
             {foreach from=$field.values key=k item=v name="rfe"}
@@ -129,11 +131,13 @@
         <input class="radio {if !$skip_field}{$_class}{else}cm-skip-avail-switch{/if} {$id_prefix}elm_{$field.field_id}" type="radio" id="{$id_prefix}elm_{$field.field_id}_commercial" name="{$data_name}[{$data_id}]" value="commercial" {if $value == "commercial"}checked="checked"{/if} {if !$skip_field}{$disabled_param nofilter}{/if} /><span class="radio">{__("address_commercial")}</span>
 
     {else}  {* Simple input *}
-        <input {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} type="{if $field.class == 'shipping-phone' || $field.class == 'billing-phone'}tel{else}text{/if}" id="{$id_prefix}elm_{$field.field_id}" name="{$data_name}[{$data_id}]" size="32" placeholder="{$field.description}" value="{if $data_id == 's_city' || $data_id == 'b_city'}{$value|default:$session_city}{else}{$value}{/if}" class="ty-input-text {if !$skip_field}{$_class}{else}cm-skip-avail-switch{/if}{if $field.class == 'shipping-phone' || $field.class == 'billing-phone'} cm-cr-mask-phone{/if}" {if !$skip_field}{$disabled_param nofilter}{/if}  {if $data_id == 's_city' || $data_id == 'b_city'}onblur="fn_check_city($(this), true);" onkeydown="fn_city_change($(this));"{/if} />
         {if $data_id == 's_city' || $data_id == 'b_city'}
-            {$kladr_name = "`$data_id`_kladr_id"}
-            <input type="hidden" {if $field.autocomplete_type}data-autocompletetype="city_id"{/if} name="{$data_name}[{$data_id}_kladr_id]" value="{$user_data.$kladr_name|default:$session_city_id}" />
+            {$city_id = "`$data_id`_id"}
+            {$city_id_type = "`$data_id`_id_type"}
+            <input type="hidden" {if $field.autocomplete_type}data-autocompletetype="city_id"{/if} name="{$data_name}[{$city_id}]" value="{$user_data.$city_id}" {if $is_checkout}data-submitonchange="true"{/if} />
+            <input type="hidden" {if $field.autocomplete_type}data-autocompletetype="city_id_type"{/if} name="{$data_name}[{$city_id_type}]" value="{$user_data.$city_id_type}" />
         {/if}
+        <input {if $field.autocomplete_type}data-autocompletetype="{$field.autocomplete_type}"{/if} type="{if $field.class == 'shipping-phone' || $field.class == 'billing-phone'}tel{else}text{/if}" id="{$id_prefix}elm_{$field.field_id}" name="{$data_name}[{$data_id}]" size="32" placeholder="{$field.description}" value="{$value}" class="ty-input-text {if !$skip_field}{$_class}{else}cm-skip-avail-switch{/if}{if $field.class == 'shipping-phone' || $field.class == 'billing-phone'} cm-cr-mask-phone{/if}" {if !$skip_field}{$disabled_param nofilter}{/if} {if $data_id == 's_city' || $data_id == 'b_city'}{/if} autocomplete="nope" />
     {/if}
 
     {if $pref_field_name != $field.description || $field.required == "Y"}
@@ -147,14 +151,6 @@
 {/hook}
 {/foreach}
 
-<script type="text/javascript" class="cm-ajax-force">
-(function(_, $) {
-    $('.cm-autocomplete-block').each(function() {
-        fn_init_autocomplete($(this));
-    });
-    fn_init_placeholder();
-}(Tygh, Tygh.$));
-</script>
 {if $body_id || $grid_wrap}
         </div>
     </div>

@@ -18,26 +18,24 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 
 if ($mode == 'update_steps') {
+    fn_save_selected_office($_REQUEST);
+}
 
-    if (!empty($_REQUEST['select_office'])) {
-        foreach($_REQUEST['select_office'] as $g_id => $select) {
+if ($mode == 'checkout') {
+    fn_save_selected_office($_REQUEST);
+}
+
+if ($mode == 'auto_save_user') {
+    fn_save_selected_office($_REQUEST);
+}
+
+function fn_save_selected_office($request)
+{
+    if (!empty($request['select_office'])) {
+        foreach($request['select_office'] as $g_id => $select) {
             foreach($select as $s_id => $o_id) {
                 $_SESSION['cart']['select_office'][$g_id][$s_id] = $o_id;
             }
         }
     }
-
 }
-
-if ($mode == 'checkout') {
-
-    if (!empty($_REQUEST['select_office'])) {
-        foreach($_REQUEST['select_office'] as $g_id => $select) {
-            foreach($select as $s_id => $o_id) {
-                $_SESSION['cart']['select_office'][$g_id][$s_id] = $o_id;
-            }
-        }
-    } 
-
-}
-
