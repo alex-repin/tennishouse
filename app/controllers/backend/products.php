@@ -463,7 +463,7 @@ if ($mode == 'add') {
     }
 
     if (fn_allowed_for('ULTIMATE') && !empty($product_data['shared_product']) && $product_data['shared_product'] = 'Y') {
-        $product_data = fn_get_product_data($_REQUEST['product_id'], $auth, DESCR_SL, '', true, true, true, true, false, true, true);
+//         $product_data = fn_get_product_data($_REQUEST['product_id'], $auth, DESCR_SL, '', true, true, true, true, false, true, true);
     }
 
     $taxes = fn_get_taxes();

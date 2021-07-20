@@ -157,20 +157,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $order_for_sdek['SellerAddress'] = Registry::get('settings.Company.company_address');
                     $order_for_sdek['ShipperAddress'] = Registry::get('settings.Company.company_address');
                     if (!empty($order_info['s_currency'])) {
-                        if ($partial_condition || $order_info['status'] == 'P') {
-                            $order_for_sdek['DeliveryRecipientCost'] = 0;
-                        } else {
-                            $order_for_sdek['DeliveryRecipientCost'] = fn_format_price_by_currency($order_for_sdek['DeliveryRecipientCost'], $order_info['s_currency']);
-                        }
+                        $order_for_sdek['DeliveryRecipientCost'] = $order_for_sdek['DeliveryRecipientCost'];
 //                         $order_for_sdek['RecipientCurrency'] = $order_info['s_currency'];
 //                         $order_for_sdek['ItemsCurrency'] = $order_info['s_currency'];
                     }
                 } else {
-                    if ($order_info['status'] == 'P') {
-                        $order_for_sdek['DeliveryRecipientCost'] = 0;
-                    } else {
-                        $order_for_sdek['DeliveryRecipientCost'] = $order_for_sdek['DeliveryRecipientCost'];
-                    }
+                    $order_for_sdek['DeliveryRecipientCost'] = $order_for_sdek['DeliveryRecipientCost'];
                 }
 
                 $xml .= '            ' . RusSdek::arraySimpleXml('Order', $order_for_sdek, 'open');
@@ -199,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $product_for_xml = array (
                                 'WareKey' => $sdek_products[$item_key]['ware_key'],
                                 'Cost' => $sdek_products[$item_key]['price'],
-                                'Payment' => ($item_data['is_paid'] == 'Y') ? 0 : $sdek_products[$item_key]['total'],
+                                'Payment' => (!empty($item_data['is_paid'])) ? ($sdek_products[$item_key]['total'] < $item_data['is_paid'] ? 0 : $sdek_products[$item_key]['total'] - $item_data['is_paid']) : $sdek_products[$item_key]['total'],
                                 'Weight' => $sdek_products[$item_key]['weight'] * 1000 * $item_data['amount'],
                                 'Amount' => $item_data['amount'],
                                 'Comment' => $sdek_products[$item_key]['product'],

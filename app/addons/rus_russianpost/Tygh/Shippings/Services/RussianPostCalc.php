@@ -80,25 +80,49 @@ class RussianPostCalc implements IService
         if (!empty($response)) {
             if ($response['msg']['type'] == 'done') {
 
-                foreach ($response['calc'] as $calc) {
-                    if ($calc['type'] == $shipping_type) {
-
+                $res = array();
+                foreach ($response['calc'] as $i => $calc) {
+                    if (!empty($calc['cost'])) {
                         $cost = $calc['cost'];
                         if (CART_PRIMARY_CURRENCY != 'RUB') {
                             $cost = fn_rus_russianpost_format_price_down($cost, 'RUB');
                         }
 
-                        $return['cost'] = $cost;
-                        $return['delivery_time'] = $calc['days'] . ' ' . __('days');
-                        $rates = array(
-                            'price' => $cost,
-                            'date' => $calc['days'] . ' ' . __('days')
-                        );
-                        break;
+                        $res[$i] = $cost;
                     }
                 }
+                asort($res);
+                $res_key = array_key_first($res);
+                
+                if ($res_key !== false) {
+                    $return['cost'] = $res[$res_key];
+                    $return['delivery_time'] = $response['calc'][$res_key]['days'] . ' ' . __('days');
+                    $rates = array(
+                        'price' => $cost,
+                        'date' => $response['calc'][$res_key]['days'] . ' ' . __('days')
+                    );
 
-                $this->_fillSessionData($rates);
+                    $this->_fillSessionData($rates);
+                }
+//                 foreach ($response['calc'] as $calc) {
+//                     if ($calc['type'] == $shipping_type) {
+// 
+//                         $cost = $calc['cost'];
+//                         if (CART_PRIMARY_CURRENCY != 'RUB') {
+//                             $cost = fn_rus_russianpost_format_price_down($cost, 'RUB');
+//                         }
+// 
+//                         $return['cost'] = $cost;
+//                         $return['delivery_time'] = $calc['days'] . ' ' . __('days');
+//                         $rates = array(
+//                             'price' => $cost,
+//                             'date' => $calc['days'] . ' ' . __('days')
+//                         );
+//                         break;
+//                     }
+//                 }
+// 
+//                 $this->_fillSessionData($rates);
 
             } else {
                 $return['error'] = $this->processErrors($response);

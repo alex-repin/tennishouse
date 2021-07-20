@@ -2265,6 +2265,7 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
         if ($key !== false) {
             unset($new_variations[$key]);
         }
+        $new_variations = array_filter(array_unique($new_variations));
         $product_data['variation_ids'] = implode(',', $new_variations);
 
         $old_variations = db_get_field("SELECT variation_ids FROM ?:products WHERE product_id = ?i", $product_id);
@@ -2278,7 +2279,7 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
                     $key = array_search($product_id, $pr_variations);
                     if ($key !== false) {
                         unset($pr_variations[$key]);
-                        db_query("UPDATE ?:products SET variation_ids = ?s WHERE product_id = ?i", implode(',', $pr_variations), $pr_id);
+                        db_query("UPDATE ?:products SET variation_ids = ?s WHERE product_id = ?i", implode(',', array_filter(array_unique($pr_variations))), $pr_id);
                     }
                 }
             }
@@ -2288,7 +2289,7 @@ function fn_development_update_product_pre(&$product_data, $product_id, $lang_co
                 $pr_variations = db_get_field("SELECT variation_ids FROM ?:products WHERE product_id = ?i", $pr_id);
                 $pr_variations = explode(',', $pr_variations);
                 $pr_variations[] = $product_id;
-                db_query("UPDATE ?:products SET variation_ids = ?s WHERE product_id = ?i", implode(',', $pr_variations), $pr_id);
+                db_query("UPDATE ?:products SET variation_ids = ?s WHERE product_id = ?i", implode(',', array_filter(array_unique($pr_variations))), $pr_id);
             }
         }
         if (!empty($product_data['generate_description_out_of_features']) && $product_data['generate_description_out_of_features'] == 'Y') {
