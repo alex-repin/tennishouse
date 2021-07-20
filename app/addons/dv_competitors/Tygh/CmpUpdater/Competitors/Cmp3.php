@@ -58,7 +58,7 @@ class Cmp3 extends Competitor
                 $product['price'] = (int)$match[1];
             }
 
-            if (preg_match('/<span id="product-availability"><a class="stockcount_product_front" href="#stockcount_product_front">(.*?)<\/a><\/span>/', $section[1], $match)) {
+            if (preg_match('/<span id="product-availability"><i class="material-icons product-available">/', $section[1], $match)) {
                 $product['in_stock'] = 'Y';
             } else {
                 $product['in_stock'] = 'N';

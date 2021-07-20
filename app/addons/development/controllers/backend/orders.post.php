@@ -31,6 +31,4 @@ if ($mode == 'manage') {
             '[link]' => fn_url('orders.manage?overdue_delivery=Y')
         )));
     }
-    Registry::get('view')->assign('payments', $payments);
-
 }

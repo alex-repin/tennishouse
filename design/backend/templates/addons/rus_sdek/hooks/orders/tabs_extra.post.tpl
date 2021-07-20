@@ -88,7 +88,7 @@
                                     {dropdown content=$smarty.capture.tools_list}
                                 </div>
                             {else}
-                                <input type="text" name="add_sdek_info[{$shipment_id}][Order][DeliveryRecipientCost]" value="{$order_info.shipping_cost}" class="input-mini" size="6"/>
+                                <input type="text" name="add_sdek_info[{$shipment_id}][Order][DeliveryRecipientCost]" value="{if $order_info.status != $smarty.const.ORDER_STATUS_PAID}{$order_info.shipping_cost}{/if}" class="input-mini" size="6"/>
                             {/if}
                         </td>
                         <td class="right nowrap">
@@ -161,7 +161,7 @@
                                     <tr>
                                         <td>{$order_info.products.$product_id.product}</td>
                                         <td><input type="text" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][products][{$product_id}][amount]" value="{$order_info.products.$product_id.amount}" class="input-mini" size="6" /></td>
-                                        <td><input type="hidden" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][products][{$product_id}][is_paid]" value="N" /><input type="checkbox" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][products][{$product_id}][is_paid]" value="Y" {if $order_info.status == $smarty.const.ORDER_STATUS_PAID}checked="checked"{/if} /></td>
+                                        <td><input type="text" name="add_sdek_info[{$shipment_id}][Order][Packages][{$new_key}][products][{$product_id}][is_paid]" value="{if $order_info.status == $smarty.const.ORDER_STATUS_PAID}{$order_info.products.$product_id.subtotal}{/if}" class="input-mini" size="6" /></td>
                                     <tr>
                                 {/foreach}
                                 </table>

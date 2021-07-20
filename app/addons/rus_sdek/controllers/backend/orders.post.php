@@ -157,20 +157,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $order_for_sdek['SellerAddress'] = Registry::get('settings.Company.company_address');
                     $order_for_sdek['ShipperAddress'] = Registry::get('settings.Company.company_address');
                     if (!empty($order_info['s_currency'])) {
-                        if ($partial_condition || $order_info['status'] == 'P') {
-                            $order_for_sdek['DeliveryRecipientCost'] = 0;
-                        } else {
-                            $order_for_sdek['DeliveryRecipientCost'] = fn_format_price_by_currency($order_for_sdek['DeliveryRecipientCost'], $order_info['s_currency']);
-                        }
+                        $order_for_sdek['DeliveryRecipientCost'] = $order_for_sdek['DeliveryRecipientCost'];
 //                         $order_for_sdek['RecipientCurrency'] = $order_info['s_currency'];
 //                         $order_for_sdek['ItemsCurrency'] = $order_info['s_currency'];
                     }
                 } else {
-                    if ($order_info['status'] == 'P') {
-                        $order_for_sdek['DeliveryRecipientCost'] = 0;
-                    } else {
-                        $order_for_sdek['DeliveryRecipientCost'] = $order_for_sdek['DeliveryRecipientCost'];
-                    }
+                    $order_for_sdek['DeliveryRecipientCost'] = $order_for_sdek['DeliveryRecipientCost'];
                 }
 
                 $xml .= '            ' . RusSdek::arraySimpleXml('Order', $order_for_sdek, 'open');
@@ -199,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $product_for_xml = array (
                                 'WareKey' => $sdek_products[$item_key]['ware_key'],
                                 'Cost' => $sdek_products[$item_key]['price'],
-                                'Payment' => ($item_data['is_paid'] == 'Y') ? 0 : $sdek_products[$item_key]['total'],
+                                'Payment' => (!empty($item_data['is_paid'])) ? ($sdek_products[$item_key]['total'] < $item_data['is_paid'] ? 0 : $sdek_products[$item_key]['total'] - $item_data['is_paid']) : $sdek_products[$item_key]['total'],
                                 'Weight' => $sdek_products[$item_key]['weight'] * 1000 * $item_data['amount'],
                                 'Amount' => $item_data['amount'],
                                 'Comment' => $sdek_products[$item_key]['product'],
@@ -399,10 +391,12 @@ if ($mode == 'details') {
         if (!empty($sdek_shipments)) {
 
             $offices = array();
-            $rec_city = (!empty($order_info['s_city'])) ? $order_info['s_city'] : $order_info['b_city'];
-            $rec_state = (!empty($order_info['s_state'])) ? $order_info['s_state'] : $order_info['b_state'];
-            $rec_country = (!empty($order_info['s_country'])) ? $order_info['s_country'] : $order_info['b_country'];
-            $rec_city_code = db_get_field("SELECT b.city_code FROM ?:rus_city_sdek_descriptions as a LEFT JOIN ?:rus_cities_sdek as b ON a.city_id = b.city_id WHERE a.city LIKE ?l AND b.state_code = ?s AND b.country_code = ?s", "$rec_city%", $rec_state, $rec_country);
+            $location = array(
+                'country' => (!empty($order_info['s_country'])) ? $order_info['s_country'] : $order_info['b_country'],
+                'state' => (!empty($order_info['s_state'])) ? $order_info['s_state'] : $order_info['b_state'],
+                'city' => (!empty($order_info['s_city'])) ? $order_info['s_city'] : $order_info['b_city']
+            );
+            $rec_city_code = RusSdek::SdekCityId($location);
 
             if (!empty($rec_city_code)) {
                 $offices = RusSdek::SdekPvzOffices(array('cityid' => $rec_city_code));
