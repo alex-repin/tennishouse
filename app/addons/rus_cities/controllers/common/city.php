@@ -42,7 +42,7 @@ if ($mode == 'autocomplete_city') {
                 'city_id_type' => 'sdek',
                 'value' => $city['city'],
                 'city' => $city['city'],
-                'label' => $city['city'] . (!empty($city['region']) ? ', ' . $city['region'] : '') . $city['name'] . ', ' . $city['country'],
+                'label' => $city['city'] . (!empty($city['region']) ? ', ' . $city['region'] : '')/* . $city['name']*/ . ', ' . $city['country'],
                 'country_code' => $city['country_code'],
                 'country' => $city['country'],
                 'state' => !empty($city['state_code']) ? $city['state_code'] : ''

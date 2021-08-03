@@ -929,7 +929,7 @@ if ($mode == 'cart') {
     Registry::get('view')->assign('expand_cart', !isset($_SESSION['expand_cart']) ? false : $_SESSION['expand_cart']);
     fn_save_checkout_step($cart, $auth['user_id'], $_SESSION['edit_step']);
     Registry::get('view')->assign('use_ajax', 'true');
-    Registry::get('view')->assign('edit_step', $edit_step);
+//     Registry::get('view')->assign('edit_step', $edit_step);
     Registry::get('view')->assign('completed_steps', $completed_steps);
     Registry::get('view')->assign('location', 'checkout');
 

@@ -274,7 +274,7 @@ function fn_init_autocomplete_city(city, form)
             var re = new RegExp( "(" + this.term + ")", "i" ),
                 $li = $( "<li/>" ).appendTo( ul );
 
-            $( "<a/>" ).attr( "href", "##" )
+            $( "<a/>" )/*.attr( "href", "#" )*/
                .html( item.label.replace( re, "<span class='ui-autocomplete-term'>$1</span>" ) )
                .appendTo( $li );
 
