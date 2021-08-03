@@ -2,34 +2,39 @@
     {if $order_id}
         {$url = "orders.details?order_id=`$order_id`"}
         {$result_ids = "elm_payments_list"}
+        <script type="text/javascript">
+        (function(_, $) {
+            $(_.doc).on('click', '.cm-select-payment', function() {
+                var self = $(this);
+
+                $.ceAjax('request', fn_url('{$url}&payment_id=' + self.val()), {
+                    result_ids: '{$result_ids}',
+                    full_render: true
+                });
+            });
+
+            $(_.doc).ready(function() {
+                $('.payments-form').each(function(index, form) {
+                    $.ceEvent('on', 'ce.formpost_' + $(form).attr('name'), function() {
+                        $('#ajax_overlay').show();
+                        $('#ajax_loading_box').html('<span class="ty-ajax-loading-box-with__text-wrapper">{__("placing_order")}</span>').addClass('ty-ajax-loading-box_text_block');
+                        $.toggleStatusBox('show');
+                    });
+                });
+            });
+        }(Tygh, Tygh.$));
+        </script>
     {else}
-        {$url = "checkout.checkout"}
-        {$result_ids = "checkout*,step_four"}
+        <script type="text/javascript">
+        (function(_, $) {
+            $(_.doc).on('click', '.cm-select-payment', function() {
+                fn_process_checkout($(this));
+            });
+        }(Tygh, Tygh.$));
+        </script>
     {/if}
 {/hook}
 
-<script type="text/javascript">
-(function(_, $) {
-    $(_.doc).on('click', '.cm-select-payment', function() {
-        var self = $(this);
-
-        $.ceAjax('request', fn_url('{$url}&payment_id=' + self.val()), {
-            result_ids: '{$result_ids}',
-            full_render: true
-        });
-    });
-
-    $(_.doc).ready(function() {
-        $('.payments-form').each(function(index, form) {
-            $.ceEvent('on', 'ce.formpost_' + $(form).attr('name'), function() {
-                $('#ajax_overlay').show();
-                $('#ajax_loading_box').html('<span class="ty-ajax-loading-box-with__text-wrapper">{__("placing_order")}</span>').addClass('ty-ajax-loading-box_text_block');
-                $.toggleStatusBox('show');
-            });
-        });
-    });
-}(Tygh, Tygh.$));
-</script>
 
 
 

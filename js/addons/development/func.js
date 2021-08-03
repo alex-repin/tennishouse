@@ -181,6 +181,15 @@ function fn_city_change(auto_form)
     }
 }
 
+function fn_process_checkout(obj)
+{
+    var auto_form = obj.closest('form');
+    if (auto_form.length) {
+        auto_form.addClass('cm-skip-validation');
+        auto_form.submit();
+    }
+}
+
 function fn_change_autocomplete_location(form, location)
 {
     var city_id = $("[data-autocompletetype='city_id']", form);
@@ -405,10 +414,7 @@ function fn_select_office(code)
         fn_change_autocomplete_location(auto_form, data);
     }
 
-    var city_id = $("[data-autocompletetype='city_id']", auto_form);
-    if (city_id.hasClass('cm-city-changed')) {
-        fn_city_change(auto_form);
-    }
+    fn_process_checkout($('#office_list'));
 }
 
 function fn_reload_city_offices(relocate)

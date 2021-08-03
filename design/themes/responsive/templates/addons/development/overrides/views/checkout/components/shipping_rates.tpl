@@ -1,40 +1,3 @@
-{literal}
-<script type="text/javascript">
-function fn_calculate_total_shipping_cost(obj) {
-
-    var auto_form = obj.closest('form');
-    if (auto_form.length) {
-        auto_form.addClass('cm-skip-validation');
-        auto_form.submit();
-    }
-
-    // if (obj.attr('checked') == 'checked') {
-    //     return true;
-    // }
-    // params = [];
-    // parents = Tygh.$('#shipping_rates_list');
-    // radio = Tygh.$('input[type=radio]:checked', parents);
-    //
-    // Tygh.$.each(radio, function(id, elm) {
-    //     params.push({name: elm.name, value: elm.value});
-    // });
-    //
-    // url = fn_url('checkout.checkout');
-    //
-    // for (i in params) {
-    //     url += '&' + params[i]['name'] + '=' + escape(params[i]['value']);
-    // }
-    //
-    // obj.attr('checked', 'checked');
-    // Tygh.$.ceAjax('request', url, {
-    //     result_ids: 'shipping_rates_list,checkout_info_summary_*,checkout_order_info_*',
-    //     method: 'get',
-    //     full_render: true
-    // });
-}
-</script>
-{/literal}
-
 {if $show_header == true}
     {include file="common/subheader.tpl" title=__("select_shipping_method")}
 {/if}
@@ -127,7 +90,7 @@ function fn_calculate_total_shipping_cost(obj) {
                         {if $display == "radio"}
                                 <div class="ty-shipping-options__method-group" id="shipping_group_{$group_key}_{$shipping.shipping_id}">
                                     <div class="ty-shipping-options__method-info">
-                                        <input type="radio" class="ty-valign radio" id="sh_{$group_key}_{$shipping.shipping_id}" name="shipping_ids[{$group_key}]" value="{$shipping.shipping_id}" onclick="fn_calculate_total_shipping_cost($(this));" {$checked} />
+                                        <input type="radio" class="ty-valign radio" id="sh_{$group_key}_{$shipping.shipping_id}" name="shipping_ids[{$group_key}]" value="{$shipping.shipping_id}" onclick="fn_process_checkout($(this));" {$checked} />
                                         <label for="sh_{$group_key}_{$shipping.shipping_id}" class="ty-valign ty-shipping-options__item-title">{$shipping.shipping} {$delivery_time} - <b>{$rate nofilter}</b>{if $shipping.original_rate && $shipping.original_rate > $shipping.rate} {include file="common/price.tpl" value=$shipping.original_rate class="ty-line-through"}{/if}</label>
                                         {if $shipping.icon}
                                             <div class="ty-shipping-options__item-image">{include file="common/image.tpl" obj_id="checkout_`$shipping.shipping_id`" images=$shipping.icon image_width="70" image_height="35" keep_transparent=true}</div>
