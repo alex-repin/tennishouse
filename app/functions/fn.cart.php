@@ -3042,21 +3042,22 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
                 $cart['company_shipping_failed'] = true;
             }
 
-            foreach ($group['shippings'] as $shipping_id => $shipping) {
-                if (isset($cart['chosen_shipping'][$key_group]) && $cart['chosen_shipping'][$key_group] == $shipping_id) {
-                    $cart['shipping_cost'] += $shipping['rate'];
-                    $cart['original_shipping_cost'] += $shipping['original_rate'];
+            if (!empty($group['shippings'])) {
+                foreach ($group['shippings'] as $shipping_id => $shipping) {
+                    if (isset($cart['chosen_shipping'][$key_group]) && $cart['chosen_shipping'][$key_group] == $shipping_id) {
+                        $cart['shipping_cost'] += $shipping['rate'];
+                        $cart['original_shipping_cost'] += $shipping['original_rate'];
+                    }
                 }
-            }
-
-            if (!empty($group['shippings']) && isset($cart['chosen_shipping'][$key_group])) {
-                $shipping = $group['shippings'][$cart['chosen_shipping'][$key_group]];
-                $shipping_id = $shipping['shipping_id'];
-                if (empty($cart['shipping'][$shipping_id])) {
-                    $cart['shipping'][$shipping_id] = $shipping;
-                    $cart['shipping'][$shipping_id]['rates'] = array();
+                if (isset($cart['chosen_shipping'][$key_group])) {
+                    $shipping = $group['shippings'][$cart['chosen_shipping'][$key_group]];
+                    $shipping_id = $shipping['shipping_id'];
+                    if (empty($cart['shipping'][$shipping_id])) {
+                        $cart['shipping'][$shipping_id] = $shipping;
+                        $cart['shipping'][$shipping_id]['rates'] = array();
+                    }
+                    $cart['shipping'][$shipping_id]['rates'][$key_group] = $shipping['rate'];
                 }
-                $cart['shipping'][$shipping_id]['rates'][$key_group] = $shipping['rate'];
             }
         }
         $cart['display_shipping_cost'] = $cart['shipping_cost'];

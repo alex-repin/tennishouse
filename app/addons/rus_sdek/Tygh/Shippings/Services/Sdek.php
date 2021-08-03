@@ -297,7 +297,7 @@ class Sdek implements IService
                 $params = array(
                     'cityid' => $rec_city_code
                 );
-                $offices = RusSdek::SdekPvzOffices($params, (AREA == 'C') ? true : false, $this->_shipping_info['package_info']['packages']);
+                $offices = RusSdek::SdekPvzOffices($params, (AREA == 'C') ? true : false, $this->_shipping_info['package_info']['packages'] ?? array());
 
                 if (!empty($offices)) {
                     $rates['offices'] = $offices;
