@@ -583,10 +583,7 @@
             ALTER TABLE `cscart_products` ADD `likes` SMALLINT UNSIGNED NOT NULL DEFAULT '0';
         </item>
         <item>
-            ALTER TABLE `cscart_user_profiles` ADD `b_city_kladr_id` BIGINT UNSIGNED NOT NULL AFTER `profile_name`, ADD `s_city_kladr_id` BIGINT UNSIGNED NOT NULL AFTER `b_city_kladr_id`;
-        </item>
-        <item>
-            ALTER TABLE `cscart_user_profiles` CHANGE `b_city_kladr_id` `b_city_id` BIGINT(20) UNSIGNED NOT NULL, CHANGE `s_city_kladr_id` `s_city_id` BIGINT(20) UNSIGNED NOT NULL;
+            ALTER TABLE `cscart_user_profiles` ADD `b_city_id` BIGINT(20) UNSIGNED NOT NULL, ADD `s_city_id` BIGINT(20) UNSIGNED NOT NULL;
         </item>
         <item>
             ALTER TABLE `cscart_user_profiles` ADD `s_city_id_type` VARCHAR(16) NOT NULL AFTER `s_city_id`, ADD `b_city_id_type` VARCHAR(16) NOT NULL AFTER `s_city_id_type`;
@@ -853,7 +850,10 @@
             ALTER TABLE `cscart_rus_city_sdek_descriptions` ADD INDEX(`city`);
         </item>
         <item>
-            ALTER TABLE `cscart_user_session_products` ADD `shipping_id` TEXT NOT NULL, ADD `payment_id` MEDIUMINT(8) UNSIGNED NOT NULL; 
+            ALTER TABLE `cscart_user_session_products` ADD `shipping_id` TEXT NOT NULL, ADD `payment_id` MEDIUMINT(8) UNSIGNED NOT NULL;
+        </item>
+        <item>
+            ALTER TABLE `cscart_orders` ADD `s_city_id` BIGINT(20) UNSIGNED NOT NULL, ADD `b_city_id` BIGINT(20) UNSIGNED NOT NULL, ADD `s_city_id_type` VARCHAR(10) NOT NULL, ADD `b_city_id_type` VARCHAR(10) NOT NULL;
         </item>
     </queries>
     <functions>
