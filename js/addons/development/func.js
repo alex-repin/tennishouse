@@ -221,7 +221,7 @@ function fn_change_autocomplete_location(form, location)
                             $('#' + state.attr('sb') + '_' + data.text.replace(/\"/g, "")).trigger('click.sb');
                         } else {
                             state.val(data.text.replace(/\"/g, ""));
-                            if (state.is("select")) {
+                            if ($.mobile && state.is("select")) {
                                 state.selectmenu();
                                 state.selectmenu('refresh');
                             }
@@ -586,7 +586,20 @@ function fn_rebuild_offices(offices_list, relocate = true)
             fn_ymaps_refresh_offices();
         });
     } else {
-        ymaps.geocode($("#ymaps_select_city [data-autocompletetype='city']").val(), {
+        var preselected_data = offices_list.closest('.cm-autocomplete-form').find('#preselected_data');
+        if (preselected_data.length) {
+            var data = JSON.parse(preselected_data.data('data'));
+        }
+
+        if (typeof(data.label) != 'undefined') {
+            var map_center = data.label;
+        } else if (typeof(data.state_raw) != 'undefined' && typeof(data.city) != 'undefined' && typeof(data.country) != 'undefined') {
+            var map_center = data.city + ', ' + data.state_raw + ', ' + data.country;
+        } else {
+            var map_center = $("#ymaps_select_city [data-autocompletetype='city']").val();
+        }
+
+        ymaps.geocode(map_center, {
             results: 1
         }).then(function (res) {
             var firstGeoObject = res.geoObjects.get(0),
@@ -697,5 +710,15 @@ function fn_init_sd_option(context)
             });
         }
         $(this).addClass('cm-sd-option-processed');
+    });
+}
+
+function fn_init_clipboard_copy(context)
+{
+    $('.cm-copy-clipboard', context).each(function(){
+        $(this).focus(function(){
+            $(this).select();
+            document.execCommand('copy');
+        })
     });
 }

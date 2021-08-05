@@ -1473,15 +1473,23 @@ if ($mode == 'calculate_balance') {
 
     return array(CONTROLLER_STATUS_REDIRECT, "profiles.update?user_id=" . $_REQUEST['user_id']);
 
+} elseif ($mode == 'generate_order_link' && !empty($_REQUEST['order_id'])) {
+
+    $user_id = db_get_field("SELECT user_id FROM ?:orders WHERE order_id = ?i", $_REQUEST['order_id']);
+
+    if (empty($user_id)) {
+        $user_id = fn_create_order_customer($_REQUEST['order_id'], $auth);
+    }
+
+    if (!empty($user_id)) {
+        fn_generate_ekey($user_id, 'L', SECONDS_IN_DAY * 90);
+    }
+
+    return array(CONTROLLER_STATUS_REDIRECT, "orders.details?order_id=" . $_REQUEST['order_id']);
+
 } elseif ($mode == 'add_user' && !empty($_REQUEST['order_id'])) {
 
-    $user_data = fn_get_order_info($_REQUEST['order_id'], false, true, true, true);
-    $user_data['status'] = 'A';
-    $res = fn_update_user(0, $user_data, $auth, false, false, false, true);
-    if (!empty($res)) {
-        list($user_id, $profile_id) = $res;
-        db_query("UPDATE ?:orders SET user_id = ?i WHERE order_id = ?i", $user_id, $_REQUEST['order_id']);
-    }
+    fn_create_order_customer($_REQUEST['order_id'], $auth);
 
     return array(CONTROLLER_STATUS_REDIRECT, "orders.details?order_id=" . $_REQUEST['order_id']);
 

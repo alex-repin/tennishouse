@@ -798,6 +798,10 @@ if ($mode == 'cart') {
 
     $payment_methods = fn_prepare_checkout_payment_methods($cart, $auth);
     if (!empty($payment_methods)) {
+
+        if (!empty($cart['payment_id']) && empty($payment_methods[$cart['payment_id']])) {
+            $cart['payment_id'] = 0;
+        }
         $first_method = reset($payment_methods);
 
         $checkout_buttons = fn_get_checkout_payment_buttons($cart, $cart_products, $auth);

@@ -223,6 +223,16 @@
                 {__("update_order_user_id")}</label>
             {/if}
 
+            <div class="control-group">
+                <label class="control-label">{__("order_link")} :</label>
+                <div class="controls">
+                    {if $lkey}
+                        <input type="text" value="{"orders.details?order_id=`$order_info.order_number`&lkey=`$lkey`"|fn_url:'C'}" class="cm-copy-clipboard" />
+                    {else}
+                        <a style="display: inline-block; padding: 5px 0;" href="{"development.generate_order_link?order_id=`$order_info.order_id`"|fn_url}">{__("generate")}</a>
+                    {/if}
+                </div>
+            </div>
             </div>
             {/hook}
 

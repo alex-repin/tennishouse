@@ -305,7 +305,7 @@ function fn_get_cart_product_data($hash, &$product, $skip_promotion, &$cart, &$a
 
         $_pdata['subtotal'] = $_pdata['price'] * $product['amount'];
         $cart['original_subtotal'] += $_pdata['original_price'] * $product['amount'];
-        $cart['subtotal'] += $_pdata['subtotal'];
+        $cart['subtotal'] += $_pdata['subtotal'] - $_pdata['discount'];
 
         /**
          * Prepare params before getting product data from cart
@@ -2912,7 +2912,6 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
 
         if (!empty($cart['calculate_shipping']) || empty($cart['product_groups'])) {
             $location = fn_get_customer_location($auth, $cart);
-            // fn_print_die($location, $cart);
             $product_groups = Shippings::groupProductsList($cart_products, $location);
             $shippings = array();
 

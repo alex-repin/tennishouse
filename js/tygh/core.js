@@ -1146,6 +1146,7 @@ var Tygh = {
                 fn_init_sd_option(context);
                 fn_init_placeholder(context);
             }
+            fn_init_clipboard_copy(context);
 
             var countryElms = $('.cm-country', context);
             if (countryElms.length) {

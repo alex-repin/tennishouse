@@ -1561,7 +1561,7 @@
         <item lang="ru" id="select_this_office">Выбрать этот пункт</item>
         <item lang="ru" id="no_offices_in_this_city">К сожалению, в этом населенном пункте нет пунктов выдачи. Пожалуйста, выберите другой.</item>
         <item lang="ru" id="change_pickup_location">Изменить пункт</item>
-        <item lang="ru" id="zoom_out_to_see_offices">Уменьшите масштаб, чтобы увидеть ближайшие пункты</item>
+        <item lang="ru" id="zoom_out_to_see_offices">Уменьшите масштаб, чтобы увидеть ближайшие пункты или выберите другой город</item>
         <item lang="ru" id="zoom_out_to_see_more_offices">Уменьшите масштаб, чтобы увидеть больше пунктов в этом городе</item>
         <item lang="ru" id="ymaps_display_as_list">Показать списком</item>
         <item lang="ru" id="ymaps_display_as_map">Показать на карте</item>
@@ -1654,5 +1654,6 @@
         <item lang="ru" id="shipping_options_text">Способ доставки</item>
         <item lang="ru" id="billing_options_text">Способ оплаты</item>
         <item lang="ru" id="update_sdek_cities">Обновить города СДЭК</item>
+        <item lang="ru" id="order_link">Клиентская ссылка</item>
     </language_variables>
 </addon>

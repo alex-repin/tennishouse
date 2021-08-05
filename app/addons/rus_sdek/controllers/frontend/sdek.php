@@ -68,6 +68,7 @@ if ($mode == 'select_office') {
         $country = $data['country'];
         $data['country'] = $data['country_code'];
         $city_id = RusSdek::SdekCityId($data);
+        $offices = array();
         if (!empty($city_id)) {
             $params = array(
                 'cityid' => $city_id
@@ -77,12 +78,12 @@ if ($mode == 'select_office') {
                 $data['city_id'] = $city_id;
                 $data['city_id_type'] = 'sdek';
             }
-            $data['country'] = $country;
-            Registry::get('ajax')->assign('preselected_data', $data);
-            Registry::get('view')->assign('offices', $offices);
-            Registry::get('view')->assign('city', $data['city']);
-            Registry::get('view')->display('addons/rus_sdek/components/select_office.tpl');
         }
+        $data['country'] = $country;
+        Registry::get('ajax')->assign('preselected_data', $data);
+        Registry::get('view')->assign('offices', $offices);
+        Registry::get('view')->assign('city', $data['city']);
+        Registry::get('view')->display('addons/rus_sdek/components/select_office.tpl');
     }
     exit;
 }

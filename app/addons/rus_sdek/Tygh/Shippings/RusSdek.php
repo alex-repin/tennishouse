@@ -171,6 +171,9 @@ class RusSdek
             if (!empty($location['country'])) {
                 $condition .= db_quote(" AND c.country_code = ?s", $location['country']);
             }
+            if (!empty($location['state'])) {
+                $condition .= db_quote(" AND c.state_code = ?s", $location['state']);
+            }
 
             $result = db_get_hash_array("SELECT c.city_code, c.state_code, d.city FROM ?:rus_city_sdek_descriptions as d LEFT JOIN ?:rus_cities_sdek as c ON c.city_id = d.city_id WHERE ?p ORDER BY city_code ASC", 'city_code', $condition);
 
@@ -203,65 +206,65 @@ class RusSdek
                 }
             }
 
-            if (empty($_result)) {
-//                     fn_set_notification('E', __('notice'), __('shippings.sdek.city_error'));
-                $data = array(
-                    'q' => $location['city'],
-                    'limit' => 10
-                );
-                $extra = array(
-                    'request_timeout' => 2,
-                    'timeout' => 1
-                );
-                $result = json_decode(Http::get('http://api.cdek.ru/city/getListByTerm/json.php', $data, $extra), true);
-                if (!empty($result['geonames'])) {
-                    if (count($result['geonames']) == 1) {
-                        $city = reset($result['geonames']);
-                        $_result = $city['id'];
-                    } elseif (count($result['geonames']) > 1) {
-                        foreach ($result['geonames'] as $i => $c_data) {
-                            if ($c_data['countryIso'] != $location['country']) {
-                                unset($result['geonames'][$i]);
-                            }
-                        }
-                        if (count($result['geonames']) == 1) {
-                            $city = reset($result['geonames']);
-                            $_result = $city['id'];
-                        } elseif (count($result['geonames']) > 1) {
-                            $max_match = $city_id = 0;
-                            foreach ($result['geonames'] as $c_code => $c_data) {
-                                $prc = round(strlen($location['city'])/strlen($c_data['cityName']), 2) * 100;
-                                if ($prc > $max_match) {
-                                    $max_match = $prc;
-                                    $city_id = $c_data['id'];
-                                }
-                            }
-                            $_result = $city_id;
-                        }
-                    }
-                }
-                $exists = db_get_field("SELECT city_code FROM ?:rus_cities_sdek WHERE city_code = ?i", $_result);
-                if (!empty($exists)) {
-                    $_result = $exists;
-                    db_query("UPDATE ?:rus_cities_sdek SET country_code = ?s, state_code = ?s WHERE city_code = ?i", $location['country'], $location['state'], $_result);
-                } elseif (!empty($_result) && !empty($location['country']) && !empty($location['city']) && (!empty($location['state']) || $location['country'] != 'RU')) {
-                    $_data = array(
-                        'country_code' => $location['country'],
-                        'state_code' => $location['state'],
-                        'city_code' => $_result,
-                        'state' => 'A'
-                    );
-                    $_city_id = db_query("REPLACE INTO ?:rus_cities_sdek ?e", $_data);
-                    if (!empty($_city_id)) {
-                        $_data = array(
-                            'city_id' => $_city_id,
-                            'lang_code' => $lang_code,
-                            'city' => $location['city']
-                        );
-                        db_query("REPLACE INTO ?:rus_city_sdek_descriptions ?e", $_data);
-                    }
-                }
-            }
+//             if (empty($_result)) {
+// //                     fn_set_notification('E', __('notice'), __('shippings.sdek.city_error'));
+//                 $data = array(
+//                     'q' => $location['city'],
+//                     'limit' => 10
+//                 );
+//                 $extra = array(
+//                     'request_timeout' => 2,
+//                     'timeout' => 1
+//                 );
+//                 $result = json_decode(Http::get('http://api.cdek.ru/city/getListByTerm/json.php', $data, $extra), true);
+//                 if (!empty($result['geonames'])) {
+//                     if (count($result['geonames']) == 1) {
+//                         $city = reset($result['geonames']);
+//                         $_result = $city['id'];
+//                     } elseif (count($result['geonames']) > 1) {
+//                         foreach ($result['geonames'] as $i => $c_data) {
+//                             if ($c_data['countryIso'] != $location['country']) {
+//                                 unset($result['geonames'][$i]);
+//                             }
+//                         }
+//                         if (count($result['geonames']) == 1) {
+//                             $city = reset($result['geonames']);
+//                             $_result = $city['id'];
+//                         } elseif (count($result['geonames']) > 1) {
+//                             $max_match = $city_id = 0;
+//                             foreach ($result['geonames'] as $c_code => $c_data) {
+//                                 $prc = round(strlen($location['city'])/strlen($c_data['cityName']), 2) * 100;
+//                                 if ($prc > $max_match) {
+//                                     $max_match = $prc;
+//                                     $city_id = $c_data['id'];
+//                                 }
+//                             }
+//                             $_result = $city_id;
+//                         }
+//                     }
+//                 }
+//                 $exists = db_get_field("SELECT city_code FROM ?:rus_cities_sdek WHERE city_code = ?i", $_result);
+//                 if (!empty($exists)) {
+//                     $_result = $exists;
+//                     db_query("UPDATE ?:rus_cities_sdek SET country_code = ?s, state_code = ?s WHERE city_code = ?i", $location['country'], $location['state'], $_result);
+//                 } elseif (!empty($_result) && !empty($location['country']) && !empty($location['city']) && (!empty($location['state']) || $location['country'] != 'RU')) {
+//                     $_data = array(
+//                         'country_code' => $location['country'],
+//                         'state_code' => $location['state'],
+//                         'city_code' => $_result,
+//                         'state' => 'A'
+//                     );
+//                     $_city_id = db_query("REPLACE INTO ?:rus_cities_sdek ?e", $_data);
+//                     if (!empty($_city_id)) {
+//                         $_data = array(
+//                             'city_id' => $_city_id,
+//                             'lang_code' => $lang_code,
+//                             'city' => $location['city']
+//                         );
+//                         db_query("REPLACE INTO ?:rus_city_sdek_descriptions ?e", $_data);
+//                     }
+//                 }
+//             }
         }
 
         return $_result;

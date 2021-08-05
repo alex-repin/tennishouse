@@ -28,6 +28,21 @@ use Tygh\Ym\Yml;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+function fn_create_order_customer($order_id, $auth)
+{
+    $user_data = fn_get_order_info($order_id, false, true, true, true);
+    $user_data['status'] = 'A';
+    $res = fn_update_user(0, $user_data, $auth, false, false, false, true);
+    if (!empty($res)) {
+        list($user_id, $profile_id) = $res;
+        db_query("UPDATE ?:orders SET user_id = ?i WHERE order_id = ?i", $user_id, $order_id);
+
+        return $user_id;
+    }
+
+    return false;
+}
+
 function fn_save_checkout_step($cart, $user_id = 0, &$edit_step)
 {
     $_edit_step = 'step_one';
