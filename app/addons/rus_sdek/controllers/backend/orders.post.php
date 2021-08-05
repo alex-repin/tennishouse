@@ -418,8 +418,13 @@ if ($mode == 'details') {
 
                         $data_status = db_get_array("SELECT * FROM ?:rus_sdek_status WHERE order_id = ?i AND shipment_id = ?i ORDER BY timestamp ASC", $params['order_id'], $shipment['shipment_id']);
                         if (!empty($data_status)) {
+                            $city_codes = array();
                             foreach ($data_status as $k => $status) {
-                                $status['city'] = db_get_field("SELECT city FROM ?:rus_city_sdek_descriptions as a LEFT JOIN ?:rus_cities_sdek as b ON a.city_id=b.city_id WHERE b.city_code = ?s", $status['city_code']);
+                                $city_codes[] = $status['city_code'];
+                            }
+                            $cities = db_get_hash_single_array("SELECT city, city_code FROM ?:rus_city_sdek_descriptions as a LEFT JOIN ?:rus_cities_sdek as b ON a.city_id = b.city_id WHERE b.city_code IN (?n)", array('city_code', 'city'), $city_codes);
+                            foreach ($data_status as $k => $status) {
+                                $status['city'] = $cities[$status['city_code']];
                                 $status['date'] = date("d-m-Y  H:i:s", $status['timestamp']);
                                 $data_shipments[$shipment['shipment_id']]['sdek_status'][$status['id']] = array(
                                     'id' => $status['id'],
