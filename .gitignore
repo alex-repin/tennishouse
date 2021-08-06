@@ -4,6 +4,7 @@ config.local.php
 var/cache/
 var/logs/
 var/features_cache
+var/database
 images/.htaccess
 images/watermarked/.htaccess
 xhprof/
